@@ -21,15 +21,23 @@ import java.io.*;
 import org.systemsbiology.data.*;
 
 /**
- * Performs a quantile normalization of raw observations.  The
+ * Performs a normalization of a matrix of raw observations, so that each
+ * column of the matrix is consistent, based on the {@link DataNormalizationMethod}
+ * passed in the {@link DataNormalizerParams} object.  One (and currently, the only) method is
+ * {@link DataNormalizationMethod.QUANTILE}, which implements a quantile normalization
+ * such that the medians of all the columns will be the same.  Here, normalization
+ * means assigning a "normalized" observation value to each "raw" observation value
+ * in the matrix.  Consolidation of the data (e.g., averaging) is a separate procedure.  The
  * normalization is performed after a rescaling of the raw observations
- * in accordance of the scale parameter {@link QuantileNormalizationScale}.
+ * in accordance of the scale parameter {@link DataNormalizationScale}.
  * All parameters for the normalization are contained in the 
- * {@link QuantileNormalizerParams} class.   Results are stored in the
- * {@link QuantileNormalizationResults} object, which must have a pre-allocated
+ * {@link DataNormalizerParams} class.   Results are stored in the
+ * {@link DataNormalizerResults} object, which must have a pre-allocated
  * <code>cern.colt.matrix.ObjectMatrix2D</code> object <code>mNormalizedObservations</code>
- * to hold the normalized observation values.  The quantile normalization algorithm
- * implemented here is based on a prototype written by Daehee Hwang at 
+ * to hold the normalized observation values.  
+ * 
+ * For the {@link DataNormalizationMethod.QUANTILE} method, the quantile normalization algorithm
+ * used is based on a prototype written by Daehee Hwang at 
  * Institute for Systems Biology, and it is similar to the quantile normalization 
  * algorithm proposed by Bolstat <em>et al.</em> in their paper
  * <blockquote>
@@ -45,7 +53,7 @@ import org.systemsbiology.data.*;
  * @author sramsey
  *
  */
-public class QuantileNormalizer
+public class DataNormalizer
 {
     private static final double LOG2 = Math.log(2.0);
     private ObjectMatrix2D mRawObservations;
@@ -87,7 +95,7 @@ public class QuantileNormalizer
         }
     }
     
-    public QuantileNormalizer()
+    public DataNormalizer()
     {
         mNumColumns = 0;
         mNumRows = 0;
@@ -151,17 +159,17 @@ public class QuantileNormalizer
         }
     }
     
-    private void unscaleRawRowMedians(QuantileNormalizationScale pScale)
+    private void unscaleRawRowMedians(DataNormalizationScale pScale)
     {
         DoubleMatrix1D rawRowMedians = mRowMedians;
         int numRows = rawRowMedians.size();
         double value = 0.0;
         boolean doExp = false;
-        if(pScale.equals(QuantileNormalizationScale.LOGARITHM))
+        if(pScale.equals(DataNormalizationScale.LOGARITHM))
         {
             doExp = true;
         }
-        else if(pScale.equals(QuantileNormalizationScale.NORM_ONLY))
+        else if(pScale.equals(DataNormalizationScale.NORM_ONLY))
         {
             // do nothing
         }
@@ -293,7 +301,7 @@ public class QuantileNormalizer
     }
         
     // mRawObservationsFilledIn => mRescaledRawObservations
-    public void rescaleRawObservations(QuantileNormalizationScale pScale)
+    public void rescaleRawObservations(DataNormalizationScale pScale)
     {
         int numColumns = mRawObservationsFilledIn.columns();
         int numRows = mRawObservationsFilledIn.rows();
@@ -302,11 +310,11 @@ public class QuantileNormalizer
         double obsVal = 0.0;
         
         boolean doLog = false;
-        if(pScale.equals(QuantileNormalizationScale.LOGARITHM))
+        if(pScale.equals(DataNormalizationScale.LOGARITHM))
         {
             doLog = true;
         }
-        else if(pScale.equals(QuantileNormalizationScale.NORM_ONLY))
+        else if(pScale.equals(DataNormalizationScale.NORM_ONLY))
         {
             // do nothing
         }
@@ -431,11 +439,11 @@ public class QuantileNormalizer
     
     
     // mRawObservations => mRawObservationsFixedForScaling
-    private void fixRawObservationsForScaling(boolean pFixNonpositiveValues, QuantileNormalizationScale pScale)
+    private void fixRawObservationsForScaling(boolean pFixNonpositiveValues, DataNormalizationScale pScale)
     {
         DoubleMatrix2D obsFixedForScaling = mRawObservationsFixedForScaling;
         obsFixedForScaling.assign(0.0);
-        boolean usingLogScale = pScale.equals(QuantileNormalizationScale.LOGARITHM);
+        boolean usingLogScale = pScale.equals(DataNormalizationScale.LOGARITHM);
 
         int numColumns = mRawObservations.columns();
         int numRows = mRawObservations.rows();
@@ -487,9 +495,9 @@ public class QuantileNormalizer
         }
     }
     
-    public void normalize(ObjectMatrix2D pRawObservations,
-                          QuantileNormalizerParams pParams,
-                          QuantileNormalizationResults pResults)
+    private void normalizeQuantile(ObjectMatrix2D pRawObservations,
+                                   DataNormalizerParams pParams,
+                                   DataNormalizerResults pResults)
     {
         Double errorTolerance = pParams.mErrorTolerance;
         ObjectMatrix2D normalizedObservations = pResults.mNormalizedObservations;
@@ -501,7 +509,7 @@ public class QuantileNormalizer
         {
             throw new IllegalArgumentException("normalized observations matrix size is not consistent with raw observations matrix row count"); 
         }
-        QuantileNormalizationScale scale = pParams.mScale;
+        DataNormalizationScale scale = pParams.mScale;
         
         
         if(null != errorTolerance && errorTolerance.doubleValue() <= 0.0)
@@ -597,13 +605,33 @@ public class QuantileNormalizer
                     normalizedObservations.set(i, j, null);
                 }
             }
-        }
+        }    
     }
     
-    public QuantileNormalizationResults normalize(ObjectMatrix2D pRawObservations,
-                                                  QuantileNormalizerParams pParams)
+    
+    public void normalize(ObjectMatrix2D pRawObservations,
+                          DataNormalizerParams pParams,
+                          DataNormalizerResults pResults)
     {
-        QuantileNormalizationResults results = new QuantileNormalizationResults();
+        DataNormalizationMethod method = pParams.mMethod;
+        
+        if(method.equals(DataNormalizationMethod.QUANTILE))
+        {
+            normalizeQuantile(pRawObservations,
+                              pParams,
+                              pResults);
+        }
+        else
+        {
+            throw new IllegalArgumentException("unknown normalization method: " + method.getName());
+        }
+ 
+    }
+    
+    public DataNormalizerResults normalize(ObjectMatrix2D pRawObservations,
+                                                  DataNormalizerParams pParams)
+    {
+        DataNormalizerResults results = new DataNormalizerResults();
         results.mNormalizedObservations = pRawObservations.like();
         normalize(pRawObservations, pParams, results);
         return results;
@@ -625,14 +653,15 @@ public class QuantileNormalizer
             ObservationsData obsData = new ObservationsData();
             obsData.loadFromFile(bufferedReader, DataFileDelimiter.TAB);
             ObjectMatrix2D obs = obsData.getObservations();
-            QuantileNormalizer normalizer = new QuantileNormalizer();
+            DataNormalizer normalizer = new DataNormalizer();
             int numColumns = obs.columns();
             int numRows = obs.rows();
             ObjectMatrix2D normObs = ObjectFactory2D.dense.make(numRows, numColumns);
-            QuantileNormalizerParams params = new QuantileNormalizerParams();
+            DataNormalizerParams params = new DataNormalizerParams();
             params.mErrorTolerance = new Double(1.0e-4);
-            params.mScale = QuantileNormalizationScale.LOGARITHM;
-            QuantileNormalizationResults results = new QuantileNormalizationResults();
+            params.mScale = DataNormalizationScale.LOGARITHM;
+            params.mMethod = DataNormalizationMethod.QUANTILE;
+            DataNormalizerResults results = new DataNormalizerResults();
             results.mNormalizedObservations = normObs;
             normalizer.normalize(obs, params, results);
             String fileOutName = fileName + "_norm.txt";

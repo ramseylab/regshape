@@ -61,7 +61,6 @@ public class EvidenceWeightedInfererDriver
     private static final String TOOL_TIP_SMOOTHING_LENGTH_FIELD = "Set this to the smoothing length for obtaining the nonparametric distribution of the significances.";
     private static final String TOOL_TIP_NUM_AFFECTED = "The number of elements that are in the final putative set of affected elements.";
     private static final String RESOURCE_HELP_ICON = "Help24.gif";
-    private static final String RESOURCE_HELP_SET = "html/AppHelp.hs";
     private static final String HELP_SET_MAP_ID = "evidenceweightedinferer";
     private static final String TOOL_TIP_SAVE_WEIGHTS = "Save the evidence weights to a file.";
     private static final String COLUMN_NAME_EVIDENCE = "evidence name";
@@ -80,6 +79,7 @@ public class EvidenceWeightedInfererDriver
     public static final double DEFAULT_SEPARATION_THRESHOLD = 1.0e-7;
     public static final EvidenceWeightType DEFAULT_EVIDENCE_WEIGHT_TYPE = EvidenceWeightType.POWER;
     public static final DataFileDelimiter DEFAULT_DATA_FILE_DELIMITER = DataFileDelimiter.COMMA;
+    private static final String FRAME_NAME = "Evidence-Weighted Inferer";
     
     private final ScientificNumberFormat mNumberFormat;
     private SignificancesData mSignificancesData;
@@ -127,6 +127,7 @@ public class EvidenceWeightedInfererDriver
     private JButton mSaveWeightsButton;
     private JLabel mNumAffectedLabel;
     private JLabel mNumAffectedField;
+    private AppConfig mAppConfig;
     
     class WeightsTableModel extends AbstractTableModel
     {
@@ -631,15 +632,15 @@ public class EvidenceWeightedInfererDriver
         }
         catch(NumberFormatException e)
         {
-            handleMessage("The separation threshold that you specified, \"" + separationString + "\", is not a valid floating-point number.",
-                    "Invalid separation threshold",
+            handleMessage("The area separation threshold that you specified, \"" + separationString + "\", is not a valid floating-point number.",
+                    "Invalid area separation threshold",
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
         if(separation <= 0.0 || separation >= 1.0)
         {
-            handleMessage("The separation threshold must be greater than 0.0, and less than 1.0.",
-                    "Invalid separation threshold",
+            handleMessage("The area separation threshold must be greater than 0.0, and less than 1.0.",
+                    "Invalid area separation threshold",
                     JOptionPane.ERROR_MESSAGE);
             return false;            
         }
@@ -1073,7 +1074,7 @@ public class EvidenceWeightedInfererDriver
         topPanel.add(quantileField);
         gridLayout.setConstraints(quantileField, constraints);
         
-        JLabel separationLabel = new JLabel("Separation threshold (from unity): ");
+        JLabel separationLabel = new JLabel("Area separation threshold (from unity): ");
         mSeparationLabel = separationLabel;
         
         constraints.fill = GridBagConstraints.NONE;
@@ -1387,19 +1388,29 @@ public class EvidenceWeightedInfererDriver
     
     private void handleHelp()
     {
-        try
+        String resourceHelpSet = mAppConfig.getAppHelpSetName();
+        if(null != resourceHelpSet)
         {
-            if(null == mHelpBrowser)
+            try
             {
-                mHelpBrowser = new HelpBrowser(mParent, RESOURCE_HELP_SET, mProgramName);
-            }
+                if(null == mHelpBrowser)
+                {
+                    mHelpBrowser = new HelpBrowser(mParent, resourceHelpSet, mProgramName);
+                }
             //mHelpBrowser.displayHelpBrowser(HELP_SET_MAP_ID, null);  // :TODO: uncomment this, when setCurrentID() bug in JavaHelp is fixed
-            mHelpBrowser.displayHelpBrowser(null, null);            
+                mHelpBrowser.displayHelpBrowser(null, null);
+            }
+            catch(Exception e)
+            {
+                handleMessage("Unable to display help; error message is: " + e.getMessage(), "No help available", 
+                              JOptionPane.INFORMATION_MESSAGE);            
+            }
+            
         }
-        catch(Exception e)
+        else
         {
-            JOptionPane.showMessageDialog(mParent, "Sorry, no help is currently available; error message is: " + e.getMessage(), "No help available", 
-                                          JOptionPane.INFORMATION_MESSAGE);            
+            handleMessage("Sorry, no help is available in this version of the application", "No help available", 
+                          JOptionPane.INFORMATION_MESSAGE);            
         }
     }
     
@@ -1566,17 +1577,33 @@ public class EvidenceWeightedInfererDriver
     
     private void run(String []pArgs)
     {
-        String programName = "Evidence-Weighted Inferer";
+        String appDir = null;
         if(pArgs.length > 0)
         {
-            programName = pArgs[0] + ": " + programName;
+            appDir = pArgs[0];
+        }        
+        try
+        {
+            mAppConfig = AppConfig.get(EvidenceWeightedInferer.class, appDir);
         }
-        JFrame frame = new JFrame(programName);
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null, "Unable to load application configuration data, system exiting.  Error message is: " + e.getMessage(),
+                                          "Unable to load application configuration data",
+                                          JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }        
+        String frameName = mAppConfig.getAppName() + ": " + FRAME_NAME;
+
+        JFrame frame = new JFrame(frameName);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Container contentPane = frame.getContentPane();
-        initialize(contentPane, frame, programName);
+        initialize(contentPane, frame, frameName);
         frame.pack();
         FramePlacer.placeInCenterOfScreen(frame);
+        
+
+        
         frame.setVisible(true);
     }
     

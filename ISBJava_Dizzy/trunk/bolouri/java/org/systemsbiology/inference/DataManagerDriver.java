@@ -57,6 +57,7 @@ import org.systemsbiology.gui.SortStatus;
 import org.systemsbiology.gui.HelpBrowser;
 import org.systemsbiology.math.ScientificNumberFormat;
 import org.systemsbiology.math.SignificantDigitsCalculator;
+import org.systemsbiology.util.AppConfig;
 import org.systemsbiology.util.InvalidInputException;
 import java.util.LinkedList;
 import java.text.NumberFormat;
@@ -103,6 +104,7 @@ public class DataManagerDriver
     private JLabel mElementSortStatusLabel;
     private JLabel mEvidenceSortStatusLabel;
     private JCheckBox mAllowDuplicatesBox;
+    private AppConfig mAppConfig;
     
     private static final boolean DEFAULT_ALLOW_DUPLICATES = true;
     private static final String TOOL_TIP_SAVE_SELECTED_COLUMNS = "Save only the columns that you have selected in the data table, to a file.";
@@ -119,10 +121,10 @@ public class DataManagerDriver
     private static final String TOOL_TIP_DELIMITER = "Indicates the type of separator that is used in the data file you want to load.";
     private static final String TOOL_TIP_HELP = "Display the help screen that explains how to use this program";
     private static final String RESOURCE_HELP_ICON = "Help24.gif";
-    private static final String RESOURCE_HELP_SET = "html/AppHelp.hs";
     private static final String HELP_SET_MAP_ID = "datamanager";
     private static final SortStatus DEFAULT_SORT_STATUS = SortStatus.NONE;
     private static final DataFileDelimiter DEFAULT_DATA_FILE_DELIMITER = DataFileDelimiter.COMMA;
+    private static final String FRAME_NAME = "Data Manager";
     
     private void initializeContentPane()
     {
@@ -905,21 +907,7 @@ public class DataManagerDriver
     }
        
     
-    private void run(String []pArgs)
-    {
-        String programName = "Data Manager"; 
-        if(pArgs.length > 0)
-        {
-            programName = pArgs[0] + ": " + programName;
-        }
-        JFrame frame = new JFrame(programName);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Container contentPane = frame.getContentPane();
-        initialize(contentPane, frame, programName);
-        frame.pack();
-        FramePlacer.placeInCenterOfScreen(frame);
-        frame.setVisible(true);
-    }
+
     
     public void initialize(Container pContentPane, Component pParent, String pProgramName)
     {
@@ -953,22 +941,61 @@ public class DataManagerDriver
         
     private void handleHelp()
     {
+        String resourceHelpSet = mAppConfig.getAppHelpSetName();
+        if(null != resourceHelpSet)
+        {
+            try
+            {
+                if(null == mHelpBrowser)
+                {
+                    mHelpBrowser = new HelpBrowser(mParent, resourceHelpSet, mProgramName);
+                }
+            //mHelpBrowser.displayHelpBrowser(HELP_SET_MAP_ID, null);  // :TODO: uncomment this, when setCurrentID() bug in JavaHelp is fixed
+                mHelpBrowser.displayHelpBrowser(null, null);
+            }
+            catch(Exception e)
+            {
+                handleMessage("Unable to display help; error message is: " + e.getMessage(), "No help available", 
+                              JOptionPane.INFORMATION_MESSAGE);            
+            }
+            
+        }
+        else
+        {
+            handleMessage("Sorry, no help is available in this version of the application", "No help available", 
+                          JOptionPane.INFORMATION_MESSAGE);            
+        }
+    }      
+    
+    private void run(String []pArgs)
+    {
+        String appDir = null;
+        if(pArgs.length > 0)
+        {
+            appDir = pArgs[0];
+        }        
         try
         {
-            if(null == mHelpBrowser)
-            {
-                mHelpBrowser = new HelpBrowser(mParent, RESOURCE_HELP_SET, mProgramName);
-            }
-            //mHelpBrowser.displayHelpBrowser(HELP_SET_MAP_ID, null);  // :TODO: uncomment this, when setCurrentID() bug in JavaHelp is fixed
-            mHelpBrowser.displayHelpBrowser(null, null);
+            mAppConfig = AppConfig.get(EvidenceWeightedInferer.class, appDir);
         }
         catch(Exception e)
         {
-            JOptionPane.showMessageDialog(mParent, "Sorry, no help is currently available; error message is: " + e.getMessage(), "No help available", 
-                                          JOptionPane.INFORMATION_MESSAGE);            
+            JOptionPane.showMessageDialog(null, "Unable to load application configuration data, system exiting.  Error message is: " + e.getMessage(),
+                          "Unable to load application configuration data",
+                          JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }        
+        String frameName = mAppConfig.getAppName() + ": " + FRAME_NAME;
+
+        JFrame frame = new JFrame(frameName);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Container contentPane = frame.getContentPane();
+        initialize(contentPane, frame, frameName);
+        frame.pack();
+        FramePlacer.placeInCenterOfScreen(frame);
+        frame.setVisible(true);
     }    
-    
+
     public static final void main(String []pArgs)
     {
         // try to create an instance of this class

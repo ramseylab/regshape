@@ -30,7 +30,7 @@ import cern.colt.matrix.ObjectMatrix2D;
  * @author sramsey
  *
  */
-public class QuantileNormalizationResults
+public class DataNormalizerResults
 {
     public ObjectMatrix2D mNormalizedObservations;
     public int mNumIterations;

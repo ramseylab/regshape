@@ -20,20 +20,22 @@ import org.systemsbiology.data.DataFileDelimiter;
 import org.systemsbiology.gui.*;
 import org.systemsbiology.math.*;
 import java.text.NumberFormat;
+
+import org.systemsbiology.util.AppConfig;
 import org.systemsbiology.util.InvalidInputException;
 
 /**
  * A graphical user interface for normalizing raw observations using the
- * {@link QuantileNormalizer}.  The data may be optionally rescaled before
- * the normalization, using the {@link QuantileNormalizationScale} parameter
- * to the {@link QuantileNormalizerParams} object. The algorithms used in this 
+ * {@link DataNormalizer}.  The data may be optionally rescaled before
+ * the normalization, using the {@link DataNormalizationScale} parameter
+ * to the {@link DataNormalizerParams} object. The algorithms used in this 
  * class are based on the ideas and designs of Daehee Hwang at Institute for 
  * Systems Biology.
  * 
  * @author sramsey
  *
  */
-public class QuantileNormalizerDriver
+public class DataNormalizerDriver
 {
     private Container mContentPane;
     private Component mParent;
@@ -42,7 +44,7 @@ public class QuantileNormalizerDriver
     private File mWorkingDirectory;
     private EmptyTableModel mEmptyTableModel;
     private NumberFormat mNumberFormat;
-    private QuantileNormalizer mQuantileNormalizer;
+    private DataNormalizer mDataNormalizer;
     
     private JTable mObservationsTable;
     private JLabel mFileNameLabel;
@@ -69,6 +71,9 @@ public class QuantileNormalizerDriver
     private JTextField mMaxIterationsField;
     private String mProgramName;
     private HelpBrowser mHelpBrowser;
+    private JLabel mMethodsLabel;
+    private JComboBox mMethodsBox;
+    private AppConfig mAppConfig;
     
     private static final String TOOL_TIP_MAX_ITERATIONS = "Specify the maximum number of iterations that may be used to compute the normalized observations.";
     private static final int DEFAULT_MAX_ITERATIONS = 10;
@@ -78,7 +83,7 @@ public class QuantileNormalizerDriver
     private static final String TOOL_TIP_CLEAR_RESULTS_BUTTON = "Clear the normalized observations from this form.";
     private static final String TOOL_TIP_RESET_FORM_BUTTON = "Reset the form to the default values.";
     private static final String TOOL_TIP_NORMALIZE_BUTTON = "Normalize the raw observations.";
-    private static final String TOOL_TIP_METHODS_BOX = "Specify the scale to be used for normalizing the raw observations.";
+    private static final String TOOL_TIP_NORMALIZATION_SCALE = "Specify the scale to be used for normalizing the raw observations.";
     private static final String TOOL_TIP_FILE_LOAD_BUTTON = "Load the file of normalized observations.  The first column should be element names.  The column headers (first row) should be evidence names.";
     private static final String TOOL_TIP_FILE_CLEAR_BUTTON = "Clear the file of normalized observations that was loaded into this form.";
     private static final String TOOL_TIP_DELIMITER = "Indicates the type of separator that is used in the data file you want to load.";
@@ -88,11 +93,14 @@ public class QuantileNormalizerDriver
     private static final String TOOL_TIP_ITERATION_COUNT = "The number of iterations the normalization algorithm needed in order to converge, to the requested accuracy.";
     private static final String TOOL_TIP_FINAL_ERROR = "The final fractional error, for missing data estimation, at the point where the normalization algorithm exited.";
     private static final String RESOURCE_HELP_ICON = "Help24.gif";
-    private static final String RESOURCE_HELP_SET = "html/AppHelp.hs";
-    private static final String HELP_SET_MAP_ID = "quantilenormalizer";
+    private static final String HELP_SET_MAP_ID = "datanormalizer";
+    private static final String TOOL_TIP_NORMALIZATION_METHOD = "Specifies the method to be used for normalizing the raw observations.";
+    private static final String FRAME_NAME = "Data Normalizer";
     
-    private static final QuantileNormalizationScale DEFAULT_QUANTILE_NORMALIZATION_METHOD = QuantileNormalizationScale.NORM_ONLY;
+    private static final DataNormalizationMethod DEFAULT_NORMALIZATION_METHOD = DataNormalizationMethod.QUANTILE;
+    private static final DataNormalizationScale DEFAULT_NORMALIZATION_SCALE = DataNormalizationScale.NORM_ONLY;    
     private static final DataFileDelimiter DEFAULT_DATA_FILE_DELIMITER = DataFileDelimiter.COMMA;
+    
     private static final int NUM_COLUMNS_TEXT_FIELD_FLOAT = 10;
     private static final int NUM_COLUMNS_TEXT_FIELD_INT = 4;
 
@@ -221,8 +229,8 @@ public class QuantileNormalizerDriver
         observationsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         JScrollPane observationsScrollPane = new JScrollPane(observationsTable);
         observationsScrollPane.setBorder(BorderFactory.createEtchedBorder());
-        observationsScrollPane.setPreferredSize(new Dimension(500, 250));
-        observationsScrollPane.setMaximumSize(new Dimension(500, 250));
+        observationsScrollPane.setPreferredSize(new Dimension(500, 230));
+        observationsScrollPane.setMaximumSize(new Dimension(500, 230));
         
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -235,11 +243,26 @@ public class QuantileNormalizerDriver
         topPanel.add(observationsScrollPane);
         gridLayout.setConstraints(observationsScrollPane, constraints);
         
-        JPanel controlsPanel = new JPanel();
+        JPanel comboPanel = new JPanel();
+        JPanel methodsPanel = new JPanel();
+        mMethodsLabel = new JLabel("Normalization method: ");
+        methodsPanel.add(mMethodsLabel);
+        DataNormalizationMethod []methods = DataNormalizationMethod.getAll();
+        int numMethods = methods.length;
+        String []methodNames = new String[numMethods];
+        for(int i = 0; i < numMethods; ++i)
+        {
+            methodNames[i] = methods[i].getName();
+        }
+        mMethodsBox = new JComboBox(methodNames);
+        methodsPanel.add(mMethodsBox);
+        mMethodsBox.setSelectedItem(DEFAULT_NORMALIZATION_METHOD.getName());
+        comboPanel.add(methodsPanel);
+        
         JPanel scalesPanel = new JPanel();
         mScalesLabel = new JLabel("Normalize using the scale: ");
         scalesPanel.add(mScalesLabel);
-        QuantileNormalizationScale []scales = QuantileNormalizationScale.getAll();
+        DataNormalizationScale []scales = DataNormalizationScale.getAll();
         int numScales = scales.length;
         String []scaleNames = new String[numScales];
         for(int i = 0; i < numScales; ++i)
@@ -260,7 +283,21 @@ public class QuantileNormalizerDriver
                 });
 
         scalesPanel.add(mScalesBox);
-        controlsPanel.add(scalesPanel);
+        comboPanel.add(scalesPanel);        
+        
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.gridheight = 1;
+        constraints.weightx = 1;
+        constraints.weighty = 0;
+        constraints.gridx = 0;
+        constraints.gridy++;
+        
+        topPanel.add(comboPanel);
+        gridLayout.setConstraints(comboPanel, constraints);
+        
+        JPanel controlsPanel = new JPanel();
+
         mErrorToleranceLabel = new JLabel("Specify the error tolerance: ");
         mErrorToleranceField = new JTextField(NUM_COLUMNS_TEXT_FIELD_FLOAT);
         JPanel errorTolerancePanel = new JPanel();
@@ -352,8 +389,8 @@ public class QuantileNormalizerDriver
         mResultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         JScrollPane resultsPane = new JScrollPane(mResultsTable);
         resultsPane.setBorder(BorderFactory.createEtchedBorder());
-        resultsPane.setPreferredSize(new Dimension(500, 250));
-        resultsPane.setMinimumSize(new Dimension(500, 250));
+        resultsPane.setPreferredSize(new Dimension(500, 230));
+        resultsPane.setMinimumSize(new Dimension(500, 230));
         
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -411,7 +448,7 @@ public class QuantileNormalizerDriver
         mParent = pParent;
         mProgramName = pProgramName;
         mHelpBrowser = null;
-        mQuantileNormalizer = new QuantileNormalizer();
+        mDataNormalizer = new DataNormalizer();
         mObservationsData = null;
         mWorkingDirectory = null;
         mEmptyTableModel = new EmptyTableModel();
@@ -426,8 +463,10 @@ public class QuantileNormalizerDriver
             mFileClearButton.setToolTipText(TOOL_TIP_FILE_CLEAR_BUTTON);
             mFileLoadButton.setToolTipText(null);
             mObservationsTable.setToolTipText(TOOL_TIP_OBSERVATIONS_TABLE);
-            mScalesLabel.setToolTipText(TOOL_TIP_METHODS_BOX);
-            mScalesBox.setToolTipText(TOOL_TIP_METHODS_BOX);
+            mScalesLabel.setToolTipText(TOOL_TIP_NORMALIZATION_SCALE);
+            mScalesBox.setToolTipText(TOOL_TIP_NORMALIZATION_SCALE);
+            mMethodsLabel.setToolTipText(TOOL_TIP_NORMALIZATION_METHOD);
+            mMethodsBox.setToolTipText(TOOL_TIP_NORMALIZATION_METHOD);
             mNormalizeButton.setToolTipText(TOOL_TIP_NORMALIZE_BUTTON);
             mResetFormButton.setToolTipText(TOOL_TIP_RESET_FORM_BUTTON);
             if(hasMissingData())
@@ -458,6 +497,8 @@ public class QuantileNormalizerDriver
             mErrorToleranceField.setToolTipText(null);
             mMaxIterationsLabel.setToolTipText(null);
             mMaxIterationsField.setToolTipText(null);
+            mMethodsLabel.setToolTipText(null);
+            mMethodsBox.setToolTipText(null);
         }
         if(pResultsObtained)
         {
@@ -515,6 +556,8 @@ public class QuantileNormalizerDriver
         mErrorText.setEnabled(showErrorLabel);
         mIterationCountLabel.setEnabled(pResultsObtained);
         mIterationCountText.setEnabled(pResultsObtained);
+        mMethodsLabel.setEnabled(pFileLoaded);
+        mMethodsBox.setEnabled(pFileLoaded);
     }
     
     private void clearResults()
@@ -536,7 +579,7 @@ public class QuantileNormalizerDriver
     private void setDefaults()
     {
         clearResults();
-        mScalesBox.setSelectedItem(DEFAULT_QUANTILE_NORMALIZATION_METHOD.getName());
+        mScalesBox.setSelectedItem(DEFAULT_NORMALIZATION_SCALE.getName());
         
         if(null != mObservationsData && mObservationsData.getMissingDataRate() > 0.0)
         {
@@ -557,10 +600,10 @@ public class QuantileNormalizerDriver
         JOptionPane.showMessageDialog(mParent, simpleArea, pTitle, pMessageType);
     }
         
-    private QuantileNormalizationScale getScale()
+    private DataNormalizationScale getScale()
     {
         String scaleName = (String) mScalesBox.getSelectedItem();
-        return QuantileNormalizationScale.get(scaleName);
+        return DataNormalizationScale.get(scaleName);
     }
     
     private void openFile(File pFile, DataFileDelimiter pDelimiter)
@@ -618,21 +661,31 @@ public class QuantileNormalizerDriver
         
     private void handleHelp()
     {
-        try
+        String resourceHelpSet = mAppConfig.getAppHelpSetName();
+        if(null != resourceHelpSet)
         {
-            if(null == mHelpBrowser)
+            try
             {
-                mHelpBrowser = new HelpBrowser(mParent, RESOURCE_HELP_SET, mProgramName);
-            }
+                if(null == mHelpBrowser)
+                {
+                    mHelpBrowser = new HelpBrowser(mParent, resourceHelpSet, mProgramName);
+                }
             //mHelpBrowser.displayHelpBrowser(HELP_SET_MAP_ID, null);  // :TODO: uncomment this, when setCurrentID() bug in JavaHelp is fixed
-            mHelpBrowser.displayHelpBrowser(null, null);            
+                mHelpBrowser.displayHelpBrowser(null, null);
+            }
+            catch(Exception e)
+            {
+                handleMessage("Unable to display help; error message is: " + e.getMessage(), "No help available", 
+                              JOptionPane.INFORMATION_MESSAGE);            
+            }
+            
         }
-        catch(Exception e)
+        else
         {
-            JOptionPane.showMessageDialog(mParent, "Sorry, no help is currently available; error message is: " + e.getMessage(), "No help available", 
-                    JOptionPane.INFORMATION_MESSAGE);            
-        }          
-    }
+            handleMessage("Sorry, no help is available in this version of the application", "No help available", 
+                          JOptionPane.INFORMATION_MESSAGE);            
+        }
+    }    
     
     private void clearFile()
     {
@@ -738,30 +791,32 @@ public class QuantileNormalizerDriver
         }
         
         // handle normalization scale
-        QuantileNormalizationScale scale = getScale();
+        DataNormalizationScale scale = getScale();
+        DataNormalizationMethod method = getMethod();
         boolean fixNegatives = mFixNegativesBox.isSelected();
-        QuantileNormalizationResults results = new QuantileNormalizationResults();
+        DataNormalizerResults results = new DataNormalizerResults();
         results.mNormalizedObservations = normalizedObservations;
-        QuantileNormalizerParams params = new QuantileNormalizerParams();
+        DataNormalizerParams params = new DataNormalizerParams();
         params.mFixNonpositiveValues = fixNegatives;
         params.mErrorTolerance = errorTolerance;
         params.mScale = scale;
         params.mMaxIterations = maxIterations;
+        params.mMethod = method;
         try
         {
-            mQuantileNormalizer.normalize(rawObservations, params, results);
+            mDataNormalizer.normalize(rawObservations, params, results);
         }
         catch(Exception e)
         {
-            handleMessage("The quantile normalization procedure failed.  The specific error message is: " + e.getMessage(),
-                          "Quantile normalization failed",
+            handleMessage("The data normalization procedure failed.  The specific error message is: " + e.getMessage(),
+                          "Data normalization failed",
                           JOptionPane.ERROR_MESSAGE);
             return;
         }
         handleResults(results);
     }
     
-    private void handleResults(QuantileNormalizationResults pResults)
+    private void handleResults(DataNormalizerResults pResults)
     {
         ObservationsData resultsData = (ObservationsData) mObservationsData.clone();
         resultsData.setObservations(pResults.mNormalizedObservations);
@@ -777,6 +832,12 @@ public class QuantileNormalizerDriver
         mIterationCountText.setText(Integer.toString(pResults.mNumIterations));
         setEnableStateForFields(true, true);
         setToolTipsForFields(true, true);
+    }
+    
+    private DataNormalizationMethod getMethod()
+    {
+        String methodName = (String) mMethodsBox.getSelectedItem();
+        return DataNormalizationMethod.get(methodName);
     }
     
     private void saveResults()
@@ -829,15 +890,28 @@ public class QuantileNormalizerDriver
     }    
     private void run(String []pArgs)
     {
-        String programName = "Quantile Normalizer";
+        String appDir = null;
         if(pArgs.length > 0)
         {
-            programName = pArgs[0] + ": " + programName;
+            appDir = pArgs[0];
+        }        
+        try
+        {
+            mAppConfig = AppConfig.get(EvidenceWeightedInferer.class, appDir);
         }
-        JFrame frame = new JFrame(programName);
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null, "Unable to load application configuration data, system exiting.  Error message is: " + e.getMessage(),
+                          "Unable to load application configuration data",
+                          JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }        
+        String frameName = mAppConfig.getAppName() + ": " + FRAME_NAME;
+        
+        JFrame frame = new JFrame(frameName);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Container contentPane = frame.getContentPane();
-        initialize(contentPane, frame, programName);
+        initialize(contentPane, frame, frameName);
         frame.pack();
         FramePlacer.placeInCenterOfScreen(frame);
         frame.setVisible(true);
@@ -848,7 +922,7 @@ public class QuantileNormalizerDriver
         // try to create an instance of this class
         try
         {
-            QuantileNormalizerDriver app = new QuantileNormalizerDriver();
+            DataNormalizerDriver app = new DataNormalizerDriver();
             app.run(pArgs);
         }
         catch(Exception e)

@@ -31,6 +31,7 @@ import cern.colt.list.DoubleArrayList;
 import javax.swing.table.AbstractTableModel;
 import org.systemsbiology.data.DataFileDelimiter;
 import org.systemsbiology.gui.*;
+import org.systemsbiology.util.AppConfig;
 import org.systemsbiology.util.InvalidInputException;
 import org.systemsbiology.math.ScientificNumberFormat;
 import org.systemsbiology.math.SignificantDigitsCalculator;
@@ -64,7 +65,6 @@ public class SignificanceCalculatorDriver
     private static final String TOOL_TIP_TEXT_SAVE_RESULTS_BUTTON = "Save the calculated significances to a file using the same delimiter type as the observations data file.";
     private static final String TOOL_TIP_RESET_FORM_BUTTON = "Reset the form to the original default values.";
     private static final String RESOURCE_HELP_ICON = "Help24.gif";
-    private static final String RESOURCE_HELP_SET = "html/AppHelp.hs";
     private static final String HELP_SET_MAP_ID = "significancecalculator";
     
     private static final double DEFAULT_MAX_CHI_SQUARE = 1.0;
@@ -73,6 +73,7 @@ public class SignificanceCalculatorDriver
     private static final SignificanceCalculationFormula DEFAULT_SIGNIFICANCE_CALCULATION_FORMULA = SignificanceCalculationFormula.CDF;    
     private static final DataFileDelimiter DEFAULT_DATA_FILE_DELIMITER = DataFileDelimiter.COMMA;
     private static final double DEFAULT_SMOOTHING_LENGTH = 1.0;
+    private static final String FRAME_NAME = "Significance Calculator";
     
     private Component mParent;
     private Container mContentPane;
@@ -101,6 +102,7 @@ public class SignificanceCalculatorDriver
     private TableColumn mColumnSmoothingLength;
     private TableColumn mColumnMaxChiSquare;
     private TableColumn mColumnNegControls;
+    private AppConfig mAppConfig;
     
     class NegativeControlData
     {
@@ -698,20 +700,30 @@ public class SignificanceCalculatorDriver
     
     private void handleHelp()
     {
-        try
+        String resourceHelpSet = mAppConfig.getAppHelpSetName();
+        if(null != resourceHelpSet)
         {
-            if(null == mHelpBrowser)
+            try
             {
-                mHelpBrowser = new HelpBrowser(mParent, RESOURCE_HELP_SET, mProgramName);
-            }
+                if(null == mHelpBrowser)
+                {
+                    mHelpBrowser = new HelpBrowser(mParent, resourceHelpSet, mProgramName);
+                }
             //mHelpBrowser.displayHelpBrowser(HELP_SET_MAP_ID, null);  // :TODO: uncomment this, when setCurrentID() bug in JavaHelp is fixed
-            mHelpBrowser.displayHelpBrowser(null, null); 
+                mHelpBrowser.displayHelpBrowser(null, null);
+            }
+            catch(Exception e)
+            {
+                handleMessage("Unable to display help; error message is: " + e.getMessage(), "No help available", 
+                              JOptionPane.INFORMATION_MESSAGE);            
+            }
+            
         }
-        catch(Exception e)
+        else
         {
-            JOptionPane.showMessageDialog(mParent, "Sorry, no help is currently available; error message is: " + e.getMessage(), "No help available", 
-                    JOptionPane.INFORMATION_MESSAGE);            
-        }             
+            handleMessage("Sorry, no help is available in this version of the application", "No help available", 
+                          JOptionPane.INFORMATION_MESSAGE);            
+        }
     }
     
     private void initializeContentPane()
@@ -1528,17 +1540,34 @@ public class SignificanceCalculatorDriver
     
     private void run(String []pArgs)
     {
-        String programName = "Significance Calculator";
+        String appDir = null;
         if(pArgs.length > 0)
         {
-            programName = pArgs[0] + ": " + programName;
+            appDir = pArgs[0];
+        }        
+        try
+        {
+            mAppConfig = AppConfig.get(EvidenceWeightedInferer.class, appDir);
         }
-        JFrame frame = new JFrame(programName);
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null, "Unable to load application configuration data, system exiting.  Error message is: " + e.getMessage(),
+                          "Unable to load application configuration data",
+                          JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }       
+        
+        String frameName = mAppConfig.getAppName() + ": " + FRAME_NAME;
+        
+        JFrame frame = new JFrame(frameName);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Container contentPane = frame.getContentPane();
-        initialize(contentPane, frame, programName);
+        initialize(contentPane, frame, frameName);
         frame.pack();
         FramePlacer.placeInCenterOfScreen(frame);
+
+ 
+        
         frame.setVisible(true);
     }
     

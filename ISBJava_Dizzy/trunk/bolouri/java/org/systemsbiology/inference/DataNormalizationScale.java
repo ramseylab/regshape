@@ -13,20 +13,20 @@ package org.systemsbiology.inference;
 import java.util.HashMap;
 
 /**
- * Specifies the scale to be used for the {@link QuantileNormalizer}.
+ * Specifies the scale to be used for the {@link DataNormalizer}.
  * This is essentially an enumeration class.  An object of this class
- * is a field in the {@link QuantileNormalizerParams} class, which is
+ * is a field in the {@link DataNormalizerParams} class, which is
  * passed to the quantile normalizer.  Note that if you choose
- * the <code>QuantileNormalizationScale.LOGARITHM</code> object, you
+ * the <code>DataNormalizationScale.LOGARITHM</code> object, you
  * should set the <code>mFixNonpositiveValues</code> field in the
- * {@link QuantileNormalizerParams} object, to ensure that any observations
+ * {@link DataNormalizerParams} object, to ensure that any observations
  * less than or equal to zero are fixed (by a global additive shift of the
  * raw observation values) prior to the logarithmic rescaling.
  * 
  * @author sramsey
  *
  */
-public class QuantileNormalizationScale
+public class DataNormalizationScale
 {
     private final String mName;
     private static final HashMap sMap;
@@ -35,26 +35,26 @@ public class QuantileNormalizationScale
     {
         sMap = new HashMap();
     }
-    private QuantileNormalizationScale(String pName, boolean pAllowsNonpositiveArgument)
+    private DataNormalizationScale(String pName, boolean pAllowsNonpositiveArgument)
     {
         mName = pName;
         mAllowsNonpositiveArgument = pAllowsNonpositiveArgument;
         sMap.put(pName, this);
     }
-    public static QuantileNormalizationScale get(String pName)
+    public static DataNormalizationScale get(String pName)
     {
-        return (QuantileNormalizationScale) sMap.get(pName);
+        return (DataNormalizationScale) sMap.get(pName);
     }
     public String getName()
     {
         return mName;
     }
-    public static QuantileNormalizationScale []getAll()
+    public static DataNormalizationScale []getAll()
     {
-        return (QuantileNormalizationScale []) sMap.values().toArray(new QuantileNormalizationScale[0]);
+        return (DataNormalizationScale []) sMap.values().toArray(new DataNormalizationScale[0]);
     }
-    public static final QuantileNormalizationScale LOGARITHM = new QuantileNormalizationScale("logarithm", false);
-    public static final QuantileNormalizationScale NORM_ONLY = new QuantileNormalizationScale("norm_only", true);
+    public static final DataNormalizationScale LOGARITHM = new DataNormalizationScale("logarithm", false);
+    public static final DataNormalizationScale NORM_ONLY = new DataNormalizationScale("norm_only", true);
     public boolean allowsNonpositiveArgument()
     {
         return mAllowsNonpositiveArgument;
