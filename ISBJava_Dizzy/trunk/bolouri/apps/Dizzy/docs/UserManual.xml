@@ -460,7 +460,7 @@ It is recommended that you specify your own reaction names, because the names
 automatically assigned by &appName; will be verbose and hard to understand.
 </p>
 <p>
-Now, let&apos; define the third reaction, which takes the enzyme-substrate
+Now, let&apos;s define the third reaction, which takes the enzyme-substrate
 complex to the enzyme plus product,
 <blockquote>
 <pre>
