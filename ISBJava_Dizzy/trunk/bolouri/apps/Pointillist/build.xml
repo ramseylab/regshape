@@ -77,7 +77,8 @@
            destdir="${app.styleDir}" 
            includes="AppHelp.xml" 
            style="${globalConfig}/${docsStyleSheet}">
-         <param name="altWebBaseURL" expression=".." />
+        <param name="altWebBaseURL" expression=".." />
+        <param name="hideExternalLinks" expression="true" />
     </style>
  
   	<style in="${app.configDir}/AppConfig.xml"
