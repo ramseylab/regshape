@@ -315,7 +315,7 @@ public class Plotter
 
         NumberAxis xAxis = new HorizontalNumberAxis("time");
         xAxis.setAutoRangeIncludesZero(false);
-        NumberAxis yAxis = new VerticalNumberAxis("populations");
+        NumberAxis yAxis = new VerticalNumberAxis("value");
         XYPlot plot = new XYPlot(seriesColl, xAxis, yAxis);
         XYToolTipGenerator toolTipGen = null;
         XYURLGenerator urlGen = null;
