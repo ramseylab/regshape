@@ -2465,8 +2465,8 @@ over the range of integer values from 1 to 12, inclusive.
 
 <isb:docsubsection name="Commands" label="commands">
 <p>
-In the CMDL, commands are preceded by the pound sign.  Two commands
-are presently permitted:
+In the CMDL, commands are preceded by the pound sign.  The following
+commands are recognized by the CMDL parser:
 <dl>
 <dt><b>#model</b></dt>
 <dd>
