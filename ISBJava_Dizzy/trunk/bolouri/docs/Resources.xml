@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-stylesheet type="text/xml" href="../docs/documentation-stylesheet.xml"?>
+<?xml-stylesheet type="text/xml" href="../config/documentation-stylesheet.xml"?>
 <!DOCTYPE Overview [
   <!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
   %CommonConfig;
@@ -8,50 +8,36 @@
 
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
-<isb:doctitle>&mainGroup; Home Page</isb:doctitle>
+<isb:doctitle>&mainGroup; Resources Page</isb:doctitle>
 <isb:docauthor>&mainAffiliation;</isb:docauthor>
 
 <isb:doccontents />
 
-<isb:docsection name="People" label="people">
+<isb:docsection name="Software Tools" label="software">
+
 <p>
-The members of our research group are:
-<blockquote>
-<table border="1">
-<tr>
-<td><em>Name</em></td>
-<td><em>Affiliation</em></td>
-<td><em>Phone</em></td>
-<td><em>E-mail</em></td>
-<td><em>Home page<br />(internal only)</em></td>
-</tr>
-<tr>
-<td><b>Pedro de Atauri</b></td><td>Senior Researcher</td><td>206-732-1353</td><td><code>pdeataur @ systemsbiology.org</code></td><td>&nbsp;</td>
-</tr>
-<tr>
-<td><b>Hamid Bolouri</b></td><td>Professor</td><td>206-732-1209</td><td><code>hbolouri @ systemsbiology.org</code></td><td><a href="http://strc.herts.ac.uk/bio/hamid/index.html" target="_new">home page</a></td>
-</tr>
-<tr>
-<td><b>Susan Harbison</b></td><td>Administrator</td><td>206-732-1301</td><td><code>sharbison @ systemsbiology.org</code></td><td>&nbsp;</td>
-</tr>
-<tr>
-<td><b>Daehee Hwang</b></td><td>Postdoctoral Scholar</td><td>&nbsp;</td><td><code>dhwang @ systemsbiology.org</code></td><td>&nbsp;</td>
-</tr>
-<tr>
-<td><b>Larissa Kamenkovich</b></td><td>Research Programmer</td><td>206-732-1366</td><td><code>lkamenko @ systemsbiology.org</code></td><td>&nbsp;</td>
-</tr>
-<tr>
-<td><b>David Orrell</b></td><td>Senior Researcher</td><td>206-732-1334</td><td><code>dorrell @ systemsbiology.org</code></td><td><a href="&internalWebServerURL;/~dorrell/index.html" target="_new">home page</a></td>
-</tr>
-<tr>
-<td><b>Stephen Ramsey</b></td><td>Senior Researcher</td><td>206-732-1335</td><td><code>sramsey at systemsbiology.org</code></td><td><a href="&internalWebServerURL;/~sramsey/index.html" target="_new">home page</a></td>
-</tr>
-<tr>
-<td><b>Alistair Rust</b></td><td>Senior Researcher</td><td>206-732-1294</td><td><code>arust @ systemsbiology.org</code></td><td><a href="&internalWebServerURL;/~arust" target="_new">home page</a></td>
-</tr>
-</table>
-</blockquote>
+This section lists selected software tools that were (or are being) developed in collaboration
+with Hamid Bolouri:
+<ul>
+<li><a href="Dizzy/">Dizzy, a chemical simulation program</a>&nbsp;&nbsp;[contains an <a href="javadoc/isb/chem/package-summary.html" target="_new">implementation</a> of the Gillespie stochastic simulator</li>
+<li><a href="http://strc.herts.ac.uk/bio/maria/NetBuilder">NetBuilder</a> (Hertfordshire, UK)</li>
+<li><a href="javadoc/">Java classes developed by the &mainGroup;</a></li>
+</ul>
 </p>
+
+</isb:docsection>
+
+<isb:docsection name="Links to Related Web Sites" label="links">
+
+<p>
+<ul>
+<li><a href="&mainPublicURL;">&mainAffiliation; Home Page</a></li>
+<li><a href="http://www.cytoscape.org">Cytoscape home page</a></li>
+<li><a href="http://www.sbw-sbml.org" target="_new">Systems Biology Workbench</a> (Pasadena, CA USA)</li>
+<li><a href="http://www.sbw-sbml.org" target="_new">Systems Biology Markup Language</a> (Pasadena, CA USA)</li>
+</ul>
+</p>
+
 </isb:docsection>
 
 <isb:docsection name="Active Collaborations" label="collaborations">
@@ -69,34 +55,6 @@ other labs and organizations outside of the &mainAffiliation;:
 </ul>
 </p>
 </isb:docsection>
-
-<isb:docsection name="Software Tools" label="software">
-
-<p>
-This section lists selected software tools that were (or are being) developed in collaboration
-with Hamid Bolouri:
-<ul>
-<li><a href="http://www.sbw-sbml.org" target="_new">Systems Biology Workbench</a> (Pasadena, CA USA)</li>
-<li><a href="http://www.sbw-sbml.org" target="_new">Systems Biology Markup Language</a> (Pasadena, CA USA)</li>
-<li><a href="http://strc.herts.ac.uk/bio/maria/NetBuilder">NetBuilder</a> (Hertfordshire, UK)</li>
-<li><a href="javadoc/">Java classes developed by the &mainGroup;</a></li>
-<li><a href="Dizzy/">Dizzy, a chemical simulation program</a>&nbsp;&nbsp;[contains an <a href="javadoc/isb/chem/package-summary.html" target="_new">implementation</a> of the Gillespie stochastic simulator</li>
-</ul>
-</p>
-
-</isb:docsection>
-
-<isb:docsection name="Links to Related Web Sites" label="links">
-
-<p>
-<ul>
-<li><a href="&mainPublicURL;">&mainAffiliation; Home Page</a></li>
-<li><a href="http://www.cytoscape.org">Cytoscape home page</a></li>
-</ul>
-</p>
-
-</isb:docsection>
-
 
 <isb:docsection name="Selected Publications" label="publications">
 

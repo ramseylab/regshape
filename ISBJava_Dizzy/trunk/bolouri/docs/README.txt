@@ -1,11 +1,13 @@
 This directory contains documentation of the Bolouri
 group that is not specific to a particular application,
 and that is not specific to the ISBJava source tree.
+All of the documentation in this directory is published
+on the external web site, and is PUBLICALLY visible.
+The files in the "private" subdirectory are not
+visible externally.
 
-The documentation in this directory is in XML format,
-which is turned into HTML by a mechanism called "XSL".
-The specific type of XML format used is similar to
-XHTML (http://www.w3.org/MarkUp), with additional
-ISB-specific tags.  For an example of the ISB-specific
-tags, please refer to the file index.xml as an
-example.
+For instructions on how to manage the web content
+contained in this directory, please refer to:
+
+http://projects.systemsbiology.org/bolouri_group/private/WebPagesManagementManual.html
+

@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE Overview [
+  <!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
+  %CommonConfig;
+  <!ENTITY internalWebServerURL "http://sun01.systemsbiology.net">
+   ]>
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+
+<isb:doctitle>Internal Home Page</isb:doctitle>
+<isb:docauthor>&mainGroup;, &mainAffiliation;</isb:docauthor>
+
+<!-- <isb:doccontents /> -->  <!-- commented this out because the contents took up too much space -->
+
+<isb:docsection name="Staff" label="staff">
+<blockquote>
+<table border="1">
+<tr>
+<td><em>Name</em></td>
+<td><em>Affiliation</em></td>
+<td><em>Phone</em></td>
+<td><em>E-mail</em></td>
+<td><em>Home page<br />(internal only)</em></td>
+</tr>
+<tr>
+<td><b>Pedro de Atauri</b></td><td>Senior Researcher</td><td>206-732-1353</td><td><code>pdeataur @ systemsbiology.org</code></td><td>&nbsp;</td>
+</tr>
+<tr>
+<td><b>Hamid Bolouri</b></td><td>Professor</td><td>206-732-1209</td><td><code>hbolouri @ systemsbiology.org</code></td><td><a href="http://strc.herts.ac.uk/bio/hamid/index.html" target="_new">home page</a></td>
+</tr>
+<tr>
+<td><b>Susan Harbison</b></td><td>Administrator</td><td>206-732-1301</td><td><code>sharbison @ systemsbiology.org</code></td><td>&nbsp;</td>
+</tr>
+<tr>
+<td><b>Daehee Hwang</b></td><td>Postdoctoral Scholar</td><td>&nbsp;</td><td><code>dhwang @ systemsbiology.org</code></td><td>&nbsp;</td>
+</tr>
+<tr>
+<td><b>Larissa Kamenkovich</b></td><td>Research Programmer</td><td>206-732-1366</td><td><code>lkamenko @ systemsbiology.org</code></td><td>&nbsp;</td>
+</tr>
+<tr>
+<td><b>Kostas Lykostratis</b></td><td>Visiting Graduate Student<br />
+       University College London, UK</td><td>&nbsp;</td><td><code>clykostr at systemsbiology.org</code></td><td>&nbsp;</td>
+</tr>
+<tr>
+<td><b>David Orrell</b></td><td>Senior Researcher</td><td>206-732-1334</td><td><code>dorrell @ systemsbiology.org</code></td><td><a href="&internalWebServerURL;/~dorrell/index.html" target="_new">home page</a></td>
+</tr>
+<tr>
+<td><b>Stephen Ramsey</b></td><td>Senior Researcher</td><td>206-732-1335</td><td><code>sramsey at systemsbiology.org</code></td><td><a href="&internalWebServerURL;/~sramsey/index.html" target="_new">home page</a></td>
+</tr>
+<tr>
+<td><b>Alistair Rust</b></td><td>Senior Researcher</td><td>206-732-1294</td><td><code>arust @ systemsbiology.org</code></td><td><a href="&internalWebServerURL;/~arust" target="_new">home page</a></td>
+</tr>
+</table>
+</blockquote>
+</isb:docsection>
+
+<isb:docsection name="Tools" label="tools">
+<ul>
+<li><a href="../Dizzy">Dizzy</a></li>
+</ul>
+</isb:docsection>
+
+
+<isb:docsection name="Links" label="links">
+<ul>
+<li><a href="../Resources.html">Bolouri Group Software and Publications</a></li>
+<li><a href="&mainPublicURL;">&mainAffiliation;</a></li>
+<li><a href="WebPagesManagementManual.html">Web Pages Management Manual</a></li>
+</ul>
+</isb:docsection>
+
+</isb:document>

@@ -36,7 +36,8 @@
         <include name="**/*.xml" />
         <include name="**/*.dtd" />
         <exclude name="**/tp/*" />
-        <exclude name="${basedir}/build.xml" />
+        <exclude name="docs/*.xml" />
+        <exclude name="build.xml" />
       </fileset>
     </copy>
   </target>

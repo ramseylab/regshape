@@ -17,7 +17,7 @@
   <property name="webServerRemoteDir" value="." />
 
   <!-- THESE PROPERTIES ARE USED THROUGHOUT THE BUILD SYSTEM: -->
-  <property name="docsStyleSheet" value="${projDocsDir}/documentation-stylesheet.xml" />
+  <property name="docsStyleSheet" value="${projConfigDir}/documentation-stylesheet.xml" />
 
   <target name="compile">
     <ant dir="${projJavaDir}" target="compile" />
@@ -41,6 +41,13 @@
     <style basedir="${projDocsDir}" 
            destdir="${projStyleDir}" 
            includes="*.xml" 
+           excludes="private/*.xml"
+           style="${docsStyleSheet}" />
+
+    <mkdir dir="${projStyleDir}/private" />
+    <style basedir="${projDocsDir}/private" 
+           destdir="${projStyleDir}/private" 
+           includes="*.xml" 
            style="${docsStyleSheet}" />
   </target>
 
@@ -49,6 +56,7 @@
     <copy todir="${projWebDir}">
       <fileset dir="${projStyleDir}">
         <include name="*.html" />
+        <include name="private/*.html" />
       </fileset>
     </copy>
   </target>

@@ -1,0 +1,270 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE Overview [
+  <!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
+  %CommonConfig;
+  <!ENTITY internalWebServerURL "http://sun01.systemsbiology.net">
+   ]>
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+
+<isb:doctitle>Web Pages Management Manual</isb:doctitle>
+<isb:docauthor>&mainGroup;, &mainAffiliation;</isb:docauthor>
+<isb:docversion>$Revision$, $Date$</isb:docversion>
+
+<isb:doccontents />
+
+<isb:docsection name="Introduction" label="introduction">
+<p>
+This document contains detailed instructions on how to manage
+the &mainGroup; web pages.  The goals of this framework are
+automation of the build/upload processes, ease of style
+modifications, and integration with our Java code base.
+</p>
+</isb:docsection>
+
+<isb:docsection name="Web Pages Format" label="format">
+<p>
+The &mainGroup; web pages are written in a variant of 
+<a href="http://www.w3c.org/MarkUp">XHTML</a> that uses a
+special &quot;stylesheet&quot; to unify the &quot;look and feel&quot; 
+of the web pages.   The use of a
+common stylesheet means that by making an edit to one file, one can (in
+principle) modify the look and feel of all of our web pages in a
+consistent manner.   The stylesheet used is not CSS (cascading style sheets),
+but instead the <a href="http://www.w3c.org/TR/xsl">XSL</a> framework.
+</p>
+</isb:docsection>
+<isb:docsection name="Required Software" label="requiredsoftware">
+<p>
+Managing the &mainGroup; web pages requires that certain software
+programs be installed on your computer.  The process is likely to 
+be much easier on a Linux computer, but in principle it should be
+do-able on a Windows computer.  You will need the following software
+installed on your computer:
+</p>
+<p>
+<ol>
+<li><b>CVS client</b><br /> 
+To confirm that CVS is installed correctly, you
+should be able to execute the "<code>cvs</code>" command
+from your command shell prompt.  This should be already installed on
+your computer if you are using a modern Linux distribution.  
+For Windows, you will likely need to download and install a
+CVS client.  There are many CVS clients available for Windows, in
+particular, <a href="http://www.tortoisecvs.org">TortoiseCVS</a>
+has been recommended.
+</li>
+<li><b>Java Development Kit (JDK)</b><br />
+The JDK version 1.4 or newer must be installed on your computer,
+or available via a network drive mounted on your computer.  To confirm
+that it is installed correctly, you should be able to execute the 
+&quot;<code>java -version</code>&quot;
+command from your command shell prompt.  A suitable JDK package is 
+available from <a href="http://java.sun.com">Sun Microsystems</a>.
+If you are using Linux, the JDK software is already available in the
+network directory &quot;<code>/tools/java/sdk</code>&quot;.
+</li>
+<li><b>Ant</b><br />
+The <a href="http://ant.apache.org">Ant</a> program is the software
+tool used for &quot;building&quot; the web site.  To confirm that Ant 
+is installed correctly, you should be able to run 
+&quot;<code>ant -version</code>&quot; from the command prompt.
+</li>
+<li><b>Xalan/Crimson</b><br />
+The Xalan XSL processor and the Crimson XML parser Java libraries are 
+both needed.  Both of these *should* be installed with your JDK, but if not,
+you will have to download and install them, and make sure the relevant
+"JAR" files are in your CLASSPATH environment varaible.  The software
+can be downloaded from <a href="http://xml.apache.org">Apache</a>. 
+To confirm that Xalan/Crimson are installed correctly, you should be able to run
+<blockquote>
+<pre>
+java org.apache.xalan.xslt.Process -v
+</pre>
+</blockquote>
+from the command prompt.
+</li>
+<li><b>NCFTP</b><br />
+The <a href="http://www.ncftpd.com">NCFTP</a> Client program. You do not 
+need NCFTPD, just the "client" program.  To confirm that it is installed
+correctly, you should be able to run "ncftpput" from the command prompt.
+</li>
+</ol>
+All of the above software programs are free (open source), and easy to
+build and install on your computer.  Building and installing Ant and
+NCFTP should just take a few minutes each.  On Linux, if you use the JDK 
+(&quot;<code>java</code>&quot;) found in the network directory
+<code>/tools/java/sdk</code>, you should not have to worry about
+items (2) and (4) above.
+</p>
+<p>
+In addition, your computer will need to be connected to the network, and
+you will need to have read access to the Bolouri Group project
+directory. The path to this directory is as follows:
+<blockquote>
+<code>/proj/bolrilab</code>&nbsp;&nbsp;(on Linux)   [note the "u" is missing, intentionally]<br />
+<code>\\isb-1\bolourilab</code>&nbsp;&nbsp;(Windows)<br />
+</blockquote>
+The web pages are stored in a CVS repository in the Bolouri Group
+project directory.  To access the web pages, set your CVSROOT
+environment variable to 
+<blockquote>
+<code>/proj/bolrilab/CVS_REPOSITORY</code>&nbsp;&nbsp;(on Linux)<br />
+<code>\\isb-1\bolourilab\CVS_REPOSITORY</code>&nbsp;&nbsp;(on Windows)<br />
+</blockquote>
+Finally, your computer will need to be &quot;behind the firewall&quot;
+of the &mainAffiliation;; otherwise, you not be allowed
+to upload your web content to the web server.  For security
+reasons, the web server does not accept FTP connections for 
+the &mainGroup; account from outside the firewall.
+</p>
+</isb:docsection>
+
+<isb:docsection name="Managing Web Content" label="managing">
+<p>
+To start managing web content, first make sure you have 
+installed all of the required software and executed the 
+preliminary steps outlined in the previous section.
+Then execute the command
+<blockquote>
+<pre>
+cvs co bolouri
+</pre>
+</blockquote>
+somewhere on your desktop computer.  This &quot;checks out&quot;
+the source code for the group web pages onto your computer, from the CVS 
+server.  This will create a subdirectory 
+&quot;<code>bolouri</code>&quot; of your current working
+directory.  The web content is contained within the 
+&quot;<code>bolouri/docs</code>&quot;
+subdirectory.  The main group &quot;Resources page&quot;
+content is in the file
+<blockquote>
+<pre>
+bolouri/docs/Resources.xml
+</pre>
+</blockquote>
+The contents of the file should be mostly
+familiar to people who have written HTML (or XHTML) before.  To modify
+the file, just open it in a text editor and make your edits.
+</p>
+<p> 
+To add a <em>new</em> document to our web pages, just add a new file 
+(such as &quot;<code>MyFile.xml</code>&quot;) to the
+&quot;<code>bolouri/docs</code>&quot; subdirectory.  Make sure the
+file name ends with the suffix &quot;<code>.xml</code>&quot;.
+Also, the file must be placed in the &quot;<code>bolouri/docs</code>&quot;
+directory.  For the contents of this file, you can use the 
+existing &quot;<code>Resources.xml</code>&quot; file
+as a template to start with.  
+</p>
+<p>
+There is a good <a href="http://www.w3c.org/MarkUp/Guide">tutorial</a>
+available on writing proper XHTML.  Note that anything you put in the
+web page documentation (i.e., in one of the &quot;<code>.xml</code>&quot;
+files within the &quot;<code>bolouri/docs</code>&quot; directory)
+must be &quot;strictly compliant&quot; XHTML.  The meaning of this 
+statement is fully explained within the specifications and tutorial on 
+XHTML referenced in the aforementioned URLs.  
+</p>
+<p>
+The next step is to test out your new web page (or your edits to
+an existing web page, whatever the case may be).  This is done by simply
+running the command
+<blockquote>
+<pre>
+ant buildWeb
+</pre>
+</blockquote>
+from within the &quot;<code>bolouri</code>&quot; directory.  If there is
+an error message, it is probably due to improper XHTML in the edits
+(or new content) that you made.  To see a more verbose parser message, run:
+<blockquote>
+<pre>
+java org.apache.xalan.xslt.Process -in docs/MyFile.xml -out build/html/MyFile.html \
+                                   -style config/documentation-stylesheet.xml -edump
+</pre>
+</blockquote>
+The last &quot;<code>-edump</code>&quot; causes the parser to spit out
+a more verbose error message.
+</p>
+<p>
+The next step is to &quot;check in&quot; your new content to the CVS 
+repository.  This ensures that the changes will never be lost.  Don&apos;t
+worry, there is a way to &quot;undo&quot; your changes if you make a mistake).
+All of the steps below assume that your current working directory is the
+&quot;<code>bolouri</code>&quot; directory that was created when you 
+executed your &quot;<code>cvs co</code>&quot; command above. 
+</p>
+If you are attempting to add a new web page &quot;<code>MyFile.html</code>&quot;
+to the web pages (as described above), run the following commands:
+<blockquote>
+<pre>
+cvs add docs/MyFile.xml
+cvs commit -m 'my new xml file' docs/MyFile.xml
+</pre>
+</blockquote>
+Substitute your specific filename for the &quot;<code>MyFile</code>&quot;
+above.
+If instead you are editing (or adding content to) an existing file
+(for instance, the &quot;Resources page&quot; file <code>Resources.xml</code>), run the
+following command:
+<blockquote>
+<pre>
+cvs commit -m 'description of my edits' docs/Resources.xml
+</pre>
+</blockquote>
+In both the above cases, the text in between the single quotes is a 
+&quot;CVS log message&quot; that you should use to briefly describe 
+what you changed. A single sentence usually suffices for the CVS log 
+message.
+
+Once you have &quot;committed&quot; your changes to the CVS archive, 
+you can then build the web site and &quot;upload&quot; it to the 
+web server.  This is accomplished by executing the following commands:
+<blockquote>
+<pre>
+ant buildWeb
+ant uploadWeb
+</pre>
+</blockquote>
+At this point, you should be able to point your web browser to
+your new web page at (for example):
+<blockquote>
+<pre>
+http://projects.systemsbiology.net/bolouri_group/MyFile.xml
+</pre>
+</blockquote>
+or the modified group home page at:
+<blockquote>
+<pre>
+http://projects.systemsbiology.net/bolouri_group
+</pre>
+</blockquote>
+If you have any questions about this process, please contact the
+web site maintainer at: <code>&mainEmailSafe;</code>.
+</isb:docsection>
+
+<isb:docsection name="Private Web Pages" label="privatepages">
+<p>
+The above instructions describe how to publish a web page
+that will be externally (publically) visible.  To publish
+a web page that is only accessible within the 
+&mainAffiliation;, create your new web page within the
+<blockquote>
+<pre>
+bolouri/docs/private
+</pre>
+</blockquote>
+directory.  Be sure to use a web page <em>within</em>
+that directory as your template, because the 
+funny-looking &quot;DOCTYPE&quot; statement at the
+top of the file is different for files in the
+&quot;<code>bolouri/docs/private</code>&quot;
+subdirectory than it is for files in the
+&quot;<code>bolouri/docs</code>&quot; subdirectory.
+</p>
+</isb:docsection>
+
+</isb:document>
