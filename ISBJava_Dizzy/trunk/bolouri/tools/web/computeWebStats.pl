@@ -79,6 +79,7 @@ sub main()
     system(BIN_DIR . "/webalizer  -D " . SCRATCH_DIR . "/" . DNS_CACHE_FILE . " -N 10 -o " . DOCUMENT_ROOT . "/" . WEB_STATS_WEB_SUBDIR . " " . $tempFile) and die("unable to analyze log files");
     unlink($tempFile) or die("unable to delete temp file $tempFile");
 
+    # handle Dizzy downloads counter
     open(DIZZY_DOWNLOADS, "<" . SCRATCH_DIR . "/DizzyDownloads.txt") or die("unable to open Dizzy downloads file, for reading");
     my $numDizzyDownloads = <DIZZY_DOWNLOADS>;
     close(DIZZY_DOWNLOADS);
@@ -93,6 +94,7 @@ sub main()
     text_to_jpg($numDizzyDownloads, SCRATCH_DIR . "/DizzyDownloads.jpg");
     system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/Dizzy/images " . SCRATCH_DIR . "/DizzyDownloads.jpg") and die("unable to FTP DizzyDownloads.jpg file to FTP server");
 
+    # handle ISBJava downloads counter
     open(ISBJAVA_DOWNLOADS, "<" . SCRATCH_DIR . "/ISBJavaDownloads.txt") or die("unable to open ISBJava downloads file, for reading");
     my $numISBJavaDownloads = <ISBJAVA_DOWNLOADS>;
     close(ISBJAVA_DOWNLOADS);
@@ -107,6 +109,22 @@ sub main()
     text_to_jpg($numISBJavaDownloads, SCRATCH_DIR . "/ISBJavaDownloads.jpg");
     system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/ISBJava/images " . SCRATCH_DIR . "/ISBJavaDownloads.jpg") and die("unable to FTP ISBJavaDownloads.jpg file to FTP server");
 
+    # handle Pointillist downloads counter
+    open(POINTILLIST_DOWNLOADS, "<" . SCRATCH_DIR . "/PointillistDownloads.txt") or die("unable to open Pointillist downloads file, for reading");
+    my $numPointDownloads = <POINTILLIST_DOWNLOADS>;
+    close(POINTILLIST_DOWNLOADS);
+    if(! defined($numPointDownloads))
+    {
+        $numPointDownloads = 0;
+    }
+    $numPointDownloads += `/bin/grep insPoint $logFile | /usr/bin/wc --lines`;
+    open(POINTILLIST_DOWNLOADS, ">" . SCRATCH_DIR . "/PointillistDownloads.txt") or die("unable do open Pointillist downloads file, for writing");
+    print POINTILLIST_DOWNLOADS $numPointDownloads . "\n";
+    close(POINTILLIST_DOWNLOADS);
+    text_to_jpg($numPointDownloads, SCRATCH_DIR . "/PointillistDownloads.jpg");
+    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/Pointillist/images " . SCRATCH_DIR . "/PointillistDownloads.jpg") and die("unable to FTP PointillistDownloads.jpg file to FTP server");
+
+    # handle Dizzy visitors counter
     open(DIZZY_VISITORS, "<" . SCRATCH_DIR . "/DizzyVisitors.txt") or die("unable to open Dizzy visitors file, for reading");
     my $numDizzyVisitors = <DIZZY_VISITORS>;
     close(DIZZY_VISITORS);
@@ -121,6 +139,7 @@ sub main()
     text_to_jpg($numDizzyVisitors, SCRATCH_DIR . "/DizzyVisitors.jpg");
     system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/Dizzy/images " . SCRATCH_DIR . "/DizzyVisitors.jpg") and die("unable to FTP DizzyVisitors.jpg file to FTP server");
 
+    # handle ISBJava visitors counter
     open(ISBJAVA_VISITORS, "<" . SCRATCH_DIR . "/ISBJavaVisitors.txt") or die("unable to open ISBJava visitors file, for reading");
     my $numISBJavaVisitors = <ISBJAVA_VISITORS>;
     close(ISBJAVA_VISITORS);
@@ -134,6 +153,21 @@ sub main()
     close(ISBJAVA_VISITORS);
     text_to_jpg($numISBJavaVisitors, SCRATCH_DIR . "/ISBJavaVisitors.jpg");
     system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/ISBJava/images " . SCRATCH_DIR . "/ISBJavaVisitors.jpg") and die("unable to FTP ISBJavaVisitors.jpg file to FTP server");
+
+    # handle Pointillist visitors counter
+    open(POINTILLIST_VISITORS, "<" . SCRATCH_DIR . "/PointVisitors.txt") or die("unable to open Pointillist visitors file, for reading");
+    my $numPointVisitors = <POINTILLIST_VISITORS>;
+    close(POINTILLIST_VISITORS);
+    if(! defined($numPointVisitors))
+    {
+        $numPointVisitors = 0;
+    }
+    $numPointVisitors += `/bin/grep '/Pointillist/ HTTP' $logFile | /usr/bin/wc --lines`;
+    open(POINTILLIST_VISITORS, ">" . SCRATCH_DIR . "/PointillistVisitors.txt") or die("unable do open Pointillist visitors file, for writing");
+    print POINTILLIST_VISITORS $numPointVisitors . "\n";
+    close(POINTILLIST_VISITORS);
+    text_to_jpg($numPointVisitors, SCRATCH_DIR . "/PointillistVisitors.jpg");
+    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/Pointillist/images " . SCRATCH_DIR . "/PointillistVisitors.jpg") and die("unable to FTP PointillistVisitors.jpg file to FTP server");
 
 }
 
