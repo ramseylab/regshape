@@ -24,7 +24,7 @@ public class SimulationLauncher
     private static final int OUTPUT_TEXT_AREA_NUM_COLS = 40;
 
     private ClassRegistry mSimulatorRegistry;
-    private Component mMainFrame;
+    private JFrame mLauncherFrame;
     private Model mModel;
     private JTextField mFileNameField;
     private JTextField mStartTimeField;
@@ -60,6 +60,7 @@ public class SimulationLauncher
     {
         setMainApp(pApp);
         JFrame frame = new JFrame();
+        mLauncherFrame = frame;
         createLauncher(frame, pAppName, pModel, false);
     }
 
@@ -75,6 +76,7 @@ public class SimulationLauncher
     {
         setMainApp(null);
         JFrame frame = new JFrame();
+        mLauncherFrame = frame;
         createLauncher(frame, pAppName, pModel, pExitOnClose);
     }
 
@@ -141,7 +143,7 @@ public class SimulationLauncher
 
     private void showCancelledSimulationDialog()
     {
-        SimpleDialog messageDialog = new SimpleDialog(mMainFrame, "Simulation cancelled", 
+        SimpleDialog messageDialog = new SimpleDialog(mLauncherFrame, "Simulation cancelled", 
                                                       "Your simulation has been cancelled");
         messageDialog.setMessageType(JOptionPane.INFORMATION_MESSAGE);
         messageDialog.show();
@@ -266,22 +268,22 @@ public class SimulationLauncher
             JPanel outputTextAreaPane = new JPanel();
             outputTextAreaPane.add(scrollPane);
             JOptionPane optionPane = new JOptionPane(outputTextAreaPane);
-            JDialog dialog = optionPane.createDialog(mMainFrame, "simulation output");
+            JDialog dialog = optionPane.createDialog(mLauncherFrame, "simulation output");
             dialog.show();
         }
         else if(pOutputType.equals(OutputType.PLOT))
         {
-            Plotter plotter = new Plotter(mMainFrame);
+            Plotter plotter = new Plotter(mLauncherFrame);
 
             String modelName = mModel.getName();
             String simulatorAlias = mSimulationRunParameters.mSimulatorAlias;
-            plotter.plot(outputBuffer.toString(), simulatorAlias, modelName);
+            plotter.plot(mAppName, outputBuffer.toString(), simulatorAlias, modelName);
         }
         else
         {
             printWriter.flush();
             JOptionPane optionPane = new JOptionPane("output saved to file:\n" + pOutputFileName);
-            JDialog dialog = optionPane.createDialog(mMainFrame, "output saved");
+            JDialog dialog = optionPane.createDialog(mLauncherFrame, "output saved");
             dialog.show();
         }
     }
@@ -316,7 +318,7 @@ public class SimulationLauncher
                 
         catch(Exception e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame,
+            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mLauncherFrame,
                                                                                              "Failure running simulation",
                                                                                              e);
             dialog.show();
@@ -436,7 +438,7 @@ public class SimulationLauncher
         String simulatorAlias = (String) mSimulatorsList.getModel().getElementAt(pSimulatorIndex);
         if(null == simulatorAlias)
         {
-            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "no simulator selected");
+            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mLauncherFrame, "no simulator selected");
             errorDialog.show();
         }
         else
@@ -507,7 +509,7 @@ public class SimulationLauncher
             }
             catch(Exception e)
             {
-                ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame,
+                ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mLauncherFrame,
                                                                                                  "Failed to instantiate simulator",
                                                                                                  e);
                 dialog.show();
@@ -743,7 +745,7 @@ public class SimulationLauncher
 
     private void handleBadInput(String pTitle, String pMessage)
     {
-        SimpleDialog dialog = new SimpleDialog(mMainFrame,
+        SimpleDialog dialog = new SimpleDialog(mLauncherFrame,
                                                pTitle,
                                                pMessage);
         dialog.show();
@@ -850,7 +852,7 @@ public class SimulationLauncher
         }
         catch(Exception e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame,
+            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mLauncherFrame,
                                                                                              "Failed to instantiate simulator",
                                                                                              e);
             dialog.show();
@@ -1182,23 +1184,25 @@ public class SimulationLauncher
             contentPane.add(controllerPanel);
             myFrame.pack();
         }
-        else if(frame instanceof JInternalFrame)
-        {
-            JInternalFrame myFrame = (JInternalFrame) frame;
-            myFrame.addInternalFrameListener(new InternalFrameAdapter() {
-                public void internalFrameClosed(InternalFrameEvent e) {
-                    handleCloseSimulationLauncher();
-                }
-            });
-            myFrame.setTitle(appTitle);
-            contentPane = myFrame.getContentPane();
-            contentPane = myFrame.getContentPane();
-            myFrame.pack();
-        }
         else
         {
             throw new IllegalArgumentException("unknown container type");
         }
+// ---------------------- reserved for future applications ------------------------
+//         else if(frame instanceof JInternalFrame)
+//         {
+//             JInternalFrame myFrame = (JInternalFrame) frame;
+//             myFrame.addInternalFrameListener(new InternalFrameAdapter() {
+//                 public void internalFrameClosed(InternalFrameEvent e) {
+//                     handleCloseSimulationLauncher();
+//                 }
+//             });
+//             myFrame.setTitle(appTitle);
+//             contentPane = myFrame.getContentPane();
+//             contentPane = myFrame.getContentPane();
+//             myFrame.pack();
+//         }
+// ---------------------- reserved for future applications ------------------------
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = frame.getSize();
