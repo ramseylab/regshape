@@ -38,15 +38,21 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
-<td>0.0.5</td>
+<td>0.0.6</td>
 <td>2003/10/22</td>
+<td>Redefined how the stochastic simulators compute
+reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.5</td>
+<td>2003/10/20</td>
 <td>Fixed a bug in the <code>GibsonSimulator</code> initialization code, for the case of a boundary
 reactant species.  Fixed a bug in the <code>ModelBuilderCommandLanguage</code> tokenizer, so that
 it can now accept a tab character as valid whitespace in a model definition file.  Modified the
 <code>SBMLValidate</code> package so that it can process SBML Level 1, Version 2 model definition files.
 Modified <code>org.systemsbiology.chem.app.MainApp</code> class, to work around a limitation of
-DOS shell command-line argument processing.  Redefined how the stochastic simulators compute
-reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</td>
+DOS shell command-line argument processing.  </td>
 </tr>
 
 <tr valign="top">

@@ -42,6 +42,14 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td>0.0.6</td>
+<td>2003/10/22</td>
+<td>Redefined how the stochastic simulators compute
+reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</td>
+<td>0.0.6</td>
+</tr>
+
+<tr valign="top">
 <td>0.0.5</td>
 <td>2003/10/20</td>
 <td>Fixed a bug in the Gibson-Bruck simulator, for the case of a boundary
@@ -50,7 +58,8 @@ now accept tabs as valid whitespace in the model definition file.  The
 SBML import feature can now process model definition files that conform to the
 SBML Level 1, Version 2 specification.  Fixed a bug in which &appName; would
 fail to start, in the case where &appName; was installed in the top-level
-directory of a Windows (or DOS) drive.</td>
+directory of a Windows (or DOS) drive. Redefined how the stochastic simulators compute
+reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</td>
 <td>0.0.5</td>
 </tr>
 
