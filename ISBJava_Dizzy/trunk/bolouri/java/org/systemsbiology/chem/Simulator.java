@@ -8,9 +8,8 @@ import java.util.*;
 
 public abstract class Simulator 
 {
-    private static final int DEFAULT_MULTISTEP_TIME_POINTS = 1000;
+    private static final int DEFAULT_MULTISTEP_TIME_POINTS = 10000;
     private static final int NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION = 15;
-//    private static final int NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION = 10000;
 
     protected String []mDynamicSymbolNames;
     protected double []mDynamicSymbolValues;
