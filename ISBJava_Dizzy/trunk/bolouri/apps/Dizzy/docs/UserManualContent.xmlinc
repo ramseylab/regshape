@@ -3121,7 +3121,9 @@ The &quot;output type&quot; can
 be &quot;print&quot; (the default), which just prints the values for the
 species populations, over time, in a simple comma-separated-value format,
 in the &quot;runtime output log&quot; text box.  The &quot;plot&quot;
-output type will cause a graphical plot to be generated.  Note that when
+output type will cause a graphical plot to be generated.  
+You may optionally define a textual label in the field &quot;label:&quot;,
+which will be added a subtitle to the simulation results plot. Note that when
 plotting the output, all species selected are displayed on the same graph.
 This means that one species with values that are much greater than the other
 species, will cause Y-axis scaling that will render the other species
@@ -3131,7 +3133,11 @@ you can export the data in comma-separated value format. This is done by
 selecting the &quot;file&quot; output type. With the data in a file in 
 comma-separated-value format, you may import the data into a program that
 has more sophisticated graphing capabilities, such as Gnuplot, Octave,
-Gnumeric, Excel, or Matlab.  By default, selecting the &quot;file&quot;
+Gnumeric, Excel, or Matlab.  Make sure to select the appropriate
+output file format depending on the application into which you wish
+to import the results.  This is necessary because Matlab has a different
+comment character (&quot;%&quot;) than Gnuplot and Excel (&quot;#&quot;).
+By default, selecting the &quot;file&quot;
 output type will generate a file for writing.  If the file selected already
 exists, you will be asked to confirm your choice.  To instead append to
 the selected file (rather than overwrite), click on the &quot;append&quot;
