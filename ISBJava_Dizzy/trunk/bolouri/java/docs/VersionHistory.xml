@@ -85,6 +85,9 @@ class, and the
 class, and the removal of the
 <code>org.systemsbiology.chem.SymbolEvaluatorChemCommandLanguage</code> class and the
 <code>org.systemsbiology.chem.SymbolEvaluatorChemMarkupLanguage</code> class.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>
+where a symbol defined within an included file, would never appear as a species
+in the containing model, even if it is included as a participant in a reaction.</li>
 </ul>
 </td>
 </tr>

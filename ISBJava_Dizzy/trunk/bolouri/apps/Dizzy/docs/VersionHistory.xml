@@ -61,6 +61,9 @@ This feature is activated using the optional
 &quot;<code>-computeFluctuations</code>&quot; command-line argument.</li>
 <li>Made some speed improvements to the delayed reaction solver, for the
 case of stochastic simulations.</li>
+<li>Fixed a bug the chemical model definition language (CMDL) parser,
+where a symbol defined within an included file, would never appear as a species
+in the containing model, even if it is included as a participant in a reaction.</li>
 </ul>
 </td>
 <td><a href="&javaURL;/1.6.0/&installerDownloadRelURL;">1.6.0</a></td>
