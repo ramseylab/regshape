@@ -29,6 +29,7 @@ import org.systemsbiology.util.*;
 public class SignificancesData 
 {
     public static final double DEFAULT_SIGNIFICANCE_MISSING_DATA = -1.0;
+    public static final String NULL_SIGNIFICANCE_STRING = "null";
     
     private DoubleMatrix2D mSignificances;
     private MatrixString mMatrixString;
@@ -130,17 +131,25 @@ public class SignificancesData
                 elemStr = matrixString.getValueAt(i + 1, j + 1).trim();
                 if(elemStr.length() > 0)
                 {
-                    try
+                    if(! elemStr.equals(NULL_SIGNIFICANCE_STRING))
                     {
-                        elemVal = Double.parseDouble(elemStr);
-                        if(elemVal < 0.0)
+                        try
                         {
-                            ++missingCtr;
+                            elemVal = Double.parseDouble(elemStr);
+                            if(elemVal < 0.0)
+                            {
+                                ++missingCtr;
+                            }
+                        }
+                        catch(NumberFormatException e)
+                        {
+                            throw new InvalidInputException("invalid numeric data at row " + i + ", column " + j);
                         }
                     }
-                    catch(NumberFormatException e)
+                    else
                     {
-                        throw new InvalidInputException("invalid numeric data at row " + i + ", column " + j);
+                        elemVal = DEFAULT_SIGNIFICANCE_MISSING_DATA;
+                        ++missingCtr;
                     }
                 }
                 else
