@@ -49,6 +49,12 @@ This document contains the version history for the
 <td>
 <ul>
 <li>
+  Please note that there have been some changes in the
+  &localJavaLibraryName; API in this release.  For more
+  information, please refer to the release notes for the
+  <a href="&javaURL;">&localJavaLibraryName; API</a>.
+</li>
+<li>
 Fixed a bug in the simulation results table window,
 which was causing the table window to not be resizable.
 </li>
