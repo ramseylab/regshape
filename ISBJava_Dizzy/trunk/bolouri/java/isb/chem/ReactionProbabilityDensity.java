@@ -84,4 +84,10 @@ class ReactionProbabilityDensity
     /*========================================*
      * public methods
      *========================================*/
+    public String toString()
+    {
+        StringBuffer sb = new StringBuffer();
+        sb.append("reaction name: " + getReaction().getName() + "; probability density: " + mProbabilityDensity);
+        return(sb.toString());
+    }
 }
