@@ -20,7 +20,7 @@ import java.util.HashMap;
 public class SymbolValue implements Comparable
 {
     protected Value mValue;
-    protected Symbol mSymbol;
+    protected final Symbol mSymbol;
 
     /**
      * Constructs a SymbolValue using the
@@ -54,7 +54,7 @@ public class SymbolValue implements Comparable
      */
     public SymbolValue(String pSymbolName, Value pValue)
     {
-        setSymbol(new Symbol(pSymbolName));
+        mSymbol = new Symbol(pSymbolName);
         setValue(pValue);
     }
 
@@ -105,11 +105,6 @@ public class SymbolValue implements Comparable
     public Symbol getSymbol()
     {
         return(mSymbol);
-    }
-
-    protected void setSymbol(Symbol pSymbol)
-    {
-        mSymbol = pSymbol;
     }
 
     public int compareTo(Object pObject)
