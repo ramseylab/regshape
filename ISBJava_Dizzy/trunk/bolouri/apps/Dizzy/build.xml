@@ -23,8 +23,8 @@
 
   &BuildHeader;
 
-  <property name="app.styleDir"                 location="${basedir}/html" />
   <property name="app.buildDir"                 location="${basedir}/build" />
+  <property name="app.styleDir"                 location="${app.buildDir}/html" />
   <property name="app.configDir"                location="${basedir}/config" />
   <property name="app.docsDir"                  location="${basedir}/docs" />
   <property name="app.imagesDir"                location="${basedir}/images" />
@@ -50,7 +50,6 @@
   </target>
 
   <target name="clean">
-    <delete dir="${app.styleDir}" quiet="yes" />
     <delete dir="${app.buildDir}" quiet="yes" />
     <delete file="${app.configDir}/CommonConfig.dtd" quiet="yes" />
   </target>
@@ -179,7 +178,7 @@
     </exec>
 
     <jar destfile="${app.resourcesFile}">
-      <fileset dir="${basedir}">
+      <fileset dir="${app.buildDir}">
         <include name="html/AppHelp*" />
         <include name="html/JavaHelpSearch/*" />
       </fileset>
@@ -228,9 +227,6 @@
 
   <target name="build">
     <!-- do nothing -->
-  </target>
-
-  <target name="distClean" depends="clean">
   </target>
 
 </project>

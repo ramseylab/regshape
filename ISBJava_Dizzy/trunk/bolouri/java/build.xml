@@ -22,14 +22,13 @@
   &BuildHeader;
 
 
-  <property name="app.styleDir"                location="${basedir}/html" />
   <property name="app.srcDir"                  location="${basedir}/org" />
   <property name="app.configDir"               location="${basedir}/config" />
   <property name="app.buildDir"                location="${basedir}/build" />
+  <property name="app.styleDir"                location="${app.buildDir}/html" />
   <property name="app.docsDir"                 location="${basedir}/docs" />
   <property name="app.extLibDir"               location="${basedir}/extlib" />
-  <property name="app.buildDir"                location="${projBuildDir}" />
-  <property name="app.classesDir"              location="${projClassesDir}" />
+  <property name="app.classesDir"              location="${app.buildDir}/classes" />
   <property name="app.imagesDir"               location="${basedir}/images" />
   <property name="app.webDir"                  location="${projWebDir}/&appName;" />
   <property name="app.javadocDir"              location="${app.webDir}/javadoc" />
@@ -40,8 +39,8 @@
 
   <property name="app.sourceCompileFlag"       value="1.4" />
 
-  <property name="app.jarFile"                 location="${projBuildDir}/&appName;.jar" />
-  <property name="app.srcFile"                 location="${projBuildDir}/&appName;-src.tar.gz" />
+  <property name="app.jarFile"                 location="${app.buildDir}/&appName;.jar" />
+  <property name="app.srcFile"                 location="${app.buildDir}/&appName;-src.tar.gz" />
 
   <path id="app.classpath">
     <pathelement location="${app.classesDir}" />
@@ -114,33 +113,53 @@
   <target name="buildInstallers">
     <mkdir dir="${app.buildDir}/&appName;" />
     <mkdir dir="${app.buildDir}/&appName;/src" />
+
+    <!-- copy all source files -->
+
     <copy todir="${app.buildDir}/&appName;/src">
       <fileset dir="${basedir}">
-        <include name="org/**/*.java" />
+        <include name="${app.rootPackage}/**/*.java" />
+        <include name="${app.rootPackage}/**/*.dtd" />
+        <include name="${app.rootPackage}/**/*.xml" />
       </fileset>
     </copy>
+
+    <!-- copy all external Java libraries -->
+
     <mkdir dir="${app.buildDir}/&appName;/lib" />
     <copy todir="${app.buildDir}/&appName;/lib">
       <fileset dir="${basedir}/extlib">
         <include name="*.jar" />
       </fileset>
     </copy>
+
+    <!-- copy the ISBJava.jar file -->
     <copy todir="${app.buildDir}/&appName;/lib" file="${app.jarFile}" />
+
+    <!-- copy the documentation -->
     <mkdir dir="${app.buildDir}/&appName;/docs" />
     <copy todir="${app.buildDir}/&appName;/docs">
-      <fileset dir="${basedir}/html">
+      <fileset dir="${app.styleDir}">
         <include name="*.html" />
         <exclude name="JavadocTitlePage*.html" />
         <exclude name="download.html" />
       </fileset>
     </copy>
-    <copy todir="${app.buildDir}/&appName;/docs" file="${app.webDir}/docs/APIDocumentation.pdf" />
+
+    <!-- copy the license file -->
     <copy todir="${app.buildDir}/&appName;/docs" file="${projStyleDir}/License.html" />
+
+    <!-- copy PDF documentation -->
+    <copy todir="${app.buildDir}/&appName;/docs" file="${app.webDir}/docs/APIDocumentation.pdf" />
+
     <mkdir dir="${app.webDir}/${app.version}" />
+
+    <!-- zip it all up into an archive -->
     <zip destfile="${app.webDir}/${app.version}/&appName;.zip" basedir="${app.buildDir}" includes="&appName;/**/*" />
     <tar destfile="${app.buildDir}/&appName;.tar" basedir="${app.buildDir}" includes="&appName;/**/*" />
     <gzip zipfile="${app.webDir}/${app.version}/&appName;.tar.gz" src="${app.buildDir}/&appName;.tar" />
 
+    <!-- copy the download.html file -->
     <copy todir="${app.webDir}/&appVersion;" file="${app.styleDir}/download.html" />
   </target>
 
@@ -198,11 +217,17 @@
   </target>  
  
   <target name="srcTar">
-    <mkdir dir="${projBuildDir}" />
+    <mkdir dir="${app.buildDir}" />
     <tar destfile="${app.srcFile}" 
-         basedir="${basedir}"
-         includes="${app.rootPackage}/**/*.java,${app.rootPackage}/**/*.xml,html/*.html,${app.rootPackage}/**/.dtd" 
          compression="gzip">
+      <tarfileset dir="${basedir}">
+        <include name="${app.rootPackage}/**/*.java" />
+        <include name="${app.rootPackage}/**/*.dtd" />
+        <include name="${app.rootPackage}/**/*.xml" />
+      </tarfileset>
+      <tarfileset dir="${projStyleDir}" prefix="">
+        <include name="License.html" />
+      </tarfileset>
     </tar>
   </target>
 
@@ -210,8 +235,8 @@
 
   <target name="test" depends="compiletests" />
   
-  <target name="jar" depends="clean, compile, copyResources">
-    <mkdir dir="${projBuildDir}" />
+  <target name="jar" depends="compile, copyResources">
+    <mkdir dir="${app.buildDir}" />
     <jar destfile="${app.jarFile}">
       <fileset dir="${app.classesDir}">
         <include name="${app.rootPackage}/**/*.class" />
@@ -224,26 +249,7 @@
   </target>
 
   <target name="clean">
-    <delete dir="${app.styleDir}" quiet="yes" />
-    <delete quiet="yes">
-      <fileset dir="${app.srcDir}">
-        <include name="**/*.class" />
-      </fileset>
-    </delete>
     <delete dir="${app.buildDir}" quiet="yes" />
-    <delete quiet="yes">
-      <fileset dir="${app.classesDir}/${app.rootPackage}">
-        <include name="**/*.class" />
-        <include name="**/*.xml" />
-        <include name="**/*.dtd" />
-      </fileset>
-    </delete>
-    <delete file="${app.configDir}/CommonConfig.dtd" quiet="yes" />
   </target>
 
-  <target name="distClean" depends="clean">
-    <delete dir="${projClassesDir}" quiet="yes" />
-    <delete dir="${projBuildDir}" quiet="yes" />
-  </target>
-  
 </project>

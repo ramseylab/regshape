@@ -266,7 +266,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@PROJROOT@/build]]></string>
+								<string><![CDATA[@PROJROOT@/java/build]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -912,7 +912,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<string><![CDATA[Please read the following release notes]]></string>
 							</property>
 							<property name="resourcePath">
-								<string><![CDATA[@PROJROOT@/apps/@APPNAME@/html/]]></string>
+								<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/html/]]></string>
 							</property>
 							<property name="resourceName">
 								<string><![CDATA[ReadMe.html]]></string>
@@ -2277,7 +2277,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/html/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2306,7 +2306,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/build/]]></string>
+												<string><![CDATA[@PROJROOT@/java/build/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2479,7 +2479,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/html/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>

@@ -21,7 +21,7 @@
   &BuildHeader;
 
   <property name="webServerUsername"  value="bolouri_group" />
-  <property name="webServerPassword"  value="b2G4cIc" />  <!-- icky: find some way to MIME-encode this -->
+  <property name="webServerPassword"  value="b2G4cIc" />  <!-- icky: find some way to obfuscate this -->
   <property name="webServerHostname"  value="labs.systemsbiology.net" />
   <property name="webServerRemoteDir" value="software" />
 
@@ -35,11 +35,6 @@
     <ant dir="${projAppsDir}" target="clean" />
     <delete dir="${projStyleDir}" quiet="yes" />
     <delete dir="${projWebDir}" quiet="yes" />
-  </target>
-
-  <target name="distClean">
-    <ant dir="${projJavaDir}" target="distClean" />
-    <ant dir="${projAppsDir}" target="distClean" />
   </target>
 
   <target name="style">

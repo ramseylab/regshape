@@ -12,10 +12,6 @@
     <ant dir="${basedir}/BioTapestry" target="clean" />
   </target>
 
-  <target name="distClean" depends="clean">
-    <ant dir="${basedir}/BioTapestry" target="distClean" />
-  </target>
-
   <target name="buildHTML">
     <ant dir="${basedir}/Dizzy" target="buildHTML" />
   </target>
