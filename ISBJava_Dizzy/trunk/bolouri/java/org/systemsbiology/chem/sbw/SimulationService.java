@@ -108,13 +108,11 @@ public abstract class SimulationService implements ISimulationService
     {
         try
         {
+            byte []sbmlBytes = sbml.getBytes();
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(sbmlBytes);
             ModelBuilderMarkupLanguage modelBuilder = new ModelBuilderMarkupLanguage();
-
             IncludeHandler fileIncludeHandler = null;
-            StringReader inputStringReader = new StringReader(sbml);
-            BufferedReader bufferedInputReader = new BufferedReader(inputStringReader);
-            
-            Model model = modelBuilder.buildModel(bufferedInputReader, fileIncludeHandler);
+            Model model = modelBuilder.buildModel(inputStream, fileIncludeHandler);
 
             Collection dynamicSymbols = model.getDynamicSymbols();
             List dynamicSymbolsList = new LinkedList(dynamicSymbols);
