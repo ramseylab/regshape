@@ -10,8 +10,6 @@
               xmlns="http://www.w3.org/TR/xhtml1">
 
 <isb:doctitle>Software, Publications, and News</isb:doctitle>
-<isb:docowner>&mainGroup;, &mainAffiliation;</isb:docowner>
-<isb:docowneremail>&mainGroupEmailSafe;</isb:docowneremail>
 <isb:docdate>$Date$</isb:docdate>
 
 <isb:doccontents />
