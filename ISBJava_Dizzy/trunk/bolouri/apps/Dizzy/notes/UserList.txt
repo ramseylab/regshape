@@ -14,6 +14,10 @@ Andrzej Kierzek
 Institute of Biochemistry and Biophysics, Poland
 andrzejk@poczta.ibb.waw.pl
 
+Earl Solis
+MIT
+eps@mit.edu
+
 Zheng Yun
 Nanyang Technological University, Singapore
 pg04325488@ntu.edu.sg
