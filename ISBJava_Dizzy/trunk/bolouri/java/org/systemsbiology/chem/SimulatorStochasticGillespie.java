@@ -8,15 +8,8 @@ package org.systemsbiology.chem;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import org.systemsbiology.math.Value;
-import org.systemsbiology.math.Symbol;
-import org.systemsbiology.math.SymbolEvaluator;
-import org.systemsbiology.math.MathFunctions;
-import org.systemsbiology.math.MutableDouble;
-import org.systemsbiology.math.MutableInteger;
-import org.systemsbiology.util.DataNotFoundException;
-import org.systemsbiology.util.InvalidInputException;
-import org.systemsbiology.util.IAliasableClass;
+import org.systemsbiology.math.*;
+import org.systemsbiology.util.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -90,9 +83,8 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
         double time = pSymbolEvaluator.getTime();
 
         int lastReactionIndex = pLastReactionIndex.getValue();
-        if(lastReactionIndex >= 0)
+        if(NULL_REACTION != lastReactionIndex)
         {
-
             Reaction lastReaction = pReactions[lastReactionIndex];
 
             updateSymbolValuesForReaction(pSymbolEvaluator,
@@ -102,7 +94,6 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
                                           pMultistepReactionSolvers);
         }
 
-        
         computeReactionProbabilities(pSpeciesRateFactorEvaluator,
                                      pSymbolEvaluator,
                                      pReactionProbabilities,

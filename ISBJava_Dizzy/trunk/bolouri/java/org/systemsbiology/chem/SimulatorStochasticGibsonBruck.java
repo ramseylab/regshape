@@ -121,8 +121,9 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
             if(reaction.getRate().isExpression() || reaction.getReactantsMap().size() == 0)
             {
                 customReactions.add(new Integer(ctr));
+                continue;
             }
-
+            
             HashMap reactantsMap = reaction.getReactantsMap();
             Collection reactantSpecies = reactantsMap.keySet();
             Iterator reactantIter = reactantSpecies.iterator();
@@ -296,7 +297,6 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
                                    MutableInteger pLastReactionIndex,
                                    MultistepReactionSolver []pMultistepReactionSolvers) throws DataNotFoundException, IllegalStateException
     {
-
         IndexedPriorityQueue putativeTimeToNextReactions = mPutativeTimeToNextReactions;
         Object []reactionDependencies = mReactionDependencies;
 
@@ -305,7 +305,7 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
         assert (pSymbolEvaluator.getTime() <= ((MutableDouble) putativeTimeToNextReactions.get(putativeTimeToNextReactions.peekIndex())).getValue()) : "invalid time";
 
         int lastReactionIndex = pLastReactionIndex.getValue();
-        if(lastReactionIndex >= 0)
+        if(NULL_REACTION != lastReactionIndex)
         {
             Reaction lastReaction = pReactions[lastReactionIndex];
 
