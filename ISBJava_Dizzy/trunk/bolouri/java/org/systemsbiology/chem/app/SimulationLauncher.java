@@ -178,7 +178,7 @@ public class SimulationLauncher
         {
             clearLastUpdateTime();
             mTerminate = false;
-            SignificantDigitsCalculator sigCalc = new SignificantDigitsCalculator(null, new Double(1.0e-2));
+            SignificantDigitsCalculator sigCalc = new SignificantDigitsCalculator();
             mNumberFormat = new ScientificNumberFormat(sigCalc);
         }
 
