@@ -18,7 +18,8 @@ import java.io.*;
 public abstract class CommandLineApp
 {
     protected static final String HELP_ARG = "-help";
-
+    public static final String NULL_MODIFIER = "null";
+    
     protected abstract void printUsage(OutputStream pOutputStream);
 
     protected void handleCommandLineError(String pMessage)
@@ -37,10 +38,14 @@ public abstract class CommandLineApp
         }
         return(pArgs[pCtr]);
     }
-
+    
     protected Double getRequiredDoubleArgumentModifier(String pArgument, String []pArgs, int pCtr)
     {
         String valueString = getRequiredArgumentModifier(pArgument, pArgs, pCtr);
+        if(valueString.equals(NULL_MODIFIER))
+        {
+            return null;
+        }
         Double retVal = null;
         try
         {
@@ -56,6 +61,10 @@ public abstract class CommandLineApp
     protected Integer getRequiredIntegerArgumentModifier(String pArgument, String []pArgs, int pCtr)
     {
         String valueString = getRequiredArgumentModifier(pArgument, pArgs, pCtr);
+        if(valueString.equals(NULL_MODIFIER))
+        {
+            return null;
+        }
         Integer retVal = null;
         try
         {
@@ -71,6 +80,10 @@ public abstract class CommandLineApp
     protected Long getRequiredLongArgumentModifier(String pArgument, String []pArgs, int pCtr)
     {
         String valueString = getRequiredArgumentModifier(pArgument, pArgs, pCtr);
+        if(valueString.equals(NULL_MODIFIER))
+        {
+            return null;
+        }
         Long retVal = null;
         try
         {
