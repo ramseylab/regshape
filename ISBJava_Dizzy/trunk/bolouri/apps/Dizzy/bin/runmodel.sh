@@ -11,6 +11,7 @@ ${INSTALL_DIR}/lib/jfreechart.jar:\
 ${INSTALL_DIR}/lib/jcommon.jar:\
 ${INSTALL_DIR}/lib/SBMLReader.jar:\
 ${INSTALL_DIR}/lib/odeToJava.jar:\
-${INSTALL_DIR}/lib/Jama.jar
+${INSTALL_DIR}/lib/Jama.jar:\
+${INSTALL_DIR}/lib/jh.jar
 
 ${JAVA_BIN} -Xmx@APPJAVAMAXHEAPSIZEBYTES@ -cp "${CLASSPATH}" 'org.systemsbiology.chem.app.SimulationLauncherCommandLine' $@
