@@ -241,6 +241,23 @@ public final class Model
         return((Species) symbolValue);
     }
 
+    public boolean containsDelayedOrMultistepReaction()
+    {
+        boolean containsDelayedOrMultistepReaction = false;
+
+        Iterator reactionIter = mReactionsMap.values().iterator();
+        while(reactionIter.hasNext())
+        {
+            Reaction reaction = (Reaction) reactionIter.next();
+            if(reaction.getDelay() > 0.0 || reaction.getNumSteps() > 1)
+            {
+                containsDelayedOrMultistepReaction = true;
+            }
+        }
+
+        return(containsDelayedOrMultistepReaction);
+    }
+
     public String []getOrderedSpeciesNamesArray()
     {
         List speciesNamesList = new LinkedList();
