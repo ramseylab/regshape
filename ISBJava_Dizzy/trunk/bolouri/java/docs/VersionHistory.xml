@@ -37,6 +37,60 @@ This document contains the version history for the
 <td>Comments</td>
 </tr>
 
+
+<tr valign="top">
+<td><a href="../1.8.1/download.html">1.8.1</a></td>
+<td>2004/10/??</td>
+<td>
+<ul>
+<li>
+Fixed a bug in <code>org.systemsbiology.chem.app.SimulationResultsTable</code>,
+which was causing the table window to not be resizable.
+</li>
+<li>
+Fixed a bug in <code>org.systemsbiology.chem.app.EditorPane</code> in
+which the <code>Tools-&gt;Simulate</code> menu item was not being enabled
+after the first character was typed in the editor text area.
+</li>
+<li>
+Changed the <code>org.systemsbiology.util.URLUtils</code> class into
+the <code>org.systemsbiology.util.FileUtils</code> class.  Added 
+<code>getExtension()</code> and a <code>removeExtension()</code> methods.
+</li>
+<li>
+Restructed the GUI-related classes in <code>org.systemsbiology.chem.app</code>
+and <code>org.systemsbiology.util</code>, to move the commonly used
+GUI classes to <code>org.systemsbiology.gui</code>.  This includes
+<code>org.systemsbiology.util.FramePlacer</code>, 
+<code>org.systemsbiology.util.ImageTransferHandler</code>, 
+<code>org.systemsbiology.util.BrowserLauncher</code>, 
+<code>org.systemsbiology.chem.app.FileChooser</code>, 
+<code>org.systemsbiology.chem.app.RegexFileFilter</code>, 
+<code>org.systemsbiology.chem.app.SimpleTextArea</code>, 
+<code>org.systemsbiology.chem.app.ExceptionDialogOperationCancelled</code>
+</li>
+<li>
+Modified <code>org.systemsbiology.util.ExceptionUtility</code> to
+allow passing any <code>Throwable</code> to <code>getStackTrace()</code>,
+instead of only the <code>Exception</code> subclass.
+</li>
+<li>
+Moved the code that disables double-clicking on a Swing component, from
+<code>org.systemsbiology.gui.FileChooser</code> to a new class
+<code>org.systemsbiology.gui.ComponentUtil</code>.
+</li>
+<li>
+Renamed the <code>org.systemsbiology.util.ExceptionUtility</code> class
+to <code>org.systemsbiology.util.ExceptionUtils</code>.
+</li>
+<li>
+Renamed the <code>org.systemsbiology.gui.ComponentUtil</code> class 
+to <code>org.systemsbiology.gui.ComponentUtils</code>.
+</li>
+</ul>
+</td>
+</tr>
+
 <tr valign="top">
 <td><a href="../1.8.0/download.html">1.8.0</a></td>
 <td>2004/10/11</td>

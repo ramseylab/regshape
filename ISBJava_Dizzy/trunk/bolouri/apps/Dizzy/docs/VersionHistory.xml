@@ -44,6 +44,21 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.8.1/download.html">1.8.1</a></td>
+<td>2004/10/??</td>
+<td>
+<ul>
+<li>
+Fixed a bug in the simulation results table window,
+which was causing the table window to not be resizable.
+</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.8.1/download.html">1.8.1</a></td>
+</tr>
+
+
+<tr valign="top">
 <td><a href="../1.8.0/&installerDownloadRelURL;">1.8.0</a></td>
 <td>2004/10/11</td>
 <td>
