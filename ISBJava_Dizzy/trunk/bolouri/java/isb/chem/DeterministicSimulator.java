@@ -891,11 +891,7 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
      * 
      * This method only modifies the <code>pPopulationSamples</code> data
      * structures.  This method may be called more than once; each time
-     * the method is called, a new simulation will be conducted.  Note that
-     * the random number generator used for the simulation will have a different
-     * ``starting'' value each time this method is invoked, unless the
-     * {@link #setRandomNumberGeneratorSeed(long)} method is called (with the
-     * same integer random number generator seed) before this method is called.
+     * the method is called, a new simulation will be conducted. 
      *
      * @param pModel the {@link Model} for which this simulation is to be
      * conducted, including the {@linkplain Reaction reactions} in the model.
