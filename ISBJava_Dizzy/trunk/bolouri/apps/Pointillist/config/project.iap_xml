@@ -2304,7 +2304,7 @@ it will search for ones in this list]]></string>
 													<method name="addElement">
 														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="39fd46fb8461">
 															<property name="propertyValue">
-																<string><![CDATA[org.systemsbiology.inference.QuantileNormalizerDriver]]></string>
+																<string><![CDATA[org.systemsbiology.inference.DataNormalizerDriver]]></string>
 															</property>
 															<property name="propertyName">
 																<string><![CDATA[lax.main.class]]></string>
@@ -2334,7 +2334,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[QuantileNormalizer]]></string>
+												<string><![CDATA[DataNormalizer]]></string>
 											</property>
 											<property name="executableIcon">
 												<object class="com.zerog.ia.installer.util.BindingWin32" objectID="17852792848f">
@@ -2353,7 +2353,7 @@ and any path to a file to read from that file]]></string>
 												</object>
 											</property>
 											<property name="mainClass">
-												<string><![CDATA[org.systemsbiology.inference.QuantileNormalizerDriver]]></string>
+												<string><![CDATA[org.systemsbiology.inference.DataNormalizerDriver]]></string>
 											</property>
 										</object>
 										<object class="com.zerog.ia.installer.actions.MakeExecutable" objectID="ee4f7ff58454">
