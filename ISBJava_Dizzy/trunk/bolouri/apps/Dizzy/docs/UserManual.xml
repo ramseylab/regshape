@@ -946,9 +946,13 @@ kinetics of a set of coupled chemical reactions, taking into account
 stochastic effects from low copy numbers of the chemical species.
 The algorithm is defined in the article:
 <blockquote>
+<table border="1">
+<tr><td>
 D. T. Gillespie, &quot;A General Method for Numerically Simulating the Stochastic
 Time Evolution of Coupled Chemical Species&quot;, <em>J. Comp.  Phys.</em>
 <b>22</b>, 403-434 (1976).
+</td></tr>
+</table>
 </blockquote>
 In Gillespie&apos;s approach, chemical reaction kinetics are modeled
 as a markov process in which reactions occur at specific instants of time
