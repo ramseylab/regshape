@@ -463,7 +463,6 @@ public class EditorPane
         
         catch(InvalidInputException e)
         {
-            System.out.println("invalid input exception");
             ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
             optionPane.createDialog(mMainFrame, "error in model definition").show();
             return(model);
