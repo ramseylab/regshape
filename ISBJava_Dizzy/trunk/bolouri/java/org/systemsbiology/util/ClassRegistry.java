@@ -121,7 +121,6 @@ public class ClassRegistry
         }
         catch(NoClassDefFoundError e)
         {
-            System.err.println("class definition not found: " + pClassName);
             return;                
         }
 
