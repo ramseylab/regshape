@@ -145,6 +145,10 @@ hyperlinks shown below:
 <td>odeToJava</td><td><code>odeToJava.jar</code></td>
 <td><a href="http://www.netlib.org/ode"><code>www.netlib.org/ode</code></a> (Murray Patterson and Raymond Spiteri)</td><td>???</td>
 </tr>
+<tr>
+<td>JAMA</td><td><code>Jama.jar</code></td>
+<td><a href="http://math.nist.gov/javanumerics/jama"><code>math.nist.gov/javanumerics/jama</code></a></td><td>public domain?</td>
+</tr>
 </table>
 </blockquote>
 </p>
