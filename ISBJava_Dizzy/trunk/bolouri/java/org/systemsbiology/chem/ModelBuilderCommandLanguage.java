@@ -1323,7 +1323,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                                       HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
     {
         Token token = getNextToken(pTokenIter);
-        assert (token.mCode.equals(Token.Code.POUNDSIGN)) : "where expected a pound sign, got an unexpected token: " + token;
+        assert (token.mCode.equals(Token.Code.POUNDSIGN)) : "where expected a pound sign, got an unexpected token \"" + token + "\"";
 
         token = getNextToken(pTokenIter);
         assert (token.mCode.equals(Token.Code.SYMBOL)) : "where expected a symbol token, got an unexpected token: " + token;
@@ -1406,7 +1406,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                     }
                     else 
                     {
-                        throw new InvalidInputException("unexpected token encountered in macro definition symbol list \"" + token.mCode + "\"");
+                        throw new InvalidInputException("unexpected token encountered in macro definition symbol list \"" + token + "\"");
                     }
                 }
             }
@@ -1612,7 +1612,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                     }
                     else
                     {
-                        throw new InvalidInputException("unknown command keyword: " + token.mSymbol);
+                        throw new InvalidInputException("unknown command keyword \"" + token.mSymbol + "\"");
                     }
                 }
                 else if(token.mCode.equals(Token.Code.PAREN_BEGIN))
@@ -1633,7 +1633,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                         }
                         else
                         {
-                            throw new InvalidInputException("parenthesis following unknown token: " + prevToken);
+                            throw new InvalidInputException("parenthesis following unexpected token \"" + prevToken.mCode + "\"");
                         }
                     }
                     else
@@ -1671,20 +1671,20 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         token = getNextToken(pTokenIter);
         if(! token.mCode.equals(Token.Code.PAREN_BEGIN))
         {
-            throw new InvalidInputException("invalid token found when expected beginning parenthesis; token is: " + token);
+            throw new InvalidInputException("unexpected token found when expected beginning parenthesis; token is \"" + token + "\"");
         }
 
         token = getNextToken(pTokenIter);
         if(! token.mCode.equals(Token.Code.SYMBOL))
         {
-            throw new InvalidInputException("invalid token found when expected loop index symbol; token is: " + token);
+            throw new InvalidInputException("unexpected token found when expected loop index symbol; token is \"" + token + "\"");
         }
 
         String loopIndexSymbolName = token.mSymbol;
 
         if(ReservedSymbolMapperChemCommandLanguage.isReservedSymbol(loopIndexSymbolName))
         {
-            throw new InvalidInputException("cannot use a reserved symbol as a loop index: " + loopIndexSymbolName);
+            throw new InvalidInputException("cannot use a reserved symbol as a loop index; you used \"" + loopIndexSymbolName + "\"");
         }
 
         loopIndexSymbolName = addNamespaceToSymbol(loopIndexSymbolName, mNamespace);
@@ -1693,7 +1693,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
         if(! token.mCode.equals(Token.Code.COMMA))
         {
-            throw new InvalidInputException("invalid token found when expected comma separator");
+            throw new InvalidInputException("unexpected token found when expected comma separator; token is \"" + token + "\"");
         }
 
         if(! pTokenIter.hasNext())
