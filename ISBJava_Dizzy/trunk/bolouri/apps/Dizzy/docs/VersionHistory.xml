@@ -48,7 +48,9 @@ This document contains the version history for the
 <td>2004/01/13</td>
 <td>
 <ul>
-<li>An operating system-specific installer is now available for the Mac OSX platform.</li>
+<li>Fixed the problem with the &appName; installer for the Mac OSX platform, where
+the installed application launcher would crash with an &quot;unexpected error&quot;
+dialog box message.</li>
 <li>Fixed a bug in the layout of the simulation launcher control screen, where the 
 full text of the &quot;select all&quot; button was not being displayed.</li>
 <li>Fixed a bug in the simulation launcher 
