@@ -10,6 +10,7 @@
   <target name="clean">
     <ant dir="${basedir}/Dizzy" target="clean" />
     <ant dir="${basedir}/Mogul" target="clean" />
+    <ant dir="${basedir}/BioTapestry" target="clean" />
   </target>
 
   <target name="distClean" depends="clean">
@@ -18,6 +19,7 @@
   <target name="buildHTML">
     <ant dir="${basedir}/Dizzy" target="buildHTML" />
     <ant dir="${basedir}/Mogul" target="buildHTML" />
+    <ant dir="${basedir}/BioTapestry" target="buildHTML" />
   </target>
 
   <target name="buildPDF">
