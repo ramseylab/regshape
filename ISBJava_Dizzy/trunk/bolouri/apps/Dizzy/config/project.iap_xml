@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This script was automatically generated using Zero G's InstallAnywhere 6.0 Standard, Build 2262
      STATUS: Fully Functional LICENSED Edition
-     DATE:   Mon Jan 26 11:09:59 PST 2004 -->
-<InstallAnywhere_Deployment_Project increments="2070">
+     DATE:   Tue Feb 10 14:39:35 PST 2004 -->
+<InstallAnywhere_Deployment_Project increments="2205">
 	<!-- ** DO NOT EDIT ** Essential authorization and configuration data ** DO NOT EDIT ** -->
 	<essentialScriptInfo>
 		<versionID major="6" minor="0" revision="-1"/>
 		<editionID>54,46,48,32,83,116,97,110,100,97,114,100,32,66,117,105,108,100,32,50,50,54,50</editionID>
-		<scriptID>12,42,11,90,89,55,57,53,54,69,56,69,83,78,52,72</scriptID>
+		<scriptID>12,42,11,90,89,49,48,57,54,69,56,69,83,78,52,72</scriptID>
 		<buildID>3,13,71,76,105,110,117,120,44,32,50,46,52,46,50,48,45,50,52,46,56,44,32,105,51,56,54,59,32,74,97,118,97,32,49,46,52,46,49,95,48,49,44,32,83,117,110,32,77,105,99,114,111,115,121,115,116,101,109,115,32,73,110,99,46,44,32,104,116,116,112,58,47,47,106,97,118,97,46,115,117,110,46,99,111,109,47,59,32,101,110,44,32,85,110,107,110,111,119,110,59,32,85,84,70,45,56</buildID>
 		<!-- The authorizationID may change between project saves and builds.  This does not effect the integrity of the project, nor do changes in this value represent changes in the actual InstallAnywhere project. -->
-		<authorizationID>1,0,0,-16,83,-102,-128,-32,80,112,116,103,88,98,113,97,113,81,67,49,74,65,70,70,85,71,64,69,66,69,48,79,87,5,2,12,11,38,115,10,0,0,0</authorizationID>
+		<authorizationID>1,0,0,-16,-93,-102,-48,-96,80,112,116,103,88,98,113,97,113,81,67,49,74,65,70,70,85,71,64,69,66,69,48,79,87,5,2,1,5,37,113,10,0,0,0</authorizationID>
 	</essentialScriptInfo>
-	<installationObjects uniqueObjects="118">
+	<installationObjects uniqueObjects="133">
 		<object class="com.zerog.ia.installer.Installer" objectID="4a0be70e9aea">
 			<property name="wizardME">
 				<object class="com.zerog.ia.installer.actions.MakeExecutable" objectID="4aa1a7c49b0f">
 					<property name="unixPermissions">
-						<string><![CDATA[777]]></string>
+						<string><![CDATA[755]]></string>
 					</property>
 					<property name="overrideUnixPermissions">
-						<boolean>false</boolean>
+						<boolean>true</boolean>
 					</property>
 					<property name="guiLauncher">
-						<boolean>true</boolean>
+						<boolean>false</boolean>
 					</property>
 					<property name="propertyList">
 						<object class="java.util.Vector">
 							<method name="addElement">
-								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="4aa30e099bab">
+								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4ed9dd2b60e">
 									<property name="propertyValue">
 										<string><![CDATA[console]]></string>
 									</property>
@@ -36,8 +36,8 @@
 										<string><![CDATA[lax.stderr.redirect]]></string>
 									</property>
 									<property name="propertyComment">
-										<string><![CDATA[leave blank for no input, "console" to read from the console window,
-and any path to a file to read from that file]]></string>
+										<string><![CDATA[leave blank for no output, "console" to send to a console window,
+and any path to a file to save to the file]]></string>
 									</property>
 								</object>
 							</method>
@@ -55,9 +55,9 @@ and any path to a file to read from that file]]></string>
 								</object>
 							</method>
 							<method name="addElement">
-								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="4aa1a7c59b11">
+								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4ed9dd2b60d">
 									<property name="propertyValue">
-										<string><![CDATA[]]></string>
+										<string><![CDATA[console]]></string>
 									</property>
 									<property name="propertyName">
 										<string><![CDATA[lax.stdin.redirect]]></string>
@@ -166,7 +166,7 @@ it will search for ones in this list]]></string>
 								</object>
 							</method>
 							<method name="addElement">
-								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="671692d8a070">
+								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4d18eb0b2cf">
 									<property name="propertyValue">
 										<string><![CDATA[org.systemsbiology.chem.sbw.SimulationModule]]></string>
 									</property>
@@ -179,7 +179,7 @@ it will search for ones in this list]]></string>
 								</object>
 							</method>
 							<method name="addElement">
-								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="4aa30e0a9bb0">
+								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4ed9dd3b60d">
 									<property name="propertyValue">
 										<string><![CDATA[console]]></string>
 									</property>
@@ -187,8 +187,8 @@ it will search for ones in this list]]></string>
 										<string><![CDATA[lax.stdout.redirect]]></string>
 									</property>
 									<property name="propertyComment">
-										<string><![CDATA[leave blank for no input, "console" to read from the console window,
-and any path to a file to read from that file]]></string>
+										<string><![CDATA[leave blank for no output, "console" to send to a console window,
+and any path to a file to save to the file]]></string>
 									</property>
 								</object>
 							</method>
@@ -275,7 +275,7 @@ and any path to a file to read from that file]]></string>
 								<string><![CDATA[ISBJava.jar]]></string>
 							</property>
 							<property name="fileSize">
-								<long>283627</long>
+								<long>305053</long>
 							</property>
 							<property name="macBinary">
 								<boolean>false</boolean>
@@ -430,7 +430,7 @@ and any path to a file to read from that file]]></string>
 								<string><![CDATA[AppResources.jar]]></string>
 							</property>
 							<property name="fileSize">
-								<long>1143369</long>
+								<long>1225404</long>
 							</property>
 							<property name="macBinary">
 								<boolean>false</boolean>
@@ -492,7 +492,7 @@ and any path to a file to read from that file]]></string>
 								<string><![CDATA[odeToJava.jar]]></string>
 							</property>
 							<property name="fileSize">
-								<long>67304</long>
+								<long>67919</long>
 							</property>
 							<property name="macBinary">
 								<boolean>false</boolean>
@@ -849,6 +849,16 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 							</property>
 						</object>
 					</method>
+					<method name="addElement">
+						<object class="com.zerog.ia.installer.actions.EditVariableTable" objectID="b4d4b881b31c">
+							<property name="name">
+								<string><![CDATA[$JAVA_MAX_HEAP_SIZE_BYTES$]]></string>
+							</property>
+							<property name="value">
+								<string><![CDATA[@APPJAVAMAXHEAPSIZEBYTES@]]></string>
+							</property>
+						</object>
+					</method>
 				</object>
 			</property>
 			<property name="postInstallActions">
@@ -1080,7 +1090,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 				<object class="java.util.Properties">
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.project.save.last.date]]></string>
-						<string><![CDATA[January 26, 2004 11:09:58 AM PST]]></string>
+						<string><![CDATA[February 10, 2004 2:39:35 PM PST]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.merge]]></string>
@@ -1124,7 +1134,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.project.build.last.date]]></string>
-						<string><![CDATA[January 26, 2004 10:58:34 AM PST]]></string>
+						<string><![CDATA[February 10, 2004 1:57:08 PM PST]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.stderr.redirect]]></string>
@@ -1359,7 +1369,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<int>4</int>
 					</property>
 					<property name="productVersionRevision">
-						<int>3</int>
+						<int>4</int>
 					</property>
 					<property name="productVersionSubRevision">
 						<int>0</int>
@@ -1824,10 +1834,10 @@ and any path to a file to read from that file]]></string>
 										</object>
 										<object class="com.zerog.ia.installer.actions.MakeExecutable" objectID="4aa15cd39b05">
 											<property name="unixPermissions">
-												<string><![CDATA[777]]></string>
+												<string><![CDATA[755]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="guiLauncher">
 												<boolean>true</boolean>
@@ -1945,9 +1955,9 @@ Can be separated by colons (Mac OS/Unix) or semicolons (Windows)]]></string>
 														</object>
 													</method>
 													<method name="addElement">
-														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="6db70ad99b03">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4e00d37b47a">
 															<property name="propertyValue">
-																<string><![CDATA[500000000]]></string>
+																<string><![CDATA[$JAVA_MAX_HEAP_SIZE_BYTES$]]></string>
 															</property>
 															<property name="propertyName">
 																<string><![CDATA[lax.nl.java.option.java.heap.size.max]]></string>
@@ -1986,7 +1996,7 @@ it will search for ones in this list]]></string>
 														</object>
 													</method>
 													<method name="addElement">
-														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="671693aaa07c">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4d18f94b2d9">
 															<property name="propertyValue">
 																<string><![CDATA[org.systemsbiology.chem.app.MainApp]]></string>
 															</property>
@@ -2274,7 +2284,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[ISBJava-src.tar.gz]]></string>
 											</property>
 											<property name="fileSize">
-												<long>130508</long>
+												<long>143568</long>
 											</property>
 											<property name="macBinary">
 												<boolean>false</boolean>
@@ -2333,64 +2343,6 @@ and any path to a file to read from that file]]></string>
 											</property>
 											<property name="fileSize">
 												<long>662</long>
-											</property>
-											<property name="macBinary">
-												<boolean>false</boolean>
-											</property>
-											<property name="targetCheckKind">
-												<int>0</int>
-											</property>
-										</object>
-										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="6e0f747f9afe">
-											<property name="unixPermissions">
-												<string><![CDATA[664]]></string>
-											</property>
-											<property name="sourceName">
-												<string><![CDATA[runmodel.bat]]></string>
-											</property>
-											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
-											</property>
-											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/bin/]]></string>
-											</property>
-											<property name="shouldUninstall">
-												<boolean>true</boolean>
-											</property>
-											<property name="destinationName">
-												<string><![CDATA[runmodel.bat]]></string>
-											</property>
-											<property name="fileSize">
-												<long>349</long>
-											</property>
-											<property name="macBinary">
-												<boolean>false</boolean>
-											</property>
-											<property name="targetCheckKind">
-												<int>0</int>
-											</property>
-										</object>
-										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="6e0f74809afe">
-											<property name="unixPermissions">
-												<string><![CDATA[664]]></string>
-											</property>
-											<property name="sourceName">
-												<string><![CDATA[runmodel.sh]]></string>
-											</property>
-											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
-											</property>
-											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/bin/]]></string>
-											</property>
-											<property name="shouldUninstall">
-												<boolean>true</boolean>
-											</property>
-											<property name="destinationName">
-												<string><![CDATA[runmodel.sh]]></string>
-											</property>
-											<property name="fileSize">
-												<long>338</long>
 											</property>
 											<property name="macBinary">
 												<boolean>false</boolean>
@@ -2505,7 +2457,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[VersionHistory.html]]></string>
 											</property>
 											<property name="fileSize">
-												<long>14574</long>
+												<long>22014</long>
 											</property>
 											<property name="macBinary">
 												<boolean>false</boolean>
@@ -2540,35 +2492,6 @@ and any path to a file to read from that file]]></string>
 												<object refID="59d91c699afd"/>
 											</visualChildren>
 										</object>
-										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="6e0fbc949afe">
-											<property name="unixPermissions">
-												<string><![CDATA[775]]></string>
-											</property>
-											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
-											</property>
-											<property name="shouldUninstall">
-												<boolean>true</boolean>
-											</property>
-											<property name="destinationName">
-												<string><![CDATA[bin]]></string>
-											</property>
-											<property name="removeRecursively">
-												<boolean>false</boolean>
-											</property>
-											<property name="totalSize">
-												<long>0</long>
-											</property>
-											<property name="macBinary">
-												<boolean>false</boolean>
-											</property>
-											<visualChildren>
-												<object refID="6e0f747f9afe"/>
-												<object refID="6e0f74809afe"/>
-												<object refID="4aa15cd39b05"/>
-												<object refID="4aa1a7c49b0f"/>
-											</visualChildren>
-										</object>
 										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="eed304219377">
 											<property name="unixPermissions">
 												<string><![CDATA[664]]></string>
@@ -2589,7 +2512,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[UserManual.pdf]]></string>
 											</property>
 											<property name="fileSize">
-												<long>408804</long>
+												<long>416641</long>
 											</property>
 											<property name="macBinary">
 												<boolean>false</boolean>
@@ -2665,6 +2588,279 @@ and any path to a file to read from that file]]></string>
 												<object refID="ecac2ae19abd"/>
 												<object refID="520850a99abe"/>
 												<object refID="705e00c59ac3"/>
+											</visualChildren>
+										</object>
+										<object class="com.zerog.ia.installer.actions.MakeExecutable" objectID="b4e95859b564">
+											<property name="unixPermissions">
+												<string><![CDATA[755]]></string>
+											</property>
+											<property name="overrideUnixPermissions">
+												<boolean>true</boolean>
+											</property>
+											<property name="guiLauncher">
+												<boolean>false</boolean>
+											</property>
+											<property name="propertyList">
+												<object class="java.util.Vector">
+													<method name="addElement">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4ed220db5fe">
+															<property name="propertyValue">
+																<string><![CDATA[console]]></string>
+															</property>
+															<property name="propertyName">
+																<string><![CDATA[lax.stderr.redirect]]></string>
+															</property>
+															<property name="propertyComment">
+																<string><![CDATA[leave blank for no output, "console" to send to a console window,
+and any path to a file to save to the file]]></string>
+															</property>
+														</object>
+													</method>
+													<method name="addElement">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4e9b4f6b568">
+															<property name="propertyValue">
+																<string><![CDATA[2750]]></string>
+															</property>
+															<property name="propertyName">
+																<string><![CDATA[lax.nl.win32.microsoftvm.min.version]]></string>
+															</property>
+															<property name="propertyComment">
+																<string><![CDATA[The minimum version of Microsoft's VM this application will run against]]></string>
+															</property>
+														</object>
+													</method>
+													<method name="addElement">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4ed220db5fd">
+															<property name="propertyValue">
+																<string><![CDATA[console]]></string>
+															</property>
+															<property name="propertyName">
+																<string><![CDATA[lax.stdin.redirect]]></string>
+															</property>
+															<property name="propertyComment">
+																<string><![CDATA[leave blank for no input, "console" to read from the console window,
+and any path to a file to read from that file]]></string>
+															</property>
+														</object>
+													</method>
+													<method name="addElement">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4e9b4f5b564">
+															<property name="propertyValue">
+																<string><![CDATA[.]]></string>
+															</property>
+															<property name="propertyName">
+																<string><![CDATA[lax.user.dir]]></string>
+															</property>
+															<property name="propertyComment">
+																<string><![CDATA[left blank, this property will cause the native launcher to not
+alter the platform default behavior for setting the user dir.
+To override this you may set this property to a relative or absolute path.
+Relative paths are relative to the launcher.]]></string>
+															</property>
+														</object>
+													</method>
+													<method name="addElement">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4e9b4f4b564">
+															<property name="propertyValue">
+																<string><![CDATA[main]]></string>
+															</property>
+															<property name="propertyName">
+																<string><![CDATA[lax.main.method]]></string>
+															</property>
+															<property name="propertyComment">
+																<string><![CDATA[the method in the main class that will be invoked]]></string>
+															</property>
+														</object>
+													</method>
+													<method name="addElement">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4e9b4f6b564">
+															<property name="propertyValue">
+																<string><![CDATA[$USER_INSTALL_DIR$]]></string>
+															</property>
+															<property name="propertyName">
+																<string><![CDATA[lax.root.install.dir]]></string>
+															</property>
+															<property name="propertyComment">
+																<string><![CDATA[path to the installdir magic folder]]></string>
+															</property>
+														</object>
+													</method>
+													<method name="addElement">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4e9b4f5b565">
+															<property name="propertyValue">
+																<string><![CDATA[$CMD_LINE_ARGUMENTS$]]></string>
+															</property>
+															<property name="propertyName">
+																<string><![CDATA[lax.command.line.args]]></string>
+															</property>
+															<property name="propertyComment">
+																<string><![CDATA[what will be passed to the main method -- be sure to quote arguments with spaces in them]]></string>
+															</property>
+														</object>
+													</method>
+													<method name="addElement">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4e9b4f6b567">
+															<property name="propertyValue">
+																<string><![CDATA[$IA_CLASSPATH$]]></string>
+															</property>
+															<property name="propertyName">
+																<string><![CDATA[lax.class.path]]></string>
+															</property>
+															<property name="propertyComment">
+																<string><![CDATA[the Java classpath necessary to run this application
+Can be separated by colons (Mac OS/Unix) or semicolons (Windows)]]></string>
+															</property>
+														</object>
+													</method>
+													<method name="addElement">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4eb37a9b58d">
+															<property name="propertyValue">
+																<string><![CDATA[$JAVA_MAX_HEAP_SIZE_BYTES$]]></string>
+															</property>
+															<property name="propertyName">
+																<string><![CDATA[lax.nl.java.option.java.heap.size.max]]></string>
+															</property>
+														</object>
+													</method>
+													<method name="addElement">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4e9b4f5b567">
+															<property name="propertyValue">
+																<string><![CDATA[J2 J1 MSJ MRJ]]></string>
+															</property>
+															<property name="propertyName">
+																<string><![CDATA[lax.nl.valid.vm.list]]></string>
+															</property>
+															<property name="propertyComment">
+																<string><![CDATA[a string containing one or more of [ ALL JDK JRE J1 J2 JRE_J1 JDK_J1 JRE_J2 JDK_J2 MSJ MRJ ]
+ delimited by spaces or commas.  If the native launcher cannot find the current vm,
+it will search for ones in this list]]></string>
+															</property>
+														</object>
+													</method>
+													<method name="addElement">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4e9b4f5b568">
+															<property name="propertyValue">
+																<string><![CDATA[5.5]]></string>
+															</property>
+															<property name="propertyName">
+																<string><![CDATA[lax.version]]></string>
+															</property>
+															<property name="propertyComment">
+																<string><![CDATA[version of LaunchAnywhere that created this properties file]]></string>
+															</property>
+														</object>
+													</method>
+													<method name="addElement">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4e9b4f3b564">
+															<property name="propertyValue">
+																<string><![CDATA[org.systemsbiology.chem.app.SimulationLauncherCommandLine]]></string>
+															</property>
+															<property name="propertyName">
+																<string><![CDATA[lax.main.class]]></string>
+															</property>
+															<property name="propertyComment">
+																<string><![CDATA[the class that contains the main method for the application]]></string>
+															</property>
+														</object>
+													</method>
+													<method name="addElement">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="b4ed220eb5fd">
+															<property name="propertyValue">
+																<string><![CDATA[console]]></string>
+															</property>
+															<property name="propertyName">
+																<string><![CDATA[lax.stdout.redirect]]></string>
+															</property>
+															<property name="propertyComment">
+																<string><![CDATA[leave blank for no output, "console" to send to a console window,
+and any path to a file to save to the file]]></string>
+															</property>
+														</object>
+													</method>
+												</object>
+											</property>
+											<property name="shouldUninstall">
+												<boolean>true</boolean>
+											</property>
+											<property name="destinationName">
+												<string><![CDATA[runmodel]]></string>
+											</property>
+											<property name="executableIcon">
+												<object class="com.zerog.ia.installer.util.BindingWin32" objectID="b4eb6d38b58f">
+													<property name="smallIconName">
+														<string><![CDATA[appLogoIcon.gif]]></string>
+													</property>
+													<property name="largeIconName">
+														<string><![CDATA[appLogoIcon.gif]]></string>
+													</property>
+													<property name="smallIconPath">
+														<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
+													</property>
+													<property name="largeIconPath">
+														<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
+													</property>
+												</object>
+											</property>
+											<property name="mainClass">
+												<string><![CDATA[org.systemsbiology.chem.app.SimulationLauncherCommandLine]]></string>
+											</property>
+										</object>
+										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="b4f9950db71c">
+											<property name="unixPermissions">
+												<string><![CDATA[755]]></string>
+											</property>
+											<property name="sourceName">
+												<string><![CDATA[runmodel.sh]]></string>
+											</property>
+											<property name="overrideUnixPermissions">
+												<boolean>true</boolean>
+											</property>
+											<property name="sourcePath">
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/bin/]]></string>
+											</property>
+											<property name="shouldUninstall">
+												<boolean>true</boolean>
+											</property>
+											<property name="destinationName">
+												<string><![CDATA[runmodel.sh]]></string>
+											</property>
+											<property name="fileSize">
+												<long>-1</long>
+											</property>
+											<property name="macBinary">
+												<boolean>false</boolean>
+											</property>
+											<property name="targetCheckKind">
+												<int>0</int>
+											</property>
+										</object>
+										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="6e0fbc949afe">
+											<property name="unixPermissions">
+												<string><![CDATA[775]]></string>
+											</property>
+											<property name="overrideUnixPermissions">
+												<boolean>false</boolean>
+											</property>
+											<property name="shouldUninstall">
+												<boolean>true</boolean>
+											</property>
+											<property name="destinationName">
+												<string><![CDATA[bin]]></string>
+											</property>
+											<property name="removeRecursively">
+												<boolean>false</boolean>
+											</property>
+											<property name="totalSize">
+												<long>0</long>
+											</property>
+											<property name="macBinary">
+												<boolean>false</boolean>
+											</property>
+											<visualChildren>
+												<object refID="b4e95859b564"/>
+												<object refID="b4f9950db71c"/>
+												<object refID="4aa15cd39b05"/>
+												<object refID="4aa1a7c49b0f"/>
 											</visualChildren>
 										</object>
 									</installChildren>
