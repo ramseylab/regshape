@@ -42,6 +42,33 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td>1.1.1</td>
+<td>2004/01/05</td>
+<td>
+<ul>
+<li>Modified the delayed reaction solver so that the internal running
+window average is recalculated from scratch, each time a minimum
+number of points (default 4000) has been inserted into the queue.
+</li>
+<li>Fixed a file-loading bug pertaining to the case where the model 
+builder fails to construct the model from the model definition file.</li>
+<li>Modified the simulation launcher to dump a stack backtrace to the 
+terminal window if a low-level error condition is detected.</li>
+<li>Generalized the multi-step reaction solver into a &quot;delayed&quot;
+reaction solver, to permit phenomenological
+modelling of reaction processes with an intrinsic time delay.</li>
+<li>Changed the command language model builder to add language extensions
+for specifying a multistep or delayed reaction.</li>
+<li>Fixed bugs in the main editor window and the plot window,
+where window resizing was not working correctly on the Windows platform.</li>
+</ul>
+</td>
+<td>
+1.1.1
+</td>
+</tr>
+
+<tr valign="top">
 <td>1.1.0</td>
 <td>2003/12/22</td>
 <td>
