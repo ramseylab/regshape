@@ -9,7 +9,7 @@ CLASSPATH=${INSTALL_DIR}/lib/ISBJava.jar:\
 ${INSTALL_DIR}/lib/SBWCore.jar:\
 ${INSTALL_DIR}/lib/jfreechart.jar:\
 ${INSTALL_DIR}/lib/jcommon.jar:\
-${INSTALL_DIR}/lib/SBMLValidate.jar:\
+${INSTALL_DIR}/lib/SBMLReader.jar:\
 ${INSTALL_DIR}/lib/odeToJava.jar:\
 ${INSTALL_DIR}/lib/Jama.jar
 
