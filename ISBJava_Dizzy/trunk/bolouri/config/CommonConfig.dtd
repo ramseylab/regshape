@@ -3,7 +3,7 @@
 <!ENTITY mainPublicURL        "http://www.systemsbiology.org">
 
 <!ENTITY mainGroup            "Bolouri Group">
-<!ENTITY mainGroupURL         "&webBaseURL;/Resources.html">
+<!ENTITY mainGroupURL         "&mainPublicURL;/Default.aspx?pagename=bolourilab">
 <!ENTITY mainAffiliation      "Institute for Systems Biology">
 <!ENTITY mainGroupEmailSafe   "bolourilab at systemsbiology.org">
 
