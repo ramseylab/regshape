@@ -48,6 +48,8 @@
 **
 ** Contributor(s):
 **
+** Contributor(s):
+**
 ** Modified by Stephen Ramsey to remove dependence on Xerces library, 
 ** 2003/08/28
 **
@@ -78,6 +80,8 @@ import uParameterList.*;
 import uReaction.*;
 import uReactant.*;
 import uOutputNetwork.*;
+import uRuleList.*;
+import uRule.*;
 
 // TJXML is a XML decorator class for the NOM object class
 // The NOM object class defines the interface to an internal representation
@@ -85,6 +89,15 @@ import uOutputNetwork.*;
 // functionality to the NOM object
 
 class TJXML implements ErrorHandler {
+
+    private static final String NODE_TAG_SPECIES_RULE = "speciesConcentrationRule";
+    private static final String NODE_TAG_PARAMETER_RULE = "parameterRule";
+    private static final String NODE_TAG_COMPARTMENT_RULE = "compartmentVolumeRule";
+    private static final String ATTRIBUTE_SPECIES = "species";
+    private static final String ATTRIBUTE_PARAMETER = "name";
+    private static final String ATTRIBUTE_COMPARTMENT = "compartment";
+    private static final String ATTRIBUTE_FORMULA = "formula";
+    private static final String ATTRIBUTE_TYPE = "type";
 
     // Depending on which constructor is called, the network variable
     // can either be owned by a TJXML instance or passed to it from
@@ -233,6 +246,65 @@ class TJXML implements ErrorHandler {
        return result;
     }
 
+    void GetRuleList(TRuleList pRuleList, NodeList pNodeList) throws Exception
+    {
+        Node node;
+        for(int i = 0; i < pNodeList.getLength(); ++i)
+        {
+            node = pNodeList.item(i);
+            if(node.getNodeType() == Node.ELEMENT_NODE)
+            {
+                String ruleName = null;
+                String nodeTag = node.getNodeName();
+                TRule.Type ruleType = null;
+                String ruleScalar = GetAttribute(node, ATTRIBUTE_TYPE, null);
+                if(null != ruleScalar && ruleScalar.equals("rate"))
+                {
+                    throw new Exception("cannot process a model with a rule whose type is \"rate\"; rule name is: " + ruleName);
+                }
+
+                String ruleFormula = GetAttribute(node, ATTRIBUTE_FORMULA, null);
+                if(null == ruleFormula)
+                {
+                    throw new Exception("required attribute not found: " + ATTRIBUTE_FORMULA);
+                }
+
+                if(nodeTag.equals(NODE_TAG_SPECIES_RULE))
+                {
+                    ruleName = GetAttribute(node, ATTRIBUTE_SPECIES, null);
+                    if(null == ruleName)
+                    {
+                        throw new Exception("required attribute not found: " + ATTRIBUTE_SPECIES);
+                    }
+                    ruleType = TRule.Type.SPECIES;
+                }
+                else if(nodeTag.equals(NODE_TAG_COMPARTMENT_RULE))
+                {
+                    ruleName = GetAttribute(node, ATTRIBUTE_COMPARTMENT, null);
+                    if(null == ruleName)
+                    {
+                        throw new Exception("required attribute not found: " + ATTRIBUTE_COMPARTMENT);
+                    }
+                    ruleType = TRule.Type.COMPARTMENT;
+                }
+                else if(nodeTag.equals(NODE_TAG_PARAMETER_RULE))
+                {
+                    ruleName = GetAttribute(node, ATTRIBUTE_PARAMETER, null);
+                    if(null == ruleName)
+                    {
+                        throw new Exception("required attribute not found: " + ATTRIBUTE_PARAMETER);
+                    }
+                    ruleType = TRule.Type.PARAMETER;
+                }
+                else
+                {
+                    throw new Exception ("Syntax error: unknown tag inside listOfRules element: " + nodeTag);
+                }
+                pRuleList.add(ruleName, ruleFormula, ruleType);
+            }
+        }
+    }
+
     // ------------------------------------------------------------------------
     // Reads in the global parameter list. The names of the parameters and their
     // values are stored in the ParameterList argument.
@@ -299,7 +371,7 @@ class TJXML implements ErrorHandler {
                 {
                     Name = GetAttribute (node, "species", "");
                 }
-                
+
                 int stoich = GetStoichiometry (node);
                 Species = Network.FindMetabolite (Name);
                 if (Species != null) {
@@ -483,6 +555,14 @@ class TJXML implements ErrorHandler {
           node = doc.getElementsByTagName ("listOfParameters").item(0);
           if (node != null && node.getParentNode().getNodeName().equals("model"))
              GetGlobalParameterList (Network.GlobalParameterList, node.getChildNodes());
+
+          node = doc.getElementsByTagName("listOfRules").item(0);
+          if (node != null)
+          {
+              TRuleList ruleList = Network.RuleList;
+              GetRuleList(ruleList, node.getChildNodes());
+              // process list of rules
+          }
 
           // Read in the reaction specifications
 
