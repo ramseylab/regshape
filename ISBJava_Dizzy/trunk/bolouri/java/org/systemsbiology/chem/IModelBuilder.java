@@ -33,5 +33,11 @@ public interface IModelBuilder
 {
     public Model buildModel( InputStream pInputStream, IncludeHandler pIncludeHandler ) throws InvalidInputException, IOException;    
     public String getFileRegex();
-    public BufferedReader getBufferedReader( InputStream pInputStream ) throws InvalidInputException;
+    public String readModel( InputStream pInputStream ) throws InvalidInputException, IOException;
+    
+    /**
+     * Write the model to the specified OutputStream, using the correct
+     * character encoding.
+     */
+    public void writeModel( String pModelText, OutputStream pOutputStream ) throws InvalidInputException;
 }

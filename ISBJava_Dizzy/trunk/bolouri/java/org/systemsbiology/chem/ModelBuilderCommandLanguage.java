@@ -2262,12 +2262,35 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         return(model);
     }
 
+    public void writeModel(String pModelText, OutputStream pOutputStream)
+    {
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(pOutputStream, sCharset);
+        BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+        PrintWriter printWriter = new PrintWriter(bufferedWriter);
+        printWriter.print(pModelText);
+        printWriter.flush();
+    }
+    
     public BufferedReader getBufferedReader(InputStream pInputStream)
     {
         InputStreamReader inputStreamReader = new InputStreamReader(pInputStream, sCharset);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
         return bufferedReader;
     }
+    
+    public String readModel(InputStream pInputStream) throws IOException
+    {
+        InputStreamReader inputStreamReader = new InputStreamReader(pInputStream, sCharset);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        StringBuffer stringBuffer = new StringBuffer();
+        String line = null;
+        while(null != (line = bufferedReader.readLine()))
+        {
+            stringBuffer.append(line + "\n");
+        }
+        return stringBuffer.toString();
+    }
+    
     
     public static boolean isValidSymbol(String pSymbolName)
     {

@@ -531,7 +531,9 @@ public class EditorPane
             else
             {
                 String modelText = getEditorPaneTextArea().getText();
-                byte []bytes = modelText.getBytes();
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                modelBuilder.writeModel(modelText, outputStream);
+                byte []bytes = outputStream.toByteArray();
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
                 
                 IncludeHandler includeHandler = new IncludeHandler();
@@ -570,13 +572,26 @@ public class EditorPane
         String shortFileName = file.getName();
         try
         {
+            IModelBuilder modelBuilder = getModelBuilder();
+            if(null == modelBuilder)
+            {
+                modelBuilder = queryModelBuilder(pFileName);
+            }
+            if(null == modelBuilder)
+            {
+                JOptionPane.showMessageDialog(mMainFrame,
+                        "Your model saving has been cancelled",
+                        "Model saving cancelled",
+                        JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+               
             MainApp theApp = MainApp.getApp();
             JTextArea fileEditorTextArea = getEditorPaneTextArea();
+
             String fileContents = fileEditorTextArea.getText();
-            FileWriter fileWriter = new FileWriter(file);
-            PrintWriter printWriter = new PrintWriter(fileWriter);
-            printWriter.println(fileContents);
-            printWriter.flush();
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            modelBuilder.writeModel(fileContents, fileOutputStream);
             setBufferDirty(false);
         }
 
@@ -614,29 +629,14 @@ public class EditorPane
             else
             {
                 InputStream inputStream = new FileInputStream(file);
-                BufferedReader bufferedReader = modelBuilder.getBufferedReader(inputStream);
+                String modelText = modelBuilder.readModel(inputStream);
                 
-                StringBuffer fileContents = new StringBuffer();
-
-                String line = null;
-                while((line = bufferedReader.readLine()) != null)
-                {
-                    fileContents.append(line);
-                    fileContents.append("\n");
-                }
-
                 MainApp theApp = MainApp.getApp();
                 JTextArea fileEditorTextArea = getEditorPaneTextArea();
-                StringReader stringReader = new StringReader(fileContents.toString());
-                
                 clearEditorText();
 
-                bufferedReader = new BufferedReader(stringReader);
-                while((line = bufferedReader.readLine()) != null)
-                {
-                    fileEditorTextArea.append(line);
-                    fileEditorTextArea.append("\n");
-                }
+                String line = null;
+                fileEditorTextArea.append(modelText);
 
                 setFileNameLabel(pFileName);
                 setBufferDirty(false);

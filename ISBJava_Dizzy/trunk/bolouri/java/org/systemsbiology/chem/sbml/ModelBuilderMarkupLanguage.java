@@ -84,39 +84,72 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
         mMarkupLanguageImporter = new MarkupLanguageImporter();
     }
 
-    private String loadXMLInputAsString(InputStream pInputStream) throws InvalidInputException
+    private Document parseXML(InputSource pInputSource) throws InvalidInputException
     {
-        String retString = null;
+        Document document = null;
         try
         {
-            InputSource inputSource = new InputSource(pInputStream);
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document document = builder.parse(inputSource);
-
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();   
-            transformer.setOutputProperty("indent", "yes");
-            Properties properties = transformer.getOutputProperties();
-            DOMSource source = new DOMSource(document);
-            StringWriter stringWriter = new StringWriter();
-            StreamResult result = new StreamResult(stringWriter);
-            transformer.transform(source, result);
-            retString = stringWriter.toString();
+            document = builder.parse(pInputSource);
         }
         catch(Exception e)
         {
             throw new InvalidInputException("unable to load XML file; please check to ensure that the file has the proper encoding and is valid XML", e);
         }
+        return document;
+    }
+    
+    public String readModel(InputStream pInputStream) throws InvalidInputException
+    {
+        String retString = null;
+        InputSource inputSource = new InputSource(pInputStream);
+        Document document = parseXML(inputSource);
+        StringWriter stringWriter = null;
+        try
+        {
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();   
+            transformer.setOutputProperty("indent", "yes");
+            Properties properties = transformer.getOutputProperties();
+            DOMSource source = new DOMSource(document);
+            stringWriter = new StringWriter();
+            StreamResult result = new StreamResult(stringWriter);
+            transformer.transform(source, result);
+        }
+        catch(Exception e)
+        {
+            throw new InvalidInputException("unable to translate XML document to string");
+        }
+        retString = stringWriter.toString();
         return retString;
     }
     
-    public BufferedReader getBufferedReader(InputStream pInputStream) throws InvalidInputException
+    public void writeModel(String pOutputData, OutputStream pOutputStream) throws InvalidInputException
     {
-        String modelText = loadXMLInputAsString(pInputStream);
-        StringReader stringReader = new StringReader(modelText);
-        BufferedReader bufferedReader = new BufferedReader(stringReader);
-        return bufferedReader;
-    }
+        InputSource inputSource = new InputSource(new StringReader(pOutputData));
+        Document document = parseXML(inputSource);
+        StreamResult streamResult = new StreamResult(pOutputStream);
+        try
+        {
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();   
+            transformer.setOutputProperty("indent", "yes");
+            Properties properties = transformer.getOutputProperties();
+            DOMSource source = new DOMSource(document);
+            transformer.transform(source, streamResult);
+        }
+        catch(Exception e)
+        {
+            throw new IllegalStateException("unable to write model in XML format; error message is: " + e.getMessage());
+        }
+    }    
+    
+//    public BufferedReader getBufferedReader(InputStream pInputStream) throws InvalidInputException
+//    {
+//        String modelText = readModel(pInputStream);
+//        StringReader stringReader = new StringReader(modelText);
+//        BufferedReader bufferedReader = new BufferedReader(stringReader);
+//        return bufferedReader;
+//    }
     
     /**
      * Processes an SBML model into a {@link Model} object, and returns the model name.
@@ -126,7 +159,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
     public Model buildModel( InputStream pInputStream,
                              IncludeHandler pIncludeHandler ) throws InvalidInputException, IOException
     {
-        String modelDefinition = loadXMLInputAsString(pInputStream);
+        String modelDefinition = readModel(pInputStream);
         
         mMarkupLanguageImporter.readModelDescription(modelDefinition);
 
