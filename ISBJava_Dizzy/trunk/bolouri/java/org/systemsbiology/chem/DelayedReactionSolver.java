@@ -49,6 +49,11 @@ public class DelayedReactionSolver extends Expression
     private int mReactionIndex;
     private double mDelay;
 
+    public String toString()
+    {
+        return(mIntermedSpecies.getName());
+    }
+
     public DelayedReactionSolver(Species pReactant,
                                  Species pIntermedSpecies, 
                                  double pDelay,
@@ -240,7 +245,6 @@ public class DelayedReactionSolver extends Expression
                 lastTime += mTimeResolution;
 
                 assert (reactantValue >= 0.0) : "invalid value";
-//                System.out.println("inserting reactant value: " + reactantValue);
                 reactantHistory.insertPoint(lastTime, reactantValue);
 
                 assert (intermedSpeciesValue >= 0.0) : "invalid value";
@@ -255,11 +259,9 @@ public class DelayedReactionSolver extends Expression
             double intermedSpeciesValue = pSymbolEvaluator.getValue(mIntermedSpecies.getSymbol());
             assert (intermedSpeciesValue >= 0.0) : "invalid value";
 
-//            System.out.println("inserting reactant value: " + reactantValue);
             reactantHistory.insertPoint(pTime, reactantValue);
             intermedSpeciesHistory.insertPoint(pTime, intermedSpeciesValue);
 
-//            System.out.println("inserting point into history; time: " + pTime + "; value: " + value);
             mFirstTimePoint = false;
         }
     }
@@ -283,24 +285,22 @@ public class DelayedReactionSolver extends Expression
             
             double intermedSpeciesValue = symbolEvaluator.getValue(mIntermedSpecies.getSymbol());
 
-            if(intermedSpeciesValue >= 0.0)
+            double minTime = reactantHistory.getMinTime();
+            double peakTimeRel = mPeakTimeRel;
+            double peakTime = currentTime - peakTimeRel;
+            
+            if(intermedSpeciesValue >= 0.0 && peakTime >= minTime)
             {
-                update(symbolEvaluator, currentTime);
-
                 double averageIntermedValue = mIntermedSpeciesHistory.getAverageValue();
                 double numIntermedSpeciesExpected = (mDelay * mRate) * reactantValue;
         
-                double minTime = reactantHistory.getMinTime();
-                double peakTimeRel = mPeakTimeRel;
-                double peakTime = currentTime - peakTimeRel;
-            
                 if(intermedSpeciesValue > 0.0 &&
-                   intermedSpeciesValue > numIntermedSpeciesExpected && peakTime >= minTime)
+                   intermedSpeciesValue > numIntermedSpeciesExpected)
                 {
                     double rate = mRate;
                     int peakIndex = (int) Math.floor( (peakTime - minTime)/mTimeResolution );
                     double peakValue = reactantHistory.getValue(peakIndex);
-                    
+
                     if(peakValue > 0.0)
                     {
                         prodRate = rate * peakValue;
@@ -336,8 +336,6 @@ public class DelayedReactionSolver extends Expression
         return(prodRate);
     }
 
-
-
     // keeping this around for historical purposes
     private static final double computeIntegral(SlidingWindowTimeSeriesQueue history,
                                                 double h,
@@ -362,7 +360,6 @@ public class DelayedReactionSolver extends Expression
                                               numStepsCorrected,
                                               currentTime);
 
-//                System.out.println("evaluating integrand; time index: " + ctr + "; value: " + value);
             if(ctr == 0 || ctr == numTimePoints - 1)
             {
                 prodRate += value/3.0;
