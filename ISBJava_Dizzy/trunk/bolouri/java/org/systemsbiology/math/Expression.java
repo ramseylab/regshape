@@ -159,6 +159,9 @@ public class Expression implements Cloneable
     private static final String TOKEN_DELIMITERS = " *+-/^()";
     private static final String TOKEN_RESERVED = "!@#$[]|&><{},=";
 
+    public static final Expression ZERO = new Expression("0.0");
+    public static final Expression ONE = new Expression("1.0");
+
     /*========================================*
      * inner class
      *========================================*/
@@ -168,7 +171,7 @@ public class Expression implements Cloneable
         public String printSymbol(Symbol pSymbol) throws DataNotFoundException;
     }
 
-    static class TokenCode
+    static final class TokenCode
     {
         private final String mName;
         private TokenCode(String pName)
@@ -193,10 +196,10 @@ public class Expression implements Cloneable
         public static final TokenCode EXPRESSION = new TokenCode("expression");
     }
 
-    static class ElementCode
+    static final class ElementCode
     {
         private final String mName;
-        private static HashMap mFunctionsMap;
+        private final static HashMap mFunctionsMap;
         public final int mIntCode;
         public final int mNumFunctionArgs;
 
@@ -426,16 +429,11 @@ public class Expression implements Cloneable
      *
      * For a list of element codes, refer to the {@link Expression} class.
      */
-    static class Element implements Cloneable
+    static final class Element implements Cloneable
     {
         protected static final Element ONE = new Element(1.0);
         protected static final Element TWO = new Element(2.0);
         
-        public Element()
-        {
-            // do nothing
-        }
-
         public Element(ElementCode pCode)
         {
             mCode = pCode;
@@ -455,7 +453,7 @@ public class Expression implements Cloneable
          * never take the value of <code>ElementCode.NONE = 0</code>, which
          * is reseved for an unused element field.
          */
-        public ElementCode mCode;
+        public final ElementCode mCode;
 
         /**
          * For a binary or unary operation element, this field is a
@@ -572,8 +570,7 @@ public class Expression implements Cloneable
 
         public Object clone()
         {
-            Element newElement = new Element();
-            newElement.mCode = mCode;
+            Element newElement = new Element(mCode);
 
             if(null != mFirstOperand)
             {
@@ -660,11 +657,19 @@ public class Expression implements Cloneable
     /*========================================*
      * constructors
      *========================================*/
-    public Expression()
+    protected Expression()
     {
         initialize();
     }
     
+    public Expression(double pValue) 
+    {
+        initialize();
+        Element rootElement = new Element(ElementCode.NUMBER);
+        rootElement.mNumericValue = pValue;
+        setRootElement(rootElement);
+    }
+
     public Expression(String pExpression) throws IllegalArgumentException
     {
         initialize();
@@ -674,16 +679,14 @@ public class Expression implements Cloneable
     /*========================================*
      * private methods
      *========================================*/
-    private SymbolEvaluator getSymbolEvaluator(HashMap pSymbolMap)
+    private SymbolEvaluator getSymbolEvaluator(HashMap pSymbolsMap)
     {
         if(null == mSymbolEvaluator)
         {
-            mSymbolEvaluator = new SymbolEvaluatorHashMap(pSymbolMap);
+            mSymbolEvaluator = new SymbolEvaluatorHashMap();
         }
-        else
-        {
-            mSymbolEvaluator.setSymbolMap(pSymbolMap);
-        }
+        mSymbolEvaluator.setSymbolsMap(pSymbolsMap);
+
         return(mSymbolEvaluator);
     }
 
@@ -824,7 +827,7 @@ public class Expression implements Cloneable
            tokCode != TokenCode.SYMBOL && 
            tokCode != TokenCode.NUMBER)
         {
-            throw new IllegalArgumentException("called tokToElem with a token that is neither a symbol nor an expression; code is: " + tokCode);
+            throw new IllegalArgumentException("expected a sub-expression, but instead found unexpected token: " + tokCode);
         }
         Element retVal;
         if(tokCode == TokenCode.EXPRESSION)
@@ -833,15 +836,14 @@ public class Expression implements Cloneable
         }
         else
         {
-            retVal = new Element();
             if(tokCode == TokenCode.NUMBER)
             {
-                retVal.mCode = ElementCode.NUMBER;
+                retVal = new Element(ElementCode.NUMBER);
                 retVal.mNumericValue = pToken.mNumericValue;
             }
             else
             {
-                retVal.mCode = ElementCode.SYMBOL;
+                retVal = new Element(ElementCode.SYMBOL);
                 retVal.mSymbol = new Symbol(pToken.mSymbolName);
             }
         }
@@ -873,16 +875,12 @@ public class Expression implements Cloneable
                     Token nextTok = (Token) iter.next();
                     if(nextTok.mCode == TokenCode.EXPRESSION)
                     {
-                        Element functionCallElement = new Element();
-                        functionCallElement.mFirstOperand = nextTok.mParsedExpression;
-                        if(null != elementCodeFunction)
-                        {
-                            functionCallElement.mCode = elementCodeFunction;
-                        }
-                        else
+                        if(null == elementCodeFunction)
                         {
                             throw new IllegalArgumentException("unknown symbol used as function name: " + symbolName);
                         }
+                        Element functionCallElement = new Element(elementCodeFunction);
+                        functionCallElement.mFirstOperand = nextTok.mParsedExpression;
                         int numArgs = elementCodeFunction.mNumFunctionArgs;
                         if(numArgs == 0)
                         {
@@ -1069,10 +1067,21 @@ public class Expression implements Cloneable
 
                     Element operand = convertTokenToElement(nextTok);
 
-                    Element opElement = new Element();
+                    Element opElement = null;
                     ElementCode elementCode = (ElementCode) pTokenCodeMap.get(tokenCode);
-                    opElement.mCode = elementCode;
-                    opElement.mFirstOperand = operand;
+
+                    // check for negative number
+                    if(! elementCode.equals(ElementCode.NEG) || ! operand.mCode.equals(ElementCode.NUMBER))
+                    {
+                        opElement = new Element(elementCode);
+                        opElement.mFirstOperand = operand;
+                    }
+                    else
+                    {
+                        opElement = new Element(ElementCode.NUMBER);
+                        opElement.mNumericValue = -1.0 * operand.mNumericValue;
+                    }
+
 
                     iter.previous();
                     iter.remove();
@@ -1116,9 +1125,8 @@ public class Expression implements Cloneable
                 Token nextTok = (Token) iter.next();
                 Element op1 = convertTokenToElement(lastTok);
                 Element op2 = convertTokenToElement(nextTok);
-                Element product = new Element();
                 ElementCode elementCode = (ElementCode) pTokenCodeMap.get(tokenCode);
-                product.mCode = elementCode;
+                Element product = new Element(elementCode);
                 product.mFirstOperand = op1;
                 product.mSecondOperand = op2;
                 iter.remove();
@@ -1429,9 +1437,9 @@ public class Expression implements Cloneable
         setRootElement(parseExpression(pExpressionString));
     }
 
-    public double computeValue(HashMap pSymbolMap) throws DataNotFoundException, IllegalStateException
+    public double computeValue(HashMap pSymbolsMap) throws DataNotFoundException, IllegalStateException
     {
-        SymbolEvaluator symbolEvaluator = getSymbolEvaluator(pSymbolMap);
+        SymbolEvaluator symbolEvaluator = getSymbolEvaluator(pSymbolsMap);
         return(computeValue(symbolEvaluator));
     }
 
@@ -1475,9 +1483,9 @@ public class Expression implements Cloneable
         return(newExpression);
     }
 
-    private Element computePartialDerivative(Element pElement, Symbol pSymbol)
+    private Element computePartialDerivative(Element pElement, Symbol pSymbol, SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
     {
-        Element retElement = new Element();
+        Element retElement = null;
         ElementCode code = pElement.mCode;
         int intCode = code.mIntCode;
 
@@ -1487,7 +1495,7 @@ public class Expression implements Cloneable
         boolean firstOperandDerivUnity = false;
         if(null != firstOperand)
         {
-            firstOperandDerivExpression = computePartialDerivative(firstOperand, pSymbol);
+            firstOperandDerivExpression = computePartialDerivative(firstOperand, pSymbol, pSymbolEvaluator);
             ElementCode firstOperandElementCode = firstOperand.mCode;
             if(firstOperandDerivExpression.mCode.equals(ElementCode.NUMBER))
             {
@@ -1509,7 +1517,7 @@ public class Expression implements Cloneable
         boolean secondOperandDerivUnity = false;
         if(null != secondOperand)
         {
-            secondOperandDerivExpression = computePartialDerivative(secondOperand, pSymbol);
+            secondOperandDerivExpression = computePartialDerivative(secondOperand, pSymbol, pSymbolEvaluator);
             ElementCode secondOperandElementCode = secondOperand.mCode;
             if(secondOperandDerivExpression.mCode.equals(ElementCode.NUMBER))
             {
@@ -1528,19 +1536,35 @@ public class Expression implements Cloneable
         switch(intCode)
         {
             case ElementCode.ELEMENT_CODE_NUMBER:
-                retElement.mCode = ElementCode.NUMBER;
+                // partial derivative of a simple number with respect to a symbol is always zero
+                retElement = new Element(ElementCode.NUMBER);
                 retElement.mNumericValue = 0.0;
                 break;
                 
             case ElementCode.ELEMENT_CODE_SYMBOL:
-                retElement.mCode = ElementCode.NUMBER;
                 Symbol symbol = pElement.mSymbol;
-                double derivValue = 0.0;
-                if(symbol.equals(pSymbol))
+                if(symbol.getName().equals(pSymbol.getName()))
                 {
-                    derivValue = 1.0;
+                    // partial derivative of a symbol with respect to itself, is unity
+                    retElement = new Element(ElementCode.NUMBER);
+                    retElement.mNumericValue = 1.0;
                 }
-                retElement.mNumericValue = derivValue;
+                else
+                {
+                    Expression symbolExpression = pSymbolEvaluator.getExpressionValue(symbol);
+                    if(null != symbolExpression)
+                    {
+                        // in this case, the symbol within the expression being differentiated is itself an expression
+                        Expression derivExpression = symbolExpression.computePartialDerivative(pSymbol, pSymbolEvaluator);
+                        retElement = derivExpression.mRootElement;
+                    }
+                    else
+                    {
+                        // in this case, the symbol within the expression being differentiated is a simple number
+                        retElement = new Element(ElementCode.NUMBER);
+                        retElement.mNumericValue = 0.0;
+                    }
+                }
                 break;
 
             case ElementCode.ELEMENT_CODE_NONE:
@@ -1564,7 +1588,7 @@ public class Expression implements Cloneable
             case ElementCode.ELEMENT_CODE_ACOS:
                 if(! firstOperandDerivZero)
                 {
-                    retElement.mCode = ElementCode.NEG;
+                    retElement = new Element(ElementCode.NEG);
 
                     Element ratio = new Element(ElementCode.DIV);
                     retElement.mFirstOperand = ratio;
@@ -1594,7 +1618,7 @@ public class Expression implements Cloneable
             case ElementCode.ELEMENT_CODE_ASIN:
                 if(! firstOperandDerivZero)
                 {
-                    retElement.mCode = ElementCode.DIV;
+                    retElement = new Element(ElementCode.DIV);
 
                     retElement.mFirstOperand = firstOperandDerivExpression;
 
@@ -1621,18 +1645,16 @@ public class Expression implements Cloneable
             case ElementCode.ELEMENT_CODE_ATAN:
                 if(! firstOperandDerivZero)
                 {
-                    retElement.mCode = ElementCode.DIV;
+                    retElement = new Element(ElementCode.DIV);
 
                     retElement.mFirstOperand = firstOperandDerivExpression;
                     
-                    Element onePlusXSquared = new Element();
+                    Element onePlusXSquared = new Element(ElementCode.ADD);
                     retElement.mSecondOperand = onePlusXSquared;
-                    onePlusXSquared.mCode = ElementCode.ADD;
                                        
                     onePlusXSquared.mFirstOperand = Element.ONE;
                     
-                    Element xSquared = new Element();
-                    xSquared.mCode = ElementCode.POW;
+                    Element xSquared = new Element(ElementCode.POW);
                     xSquared.mFirstOperand = firstOperand;
                     xSquared.mSecondOperand = Element.TWO;
                     
@@ -1649,11 +1671,10 @@ public class Expression implements Cloneable
             case ElementCode.ELEMENT_CODE_SQRT:
                 if(! firstOperandDerivZero)
                 {
-                    retElement.mCode = ElementCode.DIV;
+                    retElement = new Element(ElementCode.DIV);
                     
                     retElement.mFirstOperand = firstOperandDerivExpression;
-                    Element twoSqrt = new Element();
-                    twoSqrt.mCode = ElementCode.MULT;
+                    Element twoSqrt = new Element(ElementCode.MULT);
                     twoSqrt.mFirstOperand = Element.TWO;
                     twoSqrt.mSecondOperand = pElement;
                     retElement.mSecondOperand = twoSqrt;
@@ -1668,7 +1689,7 @@ public class Expression implements Cloneable
             case ElementCode.ELEMENT_CODE_LOG:
                 if(! firstOperandDerivZero)
                 {
-                    retElement.mCode = ElementCode.DIV;
+                    retElement = new Element(ElementCode.DIV);
                     retElement.mFirstOperand = firstOperandDerivExpression;
                     retElement.mSecondOperand = firstOperand;
                 }
@@ -1683,24 +1704,19 @@ public class Expression implements Cloneable
                 {
                     if(! secondOperandDerivZero)
                     {
-                        retElement.mCode = ElementCode.MULT;
-                        Element sum = new Element();
+                        retElement = new Element(ElementCode.MULT);
+                        Element sum = new Element(ElementCode.ADD);
                         retElement.mFirstOperand = sum;
-                        sum.mCode = ElementCode.ADD;
 
-
-                        Element xlogx = new Element();
-                        xlogx.mCode = ElementCode.MULT;
+                        Element xlogx = new Element(ElementCode.MULT);
                         xlogx.mFirstOperand = firstOperand;
-                        Element logx = new Element();
-                        logx.mCode = ElementCode.LOG;
+                        Element logx = new Element(ElementCode.LOG);
                         logx.mFirstOperand = firstOperand;
                         xlogx.mSecondOperand = logx;
                         
                         if(! secondOperandDerivUnity)
                         {
-                            Element sumFirstTerm = new Element();
-                            sumFirstTerm.mCode = ElementCode.MULT;
+                            Element sumFirstTerm = new Element(ElementCode.MULT);
                             sumFirstTerm.mFirstOperand = secondOperandDerivExpression;
                             sumFirstTerm.mSecondOperand = xlogx;
                             sum.mFirstOperand = sumFirstTerm;
@@ -1712,9 +1728,8 @@ public class Expression implements Cloneable
 
                         if(! firstOperandDerivUnity)
                         {
-                            Element sumSecondTerm = new Element();
+                            Element sumSecondTerm = new Element(ElementCode.MULT);
                             sum.mSecondOperand = sumSecondTerm;
-                            sumSecondTerm.mCode = ElementCode.MULT;
                             sumSecondTerm.mFirstOperand = firstOperandDerivExpression;
                             sumSecondTerm.mSecondOperand = secondOperand;
                         }
@@ -1723,11 +1738,11 @@ public class Expression implements Cloneable
                             sum.mSecondOperand = secondOperand;
                         }
 
-                        Element yminus1 = new Element();
+                        Element yminus1 = null;
 
                         if(! secondOperand.mCode.equals(ElementCode.NUMBER))
                         {
-                            yminus1.mCode = ElementCode.SUBT;
+                            yminus1 = new Element(ElementCode.SUBT);
                             yminus1.mFirstOperand = secondOperand;
                             yminus1.mSecondOperand = Element.ONE;
                         }
@@ -1736,20 +1751,20 @@ public class Expression implements Cloneable
                             double newVal = secondOperand.mNumericValue - 1.0;
                             if(newVal != 1.0)
                             {
-                                yminus1.mCode = ElementCode.NUMBER;
+                                yminus1 = new Element(ElementCode.NUMBER);
                                 yminus1.mNumericValue = newVal;
                             }
                             else
                             {
-                                yminus1 = null;
+                                // do nothing
                             }
                         }
 
-                        Element xtoyminus1 = new Element();
+                        Element xtoyminus1 = null;
                         
                         if(null != yminus1)
                         {
-                            xtoyminus1.mCode = ElementCode.POW;
+                            xtoyminus1 = new Element(ElementCode.POW);
                             xtoyminus1.mFirstOperand = firstOperand;
                             xtoyminus1.mSecondOperand = yminus1;
                         }
@@ -1762,12 +1777,11 @@ public class Expression implements Cloneable
                     }
                     else
                     {
-                        retElement.mCode = ElementCode.MULT;
+                        retElement = new Element(ElementCode.MULT);
 
                         if(! firstOperandDerivUnity)
                         {
-                            Element xprimey = new Element();
-                            xprimey.mCode = ElementCode.MULT;
+                            Element xprimey = new Element(ElementCode.MULT);
                             xprimey.mFirstOperand = firstOperandDerivExpression;
                             xprimey.mSecondOperand = secondOperand;
                             retElement.mFirstOperand = xprimey;
@@ -1777,11 +1791,11 @@ public class Expression implements Cloneable
                             retElement.mFirstOperand = secondOperand;
                         }
 
-                        Element yminus1 = new Element();
+                        Element yminus1 = null;
 
                         if(! secondOperand.mCode.equals(ElementCode.NUMBER))
                         {
-                            yminus1.mCode = ElementCode.SUBT;
+                            yminus1 = new Element(ElementCode.SUBT);
                             yminus1.mFirstOperand = secondOperand;
                             yminus1.mSecondOperand = Element.ONE;                        
                         }
@@ -1790,19 +1804,19 @@ public class Expression implements Cloneable
                             double newExp = secondOperand.mNumericValue - 1.0;
                             if(newExp != 1.0)
                             {
-                                yminus1.mCode = ElementCode.NUMBER;
+                                yminus1 = new Element(ElementCode.NUMBER);
                                 yminus1.mNumericValue = newExp;
                             }
                             else
                             {
-                                yminus1 = null;
+                                // do nothing
                             }
                         }
 
-                        Element xtoyminus1 = new Element();
+                        Element xtoyminus1 = null;
                         if(null != yminus1)
                         {
-                            xtoyminus1.mCode = ElementCode.POW;
+                            xtoyminus1 = new Element(ElementCode.POW);
                             xtoyminus1.mFirstOperand = firstOperand;
                             xtoyminus1.mSecondOperand = yminus1;
                         }
@@ -1818,16 +1832,14 @@ public class Expression implements Cloneable
                 {
                     if(! secondOperandDerivZero)
                     {
-                        retElement.mCode = ElementCode.MULT;
+                        retElement = new Element(ElementCode.MULT);
 
-                        Element logx = new Element();
-                        logx.mCode = ElementCode.LOG;
+                        Element logx = new Element(ElementCode.LOG);
                         logx.mFirstOperand = firstOperand;
 
                         if(! secondOperandDerivUnity)
                         {
-                            Element yprimelogx = new Element();
-                            yprimelogx.mCode = ElementCode.MULT;
+                            Element yprimelogx = new Element(ElementCode.MULT);
                             yprimelogx.mFirstOperand = secondOperandDerivExpression;
                             yprimelogx.mSecondOperand = logx;
                             retElement.mFirstOperand = yprimelogx;
@@ -1851,7 +1863,7 @@ public class Expression implements Cloneable
                 {
                     if(! firstOperandDerivUnity)
                     {
-                        retElement.mCode = ElementCode.MULT;
+                        retElement = new Element(ElementCode.MULT);
                         retElement.mFirstOperand = firstOperandDerivExpression;
                         retElement.mSecondOperand = pElement;
                     }
@@ -1871,12 +1883,12 @@ public class Expression implements Cloneable
                 {
                     if(! firstOperandDerivUnity)
                     {
-                        retElement.mCode = ElementCode.NEG;
+                        retElement = new Element(ElementCode.NEG);
                         retElement.mFirstOperand = firstOperandDerivExpression;
                     }
                     else
                     {
-                        retElement.mCode = ElementCode.NUMBER;
+                        retElement = new Element(ElementCode.NUMBER);
                         retElement.mNumericValue = -1.0;
                     }
                 }
@@ -1889,12 +1901,10 @@ public class Expression implements Cloneable
             case ElementCode.ELEMENT_CODE_TAN:
                 if(! firstOperandDerivZero)
                 {
-                    retElement.mCode = ElementCode.DIV;
+                    retElement = new Element(ElementCode.DIV);
                     retElement.mFirstOperand = firstOperandDerivExpression;
-                    Element cosSq = new Element();
-                    cosSq.mCode = ElementCode.POW;
-                    Element cos = new Element();
-                    cos.mCode = ElementCode.COS;
+                    Element cosSq = new Element(ElementCode.POW);
+                    Element cos = new Element(ElementCode.COS);
                     cos.mFirstOperand = firstOperand;
                     cosSq.mFirstOperand = cos;
                     cosSq.mSecondOperand = Element.TWO;
@@ -1909,23 +1919,19 @@ public class Expression implements Cloneable
             case ElementCode.ELEMENT_CODE_COS:
                 if(! firstOperandDerivZero)
                 {
+                    retElement = new Element(ElementCode.NEG);
                     if(! firstOperandDerivUnity)
                     {
-                        retElement.mCode = ElementCode.NEG;
-                        Element prod = new Element();
-                        prod.mCode = ElementCode.MULT;
+                        Element prod = new Element(ElementCode.MULT);
                         retElement.mFirstOperand = prod;
-                        Element sinFunc = new Element();
-                        sinFunc.mCode = ElementCode.SIN;
+                        Element sinFunc = new Element(ElementCode.SIN);
                         sinFunc.mFirstOperand = firstOperand;
                         prod.mFirstOperand = sinFunc;
                         prod.mSecondOperand = firstOperandDerivExpression;
                     }
                     else
                     {
-                        retElement.mCode = ElementCode.NEG;
-                        Element sinFunc = new Element();
-                        sinFunc.mCode = ElementCode.SIN;
+                        Element sinFunc = new Element(ElementCode.SIN);
                         sinFunc.mFirstOperand = firstOperand;
                         retElement.mFirstOperand = sinFunc;
                     }
@@ -1942,16 +1948,15 @@ public class Expression implements Cloneable
                 {
                     if(! firstOperandDerivUnity)
                     {
-                        retElement.mCode = ElementCode.MULT;
-                        Element cosFunc = new Element();
-                        cosFunc.mCode = ElementCode.COS;
+                        retElement = new Element(ElementCode.MULT);
+                        Element cosFunc = new Element(ElementCode.COS);
                         cosFunc.mFirstOperand = firstOperand;
                         retElement.mFirstOperand = cosFunc;
                         retElement.mSecondOperand = firstOperandDerivExpression;
                     }
                     else
                     {
-                        retElement.mCode = ElementCode.COS;
+                        retElement = new Element(ElementCode.COS);
                         retElement.mFirstOperand = firstOperand;
                     }
                 }
@@ -1967,7 +1972,7 @@ public class Expression implements Cloneable
                 {
                     if(! secondOperandDerivZero)
                     {
-                        retElement.mCode = ElementCode.ADD;
+                        retElement = new Element(ElementCode.ADD);
                         retElement.mFirstOperand = firstOperandDerivExpression;
                         retElement.mSecondOperand = secondOperandDerivExpression;
                     }
@@ -1995,7 +2000,7 @@ public class Expression implements Cloneable
                 {
                     if(! secondOperandDerivZero)
                     {
-                        retElement.mCode = ElementCode.SUBT;
+                        retElement = new Element(ElementCode.SUBT);
                         retElement.mFirstOperand = firstOperandDerivExpression;
                         retElement.mSecondOperand = secondOperandDerivExpression;
                     }
@@ -2008,7 +2013,7 @@ public class Expression implements Cloneable
                 {
                     if(! secondOperandDerivZero)
                     {
-                        retElement.mCode = ElementCode.NEG;
+                        retElement = new Element(ElementCode.NEG);
                         retElement.mFirstOperand = secondOperandDerivExpression;
                     }
                     else
@@ -2024,23 +2029,20 @@ public class Expression implements Cloneable
                 {
                     if(! secondOperandDerivZero)
                     {
-                        retElement.mCode = ElementCode.SUBT;
-                        Element firstTerm = new Element();
-                        firstTerm.mCode = ElementCode.DIV;
+                        retElement = new Element(ElementCode.SUBT);
+                        Element firstTerm = new Element(ElementCode.DIV);
                         firstTerm.mFirstOperand = firstOperandDerivExpression;
                         firstTerm.mSecondOperand = secondOperand;
 
                         retElement.mFirstOperand = firstTerm;
 
-                        Element secondTerm = new Element();
-                        secondTerm.mCode = ElementCode.DIV;
+                        Element secondTerm = new Element(ElementCode.DIV);
 
                         Element secondTermNum = null;
 
                         if(! secondOperandDerivUnity)
                         {
-                            secondTermNum = new Element();
-                            secondTermNum.mCode = ElementCode.MULT;
+                            secondTermNum = new Element(ElementCode.MULT);
                             secondTermNum.mFirstOperand = firstOperand;
                             secondTermNum.mSecondOperand = secondOperandDerivExpression;
                         }
@@ -2051,8 +2053,7 @@ public class Expression implements Cloneable
                         
                         secondTerm.mFirstOperand = secondTermNum;
 
-                        Element secondTermDenom = new Element();
-                        secondTermDenom.mCode = ElementCode.POW;
+                        Element secondTermDenom = new Element(ElementCode.POW);
                         secondTermDenom.mFirstOperand = secondOperand;
                         secondTermDenom.mSecondOperand = Element.TWO;
                         secondTerm.mSecondOperand = secondTermDenom;
@@ -2061,7 +2062,7 @@ public class Expression implements Cloneable
                     }
                     else
                     {
-                        retElement.mCode = ElementCode.DIV;
+                        retElement = new Element(ElementCode.DIV);
                         retElement.mFirstOperand = firstOperandDerivExpression;
                         retElement.mSecondOperand = secondOperand;
                     }
@@ -2072,37 +2073,32 @@ public class Expression implements Cloneable
                     {
                         if(! secondOperandDerivUnity)
                         {
-                            retElement.mCode = ElementCode.NEG;
+                            retElement = new Element(ElementCode.NEG);
                             
-                            Element secondTermArg = new Element();
-                            secondTermArg.mCode = ElementCode.DIV;
+                            Element secondTermArg = new Element(ElementCode.DIV);
                             retElement.mFirstOperand = secondTermArg;
                             
-                            Element secondTermNum = new Element();
-                            secondTermNum.mCode = ElementCode.MULT;
+                            Element secondTermNum = new Element(ElementCode.MULT);
                             secondTermNum.mFirstOperand = firstOperand;
                             secondTermNum.mSecondOperand = secondOperandDerivExpression;
                             secondTermArg.mFirstOperand = secondTermNum;
                             
-                            Element secondTermDenom = new Element();
-                            secondTermDenom.mCode = ElementCode.POW;
+                            Element secondTermDenom = new Element(ElementCode.POW);
                             secondTermDenom.mFirstOperand = secondOperand;
                             secondTermDenom.mSecondOperand = Element.TWO;
                             secondTermArg.mSecondOperand = secondTermDenom;
                         }
                         else
                         {
-                            retElement.mCode = ElementCode.NEG;
+                            retElement = new Element(ElementCode.NEG);
                             
-                            Element secondTermArg = new Element();
-                            secondTermArg.mCode = ElementCode.DIV;
+                            Element secondTermArg = new Element(ElementCode.DIV);
                             retElement.mFirstOperand = secondTermArg;
                             
                             Element secondTermNum = firstOperand;
                             secondTermArg.mFirstOperand = secondTermNum;
 
-                            Element secondTermDenom = new Element();
-                            secondTermDenom.mCode = ElementCode.POW;
+                            Element secondTermDenom = new Element(ElementCode.POW);
                             secondTermDenom.mFirstOperand = secondOperand;
                             secondTermDenom.mSecondOperand = Element.TWO;
                             secondTermArg.mSecondOperand = secondTermDenom;                            
@@ -2121,18 +2117,16 @@ public class Expression implements Cloneable
                 {
                     if(! secondOperandDerivZero)
                     {
-                        retElement.mCode = ElementCode.ADD;
+                        retElement = new Element(ElementCode.ADD);
 
                         if(! firstOperandDerivUnity)
                         {
                             if(! secondOperandDerivUnity)
                             { 
-                                Element firstTerm = new Element();
-                                firstTerm.mCode = ElementCode.MULT;
+                                Element firstTerm = new Element(ElementCode.MULT);
                                 firstTerm.mFirstOperand = firstOperandDerivExpression;
                                 firstTerm.mSecondOperand = secondOperand;
-                                Element secondTerm = new Element();
-                                secondTerm.mCode = ElementCode.MULT;
+                                Element secondTerm = new Element(ElementCode.MULT);
                                 secondTerm.mFirstOperand = firstOperand;
                                 secondTerm.mSecondOperand = secondOperandDerivExpression;
                                 retElement.mFirstOperand = firstTerm;
@@ -2140,8 +2134,7 @@ public class Expression implements Cloneable
                             }
                             else
                             {
-                                Element firstTerm = new Element();
-                                firstTerm.mCode = ElementCode.MULT;
+                                Element firstTerm = new Element(ElementCode.MULT);
                                 firstTerm.mFirstOperand = firstOperandDerivExpression;
                                 firstTerm.mSecondOperand = secondOperand;
                                 Element secondTerm = firstOperand;
@@ -2154,8 +2147,7 @@ public class Expression implements Cloneable
                             if(! secondOperandDerivUnity)
                             {
                                 Element firstTerm = secondOperand;
-                                Element secondTerm = new Element();
-                                secondTerm.mCode = ElementCode.MULT;
+                                Element secondTerm = new Element(ElementCode.MULT);
                                 secondTerm.mFirstOperand = firstOperand;
                                 secondTerm.mSecondOperand = secondOperandDerivExpression;
                                 retElement.mFirstOperand = firstTerm;
@@ -2172,7 +2164,7 @@ public class Expression implements Cloneable
                     {
                         if(! firstOperandDerivUnity)
                         {
-                            retElement.mCode = ElementCode.MULT;
+                            retElement = new Element(ElementCode.MULT);
                             retElement.mFirstOperand = firstOperandDerivExpression;
                             retElement.mSecondOperand = secondOperand;
                         }
@@ -2188,7 +2180,7 @@ public class Expression implements Cloneable
                     {
                         if(! secondOperandDerivUnity)
                         {
-                            retElement.mCode = ElementCode.MULT;
+                            retElement = new Element(ElementCode.MULT);
                             retElement.mFirstOperand = firstOperand;
                             retElement.mSecondOperand = secondOperandDerivExpression;
                         }
@@ -2213,18 +2205,52 @@ public class Expression implements Cloneable
         return(retElement);
     }
 
-    public Expression computePartialDerivative(Symbol pSymbol)
+    public Expression computePartialDerivative(Symbol pSymbol, SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
     {
         Expression expression = new Expression();
-        expression.mRootElement = computePartialDerivative(mRootElement, pSymbol);
+        expression.mRootElement = computePartialDerivative(mRootElement, pSymbol, pSymbolEvaluator);
         return(expression);
     }
 
-                                               
+    public Expression computePartialDerivative(Symbol pSymbol, HashMap pSymbolsMap) throws DataNotFoundException
+    {
+        SymbolEvaluator symbolEvaluator = getSymbolEvaluator(pSymbolsMap);
+        Expression expression = new Expression();
+        expression.mRootElement = computePartialDerivative(mRootElement, pSymbol, symbolEvaluator);
+        return(expression);
+    }
+
+    public boolean isSimpleNumber()
+    {
+        return(mRootElement.mCode == ElementCode.NUMBER);
+    }
+
+    public double getSimpleNumberValue() throws IllegalStateException
+    {
+        if(! isSimpleNumber())
+        {
+            throw new IllegalStateException("not allowed to call getSimpleNumberValue() on non-simple expression");
+        }
+        return(mRootElement.mNumericValue);
+    }
+
     public static final void main(String []pArgs)
     {
         try
         {
+            HashMap symbolsMap = new HashMap();
+            // make the assignment Y = [Z^2];
+            SymbolValue Y = new SymbolValue("Y");
+            Y.setValue(new Value(new Expression("Z^2 + 100.0")));
+            symbolsMap.put("Y", Y);
+            
+            SymbolValue Z = new SymbolValue("Z");
+            Z.setValue(new Value(new Expression("1.0")));
+            symbolsMap.put("Z", Z);
+
+            SymbolEvaluatorHashMap symEval = new SymbolEvaluatorHashMap();
+            symEval.setSymbolsMap(symbolsMap);
+
             InputStream in = System.in;
             InputStreamReader reader = new InputStreamReader(in);
             BufferedReader bufReader = new BufferedReader(reader);
@@ -2233,7 +2259,7 @@ public class Expression implements Cloneable
             {
                 Expression expression = new Expression(line);
                 Symbol X = new Symbol("X");
-                System.out.println(expression.computePartialDerivative(X).toString());
+                System.out.println(expression.computePartialDerivative(X, symEval).toString());
                 System.out.println("");
             }
         }
@@ -2241,5 +2267,232 @@ public class Expression implements Cloneable
         {
             e.printStackTrace(System.err);
         }
+    }
+
+    public static Expression square(Expression A)
+    {
+        Expression retVal = null;
+        if(A.isSimpleNumber())
+        {
+            double value = A.mRootElement.mNumericValue;
+            retVal = new Expression(value*value);
+        }
+        else
+        {
+            retVal = new Expression();
+            Element rootElement = new Element(ElementCode.POW);
+            rootElement.mFirstOperand = A.mRootElement;
+            rootElement.mSecondOperand = Element.TWO;
+            retVal.mRootElement = rootElement;
+        }
+        return(retVal);
+    }
+
+    public static Expression multiply(Expression A, Expression B)
+    {
+        Expression retVal = null;
+        if(A.isSimpleNumber())
+        {
+            if(B.isSimpleNumber())
+            {
+                double value = A.mRootElement.mNumericValue * B.mRootElement.mNumericValue;
+                retVal = new Expression(value);
+            }
+            else
+            {
+                if(A.mRootElement.mNumericValue == 0.0)
+                {
+                    retVal = A;
+                }
+                else if(A.mRootElement.mNumericValue == 1.0)
+                {
+                    retVal = B;
+                }
+                else if(A.mRootElement.mNumericValue == -1.0)
+                {
+                    if(! B.mRootElement.mCode.equals(ElementCode.NEG))
+                    {
+                        Element rootElement = new Element(ElementCode.NEG);
+                        rootElement.mFirstOperand = B.mRootElement;
+                        retVal = new Expression();
+                        retVal.mRootElement = rootElement;
+                    }
+                    else
+                    {
+                        retVal = new Expression();
+                        retVal.mRootElement = B.mRootElement.mFirstOperand;
+                    }
+                }
+            }
+        }
+        if(null == retVal)
+        {
+            if(B.isSimpleNumber())
+            {
+                if(B.mRootElement.mNumericValue == 0.0)
+                {
+                    retVal = B;
+                }
+                else if(B.mRootElement.mNumericValue == 1.0)
+                {
+                    retVal = A;
+                }
+                else if(B.mRootElement.mNumericValue == -1.0)
+                {
+                    if(! A.mRootElement.mCode.equals(ElementCode.NEG))
+                    {
+                        Element rootElement = new Element(ElementCode.NEG);
+                        rootElement.mFirstOperand = A.mRootElement;
+                        retVal = new Expression();
+                        retVal.mRootElement = rootElement;                    
+                    }
+                    else
+                    {
+                        retVal = new Expression();
+                        retVal.mRootElement = A.mRootElement.mFirstOperand;
+                    }
+                }
+            }
+        }
+        if(null == retVal)
+        {
+            retVal = new Expression();
+            Element prod = new Element(ElementCode.MULT);
+            prod.mFirstOperand = A.mRootElement;
+            prod.mSecondOperand = B.mRootElement;
+            retVal.mRootElement = prod;
+        }
+        return(retVal);
+    }
+
+
+    public static Expression divide(Expression A, Expression B)
+    {
+        Expression retVal = null;
+
+        if(A.isSimpleNumber() && A.mRootElement.mNumericValue == 0.0)
+        {
+            retVal = A;
+        }
+        else
+        {
+            retVal = new Expression();
+            Element quotient = new Element(ElementCode.DIV);
+            quotient.mFirstOperand = A.mRootElement;
+            quotient.mSecondOperand = B.mRootElement;
+            retVal.mRootElement = quotient;
+        }
+
+        return(retVal);
+    }
+
+    public static Expression negate(Expression A)
+    {
+        Expression retVal = null;
+        if(A.isSimpleNumber())
+        {
+            double value = -1.0 * A.mRootElement.mNumericValue;
+            retVal = new Expression(value);
+        }
+        else
+        {
+            if(A.mRootElement.mCode.equals(ElementCode.NEG))
+            {
+                retVal = new Expression();
+                retVal.mRootElement = A.mRootElement.mFirstOperand;
+            }
+            else
+            {
+                retVal = new Expression();
+                Element rootElement = new Element(ElementCode.NEG);
+                rootElement.mFirstOperand = A.mRootElement;
+                retVal.mRootElement = rootElement;
+            }
+        }
+        return(retVal);
+    }
+
+    // returns A - B
+    public static Expression subtract(Expression A, Expression B)
+    {
+        Expression retVal = null;
+        if(A.isSimpleNumber() && A.mRootElement.mNumericValue == 0.0)
+        {
+            if(B.isSimpleNumber())
+            {
+                retVal = new Expression(-1.0 * B.mRootElement.mNumericValue);
+            }
+            else
+            {
+                if(! B.mRootElement.mCode.equals(ElementCode.NEG))
+                {
+                    retVal = new Expression();
+                    retVal.mRootElement = new Element(ElementCode.NEG);
+                    retVal.mRootElement.mFirstOperand = B.mRootElement;
+                }
+                else
+                {
+                    retVal = new Expression();
+                    retVal.mRootElement = B.mRootElement.mFirstOperand;
+                }
+            }
+        }
+        else
+        {
+            if(B.isSimpleNumber() && B.mRootElement.mNumericValue == 0.0)
+            {
+                retVal = A;
+            }
+            else
+            {
+                if(A.isSimpleNumber() && B.isSimpleNumber())
+                {
+                    double value = A.mRootElement.mNumericValue - B.mRootElement.mNumericValue;
+                    retVal = new Expression(value);
+                }
+                else
+                {
+                    retVal = new Expression();
+                    Element diff = new Element(ElementCode.SUBT);
+                    diff.mFirstOperand = A.mRootElement;
+                    diff.mSecondOperand = B.mRootElement;
+                    retVal.mRootElement = diff;
+                }
+            }
+        }
+        return(retVal);
+    }
+
+    public static Expression add(Expression A, Expression B)
+    {
+        Expression retVal = null;
+        if(A.isSimpleNumber() && A.mRootElement.mNumericValue == 0.0)
+        {
+            retVal = B;
+        }
+        else
+        {
+            if(B.isSimpleNumber() && B.mRootElement.mNumericValue == 0.0)
+            {
+                retVal = A;
+            }
+            else
+            {
+                if(A.isSimpleNumber() && B.isSimpleNumber())
+                {
+                    double value = A.mRootElement.mNumericValue + B.mRootElement.mNumericValue;
+                    retVal = new Expression(value);
+                }
+                else
+                {
+                    retVal = new Expression();
+                    Element sum = new Element(ElementCode.ADD);
+                    sum.mFirstOperand = A.mRootElement;
+                    sum.mSecondOperand = B.mRootElement;
+                    retVal.mRootElement = sum;
+                }
+            }
+        }
+        return(retVal);
     }
 }
