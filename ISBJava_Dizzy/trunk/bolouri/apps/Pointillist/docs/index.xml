@@ -39,8 +39,8 @@ run the build system.
 <p>
 <ul>
 <li><a href="&appVersion;/&installerDownloadRelURL;">Download &appName;</a></li>
-<li><a href="docs/UserManual.html">&appName; User Manual</a> (a <a href="docs/UserManual.pdf">PDF version</a> is available)</li>
-<li><a href="docs/ReadMe.html">&appName; ReadMe document</a></li>
+<li><a href="docs/ReadMe.html">&appName; Overview document</a></li>
+  <li><a href="docs/UserManual.html">&appName; User Manual</a> (a <a href="docs/UserManual.pdf">PDF version</a> is available)</li>
 <li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
 <li><a href="&webBaseURL;/License.html">License Agreement</a></li>
 <li><a href="&webBaseURL;/&localJavaLibraryName;/javadoc">Javadoc API documentation</a></li>
