@@ -103,7 +103,8 @@
       <hr noshade="true" />
 
       <xsl:if test="/isb:document/isb:docdate != ''">
-        <h4>Last updated:
+        <p>
+        <b>Last updated:
           <xsl:if test="contains(isb:docdate, '$Date:')">
             <xsl:value-of select="translate(concat(
                                       substring-before(isb:docdate, '$Date:'), 
@@ -112,7 +113,8 @@
           <xsl:if test="not( contains( isb:docdate, '$Date:') )">
             <xsl:value-of select="isb:docdate"/>
           </xsl:if>
-        </h4>
+        </b>
+        </p>
       </xsl:if>
  
       <p>
