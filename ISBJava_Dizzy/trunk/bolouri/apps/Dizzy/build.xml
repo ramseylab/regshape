@@ -110,7 +110,7 @@
 
     <style in="${app.docsDir}/AppHelp.xml"
            out="${app.styleDir}/AppHelpTOC.xml"
-           style="${helpTOCStyleSheet}">
+           style="${globalConfig}/${helpTOCStyleSheet}">
         <param name="${helpContentFileParamName}" expression="AppHelp.html" />
     </style >
 
