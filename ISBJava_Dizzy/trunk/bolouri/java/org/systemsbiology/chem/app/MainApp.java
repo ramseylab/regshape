@@ -388,6 +388,7 @@ public class MainApp
                 int changeHeightPixels = heightPixels - mOriginalHeightPixels;
                 mEditorPane.handleResize(widthPixels - mOriginalWidthPixels,
                                          heightPixels - mOriginalHeightPixels);
+                mMainFrame.pack();
             }
         });
         updateMenus();
