@@ -121,6 +121,9 @@ public class ClassRegistry
         }
         catch(NoClassDefFoundError e)
         {
+            // apparently this error message happens some times, not clear why; just ignore any
+            // class that has no class definition found, but log an error message
+            System.err.println("class definition not found: " + pClassName);
             return;                
         }
 
