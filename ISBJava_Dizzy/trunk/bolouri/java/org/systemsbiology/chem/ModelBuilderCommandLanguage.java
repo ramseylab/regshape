@@ -11,6 +11,7 @@ package org.systemsbiology.chem;
 import java.io.*;
 import java.util.regex.*;
 import java.util.*;
+import java.nio.charset.*;
 
 import org.systemsbiology.util.*;
 import org.systemsbiology.math.*;
@@ -32,20 +33,26 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     private static final String STATEMENT_KEYWORD_REF = "ref";
     private static final String STATEMENT_KEYWORD_DEFINE = "define";
     private static final String KEYWORD_LOOP = "loop";
-
     private static final String VALID_SYMBOL_REGEX = "^[a-zA-Z]([_a-zA-Z0-9])*$";
     private static final Pattern VALID_SYMBOL_PATTERN = Pattern.compile(VALID_SYMBOL_REGEX);
-
+    private static final String REQUIRED_CHAR_SET = "ISO-8859-1";
     private static final String COMPARTMENT_NAME_DEFAULT = "univ";
 
     private String mNamespace;
-
+    
+    private static final Charset sCharset;
+    
+    static
+    {
+        sCharset = Charset.forName(REQUIRED_CHAR_SET);
+    }
+    
     static class Macro extends SymbolValue
     {
         public String mMacroName;
         public ArrayList mExternalSymbols;
         public LinkedList mTokenList;
-
+        
         public Macro(String pMacroName)
         {
             super(pMacroName);
@@ -463,6 +470,15 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         return(retObj);
     }
 
+    private String handleExpression(String pExpressionString,
+                                    HashMap pSymbolMap)
+    {
+        String retVal = null;
+        
+        
+        return(retVal);
+    }
+            
     // Handle the occurrence of embedded mathematical expression(s)
     // within a quoted string; if an expression occurs, translate it
     // and truncate the resulting value to an integer, before embedding
@@ -478,7 +494,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             Expression exp = new Expression(matchedSubsequence);
             SymbolEvaluatorNamespaced evaluator = new SymbolEvaluatorNamespaced(pSymbolMap, mNamespace);
             double value = exp.computeValue(evaluator);
-            String formattedExp = Integer.toString((int) value);
+            String formattedExp = Long.toString((long) value);
             pInputString = matcher.replaceFirst(formattedExp);
             matcher = searchPatternMath.matcher(pInputString);
         }
@@ -615,136 +631,148 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         return(retSymbol);
     }
 
+    private boolean isNumericLiteral(String pTokenString)
+    {
+        boolean retVal = false;
+        try
+        {
+            Double.parseDouble(pTokenString);
+            retVal = true;
+        }
+        catch(NumberFormatException e)
+        {
+            // do nothing
+        }
+        return(retVal);
+    }
+    
     // For places where the parser expects to be able to obtain a value, this
     // function walks the token list and attempts to parse a value.  The value
     // may be either a "deferred evaluation" expression, or a simple numeric value.
-    private Value obtainValue(ListIterator pTokenIter, HashMap pSymbolMap) throws InvalidInputException
+    private Value obtainValue(ListIterator pTokenIter, HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
     {
         boolean firstToken = true;
         StringBuffer expressionBuffer = new StringBuffer();
         boolean deferredExpression = false;
         
+        StringBuffer quoteBuffer = new StringBuffer();
+        boolean inQuote = false;
+        
         while(pTokenIter.hasNext())
         {
             Token token = getNextToken(pTokenIter);
-            String symbolName = null;
-            Value symbolValueObj = null;
-            String addToExpression = null;
-
-            if(token.mCode.equals(Token.Code.SYMBOL))
+            
+            if(inQuote)
             {
-                symbolName = token.mSymbol;
-                assert (null != symbolName) : "unexpected null symbol name";
-                if(! Expression.isFunctionName(symbolName))
+                // we are in a quotation; therefore, this can't be the first token
+                assert (! firstToken) : "first token, and within a quotation";
+
+                if(token.mCode.equals(Token.Code.QUOTE))
                 {
-                    // is it a numeric literal?
-                    boolean isNumericLiteral = true;
-                    try
+                    String quotedString = quoteBuffer.toString();
+                    quoteBuffer.delete(0, quoteBuffer.length());
+                    quotedString = translateMathExpressionsInString(quotedString, pSymbolMap);
+                    expressionBuffer.append(quotedString);
+                    inQuote = false;
+                }
+                else
+                {
+                    quoteBuffer.append(token.toString());
+                }
+            }
+            else
+            {
+                // we are not within a quotation
+                
+                if(token.mCode.equals(Token.Code.COMMA) ||
+                   token.mCode.equals(Token.Code.SEMICOLON))
+                {
+                    if(firstToken)
                     {
-                        Double.parseDouble(symbolName);
+                        throw new InvalidInputException("expression was expected, but instead, a comma or semicolon was found");
                     }
-                    catch(NumberFormatException e)
+                    else
                     {
-                        isNumericLiteral = false;
+                        pTokenIter.previous();
+                        break;
+                    }
+                }
+
+                // we are not within a quotation, and the token is not a comma, or semicolon
+                    
+                if(firstToken && token.mCode.equals(Token.Code.BRACKET_BEGIN))
+                {
+                    deferredExpression = true;
+                }
+                else if(token.mCode.equals(Token.Code.QUOTE))
+                {
+                    inQuote = true;
+                }
+                else if(token.mCode.equals(Token.Code.BRACKET_END))
+                {
+                    if(! deferredExpression)
+                    {
+                        throw new InvalidInputException("encountered closing bracket without an opening bracket");
                     }
 
-                    if(! isNumericLiteral)
+                    if(inQuote)
                     {
-                        Object convertedSymbol = performSymbolTokenMacroTranslationLookup(symbolName, pSymbolMap, mNamespace);
-                        if(convertedSymbol instanceof String)
+                        throw new InvalidInputException("missing quotation mark in expression");
+                    }
+                    
+                    break;
+                }
+                else if(token.mCode.equals(Token.Code.SYMBOL))
+                {
+                    String symbolString = token.mSymbol;
+                    if(! isNumericLiteral(symbolString))
+                    {
+                        Object translatedObject = performSymbolTokenMacroTranslationLookup(symbolString, 
+                                                                                           pSymbolMap,
+                                                                                           mNamespace);
+                        if(translatedObject instanceof String)
                         {
-                            addToExpression = (String) convertedSymbol;
+                            symbolString = (String) translatedObject;
                         }
-                        else if(convertedSymbol instanceof Value)
+                        else if(translatedObject instanceof Value)
                         {
-                            symbolValueObj = (Value) convertedSymbol;
+                            Value symbolValueObj = (Value) translatedObject;
                             if(symbolValueObj.isExpression())
                             {
-                                addToExpression = symbolValueObj.getExpressionString();
+                                symbolString = symbolValueObj.getExpressionString();
                             }
                             else
                             {
                                 double value = symbolValueObj.getValue();
-                                addToExpression = Double.toString(value);
+                                symbolString = Double.toString(value); 
                             }
-                        }
-                        else
-                        {
-                            assert false : "unknown symbol type for converted symbol: " + symbolName;
                         }
                     }
                     else
                     {
-                        addToExpression = symbolName;
+                        // do nothing
                     }
-                }
-            }
-
-            if(token.mCode.equals(Token.Code.SEMICOLON))
-            {
-                if(firstToken)
-                {
-                    throw new InvalidInputException("semicolon encountered where expression expected");
-                }
-
-                pTokenIter.previous();
-                break;
-            }
-            else if(token.mCode.equals(Token.Code.COMMA))
-            {
-                if(firstToken)
-                {
-                    throw new InvalidInputException("comma encountered where expression expected");
-                }
-
-                pTokenIter.previous();
-                break;
-            }
-            
-            boolean appendToken = false;
-
-            if(firstToken)
-            {
-                if(token.mCode.equals(Token.Code.BRACKET_BEGIN))
-                {
-                    deferredExpression = true;
-                    // deferred expression
-                }
-                else
-                {
-                    // non-deferred expression
-                    appendToken = true;
-                }
-                firstToken = false;
-            }
-            else
-            {
-                if(! deferredExpression || ! token.mCode.equals(Token.Code.BRACKET_END))
-                {
-                    appendToken = true;
-                }
-                else
-                {
-                    if(deferredExpression)
-                    {
-                        break;
-                    }
-                }
-            }
-
-            if(appendToken)
-            {
-                if(null != addToExpression)
-                {
-                    expressionBuffer.append(addToExpression);
+                    
+                    expressionBuffer.append(symbolString);
                 }
                 else
                 {
                     expressionBuffer.append(token.toString());
                 }
+                
+                if(firstToken)
+                {
+                    firstToken = false;
+                }
+                
             }
+        }                
+
+        if(inQuote)
+        {
+            throw new InvalidInputException("expression ended without a matching quotation character");
         }
- 
+        
         String expressionString = expressionBuffer.toString();
         Expression expression = null;
         try
@@ -1192,7 +1220,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         getEndOfStatement(pTokenIter);
     }
 
-    private void handleDelayedReaction(Reaction pReaction, HashMap pSymbolMap, ListIterator pTokenIter) throws InvalidInputException
+    private void handleDelayedReaction(Reaction pReaction, HashMap pSymbolMap, ListIterator pTokenIter) throws InvalidInputException, DataNotFoundException
     {
         Value delayValue = obtainValue(pTokenIter, pSymbolMap);
         if(delayValue.isExpression())
@@ -1207,7 +1235,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         pReaction.setDelay(delay);
     }
 
-    private void handleMultistepReaction(Reaction pReaction, HashMap pSymbolMap, ListIterator pTokenIter) throws InvalidInputException
+    private void handleMultistepReaction(Reaction pReaction, HashMap pSymbolMap, ListIterator pTokenIter) throws InvalidInputException, DataNotFoundException
     {
         Value stepsValue = obtainValue(pTokenIter, pSymbolMap);
         if(stepsValue.isExpression())
@@ -1439,7 +1467,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
         try
         {
-            bufferedReader = pIncludeHandler.openReaderForIncludeFile(fileName);
+            bufferedReader = pIncludeHandler.openReaderForIncludeFile(fileName, sCharset);
             if(null != bufferedReader)
             {
                 boolean insideInclude = true;
@@ -2123,10 +2151,13 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
 
 
-    public Model buildModel( BufferedReader pInputReader,
+    public Model buildModel( InputStream pInputStream,
                              IncludeHandler pIncludeHandler ) throws InvalidInputException, IOException
     {
-        assert (null != pIncludeHandler) : "null include handler";
+        if(null == pIncludeHandler)
+        {
+            throw new IllegalArgumentException("null include handler");
+        }
         Model model = new Model();
         model.setName(DEFAULT_MODEL_NAME);
         model.setReservedSymbolMapper(new ReservedSymbolMapperChemCommandLanguage());
@@ -2134,10 +2165,18 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         MutableInteger numReactions = new MutableInteger(0);
         mNamespace = null;
         boolean insideInclude = false;
-        parseModelDefinition(pInputReader, model, pIncludeHandler, symbolMap, numReactions, insideInclude);
+        BufferedReader bufferedReader = getBufferedReader(pInputStream);
+        parseModelDefinition(bufferedReader, model, pIncludeHandler, symbolMap, numReactions, insideInclude);
         return(model);
     }
 
+    public BufferedReader getBufferedReader(InputStream pInputStream)
+    {
+        InputStreamReader inputStreamReader = new InputStreamReader(pInputStream, sCharset);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        return bufferedReader;
+    }
+    
     public static boolean isValidSymbol(String pSymbolName)
     {
         return(VALID_SYMBOL_PATTERN.matcher(pSymbolName).matches());
