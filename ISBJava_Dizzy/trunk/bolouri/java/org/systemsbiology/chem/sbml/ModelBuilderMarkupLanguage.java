@@ -12,6 +12,12 @@ package org.systemsbiology.chem.sbml;
 import org.systemsbiology.util.*;
 import org.systemsbiology.math.*;
 import org.systemsbiology.chem.*;
+import org.xml.sax.*;
+import org.w3c.dom.*;
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -36,8 +42,8 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
      *========================================*/
     private static final String DEFAULT_MODEL_NAME = "model";
     public static final String CLASS_ALIAS = "markup-language";
-
     private static final String DELAYED_REACTION_REGEX_PATTERN = "delay\\(([^\\)\\(]*)\\,([^\\)\\(]*)\\)";
+    
     /*========================================*
      * inner classes
      *========================================*/
@@ -78,22 +84,50 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
         mMarkupLanguageImporter = new MarkupLanguageImporter();
     }
 
+    private String loadXMLInputAsString(InputStream pInputStream) throws InvalidInputException
+    {
+        String retString = null;
+        try
+        {
+            InputSource inputSource = new InputSource(pInputStream);
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document document = builder.parse(inputSource);
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();   
+            transformer.setOutputProperty("indent", "yes");
+            Properties properties = transformer.getOutputProperties();
+            DOMSource source = new DOMSource(document);
+            StringWriter stringWriter = new StringWriter();
+            StreamResult result = new StreamResult(stringWriter);
+            transformer.transform(source, result);
+            retString = stringWriter.toString();
+        }
+        catch(Exception e)
+        {
+            throw new InvalidInputException("unable to load XML file", e);
+        }
+        return retString;
+    }
+    
+    public BufferedReader getBufferedReader(InputStream pInputStream) throws InvalidInputException
+    {
+        String modelText = loadXMLInputAsString(pInputStream);
+        StringReader stringReader = new StringReader(modelText);
+        BufferedReader bufferedReader = new BufferedReader(stringReader);
+        return bufferedReader;
+    }
+    
     /**
      * Processes an SBML model into a {@link Model} object, and returns the model name.
      * Note that according to the SBML specification, there can be only one model
      * per SBML document or data stream.
      */
-    public Model buildModel( BufferedReader pInputReader,
+    public Model buildModel( InputStream pInputStream,
                              IncludeHandler pIncludeHandler ) throws InvalidInputException, IOException
     {
-        StringBuffer modelDefinitionStringBuffer = new StringBuffer();
-        String line = null;
-        while((line = pInputReader.readLine()) != null)
-        {
-            modelDefinitionStringBuffer.append(line);
-        }
-        String modelDefinition = modelDefinitionStringBuffer.toString();
-
+        String modelDefinition = loadXMLInputAsString(pInputStream);
+        
         mMarkupLanguageImporter.readModelDescription(modelDefinition);
 
         Pattern delayedReactionRegexPattern = Pattern.compile(DELAYED_REACTION_REGEX_PATTERN);
