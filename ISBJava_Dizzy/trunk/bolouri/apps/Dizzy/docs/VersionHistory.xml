@@ -75,17 +75,14 @@ This document contains the version history for the
   of estimated seconds remaining is very large.
   </li>
     <li>
-  Modified <code>org.systemsbiology.chem.app.EditorPane</code> so that it no longer
-  uses the platform-default character encoding when translating a model into a byte
-  stream that is passed to the <code>org.systemsbiology.chem.IModelBuilder</code>.  This
-  was causing unexpected behavior because different platforms have different default
-  character encodings.  The solution was to add a <code>writeModel()</code> method to the
-  <code>IModelBuilder</code> interface, so that the <code>EditorPane</code> can transparently
-  write the model to a byte stream that can be understood by the <code>IModelBuilder</code>.
-  This fixed a bug whereby a SBML model with <code>UTF-8</code> character encoding loaded into
-  the <code>EditorPane</code>, and then subsequently passed to the <code>IModelBuilder</code>, would 
-  cause a <code>SAXParserException</code> on the Macintosh OSX platform.  Thanks to Vincent Rouilly
-  for submitting this bug report.</li>
+  Fixed a potential problem with the editor pane, such that when the user selected
+  "save as" or "save", the file was being written with the platform's default character encoding.  This
+  meant that (in the case of SBML models) the encoding specified in the XML header was
+  being ignored, and (in the case of CMDL models) the model would not be written in
+  the UTF-8 encoding on platforms whose default encoding is not UTF-8.  This means that
+  on certain platforms, the "save" or "save as" functions would end up writing
+  a file that does not conform to published character encoding specifications for SBML and CMDL.      
+  </li>
   <li>
   Fixed a bug in in the "View..." -&gt; "human-readable" menu item feature, 
   where the comma-and-newline 
@@ -117,6 +114,8 @@ X = 1.0e+15;
     which will eventually fail in a stochastic simulator, due numeric precision
     limitations of floating-point addition.
     </li>    
+    <li>Improved the wording of some error messages in the simulation launcher window,
+      the editor pane, and for various menu functions.</li>
 </ul>
 </td>
 <td><a href="&javaURL;/2.2.0/download.html">2.2.0</a></td>
