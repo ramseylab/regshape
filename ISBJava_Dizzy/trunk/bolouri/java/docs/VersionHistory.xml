@@ -170,6 +170,65 @@ symbols that are expressions.  Changed the aforementioned method to be
 non-static, so that the subclasses of <code>Simulator</code> do not have
 to pass the array data structure to the method.
 </li>
+<li>
+Changed the &quot;print&quot; output type so that it now is called
+&quot;table&quot;, in the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+dialog box.  In the same dialog, changed the output type
+&quot;file&quot; to &quot;store&quot;.  
+Add a <code>org.systemsbiology.chem.app.SimulationResultsTable</code>
+class that displays the simulation results in a <code>JTable</code>.  
+
+</li> 
+<li>
+Changed <code>org.systemsbiology.chem.app.Plotter</code> into
+<code>org.systemsbiology.chem.app.SimulationResultsPlot</code>, and
+made it extend <code>JFrame</code>.  The class now displays the
+model name, date/time, and simulator alias in a <code>JLabel</code> 
+outside the plot image.
+</li>
+<li>
+Modified <code>org.systemsbiology.chem.app.SimulationLauncher</code> to
+keep a <code>JList</code> of past simulation results, and to allow
+re-generating a plot or simulation results table, from the past simulation
+results.  This list is re-initialized each time the model is re-processed.
+</li>
+<li>
+Added classes <code>org.systemsbiology.math.SignificantDigitsCalculator</code>
+and <code>org.systemsbiology.math.ScientificNumberFormat</code>, which are
+used to display a floating-point number with the number of significant 
+digits calculated from specified absolute and relative error tolerances.
+</li>
+<li>
+Added a function <code>log10()</code> to the 
+<code>org.systemsbiology.math.MathFunctions</code> class.  This is 
+used by <code>org.systemsbiology.math.SignificantDigitsCalculator</code>.
+</li>
+<li>
+Added new methods <code>placeInCascadeFormat()</code> and
+<code>placeInCenterOfScreen()</code> to <code>org.systemsbiology.util.FramePlacer</code>,
+that accept a <code>JFrame</code> as an argument.  These are used in
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> for placing the
+<code>SimulationResultsTable</code> and <code>SimulationResultsPlot</code> frames.
+Modified the method call in <code>org.systemsbiology.chem.app.MainApp</code>, accordingly.
+</li>
+<li>
+Moved <code>generateSimulationResultsLabel()</code> method from
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> to
+<code>org.systemsbiology.chem.SimulationResults</code> class, so that
+applications using the programmatic <code>org.systemsbiology.chem.ISimulator</code> API
+will have access to the simulator results label, for display purposes.  Added the
+model name to the <code>SimulationResults</code> class as a data member.
+</li>
+<li>
+Fixed a potential bug in <code>org.systemsbiology.chem.Simulator</code> 
+and <code>org.systemsbiology.chem.SimulatorStochasticTauLeapBase</code> so that
+the maximum allowed relative error cannot be greater than unity.
+</li>
+<li>
+Modified <code>SimulationLauncherCommandLine</code> to use the
+<code>org.systemsbiology.math.ScientificNumberFormat</code> class, for
+formatting the floating point values that it prints out.
+</li>
 </ul>
 </td>
 </tr>
