@@ -64,7 +64,7 @@
     <copy todir="${app.webDir}/docs">
       <fileset dir="${app.styleDir}">
         <include name="*.html" />
-        <exclude name="overview.html" />
+        <exclude name="JavadocTitlePage.html" />
         <exclude name="index.html" />
       </fileset>
     </copy>
@@ -111,7 +111,7 @@
 
     <mkdir dir="${app.webDir}/docs" />
     <javadoc source="${app.sourceCompileFlag}"
-             Overview="${app.styleDir}/overview.html"
+             Overview="${app.styleDir}/JavadocTitlePage.html"
              sourcepath="${basedir}"
              packageList="${basedir}/packageList.txt"
              doclet="com.tarsec.javadoc.pdfdoclet.PDFDoclet"
@@ -124,7 +124,7 @@
   <target name="javadoc">
     <mkdir dir="${app.javadocDir}" />
     <javadoc source="${app.sourceCompileFlag}" 
-             Overview="${app.styleDir}/overview.html" 
+             Overview="${app.styleDir}/JavadocTitlePage.html" 
              sourcepath="${basedir}" 
              destdir="${app.javadocDir}"
              packageList="${basedir}/packageList.txt"
@@ -133,7 +133,7 @@
     </javadoc>
   </target>
  
-  <target name="buildWeb" depends="style, srcTar, copyHtml, copyImages, javadoc, javadocPDF, buildInstaller" />
+  <target name="buildWeb" depends="style, srcTar, copyHtml, copyImages, javadoc,buildInstaller" />
   
   <target name="compile">
     <mkdir dir="${app.classesDir}" />

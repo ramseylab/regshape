@@ -11,8 +11,8 @@
 
 <isb:docpreamble>Javadoc documentation for &appName; classes.</isb:docpreamble>
 <isb:doctitle>&appName; API Documentation</isb:doctitle>
-<isb:docowner>&mainGroup;, &mainAffiliation;</isb:docowner>
-<isb:docowneremail>&mainGroupEmailSafe;</isb:docowneremail>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 <isb:docversion>Version &appVersion;, Released &appDate;</isb:docversion>
 
 <p>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+<!-- ========== PREAMBLE ========== -->
+
+<html xmlns:isb="http://www.systemsbiology.org/xmlns"
+      xmlns:html="http://www.w3.org/TR/xhtml1"
+      xmlns="http://www.w3.org/TR/xhtml1">
+<body>
+<h1>Javadoc docum&appName; API Documentation</h1>
+<h3>&appMaintainerFullName;, &appMaintainerAffiliation;</h3>
+<h3>Version &appVersion;, Released &appDate;</h3>
+<h4>Please e-mail comments or corrections to:  <code>&appMaintainerEmailSafe;</code></h4>
+</body>
+
+</html>
+
