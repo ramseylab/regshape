@@ -1,23 +1,23 @@
 package org.systemsbiology.chem;
 
-public class SimulationProgressReporter
+public final class SimulationProgressReporter
 {
     private double mFractionComplete;
     private long mIterationCounter;
     private long mTimeOfLastUpdateMillis;
     private boolean mSimulationFinished;
 
-    public final synchronized void setSimulationFinished(boolean pSimulationFinished)
+    public synchronized void setSimulationFinished(boolean pSimulationFinished)
     {
         mSimulationFinished = pSimulationFinished;
     }
 
-    public final synchronized boolean getSimulationFinished()
+    public synchronized boolean getSimulationFinished()
     {
         return(mSimulationFinished);
     }
 
-    public final synchronized void waitForUpdate()
+    public synchronized void waitForUpdate()
     {
         try
         {
@@ -29,12 +29,12 @@ public class SimulationProgressReporter
         }
     }
 
-    public final synchronized long getIterationCounter()
+    public synchronized long getIterationCounter()
     {
         return(mIterationCounter);
     }
 
-    public final synchronized void updateProgressStatistics(boolean pSimulationFinished, 
+    public synchronized void updateProgressStatistics(boolean pSimulationFinished, 
                                                             double pFractionComplete, 
                                                             long pIterationCounter)
     {
@@ -45,12 +45,12 @@ public class SimulationProgressReporter
         notifyAll();
     }
 
-    public final synchronized long getTimeOfLastUpdateMillis()
+    public synchronized long getTimeOfLastUpdateMillis()
     {
         return(mTimeOfLastUpdateMillis);
     }
 
-    public final synchronized double getFractionComplete()
+    public synchronized double getFractionComplete()
     {
         return(mFractionComplete);
     }

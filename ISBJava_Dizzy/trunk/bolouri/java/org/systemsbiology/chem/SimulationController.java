@@ -17,13 +17,13 @@ package org.systemsbiology.chem;
  *
  * @author Stephen Ramsey
  */
-public class SimulationController
+public final class SimulationController
 {
     private boolean mStopped;
     private boolean mCancelled;
 
 
-    public final synchronized void setCancelled(boolean pCancelled)
+    public synchronized void setCancelled(boolean pCancelled)
     {
         mCancelled = pCancelled;
         if(pCancelled == true)
@@ -33,12 +33,12 @@ public class SimulationController
         }
     }
 
-    public final synchronized boolean getCancelled()
+    public synchronized boolean getCancelled()
     {
         return(mCancelled);
     }
 
-    public final synchronized void setStopped(boolean pStopped)
+    public synchronized void setStopped(boolean pStopped)
     {
         mStopped = pStopped;
         if(! mStopped)
@@ -47,12 +47,12 @@ public class SimulationController
         }
     }
 
-    public final synchronized boolean getStopped()
+    public synchronized boolean getStopped()
     {
         return(mStopped);
     }
 
-    public final synchronized boolean handlePauseOrCancel()
+    public synchronized boolean handlePauseOrCancel()
     {
         boolean stop = false;
         try
