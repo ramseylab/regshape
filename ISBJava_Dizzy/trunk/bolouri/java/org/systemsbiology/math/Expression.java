@@ -34,7 +34,7 @@ import java.util.regex.*;
  * <code>cos()</code>, <code>tan()</code>, <code>asin()</code>, 
  * <code>acos()</code>, <code>atan()</code>, <code>abs()</code>, 
  * <code>floor()</code>, <code>ceil()</code>, <code>sqrt()</code>,
- * <code>theta()</code>.
+ * <code>theta()</code>, <code>min()</code>, <code>max()</code>.
  * The arguments of the trigonometric functions (<code>sin, cos, tan</code>)
  * <em>must</em> be in radians.  The return values of the inverse trigonometric
  * functions (<code>asin, acos, atan</code>) are in radians as well.  For more
@@ -144,6 +144,9 @@ import java.util.regex.*;
  * This class is capable of parsing numeric literals in scientific notation,
  * such as 1.0e-7 and 2.7e+14.  The "e" may be in either lower- or upper-case.
  * 
+ * Thanks to Adam Duguid, for submitting a patch for handing the <code>min()</code> and
+ * <code>max()</code> functions.
+ * 
  * @author Stephen Ramsey
  */
 public class Expression implements Cloneable
@@ -159,9 +162,10 @@ public class Expression implements Cloneable
     private static final String TOKEN_STRING_DIV = "/";
     private static final String TOKEN_STRING_POW = "^";
     private static final String TOKEN_STRING_MOD = "%";
+    private static final String TOKEN_STRING_SEP = ",";
 
-    private static final String TOKEN_DELIMITERS = " *+-/^()";
-    private static final String TOKEN_RESERVED = "!@#$[]|&><{},=";
+    private static final String TOKEN_DELIMITERS = " *+-/^(),";
+    private static final String TOKEN_RESERVED = "!@#$[]|&><{}=";
 
     public static final Expression ZERO = new Expression("0.0");
     public static final Expression ONE = new Expression("1.0");
@@ -199,6 +203,8 @@ public class Expression implements Cloneable
         public static final TokenCode SYMBOL = new TokenCode("symbol");
         public static final TokenCode EXPRESSION = new TokenCode("expression");
         public static final TokenCode SPACE = new TokenCode("space");
+        public static final TokenCode SEP = new TokenCode("sep");        
+        public static final TokenCode EXPRESSION_PAIR = new TokenCode("expression pair");
     }
 
     static final class ElementCode
@@ -232,7 +238,10 @@ public class Expression implements Cloneable
         public static final int ELEMENT_CODE_CEIL = 20;
         public static final int ELEMENT_CODE_SQRT = 21;
         public static final int ELEMENT_CODE_THETA = 22;
-
+        public static final int ELEMENT_CODE_PAIR = 23;
+        public static final int ELEMENT_CODE_MIN = 24;
+        public static final int ELEMENT_CODE_MAX = 25;
+        
         static
         {
             mFunctionsMap = new HashMap();
@@ -278,6 +287,7 @@ public class Expression implements Cloneable
          */
         public static final ElementCode NONE = new ElementCode("none", ELEMENT_CODE_NONE);
 
+        
         /**
          * element code indicating that the element is a &quot;symbol&quot;
          * (like a variable)
@@ -290,6 +300,12 @@ public class Expression implements Cloneable
          */
         public static final ElementCode NUMBER = new ElementCode("number", ELEMENT_CODE_NUMBER);
 
+        /**
+         * A pair of expressions.  This element type is a temporary placeholder, used during
+         * expression parsing,  that is not actually allowed in a final parsed expression.
+         */
+        public static final ElementCode PAIR = new ElementCode("pair", ELEMENT_CODE_PAIR);
+        
         /**
          * element code indicating that the element is an operation
          * element specifying the multiplication of its two child operands
@@ -336,6 +352,8 @@ public class Expression implements Cloneable
          */    
         public static final ElementCode NEG = new ElementCode("neg", ELEMENT_CODE_NEG);
 
+
+        
         /**
          * element code specifying the exponential function of the 
          * first (and only) argument
@@ -414,6 +432,18 @@ public class Expression implements Cloneable
          * element code specifying the Heaviside step function ("theta" function)
          */
         public static final ElementCode THETA = new ElementCode("theta", ELEMENT_CODE_THETA, true, 1);
+        
+        /**
+         * element code specifying the min function returning the
+         * smaller of the two arguments
+         */
+        public static final ElementCode MIN = new ElementCode("min", ELEMENT_CODE_MIN, true, 2);
+
+        /**
+         * element code specifying the max function returning the
+         * larger of the two arguments
+         */
+        public static final ElementCode MAX = new ElementCode("max", ELEMENT_CODE_MAX, true, 2);        
     }
 
     /**
@@ -467,7 +497,7 @@ public class Expression implements Cloneable
          * for the case of a symbol element.
          */
         public Element mFirstOperand;
-
+        
         /**
          * For a binary element, this field is a
          * reference pointing to the second operand, which is itself
@@ -517,9 +547,15 @@ public class Expression implements Cloneable
                 if(mCode.isFunction())
                 {
                     sb.append(mCode + "(");
-                    if(null != mFirstOperand)
+                    
+                    int numArgs = mCode.mNumFunctionArgs;
+                    if(numArgs > 0)
                     {
                         sb.append(mFirstOperand.toString(pSymbolPrinter));
+                        if(numArgs > 1)
+                        {
+                            sb.append(", " + mSecondOperand.toString(pSymbolPrinter));
+                        }
                     }
                     sb.append(")");
                 }
@@ -547,6 +583,10 @@ public class Expression implements Cloneable
                         {
                             sb.append(")");
                         }                        
+                    }
+                    else if(code == ElementCode.PAIR)
+                    {
+                        throw new IllegalStateException("invalid element code: pair");
                     }
                     else if(code == ElementCode.SYMBOL)
                     {
@@ -617,7 +657,8 @@ public class Expression implements Cloneable
         String mSymbolName;
         Element mParsedExpression;
         double mNumericValue;
-
+        Element mSecondParsedExpression;
+        
         public String toString()
         {
             String retVal = null;
@@ -628,6 +669,10 @@ public class Expression implements Cloneable
             else if(mCode.equals(TokenCode.NUMBER))
             {
                 retVal = Double.toString(mNumericValue);
+            }
+            else if(mCode.equals(TokenCode.EXPRESSION))
+            {
+                retVal = mParsedExpression.mCode.toString();
             }
             else
             {
@@ -641,6 +686,7 @@ public class Expression implements Cloneable
             mCode = TokenCode.NONE;
             mSymbolName = null;
             mParsedExpression = null;
+            mSecondParsedExpression = null;
         }
     }
 
@@ -901,6 +947,10 @@ public class Expression implements Cloneable
             {
                 token.mCode = TokenCode.MOD;
             }
+            else if(tokenStr.equals(TOKEN_STRING_SEP)) 
+            {
+                token.mCode = TokenCode.SEP;
+            }
             else
             {
                 Double valueObj = parseDoubleSafe(tokenStr);
@@ -938,7 +988,8 @@ public class Expression implements Cloneable
         TokenCode tokCode = pToken.mCode;
         if(tokCode != TokenCode.EXPRESSION &&
            tokCode != TokenCode.SYMBOL && 
-           tokCode != TokenCode.NUMBER)
+           tokCode != TokenCode.NUMBER &&
+           tokCode != TokenCode.EXPRESSION_PAIR)
         {
             throw new IllegalArgumentException("expected a sub-expression, but instead found unexpected token: " + tokCode);
         }
@@ -946,6 +997,12 @@ public class Expression implements Cloneable
         if(tokCode == TokenCode.EXPRESSION)
         {
             retVal = pToken.mParsedExpression;
+        }
+        else if(tokCode.equals(TokenCode.EXPRESSION_PAIR))
+        {
+            retVal = new Element(ElementCode.PAIR);
+            retVal.mFirstOperand = (Element) pToken.mParsedExpression;
+            retVal.mSecondOperand = (Element) pToken.mSecondParsedExpression;
         }
         else
         {
@@ -963,80 +1020,6 @@ public class Expression implements Cloneable
         return(retVal);
     }
 
-    private void parseFunctionCalls(List pTokenizedExpression) throws IllegalArgumentException
-    {
-        ListIterator iter = pTokenizedExpression.listIterator();
-        Token tok = null;
-        Token prevTok = null;
-
-        // parse parentheses first, since they have the highest level of precedence
-        while(iter.hasNext())
-        {
-            prevTok = tok;
-            tok = (Token) iter.next();
-            TokenCode tokenCode = tok.mCode;
-
-            if(tok.mCode == TokenCode.SYMBOL)
-            {
-                String symbolName = tok.mSymbolName;
-                ElementCode elementCodeFunction = parseFunctionName(symbolName);
-
-                // check to see if this is a function call
-                if(iter.hasNext())
-                {
-                    // check to see if next token is an expression token
-                    Token nextTok = (Token) iter.next();
-                    if(nextTok.mCode == TokenCode.EXPRESSION)
-                    {
-                        if(null == elementCodeFunction)
-                        {
-                            throw new IllegalArgumentException("unknown symbol used as function name: " + symbolName);
-                        }
-                        Element functionCallElement = new Element(elementCodeFunction);
-                        functionCallElement.mFirstOperand = nextTok.mParsedExpression;
-                        int numArgs = elementCodeFunction.mNumFunctionArgs;
-                        if(numArgs == 0)
-                        {
-                            if(functionCallElement.mFirstOperand != null)
-                            {
-                                throw new IllegalArgumentException("function does not allow any arguments: " + elementCodeFunction);
-                            }
-                        }
-                        else if(numArgs == 1)
-                        {
-                            if(functionCallElement.mFirstOperand == null)
-                            {
-                                throw new IllegalArgumentException("function requires an argument: " + elementCodeFunction);
-                            }
-                        }
-                        nextTok.mParsedExpression = functionCallElement;
-                        iter.previous();
-                        iter.previous();
-                        iter.remove();   // remove the previous symbol token, since it is not needed anymore
-                        iter.next();
-                    }
-                    else
-                    {
-                        if(null != elementCodeFunction)
-                        {
-                            throw new IllegalArgumentException("reserved function name used as symbol: " + symbolName);
-                        }
-                    }
-                }
-                else
-                {
-                    if(null != elementCodeFunction)
-                    {
-                        throw new IllegalArgumentException("reserved function name used as symbol: " + symbolName);
-                    }
-                }
-            }
-            else
-            {
-                // do nothing
-            }
-        }
-    }
 
     static private String getBinaryOperatorSymbol(ElementCode pElementOperatorCode)
     {
@@ -1124,7 +1107,7 @@ public class Expression implements Cloneable
                     if(prevTok == null ||
                        ! prevTok.mCode.equals(TokenCode.OPEN_PAREN))
                     {
-                        parsedSubFormula = parseTokenizedExpression(subFormula);
+                        parsedSubFormula = parseTokenizedExpression(subFormula, true);
                     }
                     
                     // this expression is to be added directly to the token stream
@@ -1138,6 +1121,228 @@ public class Expression implements Cloneable
         if(parenDepth > 0)
         {
             throw new IllegalArgumentException("mismatched parentheses found in formula");
+        }
+    }
+    
+    private void parseSeparators(List pTokenizedExpression, boolean pAllowArgumentLists) throws IllegalArgumentException
+    {
+        ListIterator iter = pTokenizedExpression.listIterator();
+        Token tok = null;
+
+        int parenDepth = 0;
+        boolean hasSep = false;
+        
+        while(iter.hasNext() && !hasSep)
+        {
+            tok = (Token) iter.next();
+            TokenCode tokenCode = tok.mCode;
+            if(tokenCode.equals(TokenCode.OPEN_PAREN))
+            {
+                ++parenDepth;
+            }
+            else if(tokenCode.equals(TokenCode.CLOSE_PAREN))
+            {
+                --parenDepth;
+                if(parenDepth < 0)
+                {
+                    throw new IllegalArgumentException("mismatched parentheses");
+                }
+            }
+            else if(parenDepth == 0 && tokenCode.equals(TokenCode.SEP)) 
+            {
+                if(! pAllowArgumentLists)
+                {
+                    throw new IllegalArgumentException("argument list not allowed in this context");
+                }
+                hasSep = true;
+            }
+        }
+
+        if(hasSep)
+        {
+           iter = pTokenizedExpression.listIterator();
+           List subExpression = new LinkedList();
+           Token newToken = new Token();
+           newToken.mCode = TokenCode.EXPRESSION_PAIR;
+           Element exp1 = null;
+           Element exp2 = null;
+           
+           parenDepth = 0;
+           while(iter.hasNext())
+           {
+               tok = (Token) iter.next();
+               TokenCode tokenCode = tok.mCode;
+               if(tokenCode.equals(TokenCode.OPEN_PAREN))
+               {
+                   ++parenDepth;
+               }
+               else if(tokenCode.equals(TokenCode.CLOSE_PAREN))
+               {
+                   --parenDepth;
+                   if(parenDepth < 0)
+                   {
+                       throw new IllegalArgumentException("mismatched parentheses");
+                   }
+               }
+               if(! tokenCode.equals(TokenCode.SEP))
+               {
+                   subExpression.add(tok);
+               }     
+               else if(! iter.hasNext())
+               {
+                   throw new IllegalArgumentException("invalid argument list; missing last argument");
+               }
+               else if(parenDepth == 0)
+               {
+                   // handle first argument
+                   if(subExpression.size() == 0)
+                   {
+                       throw new IllegalArgumentException("invalid argument list; empty argument");
+                   }
+                   Element parsedSubExpression = parseTokenizedExpression(subExpression, false);
+                   subExpression.clear();
+                   exp1 = parsedSubExpression;
+               }
+               if(! iter.hasNext())
+               {
+                   // handle second argument
+                   if(subExpression.size() == 0)
+                   {
+                       throw new IllegalArgumentException("invalid argument list; empty argument");
+                   }
+                   Element parsedSubExpression = parseTokenizedExpression(subExpression, false);
+                   subExpression.clear();
+                   exp2 = parsedSubExpression;
+               }
+               iter.remove();
+           }
+           
+           newToken.mParsedExpression = exp1;
+           newToken.mSecondParsedExpression = exp2;
+           
+           if(parenDepth != 0)
+           {
+               throw new IllegalArgumentException("mismatched number of parentheses");
+           }
+           
+           iter.add(newToken);
+        }
+    
+    }
+    
+    private void parseFunctionCalls(List pTokenizedExpression) throws IllegalArgumentException
+    {
+        ListIterator iter = pTokenizedExpression.listIterator();
+        Token tok = null;
+        Token prevTok = null;
+
+        // parse parentheses first, since they have the highest level of precedence
+        while(iter.hasNext())
+        {
+            prevTok = tok;
+            tok = (Token) iter.next();
+            TokenCode tokenCode = tok.mCode;
+
+            if(tok.mCode == TokenCode.SYMBOL)
+            {
+                String symbolName = tok.mSymbolName;
+                ElementCode elementCodeFunction = parseFunctionName(symbolName);
+
+                // check to see if this is a function call
+                if(iter.hasNext())
+                {
+                    // check to see if next token is an expression token
+                    Token nextTok = (Token) iter.next();
+                    if(nextTok.mCode.equals(TokenCode.EXPRESSION) || nextTok.mCode.equals(TokenCode.EXPRESSION_PAIR))
+                    {
+                        if(null == elementCodeFunction)
+                        {
+                            throw new IllegalArgumentException("unknown symbol used as function name: " + symbolName);
+                        }
+                        Element functionCallElement = new Element(elementCodeFunction);
+                        int numArgs = elementCodeFunction.mNumFunctionArgs;
+                        if(numArgs == 0)
+                        {
+                            if(! nextTok.mCode.equals(TokenCode.EXPRESSION))
+                            {
+                                throw new IllegalArgumentException("expected an expression token, instead found token: " + nextTok.mCode);
+                            }
+                            functionCallElement.mFirstOperand = nextTok.mParsedExpression;
+
+                            if(functionCallElement.mFirstOperand != null)
+                            {
+                                throw new IllegalArgumentException("function does not allow any arguments: " + elementCodeFunction);
+                            }
+                        }
+                        else if(numArgs == 1)
+                        {
+                            if(! nextTok.mCode.equals(TokenCode.EXPRESSION))
+                            {
+                                throw new IllegalArgumentException("expected an expression token, instead found token: " + nextTok.mCode);
+                            }
+                            functionCallElement.mFirstOperand = nextTok.mParsedExpression;
+                            if(functionCallElement.mFirstOperand.mCode.equals(ElementCode.PAIR))
+                            {
+                                throw new IllegalArgumentException("two arguments for single-argument function call: " + symbolName);
+                            }                            
+                        }
+                        else if(numArgs == 2)
+                        {
+                            if(! nextTok.mCode.equals(TokenCode.EXPRESSION))
+                            {
+                                throw new IllegalArgumentException("expected an expression token, instead found token: " + nextTok.mCode);
+                            }
+                            Element pairElement = nextTok.mParsedExpression;
+                            if(! pairElement.mCode.equals(ElementCode.PAIR))
+                            {
+                                throw new IllegalArgumentException("expected an argument pair; instead found token type:  " + pairElement.mCode);
+                            }
+                            functionCallElement.mFirstOperand = pairElement.mFirstOperand;
+                            functionCallElement.mSecondOperand = pairElement.mSecondOperand;
+                            nextTok.mCode = TokenCode.EXPRESSION;
+                            nextTok.mSecondParsedExpression = null;
+                        }
+                        else
+                        {
+                            throw new IllegalStateException("illegal number of function arguments");
+                        }
+                        nextTok.mParsedExpression = functionCallElement;
+                        iter.previous();
+                        iter.previous();
+                        iter.remove();   // remove the previous symbol token, since it is not needed anymore
+                        iter.next();
+                    }
+                    else
+                    {
+                        if(null != elementCodeFunction)
+                        {
+                            throw new IllegalArgumentException("reserved function name used as symbol: " + symbolName);
+                        }
+                    }
+                }
+                else
+                {
+                    if(null != elementCodeFunction)
+                    {
+                        throw new IllegalArgumentException("reserved function name used as symbol: " + symbolName);
+                    }
+                }
+            }
+            else
+            {
+                if(tok.mCode.equals(TokenCode.EXPRESSION))
+                {
+                    if(tok.mParsedExpression.mCode.equals(ElementCode.PAIR))
+                    {
+                        throw new IllegalArgumentException("argument pair not allowed in this context");
+                    }
+                }
+//                else if(tok.mCode.equals(TokenCode.EXPRESSION_LIST))
+//                {
+//                    throw new IllegalArgumentException("argument pair not allowed in this context");
+//                }
+                // do nothing
+            }
         }
     }
 
@@ -1310,6 +1515,12 @@ public class Expression implements Cloneable
                 case ElementCode.ELEMENT_CODE_MOD:
                     return(valueOfFirstOperand % valueOfSecondOperand);
                     
+                case ElementCode.ELEMENT_CODE_MIN:
+                    return Math.min(valueOfFirstOperand, valueOfSecondOperand);
+                
+                case ElementCode.ELEMENT_CODE_MAX:
+                    return Math.max(valueOfFirstOperand, valueOfSecondOperand);
+                
                 default:
                     throw new IllegalStateException("unknown function code: " + pElement.mCode);
             }
@@ -1389,11 +1600,13 @@ public class Expression implements Cloneable
         }
     }
 
-    private Element parseTokenizedExpression(List pFormula) throws IllegalArgumentException
+    private Element parseTokenizedExpression(List pFormula, boolean pAllowArgumentLists) throws IllegalArgumentException
     {
         // parse for parentheses (sub-expressions)
         parseParentheses(pFormula);
 
+        parseSeparators(pFormula, pAllowArgumentLists);
+        
         // parse for built-in function calls (exp, ln, sin, cos, tan, etc.)
         parseFunctionCalls(pFormula);
 
@@ -1453,7 +1666,7 @@ public class Expression implements Cloneable
     Element parseExpression(String pExpressionString) throws IllegalArgumentException
     {
         List tokenizedExpression = tokenizeExpression(pExpressionString);
-        return(parseTokenizedExpression(tokenizedExpression));
+        return(parseTokenizedExpression(tokenizedExpression, false));
     }
 
     /*========================================*
@@ -1763,6 +1976,12 @@ public class Expression implements Cloneable
 
             case ElementCode.ELEMENT_CODE_THETA:
                 throw new IllegalArgumentException("unable to compute the derivative of the theta() function");
+
+            case ElementCode.ELEMENT_CODE_MIN:
+                throw new IllegalArgumentException("unable to compute the derivative of the min() function");
+
+            case ElementCode.ELEMENT_CODE_MAX:
+                throw new IllegalArgumentException("unable to compute the derivative of the max() function");
 
             case ElementCode.ELEMENT_CODE_ACOS:
                 if(! firstOperandDerivZero)
@@ -2644,8 +2863,6 @@ public class Expression implements Cloneable
     {
         try
         {
-
-
             InputStream in = System.in;
             InputStreamReader reader = new InputStreamReader(in);
             BufferedReader bufReader = new BufferedReader(reader);
