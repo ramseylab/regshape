@@ -112,8 +112,14 @@ A PDF version of this manual is also available on-line at:
 The above hyperlinks for the User Manual are for the most recent
 version of the &appName; system.
 </p>
+<p>
+A <a href="&appPublicationURL;">preprint of an article</a> describing &appName;
+is available (to be published in the Journal of Bioinformatics and Computational
+Biology, May 2005).
+</p>
 </isb:docsubsection>
-<isb:docsubsection name="External Libraries" label="extlib">
+
+  <isb:docsubsection name="External Libraries" label="extlib">
 <p>
 The &appName; system relies upon a number of external open-source
 libraries.  These libraries are bundled with the &appName; program and
