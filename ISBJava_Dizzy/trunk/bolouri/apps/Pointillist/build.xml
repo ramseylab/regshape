@@ -80,6 +80,8 @@
 
   <target name="style" depends="copyCommonConfig">
     <mkdir dir="${app.styleDir}" />
+  	<mkdir dir="${app.styleConfDir}" />
+  	
     <style basedir="${app.docsDir}" 
            destdir="${app.styleDir}" 
            includes="*.xml" 
