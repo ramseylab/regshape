@@ -72,6 +72,9 @@ and Deterministic.</li>
 program now launches correctly when installed on a Mac OSX computer.</li>
 <li>The InstallAnywhere installer for &appName; now logs error messages to a log file
 &quot;<code>ins&appName;.log</code>&quot;.</li>
+<li>Fixed a bug where the &quot;copy to clipboard&quot; button was failing to
+be displayed in the simulation results plot window on the Windows platform,
+in some cases.</li>
 </ul>
 </td>
 <td><a href="&javaURL;/1.1.2/&installerDownloadRelURL;">1.1.2</a></td>
