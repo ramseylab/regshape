@@ -1291,9 +1291,9 @@ public class EvidenceWeightedInfererDriver
         numAffectedPanel.add(mNumAffectedLabel);
         JPanel numAffectedFieldPanel = new JPanel();
         numAffectedFieldPanel.setBorder(BorderFactory.createEtchedBorder());
-        numAffectedFieldPanel.setPreferredSize(new Dimension(75, 10));
-        numAffectedFieldPanel.setMinimumSize(new Dimension(75, 10));
         mNumAffectedField = new JLabel();
+        mNumAffectedField.setPreferredSize(new Dimension(75, 10));
+        mNumAffectedField.setMinimumSize(new Dimension(75, 10));
         numAffectedFieldPanel.add(mNumAffectedField);
         numAffectedPanel.add(numAffectedFieldPanel);
         numericResultsPanel.add(numAffectedPanel);
@@ -1418,7 +1418,8 @@ public class EvidenceWeightedInfererDriver
     {
         StringBuffer buf = new StringBuffer();
         String delimiter = pDelimiter.getDelimiter();
-        buf.append(COLUMN_NAME_EVIDENCE + delimiter + COLUMN_NAME_WEIGHT + "\n");
+        buf.append(pDelimiter.scrubIdentifier(COLUMN_NAME_EVIDENCE) + delimiter + 
+                   pDelimiter.scrubIdentifier(COLUMN_NAME_WEIGHT) + "\n");
         int j = 0; 
         double []weights = mEvidenceWeightedInfererResults.mWeights;
         int numEvidences = weights.length;
@@ -1458,7 +1459,9 @@ public class EvidenceWeightedInfererDriver
         Integer []sortedIndices = tableModel.getSortedIndices();
         int index = 0;
         
-        resultsBuf.append(COLUMN_NAME_ELEMENT + delimiter + COLUMN_NAME_AFFECTED + delimiter + COLUMN_NAME_OVERALL_SIGNIFICANCE + "\n"); 
+        resultsBuf.append(pDelimiter.scrubIdentifier(COLUMN_NAME_ELEMENT) + delimiter + 
+                          pDelimiter.scrubIdentifier(COLUMN_NAME_AFFECTED) + delimiter + 
+                          pDelimiter.scrubIdentifier(COLUMN_NAME_OVERALL_SIGNIFICANCE) + "\n"); 
         for(int i = 0; i < numElements; ++i)
         {
             index = sortedIndices[i].intValue();

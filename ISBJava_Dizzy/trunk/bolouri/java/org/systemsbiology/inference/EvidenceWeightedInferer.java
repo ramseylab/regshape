@@ -239,11 +239,11 @@ public final class EvidenceWeightedInferer
         {
             if(mDistNormAffected.get(j) <= 0.0)
             {
-                throw new IllegalArgumentException("evidence type has no affected elements: " + j);
+                throw new IllegalArgumentException("evidence type has no affected elements: " + j + "; please try increasing the initial quantile threshold");
             }
             if(mDistNormUnaffected.get(j) <= 0.0)
             {
-                throw new IllegalArgumentException("evidence type has no unaffected elements: " + j);
+                throw new IllegalArgumentException("evidence type has no unaffected elements: " + j + "; please try decreasing the initial quantile threshold");
             }
         }
         

@@ -386,10 +386,10 @@ public class ObservationsData implements Cloneable
         String delimiter = pDelimiter.getDelimiter();
         int numEvidences = mEvidenceNames.length;
         int numElements = mElementNames.length;
-        sb.append(ObservationsTableModel.COLUMN_NAME_ELEMENT + delimiter);
+        sb.append(pDelimiter.scrubIdentifier(ObservationsTableModel.COLUMN_NAME_ELEMENT) + delimiter);
         for(int j = 0; j < numEvidences; ++j)
         {
-            sb.append(mEvidenceNames[j]);
+            sb.append(pDelimiter.scrubIdentifier(mEvidenceNames[j]));
             if(j < numEvidences - 1)
             {
                 sb.append(delimiter);

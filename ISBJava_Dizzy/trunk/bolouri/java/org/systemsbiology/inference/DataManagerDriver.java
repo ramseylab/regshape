@@ -598,10 +598,10 @@ public class DataManagerDriver
         String delimiter = pDelimiter.getDelimiter();
         int numEvidences = evidences.length;
         int numElements = elements.length;
-        sb.append(ObservationsTableModel.COLUMN_NAME_ELEMENT + delimiter);
+        sb.append(pDelimiter.scrubIdentifier(ObservationsTableModel.COLUMN_NAME_ELEMENT) + delimiter);
         for(int j = 0; j < numEvidences; ++j)
         {
-            sb.append(evidences[j]);
+            sb.append(pDelimiter.scrubIdentifier(evidences[j]));
             if(j < numEvidences - 1)
             {
                 sb.append(delimiter);
