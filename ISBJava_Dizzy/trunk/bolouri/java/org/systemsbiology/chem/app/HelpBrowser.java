@@ -19,6 +19,8 @@ import javax.help.*;
 public class HelpBrowser
 {
     private static final String TOP_MAP_ID = "top";
+    private static final int HELP_WINDOW_WIDTH = 800;
+    private static final int HELP_WINDOW_HEIGHT = 600;
 
     JFrame mMainFrame;
 
@@ -27,8 +29,7 @@ public class HelpBrowser
         mMainFrame = pMainFrame;
     }
 
-
-    public void displayHelpBrowser()
+    public void displayHelpBrowser(String pView)
     {
         try
         {
@@ -43,10 +44,20 @@ public class HelpBrowser
                 URL helpPackageURL = HelpSet.findHelpSet(null, helpSetName);
                 if(null != helpPackageURL)
                 {
+
                     HelpSet hs = new HelpSet(null, helpPackageURL);
                     hs.setTitle(theApp.getAppConfig().getAppName() + ": help");
                     HelpBroker hb = hs.createHelpBroker();
                     hb.setCurrentID(TOP_MAP_ID);
+                    if(null != pView)
+                    {
+                        hb.setCurrentView(pView);
+                    }
+                    Dimension frameSize = new Dimension(HELP_WINDOW_WIDTH, HELP_WINDOW_HEIGHT);
+                    hb.setSize(frameSize);
+                    Point location = FramePlacer.placeInCenterOfScreen(frameSize.width, frameSize.height);
+                    hb.setLocation(location);
+                    hb.initPresentation();
                     hb.setDisplayed(true);
                 }
                 else
