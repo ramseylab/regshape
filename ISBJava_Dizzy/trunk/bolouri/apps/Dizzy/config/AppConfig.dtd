@@ -14,7 +14,7 @@
 
 <!ENTITY appName "Dizzy">
 <!ENTITY appVersion "1.0.0">
-<!ENTITY appDate "2003/12/04">
+<!ENTITY appDate "2003/12/08">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
 <!ENTITY appIconURL "images/appLogoIcon.png">
 
