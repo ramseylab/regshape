@@ -70,7 +70,7 @@ public class SignificantDigitsCalculator
 
     public int calculate(double pValue)
     {
-        if(null == mRelTol && null == mAbsTol)
+        if(Double.isNaN(pValue) || (null == mRelTol && null == mAbsTol))
         {
             return(SIGNIFICANT_DIGITS_UNKNOWN);
         }
