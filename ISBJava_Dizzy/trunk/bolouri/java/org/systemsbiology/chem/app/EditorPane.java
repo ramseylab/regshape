@@ -234,6 +234,7 @@ public class EditorPane
             clearEditorText();
             mMainApp.updateMenus();
             setParserAliasLabel(null);
+            setModelBuilder(null);
             setBufferDirty(false);
         }
         return(doClose);
@@ -344,6 +345,7 @@ public class EditorPane
             if(doSave && null != curFileName && !(curFileName.equals(fileName)))
             {
                 setParserAliasLabel(null);
+                setModelBuilder(null);
             }
 
             if(doSave)
