@@ -14,7 +14,7 @@ import org.systemsbiology.util.*;
 import java.util.*;
 
 /**
- * Abstract Symbol Evaluator class used for chemical simulations.
+ * Symbol Evaluator class used for chemical simulations.
  * 
  * @author Stephen Ramsey
  */
