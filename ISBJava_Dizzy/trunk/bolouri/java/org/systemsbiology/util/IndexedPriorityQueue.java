@@ -45,7 +45,7 @@ public class IndexedPriorityQueue extends PriorityQueue
             throw new DataNotFoundException("no queue element exists with this index: " + pIndex);
         }
         
-        remove(node);
+        remove(node, mAbstractComparator);
         
         node.clearTreeLinks();
         node.mPayload = pValue;
