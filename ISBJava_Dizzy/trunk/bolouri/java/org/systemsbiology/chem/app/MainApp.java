@@ -355,7 +355,7 @@ public class MainApp
         }
 
         enableMenuItem(MainMenu.MenuItem.FILE_CLOSE, ! bufferEmpty);
-        enableMenuItem(MainMenu.MenuItem.FILE_SAVE_AS, bufferDirty);
+        enableMenuItem(MainMenu.MenuItem.FILE_SAVE_AS, ! bufferEmpty);
         enableMenuItem(MainMenu.MenuItem.FILE_SAVE, bufferDirty && (null != bufferFilename));
         enableMenuItem(MainMenu.MenuItem.TOOLS_CYTOSCAPE, ! bufferEmpty);
         enableMenuItem(MainMenu.MenuItem.TOOLS_EXPORT, ! bufferEmpty);
