@@ -91,8 +91,10 @@
         <include name="*.html" />
         <exclude name="JavadocTitlePage.html" />
         <exclude name="index.html" />
+        <exclude name="download.html" />
       </fileset>
     </copy>
+
   </target>
 
   <target name="copyResources">
@@ -110,27 +112,36 @@
   </target>
 
   <target name="buildInstallers">
-    <!-- make the build directory -->
-    <mkdir dir="${app.buildDir}" />
-
-    <filter token="APPNAME" value="&appName;" />
-    <filter token="VERSION" value="${app.version}" />
-    <filter token="PROJROOT" value="${projRoot}" />
-
-    <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
-    <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />
-
-    <exec executable="${binInstallAnywhere}" failonerror="true">
-      <arg value="${app.buildDir}/project.iap_xml" />
-    </exec>
-
-    <!-- make the installer directory -->
-    <mkdir dir="${app.installerDir}" />
-
-    <!-- copy the InstallAnywhere web installer stuff to the web directory -->
-    <copy todir="${app.installerDir}">
-      <fileset dir="${app.buildDir}/project_Build_Output" />
+    <mkdir dir="${app.buildDir}/&appName;" />
+    <mkdir dir="${app.buildDir}/&appName;/src" />
+    <copy todir="${app.buildDir}/src/&appName;">
+      <fileset dir="${basedir}">
+        <include name="org/**/*.java" />
+      </fileset>
     </copy>
+    <mkdir dir="${app.buildDir}/&appName;/lib" />
+    <copy todir="${app.buildDir}/&appName;/lib">
+      <fileset dir="${basedir}/extlib">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
+    <copy todir="${app.buildDir}/&appName;/lib" file="${app.jarFile}" />
+    <mkdir dir="${app.buildDir}/&appName;/docs" />
+    <copy todir="${app.buildDir}/&appName;/docs">
+      <fileset dir="${basedir}/html">
+        <include name="*.html" />
+        <exclude name="JavadocTitlePage*.html" />
+        <exclude name="download.html" />
+      </fileset>
+    </copy>
+    <copy todir="${app.buildDir}/&appName;/docs" file="${app.webDir}/docs/APIDocumentation.pdf" />
+    <copy todir="${app.buildDir}/&appName;/docs" file="${projStyleDir}/License.html" />
+    <mkdir dir="${app.webDir}/${app.version}" />
+    <zip destfile="${app.webDir}/${app.version}/&appName;.zip" basedir="${app.buildDir}" includes="&appName;/**/*" />
+    <tar destfile="${app.buildDir}/&appName;.tar" basedir="${app.buildDir}" includes="&appName;/**/*" />
+    <gzip zipfile="${app.webDir}/${app.version}/&appName;.tar.gz" src="${app.buildDir}/&appName;.tar" />
+
+    <copy todir="${app.webDir}/&appVersion;" file="${app.styleDir}/download.html" />
   </target>
 
   <target name="javadocPDF">

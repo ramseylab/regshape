@@ -72,9 +72,8 @@ Runtime Environment is available.
 <p>
 The source code for the &localJavaLibraryName; library 
 is included with the library installer.  You can find the code 
-in the file &quot;<code>&localJavaLibraryName;-src.tar.gz</code>&quot;
-that is installed in the &quot;<code>src</code>&quot;
-subdirectory of the installation directory for this program.
+in the &quot;<code>src</code>&quot; subdirectory of the 
+installation directory for this program.
 </p>
 </isb:docsection>
 

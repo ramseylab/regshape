@@ -27,7 +27,7 @@
 <isb:docdate>$Date$</isb:docdate>
 
 <ul>
-<li><a href="&appVersion;/installer/Web_Installers/install.htm">Download &appName;</a></li>
+<li><a href="&appVersion;/download.html">Download &appName;</a></li>
 <li><a href="docs/UserManual.html">&appName; User Manual</a></li>
 <li><a href="docs/ReadMe.html">&appName; ReadMe</a></li>
 <li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
