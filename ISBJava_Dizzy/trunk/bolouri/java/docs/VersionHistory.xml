@@ -51,11 +51,11 @@ with a high degree of stiffness).</li>
 to permit inclusion of &quot;rules&quot; in SBML models</li>
 <li>Modified the <code>org.systemsbiology.chem.scripting.ModelExporterMarkupLanguage</code>
 to export models in SBML level 1, version 2.</li>
-<li>Fixing bug in <code>org.systemsbiology.chem.app.MainApp</code> when model-building
+<li>Fixed a bug in <code>org.systemsbiology.chem.app.MainApp</code> when model-building
 fails after the user selects &quot;Export&quot; from the &quot;Tools&quot; menu.</li>
 <li>Created separate fields in <code>org.systemsbiology.chem.app.SimulationLauncher</code>
 for specifying the matximum allowed relative and absolute errors</li>
-<li>Fixing bug in <code>org.systemsbiology.chem.Parameter</code>, in which a 
+<li>Fixed a bug in <code>org.systemsbiology.chem.Parameter</code>, in which a 
 <code>clone()</code> implementation was not provided, leading to incorrect behavior
 of the simulator when a parameter is defined with a deferred-evaluation expression</li>
 </ul>

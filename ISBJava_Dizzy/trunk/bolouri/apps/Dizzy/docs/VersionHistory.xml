@@ -53,11 +53,11 @@ an implicit/explicit Runge-Kutta solver with adaptive step-size control (for mod
 with a high degree of stiffness).</li>
 <li>Modified the SBML reader to permit inclusion of &quot;rules&quot; in SBML models</li>
 <li>Modified the SBML writer to export models in SBML level 1, version 2.</li>
-<li>Fixing bug in which the operation does not terminate, when model-building
+<li>Fixed a bug in which the operation does not terminate, when model-building
 fails after the user selects &quot;Export&quot; from the &quot;Tools&quot; menu.</li>
 <li>Created separate fields in the SimulationLauncher
 for specifying the matximum allowed relative and absolute errors</li>
-<li>Fixing bug for the case of a parameter defined as a deferred-evaluation
+<li>Fixed a bug for the case of a parameter defined as a deferred-evaluation
 expression</li>
 </ul>
 </td>
