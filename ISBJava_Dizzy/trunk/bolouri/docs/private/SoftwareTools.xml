@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
+  %CommonConfig;
+  <!ENTITY docLastUpdated "2003/06/10">
+   ]>
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>Software Tools</isb:doctitle>
+<isb:docdate>&docLastUpdated;</isb:docdate>
+<isb:docversion>Version: 0.3, Date: &docLastUpdated;</isb:docversion>
+
+<isb:doccontents />
+
+<isb:docsection name="Introduction" label="introduction">
+
+This document describes software tools available within the Bolouri
+Lab.
+
+</isb:docsection>
+
+<isb:docsection name="Computers" label="computers">
+
+Many of the tools described in this document are installed on shared
+computers.  These shared computers are described in this section.
+
+<isb:docsubsection name="Shared Linux Computer" label="sharedlinux">
+The shared Linux computer has the hostname <code>hamid-lx.systemsbiology.net</code>.
+This computer resides in the "old conference room" now used as an office
+for the Bolouri Group.  Many useful software programs are installed on this
+computer, as <a href="#tools">described below</a>.  You may use software
+that has been installed on this computer, in one of two possible modes:
+<ol>
+<li>You may use the computer at the console, meaning you physically go
+over to the computer and use the keyboard, mouse, and display that are
+attached to it.  This is the preferred option if your primary desktop
+computer is a Windows computer, and you do not have an X-windows emulator
+program and OpenSSH installed on your desktop computer (or if you do not 
+know what an "X-windows emulator program" and "OpenSSH" are).  Simply log
+in using your Linux account username and password.  Note that your password
+may be different than your Windows password.  Once you are logged in, open
+a command terminal window.  In this window you may run various applications
+that are installed on the computer.
+</li>
+
+<li>You may use the computer via a remote SSH connection.  This is the
+preferred option if you have a desktop computer that can boot into Linux
+or a simililar Unix-like operating system.  You will need to have OpenSSH
+or a compatible SSH client installed on your computer, and (generally speaking)
+you will need to have X-windows running on your computer.  From the command
+shell, you would do the following:
+<blockquote>
+<pre>
+ssh -X -C hamid-lx.systemsbiology.net
+xterm &amp;
+</pre>
+</blockquote>
+This should cause a terminal window to pop open on your desktop computer. 
+In this window, you can run any software program that is installed on the
+shared Linux computer, and the application will appear on your X-windows
+desktop.
+</li>
+</ol>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Shared Windows Computer" label="sharedwindows">
+The shared Windows computer is in the Bolouri Group office that used to
+be a conference room.  It has Matlab and Mathematica installed on it.
+
+</isb:docsubsection>
+
+</isb:docsection>
+
+<isb:docsection name="Tools" label="tools">
+
+This section describes the software tools that are available for the
+Bolouri research group.
+
+<isb:docsubsection name="InstallAnywhere" label="installanywhere">
+
+InstallAnywhere is a tool for building software package installers.
+It is specifically oriented to building installers for Java applications.
+It can build installers for a variety of platforms, and can (on some
+platforms) provide an installer that does not require the target
+computer to already have a functioning Java Runtime Environment installed.
+<p />
+The InstallAnywhere program is installed on the shared Linux computer,
+in the directory:
+<blockquote>
+<pre>
+/local/InstallAnywhere_5_Standard
+</pre>
+</blockquote>
+To run the program, just type the following at the command prompt:
+<blockquote>
+<pre>
+/local/InstallAnywhere_5_Standard/InstallAnywhere
+</pre>
+</blockquote>
+This should cause the InstallAnywhere program to open up in a new window.
+The version of InstallAnywhere that is installed is version 5.
+The <a href="../privateRepository/InstallAnywhere5_UserManual.pdf">user manual for InstallAnywhere</a>
+is available online.
+</isb:docsubsection>
+
+<isb:docsubsection name="Matlab" label="matlab">
+The basic Matlab package  is installed on the shared Linux computer, in the
+directory:
+<blockquote>
+<pre>
+/usr/local/matlab6p5
+</pre>
+</blockquote>
+To run Matlab, just type the following at the command prompt:
+<blockquote>
+<pre>
+/usr/local/bin/matlab
+</pre>
+</blockquote>
+This should cause Matlab to open up in a new window.  The version of
+Matlab that is installed is version 6.  The symbolic math toolbox should
+also be installed.  No additional Matlab toolboxes have been installed
+on that computer (due to cost reasons).
+
+</isb:docsubsection>
+
+
+<isb:docsubsection name="Mathematica" label="mathematica">
+Mathematica is installed on the shared Linux computer, in the directory:
+<blockquote>
+<pre>
+/usr/local/Wolfram/Mathematica/4.2
+</pre>
+</blockquote>
+To run Mathematica, just type the following at the command prompt:
+<blockquote>
+<pre>
+/usr/local/bin/mathematica
+</pre>
+</blockquote>
+The version of Mathematica that is installed is version 4.2.
+
+
+</isb:docsubsection>
+
+<isb:docsubsection name="JProfiler" label="jprofiler">
+JProfiler is installed on the shared Linux computer.  This program
+is a code profiler and optimizer for the Java language.  It is
+installed in the directory:
+<blockquote>
+<pre>
+/opt/jprofiler
+</pre>
+</blockquote>
+To run JProfiler, just type the following at the command prompt:
+<blockquote>
+<pre>
+/usr/local/bin/jprofiler
+</pre>
+</blockquote>
+You may be prompted to enter a license key.  If this happens,
+you will only need to enter the license key once, the first time you
+run JProfiler.  You can obtain the group's license key for JProfiler 
+by e-mailing a request to <code>&mainGroupEmailSafe;</code>.
+The version of JProfiler that is installed is 2.2.1.
+</isb:docsubsection>
+
+</isb:docsection>
+
+
+</isb:document>

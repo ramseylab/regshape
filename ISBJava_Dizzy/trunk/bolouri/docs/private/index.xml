@@ -17,7 +17,7 @@
 <tr>
 <td>
 
-<isb:docsection name="Tools" label="tools">
+<isb:docsection name="Locally Developed Tools" label="tools">
 <ul>
 <li><a href="../Dizzy">Dizzy (Gillespie stochastic simulator)</a></li>
 <li><a href="../&localJavaLibraryName;">&localJavaLibraryName; (Java class library)</a></li>
@@ -47,8 +47,9 @@
 </ul>
 </isb:docsection>
 
-<isb:docsection name="Software Manuals" label="softwaremanuals">
+<isb:docsection name="Software Tools" label="softwaremanuals">
 <ul>
+<li><a href="SoftwareTools.html">Software Tools Page</a></li>
 <li><a href="&privateRepositoryURL;/InstallAnywhere5_UserManual.pdf">InstallAnywhere User Manual (PDF)</a></li>
 <li><a href="&privateRepositoryURL;/CVSManual.pdf">CVS User Manual (PDF)</a></li>
 </ul>
