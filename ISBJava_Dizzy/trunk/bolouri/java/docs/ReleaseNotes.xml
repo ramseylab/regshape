@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+
+<isb:doctitle>&appName; Release Notes</isb:doctitle>
+<isb:docowner>&mainGroup;, &mainAffiliation;</isb:docowner>
+<isb:docownerurl>&mainGroupURL;</isb:docownerurl>
+<isb:docdate>$Date$</isb:docdate>
+<isb:docowneremail>&mainGroupEmailSafe;</isb:docowneremail>
+<isb:docversion>Version &appVersion;, Released &appDate;</isb:docversion>
+
+<isb:doccontents />
+
+<isb:docsection name="Introduction" label="introduction">
+<p />
+The &appName; project is a library (collection) of classes
+written in the <a href="http://java.sun.com">Java</a>
+programming language, that are intended to be used for
+research in computational biology.  For more information,
+please refer to the <a href="&webBaseURL;/&appName;">&appName;
+home page</a>.
+</isb:docsection>
+
+<isb:docsection name="License agreement" label="licenseagreement">
+<p>
+This software is distributed under the GNU Lesser
+General Public License (LGPL), 
+which is a standard &quot;free software&quot;
+and &quot;open source&quot; license.  A copy of the 
+The text of the license agreement is available <a href="&webBaseURL;/License.html">here</a>.
+</p>
+</isb:docsection>
+
+<isb:docsection name="Requirements" label="requirements">
+You will need the Sun Java Development Kit (JDK) vesrion 1.4 
+or newer (or the equivalent) in order to use these classes.
+Some of the packages in this source directory tree
+require external Java packages/libraries to be installed.
+In particular, in order to be able to compile the full
+source tree, you will need to have the following Java libraries
+installed and available within your <code>CLASSPATH</code> environment
+variable:
+<blockquote>
+<table border="1">
+<tr>
+<td>Package name</td><td>JAR name</td><td>Source</td>
+</tr>
+<tr>
+<td>jfreechart</td><td><code>jfreechart-&lt;VERS&gt;.jar</code></td>
+<td><a href="http://www.jfree.org/jfreechart"><code>www.object-refinery.com/jfreechart/</code></a></td>
+</tr>
+<tr>
+<td>jcommon</td><td><code>jcommon-&lt;VERS&gt;.jar</code></td>
+<td><a href="http://www.jfree.org/jcommon"><code>www.object-refinery.com/jcommon/</code></a></td>
+</tr>
+<tr>
+<td>SBW (core)</td><td><code>SBWCore.jar</code></td>
+<td><code>www.sbw-sbml.org/sbw/software/</code></td>
+</tr>
+<tr>
+<td>SBML Validator</td><td><code>SBMLValidate.jar</code></td>
+<td><code>www.sbw-sbml.org/sbw/software/</code></td>
+</tr>
+</table>
+</blockquote>
+Note that the SBW/SBML libraries and packages are only required for
+compiling the code in the &quot;<code>isb.chem.sbw</code>&quot; 
+directory.  By omitting this
+directory from the compilation (by adding a suitable 
+&quot;<code>exclude</code>&quot; to the
+&quot;<code>javac</code>&quot; statements in the 
+<code>build.xml</code> file), in principle the resulting
+<code>isb.jar</code> file that would be built, 
+would not have any dependencies on 
+the aforementioned SBW/SBML libraries.  
+<p />
+The <code>jfreechart</code> and <code>jcommon</code> libraries
+are needed in order to compile the <code>isb.chem.app</code>
+package.  They are not needed for any other packages in the &appName;
+library.
+<p />
+The classes in this library
+have been tested on the Sun JDK v1.4.1, on the Red Hat
+Linux 8.0 platform.  On other platforms, your mileage 
+may vary.  
+<p />
+Ant is required to use the "build.xml" file in this directory.
+You can download and install Ant from 
+<a href="http://ant.apache.org">the apache Ant project</a>.
+</isb:docsection>
+
+<isb:docsection name="Notes" label="note">
+<p />
+The <a href="VersionHistory.html">Version History
+of the &appName; library is available here</a>.
+<p />
+A few notes about conventions used these java packages.
+The &quot;.tp&quot; suffix at the end of a package name
+indicates that the &quot;.tp&quot; 
+subpackage contains test programs for
+the parent package.  Similarly, a suffix &quot;.t&quot;
+at the end of a package name indicates that the 
+&quot;.t&quot; subpackage contains unit tests for the
+parent package (in the JUnit framework).  
+<p />
+These classes are all in development, and are subject
+to change at any time, without notice.  All classes contained
+herein should be considered copyright of the &mainAffiliation;, 
+2003.  
+</isb:docsection>
+
+<isb:docsection name="Building" label="building">
+All builds must be initiated from inside the <code>java</code>
+directory (one level up from the <code>java/src</code> directory).
+The end products of the source code in this directory are:
+<ol>
+<li>Class files, stored in: <code>CVSARCHIVE/bolouri/classes/isb/...</code></li>
+<li>A JAR file in: <code>CVSARCHIVE/bolouri/build/isb.jar</code></li>
+<li>Javadoc documentation:  <code>&lt;WEBDIR&gt;/javadoc</code></li>
+</ol>
+</isb:docsection>
+
+</isb:document>

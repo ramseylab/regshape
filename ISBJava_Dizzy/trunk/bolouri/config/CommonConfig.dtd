@@ -7,6 +7,8 @@
 <!ENTITY mainAffiliation    "Institute for Systems Biology">
 <!ENTITY mainGroupEmailSafe "bolourilab at systemsbiology.org">
 
+<!ENTITY localJavaLibraryName "ISBJava">
+
 <!-- these definitions are used in styled XHTML files: -->
 <!ENTITY eacute "&#x00E9;">
 <!ENTITY nbsp "&#160;"> 

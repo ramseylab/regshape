@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
-<!DOCTYPE UserGuide [
+<!DOCTYPE isbdocument [
   <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
   %AppConfig;
    ]>
@@ -22,7 +22,7 @@
 <li><a href="docs/ReleaseNotes.html">&appName; Release Notes</a></li>
 <li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
 <li><a href="../License.html">License Agreement</a></li>
-<li><a href="../javadoc">ISBJava Javadoc API</a></li>
+<li><a href="../&localJavaLibraryName;">&localJavaLibraryName; library</a></li>
 </ul>
 </p>
 
@@ -37,13 +37,17 @@ and the reactions through which they interact.  The software can then be
 used to simulate the reaction kinetics of the system of interacting species.
 The software consists of the following elements:
 <ol>
-<li>a set of Java packages or "libraries" that constitute a Java 
-application programming interface (or "API") for this software system
-There is <a href="../javadoc">javadoc</a> documentation available
-for the API for this software package.</li>
+<li>A set of Java packages or that (among other things) provides a Java 
+application programming interface (or "API") for this software system.
+This set of Java packages is collectively known as the
+<a href="../&localJavaLibraryName;">&localJavaLibraryName;</a> library.
+There is Javadoc documentation available at the &localJavaLibraryName; page.</li>
 <li>a scripting engine that can be invoked from the command-line, to define
 a model and run simulations on the model, and to export a model to a different
 model definition language</li>
+<li>an implementation of the 
+<a href="&webBaseURL;/&localJavaLibraryName;/javadoc/isb/chem/GillespieSimulator.html">
+Gillespie stochastic algorithm</a> for simulating chemical reaction kinetics</li>
 <li>a graphical user interface ("GUI") application that can be used to run 
 simulations and export a model to a different model definition language</li>
 <li>a Systems Biology Workbench bridge that allows the simulator to be
@@ -62,7 +66,7 @@ bugs, add new features, and add (much needed) documentation.  Your
 patience is appreciated.
 </p>
 <p>
-This program is distributed under the GNU Public License (GPL), 
+This software is distributed under the GNU Public License (GPL), 
 which is a standard &quot;free software&quot;
 and &quot;open source&quot; license.  A copy of the 
 The text of the license agreement is available <a href="../License.html">here</a>.

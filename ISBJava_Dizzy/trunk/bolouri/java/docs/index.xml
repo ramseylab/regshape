@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+
+<isb:doctitle>&appName; Home Page</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+<isb:docdate>$Date$</isb:docdate>
+
+<ul>
+<li><a href="&appVersion;/isb-src.tar.gz">Download &appName; (source code)</a></li>
+<li><a href="javadoc/">Javadoc API documentation</a></li>
+<li><a href="../License.html">License Agreement</a></li>
+<li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
+<li><a href="docs/ReleaseNotes.html">&appName; Release Notes</a></li>
+</ul>
+
+<img src="images/appLogo.png" border="1" />
+
+<p>
+The &appName; project is a library (collection) of classes
+written in the <a href="http://java.sun.com">Java</a>
+programming language, that are intended to be used for
+research in computational biology.  The body of source code
+for these java classes is available for download, subject
+to the terms of the <a href="../License.html">license agreement</a>.
+</p>
+
+</isb:document>

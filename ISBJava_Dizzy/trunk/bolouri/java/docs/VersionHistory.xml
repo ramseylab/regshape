@@ -5,16 +5,27 @@
   %AppConfig;
    ]>
 
+
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
-<isb:docpreamble>Javadoc documentation for &appName; classes.</isb:docpreamble>
-<isb:doctitle>&appName; API Documentation</isb:doctitle>
+<isb:doctitle>&appName; Version History</isb:doctitle>
 <isb:docowner>&mainGroup;, &mainAffiliation;</isb:docowner>
+<isb:docownerurl>&mainGroupURL;</isb:docownerurl>
+<isb:docdate>$Date$</isb:docdate>
 <isb:docowneremail>&mainGroupEmailSafe;</isb:docowneremail>
-<isb:docversion>Version &appVersion;, Released &appDate;</isb:docversion>
 
 <p>
-<a href="../" target="_new">&appName;</a> javadoc API documentation.
+This document contains the version history for the
+<a href="../">&appName;</a> software product.
+</p>
+
+<p>
+<dl>
+<dt><b>0.0.1 (2003/04/01)</b></dt>
+<dd>First version of the library.  
+It is an alpha version, intended only for internal use at
+&mainAffiliation;.</dd>
+</dl>
 </p>
 
 </isb:document>

@@ -1,37 +1,80 @@
 <?xml version="1.0"?>
+<!DOCTYPE BuildFile [
+<!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
+%CommonConfig;
+<!ENTITY % AppConfig SYSTEM "config/AppConfig.dtd">
+%AppConfig;
+]>
 
 <project name="localJava" default="compile" basedir=".">
 
-  <property name="localJava.styleDir"                location="${basedir}/html" />
-  <property name="localJava.srcDir"                  location="${basedir}/isb" />
-  <property name="localJava.docsDir"                 location="${basedir}/docs" />
-  <property name="localJava.extLibDir"               location="${basedir}/extlib" />
-  <property name="localJava.buildDir"                location="${projBuildDir}" />
-  <property name="localJava.classesDir"              location="${projClassesDir}" />
-  <property name="localJava.javadocDir"              location="${projWebDir}/javadoc" />
+  <property name="app.styleDir"                location="${basedir}/html" />
+  <property name="app.srcDir"                  location="${basedir}/isb" />
+  <property name="app.configDir"               location="${basedir}/config" />
+  <property name="app.docsDir"                 location="${basedir}/docs" />
+  <property name="app.extLibDir"               location="${basedir}/extlib" />
+  <property name="app.buildDir"                location="${projBuildDir}" />
+  <property name="app.classesDir"              location="${projClassesDir}" />
+  <property name="app.imagesDir"               location="${basedir}/images" />
+  <property name="app.webDir"                  location="${projWebDir}/&appName;" />
+  <property name="app.javadocDir"              location="${app.webDir}/javadoc" />
+  <property name="app.version"                 value="&appVersion;" />
+  <property name="app.downloadDir"             location="${app.webDir}/&appVersion;" />
 
-  <property name="localJava.sourceCompileFlag"       value="1.4" />
+  <property name="app.sourceCompileFlag"       value="1.4" />
 
-  <property name="localJava.jarFile"                 location="${localJava.buildDir}/isb.jar" />
-  <property name="localJava.srcFile"                 location="${localJava.buildDir}/isb-src.tar.gz" />
+  <property name="app.jarFile"                 location="${app.buildDir}/isb.jar" />
+  <property name="app.srcFile"                 location="${app.buildDir}/isb-src.tar.gz" />
 
-  <path id="localJava.classpath">
-    <pathelement location="${localJava.classesDir}" />
-    <fileset dir="${localJava.extLibDir}"> 
+  <path id="app.classpath">
+    <pathelement location="${app.classesDir}" />
+    <fileset dir="${app.extLibDir}"> 
       <include name="*.jar" />
     </fileset>
   </path>
 
-  <target name="style">
-    <mkdir dir="${localJava.styleDir}" />
-    <style basedir="${localJava.docsDir}" 
-           destdir="${localJava.styleDir}" 
+  <target name="copyCommonConfig">
+    <copy file="${projConfigDir}/CommonConfig.dtd" todir="${app.configDir}" />
+  </target>
+
+  <target name="style" depends="copyCommonConfig">
+    <mkdir dir="${app.styleDir}" />
+    <style basedir="${app.docsDir}" 
+           destdir="${app.styleDir}" 
            includes="*.xml" 
            style="${docsStyleSheet}" />
   </target>
 
+  <target name="copyImages">
+    <mkdir dir="${app.webDir}/images" />
+    <copy todir="${app.webDir}/images">
+      <fileset dir="${app.imagesDir}">
+        <include name="*.png" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="copyHtml">
+    <mkdir dir="${app.webDir}" />
+    <copy todir="${app.webDir}" file="${app.styleDir}/index.html" />
+
+    <mkdir dir="${app.webDir}/docs" />
+    <copy todir="${app.webDir}/docs">
+      <fileset dir="${app.styleDir}">
+        <include name="*.html" />
+        <exclude name="overview.html" />
+        <exclude name="index.html" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="copySourceTarball">
+    <mkdir dir="${app.downloadDir}" />
+    <copy todir="${app.downloadDir}" file="${app.srcFile}" />
+  </target>
+
   <target name="copyResources">
-    <copy todir="${localJava.classesDir}">
+    <copy todir="${app.classesDir}">
       <fileset dir="${basedir}">
         <include name="**/*.xml" />
         <include name="**/*.dtd" />
@@ -42,54 +85,54 @@
     </copy>
   </target>
 
-  <target name="buildWeb" depends="style, javadoc" />
+  <target name="buildWeb" depends="style, srctar, copyHtml, copyImages, copySourceTarball, javadoc" />
   
   <target name="javadoc">
-    <mkdir dir="${localJava.javadocDir}" />
-    <javadoc source="${localJava.sourceCompileFlag}" 
-             Overview="${localJava.styleDir}/overview.html" 
+    <mkdir dir="${app.javadocDir}" />
+    <javadoc source="${app.sourceCompileFlag}" 
+             Overview="${app.styleDir}/overview.html" 
              sourcepath="${basedir}" 
-             destdir="${localJava.javadocDir}"
+             destdir="${app.javadocDir}"
              packageList="${basedir}/packageList.txt"
              additionalparam="-breakiterator"> 
-      <classpath refid="localJava.classpath" />
+      <classpath refid="app.classpath" />
     </javadoc>
   </target>
 
   <target name="compile">
-    <mkdir dir="${localJava.classesDir}" />
-    <javac srcdir="${localJava.srcDir}" 
-           destdir="${localJava.classesDir}" 
-           source="${localJava.sourceCompileFlag}" 
+    <mkdir dir="${app.classesDir}" />
+    <javac srcdir="${app.srcDir}" 
+           destdir="${app.classesDir}" 
+           source="${app.sourceCompileFlag}" 
            debug="on" 
            excludes="**/tp/*.java">
-      <classpath refid="localJava.classpath" />
+      <classpath refid="app.classpath" />
     </javac>
   </target>
 
   <target name="compiletests" depends="compile">
-    <mkdir dir="${localJava.classesDir}" />
-    <javac srcdir="${localJava.srcDir}" 
-           destdir="${localJava.classesDir}" 
-           source="${localJava.sourceCompileFlag}" 
+    <mkdir dir="${app.classesDir}" />
+    <javac srcdir="${app.srcDir}" 
+           destdir="${app.classesDir}" 
+           source="${app.sourceCompileFlag}" 
            debug="on" 
            includes="**/tp/*.java" />
   </target>  
  
   <target name="srctar">
-    <tar destfile="${localJava.srcFile}" 
+    <tar destfile="${app.srcFile}" 
          basedir="${basedir}"
-         includes="**/*.java,**/*.xml,**/.dtd" 
+         includes="isb/**/*.java,isb/**/*.xml,html/*.html,isb/**/.dtd" 
          compression="gzip">
     </tar>
   </target>
 
-  <target name="build" depends="jar, srctar" />
+  <target name="build" depends="jar" />
 
   <target name="jar" depends="clean, compile, copyResources">
-    <mkdir dir="${localJava.buildDir}" />
-    <jar basedir="${localJava.classesDir}" destfile="${localJava.jarFile}">
-      <fileset dir="${localJava.classesDir}">
+    <mkdir dir="${app.buildDir}" />
+    <jar basedir="${app.classesDir}" destfile="${app.jarFile}">
+      <fileset dir="${app.classesDir}">
         <include name="**/*.class" />
         <include name="**/*.xml" />
         <include name="**/*.dtd" />
@@ -99,20 +142,21 @@
   </target>
 
   <target name="clean">
-    <delete dir="${localJava.styleDir}" quiet="yes" />
+    <delete dir="${app.styleDir}" quiet="yes" />
     <delete quiet="yes">
-      <fileset dir="${localJava.srcDir}">
+      <fileset dir="${app.srcDir}">
         <include name="**/*.class" />
       </fileset>
     </delete>
-    <delete dir="${localJava.buildDir}" quiet="yes" />
+    <delete dir="${app.buildDir}" quiet="yes" />
     <delete quiet="yes">
-      <fileset dir="${localJava.classesDir}">
+      <fileset dir="${app.classesDir}">
         <include name="**/*.class" />
         <include name="**/*.xml" />
         <include name="**/*.dtd" />
       </fileset>
     </delete>
+    <delete file="${app.configDir}/CommonConfig.dtd" quiet="yes" />
   </target>
 
   <target name="distClean" depends="clean">

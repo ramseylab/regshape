@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
-<!DOCTYPE UserGuide [
+<!DOCTYPE isbdocument [
   <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
   %AppConfig;
    ]>
@@ -36,8 +36,8 @@ refer to the
 </isb:docsection>
 <isb:docsection name="License Agreement" label="licenseagreement">
 <p>
-This software is licensed under the GNU public 
-license (GPL), which is a standard &quot;free software&quot;
+This software is licensed under the GNU Lesser General Public 
+License (LGPL), which is a standard &quot;free software&quot;
 and &quot;open source&quot; license.  A copy of the 
 license agreement is available in the file &quot;LICENSE.txt&quot;
 in the &quot;docs&quot; subdirectory of the
@@ -60,7 +60,7 @@ please consult the
 <a href="UserManual.html">&appName; User Manual</a>.
 For detailed documentation of the application programming
 interface (API) to the &appName; system, please consult the
-<a href="&webBaseURL;/javadoc">ISBJava</a> home page.
+<a href="&webBaseURL;/&localJavaLibraryName;">ISBJava</a> home page.
 You will find examples of model defrnition in the "samples"
 subdirectory of the directory in which you install the 
 &appName; software.

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xml" href="../config/documentation-stylesheet.xml"?>
-<!DOCTYPE Overview [
+<!DOCTYPE isbdocument [
   <!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
   %CommonConfig;
    ]>
@@ -20,10 +20,10 @@
 This section lists selected software tools that were (or are being) developed in collaboration
 with Hamid Bolouri:
 <ul>
-<li><a href="Dizzy/">Dizzy, a chemical simulation program</a>&nbsp;&nbsp;[contains an <a href="javadoc/isb/chem/package-summary.html" target="_new">implementation</a> of the Gillespie stochastic simulator</li>
+<li><a href="Dizzy/">Dizzy, a chemical kinetics simulation system</a></li>
 <li><a href="http://strc.herts.ac.uk/bio/maria/NetBuilder">NetBuilder</a> (Hertfordshire, UK)</li>
-<li><a href="javadoc/">Java classes developed by the &mainGroup;</a></li>
-<li><a href="models/">&mainGroup; biomolecular model repository</a></li>
+<li><a href="&localJavaLibraryName;/">&localJavaLibraryName; library</a></li>
+<li><a href="models/">&mainGroup; model repository</a></li>
 </ul>
 </p>
 

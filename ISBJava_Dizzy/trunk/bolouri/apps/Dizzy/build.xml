@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<!DOCTYPE DizzyBuildFile [
+<!DOCTYPE BuildFile [
 <!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
 %CommonConfig;
 <!ENTITY % AppConfig SYSTEM "config/AppConfig.dtd">
@@ -14,7 +14,8 @@
   <property name="app.docsDir"                  location="${basedir}/docs" />
   <property name="app.imagesDir"                location="${basedir}/images" />
   <property name="app.webDir"                   location="${projWebDir}/${ant.project.name}" />
-  <property name="app.installerDir"             location="${app.webDir}/&appVersion;/installer" />
+  <property name="app.downloadDir"              location="${app.webDir}/&appVersion;" />
+  <property name="app.installerDir"             location="${app.downloadDir}/installer" />
   <property name="app.version"                  value="&appVersion;" />
 
   <target name="compile">

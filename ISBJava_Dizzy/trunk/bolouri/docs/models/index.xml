@@ -3,17 +3,18 @@
 <!DOCTYPE Overview [
   <!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
   %CommonConfig;
+  <!ENTITY userManualURL "../Dizzy/docs/UserManual.html">
    ]>
 
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
-<isb:doctitle>Biomolecular Model Repository</isb:doctitle>
+<isb:doctitle>Model Repository</isb:doctitle>
 <isb:docdate>$Date$</isb:docdate>
 
 <p>
-This page is an archive of model definition files for biomolecular 
-systems that have been found to be useful or interesting in our group&apos;s
-research.  
+This page is an archive of model definition files for biomolecular or 
+mathematical systems that have been found to be useful or interesting in 
+our group&apos;s research.  
 </p>
 <p>
 The filename suffix of each model definition file indicates its
@@ -21,6 +22,12 @@ format.  The possible formats for model definition files, and the
 filename suffxes of each model definition file format, are
 described in the 
 <a href="../Dizzy/UserManual.html#introduction">Dizzy User Manual</a>.
+The possible formats are:
+<ul>
+<li><a href="&userManualURL;#ccmdl">Condensed Chemical Model Definition Language (CCMDL)</a></li>
+<li><a href="&userManualURL;#cmdl">Chemical Model Definition Language (CMDL)</a></li>
+<li><a href="&userManualURL;#sbml">Systems Biology Markup Language (SBML)</a></li>
+</ul>
 </p>
 
 <hr />
@@ -32,9 +39,9 @@ described in the
 <ul>
 <li><a href="singlegene.dizzy">Simple stochastic model of 
 transcription of a single gene</a>, with two
-transcription factors TFA and TFB</li>
+transcription factors TFA and TFB [CCMDL format]</li>
 <li><a href="GAL.dizzy">Simple stochastic model of GAL4 system</a>,
-from <em>S. cerevisiae</em></li>
+from <em>S. cerevisiae</em> [CCMDL format]</li>
 </ul>
 </p>
  

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xml" href="../../config/documentation-stylesheet.xml"?>
-<!DOCTYPE Overview [
+<!DOCTYPE isbdocument [
   <!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
   %CommonConfig;
   <!ENTITY internalWebServerURL "http://sun01.systemsbiology.net">
@@ -14,7 +14,7 @@
 <isb:docsection name="Tools" label="tools">
 <ul>
 <li><a href="../Dizzy">Dizzy</a> (stochastic simulation software)</li>
-<li><a href="../javadoc">ISBJava</a> (java class library)</li>
+<li><a href="../&localJavaLibraryName;">&localJavaLibraryName;</a> (java class library)</li>
 </ul>
 </isb:docsection>
 
@@ -22,7 +22,7 @@
 <isb:docsection name="Links" label="links">
 <ul>
 <li><a href="../Resources.html">&mainGroup; Resources Page</a></li>
-<li><a href="../models">&mainGroup; Biomolecular Model Repository</a></li>
+<li><a href="../models">&mainGroup; Model Repository</a></li>
 <li><a href="&mainPublicURL;">&mainAffiliation;</a></li>
 <li><a href="WebPagesManagementManual.html">Web Pages Management Manual</a></li>
 <li><a href="http://www.sbw-sbml.org">SBW/SBML Project</a></li>
