@@ -748,7 +748,10 @@ In practice, this limitation rarely presents a problem.
 Another consequence of numeric precision is that a model containing
 a dynamical species whose initial population is greater than 
 or equal to <code>9.0071993e+15</code> molecules will not be allowed
-to be simulated using a stochastic simulator.  This is because
+to be simulated using a stochastic simulator.  In addition, if the
+value of any dynamical species becomes greater than the aforementioned
+threshold during the course of a simulation, an error message will occur,
+and the simulation will be terminated.  This is because
 the number of molecules is stored using a double-precision floating-point
 number, and for numbers greater than the aforementioned value, 
 there are not enough significant digits in the floating-point
