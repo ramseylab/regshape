@@ -10,6 +10,7 @@ import java.util.LinkedList;
 
 import org.systemsbiology.math.SymbolValue;
 import org.systemsbiology.util.DebugUtils;
+import org.systemsbiology.util.DataNotFoundException;
 
 /**
  * A named collection of {@link Reaction} and
@@ -164,6 +165,20 @@ public class Model
 
         pReaction.addDynamicSpeciesToGlobalSpeciesMap(getDynamicSymbolsMap());
         pReaction.addSymbolsToGlobalSymbolMap(getSymbolsMap());
+    }
+
+    public Species getSpeciesByName(String pSpeciesName) throws DataNotFoundException
+    {
+        SymbolValue symbolValue = (SymbolValue) mSymbolsMap.get(pSpeciesName);
+        if(null == symbolValue)
+        {
+            throw new DataNotFoundException("could not find species: " + pSpeciesName);
+        }
+        if(! (symbolValue instanceof Species))
+        {
+            throw new IllegalArgumentException("requested item is not a species: " + pSpeciesName);
+        }
+        return((Species) symbolValue);
     }
 
     public String []getOrderedSpeciesNamesArray()

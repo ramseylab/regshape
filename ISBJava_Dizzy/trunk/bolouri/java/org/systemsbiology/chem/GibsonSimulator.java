@@ -4,6 +4,16 @@ import java.util.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.math.*;
 
+/**
+ * Implementation of the Gibson-Bruck "Next Reaction" algorithm.
+ *
+ * Note:  If the Model contains M reactions with custom reaction
+ * rate expressions, the Gibson algorithm will require M^2 memory
+ * because each of the M reactions will need to be recomputed when
+ * any of the other reactions occurs.  
+ *
+ * @author Stephen Ramsey
+ */
 public class GibsonSimulator extends StochasticSimulator implements IAliasableClass, ISimulator
 {
     public static final String CLASS_ALIAS = "gibson-bruck"; 
@@ -16,7 +26,7 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
         initializeSimulator(pModel, pSimulationController);
         checkDynamicalSymbolsInitialValues();
         initializeRandomNumberGenerator();
-        createDependencyGraph();
+        createDependencyGraph(pModel);
         initializePutativeTimeToNextReactions();
     }
 
@@ -32,7 +42,7 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
         mPutativeTimeToNextReactions = putativeTimeToNextReactions;
     }
 
-    private void createDependencyGraph()
+    private void createDependencyGraph(Model pModel) throws DataNotFoundException
     {
         Reaction []reactions = mReactions;
         int numReactions = reactions.length;
@@ -57,6 +67,12 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
             }
         }
 
+        boolean checkCompartmentValues = false;
+        if(pModel.getSpeciesRateFactorEvaluator() instanceof SpeciesRateFactorEvaluatorConcentration)
+        {
+            checkCompartmentValues = true;
+        }
+
         HashSet customSpecies = new HashSet();
         for(int ctr = 0; ctr < numSpecies; ++ctr)
         {
@@ -64,9 +80,25 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
             Symbol speciesSymbol = (Symbol) mSymbolMap.get(speciesName);
             if(null != speciesSymbol)
             {
+                boolean addSpeciesToCustomList = false;
                 if(null != speciesSymbol.getValueArray())
                 {
                     // this is a boundary species with a custom population expression
+                    addSpeciesToCustomList = true;
+                }
+                else
+                {
+                    if(checkCompartmentValues)
+                    {
+                        Compartment compartment = pModel.getSpeciesByName(speciesName).getCompartment();
+                        if(compartment.getValue().isExpression())
+                        {
+                            addSpeciesToCustomList = true;
+                        }
+                    }
+                }
+                if(addSpeciesToCustomList)
+                {
                     customSpecies.add(speciesName);
                 }
             }
@@ -78,7 +110,7 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
             Reaction reaction = reactions[ctr];
             if(reaction.getRate().isExpression())
             {
-                customReactions.add(reaction);
+                customReactions.add(new Integer(ctr));
             }
 
             HashMap reactantsMap = reaction.getReactantsMap();
@@ -89,7 +121,7 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
                 String reactantSpeciesName = (String) reactantIter.next();
                 if(customSpecies.contains(reactantSpeciesName))
                 {
-                    customReactions.add(reaction);
+                    customReactions.add(new Integer(ctr));
                 }
             }
         }
@@ -402,9 +434,6 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
         System.arraycopy(timesArray, 0, pRetTimeValues, 0, timeCtr);
         
     }
-
-
-
 
 }
     
