@@ -18,3 +18,6 @@
 <!ENTITY appOriginalAuthorFullName "Stephen Ramsey">
 <!ENTITY appOriginalAuthorEmailSafe "sramsey at systemsbiology.org"> 
 <!ENTITY appHelpSetName "html/AppHelp.hs">
+
+<!ENTITY sbmlURL "http://www.sbw-sbml.org">
+<!ENTITY cytoscapeURL "http://www.cytoscape.org">

@@ -35,8 +35,8 @@ written in Java.  It provides a model definition environment and an implementati
 <a href="docs/UserManual.html#gillespie">Gillespie</a> and
 <a href="docs/UserManual.html#gibsonbruck">Gibson-Bruck</a> stochastic algorithms.
 &appName; is capable of importing and exporting the 
-<a href="http://www.sbw-sbml.org">SBML model definition language</a>,
-as well as displaying models graphically using the <a href="http://www.cytoscape.org">Cytoscape
+<a href="&sbmlURL;">SBML model definition language</a>,
+as well as displaying models graphically using the <a href="&cytoscapeURL;">Cytoscape
 software system</a>.  The &appName; system is based on the 
 <a href="../&localJavaLibraryName;">&localJavaLibraryName; library</a>. 
 The software is available for download within a self-extracting installer 

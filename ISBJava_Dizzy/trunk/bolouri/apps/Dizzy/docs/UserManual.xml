@@ -6,8 +6,6 @@
 
 <!ENTITY cmdlExtension ".dizzy">
 <!ENTITY sbmlExtension ".xml">
-<!ENTITY sbmlURL "http://www.sbw-sbml.org">
-<!ENTITY cytoscapeURL "http://www.cytoscape.org">
 <!ENTITY appNameCommandLine "dizzycmd">
    ]>
 

@@ -25,7 +25,7 @@ intended only for internal use at &mainAffiliation;.  Built and tested
 with version <code>0.0.1</code> of the 
 <a href="&webBaseURL;/&localJavaLibraryName;">&localJavaLibraryName;</a> library</dd>
 <dt><b>0.0.2 (2003/08/06)</b></dt>
-<dd>Added the ability to display a model in Cytoscape.</dd>
+<dd>Added the ability to display a model in a <a href="&cytoscapeURL;">Cytoscape</a> window.</dd>
 </dl>
 </p>
 
