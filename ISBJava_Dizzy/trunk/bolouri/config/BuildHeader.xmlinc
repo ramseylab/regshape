@@ -13,7 +13,7 @@
   <property name="helpTOCStyleSheet" value="${projConfigDir}/javahelp-toc-stylesheet.xml" />
   <property name="helpContentFileParamName" value="contentFile" />
 
-  <property name="binInstallAnywhere" location="/local/InstallAnywhere_6_Standard/build" />
+  <property name="binInstallAnywhere" location="/local/InstallAnywhere_6_Enterprise/build" />
   <property name="binHtml2PS"         value="html2ps" />
   <property name="binHtmlTidy"        value="tidy" />
   <property name="binPS2PDF"          value="ps2pdf" />
