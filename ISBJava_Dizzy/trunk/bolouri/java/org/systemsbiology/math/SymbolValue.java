@@ -32,6 +32,12 @@ public class SymbolValue implements Comparable
         this(pSymbolName, null);
     }
 
+    public SymbolValue(String pSymbolName, double pSymbolValue)
+    {
+        this(pSymbolName, new Value(pSymbolValue));
+    }
+
+
     /**
      * The copy constructor.
      */
