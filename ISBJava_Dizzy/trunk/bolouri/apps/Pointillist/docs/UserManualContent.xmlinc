@@ -336,7 +336,7 @@ The data file of observations that is loaded into the Data Manager must
 conform to a <a href="#fileformat">specific format</a>.  In addition to the
 format requirements listed above, the Data Manager may require that 
 element names be unique within the input data file, depending on the
-state of the "allow duplicates" check-box (see below).
+state of the "average duplicates" check-box (see below).
 </p>  
 <p>
 Before you load your data file, please make sure you select the proper
@@ -351,14 +351,18 @@ click on the "load data" button at any time, to load additional data files.
 You may change the ordering of the data files, which will rearrange the
 order of colums in the data table (if you have not specified a sort
 order for evidence names), using the "move file up" button.  The 
-"allow duplicates" checkbox allows you to specify how you wish for
+"average duplicates" checkbox allows you to specify how you wish for
 the Data Manager to handle the case of multiple measurements of the
 same evidence type and network element.  If you have checked this box,
 the Data Manager will average over the multiple measurements, and use the
 single resulting value as the consensus measurement.  If you have not
-checked the box, the Data Manager will pop up an error message and will
-not load the file, if the file contains multiple measurements for a single
-evidence type and network element.  
+checked the box, the Data Manager will display separate rows for two elements
+appear with the same element name, in the same data file.  In this case, if you attempt
+to add a second data file and the "average duplicates" box is unchecked, you
+will get an error message.  If the first data file does not contain
+any duplicate elements but you attempt to add a second data file that contains
+an element/evidence pair that overlaps with an entry in the first data file, you will 
+get an error message.
 </p>
 <p>
   The following list describes the various components and controls of the Data Normalizer
@@ -371,10 +375,10 @@ evidence type and network element.
       the data from the multiple files will be merged.  It should be noted that if
       two files each contain an observation for element X and evidence type Y (or if
       a single file contains an element X that is represented on more than one row), the
-      "Allow duplicates" check-box should be selected, or else an error message will
+      "Average duplicates" check-box should be selected, or else an error message will
       appear when the data file(s) are loaded.  This is because the Data Manager needs to
       average redundant data before it can merge data files that have overlapping observations.
-      The "Allow duplicates" check-box gives the Data Manager permission to carry out this averaging.</dd>
+      The "Average duplicates" check-box gives the Data Manager permission to carry out this averaging.</dd>
   <dt><b>Delimiter</b></dt>
   <dd>This drop-down list is used to specify how your input data file (and output data file)
     are delimited.  The three choices are "tab", "space", and "comma".  Comma-delimited files
@@ -385,14 +389,20 @@ evidence type and network element.
     so you cannot use the string "Null" or "NULL".  Once you have loaded your input data file,
     you may change the delimiter that you use to save the output file, if you wish.  
   </dd>
-  <dt><b>Allow duplicates</b></dt>
+  <dt><b>Average duplicates</b></dt>
   <dd>
     This check-box is used to indicate how the Data Manager should handle overlapping
     ovservations in the input data.  Overlapping observations are two observations for
     the same element name and evidence type.  If this check-box is selected, the Data
     Manager will average over any overlapping observations to assign a "consensus" observation
     to the evidence type and element.  If this check-box is not selected, the Data Manager
-    will show an error message if the input data contains overlapping data.  Note that two
+    will display separate rows for two elements
+appear with the same element name, in the same data file.  In this case, if you attempt
+to add a second data file and the "average duplicates" box is unchecked, you
+will get an error message.  If the first data file does not contain
+any duplicate elements but you attempt to add a second data file that contains
+an element/evidence pair that overlaps with an entry in the first data file, you will 
+get an error message.  Note that two
     data files may also contain <em>complementary</em> data, i.e., data for the same evidence types
     but different elements; this is not overlapping data, and is not impacted by the "allow
     duplicates" check-box.  The default is for this check-box to be selected.
