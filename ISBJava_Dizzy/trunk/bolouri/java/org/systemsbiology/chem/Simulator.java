@@ -50,7 +50,13 @@ public abstract class Simulator
     protected HashMap []mReactionsLocalParamSymbolsMaps;
     protected Value []mReactionRates;
     protected DelayedReactionSolver []mReactionsDelayedReactionAssociations;
+    protected Symbol []mReactionSymbols;
 
+    /**
+     * Go through all the SymbolValue objects in pSymbolArray, and
+     * for each such object, obtain the Symbol object, index it, 
+     * and put it into the pSymbolMap hashmap.
+     */
     static final void indexSymbolArray(SymbolValue []pSymbolArray, 
                                        HashMap pSymbolMap, 
                                        double []pDoubleArray, 
@@ -73,7 +79,6 @@ public abstract class Simulator
             assert (null != value) : "null value object for symbol: " + symbolName;
 
             pSymbolMap.put(symbolName, symbol);
-
             if(null != pDoubleArray)
             {
 
@@ -210,19 +215,23 @@ public abstract class Simulator
             pReactions.add(delayedReaction);
             delayedReaction.setRate(rate);
             double delay = 0.0;
+            boolean isMultistep;
             if(numSteps > 0)
             {
                 delay = (numSteps - 1) / rate;
+                isMultistep = true;
             }
             else
             {
                 delay = pReaction.getDelay();
+                isMultistep = false;
             }
 
-            DelayedReactionSolver solver = new DelayedReactionSolver(reactant,
-                                                                     intermedSpecies,
+            DelayedReactionSolver solver = new DelayedReactionSolver((Species) reactant.clone(),
+                                                                     (Species) intermedSpecies.clone(),
                                                                      delay,
                                                                      rate,
+                                                                     isMultistep,
                                                                      pReactions.size() - 1,
                                                                      pIsStochasticSimulator);
             pDelayedReactionSolvers.add(solver);
@@ -372,7 +381,11 @@ public abstract class Simulator
         }
         
         ReservedSymbolMapper reservedSymbolMapper = pModel.getReservedSymbolMapper();
-        SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = pModel.getSymbolEvaluationPostProcessor();
+        SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = (SymbolEvaluationPostProcessor) pModel.getSymbolEvaluationPostProcessor();
+        if(null != symbolEvaluationPostProcessor)
+        {
+            symbolEvaluationPostProcessor = (SymbolEvaluationPostProcessor) symbolEvaluationPostProcessor.clone();
+        }
         boolean useExpressionValueCaching = true;
         SymbolEvaluatorChem evaluator = new SymbolEvaluatorChem(useExpressionValueCaching,
                                                                 symbolEvaluationPostProcessor,
@@ -394,6 +407,7 @@ public abstract class Simulator
         mReactionsLocalParamSymbolsMaps = new HashMap[numReactions];
 
         mReactionRates = new Value[numReactions];
+        mReactionSymbols = new Symbol[numReactions];
 
         for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
         {
@@ -445,19 +459,11 @@ public abstract class Simulator
 
             mReactionsProductsSpecies[reactionCtr] = productsSymbolsArray;
             mReactionsProductsStoichiometries[reactionCtr] = productsStoichiometryArray;
-            mReactionsProductsDynamic[reactionCtr] = productsDynamicArray;
+            mReactionsProductsDynamic[reactionCtr] = productsDynamicArray;    
 
-            SymbolValue []localSymbolsValues = reaction.getLocalSymbolValues();
-            int numLocalSymbols = localSymbolsValues.length;
-            Value []localValues = new Value[numLocalSymbols];
-            HashMap localSymbolsMap = new HashMap();
-            
-            indexSymbolArray(localSymbolsValues,
-                             localSymbolsMap,
-                             null,
-                             localValues);            
+            mReactionsLocalParamSymbolsMaps[reactionCtr] = createLocalSymbolsMap(reaction);
 
-            mReactionsLocalParamSymbolsMaps[reactionCtr] = localSymbolsMap;
+            mReactionSymbols[reactionCtr] = reaction.getSymbol();
         }
 
         // create an array of doubles to hold the reaction probabilities
@@ -466,6 +472,21 @@ public abstract class Simulator
         checkReactionRates();
 
         mInitialized = true;
+    }
+
+    static HashMap createLocalSymbolsMap(Reaction pReaction)
+    {
+        SymbolValue []localSymbolsValues = pReaction.getLocalSymbolValues();
+        int numLocalSymbols = localSymbolsValues.length;
+        Value []localValues = new Value[numLocalSymbols];
+        HashMap localSymbolsMap = new HashMap();
+            
+        indexSymbolArray(localSymbolsValues,
+                         localSymbolsMap,
+                         null,
+                         localValues);                    
+
+        return(localSymbolsMap);
     }
 
     private final void checkReactionRates() throws DataNotFoundException
@@ -511,6 +532,8 @@ public abstract class Simulator
         mDynamicSymbols = null;
         mDynamicSymbolAdjustmentVectors = null;
         mReactionsDelayedReactionAssociations = null;
+        mReactionSymbols = null;
+        mReactionRates = null;
     }
 
     public Simulator()
@@ -829,6 +852,31 @@ public abstract class Simulator
         }
     }
 
+    static Expression computeRatePartialDerivativeExpression(Expression pRateExpression,
+                                                             SymbolValue pSymbolValue,
+                                                             SymbolEvaluatorChem pSymbolEvaluator,
+                                                             HashMap pLocalSymbolsMap) throws DataNotFoundException
+    {
+        SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = pSymbolEvaluator.getSymbolEvaluationPostProcessor();
+        Symbol derivSymbol = pSymbolValue.getSymbol();
+        pSymbolEvaluator.setLocalSymbolsMap(pLocalSymbolsMap);
+        Expression retVal = pRateExpression.computePartialDerivative(derivSymbol, pSymbolEvaluator);
+        pSymbolEvaluator.setLocalSymbolsMap(null);
+
+        return(retVal);
+    }
+
+    protected Expression computeRatePartialDerivativeExpression(int pReactionCtr, 
+                                                                Expression pRateExpression,
+                                                                SymbolValue pSymbolValue,
+                                                                SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
+    {
+        return(computeRatePartialDerivativeExpression(pRateExpression,
+                                                      pSymbolValue,
+                                                      pSymbolEvaluator,
+                                                      mReactionsLocalParamSymbolsMaps[pReactionCtr]));
+    }
+
     final double computeReactionRate(int pReactionCtr) throws DataNotFoundException
     {
         if(null == mReactionsDelayedReactionAssociations || null == mReactionsDelayedReactionAssociations[pReactionCtr])
@@ -852,7 +900,7 @@ public abstract class Simulator
             else
             {
                 mSymbolEvaluator.setLocalSymbolsMap(mReactionsLocalParamSymbolsMaps[pReactionCtr]);
-                double rate = mReactionRates[pReactionCtr].getValue(mSymbolEvaluator);
+                double rate = mSymbolEvaluator.getValue(mReactionSymbols[pReactionCtr]);
                 mSymbolEvaluator.setLocalSymbolsMap(null);
                 return(rate);
             }
@@ -861,7 +909,6 @@ public abstract class Simulator
         {
             // it is a delayed reaction; call computeRate() on the DelayedReactionSolver
             double rate = mReactionsDelayedReactionAssociations[pReactionCtr].computeRate(mSymbolEvaluator);
-//            System.out.println("time: " + mSymbolEvaluator.getTime() + "; rate for delayed reaction is: " + rate);
             return(rate);
         }
     }
