@@ -24,11 +24,11 @@ public class SimulationLauncher
     private static final int OUTPUT_TEXT_AREA_NUM_COLS = 40;
     private static final int SPECIES_LIST_BOX_ROW_COUNT = 10;
     private static final int SIMULATORS_LIST_BOX_ROW_COUNT = 10;
+    private static final int OUTPUT_FILE_TEXT_FIELD_SIZE_CHARS = 20;
 
     private ClassRegistry mSimulatorRegistry;
     private Component mLauncherFrame;
     private Model mModel;
-    private JTextField mFileNameField;
     private JTextField mStartTimeField;
     private JTextField mStopTimeField;
     private JTextField mNumPointsField;
@@ -42,7 +42,7 @@ public class SimulationLauncher
     private JLabel mAllowedRelativeErrorFieldLabel;
     private JTextField mAllowedAbsoluteErrorField;
     private JLabel mAllowedAbsoluteErrorFieldLabel;
-    private String mOutputType;
+    private OutputType mOutputType;
     private JButton mStartButton;
     private JButton mStopButton;
     private JButton mResumeButton;
@@ -55,8 +55,11 @@ public class SimulationLauncher
     private boolean mExitOnClose;
     private JLabel mModelNameLabel;
     private ArrayList mListeners;
+    private File mOutputFile;
+    private JTextField mOutputFileField;
+    private JCheckBox mOutputFileAppendCheckBox;
+    private JLabel mOutputFileAppendLabel;
 
-    
     /**
      * Enumerates the possible results of calling {@link #setModel(org.systemsbiology.chem.Model)}.
      */
@@ -98,6 +101,7 @@ public class SimulationLauncher
         }
         mListeners = new ArrayList();
         createLauncher(pAppName, pModel);
+        mOutputFile = null;
     }
 
     private void setLauncherLocation()
@@ -249,6 +253,7 @@ public class SimulationLauncher
 
     private void handleOutput(OutputType pOutputType,
                               String pOutputFileName,
+                              boolean pOutputFileAppend,
                               String []pRequestedSymbolNames,
                               double []pTimeValues,
                               Object []pSymbolValues) throws IOException
@@ -264,7 +269,7 @@ public class SimulationLauncher
         {
             assert (null != pOutputFileName) : "null output file name";
             File file = new File(pOutputFileName);
-            FileWriter fileWriter = new FileWriter(file);
+            FileWriter fileWriter = new FileWriter(file, pOutputFileAppend);
             printWriter = new PrintWriter(fileWriter);
         }
             
@@ -329,6 +334,7 @@ public class SimulationLauncher
             {
                 handleOutput(pSimulationRunParameters.mOutputType,
                              pSimulationRunParameters.mOutputFileName,
+                             pSimulationRunParameters.mOutputFileAppend,
                              pSimulationRunParameters.mRequestedSymbolNames, 
                              pSimulationRunParameters.mRetTimeValues, 
                              pSimulationRunParameters.mRetSymbolValues);
@@ -381,6 +387,7 @@ public class SimulationLauncher
         int mNumTimePoints;
         OutputType mOutputType;
         String mOutputFileName;
+        boolean mOutputFileAppend;
         String []mRequestedSymbolNames;
         double []mRetTimeValues;
         Object []mRetSymbolValues;
@@ -613,8 +620,18 @@ public class SimulationLauncher
     {
         JPanel panel = new JPanel();
         Box box = new Box(BoxLayout.Y_AXIS);
-        JLabel label = new JLabel("simulation:");
-        box.add(label);
+
+        JLabel label = new JLabel("controller:");
+
+        JPanel labelPanel = new JPanel();
+        Box labelBox = new Box(BoxLayout.X_AXIS);
+        labelBox.add(label);
+        JPanel padding5 = new JPanel();
+        padding5.setBorder(BorderFactory.createEmptyBorder(2, 1, 2, 1));
+        labelBox.add(padding5);
+        labelPanel.add(labelBox);
+
+        box.add(labelPanel);
 
         JPanel padding2 = new JPanel();
         padding2.setBorder(BorderFactory.createEmptyBorder(2, 1, 2, 1));
@@ -1023,7 +1040,7 @@ public class SimulationLauncher
         Object []symbolValues = new Object[numTimePoints];
         srp.mRetSymbolValues = symbolValues;
      
-        String outputTypeStr = mOutputType;
+        String outputTypeStr = mOutputType.toString();
         OutputType outputType = OutputType.get(outputTypeStr);
         assert (null != outputType) : "null output type";
 
@@ -1038,47 +1055,98 @@ public class SimulationLauncher
         srp.mOutputType = outputType;
         if(mOutputType.equals(OutputType.FILE))
         {
-            String fileName = mFileNameField.getText();
-            if(null == fileName || fileName.trim().length() == 0)
+            File outputFile = mOutputFile;
+            if(null == outputFile)
             {
                 handleBadInput("output file name was not specified", "Saving the results to a file requires specifying a file name");
                 return(retVal);
             }
+            String fileName = outputFile.getAbsolutePath();
+            assert (null != fileName && fileName.trim().length() > 0) : "invalid output file name";
             srp.mOutputFileName = fileName;
+            boolean append = mOutputFileAppendCheckBox.isSelected();
+            srp.mOutputFileAppend = append;
         }
 
         retVal = srp;
         return(retVal);
     }
 
-    
+    private void enableOutputFieldSection(boolean pEnabled)
+    {
+        mOutputFileField.setEnabled(pEnabled);
+        mOutputFileAppendCheckBox.setEnabled(pEnabled);
+        mOutputFileAppendLabel.setEnabled(pEnabled);
+        
+        if(pEnabled && mOutputFileField.getText().length() == 0)
+        {
+            mOutputFileField.setText("[output file; click to edit]");
+        }
+    }
 
     private void handleButtonEvent(ActionEvent e)
     {
         String outputTypeStr = e.getActionCommand();
-        mOutputType = outputTypeStr;
         OutputType outputType = OutputType.get(outputTypeStr);
+        mOutputType = outputType;
+        
         if(null != outputType)
         {
             if(outputType.equals(OutputType.PRINT))
             {
-                mFileNameField.setEnabled(false);
-                mEnsembleField.setEnabled(true);
+                enableOutputFieldSection(false);
             }
             else if(outputType.equals(OutputType.PLOT))
             {
-                mFileNameField.setEnabled(false);
-                mEnsembleField.setEnabled(true);
+                enableOutputFieldSection(false);
             }
             else if(outputType.equals(OutputType.FILE))
             {
-                mFileNameField.setEnabled(true);
-                mEnsembleField.setEnabled(true);
+                enableOutputFieldSection(true);
             }
             else
             {
                 assert false: "unknown output type";
             }
+        }
+        else
+        {
+            throw new IllegalStateException("unknown output type: " + outputType);
+        }
+    }
+
+    private void handleOutputFileMouseClick()
+    {
+        OutputType outputType = mOutputType;
+        if(outputType.equals(OutputType.FILE))
+        {
+            FileChooser outputFileChooser = new FileChooser(mLauncherFrame);
+            outputFileChooser.setDialogTitle("Please specify the file for the simulation output");
+            if(null != mOutputFile)
+            {
+                outputFileChooser.setSelectedFile(mOutputFile);
+            }
+            outputFileChooser.setApproveButtonText("approve");
+            outputFileChooser.show();
+            File outputFile = outputFileChooser.getSelectedFile();
+            if(null != outputFile)
+            {
+                String outputFileName = outputFile.getAbsolutePath(); 
+                boolean doUpdate = true;
+                if(outputFile.exists() && 
+                   (null == mOutputFile ||
+                    !mOutputFile.equals(outputFile)) && 
+                   ! mOutputFileAppendCheckBox.isSelected())
+                {
+                    doUpdate = FileChooser.handleOutputFileAlreadyExists(mLauncherFrame, outputFileName);
+                }
+                if(doUpdate)
+                {
+                    mOutputFile = outputFile;
+                    mOutputFileField.setText(outputFileName);
+                }
+            }   
+
         }
     }
 
@@ -1103,19 +1171,20 @@ public class SimulationLauncher
         };
 
         JPanel printPlotPanel = new JPanel();
+
+        JRadioButton plotButton = new JRadioButton(OutputType.PLOT.toString(), true);
+        plotButton.addActionListener(buttonListener);
+        plotButton.setSelected(true);
+        buttonGroup.add(plotButton);
+        printPlotPanel.add(plotButton);
+        outputBox.add(printPlotPanel);
+
         JRadioButton printButton = new JRadioButton(OutputType.PRINT.toString(), true);
         printButton.addActionListener(buttonListener);
         printButton.setSelected(false);
         buttonGroup.add(printButton);
         printPlotPanel.add(printButton);
 
-        JRadioButton plotButton = new JRadioButton(OutputType.PLOT.toString(), true);
-        plotButton.addActionListener(buttonListener);
-        plotButton.setSelected(true);
-        mOutputType = OutputType.PLOT.toString();
-        buttonGroup.add(plotButton);
-        printPlotPanel.add(plotButton);
-        outputBox.add(printPlotPanel);
 
         JPanel filePanel = new JPanel();
         JRadioButton fileButton = new JRadioButton(OutputType.FILE.toString(), false);
@@ -1124,14 +1193,49 @@ public class SimulationLauncher
         filePanel.add(fileButton);
         JPanel fileNamePanel = new JPanel();
         Box fileBox = new Box(BoxLayout.Y_AXIS);
-        JLabel fileLabel = new JLabel("save results as a text (CSV) file:");
-        JTextField fileNameField = new JTextField(NUM_COLUMNS_FILE_NAME);
-        fileBox.add(fileLabel);
-        fileBox.add(fileNameField);
+        JTextField fileNameTextField = new JTextField();
+        fileNameTextField.setColumns(OUTPUT_FILE_TEXT_FIELD_SIZE_CHARS);
+        mOutputFileField = fileNameTextField;
+        fileNameTextField.setEditable(false);
+        fileNameTextField.addMouseListener(new MouseAdapter()
+        {
+            public void mouseClicked(MouseEvent e)
+            {
+                handleOutputFileMouseClick();
+            }
+        });
+        fileBox.add(fileNameTextField);
         fileNamePanel.add(fileBox);
-        mFileNameField = fileNameField;
-        mFileNameField.setEnabled(false);
         filePanel.add(fileNamePanel);
+        JLabel outputFileAppendLabel = new JLabel("append:");
+        filePanel.add(outputFileAppendLabel);
+        JCheckBox outputFileAppendCheckBox = new JCheckBox();
+        filePanel.add(outputFileAppendCheckBox);
+        mOutputFileAppendCheckBox = outputFileAppendCheckBox;
+        mOutputFileAppendLabel = outputFileAppendLabel;
+        outputFileAppendCheckBox.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                boolean append = mOutputFileAppendCheckBox.isSelected();
+                if(! append && null != mOutputFile && mOutputFile.exists())
+                {
+                    boolean proceed = FileChooser.handleOutputFileAlreadyExists(mLauncherFrame, 
+                                                                                mOutputFile.getAbsolutePath());
+                    if(! proceed)
+                    {
+                        mOutputFileAppendCheckBox.setSelected(true);
+                    }
+                }
+            }
+        });
+        mOutputType = OutputType.PLOT;
+        enableOutputFieldSection(false);
+
+        //----------------------------------------------------
+        // :TODO:  initialize "append" checkbox and create label
+        //----------------------------------------------------
+
         outputBox.add(filePanel);
 
         outputPanel.add(outputBox);
