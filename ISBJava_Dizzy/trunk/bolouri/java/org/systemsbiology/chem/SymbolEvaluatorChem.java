@@ -67,7 +67,11 @@ public final class SymbolEvaluatorChem extends SymbolEvaluator
         Symbol symbol = (Symbol) mSymbolsMap.get(symbolName);
         if(null == symbol)
         {
-            throw new DataNotFoundException("unable to find symbol in symbol map, symbol is \"" + symbolName + "\"");
+            symbol = (Symbol) mLocalSymbolsMap.get(symbolName);
+            if(null == symbol)
+            {
+                throw new DataNotFoundException("unable to find symbol in symbol map, symbol is \"" + symbolName + "\"");
+            }
         }
         Value []valueArray = symbol.getValueArray();
         int arrayIndex = symbol.getArrayIndex();
