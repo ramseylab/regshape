@@ -623,6 +623,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         boolean firstToken = true;
         StringBuffer expressionBuffer = new StringBuffer();
         boolean deferredExpression = false;
+        
         while(pTokenIter.hasNext())
         {
             Token token = getNextToken(pTokenIter);
@@ -699,7 +700,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                 pTokenIter.previous();
                 break;
             }
-
+            
             boolean appendToken = false;
 
             if(firstToken)
@@ -743,7 +744,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                 }
             }
         }
-
+ 
         String expressionString = expressionBuffer.toString();
         Expression expression = null;
         try
@@ -1830,6 +1831,9 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                         Token firstToken = (Token) tokenList.get(0);
                         if(firstToken.mCode.equals(Token.Code.SYMBOL))
                         {
+                            // at this stage, we don't know if the string token is a literal numeric, or a symbol
+                            
+                            // test to see if it is a numeric literal
                             Object symbolObj = null;
                             String symbolName = firstToken.mSymbol;
                             // try to parse as a number
@@ -1842,8 +1846,22 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                             }
                             catch(NumberFormatException nfe)
                             {
-                                // must be a symbol name, which is the normal case
-                                symbolObj = symbolName;
+                                // the string token is not a numeric literal; therefore, it is a symbol
+
+                                // scope the symbol name based on our namespace
+                                symbolObj = addNamespaceToSymbol(symbolName, mNamespace);
+                                      
+                                // IMPORTANT:  if this macro reference is embedded within a macro
+                                // definition, it is possible that this symbol (after scoping with the
+                                // current namespace) is actually a "dummy symbol".  If it *is* a dummy
+                                // symbol, we use the dummy symbol's instance object.
+                                Object symbolTableEntry = pSymbolMap.get(symbolObj);
+                                if(null != symbolTableEntry && symbolTableEntry instanceof DummySymbol)
+                                {
+                                    DummySymbol dummySymbol = (DummySymbol) symbolTableEntry;
+                                    symbolObj = dummySymbol.mInstanceSymbolObject;
+                                    // in this case, just use the value of the dummysymbol
+                                }
                             }
                             externalSymbolsList.add(symbolObj);
                         }
@@ -1910,24 +1928,17 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             String dummySymbolName = (String) macro.mExternalSymbols.get(i);
             assert (null != dummySymbolName) : "unexpected null array element";
 
+            
             // add namespace to the dummy symbol
-            dummySymbolName = addNamespaceToSymbol(dummySymbolName, mNamespace);
+            String translatedDummySymbolName = addNamespaceToSymbol(dummySymbolName, mNamespace);
             assert (null == pSymbolMap.get(dummySymbolName)) : "unexpectedly found dummy symbol in global symbol table: " + dummySymbolName;
+            
             
             Object extSymValueObj = externalSymbolsList.get(i);
             assert (null != extSymValueObj) : "unexpected null array element";
 
-//            String extSymValue = (String) externalSymbolsList.get(i);
-//            assert (null != extSymValue) : "unexpected null array element";
-
-            
-//            if(null == pSymbolMap.get(extSymValue))
-//            {
-//                throw new InvalidInputException("unknown symbol referenced: " + extSymValue);
-//            }
-
-            DummySymbol dummySymbol = new DummySymbol(dummySymbolName, extSymValueObj);
-            pSymbolMap.put(dummySymbolName, dummySymbol);
+            DummySymbol dummySymbol = new DummySymbol(translatedDummySymbolName, extSymValueObj);
+            pSymbolMap.put(translatedDummySymbolName, dummySymbol);
         }
 
 
