@@ -631,14 +631,14 @@ public class EvidenceWeightedInfererDriver
         }
         catch(NumberFormatException e)
         {
-            handleMessage("The suggested separation threshold that you specified, \"" + separationString + "\", is not a valid floating-point number.",
+            handleMessage("The separation threshold that you specified, \"" + separationString + "\", is not a valid floating-point number.",
                     "Invalid separation threshold",
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
         if(separation <= 0.0 || separation >= 1.0)
         {
-            handleMessage("The suggested separation threshold must be greater than 0.0, and less than 1.0.",
+            handleMessage("The separation threshold must be greater than 0.0, and less than 1.0.",
                     "Invalid separation threshold",
                     JOptionPane.ERROR_MESSAGE);
             return false;            
@@ -1018,7 +1018,7 @@ public class EvidenceWeightedInfererDriver
         topPanel.add(initialCutoffField);
         gridLayout.setConstraints(initialCutoffField, constraints);
         
-        JLabel combinedSignificanceLabel = new JLabel("Suggested cutoff for combined significances: ");
+        JLabel combinedSignificanceLabel = new JLabel("Cutoff for combined significances: ");
         mCombinedSignificanceLabel = combinedSignificanceLabel;
         
         constraints.fill = GridBagConstraints.NONE;
@@ -1073,7 +1073,7 @@ public class EvidenceWeightedInfererDriver
         topPanel.add(quantileField);
         gridLayout.setConstraints(quantileField, constraints);
         
-        JLabel separationLabel = new JLabel("Suggested separation threshold (from unity): ");
+        JLabel separationLabel = new JLabel("Separation threshold (from unity): ");
         mSeparationLabel = separationLabel;
         
         constraints.fill = GridBagConstraints.NONE;
