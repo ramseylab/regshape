@@ -33,8 +33,14 @@ public class ClassRegistry
      *========================================*/
     private static final String FIELD_NAME_CLASS_ALIAS = "CLASS_ALIAS";
     private static final String MANIFEST_DIR_NAME = "META-INF";
-
-
+    private static HashSet sAliasableClasses;
+    private static final String PACKAGE_ROOT = "org.systemsbiology";
+    
+    static
+    {
+        sAliasableClasses = null;
+    }
+    
     /*========================================*
      * member data
      *========================================*/
@@ -112,7 +118,6 @@ public class ClassRegistry
         Class theClass = null;
         try
         {
-//            theClass = ClassLoader.getSystemClassLoader().loadClass(pClassName);
             theClass = getClass().getClassLoader().loadClass(pClassName);
         }
         catch(ClassNotFoundException e)
@@ -136,18 +141,6 @@ public class ClassRegistry
 
         if(pInterface.isAssignableFrom(theClass))
         {
-            // this class implements the desired interface
-            try
-            {
-                // make sure it also implements IAliasbleClass marker interface
-                checkClass(theClass);
-            }
-            catch(IllegalArgumentException e)
-            {
-                System.err.println(e.getMessage());
-                return;
-            }
-
             String className = theClass.getName();
 
             Field aliasField = null;
@@ -182,10 +175,33 @@ public class ClassRegistry
         }
     }
 
-    private void recursivelyRegisterAllClassesUnderPackage(String pPackageName,
-                                                                   HashSet pPackagesAlreadySearched,
-                                                                   Class pInterface,
-                                                                   HashMap pRegistry) throws IOException, IllegalArgumentException
+    private boolean classImplementsInterface(String pClassName,
+                                             Class pInterface)
+    {
+        boolean retVal = false;
+        
+        Class theClass = null;
+        try
+        {
+            theClass = getClass().getClassLoader().loadClass(pClassName);
+            if(! theClass.isInterface() &&
+                 pInterface.isAssignableFrom(theClass))
+            {
+                retVal = true;
+            }
+        }
+        catch(Exception e)
+        {
+            System.err.println("warning:  there is a problem with class file \"" + pClassName + "\"");
+        }
+      
+        return retVal;
+    }
+    
+    private void searchForClassesImplementingInterface(String pPackageName,
+                                                       HashSet pPackagesAlreadySearched,
+                                                       Class pInterface,
+                                                       HashSet pClassesImplementingInterface) throws IOException, IllegalArgumentException
     {
         String resourceName = pPackageName.replace('.', '/');
         if(! resourceName.startsWith("/"))
@@ -238,10 +254,10 @@ public class ClassRegistry
                         }
                         pPackagesAlreadySearched.add(subPackageName);
 
-                        recursivelyRegisterAllClassesUnderPackage(subPackageName,
-                                                                             pPackagesAlreadySearched,
-                                                                             pInterface,
-                                                                             pRegistry);
+                        searchForClassesImplementingInterface(subPackageName,
+                                                              pPackagesAlreadySearched,
+                                                              pInterface,
+                                                              pClassesImplementingInterface);
                     }
 
 
@@ -259,7 +275,11 @@ public class ClassRegistry
                         }
                         packageName = packageName.replace('/', '.');
                         String className = packageName + "." + fileName.substring(0, fileName.length() - 6);
-                        registerClassIfImplementingInterface(className, pInterface, pRegistry);
+                        if(! pClassesImplementingInterface.contains(className) &&
+                           classImplementsInterface(className, pInterface))
+                        {
+                            pClassesImplementingInterface.add(className);
+                        }
                     }
                 }
             }
@@ -291,10 +311,10 @@ public class ClassRegistry
                         }
                         pPackagesAlreadySearched.add(subPackageName);
 
-                        recursivelyRegisterAllClassesUnderPackage(subPackageName,
-                                                                             pPackagesAlreadySearched,
-                                                                             pInterface,
-                                                                             pRegistry);
+                        searchForClassesImplementingInterface(subPackageName,
+                                                              pPackagesAlreadySearched,
+                                                              pInterface,
+                                                              pClassesImplementingInterface);
                     }
                     if (entryName.startsWith(starts)
                         &&(entryName.lastIndexOf('/')<=starts.length())
@@ -304,7 +324,11 @@ public class ClassRegistry
                         if (classname.startsWith("/"))
                             classname = classname.substring(1);
                         classname = classname.replace('/','.');
-                        registerClassIfImplementingInterface(classname, pInterface, pRegistry);
+                        if(! pClassesImplementingInterface.contains(classname) &&
+                             classImplementsInterface(classname, pInterface))
+                        {
+                            pClassesImplementingInterface.add(classname);
+                        }
                     }
                 }
 
@@ -312,7 +336,9 @@ public class ClassRegistry
         }
     }
 
-    private void registerAllClassesImplementingInterface(HashSet pPackagesAlreadySearched, Class pInterface, HashMap pRegistry) throws IOException
+    private void searchForClassesImplementingInterface(HashSet pPackagesAlreadySearched, 
+                                                       Class pInterface, 
+                                                       HashSet pClassesImplementingInterface) throws IOException
     {
         // get list of all packages known to the JRE
         Package []packages = Package.getPackages();
@@ -321,20 +347,12 @@ public class ClassRegistry
         {
             Package thePackage = packages[packageCtr];
             String packageName = thePackage.getName();
-            recursivelyRegisterAllClassesUnderPackage(packageName, pPackagesAlreadySearched, pInterface, pRegistry);
+            searchForClassesImplementingInterface(packageName, 
+                                                  pPackagesAlreadySearched, 
+                                                  pInterface, 
+                                                  pClassesImplementingInterface);
         }
 
-    }
-
-    private void checkClass(Class pClass) throws IllegalArgumentException
-    {
-        // make sure that each interface implements IAliasableInterface
-
-        Class aliasableClass = IAliasableClass.class;
-        if(! aliasableClass.isAssignableFrom(pClass))
-        {
-            throw new IllegalArgumentException("class " + pClass.getName() + " does not implement the required interface IAliasableClass");
-        }
     }
 
     private void checkInterface(Class pInterface) throws IllegalArgumentException
@@ -362,17 +380,30 @@ public class ClassRegistry
      */
     public void buildRegistry() throws ClassNotFoundException, IOException, IllegalArgumentException
     {
-        HashSet packagesAlreadySearched = new HashSet();
-
-        // search all packages known to the JRE
-        registerAllClassesImplementingInterface(packagesAlreadySearched, getInterface(), getRegistry());
-
-        // search all packages in classpath, under "isb" namespace
-        recursivelyRegisterAllClassesUnderPackage("org.systemsbiology",
+        if(null == sAliasableClasses)
+        {
+            sAliasableClasses = new HashSet();
+            Class aliasableClassesInterfaceClass = IAliasableClass.class;
+            HashSet packagesAlreadySearched = new HashSet();
+            searchForClassesImplementingInterface(packagesAlreadySearched, 
+                                                  aliasableClassesInterfaceClass,
+                                                  sAliasableClasses);
+            searchForClassesImplementingInterface(PACKAGE_ROOT,
                                                   packagesAlreadySearched,
-                                                  getInterface(),
-                                                  getRegistry());
-                                                             
+                                                  aliasableClassesInterfaceClass,
+                                                  sAliasableClasses);
+        }
+
+        Iterator classNamesIter = sAliasableClasses.iterator();
+        HashMap registry = getRegistry();
+        Class targetInterface = getInterface();
+        while(classNamesIter.hasNext())
+        {
+            String className = (String) classNamesIter.next();
+            registerClassIfImplementingInterface(className,
+                                                 targetInterface,
+                                                 registry);
+        }
     }
 
     /**
