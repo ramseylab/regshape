@@ -32,3 +32,5 @@
 
 <!-- this is the name of the main stylesheet file for ISB documentation -->
 <!ENTITY mainDocumentStylesheet "documentation-stylesheet.xml">
+
+<!ENTITY installerDownloadRelURL "installer/Web_Installers/install.htm">
