@@ -16,7 +16,7 @@
 by a perturbation of a biological system, based on a collection 
 of evidences.  It contains four programs:  
 <a href="#datamanager">Data Manager</a>,
-<a href="#quantilenormalizer">Quantile Normalizer</a>,
+<a href="#datanormalizer">Data Normalizer</a>,
 <a href="#significancecalculator">Significance Calculator</a>,
 and 
 <a href="#evidenceweightedinferer">Evidence-Weighted Inferer</a>.
@@ -225,7 +225,7 @@ own Java programs and just using the &localJavaLibraryName; API.
 <p>
 &appName; is launched by executing the one of the four executable
 programs (<a href="#datamanager">Data Manager</a>,
-<a href="#quantilenormalizer">Quantile Normalizer</a>,
+<a href="#datanormalizer">Data Normalizer</a>,
 <a href="#significancecalculator">Significance Calculator</a>,
 <a href="#evidenceweightedinferer">Evidence-Weighted Inferer</a>)
 that were installed as a symbolic link by the installation program 
@@ -361,7 +361,7 @@ not load the file, if the file contains multiple measurements for a single
 evidence type and network element.  
 </p>
 <p>
-  The following list describes the various components and controls of the Quantile Normalizer
+  The following list describes the various components and controls of the Data Normalizer
   program window:
   <dl>
     <dt><b>Load data</b></dt>
@@ -438,13 +438,14 @@ Here is a screen shot of the Data Manager program:
 
 </isb:docsection>
 
-<isb:docsection name="Quantile Normalizer" label="quantilenormalizer">
+<isb:docsection name="Data Normalizer" label="datanormalizer">
 
 <p>
-  The <b>Quantile Normalizer</b> is a program that can be used to perform a quantile
+  The <b>Data Normalizer</b> is a program that can be used to perform a 
   normalization of microarray expression data that is arranged in a matrix format 
   in a single data file.  The data file must conform to the
-  a <a href="#fileformat">specific format</a>.  The quantile normalization algorithm
+  a <a href="#fileformat">specific format</a>.  Currently, the only normalization
+  method supported is Quantile Normalization.  The quantile normalization algorithm
   implemented here is based on a prototype written by Daehee Hwang at 
   Institute for Systems Biology, and it is similar to the quantile normalization 
   algorithm proposed by Bolstat <em>et al.</em> in their paper
@@ -467,7 +468,7 @@ Here is a screen shot of the Data Manager program:
   section above.
 </p>
 <p>
-  The following list describes the various components and controls of the Quantile Normalizer
+  The following list describes the various components and controls of the Data Normalizer
   program window:
   <dl>
   <dt><b>Load observations</b></dt>
@@ -559,7 +560,7 @@ Here is a screen shot of the Data Manager program:
     less than the error threshold specified above, depending on the value chosen for
     the "max iterations" field.</dd>
   <dt><b>Results Table</b></dt>
-  <dd>This table displays the results of the quantile normalization.  The columns should
+  <dd>This table displays the results of the data normalization.  The columns should
     have approximately the same quantiles, although they will not be exactly equal if there
     is missing data.</dd>
   <dt><b>Save results</b></dt>
@@ -576,10 +577,10 @@ Here is a screen shot of the Data Manager program:
       </dl>
 </p>
 <p>
-Here is a screen shot of the Quantile Normalizer program:
+Here is a screen shot of the Data Normalizer program:
 </p>
 <p>
-  <a href="../images/QuantileNormalizer-big.png"><img src="../images/QuantileNormalizer.png" alt="Quantile Normalizer screenshot" /></a>
+  <a href="../images/DataNormalizer-big.png"><img src="../images/DataNormalizer.png" alt="Data Normalizer screenshot" /></a>
 </p>
   
 </isb:docsection>
@@ -754,20 +755,23 @@ Here is a screen shot of the Significance Calculator program:
     denoting the significance of the evidence and element pair.</dd>
   <dt><b>Number of bins for significance distributions</b></dt>
   <dd>This type-in box is used to specify how many bins are to be used for the calculating
-    the nonparametric distribution of combined significance values of the elements.  The
+    the nonparametric distribution of overall significance values of the elements.  The
     program suggests a default value; you may change it to any integer greater than 1.0.</dd>
-  <dt><b>Suggested cut-off value for combined significances</b></dt>
-  <dd>This type-in box is used to specify a "sanity check" threshold for combined significances.
-    Any element whose combined significance is less than this threshold, is guaranteed to
+  <dt><b>Cut-off value for overall significances</b></dt>
+  <dd>This type-in box is used to specify a "sanity check" threshold for overall (combined) significances.
+    Any element whose overall significance is less than this threshold, is guaranteed to
     be put in the set of affected elements.  This parameter should be kept very small.  It is OK
     to set this parameter to 0.0, but it may not be set to a negative value.  If you are not sure
     what value to use, first try using the default; if you suspect the predicted set of affected
     elements has too high a rate of false positives, you might try setting this parameter to 0.0.</dd>
-  <dt><b>Suggested separation threshold (from unity)</b></dt>
+  <dt><b>Area separation threshold (from unity)</b></dt>
   <dd>This type-in box is used to specify the criterion for exiting the iterative algorithm.
-    When the separation parameter (objective function) changes by an absolute amount smaller than this
-    threshold from one iteration to the next, the algorithm will exit.  This value should be kept small,
-    and is required to be positive-definite.  If you are not sure what value to use, just use the default.</dd>
+    The algorithm uses an objective function, which is defined as the
+    fraction of the area of the distribution of significances of affected elements which
+    does not overlap the distribution of unaffected elements (objective function).  Then
+    this objective function changes by an absolute amount smaller than the "area separation threshold"
+    from one iteration to the next, the algorithm will exit.  This value should be kept small,
+    and is required to be positive-definite.  If you are not sure what value to use, just leave the default.</dd>
   <dt><b>Effective evidence weighting scheme</b></dt>
   <dd>This drop-down list is used to specify how the effective significance is to be calculated
     from the raw (unweighted) significance.  The two choices are "linear" and "power".  The "linear" choice
@@ -811,10 +815,10 @@ Here is a screen shot of the Significance Calculator program:
     value to use, just use the default.</dd>
   <dt><b>Smoothing length for significance distribution</b></dt>
   <dd>This type-in box is used to specify the smoothing length for obtaining the
-    smoothed, normalized nonparametric distribution of combined significances of
+    smoothed, normalized nonparametric distribution of overall significances of
     elements.  Specifically, this parameter is used as the standard deviation of
     the Gaussian kernel density function for smoothing the nonparametric distribution of
-    combined significances.  The default is a small fraction, but you may set to any
+    overall significances.  The default is a small fraction, but you may set to any
     value greater than 0.0.  If you are not sure what value to use, just use the default.</dd>
   <dt><b>Infer affected elements</b></dt>
   <dd>This button starts the inference algorithm.  Depending on the size of the input
