@@ -834,15 +834,34 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                 throw new InvalidInputException("encountered unknown token when expected equals token");
             }
         }
-
+        
         Value value = obtainValue(pTokenIter, pSymbolMap);
         SymbolValue symbolValue = new SymbolValue(symbolName, value);
         SymbolValue foundSymbolValue = (SymbolValue) pSymbolMap.get(symbolName);
         if(null != foundSymbolValue)
         {
-            throw new InvalidInputException("symbol multiply defined: " + symbolName);
+            // :BUGBUG: this is a hack until I can get an "if/then/else" construct working
+            // in the CMDL.  When defining a vector of species inside a loop, it is
+            // often useful to be able to have a nonzero value for just one element of
+            // the vector.  With multiple nested loops, this is difficult to accomplish.
+            // So for now, we make it legal to redefine the Value after the loop, so
+            // long as the symbol value has not yet been turned into a derived class.
+            if(null == foundSymbolValue.getValue() ||
+                foundSymbolValue.getClass().getSuperclass().equals(Object.class))
+            {
+                // this SymbolValue either has no Value assigned yet, or it 
+                // is just a plain symbol value; it is ok to redefine its value
+                foundSymbolValue.setValue(symbolValue.getValue());
+            }
+            else
+            {
+                throw new InvalidInputException("a symbol of type " + foundSymbolValue.getClass().getName() + " cannot have its value redefined; symbol name is: " + symbolName);
+            }
         }
-        pSymbolMap.put(symbolName, symbolValue);
+        else
+        {
+            pSymbolMap.put(symbolName, symbolValue);
+        }
 
         getEndOfStatement(pTokenIter);
     }
@@ -1015,6 +1034,11 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                 hasReactants = true;
             }
             else if(token.mCode.equals(Token.Code.SEMICOLON))
+            {
+                pTokenIter.next();
+                break;
+            }
+            else if(token.mCode.equals(Token.Code.BRACE_END))
             {
                 pTokenIter.next();
                 break;
@@ -1344,23 +1368,29 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
         boolean gotEndBrace = false;
         Token prevToken = null;
+        int braceCtr = 1;
         while(pTokenIter.hasNext())
         {
             prevToken = token;
             token = getNextToken(pTokenIter);
             if(token.mCode.equals(Token.Code.BRACE_END))
             {
-                gotEndBrace = true;
-                break;
-            }
-            else
-            {
-                if(null != prevToken && prevToken.mCode.equals(Token.Code.POUNDSIGN) && token.mCode.equals(Token.Code.SYMBOL) && token.mSymbol.equals(STATEMENT_KEYWORD_DEFINE))
+                --braceCtr;
+                if(0 == braceCtr)
                 {
-                    throw new InvalidInputException("it is illegal to embed a macro definition inside a macro definition");
+                    gotEndBrace = true;
+                    break;
                 }
-                tokenList.add(token);
             }
+            else if(token.mCode.equals(Token.Code.BRACE_BEGIN))
+            {
+                ++braceCtr;
+            }
+            else if(null != prevToken && prevToken.mCode.equals(Token.Code.POUNDSIGN) && token.mCode.equals(Token.Code.SYMBOL) && token.mSymbol.equals(STATEMENT_KEYWORD_DEFINE))
+            {
+                    throw new InvalidInputException("it is illegal to embed a macro definition inside a macro definition");
+            }
+            tokenList.add(token);
         }
         if(! gotEndBrace)
         {
@@ -1581,6 +1611,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             throw new InvalidInputException("cannot use a reserved symbol as a loop index: " + loopIndexSymbolName);
         }
 
+        loopIndexSymbolName = addNamespaceToSymbol(loopIndexSymbolName, mNamespace);
+
         token =  getNextToken(pTokenIter);
 
         if(! token.mCode.equals(Token.Code.COMMA))
@@ -1609,7 +1641,6 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         Expression startExpression = new Expression(startExpressionString);
 
         int startValue = (int) (startExpression.computeValue(pSymbolMap));
-        
         if(! pTokenIter.hasNext())
         {
             throw new InvalidInputException("missing loop ending value");
@@ -1681,21 +1712,25 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             {
                 braceCtr--;
             }
-            if(braceCtr < 0)
-            {
-                throw new InvalidInputException("brace encountered without matching begin brace");
-            }
-            if(braceCtr > 0 ||
-               !(token.mCode.equals(Token.Code.BRACE_END)))
+
+            if(braceCtr > 0)
             {
                 subTokenList.add(token); 
             }
+            if(braceCtr == 0)
+            {
+                break;
+            }
+        }
+
+        if(braceCtr > 0)
+        {
+            throw new InvalidInputException("end-of-file encountered without matching end brace");
         }
 
         for(int loopIndex = startValue; loopIndex <= endValue; ++loopIndex)
         {
             loopIndexObj.setValue(loopIndex);
-            
             executeStatementBlock(subTokenList, pModel, pIncludeHandler, pSymbolMap, pNumReactions);
         }
 
