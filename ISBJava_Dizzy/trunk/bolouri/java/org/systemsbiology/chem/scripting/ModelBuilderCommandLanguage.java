@@ -53,12 +53,12 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
     static class DummySymbol extends SymbolValue
     {
-        public String mInstanceSymbolName;
+        public Object mInstanceSymbolObject;
 
-        public DummySymbol(String pDummySymbolName, String pInstanceSymbolName)
+        public DummySymbol(String pDummySymbolName, Object pInstanceSymbolObject)
         {
             super(pDummySymbolName);
-            mInstanceSymbolName = pInstanceSymbolName;
+            mInstanceSymbolObject = pInstanceSymbolObject;
         }
     }
 
@@ -371,9 +371,24 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
         public double getValue(Symbol pSymbol) throws DataNotFoundException
         {
-            String symbolName = convertSymbolWithNamespaceIfNecessary(pSymbol.getName(), mSymbolMap, mNamespace);
+            Object convertedSymbol = performSymbolTokenMacroTranslationLookup(pSymbol.getName(), mSymbolMap, mNamespace);
+            double retVal = 0.0;
+            if(convertedSymbol instanceof String)
+            {
+                String symbolName = (String) convertedSymbol;
+                retVal = super.getValue(symbolName);
+            }
+            else if(convertedSymbol instanceof Value)
+            {
+                Value symbolValue = (Value) convertedSymbol;
+                retVal = symbolValue.getValue(this);
+            }
+            else
+            {
+                assert false : "unknown converted symbol type, for symbol: " + pSymbol.getName();
+            }
             
-            return(super.getValue(symbolName));
+            return(retVal);
         }
     }
 
@@ -387,20 +402,40 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         return(retName);
     }
 
-    private static String convertSymbolWithNamespaceIfNecessary(String pSymbol, HashMap pSymbolMap, String pNamespace)
+    // When the parser encounters a symbol token, it must check to see if this
+    // symbol is one of the special "dummy symbols" in a macro reference.  If so,
+    // the "dummy symbol" must be translated in accordance with the macro's translation
+    // table.  It can get translated into another symbol (most common), or into a
+    // value.  The return type of the function is either String or Value, depending 
+    // on whether the translation returns a symbol or a value.
+    private static Object performSymbolTokenMacroTranslationLookup(String pSymbol, HashMap pSymbolMap, String pNamespace)
     {
+        Object retObj = pSymbol;
         if(null != pNamespace)
         {
             if(! SymbolEvaluatorChemSimulation.isReservedSymbol(pSymbol))
             {
                 pSymbol = addNamespaceToSymbol(pSymbol, pNamespace);
+                retObj = pSymbol;
 
                 // check to see if this is a dummy symbol
                 SymbolValue symbolValue = (SymbolValue) pSymbolMap.get(pSymbol);
                 if(null != symbolValue && symbolValue instanceof DummySymbol)
                 {
-                    // the symbol is a "dummy sumbol"; substitute the instance symbol instead
-                    pSymbol = ((DummySymbol) symbolValue).mInstanceSymbolName;
+                    DummySymbol dummySymbol = (DummySymbol) symbolValue;
+                    Object dummySymbolInstance = dummySymbol.mInstanceSymbolObject;
+                    if(dummySymbolInstance instanceof String)
+                    {
+                        retObj = dummySymbolInstance;
+                    }
+                    else if(dummySymbolInstance instanceof Value)
+                    {
+                        retObj = dummySymbolInstance;
+                    }
+                    else
+                    {
+                        assert false : "unknown dummy symbol instance class, for symbol: " + pSymbol;
+                    }
                 }
             }
             else
@@ -408,9 +443,13 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                 // do nothing; reserved symbols do not get namespace scoping
             }
         }
-        return(pSymbol);
+        return(retObj);
     }
 
+    // Handle the occurrence of embedded mathematical expression(s)
+    // within a quoted string; if an expression occurs, translate it
+    // and truncate the resulting value to an integer, before embedding
+    // the result into the string at the point where the expression occurs.
     private String translateMathExpressionsInString(String pInputString, 
                                                     HashMap pSymbolMap) throws DataNotFoundException, IllegalArgumentException
     {
@@ -427,6 +466,82 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             matcher = searchPatternMath.matcher(pInputString);
         }
         return(pInputString);
+    }
+
+    // This function is used by the handleStatementMacroReference
+    // function, to grab all of the tokens in the token stream up to
+    // the next comma "," token or end-parenthesis ")" token.  The
+    // reason why we cannot just use "obtainSymbol" is that in a
+    // macro reference, either a symbol *or* a value can be provided
+    // in the comma-separated list.  It is the only place in the CMDL
+    // where either a symbol, or a value/expression is allowed.  So
+    // special code is needed to handle this case, since we do not
+    // know definitively whether to expect a symbol or a value/expression.
+    private void grabTokensToNextCommaOrParen(ListIterator pTokenIter, LinkedList pTokens, HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
+    {
+        Token token = null;
+        boolean inQuote = false;
+        StringBuffer quotedString = new StringBuffer();
+        boolean gotFirstToken = false;
+        while(pTokenIter.hasNext())
+        {
+            token = getNextToken(pTokenIter);
+            if(! inQuote)
+            {
+                if(token.mCode.equals(Token.Code.PAREN_END))
+                {
+                    pTokenIter.previous();
+                    break;
+                }
+                else if(token.mCode.equals(Token.Code.SEMICOLON))
+                {
+                    throw new InvalidInputException("end of statement reached when parenthesis expected");
+                }
+                else if(token.mCode.equals(Token.Code.COMMA))
+                {
+                    pTokenIter.previous();
+                    break;
+                }
+                else if(token.mCode.equals(Token.Code.QUOTE))
+                {
+                    inQuote = true;
+                    if(! gotFirstToken)
+                    {
+                        gotFirstToken = true;
+                    }
+                }
+                else
+                {
+                    pTokens.add(token);
+                    if(! gotFirstToken)
+                    {
+                        gotFirstToken = true;
+                    }
+                }
+            }
+            else
+            {
+                if(token.mCode.equals(Token.Code.QUOTE))
+                {
+                    inQuote = false;
+                    Token newToken = new Token(Token.Code.SYMBOL);
+                    String symbolName = quotedString.toString();
+                    quotedString.delete(0, symbolName.length());
+                    symbolName = translateMathExpressionsInString(symbolName, pSymbolMap);
+                    newToken.mSymbol = symbolName;
+                    pTokens.add(newToken);
+                }
+                else
+                {
+                    quotedString.append(token.toString());
+                }
+            }
+
+        }
+        if(! gotFirstToken)
+        {
+            throw new InvalidInputException("a symbol token was expected in list environment");
+        }
     }
 
     private String obtainSymbol(ListIterator pTokenIter, HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
@@ -470,9 +585,22 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     private String obtainSymbolWithNamespace(ListIterator pTokenIter, HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
     {
         String symbol = obtainSymbol(pTokenIter, pSymbolMap);
-        return(convertSymbolWithNamespaceIfNecessary(symbol, pSymbolMap, mNamespace));
+        Object convertedSymbolObj = performSymbolTokenMacroTranslationLookup(symbol, pSymbolMap, mNamespace);
+        String retSymbol = null;
+        if(convertedSymbolObj instanceof String)
+        {
+            retSymbol = (String) convertedSymbolObj;
+        }
+        else
+        {
+            throw new InvalidInputException("where expected a symbol, macro reference translated into a value: " + symbol);
+        }
+        return(retSymbol);
     }
 
+    // For places where the parser expects to be able to obtain a value, this
+    // function walks the token list and attempts to parse a value.  The value
+    // may be either a "deferred evaluation" expression, or a simple numeric value.
     private Value obtainValue(ListIterator pTokenIter, HashMap pSymbolMap) throws InvalidInputException
     {
         boolean firstToken = true;
@@ -482,6 +610,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         {
             Token token = getNextToken(pTokenIter);
             String symbolName = null;
+            Value symbolValueObj = null;
+            String addToExpression = null;
 
             if(token.mCode.equals(Token.Code.SYMBOL))
             {
@@ -493,7 +623,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                     boolean isNumericLiteral = true;
                     try
                     {
-                        Double.valueOf(symbolName);
+                        Double.parseDouble(symbolName);
                     }
                     catch(NumberFormatException e)
                     {
@@ -502,7 +632,32 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
                     if(! isNumericLiteral)
                     {
-                        symbolName = convertSymbolWithNamespaceIfNecessary(symbolName, pSymbolMap, mNamespace);
+                        Object convertedSymbol = performSymbolTokenMacroTranslationLookup(symbolName, pSymbolMap, mNamespace);
+                        if(convertedSymbol instanceof String)
+                        {
+                            addToExpression = (String) convertedSymbol;
+                        }
+                        else if(convertedSymbol instanceof Value)
+                        {
+                            symbolValueObj = (Value) convertedSymbol;
+                            if(symbolValueObj.isExpression())
+                            {
+                                addToExpression = symbolValueObj.getExpressionString();
+                            }
+                            else
+                            {
+                                double value = symbolValueObj.getValue();
+                                addToExpression = Double.toString(value);
+                            }
+                        }
+                        else
+                        {
+                            assert false : "unknown symbol type for converted symbol: " + symbolName;
+                        }
+                    }
+                    else
+                    {
+                        addToExpression = symbolName;
                     }
                 }
             }
@@ -561,9 +716,9 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
             if(appendToken)
             {
-                if(null != symbolName)
+                if(null != addToExpression)
                 {
-                    expressionBuffer.append(symbolName);
+                    expressionBuffer.append(addToExpression);
                 }
                 else
                 {
@@ -1408,9 +1563,15 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         assert (token.mSymbol.equals(KEYWORD_LOOP)) : "expected loop keyword; unexpectedly got symbol: " + token.mSymbol;
 
         token = getNextToken(pTokenIter);
+        if(! token.mCode.equals(Token.Code.PAREN_BEGIN))
+        {
+            throw new InvalidInputException("invalid token found when expected beginning parenthesis; token is: " + token);
+        }
+
+        token = getNextToken(pTokenIter);
         if(! token.mCode.equals(Token.Code.SYMBOL))
         {
-            throw new InvalidInputException("invalid token found when expected loop index symbol");
+            throw new InvalidInputException("invalid token found when expected loop index symbol; token is: " + token);
         }
 
         String loopIndexSymbolName = token.mSymbol;
@@ -1586,12 +1747,52 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
             boolean expectSymbol = true;
             boolean gotEndParen = false;
+
+            LinkedList tokenList = new LinkedList();
             while(pTokenIter.hasNext())
             {
                 if(expectSymbol)
                 {
-                    String symbol = obtainSymbol(pTokenIter, pSymbolMap);
-                    externalSymbolsList.add(symbol);
+                    
+                    // grab all symbols until the comma or paren end or semicolon
+                    tokenList.clear();
+                    grabTokensToNextCommaOrParen(pTokenIter, tokenList, pSymbolMap);
+                    if(tokenList.size() > 1 )
+                    {
+                        // cannot be a single symbol; must be an expression
+                        Value valueObj = obtainValue(tokenList.listIterator(), pSymbolMap);
+                        externalSymbolsList.add(valueObj);
+                    }
+                    else
+                    {
+                        Token firstToken = (Token) tokenList.get(0);
+                        if(firstToken.mCode.equals(Token.Code.SYMBOL))
+                        {
+                            Object symbolObj = null;
+                            String symbolName = firstToken.mSymbol;
+                            // try to parse as a number
+                            double value = 0.0;
+                            try
+                            {
+                                value = Double.parseDouble(symbolName);
+                                Value symbolValueObj = new Value(value);
+                                symbolObj = symbolValueObj;
+                            }
+                            catch(NumberFormatException nfe)
+                            {
+                                // must be a symbol name, which is the normal case
+                                symbolObj = symbolName;
+                            }
+                            externalSymbolsList.add(symbolObj);
+                        }
+                        else
+                        {
+                            throw new InvalidInputException("unknown token in list of symbols: " + firstToken);
+                        }
+                    }
+
+//                    String symbol = obtainSymbol(pTokenIter, pSymbolMap);
+//                    externalSymbolsList.add(symbol);
                     expectSymbol = false;
                 }
                 else
@@ -1649,18 +1850,21 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
             // add namespace to the dummy symbol
             extSymDummy = addNamespaceToSymbol(extSymDummy, mNamespace);
-            
-            String extSymValue = (String) externalSymbolsList.get(i);
-            assert (null != extSymValue) : "unexpected null array element";
-
             assert (null == pSymbolMap.get(extSymDummy)) : "unexpectedly found dummy symbol in global symbol table: " + extSymDummy;
             
-            if(null == pSymbolMap.get(extSymValue))
-            {
-                throw new InvalidInputException("unknown symbol referenced: " + extSymValue);
-            }
+            Object extSymValueObj = externalSymbolsList.get(i);
+            assert (null != extSymValueObj) : "unexpected null array element";
 
-            DummySymbol dummySymbol = new DummySymbol(extSymDummy, extSymValue);
+//            String extSymValue = (String) externalSymbolsList.get(i);
+//            assert (null != extSymValue) : "unexpected null array element";
+
+            
+//            if(null == pSymbolMap.get(extSymValue))
+//            {
+//                throw new InvalidInputException("unknown symbol referenced: " + extSymValue);
+//            }
+
+            DummySymbol dummySymbol = new DummySymbol(extSymDummy, extSymValueObj);
             pSymbolMap.put(extSymDummy, dummySymbol);
         }
 
