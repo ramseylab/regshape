@@ -11,6 +11,7 @@ package org.systemsbiology.util;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 import java.io.*;
+
 import javax.xml.parsers.*;
 import java.net.*;
 
@@ -150,6 +151,30 @@ public class AppConfig
         return(getProperty(PROPERTY_NAME_APP_HELP_SET_NAME));
     }
 
+    public static AppConfig get(Class pAppClass, String pAppDir) throws DataNotFoundException, InvalidInputException, FileNotFoundException
+    {
+        
+        AppConfig appConfig = null;
+        if(null == pAppDir)
+        {
+            // we don't know where we are installed, so punt and look for 
+            // the config file as a class resource:
+            appConfig = new AppConfig(pAppClass);
+        }
+        else
+        {
+            pAppDir = FileUtils.fixWindowsCommandLineDirectoryNameMangling(pAppDir);
+            File appDirFile = new File(pAppDir);
+            if(! appDirFile.exists())
+            {
+                throw new DataNotFoundException("could not find application directory: " + pAppDir);
+            }
+            String configFileName = appDirFile.getAbsolutePath() + "/config/" + AppConfig.CONFIG_FILE_NAME;
+            appConfig = new AppConfig(new File(configFileName));
+        }
+        return appConfig;        
+    }
+    
     public static void main(String []pArgs)
     {
         try
@@ -164,4 +189,5 @@ public class AppConfig
             e.printStackTrace(System.err);
         }
     }
+        
 }
