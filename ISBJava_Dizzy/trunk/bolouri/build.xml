@@ -20,20 +20,10 @@
   
   &BuildHeader;
 
-  <property name="binInstallAnywhere" location="/local/InstallAnywhere_5_Standard/build" />
-  <property name="binHtml2PS"         value="html2ps" />
-  <property name="binHtmlTidy"        value="tidy" />
-  <property name="binPS2PDF"          value="ps2pdf" />
-
   <property name="webServerUsername"  value="bolouri_group" />
   <property name="webServerPassword"  value="b2G4cIc" />  <!-- icky: find some way to MIME-encode this -->
   <property name="webServerHostname"  value="labs.systemsbiology.net" />
   <property name="webServerRemoteDir" value="software" />
-
-  <!-- THESE PROPERTIES ARE USED THROUGHOUT THE BUILD SYSTEM: -->
-  <property name="helpMapStyleSheet" value="${projConfigDir}/javahelp-map-stylesheet.xml" />
-  <property name="helpTOCStyleSheet" value="${projConfigDir}/javahelp-toc-stylesheet.xml" />
-  <property name="helpContentFileParamName" value="contentFile" />
 
   <target name="compile">
     <ant dir="${projJavaDir}" target="compile" />
