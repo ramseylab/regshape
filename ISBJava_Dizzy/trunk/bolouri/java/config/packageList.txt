@@ -5,6 +5,8 @@ org.systemsbiology.chem.odetojava
 org.systemsbiology.chem.app
 org.systemsbiology.data
 org.systemsbiology.gui
+org.systemsbiology.inference
 org.systemsbiology.math
+org.systemsbiology.math.probability
 org.systemsbiology.util
 
