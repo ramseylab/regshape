@@ -154,6 +154,23 @@ This document contains the version history for the
     Fixed some incorrect error messages in <code>org.systemsbiology.chem.SimulatorDeterministicRungeKuttaFixed</code>,
     for the case of an <code>org.systemsbiology.math.AccuracyException</code>.
   </li>
+  <li>
+    Modified <code>org.systemsbiology.util.CommandLineApp</code> to permit
+    passing the string "null" as an argument modifier, to obtain a null modifier
+    for a command-line argument.
+  </li>
+  <li>
+    Modified <code>org.systemsbiology.chem.app.SimulationLauncher</code> and
+    <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code> to
+    allow disabling error checking for the fixed-stepsize Runge-Kutta integrator.
+  </li>
+  <li>
+    Modified the <code>org.systemsbiology.chem.Simulator.checkSimulationParametersForDeterministicSimulator</code>
+    method to allow a <code>null</code> parameter for the <code>maxRelativeError</code> and
+    <code>maxAbsoluteError</code> fields of the <code>org.systemsbiology.chem.SimulatorParameters</code>
+    class.  This change required some modifications to several of the <code>org.systemsbiology.chem.Simulator</code>
+    subclasses.
+  </li>
 </ul>
 </td>
 </tr>
