@@ -70,6 +70,10 @@ offered by this module.</li>
 <code>createTransferableImage()</code> method was returning a <code>Transferable</code> object
 that was failing to properly set the &quot;<code>transfredSuccessfully</code>&quot; flag in 
 some cases.</li>
+<li>Fixed a bug in the error-handling code in the
+<code>org.systemsbiology.chem.app.MainApp</code> class, for the case of when
+a syntactially invalid model is processed and a null pointer is passed
+to the <code>org.systemsbiology.chem.app.CytoscapeViewer</code> class.</li>
 </ul>
 </td>
 </tr>
