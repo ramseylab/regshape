@@ -143,7 +143,7 @@ hyperlinks shown below:
 </tr>
 <tr>
 <td>odeToJava</td><td><code>odeToJava.jar</code></td>
-<td><a href="http://www.netlib.org/ode"><code>www.netlib.org/ode</code></a> (Murray Patterson and Raymond Spiteri)</td><td>???</td>
+<td><a href="http://www.netlib.org/ode"><code>www.netlib.org/ode</code></a> (Murray Patterson and Raymond Spiteri)</td><td>included with permission from Raymond Spiteri</td>
 </tr>
 <tr>
 <td>JAMA</td><td><code>Jama.jar</code></td>
