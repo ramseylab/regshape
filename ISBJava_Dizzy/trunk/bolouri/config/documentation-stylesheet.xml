@@ -23,7 +23,8 @@
 
   <xsl:param name="altWebBaseURL" /> 
   <xsl:param name="hideGroupLogo" />
-
+  <xsl:param name="hideMainLogo" />
+  
   <xsl:template match="html:*|html:*/@*">
     <xsl:copy>
       <xsl:apply-templates select="@* | node()" />
@@ -48,6 +49,7 @@
     <center>
     <table cellpadding="20">
       <tr>
+        <xsl:if test="not( $hideMainLogo != '' )">
         <td>
           <a href="&mainPublicURL;">
             <xsl:element name="img">
@@ -57,6 +59,8 @@
             </xsl:element>
           </a>
         </td>
+        </xsl:if>
+
         <td>
       <xsl:if test="/isb:document/isb:doctitle != ''">
         <h1><xsl:value-of select="isb:doctitle"/></h1>
