@@ -108,18 +108,7 @@ java org.apache.xalan.xslt.Process -v
 </blockquote>
 from the command prompt.
 </li>
-<li><b>html2ps</b><br />
-In order to be able to convert HTML documentation to PostScript format
-(which is a necessary step in order to convert it to PDF format), you 
-will need to have the <code>html2ps</code> program installed on your computer.
-This simple program is availble from the 
-<a href="http://www.tdb.uu.se/~jan/html2ps.html">HTML2PS Home Page</a>.
-</li>
-<li><b>ps2pdf</b><br />
-The <code>ps2pdf</code> program is used to convert PostScript files to
-PDF format.  This program should already be installed on your
-computer, if you have a modern desktop Linux distribution. 
-</li>
+
 </ol>
 All of the above software programs are free (open source), and easy to
 build and install on your computer.  Building Ant, and installing Ant 
@@ -205,7 +194,7 @@ an existing web page, whatever the case may be).  This is done by simply
 running the command
 <blockquote>
 <pre>
-ant buildWeb
+ant buildHTML
 </pre>
 </blockquote>
 from within the &quot;<code>bolouri</code>&quot; directory.  If there is
@@ -256,7 +245,7 @@ you can then build the web site and &quot;upload&quot; it to the
 web server.  This is accomplished by executing the following commands:
 <blockquote>
 <pre>
-ant buildWeb
+ant buildHTML
 ant uploadWeb
 </pre>
 </blockquote>
@@ -393,6 +382,63 @@ web content!
 </p>
 </isb:docsection>
 
+<isb:docsection name="Generating PDF" label="generatingpdf">
+<p>
+If you wish to be able to build PDF documentation, you will need to
+have the following software installed on your computer:
+<ol>
+<li><b>html2ps</b><br />
+In order to be able to convert HTML documentation to PostScript format
+(which is a necessary step in order to convert it to PDF format), you 
+will need to have the <code>html2ps</code> program installed on your computer.
+This simple program is availble from the 
+<a href="http://www.tdb.uu.se/~jan/html2ps.html">HTML2PS Home Page</a>.
+</li>
+<li><b>ps2pdf</b><br />
+The <code>ps2pdf</code> program is used to convert PostScript files to
+PDF format.  This program should already be installed on your
+computer, if you have a modern desktop Linux distribution. 
+</li>
+<li><b>pdfdoclet</b><br />
+The <code>pdfdoclet</code> program is used to generate Javadoc documentation
+in PDF format.  This program is available from
+<a href="http://pdfdoclet.sourceforge.net"><code>pdfdoclet.sourceforget.net</code></a>.
+This program must be installed and the three libraries that ship with it
+must be in your <code>CLASSPATH</code>:
+<blockquote>
+<pre>
+pdfdoclet.jar
+itext.jar
+jakarta-regexp.jar
+</pre>
+</blockquote>
+Make sure that the Ant program is capable
+</li>
+</ol>
+The above three items are needed <em>only</em> if you are going to
+(re-)generate PDF documentation from the original XML/Javadoc sources.
+</p>
+<p>
+All of the PDF documentation for the &mainGroup; software
+is (so far) generated from XML sources and from Javadoc
+comments in Java source code.  
+To re-generate PDF documentation from the XML and javadoc
+sources, you would first check in your changes to the source
+files, and then do:
+<blockquote>
+<pre>
+ant buildHTML
+ant buildPDF
+ant uploadWeb
+</pre>
+</blockquote>
+The last command uploads the web content to the FTP server.
+Note that the &quot;<code>pdfdoclet</code>&quot; software product 
+(used to generate a PDF version of Javadoc API documentation) is
+still quite experimental, and its support for fancy HTML constructs
+in Javadoc comments is rather shaky.
+</p>
+</isb:docsection>
 
 <isb:docsection name="Model Repository" label="repository">
 <p>
@@ -442,7 +488,7 @@ cvs commit -m 'my new model' docs/models/myModel.dizzy
 <li>from that same directory, run the command:
 <blockquote>
 <pre>
-ant buildWeb
+ant buildHTML
 </pre>
 </blockquote>
 This should publish your new model definition file
