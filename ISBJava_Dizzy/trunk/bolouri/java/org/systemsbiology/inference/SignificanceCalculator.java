@@ -419,6 +419,7 @@ public class SignificanceCalculator
         double pdfx = 0.0;
         
         double variance = pSmoothingLength*pSmoothingLength;
+        numControlValues = controls.length;
         double numControlsDouble = (double) numControlValues;
         double pdfInt = 0.0;
         
