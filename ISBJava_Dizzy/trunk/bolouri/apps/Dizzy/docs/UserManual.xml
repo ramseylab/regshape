@@ -1104,11 +1104,38 @@ given by the individual reaction rates.
 <p>
 The &appName; system provides a Java implementation of the Gillespie
 algorithm, for which <a href="&webBaseURL;/javadocisb/chem/GillespieSimulator.html">more
-information is available in the Javadoc documentation</a>.
+information is available in the Javadoc documentation</a>.  This implementation
+uses the &quot;direct method&quot; variant of Gillespie's algorithm.
 </p>
 </isb:docsubsection>
 
-<isb:docsubsection name="ODE Simulator" label="odesim">
+<isb:docsubsection name="Gibson-Bruck Stochastic Algorithm" label="gibsonbruck">
+<p>
+The Gibson-Bruck stochastic algorithm is an algorithm for modeling
+the kinetics of a coupled set of coupled chemical reactions.  The algorithm
+is defined in the article:
+<blockquote>
+<table border="1">
+<tr>
+<td>
+M. A. Gibson and J. Bruck, &quot;Efficient Exact Stochastic Simulation
+of Chemical Systems with Many Species and Many Channels&quot;, Caltech
+Parallel and Distributed Systems Group technical report number 026, (1999).
+</td>
+</tr>
+</table>
+</blockquote>
+This implementation uses the "next reaction" variant of the 
+Gibson and Bruck algorithm.  The Gibson-Bruck algorithm is O(log(M)) 
+in the number of reactions, so it is preferred over the Gillespie
+algorithm for models with a large number of reactions and/or species.
+For models with a small number of reactions and species, the Gillepie
+algorithm is preferred, as it avoids the overhead of maintaining
+the complex data structures needed for the Gibson-Bruck algorithm.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="ODE Simulator (Adaptive)" label="odesimadaptive">
 <p>
 The &appName; system provides a deterministic simulator
 for reaction kinetics, in which the system is modeled as
@@ -1116,9 +1143,25 @@ a set of coupled ordinary differential equations (ODEs).
 The differential equations are solved using a finite
 difference method, specifically the 5th-order Runge-Kutta
 algorithm with an adaptive stepsize controller.  The 
-error tolerance per iteration of the algorithm is set to 10^-2,
-but can be changed if the simulator is used programmatically
-(it is not currently changeable through the GUI).  
+error tolerance per iteration of the algorithm is set to 10^-3,
+but can be made smaller by specifying a large integer value
+(greater than 1000) for the "number of steps" input field 
+in the simulation controller window.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="ODE Simulator (Fixed)" label="odesimfixed">
+<p>
+The &appName; system provides a deterministic simulator
+for reaction kinetics, in which the system is modeled as
+a set of coupled ordinary differential equations (ODEs).
+The differential equations are solved using a finite
+difference method, specifically the 5th-order Runge-Kutta
+algorithm with a fixed stepsize.  The number of steps
+defaults to the number of time points at which the 
+species populations are to be sampled (default of 100), but
+this can be modified by changing the "number of steps" input 
+field in the simulation controller window.
 </p>
 </isb:docsubsection>
 

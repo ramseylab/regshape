@@ -32,7 +32,8 @@
 <img src="images/appLogo.png" alt="&appName; logo" border="1" align="left"/>
 &appName; is a chemical kinetics stochastic simulation software package 
 written in Java.  It provides a model definition environment and an implementation of the 
-<a href="docs/UserManual.html#gillespie">Gillespie stochastic algorithm</a>.
+<a href="docs/UserManual.html#gillespie">Gillespie</a> and
+<a href="docs/UserManual.html#gibsonbruck">Gibson-Bruck</a> stochastic algorithms.
 The software is based on the 
 <a href="../&localJavaLibraryName;">&localJavaLibraryName; library</a>. 
 The software is available for download within a self-extracting installer 
