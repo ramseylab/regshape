@@ -26,7 +26,7 @@ import javax.swing.filechooser.*;
 
 public class EditorPane
 {
-    private static final int EDITOR_TEXT_AREA_NUM_ROWS = 48;
+    private static final int EDITOR_TEXT_AREA_NUM_ROWS = 40;
     private static final int EDITOR_TEXT_AREA_NUM_COLS = 80;
     private static final String LABEL_FILE =   "file: ";
     private static final String LABEL_PARSER = "parser: ";
