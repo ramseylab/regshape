@@ -9,7 +9,7 @@ package org.systemsbiology.chem.app;
  */
 
 /**
- * Provides a GUI interface for initiating simulations.
+ * Provides a GUI interface for initiating and controlling simulations.
  */
 import org.systemsbiology.chem.*;
 import org.systemsbiology.util.*;
@@ -54,12 +54,14 @@ public class SimulationLauncher
     private JList mSymbolList;
     private JTextField mEnsembleField;
     private JLabel mEnsembleFieldLabel;
-    private JTextField mNumStepsField;
-    private JLabel mNumStepsFieldLabel;
+    private JTextField mStepSizeFractionField;
+    private JLabel mStepSizeFractionFieldLabel;
     private JTextField mAllowedRelativeErrorField;
     private JLabel mAllowedRelativeErrorFieldLabel;
     private JTextField mAllowedAbsoluteErrorField;
     private JLabel mAllowedAbsoluteErrorFieldLabel;
+    private JTextField mNumHistoryBinsField;
+    private JLabel mNumHistoryBinsFieldLabel;
     private JButton mStartButton;
     private JButton mPauseButton;
     private JButton mResumeButton;
@@ -386,6 +388,10 @@ public class SimulationLauncher
 
         // set the model and fill the symbol list-box
         setModel(pModel);
+
+        // The simulator parameters panel has to be updated
+        // based on the choice of simulator, and the model.
+        updateSimulatorParametersPanel();
 
         // pack the launcher frame and set its location
         activateLauncherFrame();
@@ -815,7 +821,12 @@ public class SimulationLauncher
         return(pauseButton);
     }    
 
-    private void handleSimulatorSelection(int pSimulatorIndex)
+    private void updateSimulatorParametersPanel()
+    {
+        updateSimulatorParametersPanel(mSimulatorsList.getSelectedIndex());
+    }
+
+    private void updateSimulatorParametersPanel(int pSimulatorIndex)
     {
         String simulatorAlias = (String) mSimulatorsList.getModel().getElementAt(pSimulatorIndex);
         if(null == simulatorAlias)
@@ -831,7 +842,7 @@ public class SimulationLauncher
             {
                 simulator = (ISimulator) getSimulatorRegistry().getInstance(simulatorAlias);
                 SimulatorParameters simParams = simulator.getDefaultSimulatorParameters();
-                Long ensembleSize = simParams.getEnsembleSize();
+                Integer ensembleSize = simParams.getEnsembleSize();
                 if(null != ensembleSize)
                 {
                     mEnsembleField.setText(ensembleSize.toString());
@@ -845,18 +856,18 @@ public class SimulationLauncher
                     mEnsembleFieldLabel.setEnabled(false);
                 }
                 
-                Long minNumSteps = simParams.getMinNumSteps();
-                if(null != minNumSteps)
+                Double stepSizeFraction = simParams.getStepSizeFraction();
+                if(null != stepSizeFraction)
                 {
-                    mNumStepsField.setText(minNumSteps.toString());
-                    mNumStepsField.setEnabled(true);
-                    mNumStepsFieldLabel.setEnabled(true);
+                    mStepSizeFractionField.setText(stepSizeFraction.toString());
+                    mStepSizeFractionField.setEnabled(true);
+                    mStepSizeFractionFieldLabel.setEnabled(true);
                 }
                 else
                 {
-                    mNumStepsField.setText("");
-                    mNumStepsField.setEnabled(false);
-                    mNumStepsFieldLabel.setEnabled(false);
+                    mStepSizeFractionField.setText("");
+                    mStepSizeFractionField.setEnabled(false);
+                    mStepSizeFractionFieldLabel.setEnabled(false);
                 }
 
 
@@ -889,6 +900,28 @@ public class SimulationLauncher
                     mAllowedAbsoluteErrorFieldLabel.setEnabled(false);
                 }
 
+                Integer numHistoryBins = simParams.getNumHistoryBins();
+                if(null != numHistoryBins)
+                {
+                    mNumHistoryBinsField.setText(numHistoryBins.toString());
+                    if(null != mModel && (mModel.containsDelayedOrMultistepReaction()))
+                    {
+                        mNumHistoryBinsField.setEnabled(true);
+                        mNumHistoryBinsFieldLabel.setEnabled(true);
+                    }
+                    else
+                    {
+                        mNumHistoryBinsField.setEnabled(false);
+                        mNumHistoryBinsFieldLabel.setEnabled(false);
+                    }
+                }
+                else
+                {
+                    mNumHistoryBinsField.setText("");
+                    mNumHistoryBinsField.setEnabled(false);
+                    mNumHistoryBinsFieldLabel.setEnabled(false);
+                }
+
                 boolean allowsInterrupt = simulator.allowsInterrupt();
                 updateSimulationControlButtons(allowsInterrupt);
             }
@@ -918,7 +951,8 @@ public class SimulationLauncher
         simulatorsList.setVisibleRowCount(SIMULATORS_LIST_BOX_ROW_COUNT);
         simulatorsList.setListData(simulatorAliasObjects);
         simulatorsList.setSelectedIndex(0);
-        handleSimulatorSelection(0);
+        // we will call updateSimulatorParametersPanel() later in the
+        // initialization process, after we have called setModel();
         simulatorsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListSelectionListener listSelectionListener = new ListSelectionListener()
         {
@@ -926,7 +960,7 @@ public class SimulationLauncher
             {
                 if(e.getValueIsAdjusting())
                 {
-                    handleSimulatorSelection(simulatorsList.getSelectedIndex());
+                    updateSimulatorParametersPanel();
                 }
             }
         };
@@ -1058,24 +1092,29 @@ public class SimulationLauncher
         JPanel panel = new JPanel();
         Box box = new Box(BoxLayout.Y_AXIS);
 
+        JPanel startStopPanel = new JPanel();
+
+
         JPanel startPanel = new JPanel();
-        JLabel startLabel = new JLabel("start time:");
+        JLabel startLabel = new JLabel("start:");
         startPanel.add(startLabel);
         JTextField startField = new JTextField("0.0", NUM_COLUMNS_TIME_FIELD);
         mStartTimeField = startField;
         startPanel.add(startField);
-        box.add(startPanel);
+        startStopPanel.add(startPanel);
 
         JPanel stopPanel = new JPanel();
-        JLabel stopLabel = new JLabel("stop time:");
+        JLabel stopLabel = new JLabel("stop:");
         stopPanel.add(stopLabel);
         JTextField stopField = new JTextField(NUM_COLUMNS_TIME_FIELD);
         mStopTimeField = stopField;
         stopPanel.add(stopField);
-        box.add(stopPanel);
+        startStopPanel.add(stopPanel);
+
+        box.add(startStopPanel);
 
         JPanel numPointsPanel = new JPanel();
-        JLabel numPointsLabel = new JLabel("num samples:");
+        JLabel numPointsLabel = new JLabel("number of results points:");
         numPointsPanel.add(numPointsLabel);
         JTextField numPointsField = new JTextField("100", NUM_COLUMNS_TIME_FIELD);
         mNumPointsField = numPointsField;
@@ -1085,7 +1124,7 @@ public class SimulationLauncher
         JPanel ensemblePanel = new JPanel();
         JPanel ensembleLabelPanel = new JPanel();
         Box ensembleLabelBox = new Box(BoxLayout.Y_AXIS);
-        JLabel ensembleLabel = new JLabel("number of ensembles:");
+        JLabel ensembleLabel = new JLabel("stochastic ensemble size:");
         ensembleLabelBox.add(ensembleLabel);
         ensembleLabelPanel.add(ensembleLabelBox);
         ensemblePanel.add(ensembleLabelPanel);
@@ -1095,18 +1134,18 @@ public class SimulationLauncher
         ensemblePanel.add(ensembleField);
         box.add(ensemblePanel);
 
-        JPanel numStepsPanel = new JPanel();
-        JPanel numStepsLabelPanel = new JPanel();
-        Box numStepsLabelBox = new Box(BoxLayout.Y_AXIS);
-        JLabel numStepsLabel = new JLabel("min number of timesteps:");
-        numStepsLabelBox.add(numStepsLabel);
-        numStepsLabelPanel.add(numStepsLabelBox);
-        numStepsPanel.add(numStepsLabelPanel);
-        JTextField numStepsField = new JTextField(NUM_COLUMNS_TIME_FIELD);
-        mNumStepsField = numStepsField;
-        mNumStepsFieldLabel = numStepsLabel;
-        numStepsPanel.add(numStepsField);
-        box.add(numStepsPanel);
+        JPanel stepSizeFractionPanel = new JPanel();
+        JPanel stepSizeFractionLabelPanel = new JPanel();
+        Box stepSizeFractionLabelBox = new Box(BoxLayout.Y_AXIS);
+        JLabel stepSizeFractionLabel = new JLabel("step size (fractional):");
+        stepSizeFractionLabelBox.add(stepSizeFractionLabel);
+        stepSizeFractionLabelPanel.add(stepSizeFractionLabelBox);
+        stepSizeFractionPanel.add(stepSizeFractionLabelPanel);
+        JTextField stepSizeFractionField = new JTextField(NUM_COLUMNS_TIME_FIELD);
+        mStepSizeFractionField = stepSizeFractionField;
+        mStepSizeFractionFieldLabel = stepSizeFractionLabel;
+        stepSizeFractionPanel.add(stepSizeFractionField);
+        box.add(stepSizeFractionPanel);
 
         JPanel allowedRelativeErrorPanel = new JPanel();
         JPanel allowedRelativeErrorLabelPanel = new JPanel();
@@ -1133,6 +1172,20 @@ public class SimulationLauncher
         mAllowedAbsoluteErrorFieldLabel = allowedAbsoluteErrorLabel;
         allowedAbsoluteErrorPanel.add(allowedAbsoluteErrorField);
         box.add(allowedAbsoluteErrorPanel);
+
+        // create panel for the "number of history bins"
+        JPanel numHistoryBinsPanel = new JPanel();
+        JPanel numHistoryBinsLabelPanel = new JPanel();
+        Box numHistoryBinsLabelBox = new Box(BoxLayout.Y_AXIS);
+        JLabel numHistoryBinsLabel = new JLabel("number of history bins:");
+        numHistoryBinsLabelBox.add(numHistoryBinsLabel);
+        numHistoryBinsLabelPanel.add(numHistoryBinsLabelBox);
+        numHistoryBinsPanel.add(numHistoryBinsLabelPanel);
+        JTextField numHistoryBinsField = new JTextField(NUM_COLUMNS_TIME_FIELD);
+        mNumHistoryBinsField = numHistoryBinsField;
+        mNumHistoryBinsFieldLabel = numHistoryBinsLabel;
+        numHistoryBinsPanel.add(numHistoryBinsField);
+        box.add(numHistoryBinsPanel);
 
         panel.add(box);
         panel.setBorder(BorderFactory.createEtchedBorder());
@@ -1292,24 +1345,24 @@ public class SimulationLauncher
             simulatorParameters.setEnsembleSize(ensembleSize.intValue());
         }
 
-        String numStepsStr = mNumStepsField.getText();
+        String stepSizeFractionStr = mStepSizeFractionField.getText();
 
-        Integer numSteps = null;
-        if(null != numStepsStr && numStepsStr.trim().length() > 0)
+        Double stepSizeFraction = null;
+        if(null != stepSizeFractionStr && stepSizeFractionStr.trim().length() > 0)
         {
             try
             {
-                numSteps = new Integer(numStepsStr);
+                stepSizeFraction = new Double(stepSizeFractionStr);
             }
             catch(NumberFormatException e)
             {
-                handleBadInput("invalid number of steps", "The number of steps you specified is invalid");
+                handleBadInput("invalid step size fraction", "The fractional step size you specified is invalid");
                 return(retVal);
             }
         }
-        if(null != numSteps)
+        if(null != stepSizeFraction)
         {
-            simulatorParameters.setMinNumSteps(numSteps.intValue());
+            simulatorParameters.setStepSizeFraction(stepSizeFraction.doubleValue());
         }
 
         String allowedRelativeErrorStr = mAllowedRelativeErrorField.getText();
@@ -1348,6 +1401,25 @@ public class SimulationLauncher
         if(null != allowedAbsoluteError)
         {
             simulatorParameters.setMaxAllowedAbsoluteError(allowedAbsoluteError.doubleValue());
+        }
+
+        String numHistoryBinsStr = mNumHistoryBinsField.getText();
+        Integer numHistoryBins = null;
+        if(null != numHistoryBinsStr && numHistoryBinsStr.trim().length() > 0)
+        {
+            try
+            {
+                numHistoryBins = new Integer(numHistoryBinsStr);
+            }
+            catch(NumberFormatException e)
+            {
+                handleBadInput("invalid number of history bins", "The number of history bins you specified is invalid");
+                return(retVal);
+            }
+        }
+        if(null != numHistoryBins)
+        {
+            simulatorParameters.setNumHistoryBins(numHistoryBins.intValue());
         }
 
         Object []symbolSelected = mSymbolList.getSelectedValues();
