@@ -10,6 +10,7 @@ package org.systemsbiology.math;
 
 import org.systemsbiology.util.*;
 import java.util.*;
+import java.io.*;
 
 /**
  * This class is a general-purpose facility for parsing simple mathematical 
@@ -32,7 +33,7 @@ import java.util.*;
  * <code>cos()</code>, <code>tan()</code>, <code>asin()</code>, 
  * <code>acos()</code>, <code>atan()</code>, <code>abs()</code>, 
  * <code>floor()</code>, <code>ceil()</code>, <code>sqrt()</code>,
- * <code>rand()</code>, <code>theta()</code>.
+ * <code>theta()</code>.
  * The arguments of the trigonometric functions (<code>sin, cos, tan</code>)
  * <em>must</em> be in radians.  The return values of the inverse trigonometric
  * functions (<code>asin, acos, atan</code>) are in radians as well.  For more
@@ -217,9 +218,7 @@ public class Expression implements Cloneable
         public static final int ELEMENT_CODE_FLOOR = 19;
         public static final int ELEMENT_CODE_CEIL = 20;
         public static final int ELEMENT_CODE_SQRT = 21;
-        public static final int ELEMENT_CODE_GAMMALN = 22;
-        public static final int ELEMENT_CODE_THETA = 23;
-        public static final int ELEMENT_CODE_RAND = 24;
+        public static final int ELEMENT_CODE_THETA = 22;
 
         static
         {
@@ -399,22 +398,9 @@ public class Expression implements Cloneable
         public static final ElementCode SQRT = new ElementCode("sqrt", ELEMENT_CODE_SQRT, true, 1);
 
         /**
-         * element code specifying the natural logarithm of the gamma function 
-         * of the argument
-         */
-        public static final ElementCode GAMMALN = new ElementCode("gammaln", ELEMENT_CODE_GAMMALN, true, 1);
-
-        /**
-         * element code specifying the natural logarithm of the gamma function 
-         * of the argument
+         * element code specifying the Heaviside step function ("theta" function)
          */
         public static final ElementCode THETA = new ElementCode("theta", ELEMENT_CODE_THETA, true, 1);
-
-        /**
-         * element code specifying a random number chosen from the unit interval
-         * with uniform distribution (inclusive of 0.0, exclusive of 1.0).
-         */
-        public static final ElementCode RAND = new ElementCode("rand", ELEMENT_CODE_RAND, true, 0);
     }
 
     /**
@@ -435,9 +421,26 @@ public class Expression implements Cloneable
      *
      * For a list of element codes, refer to the {@link Expression} class.
      */
-    class Element implements Cloneable
+    static class Element implements Cloneable
     {
+        protected static final Element ONE = new Element(1.0);
+        protected static final Element TWO = new Element(2.0);
+        
+        public Element()
+        {
+            // do nothing
+        }
 
+        public Element(ElementCode pCode)
+        {
+            mCode = pCode;
+        }
+
+        public Element(double pNumericValue)
+        {
+            mCode = ElementCode.NUMBER;
+            mNumericValue = pNumericValue;
+        }
 
         /**
          * The element code indicating whether the element is a
@@ -1170,6 +1173,18 @@ public class Expression implements Cloneable
                     return(valueOfFirstOperand - valueOfSecondOperand);
                     
                 case ElementCode.ELEMENT_CODE_POW:
+                    if(valueOfSecondOperand == 2.0)
+                    {
+                        return(valueOfFirstOperand * valueOfFirstOperand);
+                    }
+                    else if(valueOfSecondOperand == 3.0)
+                    {
+                        return(valueOfFirstOperand * valueOfFirstOperand * valueOfFirstOperand);
+                    }
+                    else if(valueOfSecondOperand == 4.0)
+                    {
+                        return(valueOfFirstOperand * valueOfFirstOperand * valueOfFirstOperand * valueOfFirstOperand);
+                    }
                     return(Math.pow(valueOfFirstOperand, valueOfSecondOperand));
                     
                 case ElementCode.ELEMENT_CODE_MOD:
@@ -1222,9 +1237,6 @@ public class Expression implements Cloneable
                 case ElementCode.ELEMENT_CODE_SQRT:
                     return(Math.sqrt(valueOfFirstOperand));
                     
-                case ElementCode.ELEMENT_CODE_GAMMALN:
-                    return(MathFunctions.gammaln(valueOfFirstOperand));
-                    
                 case ElementCode.ELEMENT_CODE_THETA:
                     return(MathFunctions.thetaFunction(valueOfFirstOperand));
                     
@@ -1248,9 +1260,6 @@ public class Expression implements Cloneable
 
             case ElementCode.ELEMENT_CODE_NUMBER:
                 return(pElement.mNumericValue);
-
-            case ElementCode.ELEMENT_CODE_RAND:
-                return(Math.random());
 
             default:
                 return(valueOfSubtreeNonSimple(pElement, pSymbolEvaluator, elementCodeInt));
@@ -1440,5 +1449,773 @@ public class Expression implements Cloneable
             newExpression.mRootElement = null;
         }
         return(newExpression);
+    }
+
+    private Element computePartialDerivative(Element pElement, Symbol pSymbol)
+    {
+        Element retElement = new Element();
+        ElementCode code = pElement.mCode;
+        int intCode = code.mIntCode;
+
+        Element firstOperand = pElement.mFirstOperand;
+        Element firstOperandDerivExpression = null;
+        boolean firstOperandDerivZero = false;
+        boolean firstOperandDerivUnity = false;
+        if(null != firstOperand)
+        {
+            firstOperandDerivExpression = computePartialDerivative(firstOperand, pSymbol);
+            ElementCode firstOperandElementCode = firstOperand.mCode;
+            if(firstOperandDerivExpression.mCode.equals(ElementCode.NUMBER))
+            {
+                double derivValue = firstOperandDerivExpression.mNumericValue;
+                if(derivValue == 0.0)
+                {
+                    firstOperandDerivZero = true;
+                }
+                else if(derivValue == 1.0)
+                {
+                    firstOperandDerivUnity = true;
+                }
+            }
+        }
+
+        Element secondOperand = pElement.mSecondOperand;
+        Element secondOperandDerivExpression = null;
+        boolean secondOperandDerivZero = false;
+        boolean secondOperandDerivUnity = false;
+        if(null != secondOperand)
+        {
+            secondOperandDerivExpression = computePartialDerivative(secondOperand, pSymbol);
+            ElementCode secondOperandElementCode = secondOperand.mCode;
+            if(secondOperandDerivExpression.mCode.equals(ElementCode.NUMBER))
+            {
+                double derivValue = secondOperandDerivExpression.mNumericValue;
+                if(derivValue == 0.0)
+                {
+                    secondOperandDerivZero = true;
+                }
+                else if(derivValue == 1.0)
+                {
+                    secondOperandDerivUnity = true;
+                }
+            }
+        }
+
+        switch(intCode)
+        {
+            case ElementCode.ELEMENT_CODE_NUMBER:
+                retElement.mCode = ElementCode.NUMBER;
+                retElement.mNumericValue = 0.0;
+                break;
+                
+            case ElementCode.ELEMENT_CODE_SYMBOL:
+                retElement.mCode = ElementCode.NUMBER;
+                Symbol symbol = pElement.mSymbol;
+                double derivValue = 0.0;
+                if(symbol.equals(pSymbol))
+                {
+                    derivValue = 1.0;
+                }
+                retElement.mNumericValue = derivValue;
+                break;
+
+            case ElementCode.ELEMENT_CODE_NONE:
+                throw new IllegalArgumentException("element code NONE should never occur in a valid expression tree");
+
+            case ElementCode.ELEMENT_CODE_MOD:
+                throw new IllegalArgumentException("unable to compute the derivative of the modulo division operator");
+
+            case ElementCode.ELEMENT_CODE_ABS:
+                throw new IllegalArgumentException("unable to compute the derivative of the abs() function");
+
+            case ElementCode.ELEMENT_CODE_FLOOR:
+                throw new IllegalArgumentException("unable to compute the derivative of the floor() function");
+
+            case ElementCode.ELEMENT_CODE_CEIL:
+                throw new IllegalArgumentException("unable to compute the derivative of the ceil() function");
+
+            case ElementCode.ELEMENT_CODE_THETA:
+                throw new IllegalArgumentException("unable to compute the derivative of the theta() function");
+
+            case ElementCode.ELEMENT_CODE_ACOS:
+                if(! firstOperandDerivZero)
+                {
+                    retElement.mCode = ElementCode.NEG;
+
+                    Element ratio = new Element(ElementCode.DIV);
+                    retElement.mFirstOperand = ratio;
+
+                    ratio.mFirstOperand = firstOperandDerivExpression;
+
+                    Element sqrtOneMinusXSquared = new Element(ElementCode.SQRT);
+                    ratio.mSecondOperand = sqrtOneMinusXSquared;
+
+                    Element oneMinusXSquared = new Element(ElementCode.SUBT);
+                    sqrtOneMinusXSquared.mFirstOperand = oneMinusXSquared;
+
+                    oneMinusXSquared.mFirstOperand = Element.ONE;
+                    
+                    Element xSquared = new Element(ElementCode.POW);
+                    oneMinusXSquared.mSecondOperand = xSquared;
+
+                    xSquared.mFirstOperand = firstOperand;
+                    xSquared.mSecondOperand = Element.TWO;
+                }
+                else
+                {
+                    retElement = firstOperandDerivExpression;
+                }
+                break;
+
+            case ElementCode.ELEMENT_CODE_ASIN:
+                if(! firstOperandDerivZero)
+                {
+                    retElement.mCode = ElementCode.DIV;
+
+                    retElement.mFirstOperand = firstOperandDerivExpression;
+
+                    Element sqrtOneMinusXSquared = new Element(ElementCode.SQRT);
+                    retElement.mSecondOperand = sqrtOneMinusXSquared;
+
+                    Element oneMinusXSquared = new Element(ElementCode.SUBT);
+                    sqrtOneMinusXSquared.mFirstOperand = oneMinusXSquared;
+
+                    oneMinusXSquared.mFirstOperand = Element.ONE;
+                    
+                    Element xSquared = new Element(ElementCode.POW);
+                    oneMinusXSquared.mSecondOperand = xSquared;
+
+                    xSquared.mFirstOperand = firstOperand;
+                    xSquared.mSecondOperand = Element.TWO;
+                }
+                else
+                {
+                    retElement = firstOperandDerivExpression;
+                }
+                break;
+
+            case ElementCode.ELEMENT_CODE_ATAN:
+                if(! firstOperandDerivZero)
+                {
+                    retElement.mCode = ElementCode.DIV;
+
+                    retElement.mFirstOperand = firstOperandDerivExpression;
+                    
+                    Element onePlusXSquared = new Element();
+                    retElement.mSecondOperand = onePlusXSquared;
+                    onePlusXSquared.mCode = ElementCode.ADD;
+                                       
+                    onePlusXSquared.mFirstOperand = Element.ONE;
+                    
+                    Element xSquared = new Element();
+                    xSquared.mCode = ElementCode.POW;
+                    xSquared.mFirstOperand = firstOperand;
+                    xSquared.mSecondOperand = Element.TWO;
+                    
+                    onePlusXSquared.mSecondOperand = xSquared;
+
+                    retElement.mSecondOperand = onePlusXSquared;
+                }
+                else
+                {
+                    retElement = firstOperandDerivExpression;
+                }
+                break;
+
+            case ElementCode.ELEMENT_CODE_SQRT:
+                if(! firstOperandDerivZero)
+                {
+                    retElement.mCode = ElementCode.DIV;
+                    
+                    retElement.mFirstOperand = firstOperandDerivExpression;
+                    Element twoSqrt = new Element();
+                    twoSqrt.mCode = ElementCode.MULT;
+                    twoSqrt.mFirstOperand = Element.TWO;
+                    twoSqrt.mSecondOperand = pElement;
+                    retElement.mSecondOperand = twoSqrt;
+                }
+                else
+                {
+                    retElement = firstOperandDerivExpression;
+                }
+
+                break;
+
+            case ElementCode.ELEMENT_CODE_LOG:
+                if(! firstOperandDerivZero)
+                {
+                    retElement.mCode = ElementCode.DIV;
+                    retElement.mFirstOperand = firstOperandDerivExpression;
+                    retElement.mSecondOperand = firstOperand;
+                }
+                else
+                {
+                    retElement = firstOperandDerivExpression;
+                }
+                break;
+
+            case ElementCode.ELEMENT_CODE_POW:
+                if(! firstOperandDerivZero)
+                {
+                    if(! secondOperandDerivZero)
+                    {
+                        retElement.mCode = ElementCode.MULT;
+                        Element sum = new Element();
+                        retElement.mFirstOperand = sum;
+                        sum.mCode = ElementCode.ADD;
+
+
+                        Element xlogx = new Element();
+                        xlogx.mCode = ElementCode.MULT;
+                        xlogx.mFirstOperand = firstOperand;
+                        Element logx = new Element();
+                        logx.mCode = ElementCode.LOG;
+                        logx.mFirstOperand = firstOperand;
+                        xlogx.mSecondOperand = logx;
+                        
+                        if(! secondOperandDerivUnity)
+                        {
+                            Element sumFirstTerm = new Element();
+                            sumFirstTerm.mCode = ElementCode.MULT;
+                            sumFirstTerm.mFirstOperand = secondOperandDerivExpression;
+                            sumFirstTerm.mSecondOperand = xlogx;
+                            sum.mFirstOperand = sumFirstTerm;
+                        }
+                        else
+                        {
+                            sum.mFirstOperand = xlogx;
+                        }
+
+                        if(! firstOperandDerivUnity)
+                        {
+                            Element sumSecondTerm = new Element();
+                            sum.mSecondOperand = sumSecondTerm;
+                            sumSecondTerm.mCode = ElementCode.MULT;
+                            sumSecondTerm.mFirstOperand = firstOperandDerivExpression;
+                            sumSecondTerm.mSecondOperand = secondOperand;
+                        }
+                        else
+                        {
+                            sum.mSecondOperand = secondOperand;
+                        }
+
+                        Element yminus1 = new Element();
+
+                        if(! secondOperand.mCode.equals(ElementCode.NUMBER))
+                        {
+                            yminus1.mCode = ElementCode.SUBT;
+                            yminus1.mFirstOperand = secondOperand;
+                            yminus1.mSecondOperand = Element.ONE;
+                        }
+                        else
+                        {
+                            double newVal = secondOperand.mNumericValue - 1.0;
+                            if(newVal != 1.0)
+                            {
+                                yminus1.mCode = ElementCode.NUMBER;
+                                yminus1.mNumericValue = newVal;
+                            }
+                            else
+                            {
+                                yminus1 = null;
+                            }
+                        }
+
+                        Element xtoyminus1 = new Element();
+                        
+                        if(null != yminus1)
+                        {
+                            xtoyminus1.mCode = ElementCode.POW;
+                            xtoyminus1.mFirstOperand = firstOperand;
+                            xtoyminus1.mSecondOperand = yminus1;
+                        }
+                        else
+                        {
+                            xtoyminus1 = firstOperand;
+                        }
+
+                        retElement.mSecondOperand = xtoyminus1;
+                    }
+                    else
+                    {
+                        retElement.mCode = ElementCode.MULT;
+
+                        if(! firstOperandDerivUnity)
+                        {
+                            Element xprimey = new Element();
+                            xprimey.mCode = ElementCode.MULT;
+                            xprimey.mFirstOperand = firstOperandDerivExpression;
+                            xprimey.mSecondOperand = secondOperand;
+                            retElement.mFirstOperand = xprimey;
+                        }
+                        else
+                        {
+                            retElement.mFirstOperand = secondOperand;
+                        }
+
+                        Element yminus1 = new Element();
+
+                        if(! secondOperand.mCode.equals(ElementCode.NUMBER))
+                        {
+                            yminus1.mCode = ElementCode.SUBT;
+                            yminus1.mFirstOperand = secondOperand;
+                            yminus1.mSecondOperand = Element.ONE;                        
+                        }
+                        else
+                        {
+                            double newExp = secondOperand.mNumericValue - 1.0;
+                            if(newExp != 1.0)
+                            {
+                                yminus1.mCode = ElementCode.NUMBER;
+                                yminus1.mNumericValue = newExp;
+                            }
+                            else
+                            {
+                                yminus1 = null;
+                            }
+                        }
+
+                        Element xtoyminus1 = new Element();
+                        if(null != yminus1)
+                        {
+                            xtoyminus1.mCode = ElementCode.POW;
+                            xtoyminus1.mFirstOperand = firstOperand;
+                            xtoyminus1.mSecondOperand = yminus1;
+                        }
+                        else
+                        {
+                            xtoyminus1 = firstOperand;
+                        }
+
+                        retElement.mSecondOperand = xtoyminus1;
+                    }
+                }
+                else
+                {
+                    if(! secondOperandDerivZero)
+                    {
+                        retElement.mCode = ElementCode.MULT;
+
+                        Element logx = new Element();
+                        logx.mCode = ElementCode.LOG;
+                        logx.mFirstOperand = firstOperand;
+
+                        if(! secondOperandDerivUnity)
+                        {
+                            Element yprimelogx = new Element();
+                            yprimelogx.mCode = ElementCode.MULT;
+                            yprimelogx.mFirstOperand = secondOperandDerivExpression;
+                            yprimelogx.mSecondOperand = logx;
+                            retElement.mFirstOperand = yprimelogx;
+                        }
+                        else
+                        {
+                            retElement.mFirstOperand = logx;
+                        }
+
+                        retElement.mSecondOperand = pElement;
+                    }
+                    else
+                    {
+                        retElement = firstOperandDerivExpression;
+                    }
+                }
+                break;
+
+            case ElementCode.ELEMENT_CODE_EXP:
+                if(! firstOperandDerivZero)
+                {
+                    if(! firstOperandDerivUnity)
+                    {
+                        retElement.mCode = ElementCode.MULT;
+                        retElement.mFirstOperand = firstOperandDerivExpression;
+                        retElement.mSecondOperand = pElement;
+                    }
+                    else
+                    {
+                        retElement = pElement;
+                    }
+                }
+                else
+                {
+                    retElement = firstOperandDerivExpression;
+                }
+                break;
+
+            case ElementCode.ELEMENT_CODE_NEG:
+                if(! firstOperandDerivZero)
+                {
+                    if(! firstOperandDerivUnity)
+                    {
+                        retElement.mCode = ElementCode.NEG;
+                        retElement.mFirstOperand = firstOperandDerivExpression;
+                    }
+                    else
+                    {
+                        retElement.mCode = ElementCode.NUMBER;
+                        retElement.mNumericValue = -1.0;
+                    }
+                }
+                else
+                {
+                    retElement = firstOperandDerivExpression;
+                }
+                break;
+
+            case ElementCode.ELEMENT_CODE_TAN:
+                if(! firstOperandDerivZero)
+                {
+                    retElement.mCode = ElementCode.DIV;
+                    retElement.mFirstOperand = firstOperandDerivExpression;
+                    Element cosSq = new Element();
+                    cosSq.mCode = ElementCode.POW;
+                    Element cos = new Element();
+                    cos.mCode = ElementCode.COS;
+                    cos.mFirstOperand = firstOperand;
+                    cosSq.mFirstOperand = cos;
+                    cosSq.mSecondOperand = Element.TWO;
+                    retElement.mSecondOperand = cosSq;
+                }
+                else
+                {
+                    retElement = firstOperandDerivExpression;
+                }
+                break;
+
+            case ElementCode.ELEMENT_CODE_COS:
+                if(! firstOperandDerivZero)
+                {
+                    if(! firstOperandDerivUnity)
+                    {
+                        retElement.mCode = ElementCode.NEG;
+                        Element prod = new Element();
+                        prod.mCode = ElementCode.MULT;
+                        retElement.mFirstOperand = prod;
+                        Element sinFunc = new Element();
+                        sinFunc.mCode = ElementCode.SIN;
+                        sinFunc.mFirstOperand = firstOperand;
+                        prod.mFirstOperand = sinFunc;
+                        prod.mSecondOperand = firstOperandDerivExpression;
+                    }
+                    else
+                    {
+                        retElement.mCode = ElementCode.NEG;
+                        Element sinFunc = new Element();
+                        sinFunc.mCode = ElementCode.SIN;
+                        sinFunc.mFirstOperand = firstOperand;
+                        retElement.mFirstOperand = sinFunc;
+                    }
+                }
+                else
+                {
+                    retElement = firstOperandDerivExpression;
+                }
+
+                break;
+
+            case ElementCode.ELEMENT_CODE_SIN:
+                if(! firstOperandDerivZero)
+                {
+                    if(! firstOperandDerivUnity)
+                    {
+                        retElement.mCode = ElementCode.MULT;
+                        Element cosFunc = new Element();
+                        cosFunc.mCode = ElementCode.COS;
+                        cosFunc.mFirstOperand = firstOperand;
+                        retElement.mFirstOperand = cosFunc;
+                        retElement.mSecondOperand = firstOperandDerivExpression;
+                    }
+                    else
+                    {
+                        retElement.mCode = ElementCode.COS;
+                        retElement.mFirstOperand = firstOperand;
+                    }
+                }
+                else
+                {
+                    retElement = firstOperandDerivExpression;
+                }
+
+                break;
+
+            case ElementCode.ELEMENT_CODE_ADD:
+                if(! firstOperandDerivZero)
+                {
+                    if(! secondOperandDerivZero)
+                    {
+                        retElement.mCode = ElementCode.ADD;
+                        retElement.mFirstOperand = firstOperandDerivExpression;
+                        retElement.mSecondOperand = secondOperandDerivExpression;
+                    }
+                    else
+                    {
+                        retElement = firstOperandDerivExpression;
+                    }
+                }
+                else
+                {
+                    if(! secondOperandDerivZero)
+                    {
+                        retElement = secondOperandDerivExpression;
+                    }
+                    else
+                    {
+                        retElement = firstOperandDerivExpression;
+                    }
+                }
+
+                break;
+                
+            case ElementCode.ELEMENT_CODE_SUBT:
+                if(! firstOperandDerivZero)
+                {
+                    if(! secondOperandDerivZero)
+                    {
+                        retElement.mCode = ElementCode.SUBT;
+                        retElement.mFirstOperand = firstOperandDerivExpression;
+                        retElement.mSecondOperand = secondOperandDerivExpression;
+                    }
+                    else
+                    {
+                        retElement = firstOperandDerivExpression;
+                    }
+                }
+                else
+                {
+                    if(! secondOperandDerivZero)
+                    {
+                        retElement.mCode = ElementCode.NEG;
+                        retElement.mFirstOperand = secondOperandDerivExpression;
+                    }
+                    else
+                    {
+                        retElement = firstOperandDerivExpression;
+                    }
+                }
+
+                break;
+                
+            case ElementCode.ELEMENT_CODE_DIV:
+                if(! firstOperandDerivZero)
+                {
+                    if(! secondOperandDerivZero)
+                    {
+                        retElement.mCode = ElementCode.SUBT;
+                        Element firstTerm = new Element();
+                        firstTerm.mCode = ElementCode.DIV;
+                        firstTerm.mFirstOperand = firstOperandDerivExpression;
+                        firstTerm.mSecondOperand = secondOperand;
+
+                        retElement.mFirstOperand = firstTerm;
+
+                        Element secondTerm = new Element();
+                        secondTerm.mCode = ElementCode.DIV;
+
+                        Element secondTermNum = null;
+
+                        if(! secondOperandDerivUnity)
+                        {
+                            secondTermNum = new Element();
+                            secondTermNum.mCode = ElementCode.MULT;
+                            secondTermNum.mFirstOperand = firstOperand;
+                            secondTermNum.mSecondOperand = secondOperandDerivExpression;
+                        }
+                        else
+                        {
+                            secondTermNum = firstOperand;
+                        }
+                        
+                        secondTerm.mFirstOperand = secondTermNum;
+
+                        Element secondTermDenom = new Element();
+                        secondTermDenom.mCode = ElementCode.POW;
+                        secondTermDenom.mFirstOperand = secondOperand;
+                        secondTermDenom.mSecondOperand = Element.TWO;
+                        secondTerm.mSecondOperand = secondTermDenom;
+
+                        retElement.mSecondOperand = secondTerm;
+                    }
+                    else
+                    {
+                        retElement.mCode = ElementCode.DIV;
+                        retElement.mFirstOperand = firstOperandDerivExpression;
+                        retElement.mSecondOperand = secondOperand;
+                    }
+                }
+                else
+                {
+                    if(! secondOperandDerivZero)
+                    {
+                        if(! secondOperandDerivUnity)
+                        {
+                            retElement.mCode = ElementCode.NEG;
+                            
+                            Element secondTermArg = new Element();
+                            secondTermArg.mCode = ElementCode.DIV;
+                            retElement.mFirstOperand = secondTermArg;
+                            
+                            Element secondTermNum = new Element();
+                            secondTermNum.mCode = ElementCode.MULT;
+                            secondTermNum.mFirstOperand = firstOperand;
+                            secondTermNum.mSecondOperand = secondOperandDerivExpression;
+                            secondTermArg.mFirstOperand = secondTermNum;
+                            
+                            Element secondTermDenom = new Element();
+                            secondTermDenom.mCode = ElementCode.POW;
+                            secondTermDenom.mFirstOperand = secondOperand;
+                            secondTermDenom.mSecondOperand = Element.TWO;
+                            secondTermArg.mSecondOperand = secondTermDenom;
+                        }
+                        else
+                        {
+                            retElement.mCode = ElementCode.NEG;
+                            
+                            Element secondTermArg = new Element();
+                            secondTermArg.mCode = ElementCode.DIV;
+                            retElement.mFirstOperand = secondTermArg;
+                            
+                            Element secondTermNum = firstOperand;
+                            secondTermArg.mFirstOperand = secondTermNum;
+
+                            Element secondTermDenom = new Element();
+                            secondTermDenom.mCode = ElementCode.POW;
+                            secondTermDenom.mFirstOperand = secondOperand;
+                            secondTermDenom.mSecondOperand = Element.TWO;
+                            secondTermArg.mSecondOperand = secondTermDenom;                            
+                        }
+                    }
+                    else
+                    {
+                        retElement = secondOperandDerivExpression;
+                    }
+                }
+                break;
+
+            case ElementCode.ELEMENT_CODE_MULT:
+
+                if(! firstOperandDerivZero)
+                {
+                    if(! secondOperandDerivZero)
+                    {
+                        retElement.mCode = ElementCode.ADD;
+
+                        if(! firstOperandDerivUnity)
+                        {
+                            if(! secondOperandDerivUnity)
+                            { 
+                                Element firstTerm = new Element();
+                                firstTerm.mCode = ElementCode.MULT;
+                                firstTerm.mFirstOperand = firstOperandDerivExpression;
+                                firstTerm.mSecondOperand = secondOperand;
+                                Element secondTerm = new Element();
+                                secondTerm.mCode = ElementCode.MULT;
+                                secondTerm.mFirstOperand = firstOperand;
+                                secondTerm.mSecondOperand = secondOperandDerivExpression;
+                                retElement.mFirstOperand = firstTerm;
+                                retElement.mSecondOperand = secondTerm;
+                            }
+                            else
+                            {
+                                Element firstTerm = new Element();
+                                firstTerm.mCode = ElementCode.MULT;
+                                firstTerm.mFirstOperand = firstOperandDerivExpression;
+                                firstTerm.mSecondOperand = secondOperand;
+                                Element secondTerm = firstOperand;
+                                retElement.mFirstOperand = firstTerm;
+                                retElement.mSecondOperand = secondTerm;                                
+                            }
+                        }
+                        else
+                        {
+                            if(! secondOperandDerivUnity)
+                            {
+                                Element firstTerm = secondOperand;
+                                Element secondTerm = new Element();
+                                secondTerm.mCode = ElementCode.MULT;
+                                secondTerm.mFirstOperand = firstOperand;
+                                secondTerm.mSecondOperand = secondOperandDerivExpression;
+                                retElement.mFirstOperand = firstTerm;
+                                retElement.mSecondOperand = secondTerm;
+                            }
+                            else
+                            {
+                                retElement.mFirstOperand = firstOperand;
+                                retElement.mSecondOperand = secondOperand;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(! firstOperandDerivUnity)
+                        {
+                            retElement.mCode = ElementCode.MULT;
+                            retElement.mFirstOperand = firstOperandDerivExpression;
+                            retElement.mSecondOperand = secondOperand;
+                        }
+                        else
+                        {
+                            retElement = secondOperand;
+                        }
+                    }
+                }
+                else
+                {
+                    if(! secondOperandDerivZero)
+                    {
+                        if(! secondOperandDerivUnity)
+                        {
+                            retElement.mCode = ElementCode.MULT;
+                            retElement.mFirstOperand = firstOperand;
+                            retElement.mSecondOperand = secondOperandDerivExpression;
+                        }
+                        else
+                        {
+                            retElement = firstOperand;
+                        }
+                    }
+                    else
+                    {
+                        retElement = secondOperandDerivExpression;
+                    }
+                }
+
+                break;
+
+            default:
+                throw new IllegalStateException("unable to differentiate element code: " + pElement.mCode);
+        }
+
+
+        return(retElement);
+    }
+
+    public Expression computePartialDerivative(Symbol pSymbol)
+    {
+        Expression expression = new Expression();
+        expression.mRootElement = computePartialDerivative(mRootElement, pSymbol);
+        return(expression);
+    }
+
+                                               
+    public static final void main(String []pArgs)
+    {
+        try
+        {
+            InputStream in = System.in;
+            InputStreamReader reader = new InputStreamReader(in);
+            BufferedReader bufReader = new BufferedReader(reader);
+            String line = null;
+            while(null != (line = bufReader.readLine()))
+            {
+                Expression expression = new Expression(line);
+                Symbol X = new Symbol("X");
+                System.out.println(expression.computePartialDerivative(X).toString());
+                System.out.println("");
+            }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace(System.err);
+        }
     }
 }
