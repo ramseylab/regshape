@@ -143,7 +143,6 @@ public class Model
     private Vector mReactions;
     private HashMap mParameters;
     private String mName;
-    private Vector mCompartments;
     private HashMap mSymbolTable;  // the global symbol table
                                    // (contains names of species, parameters,
                                    // reactions, and containers)
@@ -204,16 +203,6 @@ public class Model
     private HashMap getSymbolTable()
     {
         return(mSymbolTable);
-    }
-    
-    private void setCompartments(Vector pCompartments)
-    {
-        mCompartments = pCompartments;
-    }
-
-    private Vector getCompartments()
-    {
-        return(mCompartments);
     }
 
     /**
@@ -281,11 +270,6 @@ public class Model
         setSymbolTable(new HashMap());
     }
 
-    private void initializeCompartments()
-    {
-        setCompartments(new Vector());
-    }
-
     private void initializeParameters()
     {
         setParameters(new HashMap());
@@ -303,7 +287,6 @@ public class Model
         initializeSymbolTable();
         initializeReactions();
         initializeParameters();
-        initializeCompartments();
     }
 
     /*========================================*
