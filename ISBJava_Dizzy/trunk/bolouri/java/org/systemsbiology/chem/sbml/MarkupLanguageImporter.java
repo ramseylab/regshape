@@ -257,4 +257,9 @@ public class MarkupLanguageImporter
     {
         return(getSBMLReader().getNthRuleType(pIndex));
     }
+
+    public String getSubstanceUnitsString()
+    {
+        return(getSBMLReader().getSubstanceUnitsString());
+    }
 }
