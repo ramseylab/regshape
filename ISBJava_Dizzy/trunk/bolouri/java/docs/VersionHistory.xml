@@ -63,7 +63,6 @@ and <code>org.systemsbiology.util</code>, to move the commonly used
 GUI classes to <code>org.systemsbiology.gui</code>.  This includes
 <code>org.systemsbiology.util.FramePlacer</code>, 
 <code>org.systemsbiology.util.ImageTransferHandler</code>, 
-<code>org.systemsbiology.util.BrowserLauncher</code>, 
 <code>org.systemsbiology.chem.app.FileChooser</code>, 
 <code>org.systemsbiology.chem.app.RegexFileFilter</code>, 
 <code>org.systemsbiology.chem.app.SimpleTextArea</code>, 
@@ -86,6 +85,105 @@ to <code>org.systemsbiology.util.ExceptionUtils</code>.
 <li>
 Renamed the <code>org.systemsbiology.gui.ComponentUtil</code> class 
 to <code>org.systemsbiology.gui.ComponentUtils</code>.
+</li>
+<li>
+Fixed a bug in <code>org.systemsbiology.math.SignificantDigitsCalculator</code>,
+for case of <code>NaN</code> and <code>Infinity</code> 
+input to the <code>calculate()</code> method.
+</li>
+<li>
+Modified <code>org.systemsbiology.chem.ISimulator</code> to add a
+<code>canComputeFluctuations()</code> method.  Implemented this method
+in <code>org.systemsbiology.chem.Simulator</code>.  Modified the
+<code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code> to
+check this method and issue an error message, if the simulator returns false
+and the user has requested <code>-computeFluctuations</code>.
+</li>
+<li>
+Added a new class <code>org.systemsbiology.gui.DataColumnSelector</code>.
+</li>
+<li>
+Refactored the <code>org.systemsbiology.gui.FileChooser</code> class, to
+remove unnecessary methods that were provided adequately by the superclass.
+In particular, the <code>show()</code> was removed, in favor of the
+<code>showOpenDialog()</code>, <code>showSaveDialog()</code> and
+<code>showDialog()</code> methods in the superclass.
+</li>
+<li>
+Modified <code>org.systemsbiology.math.ScientificNumberFormat</code> class
+to allow for overriding the default symbols for not-a-number and infinity.
+Modified <code>org.systemsbiology.chem.TimeSeriesOutputFormat</code> to define
+the symbols for not-a-number and inifity, for the different output file formats.
+</li>
+<li>
+Fixed a bug in <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>,
+which was occurring when a macro reference is embedded within another macro definition.
+The bug was causing an exception for an undefined symbol.
+</li>
+<li>
+Fixed bug in <code>org.systemsbiology.chem.app.EditorPane</code> in which the
+file dirty bit was being set, when a file was closed.  This was prompting a
+needless dialog box about saving changes to the editor buffer, the next time
+the user attempted to load a model definition file.
+</li>
+<li>
+Modified <code>org.systemsbiology.math.Expression</code> to enable parsing
+of floating-point numeric literals in scientific notation.
+</li>
+<li>
+Added a new class <code>org.systemsbiology.data.DataFileDelimiter</code>,
+for enumerating the possible delimiters for text data files.</li>
+<li>
+Added a new class <code>org.systemsbiology.data.MatrixString</code>,
+for loading a data file into a matrix of String objects.</li>
+<li>
+When processing model definition files, the default locale encoding is now
+ignored, to ensure that model processing is consistent in all locales.
+Fixed bug in <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>
+that was using UTF-8 encoding on Red Hat Linux.  This class now uses ISO-8859 
+encoding on all platforms, for interpreting the CMDL model description from 
+the byte stream.  Files loaded with an "include" directive in any model builder,
+will now be processed in the same character encoding as the parent file.  Thus,
+in a CMDL file, when processing a "#include", the included file is required to be
+in ISO-8859 encoding.
+</li>
+<li>
+Moved the <code>org.systemsbiology.util.Queue</code> class and all subclasses,
+as well as <code>org.systemsbiology.util.AbstractComparator</code> to the
+<code>org.systemsbiology.data</code> package.  Also moved the
+<code>SlidingWindowTimeSeriesQueue</code> class to the <code>org.systemsbiology.data</code>
+package.
+</li>
+<li>
+Moved the <code>org.systemsbiology.chem.app.HelpBrowser</code> and the
+classes <code>ExHelpSearchNavigator</code> and <code>ExHelpSearchNavigatorUI</code>
+to the <code>org.systemsbiology.gui</code> package.  Added some new mutator
+methods to the <code>HelpBrowser</code> class, to make it more flexible.
+</li>
+<li>
+Added method <code>addSuffixToFilename()</code> to the 
+<code>org.systemsbiology.util.FileUtils</code> class.
+</li>
+<li>
+Fixed a potential bug in <code>org.systemsbiology.chem.sbml.ModelBuilderMarkupLanguage</code>
+where SBML files were being read in the default
+locale encoding for text files, and not in the encoding specified in the
+XML file header.
+</li>
+<li>
+Moved the <code>processModel</code> method of the 
+<code>org.systemsbiology.chem.app.ModelProcessor</code>
+class into the <code>org.systemsbiology.chem.app.EditorPane</code> class.
+</li>
+<li>
+Fixed a bug (reported by Alex Kowald) in the CMDL in which an exception is 
+thrown, if a quoted string is embedded within a deferred-evaluation mathematical
+expression.  This prevents referencing a symbol name that contains
+an integer (e.g., an index) obtained from a mathematical expression,
+within the context of a deferred-evaluation mathematical expression.
+This bug potentially affects models in which the loop construct is used,
+in conjunction with reaction definitions with complex (deferred-evaluation)
+kinetic rate expressions.
 </li>
 </ul>
 </td>
