@@ -44,6 +44,27 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.4.4/&installerDownloadRelURL;">1.4.4</a></td>
+<td>2004/02/10</td>
+<td>
+<ul>
+<li>Fixed a bug in the deterministic simulators based on the <code>OdeToJava</code> 
+ODE solvers, in which the simulators were failing to delete the temporary file 
+containing the simulation results.  This was cluttering up the temporary files 
+directory with old (unneeded) data files.</li>
+<li>Added a new launcher <code>runmodel</code> in the <code>bin</code> subdirectory
+of the &appName; installation directory.  This launcher is designed to launch
+the command-line interface to &appName;, without needing any prior user configuration.
+</li>
+<li>Simplified the <code>runmodel.sh</code> script, to make user configuration easier.</li>
+<li>Removed the <code>runmodel.bat</code> script, because it is superseded by the
+<code>runmodel</code> launcher.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.4.4/&installerDownloadRelURL;">1.4.4</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.4.3/&installerDownloadRelURL;">1.4.3</a></td>
 <td>2004/02/06</td>
 <td>
