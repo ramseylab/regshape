@@ -75,6 +75,18 @@ public class DistributionPrinter
                 x = max;
             }
         }
+        double cdfx = 0.0;
+        x = xstart;
+        for(int i = 0; i < pNumSamples; ++i)
+        {
+            cdfx = pDist.cdf(x);
+            sb.append("cdf(" + x + ") = " + cdfx + "\n");
+            x += deltax;
+            if(x > max)
+            {
+                x = max;
+            }
+        }        
         return sb.toString();
     }
 }
