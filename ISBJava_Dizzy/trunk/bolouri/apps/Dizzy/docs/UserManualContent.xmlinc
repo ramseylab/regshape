@@ -28,8 +28,9 @@ for simulating chemical reaction kinetics</li>
 simulating chemical reaction kinetics</li>
 <li>a graphical user interface ("GUI") application that can be used to run 
 simulations and export a model to a different model definition language</li>
-<li>a Systems Biology Workbench bridge that allows the simulator to be
-invoked through the Systems Biology Workbench, using a model defined in
+<li>a <a href="#sbwinterface">Systems Biology Workbench (SBW) interface</a> 
+that allows the simulator to be
+invoked through the <a href="&sbwURL;">Systems Biology Workbench</a>, using a model defined in
 the Systems Biology Markup Language</li>
 <li>a graphical display feature that can display a graphical
 representation of a model using the <a href="&cytoscapeURL;">Cytoscape system</a>.</li>
@@ -108,87 +109,9 @@ version of the &appName; system.
 The &appName; system relies upon a number of external open-source
 libraries.  These libraries are bundled with the &appName; program and
 are installed within the &appName; directory when you install
-&appName; on your system.   The libraries are installed in a compiled
-format called a &quot;JAR archive&quot;.  The source code for each of 
-these libraries is freely available at the web sites identified by the 
-hyperlinks shown below:
-<blockquote>
-<table border="1">
-<tr>
-<td>Package name</td><td>JAR name</td><td>Source</td><td>License</td>
-</tr>
-<tr>
-<td>jfreechart</td><td><code>jfreechart.jar</code></td>
-<td><a href="http://www.jfree.org/jfreechart"><code>www.jfree.org/jfreechart/</code></a></td><td>LGPL</td>
-</tr>
-<tr>
-<td>jcommon</td><td><code>jcommon.jar</code></td>
-<td><a href="http://www.jfree.org/jcommon"><code>www.jfree.org/jcommon/</code></a></td><td>LGPL</td>
-</tr>
-<tr>
-<td>SBW (core)</td><td><code>SBWCore.jar</code></td>
-<td><a href="&sbwURL;"><code>&sbwURL;</code></a></td><td>LGPL</td>
-</tr>
-<tr>
-<td>JavaHelp</td><td><code>jh.jar</code></td>
-<td><a href="http://java.sun.com/products/javahelp"><code>java.sun.com/products/javahelp</code></a></td><td>Sun Binary Code License</td>
-</tr>
-<tr>
-<td>Netx JNLP client</td><td><code>netx.jar</code></td>
-<td><a href="http://jnlp.sourceforge.net/netx"><code>jnlp.sourceforge.net/netx</code></a></td><td>LGPL</td>
-</tr>
-<tr>
-<td>JAMA</td><td><code>Jama.jar</code></td>
-<td><a href="http://math.nist.gov/javanumerics/jama"><code>math.nist.gov/javanumerics/jama</code></a></td><td>public domain</td>
-</tr>
-<tr>
-<td>odeToJava</td><td><code>odeToJava.jar</code></td>
-<td><a href="&localJavaLibraryURL;"><code>&localJavaLibraryURL;</code></a>  (slightly modified version of the <code>odeToJava</code> library written by 
-Murray Patterson and Raymond Spiteri and obtained from Netlib)</td><td>included with permission from Raymond Spiteri</td>
-</tr>
-<tr>
-<td>SBMLReader</td><td><code>SBMLReader.jar</code></td>
-<td><a href="&localJavaLibraryURL;"><code>&localJavaLibraryURL;</code></a> (based on 
-the <code>SBMLValidate</code> library by Herbert Sauro and the 
-<a href="&sbwURL;">Systems Biology Workbench (SBW) Project</a> team)</td><td>LGPL</td>
-</tr>
-</table>
-</blockquote>
+&appName; on your system.   
 </p>
-<p>
-Please note that the <code>SBMLValidate.jar</code> library is
-not distributed in its original form with &appName;.  Instead,
-it has been modified and is bundled with &appName; 
-under a different library name
-(<code>SBMLReader.jar</code>) and a different package name.
-This was done in order to minimize the potentnial for conflict in cases 
-where the target installation computer already has an installation of 
-<code>SBMLValidate.jar</code> from the 
-<a href="&sbwURL;">Systems Biology Workbench (SBW)</a>.
-</p>
-<p>
-In addition, please note that the <code>odeToJava</code> library
-is not distributed in its original form with &appName;. It has
-been modified from the version that is available from 
-<a href="http://www.netlib.org">Netlib</a>.
-Please use the <code>odeToJava.jar</code> library that is bundled 
-with &appName;, as it contains some features that are necessary in 
-order to function correctly with &appName;.  The Netlib version of
-<code>odeToJava</code> is no longer compatible with &appName;, without
-some slight modifications to the source code.
-</p>
-<p>
-The <code>jfreechart</code> and <code>jcommon</code> libraries
-are used by &appName; in order to generate graphical plots of
-simulation results.  Please note that the public API for these libraries
-has changed in recent versions, in a non-backwards-compatible manner.
-It is necessary to use the (older) versions of these libraries, that
-are provided with the <code>&appName;</code> installation.  If you
-download the latest version of the <code>jfreechart</code> and
-<code>jcommon</code> libraries from the 
-<a href="http://www.jfree.org">JFree.org</a> web site, they
-will not be compatible with &appName;.
-</p>
+&ExternalLibraries;
 </isb:docsubsection>
 
 <isb:docsubsection name="Acknowledgements" label="acknowledgements">
@@ -1123,6 +1046,25 @@ k * (A/(N*V)) * (B/(N*V))
 Note that the symbols <code>time</code> and <code>N</code>
 are special symbols, defined <a href="#symbols">above</a>.
 </p>
+<p>
+Certain functions offered above, are not differentiable.
+This means that algorithms or features of &appName; that
+rely on the Jacobian matrix of the model (the partial derivative
+of the time rate of change of the ith species in the model, 
+with respect to the jth species), may not be used if you
+specify a model that contains one of these non-differentiable
+functions in an expression.  An error will result if you
+attempt to use a feature that relies on the Jacobian,
+with a model containing a non-differentiable function.
+The non-differentiable functions are:
+<code>theta()</code>, <code>ceil()</code>, <code>floor()</code>,
+<code>abs()</code>, and the modulo division operator <code>%</code>.
+The features in &appName; that rely on the Jacobian are the
+<a href="#tauleap">Tau-Leap simulators</a> and the
+<a href="#steadystatefluc">steady state fluctuations estimator</a>
+(the latter relies on the Jacobian only in the case of an ODE-based
+simulator).
+</p>
 
 <p>
 When specifying a mathematical expression, it is important
@@ -1237,7 +1179,15 @@ Accelerated Stochastic Simulation&quot;, <em>J. Chem. Phys.</em>
 </blockquote>
 and in references therein.
 </p>
-
+<p>
+Two implementations of the Tau-Leap algorithm are provided with &appName;
+The first is called &quot;<code>tauleap-simple</code>&quot;.  It is intended
+for use with models that are entirely composed of elementary reactions, that is,
+reactions with rate laws that are simple mass-action kinetics.  The 
+second is called &quot;<code>tauleap-complex</code>&quot;.  It is intended
+for use with models that contain custom algebraic 
+<a href="#expressions">rate expressions</a>.
+</p>
 </isb:docsubsection>
 
 <isb:docsubsection name="Gibson-Bruck Stochastic Algorithm" label="gibsonbruck">
@@ -2874,6 +2824,80 @@ successful import of most of the SBML models available.
 </p>
 </isb:docsection>
 
+<!-- ========== SBW INTERFACE ============ -->
+
+<isb:docsection name="&appName; Systems Biology Workbench Interface" label="sbwinterface">
+<p>
+&appName; has an interface to the <a href="&sbwURL;">Systems Biology Workbench (SBW)</a>
+system.  This makes it possible to access the simulation engine for &appName; using
+the cross-language remote procedure invocation capabilities of SBW.  Note that this
+section of the &appName; user manual assumes you are familiar with the architecture and
+terminology of the Systems Biology Workbench system.  For a good overview of these
+concepts and terminology, please refer to the
+<a href="&sbwURL;/docs/intro/intro.pdf">Introduction to the Systems Biology Workbench</a>
+document, available at the SBW Project home page.  The interface
+to SBW offered by &appName; includes a SBW module &quot;<code>org.systemsbiology.chem.Simulator</code>&quot;,
+which contains three SBW services, each of which implements the standard SBW simulation
+service API as defined in the <a href="&sbwURL;/docs/module-api/module-api.pdf">Systems
+Biology Workbench Module Programmer's Manual</a>.  The three simulation services
+offered through the &appName;-to-SBW interface are:
+<ul>
+<li><code>GillespieService</code>, which is the <a href="#gillespie">Gillespie</a> 
+simulator.</li>
+<li><code>GibsonBruckService</code>, which is the <a href="#gibsonbruck">Gibson-Bruck</a> simulator.
+</li>
+<li><code>DeterministicService</code>, which is the <a href="#odesimadaptive">Runge-Kutta 5th-order
+adaptive ODE simulator</a>.</li>
+</ul>
+Before the &appName; simulators can be accessed through the SBW, the Systems
+Biology Workbench must first be installed on your computer.  The software and
+installation instructions may be downloaded from the
+<a href="&sbwURL;">Systems Biology Workbench project page</a>.  Once SBW 
+is installed on your computer, the SBW Broker must be started.  Instructions
+for how to do this are also provided in the installation guide for the SBW.
+At this point, you are ready to start the &appName; interface to SBW.  This
+may be done in one of two ways:
+<ol>
+<li>You may wish to &quot;register&quot; the &appName; simulation services
+with the SBW broker.  This is done by running the &quot;<code>RegisterSBWServices</code>&quot;
+launcher that was placed on your desktop or in your Start Menu when you
+first installed &appName;.  A console window should briefly appear, and in
+it the message &quot;registering SBW simulation module&quot; should be
+displayed.  [The console window will go away as soon as the registration is
+complete, so it may just appear as a brief flicker of a window on the screen.]
+At this point, the &appName; simulation services
+can be seen by interrogating the SBW Broker using one of the SBW Broker
+module browsing tools, such as &quot;SBW Inspector&quot; or 
+&quot;SBW Browser&quot; (the Browser tool ships with SBW, and the Inspector
+tool is available for download from the SBW Project home page.  It should be
+emphasized that at this point, the &appName; simulation services 
+are not actually running, they are just registered with the broker.
+A simulation service will be automatically started if a software program attempts
+to invoke a method on it, through the SBW Broker.</li>
+<li>You may wish to directly register and start the &appName; simulation servics.
+This performs registration and the start-up of all of the &appName;-provided
+simulation services listed above, in a single step.  To do this, run the
+&quot;<code>LaunchSBWSimulators</code>&quot; launcher that was placed in
+your Start Menu or on your desktop, when you installed &appName;. A console
+window should appear, with the string &quot;running SBW simulation module&quot;
+displayed.  The console window should remain in that state until the simulation
+services (or the SBW Broker) are terminated.  At that point, you
+should be able to invoke the methods of the simulation services
+through the SBW Broker, without the overhead of starting up a new Java Virtual
+Machine. In addition, if you built SBW with the SBW-Python bridge included
+(or installed a pre-built version of SBW containing the SBW-Python bridge),
+you should be able to run &quot;sbwpython&quot; and programmatically 
+interrogate the available &appName; simulation services through the 
+Python command-line, without needing to use the SBW API.
+</li>
+</ol>
+To have the full capabilities of &appName; available, it is recommended
+that you use the <a href="#gui">&appName; Graphical User Interface</a>,
+the <a href="#commandline">&appName; Command-Line Interface</a>, or the
+<a href="#api">&appName; Programmatic Interface</a>.
+</p>
+</isb:docsection>
+
 <!-- ========== COMMAND-LINE INTERFACE ========== -->
 
 <isb:docsection name="&appName; Command-line Interface" label="commandline">
@@ -2938,6 +2962,8 @@ The list of allowed values for the "-simulator" argument is:
   ODEtoJava-imex443-stiff
   gibson-bruck
   gillespie-direct
+  tauleap-complex
+  tauleap-simple
 
 The list of allowed values for the "-outputFormat" argument is:
   CSV-excel
@@ -3028,6 +3054,8 @@ program can be found within the <code>PATH</code>, in order to use the
 command-line interface to &appName;.
 </p>
 <p>
+<a name="steadystatefluc" />
+<b>Estimating the steady-state fluctuations:</b><br />
 The <code>-computeFluctuations</code> option is used to specify that
 the simulator should attempt to compute the steady-state fluctuations
 in the dynamical species in the model.  These fluctuations come from
