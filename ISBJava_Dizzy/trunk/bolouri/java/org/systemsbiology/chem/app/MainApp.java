@@ -159,7 +159,15 @@ public class MainApp
         {
             String appName = getName();
             Model model = mEditorPane.processModel();
-            SimulationLauncher simulator = new SimulationLauncher(appName, model, this);
+            enableSimulateMenuItem(false);
+            SimulationLauncher simulator = new SimulationLauncher(appName, model, false);
+            simulator.addListener(new SimulationLauncher.Listener()
+            {
+                public void simulationLauncherClosing()
+                {
+                    enableSimulateMenuItem(true);
+                }
+            });
         }
         catch(Exception e)
         {

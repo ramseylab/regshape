@@ -22,9 +22,10 @@ public class SimulationLauncher
 {
     private static final int OUTPUT_TEXT_AREA_NUM_ROWS = 20;
     private static final int OUTPUT_TEXT_AREA_NUM_COLS = 40;
+    private static final int SPECIES_LIST_BOX_ROW_COUNT = 6;
 
     private ClassRegistry mSimulatorRegistry;
-    private JFrame mLauncherFrame;
+    private Component mLauncherFrame;
     private Model mModel;
     private JTextField mFileNameField;
     private JTextField mStartTimeField;
@@ -50,18 +51,28 @@ public class SimulationLauncher
     private SimulationRunner mSimulationRunner;
     private SimulationRunParameters mSimulationRunParameters;
     private String mAppName;
-    private MainApp mMainApp;
     private boolean mExitOnClose;
+    private JLabel mModelNameLabel;
 
-
-    public SimulationLauncher(String pAppName,
-                              Model pModel,
-                              MainApp pApp) throws ClassNotFoundException, IOException
+    /**
+     * Enumerates the possible results of calling {@link #setModel(org.systemsbiology.chem.Model)}.
+     */
+    public static class SetModelResult
     {
-        setMainApp(pApp);
-        JFrame frame = new JFrame();
-        mLauncherFrame = frame;
-        createLauncher(frame, pAppName, pModel, false);
+        private final String mName;
+        private SetModelResult(String pName)
+        {
+            mName = pName;
+        }
+
+        public static final SetModelResult FAILED_CLOSED = new SetModelResult("failed_closed");
+        public static final SetModelResult SUCCESS = new SetModelResult("success");
+        public static final SetModelResult FAILED_RUNNING = new SetModelResult("failed_running");
+    }
+
+    public interface Listener
+    {
+        public void simulationLauncherClosing();
     }
 
     /**
@@ -74,33 +85,32 @@ public class SimulationLauncher
                               Model pModel,
                               boolean pExitOnClose) throws ClassNotFoundException, IOException
     {
-        setMainApp(null);
         JFrame frame = new JFrame();
-        mLauncherFrame = frame;
-        createLauncher(frame, pAppName, pModel, pExitOnClose);
+        setLauncherFrame(frame);
+        if(pExitOnClose)
+        {
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        }
+        createLauncher(pAppName, pModel);
     }
 
-// ---------------------- reserved for future applications ------------------------
-//     public SimulationLauncher(String pAppName,
-//                               Model pModel,
-//                               JDesktopPane pContainingPane,
-//                               MainApp pApp) throws ClassNotFoundException, IOException
-//     {
-//         setMainApp(pApp);
-//         JInternalFrame internalFrame = new JInternalFrame();
-//         pContainingPane.add(internalFrame);
-//         createLauncher(internalFrame, pAppName, pModel, false);
-//     }
-// ---------------------- reserved for future applications ------------------------
-
-    void setMainApp(MainApp pMainApp)
+    private void setLauncherLocation()
     {
-        mMainApp = pMainApp;
+        Component frame = getLauncherFrame();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = frame.getSize();
+        frame.setLocation((screenSize.width - frameSize.width) / 2,
+                          (screenSize.height - frameSize.height) / 2);
     }
 
-    private MainApp getMainApp()
+    synchronized Component getLauncherFrame()
     {
-        return(mMainApp);
+        return(mLauncherFrame);
+    }
+
+    synchronized void setLauncherFrame(Component pLauncherFrame)
+    {
+        mLauncherFrame = pLauncherFrame;
     }
 
     public Set getSimulatorAliasesCopy()
@@ -118,12 +128,12 @@ public class SimulationLauncher
         mSimulatorRegistry = pSimulatorRegistry;
     }
 
-    private SimulationRunParameters getSimulationRunParameters()
+    private synchronized SimulationRunParameters getSimulationRunParameters()
     {
         return(mSimulationRunParameters);
     }
 
-    private void setSimulationRunParameters(SimulationRunParameters pSimulationRunParameters)
+    private synchronized void setSimulationRunParameters(SimulationRunParameters pSimulationRunParameters)
     {
         mSimulationRunParameters = pSimulationRunParameters;
     }
@@ -143,7 +153,7 @@ public class SimulationLauncher
 
     private void showCancelledSimulationDialog()
     {
-        SimpleDialog messageDialog = new SimpleDialog(mLauncherFrame, "Simulation cancelled", 
+        SimpleDialog messageDialog = new SimpleDialog(getLauncherFrame(), "Simulation cancelled", 
                                                       "Your simulation has been cancelled");
         messageDialog.setMessageType(JOptionPane.INFORMATION_MESSAGE);
         messageDialog.show();
@@ -156,6 +166,8 @@ public class SimulationLauncher
     {
         return(null != getSimulationRunParameters());
     }
+
+
 
     private SimulationController getSimulationController()
     {
@@ -268,12 +280,12 @@ public class SimulationLauncher
             JPanel outputTextAreaPane = new JPanel();
             outputTextAreaPane.add(scrollPane);
             JOptionPane optionPane = new JOptionPane(outputTextAreaPane);
-            JDialog dialog = optionPane.createDialog(mLauncherFrame, "simulation output");
+            JDialog dialog = optionPane.createDialog(getLauncherFrame(), "simulation output");
             dialog.show();
         }
         else if(pOutputType.equals(OutputType.PLOT))
         {
-            Plotter plotter = new Plotter(mLauncherFrame);
+            Plotter plotter = new Plotter(getLauncherFrame());
 
             String modelName = mModel.getName();
             String simulatorAlias = mSimulationRunParameters.mSimulatorAlias;
@@ -283,7 +295,7 @@ public class SimulationLauncher
         {
             printWriter.flush();
             JOptionPane optionPane = new JOptionPane("output saved to file:\n" + pOutputFileName);
-            JDialog dialog = optionPane.createDialog(mLauncherFrame, "output saved");
+            JDialog dialog = optionPane.createDialog(getLauncherFrame(), "output saved");
             dialog.show();
         }
     }
@@ -309,16 +321,19 @@ public class SimulationLauncher
             long deltaTime = System.currentTimeMillis() - startTime;
             System.out.println("simulation time: " + ((double) deltaTime)/1000.0 + " seconds");
 
-            handleOutput(pSimulationRunParameters.mOutputType,
-                         pSimulationRunParameters.mOutputFileName,
-                         pSimulationRunParameters.mRequestedSymbolNames, 
-                         pSimulationRunParameters.mRetTimeValues, 
-                         pSimulationRunParameters.mRetSymbolValues);
+            if(! mSimulationController.getCancelled())
+            {
+                handleOutput(pSimulationRunParameters.mOutputType,
+                             pSimulationRunParameters.mOutputFileName,
+                             pSimulationRunParameters.mRequestedSymbolNames, 
+                             pSimulationRunParameters.mRetTimeValues, 
+                             pSimulationRunParameters.mRetSymbolValues);
+            }
         }
                 
         catch(Exception e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mLauncherFrame,
+            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
                                                                                              "Failure running simulation",
                                                                                              e);
             dialog.show();
@@ -438,7 +453,7 @@ public class SimulationLauncher
         String simulatorAlias = (String) mSimulatorsList.getModel().getElementAt(pSimulatorIndex);
         if(null == simulatorAlias)
         {
-            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mLauncherFrame, "no simulator selected");
+            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(getLauncherFrame(), "no simulator selected");
             errorDialog.show();
         }
         else
@@ -509,7 +524,7 @@ public class SimulationLauncher
             }
             catch(Exception e)
             {
-                ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mLauncherFrame,
+                ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
                                                                                                  "Failed to instantiate simulator",
                                                                                                  e);
                 dialog.show();
@@ -603,11 +618,15 @@ public class SimulationLauncher
     {
         JList speciesListBox = new JList();
         mSpeciesList = speciesListBox;
-        Object []speciesArray = mModel.getOrderedSpeciesNamesArray();
-        speciesListBox.setListData(speciesArray);
-        speciesListBox.setVisibleRowCount(6);
+        speciesListBox.setVisibleRowCount(SPECIES_LIST_BOX_ROW_COUNT);
         speciesListBox.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         return(speciesListBox);
+    }
+
+    private void populateSpeciesListPanel()
+    {
+        Object []speciesArray = mModel.getOrderedSpeciesNamesArray();
+        mSpeciesList.setListData(speciesArray);
     }
 
     private JPanel createSpeciesListPanel()
@@ -745,7 +764,7 @@ public class SimulationLauncher
 
     private void handleBadInput(String pTitle, String pMessage)
     {
-        SimpleDialog dialog = new SimpleDialog(mLauncherFrame,
+        SimpleDialog dialog = new SimpleDialog(getLauncherFrame(),
                                                pTitle,
                                                pMessage);
         dialog.show();
@@ -852,7 +871,7 @@ public class SimulationLauncher
         }
         catch(Exception e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mLauncherFrame,
+            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
                                                                                              "Failed to instantiate simulator",
                                                                                              e);
             dialog.show();
@@ -997,7 +1016,7 @@ public class SimulationLauncher
         return(retVal);
     }
 
-
+    
 
     private void handleButtonEvent(ActionEvent e)
     {
@@ -1088,9 +1107,16 @@ public class SimulationLauncher
     {
         JPanel labelPanel = new JPanel();
         labelPanel.setBorder(BorderFactory.createEtchedBorder());
-        JLabel modelLabel = new JLabel("model name: [" + mModel.getName() + "]");
+        JLabel modelLabel = new JLabel();
+        mModelNameLabel = modelLabel;
+        setModelLabel("unknown");
         labelPanel.add(modelLabel);
         return(labelPanel);
+    }
+
+    private void setModelLabel(String pModelName)
+    {
+        mModelNameLabel.setText("model name: [" + pModelName + "]");
     }
 
     private void createSimulationRunnerThread()
@@ -1105,38 +1131,15 @@ public class SimulationLauncher
 
     private void handleCloseSimulationLauncher()
     {
-        MainApp app = getMainApp();
-        if(null != app)
-        {
-            app.enableSimulateMenuItem(true);
-        }
-
         handleCancelButton();
-
-        if(mExitOnClose)
-        {
-             System.exit(0);
-        }
- 
+        setLauncherFrame(null);
     }
 
-    private void createLauncher(Component pMainFrame, 
-                                String pAppName,
-                                Model pModel,
-                                boolean pExitOnClose) throws IOException, ClassNotFoundException
+    private void createLauncher(String pAppName, Model pModel) throws IOException, ClassNotFoundException
     {
-        mExitOnClose = pExitOnClose;
-
-        Component frame = pMainFrame;
-        mModel = pModel;
+        Component frame = getLauncherFrame();
         mAppName = pAppName;
         String appTitle = pAppName + ": simulator";
-
-        MainApp app = getMainApp();
-        if(null != app)
-        {
-            app.enableSimulateMenuItem(false);
-        }
 
         // create simulator aliases
         ClassRegistry classRegistry = new ClassRegistry(org.systemsbiology.chem.ISimulator.class);
@@ -1170,12 +1173,32 @@ public class SimulationLauncher
         controllerPanel.add(box);
 
         Container contentPane = null;
+
+        setSimulationRunParameters(null);
+        updateSimulationControlButtons();
+        createSimulationRunnerThread();
+
+        setModel(pModel);
+
         // Add listener for "window-close" event
         if(frame instanceof JFrame)
         {
             JFrame myFrame = (JFrame) frame;
+            myFrame.setTitle(appTitle);
+            contentPane = myFrame.getContentPane();
+            contentPane.add(controllerPanel);
             myFrame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
+                    handleCloseSimulationLauncher();
+                }
+            });
+            myFrame.pack();
+        }
+        else if(frame instanceof JInternalFrame)
+        {
+            JInternalFrame myFrame = (JInternalFrame) frame;
+            myFrame.addInternalFrameListener(new InternalFrameAdapter() {
+                public void internalFrameClosed(InternalFrameEvent e) {
                     handleCloseSimulationLauncher();
                 }
             });
@@ -1186,35 +1209,74 @@ public class SimulationLauncher
         }
         else
         {
-            throw new IllegalArgumentException("unknown container type");
+            throw new IllegalStateException("unknown container type");
         }
-// ---------------------- reserved for future applications ------------------------
-//         else if(frame instanceof JInternalFrame)
-//         {
-//             JInternalFrame myFrame = (JInternalFrame) frame;
-//             myFrame.addInternalFrameListener(new InternalFrameAdapter() {
-//                 public void internalFrameClosed(InternalFrameEvent e) {
-//                     handleCloseSimulationLauncher();
-//                 }
-//             });
-//             myFrame.setTitle(appTitle);
-//             contentPane = myFrame.getContentPane();
-//             contentPane = myFrame.getContentPane();
-//             myFrame.pack();
-//         }
-// ---------------------- reserved for future applications ------------------------
 
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension frameSize = frame.getSize();
-        frame.setLocation((screenSize.width - frameSize.width) / 2,
-                          (screenSize.height - frameSize.height) / 2);
+        setLauncherLocation();
+        frame.setVisible(true);
+    }
 
-        setSimulationRunParameters(null);
-        updateSimulationControlButtons();
+    public void addListener(Listener pListener)
+    {
+        Component frame = getLauncherFrame();
+        final Listener listener = pListener;
+        if(frame instanceof JFrame)
+        {
+            JFrame launcherFrame = (JFrame) frame;
+            launcherFrame.addWindowListener(new WindowAdapter() 
+            {
+                public void windowClosing(WindowEvent e)
+                {
+                    listener.simulationLauncherClosing();
+                }
+            }
+                );
+        }
+        else if(frame instanceof JInternalFrame)
+        {
+            JInternalFrame launcherFrame = (JInternalFrame) frame;
+            launcherFrame.addInternalFrameListener(new InternalFrameAdapter()
+            {
+                public void internalFrameClosing(InternalFrameEvent e)
+                {
+                    listener.simulationLauncherClosing();
+                }
+            }
+                );
+        }
+        else
+        {
+            throw new IllegalStateException("unknown listener component type");
+        }
+    }
 
-        createSimulationRunnerThread();
+    public SetModelResult setModel(Model pModel)
+    {
+        SetModelResult result = null;
 
-        pMainFrame.setVisible(true);
+        if(! getSimulationInProgress())
+        {
+            if(null != getLauncherFrame())
+            {
+                // set the model
+
+                mModel = pModel;
+                populateSpeciesListPanel();
+                setModelLabel(pModel.getName());
+
+                result = SetModelResult.SUCCESS;
+            }
+            else
+            {
+                result = SetModelResult.FAILED_CLOSED;
+            }
+        }
+        else
+        {
+            result = SetModelResult.FAILED_RUNNING;
+        }
+
+        return(result);
     }
 }
     
