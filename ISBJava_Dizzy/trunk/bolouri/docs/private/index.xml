@@ -13,6 +13,26 @@
 
 <!-- <isb:doccontents /> -->  <!-- commented this out because the contents took up too much space -->
 
+
+<isb:docsection name="Tools" label="tools">
+<ul>
+<li><a href="../Dizzy">Dizzy</a> (stochastic simulation software)</li>
+<li><a href="../javadoc">ISBJava</a> (java class library)</li>
+</ul>
+</isb:docsection>
+
+
+<isb:docsection name="Links" label="links">
+<ul>
+<li><a href="../Resources.html">Bolouri Group Software and Publications Page</a></li>
+<li><a href="&mainPublicURL;">&mainAffiliation;</a></li>
+<li><a href="WebPagesManagementManual.html">Web Pages Management Manual</a></li>
+<li><a href="http://www.sbw-sbml.org">SBW/SBML Project</a></li>
+<li><a href="http://www.cytoscape.org">Cytoscape Project</a></li>
+</ul>
+</isb:docsection>
+
+
 <isb:docsection name="Staff" label="staff">
 <blockquote>
 <table border="1">
@@ -54,19 +74,5 @@
 </blockquote>
 </isb:docsection>
 
-<isb:docsection name="Tools" label="tools">
-<ul>
-<li><a href="../Dizzy">Dizzy</a></li>
-</ul>
-</isb:docsection>
-
-
-<isb:docsection name="Links" label="links">
-<ul>
-<li><a href="../Resources.html">Bolouri Group Software and Publications</a></li>
-<li><a href="&mainPublicURL;">&mainAffiliation;</a></li>
-<li><a href="WebPagesManagementManual.html">Web Pages Management Manual</a></li>
-</ul>
-</isb:docsection>
 
 </isb:document>
