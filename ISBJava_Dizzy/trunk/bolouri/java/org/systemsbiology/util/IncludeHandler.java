@@ -10,6 +10,7 @@ package org.systemsbiology.util;
 
 import java.io.*;
 import java.util.*;
+import java.nio.charset.*;
 
 /**
  * Utility class for handling nested file 
@@ -21,7 +22,7 @@ public class IncludeHandler
 {
     private HashSet mIncludedFiles;
     private File mDirectory;
-
+    
     public File getDirectory()
     {
         return(mDirectory);
@@ -58,13 +59,13 @@ public class IncludeHandler
     {
         getIncludedFiles().add(pFileName);
     }
-
+    
     public IncludeHandler()
     {
         setIncludedFiles(new HashSet());
         setDirectory(null);
     }
-
+    
     public String getIncludeFileAbsolutePath(String pIncludeFileName) throws IOException
     {
         File includeFile = new File(pIncludeFileName);
@@ -88,15 +89,25 @@ public class IncludeHandler
         return(includeFileAbsolutePath);
     }
 
-    public BufferedReader openReaderForIncludeFile(String pIncludedFileName) throws IOException
+    public BufferedReader openReaderForIncludeFile(String pIncludedFileName, Charset pCharset) throws IOException
     {
         String includeFileAbsolutePath = getIncludeFileAbsolutePath(pIncludedFileName);
         BufferedReader bufferedReader = null;
         if(! alreadyParsedFile(includeFileAbsolutePath))
         {
             storeParsedFile(includeFileAbsolutePath);
-            FileReader fileReader = new FileReader(includeFileAbsolutePath);
-            bufferedReader = new BufferedReader(fileReader);
+            File includeFile = new File(includeFileAbsolutePath);
+            FileInputStream fileInputStream = new FileInputStream(includeFile);
+            InputStreamReader inputStreamReader = null;
+            if(null != pCharset)
+            {
+                inputStreamReader = new InputStreamReader(fileInputStream, pCharset);
+            }
+            else
+            {
+                inputStreamReader = new InputStreamReader(fileInputStream);
+            }
+            bufferedReader = new BufferedReader(inputStreamReader);
         }
         else
         {
