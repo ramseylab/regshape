@@ -26,7 +26,7 @@ public class ExceptionNotificationOptionPane extends JOptionPane
     public void handleDetailedButton()
     {
         mShowDetailsButton.setEnabled(false);
-        String stackTrace = ExceptionUtility.getStackTrace(mException);
+        String stackTrace = ExceptionUtils.getStackTrace(mException);
         mTextArea.append("\n\n" + stackTrace);
     }
 

@@ -27,7 +27,7 @@ public class FileChooser extends JFileChooser
     private void initialize()
     {
         mSelectedFile = null;
-        ComponentUtil.disableDoubleMouseClick(this);
+        ComponentUtils.disableDoubleMouseClick(this);
     }
         
     public FileChooser(Component pMainFrame)

@@ -15,7 +15,7 @@ import java.io.*;
  *
  * @author Stephen Ramsey
  */
-public class ExceptionUtility
+public class ExceptionUtils
 {
     /**
      * Returns the stack backtrace of an exception, as
