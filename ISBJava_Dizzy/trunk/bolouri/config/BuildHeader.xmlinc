@@ -7,7 +7,6 @@
   <property name="projImagesDir"      location="${projRoot}/images" />
   <property name="projBuildDir"       location="${projRoot}/build" />
   <property name="projStyleDir"       location="${projRoot}/build/html" />
-  <property name="projClassesDir"     location="${projRoot}/classes" />
 
   <property name="helpMapStyleSheet" value="${projConfigDir}/javahelp-map-stylesheet.xml" />
   <property name="helpTOCStyleSheet" value="${projConfigDir}/javahelp-toc-stylesheet.xml" />
