@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
+
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>Group Meetings Page</isb:doctitle>
+<isb:docowner>Bolouri Group, Institute for Systems Biology</isb:docowner>
+<isb:docownerurl>http://projects.systemsbiology.net/bolouri_group/private/</isb:docownerurl>
+<isb:docowneremail>bolourigroup at systemsbiology.org</isb:docowneremail>
+<isb:docdate>$Date$</isb:docdate>
+
+<isb:doccontents />
+
+<isb:docsection name="Introduction" label="introduction">
+<p>
+The Bolouri Group is establishing a speaker rotation for
+the weekly group meetings.  Each week an individual (or in
+some cases, a pair of group members) will give a brief presentation
+to the group, on a (scientifically relevant) topic of their choosing.
+If you are presenting a paper that you read, please consider sending
+around a reference to the paper (or the PDF) to the group in advance,
+so the group members can familiarize themselves with the paper in 
+advance of your talk.
+</p>
+</isb:docsection>
+
+
+<isb:docsection name="Schedule" label="schedule">
+<p>
+The following table shows the schedule of weekly speakers for
+the Bolouri Group meetings:
+<blockquote>
+<pre>
+2003/05/07    Stephen Ramsey
+2003/05/14    Bill Longabaugh
+2003/05/21    Pedro de Atauri and Daehee Hwang
+2003/05/58    Alistair Rust
+2003/06/04    David Orrell
+2003/06/11    Larissa Kamenkovich
+2003/06/18    Kostas Lycostratis
+</pre>
+</blockquote>
+</p>
+</isb:docsection>
+
+</isb:document>
