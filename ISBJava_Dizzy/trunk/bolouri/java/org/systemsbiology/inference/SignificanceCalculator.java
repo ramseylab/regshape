@@ -334,93 +334,7 @@ public class SignificanceCalculator
         pRetResults.mBestChiSquare = bestChiSquare;
         pRetResults.mBestProbDist = bestProbDist;
     }
-    
-    private void calculateSignificances(Double []pObservations,
-                                        IContinuousDistribution pDistribution,
-                                        boolean pSingleTailed,
-                                        SignificanceCalculationFormula pSignificanceType,
-                                        double []pRetSignificances)
-    {    
-        if(null == pObservations)
-        {
-            throw new IllegalArgumentException("no observations");
-        }
-        if(null == pDistribution)
-        {
-            throw new IllegalArgumentException("no distribution");
-        }
-        if(null == pSignificanceType)
-        {
-            throw new IllegalArgumentException("no significance formula");
-        }
-        if(null == pRetSignificances)
-        {
-            throw new IllegalArgumentException("no ret significances");
-        }
-        int numObservations = pObservations.length;
-        if(numObservations == 0)
-        {
-            throw new IllegalArgumentException("no observations");
-        }
-        
-        if(pRetSignificances.length != numObservations)
-        {
-            throw new IllegalArgumentException("significances vector has the wrong size");
-        }
-                
-        double sig = 0.0;
-        double obs = 0.0;
-        Double obsObj = null;
-        
-        double max = pDistribution.domainMax();
-        double min = pDistribution.domainMin();
-        
-        double cdfx = 0.0;
-        Double sigObj = null;
-        for(int i = 0; i < numObservations; ++i)
-        {
-            obsObj = (Double) pObservations[i];
-            if(null != obsObj)
-            {
-                obs = obsObj.doubleValue();
-                if(obs < min || obs > max)
-                {     
-                    throw new IllegalArgumentException("observation out of range, for element number: " + i + "; value is: " + obs);
-                }
-                if(pSignificanceType.equals(SignificanceCalculationFormula.CDF))
-                {
-                    cdfx = pDistribution.cdf(obs);
-                    if(pSingleTailed)
-                    {
-                        sig = 1.0 - cdfx;
-                        if(sig < 0.0)
-                        {
-                            throw new IllegalStateException("negative significance value");
-                        }
-                    }
-                    else
-                    {
-                        sig = Math.min( 2.0 * cdfx, 2.0 * (1.0 - cdfx) ); 
-                    }
-                }
-                else if(pSignificanceType.equals(SignificanceCalculationFormula.PDF))
-                {
-                    sig = pDistribution.pdf(obs);
-                }
-                else
-                {
-                    throw new IllegalArgumentException("unknown significance calculation formula: " + pSignificanceType.toString());
-                }
-            }
-            else
-            {
-                sig = mMissingDataSignificance;
-            }
-            pRetSignificances[i] = sig;
-        }              
-    }
 
- 
     
     public void calculateSignificancesCDF(Double []pObservations, 
                                           Double []pControlData,
@@ -471,7 +385,8 @@ public class SignificanceCalculator
         }
         double controlMax = Descriptive.max(controlsList);
         double controlMin = Descriptive.min(controlsList);
-
+//        System.out.println("control min: " + controlMin + "; control max: " + controlMax);
+        
         double obsMax = 0.0;
         double obsMin = Double.MAX_VALUE;
         Double obsObj = null;
@@ -492,7 +407,8 @@ public class SignificanceCalculator
                 }
             }
         }
-
+//        System.out.println("obs min: " + obsMin + "; obs max: " + obsMax);
+        
         double []controls = controlsList.elements();
         double []pdfs = mPDFs;
 
@@ -506,6 +422,8 @@ public class SignificanceCalculator
         double pdfInt = 0.0;
         
         double []xs = mXs;
+        
+        // build the probability distribution
         for(int k = 0; k < pNumBins; ++k)
         {
             x = obsMin + binSize*(((double) k) + 0.5);
@@ -527,6 +445,7 @@ public class SignificanceCalculator
         for(int k = 0; k < pNumBins; ++k)
         {
             pdfs[k] /= pdfInt;
+//            System.out.println("pdf[" + k + "] = " + pdfs[k]);
         }
         
         pdfInt = 0.0;
@@ -566,12 +485,13 @@ public class SignificanceCalculator
                 else if(kdouble <= 0.5)
                 {
                     yLeft = 0.0;
-                    yRight = pdfs[0];
-                    xLeft = xs[0] - binSize;
+                    yRight = cdfs[0];
+                    //xLeft = xs[0] - binSize;
+                    xLeft = obsMin;
                 }
                 else
                 {
-                    yLeft = pdfs[pNumBins - 1];
+                    yLeft = cdfs[pNumBins - 1];
                     yRight = 0.0;
                     xLeft = xs[pNumBins - 1];
                 }
@@ -579,7 +499,7 @@ public class SignificanceCalculator
                 slope = (yRight - yLeft)/binSize;
                 
                 cdf = Math.min(1.0, yLeft + slope*(obsVal - xLeft));                
-                
+                //System.out.println("obs: " + obsVal + "; k: " + k + "; xLeft: " + xLeft + "; yLeft: " + yLeft + "; yRight: " + yRight + "; cdf: " + cdf);
                 sig = 0.0;
                 
                 if(! pSingleTailed)
@@ -697,11 +617,33 @@ public class SignificanceCalculator
             throw new IllegalArgumentException("no probability distribution returned from fitDistribution");
         }
         
-        calculateSignificances(pObservations,
-                               bestProbDist,
-                               pSingleTailed,
-                               SignificanceCalculationFormula.PDF,
-                               significances);
+        double sig = 0.0;
+        double obs = 0.0;
+      
+        double max = bestProbDist.domainMax();
+        double min = bestProbDist.domainMin();
+      
+        double cdfx = 0.0;
+        Double sigObj = null;
+        for(int i = 0; i < numObservations; ++i)
+        {
+            obsObj = (Double) pObservations[i];
+            if(null != obsObj)
+            {
+                obs = obsObj.doubleValue();
+                if(obs < min || obs > max)
+                {     
+                    throw new IllegalArgumentException("observation out of range, for element number: " + i + "; value is: " + obs);
+                }
+                
+                sig = bestProbDist.pdf(obs);
+            }
+            else
+            {
+                sig = mMissingDataSignificance;
+            }
+            significances[i] = sig;
+        }       
         
         pRetResults.mReducedChiSquare = bestChiSquare;
         pRetResults.mBestFitDistribution = bestProbDist;
