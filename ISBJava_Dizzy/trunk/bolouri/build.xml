@@ -13,6 +13,8 @@
   <property name="projClassesDir"     location="${basedir}/classes" />
 
   <property name="binInstallAnywhere" location="/local/InstallAnywhere_5_Standard/build" />
+  <property name="binHtml2PS"         location="/local/bin/html2ps" />
+  <property name="binPS2PDF"          location="/usr/bin/ps2pdf" />
 
   <property name="webServerUsername"  value="bolouri_group" />
   <property name="webServerPassword"  value="b2G4cIc" />  <!-- icky: find some way to MIME-encode this -->
@@ -101,19 +103,14 @@
   </target>
 
   <target name="uploadWeb">
-    <apply executable="ncftpput" type="both">
-      <arg value="-u" />
-      <arg value="${webServerUsername}" />
-      <arg value="-p" />
-      <arg value="${webServerPassword}" /> 
-      <arg value="-R" />
-      <arg value="${webServerHostname}" />
-      <arg value="${webServerRemoteDir}" />
+    <ftp server="${webServerHostname}"
+         userid="${webServerUsername}"
+         password="${webServerPassword}"
+         remotedir="${webServerRemoteDir}">
       <fileset dir="${projWebDir}">
-        <include name="*" />
+        <include name="*/**/*" />
       </fileset>
-    </apply>
+    </ftp>
   </target>
-
 
 </project>
