@@ -1,3 +1,12 @@
+<!--
+  Copyright (C) 2004 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This document is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
 <p>
 The following table documents the external library dependencies of
 the &appName; system.  The libraries are provided in a compiled
