@@ -41,6 +41,31 @@
            excludes="AppConfig.xml" />
   </target>
 
+  <target name="convertHtmlToPDF">
+    <apply executable="${binHtml2PS}" failonerror="true" dest="${app.webDir}/docs">
+      <mapper type="regexp" from="^(.*)\.html$$" to="\1\.ps" />
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.html" />
+      </fileset>
+      <arg value="-o" />
+      <targetfile />
+      <srcfile />
+    </apply>
+    <apply executable="${binPS2PDF}" failonerror="true" dest="${app.webDir}/docs">
+      <mapper type="regexp" from="^(.*)\.ps$$" to="\1\.pdf" />
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.ps" />
+      </fileset>
+      <srcfile />
+      <targetfile />
+    </apply>
+    <delete>
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.ps" />
+      </fileset>
+    </delete>
+  </target>
+
   <target name="copyHtml">
     <mkdir dir="${app.webDir}" />
     <copy todir="${app.webDir}" file="${app.styleDir}/index.html" />
@@ -63,7 +88,7 @@
     </copy>
   </target>
 
-  <target name="buildWeb" depends="style, copyImages, copyHtml">
+  <target name="buildInstaller">
     <!-- make the build directory -->
     <mkdir dir="${app.buildDir}" />
 
@@ -84,6 +109,8 @@
       <fileset dir="${app.buildDir}/project_Build_Output" />
     </copy>
   </target>
+
+  <target name="buildWeb" depends="style, copyImages, copyHtml, convertHtmlToPDF, buildInstaller" />
 
   <target name="build">
     <!-- do nothing -->
