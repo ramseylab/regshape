@@ -453,7 +453,7 @@ public class EditPreferencesFrame extends JFrame
             throw new IllegalStateException("a default data file delimiter should already be configured");
         }
 
-        preferredDelimiter = DataFileDelimiter.forName(preferredDelimiterName);
+        preferredDelimiter = DataFileDelimiter.get(preferredDelimiterName);
         if(null == preferredDelimiter)
         {
             throw new IllegalStateException("unknown data file delimiter: " + preferredDelimiterName);
