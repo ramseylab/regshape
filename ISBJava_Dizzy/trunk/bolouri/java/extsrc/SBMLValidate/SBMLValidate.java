@@ -50,6 +50,9 @@
 **
 ** Modified by Stephen Ramsey to remove dependence on Xerces library, 
 ** 2003/08/28
+**
+** Modified by Stephen Ramsey to permit SBML Level 1, Version 2 documents.
+** 2003/10/20
 */
 package SBMLValidate;
 

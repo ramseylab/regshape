@@ -1,4 +1,14 @@
 package org.systemsbiology.math;
+/*
+ * Copyright (C) 2003 by Institute for Systems Biology,
+ * Seattle, Washington, USA.  All rights reserved.
+ * (Except those portions of code that are copyright 
+ * Stephen L. Moshier, as specifically indicated herein)
+ * 
+ * This source code is distributed under the GNU Lesser 
+ * General Public License, the text of which is available at:
+ *   http://www.gnu.org/copyleft/lesser.html
+ */
 
 /**
  * This class is a collection of useful mathematical functions.
