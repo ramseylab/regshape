@@ -43,13 +43,13 @@ run the build system.
   <li><a href="docs/UserManual.html">&appName; User Manual</a> (a <a href="docs/UserManual.pdf">PDF version</a> is available)</li>
 <li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
 <li><a href="&webBaseURL;/License.html">License Agreement</a></li>
-<!--<li><a href="&webBaseURL;/&localJavaLibraryName;/javadoc">Javadoc API documentation</a></li> --> 
+<li><a href="&webBaseURL;/&localJavaLibraryName;/javadoc">Javadoc API documentation</a></li> 
 </ul>
 </p>
 
 <p>
 <img src="images/appLogo.jpg" alt="&appName; logo" border="1"
-align="left"/> &appName; is a software program that infers the
+align="left"/> &appName; is a set of four programs for inferring the
 set of elements affected by a perturbation of a biological
 system, based on multiple types of evidence.  &appName; is written
 in Java, and is based on the

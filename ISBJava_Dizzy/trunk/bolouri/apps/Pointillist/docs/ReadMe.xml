@@ -31,7 +31,7 @@
 
 <!-- ========== INTRODUCTION ========== -->
 <isb:docsection name="Introduction" label="introduction">
-&appName; is a software program that infers the
+&appName; is a set of four software programs for inferring the
 set of elements affected by a perturbation of a biological
 system, based on multiple types of evidence.  &appName; is written
 in Java, and is based on the 
