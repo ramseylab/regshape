@@ -17,7 +17,7 @@ package org.systemsbiology.math;
  * values to be mutable as well; this cannot be done with the standard
  * Java class <code>Double</code>, which is immutable.
  *
- * @see MutableLong
+ * @see MutableBoolean
  * @see MutableInteger
  *
  * @author Stephen Ramsey
