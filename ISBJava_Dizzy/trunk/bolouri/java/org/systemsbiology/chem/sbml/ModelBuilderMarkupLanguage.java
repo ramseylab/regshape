@@ -108,6 +108,15 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
         }
 
         Model model = new Model(modelName);
+        HashSet reactionSet = new HashSet();
+
+        String substanceUnitsString = mMarkupLanguageImporter.getSubstanceUnitsString();
+        SubstanceUnit substanceUnit = SubstanceUnit.get(substanceUnitsString);
+        if(null == substanceUnit)
+        {
+            throw new InvalidInputException("only SBML models with substance units of \"item\" or \"mole\" may be imported; your model specifies substance units of \"" + substanceUnitsString + "\"");
+        }
+        double substanceUnitConversionToMolecules = substanceUnit.getConversionToMolecules();
 
         // process compartments and store them in a global map
         int numCompartments = mMarkupLanguageImporter.getNumCompartments();
@@ -190,7 +199,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
             }
 
             double initialSpeciesPopulation = mMarkupLanguageImporter.getValue(speciesName);
-            species.setSpeciesPopulation(initialSpeciesPopulation);
+            species.setSpeciesPopulation(substanceUnitConversionToMolecules * initialSpeciesPopulation);
 
             model.addSpecies(species);
             species.addSymbolToMap(dynamicalSpeciesMap, speciesName);
@@ -218,7 +227,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
             if(mMarkupLanguageImporter.hasValue(speciesName))
             {
                 double initialSpeciesPopulation = mMarkupLanguageImporter.getValue(speciesName);
-                species.setSpeciesPopulation(initialSpeciesPopulation);
+                species.setSpeciesPopulation(substanceUnitConversionToMolecules * initialSpeciesPopulation);
             }
 
             speciesCompartmentMap.put(speciesName, compartmentName);
@@ -228,7 +237,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
 
         }
 
-        SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = new SymbolEvaluationPostProcessorChemMarkupLanguage(speciesCompartmentMap);
+        SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = new SymbolEvaluationPostProcessorChemMarkupLanguage(speciesCompartmentMap, reactionSet, substanceUnitConversionToMolecules);
 
         model.setSymbolEvaluationPostProcessor(symbolEvaluationPostProcessor);
 
@@ -310,6 +319,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
             // get reaction name
             String reactionName = mMarkupLanguageImporter.getNthReactionName(reactionCtr);
             Reaction reaction = new Reaction(reactionName);
+            reactionSet.add(reactionName);
 
             // get number of reactants
             int numReactants = mMarkupLanguageImporter.getNumReactants(reactionCtr);
@@ -479,6 +489,6 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
 
     public String getFileRegex()
     {
-        return(".*\\.(xml|sbml)$");
+        return(".*\\.((xml)|(sbml))$");
     }
 }
