@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+\<?xml version="1.0"?>
 <?xml-stylesheet type="text/xml" href="../config/documentation-stylesheet.xml"?>
 <!DOCTYPE isbdocument [
   <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
@@ -23,7 +23,7 @@ This document contains the version history for the
 
 <p>
 <dl>
-<dt><b>0.0.1 (2003/05/06)</b></dt>
+<dt><b>0.0.1 (2003/07/24)</b></dt>
 <dd>First version of the library.  
 It is an alpha version, intended only for internal use at
 &mainAffiliation;.</dd>
