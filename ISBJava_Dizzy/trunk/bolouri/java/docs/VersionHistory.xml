@@ -42,7 +42,8 @@ This document contains the version history for the
 <td>2005/02/18</td>
 <td>
 <ul>
-  <li>Updated <code>SignificancesData</code> and <code>ObservationsData</code> to require
+  <li>Updated <code>org.systemsbiology.inference.SignificancesData</code> and 
+    <code>org.systemsbiology.inference.ObservationsData</code> to require
     a <code>BufferedReader</code> object instead of a <code>File</code> object in their
     <code>loadFromFile()</code> methods, thus allowing defining a data object based on
     an alternative type of data stream, other than a file.
@@ -59,7 +60,7 @@ This document contains the version history for the
   <li>Added a <code>scrubIdentifier()</code> method to the <code>org.systemsbiology.data.DataFileDelimmiter</code>
     class, which takes a string identifier and converts any instances of the <code>DataFileDelimiter</code> 
     object's delimiter character (or string) into the "_" (underscore) character.</li>
-  <li>Added a <code>writeToFile()</code> method to the <code>ObservationsData</code> class.</li>
+  <li>Added a <code>writeToFile()</code> method to the <code>org.systemsbiology.inference.ObservationsData</code> class.</li>
   <li>Modified <code>org.systemsbiology.inference.SignificancesData.loadFromFile()</code> so that 
     it will interpret a cell containing the string "null" (and not in the first row or first
     column of the data file) as an empty cell.</li>
