@@ -1,0 +1,151 @@
+<p>
+The following table documents the external library dependencies of
+the &appName; system.  The libraries are provided in a compiled
+format called a &quot;JAR archive&quot;.  Some of the libraries have
+software licenses that require making the source code available, namely,
+the GNU Lesser General Public License (LGPL).  For each of those licenses,
+a hyperlink is provided to a compressed archive file containing the
+source code for the version of the library that is included with &appName;.
+These hyperlinks are shown in the &quot;Source&quot; column below.
+<blockquote>
+<table border="1">
+<tr>
+<td>Package name</td><td>JAR name</td><td>Home Page / Documentation</td><td>License</td><td>Version</td><td>Source Code</td>
+</tr>
+
+<tr>
+<td>jfreechart</td><td><code>jfreechart.jar</code></td>
+<td><a href="http://www.jfree.org/jfreechart"><code>http://www.jfree.org/jfreechart/</code></a></td>
+<td>LGPL</td>
+<td>0.9.6</td>
+<td><a href="&publicRepositoryURL;/src/jfreechart-0.9.6.tar.gz">full</a></td>
+</tr>
+
+<tr>
+<td>jcommon</td><td><code>jcommon.jar</code></td>
+<td><a href="http://www.jfree.org/jcommon"><code>http://www.jfree.org/jcommon/</code></a></td>
+<td>LGPL</td>
+<td>0.7.2</td>
+<td><a href="&publicRepositoryURL;/src/jcommon-0.7.2.tar.gz">full</a></td>
+</tr>
+
+<tr>
+<td>SBW (core)</td><td><code>SBWCore.jar</code></td>
+<td><a href="&sbwURL;"><code>&sbwURL;</code></a></td>
+<td>LGPL</td>
+<td>1.0.5</td>
+<td><a href="&publicRepositoryURL;/src/sbw-1.0.5-src.zip">full</a></td>
+</tr>
+
+<tr>
+<td>Netx JNLP client</td><td><code>netx.jar</code></td>
+<td><a href="http://jnlp.sourceforge.net/netx"><code>http://jnlp.sourceforge.net/netx</code></a></td>
+<td>LGPL</td>
+<td>0.5</td>
+<td><a href="&publicRepositoryURL;/src/netx-0.5.zip">full</a></td>
+</tr>
+
+<tr>
+<td>JavaHelp</td><td><code>jh.jar</code></td>
+<td><a href="http://java.sun.com/products/javahelp"><code>http://java.sun.com/products/javahelp</code></a></td>
+<td>Sun Binary Code License</td>
+<td>1.1.3</td>
+<td><a href="http://java.sun.com/products/javahelp">partial</a></td>
+</tr>
+
+<tr>
+<td>JAMA</td><td><code>Jama.jar</code></td>
+<td><a href="http://math.nist.gov/javanumerics/jama"><code>http://math.nist.gov/javanumerics/jama</code></a></td>
+<td>public domain</td>
+<td>1.0.1</td>
+<td><a href="&publicRepositoryURL;/src/Jama-1.0.1.tar.gz">full</a></td>
+</tr>
+
+<tr>
+<td>colt</td><td><code>colt.jar</code></td>
+<td><a href="http://hoschek.home.cern.ch/hoschek/colt"><code>http://hoscheck.home.cern.ch/hoscheck/colt</code></a></td>
+<td>open source (see below)</td>
+<td>1.0.3</td>
+<td><a href="&publicRepositoryURL;/src/colt1.0.3.zip">full</a></td>
+</tr>
+
+<tr>
+<td>odeToJava</td><td><code>odeToJava.jar</code></td>
+<td><a href="http://www.cs.dal.ca/~spiteri/students/mpatterson_bcs_thesis.ps"><code>http://www.cs.dal.ca/~spiteri/students/mpatterson_bcs_thesis.ps</code></a>
+(customized version -- see note below) 
+</td>
+<td>public domain</td>
+<td>alpha.2.p1</td>
+<td><a href="&publicRepositoryURL;/src/odeToJava-alpha2p1.tar.gz">full</a></td>
+</tr>
+
+<tr>
+<td>SBMLReader</td><td><code>SBMLReader.jar</code></td>
+<td>
+(customized and abridged version of the <code>SBMLValidate</code> library 
+by Herbert Sauro and the SBW Project team)</td>
+<td>LGPL</td>
+<td>1.0</td>
+<td><a href="&publicRepositoryURL;/src/SBMLReader-1.0.tar.gz">full</a></td>
+</tr>
+
+</table>
+</blockquote>
+</p>
+<p>
+Please note that the <code>SBMLReader.jar</code> library is a modified
+version of the SBML-parsing code originally contained in the program 
+<code>SBMLValidate.jar</code>.  The package name has been changed also.
+This was done in order to minimize the potential for conflict in cases 
+where the target installation computer already has an installation of 
+<code>SBMLValidate.jar</code> from the 
+<a href="&sbwURL;">Systems Biology Workbench (SBW)</a>. 
+</p>
+<p>
+The <code>SBWCore.jar</code> library distribution contains three
+external libraries:  <code>gnu-regexp</code>, <code>grace</code>,
+and <code>java_cup</code>. For information about these
+libraries and to obtain the source code, please consult the various
+<code>README.txt</code> files within the subdirectories of the
+<code>sbw-1.0.5/src/imported</code> directory of the source archive
+for the <code>SBWCore</code> library, obtained at the link given above.
+</p>
+<p>
+The <code>odeToJava</code> library is copyright Raymond Spiteri
+and Murray Patterson.  It is provided with kind permission from
+Raymond Spiteri (Dalhousie University, Halifax, NS, Canada).
+The <code>odeToJava</code> library is not distributed in its original 
+form with &appName;. It has been modified from the version that is available 
+from <a href="http://www.netlib.org/ode">Netlib</a>.
+Please use the <code>odeToJava.jar</code> library that is bundled 
+with &appName;, as it contains some features that are necessary in 
+order to function correctly with &appName;.  The Netlib version of
+<code>odeToJava</code> is no longer compatible with &appName;, without
+some slight modifications to the source code.
+</p>
+<p>
+The <code>jfreechart</code> and <code>jcommon</code> libraries
+are used by &appName; in order to generate graphical plots of
+simulation results.  Please note that the public API for these libraries
+has changed in recent versions, in a non-backwards-compatible manner.
+It is necessary to use the (older) versions of these libraries (referenced above), 
+that are provided with the <code>&appName;</code> installation.  If you
+download the latest version of the <code>jfreechart</code> and
+<code>jcommon</code> libraries from the 
+<a href="http://www.jfree.org">JFree.org</a> web site, they
+will not be compatible with &appName;.
+</p>
+<p>
+The Colt library is provided under the following license terms:
+<blockquote>
+<pre>
+Copyright (c) 1999 CERN - European Organization for Nuclear Research.
+Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose
+is hereby granted without fee, provided that the above copyright notice appear in all copies and
+that both that copyright notice and this permission notice appear in supporting
+documentation.
+CERN makes no representations about the suitability of this software for any purpose.
+It is provided "as is" without expressed or implied warranty.
+</pre>
+</blockquote>
+</p>

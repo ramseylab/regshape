@@ -44,6 +44,35 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.6.4/&installerDownloadRelURL;">1.6.4</a></td>
+<td>2004/04/05</td>
+<td>
+<ul>
+<li>Fixed an inefficiency in the <code>SimulatorStochasticGibsonBruck</code>,
+where reaction rates for reactions with custom reaction rate expressions, were
+being recomputed after every iteration.  Now, the <code>Expression.IVisitor</code>
+interface is used to build a dependency tree of the reaction rate expression.
+The reaction rate is then recomputed only when one of the dynamical elements it is 
+dependent upon, has changed.</li>
+<li>Split the Tau-Leap simulator into two separate simulators, 
+<code>taulea-complex</code> and <code>tauleap-simple</code>.  This allows for using
+different algorithms for calculating the leap time, for complex and
+simple models.</li>
+<li>Made some speed improvements to the stochastic simulators, in the method
+where the species populations are updated as a result of a reaction event.</li>
+<li>Fixed a problem with the delayed reaction solver where the delay was artificially 
+long in some cases.</li>
+<li>Modified the <code>RegisterSBWSimulators</code> program so that
+it prints out a message indicating that the simulators have been registered with
+the SBW Broker.</li>
+<li>Added a new program <code>LaunchSBWSimulators</code> that both
+registers and launches the SBW interface to the simulators.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.6.4/&installerDownloadRelURL;">1.6.4</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.6.3/&installerDownloadRelURL;">1.6.3</a></td>
 <td>2004/03/26</td>
 <td>

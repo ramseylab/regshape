@@ -3,6 +3,7 @@
 <!DOCTYPE isbdocument [
   <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
   %AppConfig;
+<!ENTITY ExternalLibraries SYSTEM "ExternalLibraries.xmlinc">
    ]>
 
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
@@ -57,63 +58,55 @@ at the following URL:
 </isb:docsection>
 
 <isb:docsection name="Requirements" label="requirements">
+<p>
 You will need the Sun Java Development Kit (JDK) vesrion 1.4 
 or newer (or the equivalent) in order to use these classes.
 Some of the packages in this source directory tree
-require external Java packages/libraries to be installed.
-In particular, in order to be able to compile the full
-source tree, you will need to have the following Java libraries
-installed and available within your <code>CLASSPATH</code> environment
-variable:
-<a name="extlib" />
-<blockquote>
-<table border="1">
-<tr>
-<td>Package name</td><td>JAR name</td><td>Source</td><td>License</td>
-</tr>
-<tr>
-<td>jfreechart</td><td><code>jfreechart-&lt;VERS&gt;.jar</code></td>
-<td><a href="http://www.jfree.org/jfreechart"><code>www.jfree.org/jfreechart/</code></a></td><td>LGPL</td>
-</tr>
-<tr>
-<td>jcommon</td><td><code>jcommon-&lt;VERS&gt;.jar</code></td>
-<td><a href="http://www.jfree.org/jcommon"><code>www.jfree.org/jcommon/</code></a></td><td>LGPL</td>
-</tr>
-<tr>
-<td>SBW (core)</td><td><code>SBWCore.jar</code></td>
-<td><a href="&sbwURL;"><code>&sbwURL;</code></a></td><td>LGPL</td>
-</tr>
-<tr>
-<td>JavaHelp</td><td><code>jh.jar</code></td>
-<td><a href="http://java.sun.com/products/javahelp"><code>java.sun.com/products/javahelp</code></a></td><td>Sun Binary Code License</td>
-</tr>
-<tr>
-<td>Netx JNLP client</td><td><code>netx.jar</code></td>
-<td><a href="http://jnlp.sourceforge.net/netx"><code>jnlp.sourceforge.net/netx</code></a></td><td>LGPL</td>
-</tr>
-<tr>
-<td>JAMA</td><td><code>Jama.jar</code></td>
-<td><a href="http://math.nist.gov/javanumerics/jama"><code>math.nist.gov/javanumerics/jama</code></a></td><td>public domain</td>
-</tr>
-<tr>
-<td>odeToJava</td><td><code>odeToJava.jar</code></td>
-<td><a href="&appHomePage;"><code>&appHomePage;</code></a> (slightly modified version of the <code>odeToJava</code> library written by 
-Murray Patterson and Raymond Spiteri and obtained from <a href="http://www.netlib.org">Netlib</a>)</td>
-<td>included with permission from Raymond Spiteri</td>
-</tr>
-<tr>
-<td>SBML Reader</td><td><code>SBMLReader.jar</code></td>
-<td><a href="&appHomePage;"><code>&appHomePage;</code></a> (based on <code>SBMLValidate</code> by Herbert Sauro and the <a href="&sbwURL;">Systems Biology Workbench (SBW) Project</a> team)</td><td>LGPL</td>
-</tr>
-</table>
-</blockquote>
-All of the aforementioned libraries are included with the installation
-of <code>&appName;</code>, in a subdirectory &quot;<code>extlib</code>&quot;.
+require <a href="#extlib">external Java packages/libraries</a> to be installed.
+In order to compile the &appName; library, you will need to
+have all of these external libraries listed in your 
+<code>CLASSPATH</code> environment variable.  Some of the
+external libraries are needed only in order to compile specific
+sub-packages of the &appName; source tree; see the
+<a href="#extlib">external libraries</a> section of this manual 
+for details.
+</p>
+<p>
+The classes in this library
+have been tested on the Sun JDK v1.4.1, on the Red Hat
+Linux 8.0 platform and on Windows XP.  On other platforms,
+your mileage may vary.
+</p>
+<p>
+Ant is required to use the "build.xml" file in this directory.
+You can download and install Ant from 
+<a href="http://ant.apache.org">the apache Ant project</a>.
+</p>
+</isb:docsection>
+
+<isb:docsection name="Acknowledgements" label="acknowledgements">
+<p>
+The assistance, advice, and contributions of several individuals 
+to the &appName; project is gratefully acknowledged:  Hamid Bolouri
+(principal investigator), William Longabaugh, and Alistair Rust.
+</p>
+
+</isb:docsection>
+
+<isb:docsection name="External Libraries" label="extlib">
+<p />
+The &appName; system has various external library dependencies, that
+are documented in this section.  All of the external libraries (excepting
+those that are included by default in the JDK) are included with the 
+installation of <code>&appName;</code>, in a subdirectory 
+&quot;<code>extlib</code>&quot;.
 Please make sure to use these libraries in order to compile the 
 <code>&appName;.jar</code> library from source code.  Some of these
 external libraries have changed in recent versions, in such a way
 that they are no longer compatible with the source code in &appName;.
 Where this is known to be the case, it is noted below.
+<p />
+&ExternalLibraries;
 <p />
 Note that the <code>SBWCore</code> library is only required for
 compiling the code in the &quot;<code>org.systemsbiology.chem.sbw</code>&quot; 
@@ -129,20 +122,8 @@ the aforementioned SBW libraries.
 The <code>jfreechart</code> and <code>jcommon</code> libraries
 are needed in order to compile the <code>org.systemsbiology.chem.app</code>
 package.  They are not needed for any other packages in the &appName;
-library.  Please note that the public API for these libraries
-has changed in recent versions, in a non-backwards-compatible manner.
-It is necessary to use the older versions of these libraries, that
-are provided with the <code>&appName;</code> installation.
+library.  
 <p />
-The <code>SBMLReader.jar</code> library is based on code from
-the <code>SBMLValidate.jar</code> library, which is available
-at the <a href="&sbwURL;">SBW Project</a>.
-The <code>SBMLValidate.jar</code> source code has been 
-modified and is distributed under a different library
-name, <code>SBMLReader.jar</code> and a different package name,
-in order to minimize the potentnial for conflict in cases where 
-the target computer already has an installation of 
-<code>SBMLValidate.jar</code> from the Systems Biology Workbench (SBW).
 The <code>SBMLReader.jar</code> library is only required for 
 compiling the code in the &quot;<code>org.systemsbiology.chem.app</code>&quot;
 and &quot;<code>org.systemsbiology.chem.sbml</code>&quot; packages.  
@@ -156,15 +137,7 @@ However, the GUI application front-end to the
 &quot;<code>org.systemsbiology.chem</code>&quot; simulation package
 would not be available.
 <p />
-In addition, please note that the <code>odeToJava</code> library
-is not distributed in its original form with &appName;. It has
-been modified from the version that is available from 
-<a href="http://www.netlib.org/ode">Netlib</a>.
-Please use the <code>odeToJava.jar</code> library that is bundled 
-with &appName;, as it contains some features that are necessary in 
-order to function correctly with &appName;.  The Netlib version of
-<code>odeToJava</code> is no longer compatible with &appName;, without
-some slight modifications to the source code.  The <code>odeToJava</code>
+The <code>odeToJava</code>
 library is only required for compiling the code in the
 &quot;<code>org.systemsbiology.chem.odetojava</code>&quot;
 package.  By omitting the
@@ -174,25 +147,6 @@ statement to the <code>build.xml</code> file), in principle the resulting
 <code>&localJavaLibraryName;.jar</code> file that would be built,
 would not have any dependencies on the <code>odeToJava</code> library.
 <p />
-<p />
-The classes in this library
-have been tested on the Sun JDK v1.4.1, on the Red Hat
-Linux 8.0 platform and on Windows XP.  On other platforms,
-your mileage may vary.
-<p />
-Ant is required to use the "build.xml" file in this directory.
-You can download and install Ant from 
-<a href="http://ant.apache.org">the apache Ant project</a>.
-</isb:docsection>
-
-<isb:docsection name="Acknowledgements" label="acknowledgements">
-<p>
-The assistance, advice, and contributions of several individuals 
-to the &appName; project is gratefully acknowledged:  Hamid Bolouri
-(principal investigator), William Longabaugh, and Alistair Rust.
-
-</p>
-
 </isb:docsection>
 
 <isb:docsection name="Naming Conventions" label="namingconventions">

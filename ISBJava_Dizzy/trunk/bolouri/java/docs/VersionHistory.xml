@@ -38,6 +38,47 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.6.4/&installerDownloadRelURL;">1.6.4</a></td>
+<td>2004/04/05</td>
+<td>
+<ul>
+<li>Added the <code>IVisitor</code> interface to the <code>org.systemsbiology.math.Expression</code>
+class, which makes it possible to call some user-constructed code on every node of a
+parsed expression tree.  This was needed in order to fix some inefficiencies in the
+Gibson-Bruck simulator, as described below.</li>
+<li>Refactored the <code>ReactionParticipant</code> inner class code from the
+<code>org.systemsbiology.chem.Reaction</code> class to become a
+separate class.  This makes it less cumbersome for the Simulator class to
+refer to the <code>ReactionParticipant.Type</code> enumerations.</li>
+<li>Moved all of the data structures used by the <code>Simulator</code>
+class tree, out of the <code>org.systemsbiology.chem.Reaction</code> class, and
+into the <code>org.systemsbiology.chem.Simulator</code> class.</li>
+<li>Fixed an inefficiency in the <code>SimulatorStochasticGibsonBruck</code>,
+where reaction rates for reactions with custom reaction rate expressions, were
+being recomputed after every iteration.  Now, the <code>Expression.IVisitor</code>
+interface is used to build a dependency tree of the reaction rate expression.
+The reaction rate is then recomputed only when one of the dynamical elements it is 
+dependent upon, has changed.</li>
+<li>Split the <code>SimulatorStochasticGillespieTauLeap</code> into two
+separate simulators, <code>SimulatorStochasticTauLeapComplex</code> and
+<code>SimulatorStochasticTauLeapSimple</code>.  This allows for using
+different algorithms for calculating the leap time, for complex and
+simple models.</li>
+<li>Modified the <code>updateSymbolValuesForReaction()</code> method in the
+<code>SimulatorStochasticBase</code> class, in order to improve speed.</li>
+<li>Changed the <code>org.systemsbiology.chem.DelayedReactionSolver</code> class
+so that it is no longer a subclass of <code>org.systemsbiology.math.Expression</code>.
+Fixed a problem with the <code>org.systemsbiology.chem.DelayedReactionSolver.computeValue()</code>
+where the delay was artificially long in some cases, and renamed the method 
+<code>computeRate()</code>.</li>
+<li>Modified the <code>org.systemsbiology.chem.sbw.SimulationModule</code> so that
+it prints out a message indicating that the simulators have been registered
+or initiated.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.6.3/&installerDownloadRelURL;">1.6.3</a></td>
 <td>2004/03/26</td>
 <td>
