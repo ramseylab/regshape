@@ -26,6 +26,7 @@ public class AppConfig
     private static final String PROPERTY_NAME_APP_VERSION = "appVersion";
     private static final String PROPERTY_NAME_APP_ICON_FILE = "appIconFile";
     private static final String PROPERTY_NAME_APP_HOME_PAGE = "appHomePage";
+
     public static final String CONFIG_FILE_NAME="AppConfig.xml";
 
     /**

@@ -1550,7 +1550,7 @@ Relative paths are relative to the launcher.]]></string>
 													<method name="addElement">
 														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="d56a0be19383">
 															<property name="propertyValue">
-																<string><![CDATA["$USER_INSTALL_DIR$/config/AppConfig.xml"]]></string>
+																<string><![CDATA["$USER_INSTALL_DIR$"]]></string>
 															</property>
 															<property name="propertyName">
 																<string><![CDATA[lax.command.line.args]]></string>
@@ -2250,6 +2250,32 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 										</object>
+										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="228fbca29370">
+											<property name="unixPermissions">
+												<string><![CDATA[664]]></string>
+											</property>
+											<property name="sourceName">
+												<string><![CDATA[UserManual.html]]></string>
+											</property>
+											<property name="overrideUnixPermissions">
+												<boolean>false</boolean>
+											</property>
+											<property name="sourcePath">
+												<string><![CDATA[@PROJROOT@/build/web/Dizzy/docs/]]></string>
+											</property>
+											<property name="shouldUninstall">
+												<boolean>true</boolean>
+											</property>
+											<property name="destinationName">
+												<string><![CDATA[UserManual.html]]></string>
+											</property>
+											<property name="fileSize">
+												<long>-1</long>
+											</property>
+											<property name="macBinary">
+												<boolean>false</boolean>
+											</property>
+										</object>
 										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="59b83c599afa">
 											<property name="unixPermissions">
 												<string><![CDATA[775]]></string>
@@ -2274,6 +2300,7 @@ and any path to a file to read from that file]]></string>
 												<object refID="9227b8499aff"/>
 												<object refID="a61db5e9bd12"/>
 												<object refID="eed304219377"/>
+												<object refID="228fbca29370"/>
 											</visualChildren>
 										</object>
 									</installChildren>

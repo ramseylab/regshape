@@ -73,11 +73,13 @@
   <target name="copyResources">
     <copy todir="${app.classesDir}">
       <fileset dir="${basedir}">
-        <include name="**/*.xml" />
-        <include name="**/*.dtd" />
+        <include name="isb/**/*.xml" />
+        <include name="isb/**/*.dtd" />
+        <include name="isb/**/*.html" />
         <exclude name="**/tp/*" />
         <exclude name="docs/*.xml" />
         <exclude name="build.xml" />
+        <exclude name="**/package.html" />
       </fileset>
     </copy>
   </target>
@@ -176,6 +178,7 @@
       <fileset dir="${app.classesDir}">
         <include name="**/*.class" />
         <include name="**/*.xml" />
+        <include name="**/*.html" />
         <include name="**/*.dtd" />
         <exclude name="**/tp/*.class" />
       </fileset>

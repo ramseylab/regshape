@@ -14,6 +14,7 @@ public class MainMenu extends JMenuBar
     private static final String ACTION_COMMAND_FILE_QUIT = "Quit";
 
     private static final String ACTION_COMMAND_HELP_ABOUT = "About...";
+    private static final String ACTION_COMMAND_HELP_USER_MANUAL = "User manual...";
 
     private static final String ACTION_COMMAND_TOOLS_EXPORT = "Export...";
     private static final String ACTION_COMMAND_TOOLS_SIMULATE = "Simulate...";
@@ -36,6 +37,10 @@ public class MainMenu extends JMenuBar
             else if(actionCommand.equals(ACTION_COMMAND_HELP_ABOUT))
             {
                 mApp.handleAbout();
+            }
+            else if(actionCommand.equals(ACTION_COMMAND_HELP_USER_MANUAL))
+            {
+                mApp.handleHelpUserManual();
             }
             else if(actionCommand.equals(ACTION_COMMAND_TOOLS_EXPORT))
             {
@@ -95,8 +100,9 @@ public class MainMenu extends JMenuBar
 
         createSingleMenu("Tools", toolsItems, toolsShortcuts);
 
-        String []helpItems = new String[] {ACTION_COMMAND_HELP_ABOUT};
-        int []helpShortcuts = {'A'};
+        String []helpItems = new String[] {ACTION_COMMAND_HELP_ABOUT,
+                                           ACTION_COMMAND_HELP_USER_MANUAL};
+        int []helpShortcuts = {'A', 'U'};
         
         mSimulateMenuItem.setEnabled(false);
         mExportMenuItem.setEnabled(false);

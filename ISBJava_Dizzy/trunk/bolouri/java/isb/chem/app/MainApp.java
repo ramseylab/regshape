@@ -30,6 +30,17 @@ public class MainApp
     private JButton mClearRuntimeButton;
     private JButton mClearOutputButton;
     private AppConfig mAppConfig;
+    private File mAppDir;
+
+    File getAppDir()
+    {
+        return(mAppDir);
+    }
+
+    private void setAppDir(File pAppDir)
+    {
+        mAppDir = pAppDir;
+    }
 
     private void setAppConfig(AppConfig pAppConfig)
     {
@@ -120,6 +131,12 @@ public class MainApp
     {
         AboutDialog aboutDialog = new AboutDialog(getMainFrame());
         aboutDialog.show();
+    }
+
+    void handleHelpUserManual()
+    {
+        HelpUserManual helpUserManual = new HelpUserManual(getMainFrame());
+        helpUserManual.displayUserManual();
     }
 
     void handleExport()
@@ -224,16 +241,27 @@ public class MainApp
         }
     }
 
-    private void initializeAppConfig(String pConfigFileName) throws DataNotFoundException, InvalidInputException, FileNotFoundException
+    private void initializeAppConfig(String pAppDir) throws DataNotFoundException, InvalidInputException, FileNotFoundException
     {
+        
         AppConfig appConfig = null;
-        if(null == pConfigFileName)
+        if(null == pAppDir)
         {
+            // we don't know where we are installed, so punt and look for 
+            // the config file as a class resource:
             appConfig = new AppConfig(MainApp.class);
         }
         else
         {
-            appConfig = new AppConfig(new File(pConfigFileName));
+            File appDirFile = new File(pAppDir);
+            if(! appDirFile.exists() ||
+               ! appDirFile.isDirectory())
+            {
+                throw new DataNotFoundException("could not find application directory: " + pAppDir);
+            }
+            setAppDir(appDirFile);
+            String configFileName = appDirFile.getAbsolutePath() + "/config/" + AppConfig.CONFIG_FILE_NAME;
+            appConfig = new AppConfig(new File(configFileName));
         }
         setAppConfig(appConfig);
     }
@@ -337,6 +365,11 @@ public class MainApp
         mMainMenu = mainMenu;
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = frame.getSize();
+        frame.setLocation((screenSize.width - frameSize.width) / 2,
+                          (screenSize.height - frameSize.height) / 2);
+
         frame.setVisible(true);
     }
 
@@ -348,14 +381,14 @@ public class MainApp
         }
         mApp = this;
         
-        String configFileName = null;
+        String appDir = null;
         if(pArgs.length > 0)
         {
-            // argument is the config file
-            configFileName = pArgs[0];
+            // argument is the main application directory
+            appDir = pArgs[0];
         }
 
-        initializeAppConfig(configFileName);
+        initializeAppConfig(appDir);
 
         ScriptRuntime scriptRuntime = new ScriptRuntime();
         SimulationController simulationController = new SimulationController();
