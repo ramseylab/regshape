@@ -29,6 +29,16 @@ public class SimulationModule
                                      "Simulation",
                                      GillespieService.class);
 
+                moduleImp.addService(GibsonBruckService.SERVICE_NAME,
+                                     GibsonBruckService.SERVICE_DESCRIPTION,
+                                     "Simulation",
+                                     GibsonBruckService.class);
+
+                moduleImp.addService(DeterministicService.SERVICE_NAME,
+                                     DeterministicService.SERVICE_DESCRIPTION,
+                                     "Simulation",
+                                     DeterministicService.class);
+
                 moduleImp.run(pArgs);
             }
 
