@@ -36,6 +36,7 @@
   <property name="app.downloadDir"             location="${app.webDir}/&appVersion;" />
   <property name="app.installerDir"            location="${app.downloadDir}/installer" />
   <property name="app.rootPackage"             value="org" />
+  <property name="javadocLink"                 value="http://java.sun.com/j2se/1.4.2/docs/api" />
 
   <property name="app.sourceCompileFlag"       value="1.4" />
 
@@ -175,6 +176,7 @@
              packageList="${app.configDir}/packageList.txt"
              docletpathref="app.docletclasspath"
              doclet="com.tarsec.javadoc.pdfdoclet.PDFDoclet"
+             link="${javadocLink}"
              additionalparam="-pdf ${app.webDir}/docs/APIDocumentation.pdf -config ${app.configDir}/PDFDoclet.properties">
       <classpath refid="app.classpath" />
     </javadoc>                 
@@ -187,6 +189,7 @@
              sourcepath="${basedir}" 
              destdir="${app.javadocDir}"
              packageList="${app.configDir}/packageList.txt"
+             link="${javadocLink}"
              additionalparam="-breakiterator"> 
       <classpath refid="app.classpath" />
     </javadoc>
