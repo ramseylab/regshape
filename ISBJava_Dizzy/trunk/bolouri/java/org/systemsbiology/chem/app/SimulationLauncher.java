@@ -130,8 +130,6 @@ public class SimulationLauncher
         TimeSeriesOutputFormat mOutputFileFormat;
         boolean mOutputFileAppend;
         String []mRequestedSymbolNames;
-        double []mRetTimeValues;
-        Object []mRetSymbolValues;
     }
 
     // This thread handles updates to the progress bar.  It
@@ -607,8 +605,7 @@ public class SimulationLauncher
                               TimeSeriesOutputFormat pOutputFileFormat,
                               boolean pOutputFileAppend,
                               String []pRequestedSymbolNames,
-                              double []pTimeValues,
-                              Object []pSymbolValues) throws IOException
+                              SimulationResults pSimulationResults) throws IOException
     {
         StringWriter outputBuffer = null;
         PrintWriter printWriter = null;
@@ -625,10 +622,13 @@ public class SimulationLauncher
             printWriter = new PrintWriter(fileWriter);
         }
             
+        double []timeValues = pSimulationResults.getResultsTimeValues();
+        Object []symbolValues = pSimulationResults.getResultsSymbolValues();
+
         TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(printWriter,
                                                                     pRequestedSymbolNames,
-                                                                    pTimeValues,
-                                                                    pSymbolValues,
+                                                                    timeValues,
+                                                                    symbolValues,
                                                                     pOutputFileFormat);
 
         if(pOutputType.equals(OutputType.PRINT))
@@ -678,15 +678,13 @@ public class SimulationLauncher
 
             long startTime = System.currentTimeMillis(); 
 
-            simulator.simulate(pSimulationRunParameters.mStartTime,
-                               pSimulationRunParameters.mEndTime,
-                               pSimulationRunParameters.mSimulatorParameters,
-                               pSimulationRunParameters.mNumTimePoints,
-                               pSimulationRunParameters.mRequestedSymbolNames,
-                               pSimulationRunParameters.mRetTimeValues,
-                               pSimulationRunParameters.mRetSymbolValues);
+            SimulationResults simulationResults = simulator.simulate(pSimulationRunParameters.mStartTime,
+                                                                     pSimulationRunParameters.mEndTime,
+                                                                     pSimulationRunParameters.mSimulatorParameters,
+                                                                     pSimulationRunParameters.mNumTimePoints,
+                                                                     pSimulationRunParameters.mRequestedSymbolNames);
 
-            if(! mSimulationController.getCancelled())
+            if(! mSimulationController.getCancelled() && null != simulationResults)
             {
                 if(mHandleOutputInternally)
                 {
@@ -699,18 +697,10 @@ public class SimulationLauncher
                                  pSimulationRunParameters.mOutputFileFormat,
                                  pSimulationRunParameters.mOutputFileAppend,
                                  pSimulationRunParameters.mRequestedSymbolNames, 
-                                 pSimulationRunParameters.mRetTimeValues, 
-                                 pSimulationRunParameters.mRetSymbolValues);
+                                 simulationResults);
                 }
                 else
                 {
-                    SimulationResults simulationResults = new SimulationResults();
-                    simulationResults.setSimulatorAlias(pSimulationRunParameters.mSimulatorAlias);
-                    simulationResults.setStartTime(pSimulationRunParameters.mStartTime);
-                    simulationResults.setEndTime(pSimulationRunParameters.mEndTime);
-                    simulationResults.setResultsTimeValues(pSimulationRunParameters.mRetTimeValues);
-                    simulationResults.setResultsSymbolNames(pSimulationRunParameters.mRequestedSymbolNames);
-                    simulationResults.setResultsSymbolValues(pSimulationRunParameters.mRetSymbolValues);
                     mResultsQueue.add(simulationResults);
                 }
             }
@@ -1372,12 +1362,6 @@ public class SimulationLauncher
         }
         srp.mRequestedSymbolNames = symbolSelectedNames;
 
-        double []timeValues = new double[numTimePoints];
-        srp.mRetTimeValues = timeValues;
-
-        Object []symbolValues = new Object[numTimePoints];
-        srp.mRetSymbolValues = symbolValues;
-     
         if(mHandleOutputInternally)
         {
             String outputTypeStr = mOutputType.toString();
