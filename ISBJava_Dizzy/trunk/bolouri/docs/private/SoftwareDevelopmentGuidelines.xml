@@ -803,7 +803,7 @@ Java Runtime Environment installed.
 The InstallAnywhere product is currently installed on the Linux host
 <blockquote>
 <pre>
-oahu-lx.systemsbiology.net
+hamid-lx.systemsbiology.net
 </pre>
 </blockquote>
 To run InstallAnywhere remotely, you will need access to
@@ -812,7 +812,7 @@ installed. Any desktop Linux computer will suffice.  From your
 desktop computer, simply do the following:
 <blockquote>
 <pre>
-ssh -X -C oahu-lx.systemsbiology.net
+ssh -X -C hamid-lx.systemsbiology.net
 /local/InstallAnywhere_5_Standard/InstallAnywhere
 </pre>
 </blockquote>
