@@ -56,7 +56,6 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
                 break;
             }
         }
-        assert (-1 != reactionIndex) : "null reaction found in chooseTypeOfNextReaction";
         return(reactionIndex);
     }
 
@@ -122,7 +121,6 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
             {
                 DelayedReactionSolver solver = pDelayedReactionSolvers[nextDelayedReactionIndex];
                 double nextDelayedReactionTime = solver.peekNextReactionTime();
-                assert (nextDelayedReactionTime > time) : "invalid time for next delayed reaction";
 //                System.out.println("next delayed reaction will occur at: " + nextDelayedReactionTime);
                 if(nextDelayedReactionTime < time + deltaTimeToNextReaction)
                 {
