@@ -12,6 +12,11 @@ import org.systemsbiology.util.*;
 import org.systemsbiology.math.*;
 import java.util.*;
 
+/**
+ * Class for running a simulation from the command-line.
+ *
+ * @author Stephen Ramsey
+ */
 public abstract class SimulatorStochasticBase extends Simulator
 {
     public static final int DEFAULT_ENSEMBLE_SIZE = 1;
@@ -92,7 +97,6 @@ public abstract class SimulatorStochasticBase extends Simulator
                 Species reactant = reactantsSpecies[ctr];
                 Symbol reactantSymbol = reactant.getSymbol();
                 int reactantIndex = reactantSymbol.getArrayIndex();
-                assert (reactantIndex != Symbol.NULL_ARRAY_INDEX) : "null array index";
                 pSymbolValues[reactantIndex] -= ((double) reactantsStoichiometry[ctr]);
             }
         }
@@ -108,7 +112,6 @@ public abstract class SimulatorStochasticBase extends Simulator
                 Species product = productsSpecies[ctr];
                 Symbol productSymbol = product.getSymbol();
                 int productIndex = productSymbol.getArrayIndex();
-                assert (productIndex != Symbol.NULL_ARRAY_INDEX) : "null array index";
                 pSymbolValues[productIndex] += ((double) productsStoichiometry[ctr]);
                 if(numDelayedReactions > 0)
                 {
@@ -117,7 +120,6 @@ public abstract class SimulatorStochasticBase extends Simulator
                         DelayedReactionSolver solver = pDelayedReactionSolvers[i];
                         if(solver.hasIntermedSpecies(product))
                         {
-                            assert (productsStoichiometry[ctr] == 1) : "invalid stoichiometry for delayed reaction";
                             solver.addReactant(pSymbolEvaluator);
                         }
                     }
@@ -131,7 +133,6 @@ public abstract class SimulatorStochasticBase extends Simulator
     {
         double randomNumberUniformInterval = getRandomNumberUniformInterval(pRandomNumberGenerator);
         double inverseRandomNumberUniformInterval = 1.0 / randomNumberUniformInterval;
-        assert (randomNumberUniformInterval >= 0.0) : ("randomNumberUniformInterval: " + randomNumberUniformInterval);
         double logInverseRandomNumberUniformInterval = Math.log(inverseRandomNumberUniformInterval);
         double timeConstant = 1.0 / pReactionProbability;
 
@@ -202,12 +203,12 @@ public abstract class SimulatorStochasticBase extends Simulator
 
         Random randomNumberGenerator = mRandomNumberGenerator;
 
-        Integer ensembleSizeObj = pSimulatorParameters.getEnsembleSize();
+        Long ensembleSizeObj = pSimulatorParameters.getEnsembleSize();
         if(null == ensembleSizeObj)
         {
             throw new IllegalArgumentException("ensemble size was not defined");
         }            
-        int ensembleSize = ensembleSizeObj.intValue();
+        long ensembleSize = ensembleSizeObj.longValue();
         if(ensembleSize <= 0)
         {
             throw new IllegalArgumentException("illegal value for ensemble size");
@@ -219,12 +220,18 @@ public abstract class SimulatorStochasticBase extends Simulator
 
         MutableInteger lastReactionIndex = new MutableInteger(NULL_REACTION);
 
-        for(int simCtr = ensembleSize; --simCtr >= 0; )
+        setIterationCounter(0);
+
+        for(long simCtr = ensembleSize; --simCtr >= 0; )
         {
             timeCtr = 0;
 
             double time = pStartTime;
+            // save the iteration counter from the previous simulation
+            long lastIterationCtr = getIterationCounter();
             prepareForSimulation(time);
+            // re-set the iteration counter to the results of the previous simulation
+            setIterationCounter(lastIterationCtr);
 
             lastReactionIndex.setValue(NULL_REACTION);
 
