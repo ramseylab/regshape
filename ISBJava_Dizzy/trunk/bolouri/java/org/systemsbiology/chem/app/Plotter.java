@@ -22,12 +22,19 @@ import java.awt.event.*;
 import java.awt.image.*;
 import javax.swing.*;
 import java.text.*;
+import javax.imageio.*;
+import java.awt.datatransfer.*;
 
 public class Plotter 
 {
     private Component mMainFrame;
-    private static final int DEFAULT_WIDTH_PIXELS = 500;
-    private static final int DEFAULT_HEIGHT_PIXELS = 400;
+    private static final int DEFAULT_PLOT_WIDTH_PIXELS = 500;
+    private static final int DEFAULT_PLOT_HEIGHT_PIXELS = 500;
+    private static final int MIN_PLOT_WIDTH_PIXELS = 400;
+    private static final int MIN_PLOT_HEIGHT_PIXELS = 400;
+    private static final int SCROLL_PANE_OFFSET_PIXELS = 20;
+    private static final String OUTPUT_IMAGE_TYPE_EXTENSION = "png";
+
     public static final int MAX_NUM_SPECIES_TO_PLOT = 20;
     private static final int PLOT_POSITION_STAGGER_AMOUNT_PIXELS = 20;
 
@@ -43,53 +50,184 @@ public class Plotter
         String mSimulatorAlias;
         String mModelName;
         Date mSimulationDate;
-        int mHeightPixels;
-        int mWidthPixels;
+        int mOrigFrameHeightPixels;
+        int mOrigFrameWidthPixels;
+        int mPlotHeightPixels;
+        int mPlotWidthPixels;
         JLabel mPlotLabel;
         JFreeChart mChart;
-        
+        JScrollPane mPlotScrollPane;
+        BufferedImage mPlotImage;
+
         public Plot(String pAppName, String pData, String pSimulatorAlias, String pModelName) throws IOException
         {
             super(pAppName + ": results");
             mSimulatorAlias = pSimulatorAlias;
             mModelName = pModelName;
             mSimulationDate = new Date(System.currentTimeMillis());
-            mHeightPixels = DEFAULT_HEIGHT_PIXELS;
-            mWidthPixels = DEFAULT_WIDTH_PIXELS;
+            mPlotHeightPixels = DEFAULT_PLOT_HEIGHT_PIXELS;
+            mPlotWidthPixels = DEFAULT_PLOT_WIDTH_PIXELS;
 
-            JPanel plotPanel = new JPanel();
+            JPanel bigPanel = new JPanel();
+
+            Box plotBox = new Box(BoxLayout.Y_AXIS);
             JLabel plotLabel = new JLabel();
-            plotPanel.add(plotLabel);
+// ------------- save for when clipboard issues are worked out, on Linux ------------
+//            plotLabel.setTransferHandler(new ImageSelection());
+// ------------- save for when clipboard issues are worked out, on Linux ------------
+            JPanel labelPanel = new JPanel();
+
             mPlotLabel = plotLabel;
+
+            mChart = generateChart(pData, this);
+            updatePlotImage();
+
+            JButton saveButton = new JButton("save as " + OUTPUT_IMAGE_TYPE_EXTENSION.toUpperCase() + " image file");
+            saveButton.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent e)
+                {
+                    handleSaveButton();
+                }
+            });
+
+            JScrollPane scrollPane = new JScrollPane(plotLabel);
+            scrollPane.setPreferredSize(new Dimension(DEFAULT_PLOT_WIDTH_PIXELS + SCROLL_PANE_OFFSET_PIXELS, DEFAULT_PLOT_HEIGHT_PIXELS + SCROLL_PANE_OFFSET_PIXELS));
+            mPlotScrollPane = scrollPane;
+            
+            plotBox.add(scrollPane);
+            
+            JPanel buttonPanel = new JPanel();
+            Box buttonBox = new Box(BoxLayout.X_AXIS);
+            buttonBox.add(saveButton);
+
+// ------------- save for when clipboard issues are worked out, on Linux ------------
+//             JButton copyButton = new JButton("copy to clipboard");
+//             copyButton.addActionListener(new ActionListener()
+//             {
+//                 public void actionPerformed(ActionEvent e)
+//                 {
+//                     handleCopyButton();
+//                 }
+//             });
+//             buttonBox.add(copyButton);
+// ------------- save for when clipboard issues are worked out, on Linux ------------
+
+            buttonPanel.add(buttonBox);
+
+            plotBox.add(buttonPanel);
+
+            bigPanel.add(plotBox);
+            setContentPane(bigPanel);
+
+            pack();
+
+            mOrigFrameHeightPixels = getHeight();
+            mOrigFrameWidthPixels = getWidth();
 
             addComponentListener(new ComponentAdapter()
             {
                 public void componentResized(ComponentEvent e) 
                 {
-                    mHeightPixels = getHeight();
-                    mWidthPixels = getWidth();
-                    try
-                    {
-                        updatePlotImage();
-                    }
-                    catch(IOException e2)
-                    {
-                        throw new RuntimeException(e2);
-                    }
+                    handleResize();
                 }
 
             });
-
-            mChart = generateChart(pData, this);
-            updatePlotImage();
-            
-            getContentPane().add(plotPanel);
-            pack();
         }
-        
+
+// ------------- save for when clipboard issues are worked out, on Linux ------------
+//         public void handleCopyButton()
+//         {
+//             try
+//             {
+//                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+//                 TransferHandler handler = mPlotLabel.getTransferHandler();
+//                 handler.exportToClipboard(mPlotLabel, clipboard, TransferHandler.COPY);
+//             }
+//             catch(Exception e)
+//             {
+//                 ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(this, "failed to copy plot image", e);
+//                 dialog.show();
+
+//             }
+//         }
+// ------------- save for when clipboard issues are worked out, on Linux ------------
+
+        public void handleResize()
+        {
+            int newFrameWidthPixels = getWidth();
+            int newFrameHeightPixels = getHeight();
+            
+            int origFrameWidthPixels = mOrigFrameWidthPixels;
+            int origFrameHeightPixels = mOrigFrameHeightPixels;
+            
+            int changeFrameWidthPixels = newFrameWidthPixels - origFrameWidthPixels;
+            int changeFrameHeightPixels = newFrameHeightPixels - origFrameHeightPixels;
+
+            int newPlotWidthPixels = DEFAULT_PLOT_WIDTH_PIXELS + changeFrameWidthPixels;
+            int newPlotHeightPixels = DEFAULT_PLOT_HEIGHT_PIXELS + changeFrameHeightPixels;
+            mPlotScrollPane.setPreferredSize(new Dimension(newPlotWidthPixels + SCROLL_PANE_OFFSET_PIXELS,
+                                                           newPlotHeightPixels + SCROLL_PANE_OFFSET_PIXELS));
+
+            if(newPlotWidthPixels < MIN_PLOT_WIDTH_PIXELS)
+            {
+                newPlotWidthPixels = MIN_PLOT_WIDTH_PIXELS;
+            }
+            if(newPlotHeightPixels < MIN_PLOT_HEIGHT_PIXELS)
+            {
+                newPlotHeightPixels = MIN_PLOT_HEIGHT_PIXELS;
+            }
+            mPlotWidthPixels = newPlotWidthPixels;
+            mPlotHeightPixels = newPlotHeightPixels;
+
+            try
+            {
+                updatePlotImage();
+            }
+            catch(IOException e2)
+            {
+                throw new RuntimeException(e2);
+            }
+
+            mPlotLabel.setPreferredSize(new Dimension(mPlotWidthPixels, mPlotHeightPixels));
+            mPlotLabel.revalidate();
+        }
+             
+        private void handleSaveButton()
+        {
+            FileChooser fileChooser = new FileChooser(this);
+            RegexFileFilter fileFilter = new RegexFileFilter(".*\\.png$", "image (.png) file");
+            fileChooser.setDialogTitle("please choose the file for saving the imsage:");
+            fileChooser.setFileFilter(fileFilter);
+            fileChooser.show();
+            File selectedFile = fileChooser.getSelectedFile();
+            if(null != selectedFile)
+            {
+                boolean doSave = true;
+                String selectedFileName = selectedFile.getAbsolutePath();
+                if(selectedFile.exists())
+                {
+                    doSave = FileChooser.handleOutputFileAlreadyExists(this, selectedFileName);
+                }
+                if(doSave)
+                {
+                    try
+                    {
+                        ImageIO.write(mPlotImage, OUTPUT_IMAGE_TYPE_EXTENSION, selectedFile);
+                    }
+                    catch(Exception e)
+                    {
+                        ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(this, "failed to save plot image", e);
+                        dialog.show();
+                    }
+                }
+            }
+        }
+
         void updatePlotImage() throws IOException
         {
-            BufferedImage plotImage = mChart.createBufferedImage(mWidthPixels, mHeightPixels);
+            BufferedImage plotImage = mChart.createBufferedImage(mPlotWidthPixels, mPlotHeightPixels);
+            mPlotImage = plotImage;
             mPlotLabel.setIcon(new ImageIcon(plotImage));
         }
 
