@@ -21,6 +21,8 @@
                 >              
   <xsl:output method="html" indent="yes" encoding="ISO-8859-1" />
 
+  <xsl:param name="altWebBaseURL" /> 
+
   <xsl:template match="html:*|html:*/@*">
     <xsl:copy>
       <xsl:apply-templates select="@* | node()" />
@@ -97,14 +99,24 @@
         </h4>
       </xsl:if>
 
-
-
         </td>
         <td>
-          <a href="&mainPublicURL;"><img src="&mainLogoURL;" alt="ISB" border="0" /></a>
+          <a href="&mainPublicURL;">
+            <xsl:element name="img">
+              <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/&mainLogoRelURL;</xsl:attribute>
+              <xsl:attribute name="border">0</xsl:attribute>
+              <xsl:attribute name="alt">ISB Logo</xsl:attribute>
+            </xsl:element>
+          </a>
         </td>
         <td>
-          <a href="&mainGroupURL;"><img src="&groupLogoURL;" alt="Bolouri Group" border="0" /></a>
+          <a href="&mainGroupURL;">
+            <xsl:element name="img">
+              <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/&groupLogoRelURL;</xsl:attribute>
+              <xsl:attribute name="border">0</xsl:attribute>
+              <xsl:attribute name="alt">Group Logo</xsl:attribute>
+            </xsl:element>
+          </a>
         </td>
       </tr>
       </table>
