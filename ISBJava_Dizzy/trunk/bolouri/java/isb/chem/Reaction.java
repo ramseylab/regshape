@@ -202,7 +202,7 @@ public class Reaction implements Comparable, Cloneable
 
     // this is a simple data structure that bundles together a
     // species and its reaction stoichiometry (multiplicity)
-    class ReactionElement implements Cloneable
+    class ReactionElement implements Cloneable, Comparable
     {
         public Species mSpecies;
         public Integer mMultiplicity;
