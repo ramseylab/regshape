@@ -80,7 +80,7 @@
  
   	<style in="${app.configDir}/AppConfig.xml"
       	   out="${app.styleConfDir}/AppConfig.xml"
-  	       style="${globalConfig}/${appConfigStyleSheet}" />
+  	       style="${globalConfig}/${simpleXMLStyleSheet}" />
   	
     <style in="${app.docsDir}/AppHelp.xml"
            out="${app.styleDir}/AppHelp.jhm"
