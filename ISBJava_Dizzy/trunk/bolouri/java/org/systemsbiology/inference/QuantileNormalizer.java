@@ -327,7 +327,7 @@ public class QuantileNormalizer
                     {
                         throw new IllegalArgumentException("non-positive raw observation (" + obsVal + ") at row " + i + " and column " + j);
                     }
-                    rescaledObs = Math.log(obsVal/LOG2);
+                    rescaledObs = Math.log(obsVal)/LOG2;
                 }
                 else
                 {
