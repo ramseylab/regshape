@@ -62,7 +62,7 @@
       <arg value="-modify" />
       <arg value="-quiet" />
       <arg value="-xml" />
-      <arg value="-asxhtml" />
+      <arg value="-ashtml" />
       <srcfile />
     </apply>
   </target>
@@ -108,7 +108,7 @@
   <target name="buildHelp">
     <mkdir dir="${app.webDir}" />
     <copy todir="${app.styleDir}" file="${app.configDir}/AppHelp.hs" />
-    <jar destfile="${app.webDir}/AppHelp.jar">
+    <jar destfile="${app.webDir}/AppResources.jar">
       <fileset dir="${basedir}">
         <include name="html/AppHelp.jhm" />
         <include name="html/AppHelpTOC.xml" />
