@@ -48,6 +48,7 @@
   	<filter token="MAIN_PUBLIC_URL" value="&mainPublicURL;" />
   	<filter token="MAIN_GROUP_EMAIL" value="&mainGroupEmail;" />
   	<filter token="MAIN_AFFILIATION" value="&mainAffiliation;" />
+  	<filter token="APP_INSTALLER_NAME" value="&appInstallerName;" />
   </target>
 
   <target name="compile">

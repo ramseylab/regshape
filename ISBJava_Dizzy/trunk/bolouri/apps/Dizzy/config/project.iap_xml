@@ -1173,7 +1173,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.stderr.redirect]]></string>
-						<string><![CDATA[ins@APP_NAME@.log]]></string>
+						<string><![CDATA[@APP_INSTALLER_NAME@.log]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.heap.size.initial]]></string>
@@ -1257,7 +1257,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.stdout.redirect]]></string>
-						<string><![CDATA[ins@APP_NAME@.log]]></string>
+						<string><![CDATA[@APP_INSTALLER_NAME@.log]]></string>
 					</method>
 				</object>
 			</property>
@@ -1382,7 +1382,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<string><![CDATA[@APP_NAME@ v@APP_VERSION@]]></string>
 					</property>
 					<property name="installerName">
-						<string><![CDATA[ins@APP_NAME@]]></string>
+						<string><![CDATA[@APP_INSTALLER_NAME@]]></string>
 					</property>
 					<property name="productName">
 						<string><![CDATA[@APP_NAME@ v@APP_VERSION@]]></string>
