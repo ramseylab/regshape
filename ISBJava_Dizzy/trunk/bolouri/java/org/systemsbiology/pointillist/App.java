@@ -14,12 +14,13 @@ import org.systemsbiology.gui.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.data.*;
 import javax.swing.*;
-
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.prefs.*;
+import java.awt.*;
+import java.util.*;
 
 /**
  * @author sramsey
@@ -37,6 +38,8 @@ public class App extends JFrame
     private AppConfig mAppConfig;
     private File mInstallationDir;
     private File mWorkingDirectory;
+    private JLabel mMatlabConnectionLabel;
+    private HashMap mDataFrames;
     
     public static final String PREFERENCES_KEY_MATLAB_LOCATION = "matlabLocation";
     public static final String PREFERENCES_KEY_DATA_FILE_DELIMITER = "dataFileDelimiter";
@@ -44,8 +47,25 @@ public class App extends JFrame
     public static final String PREFERENCES_KEY_MATLAB_SCRIPTS_LOCATION = "matlabScriptsLocation";
     public static final String PREFERENCES_KEY_PVALUE_CUTOFF = "pvalueCutoff";
     public static final String DEFAULT_PVALUE_CUTOFF = "0.05";
+    public static final String MATLAB_CONNECTED = "matlab status: connected";
+    public static final String MATLAB_DISCONNECTED = "matlab status: disconnected";
     
     public static final DataFileDelimiter DEFAULT_DATA_FILE_DELIMITER = DataFileDelimiter.TAB;
+    
+    public JFrame getDataFrame(String pFileName)
+    {
+        return (JFrame) mDataFrames.get(pFileName);
+    }
+    
+    public void addDataFrame(String pFileName, JFrame pDataFrame)
+    {
+        mDataFrames.put(pFileName, pDataFrame);
+    }
+    
+    public void removeDataFrame(String pFileName)
+    {
+        mDataFrames.put(pFileName, null);
+    }
     
     public File getWorkingDirectory()
     {
@@ -115,6 +135,7 @@ public class App extends JFrame
     public App(String pName)
     {
         super(pName);
+        mDataFrames = new HashMap();
     }
     
     public void configureDefaultDataFileDelimiterPreference()
@@ -164,6 +185,26 @@ public class App extends JFrame
         return(APP_NAME);
     }
     
+    public void handleMatlabConnectionState(boolean pConnected)
+    {
+        MenuBar menu = getMenu();
+        
+        menu.setMenuItemEnabled(MenuBar.ACTION_NORMALIZE, pConnected);
+        menu.setMenuItemEnabled(MenuBar.ACTION_STATISTICAL_TESTS, pConnected);
+        menu.setMenuItemEnabled(MenuBar.ACTION_INTEGRATE, pConnected);
+        menu.setMenuItemEnabled(MenuBar.ACTION_MATLAB_CONNECT, !pConnected);
+        menu.setMenuItemEnabled(MenuBar.ACTION_MATLAB_DISCONNECT, pConnected);
+        
+        if(pConnected)
+        {
+            mMatlabConnectionLabel.setText(MATLAB_CONNECTED);
+        }
+        else
+        {
+            mMatlabConnectionLabel.setText(MATLAB_DISCONNECTED);
+        }
+    }
+    
     private void initializeFrame()
     {
         MenuBar menu = new MenuBar(this);
@@ -176,6 +217,14 @@ public class App extends JFrame
         });
         mMenu = menu;
         setJMenuBar(menu);
+        Container contentPane = getContentPane();
+        JLabel matlabConnectionLabel = new JLabel("");
+        Font plainFont = matlabConnectionLabel.getFont().deriveFont(Font.PLAIN);
+        matlabConnectionLabel.setFont(plainFont);
+        contentPane.add(matlabConnectionLabel);
+        mMatlabConnectionLabel = matlabConnectionLabel;
+        
+        handleMatlabConnectionState(false);
         pack();
         mFramePlacer = new FramePlacer();
         FramePlacer.placeInCenterOfScreen(this);
@@ -294,7 +343,7 @@ public class App extends JFrame
         setVisible(true);
     }
     
-    public void checkIfConnectedToMatlab()
+    public boolean checkIfConnectedToMatlab()
     {
         boolean connected = this.mMatlabConnectionManager.isConnected();
         if(! connected)
@@ -302,6 +351,7 @@ public class App extends JFrame
             JOptionPane.showMessageDialog(this, "Please connect to Matlab first, using the \"Connections\" menu", 
                 "Not connected to Matlab", JOptionPane.WARNING_MESSAGE);
         }
+        return connected;
     }
     
     public static final void main(String []pArgs)
