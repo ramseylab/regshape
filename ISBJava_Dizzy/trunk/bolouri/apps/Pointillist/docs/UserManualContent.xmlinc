@@ -789,14 +789,17 @@ Here is a screen shot of the Significance Calculator program:
     </blockquote>
     where the "<code>^</code>" character denotes exponentiation.  The default is "power".  
   </dd>
-  <dt><b>Initial p-value cutoff for a single evidence type</b></dt>
-  <dd>This type-in box is used to specify the significance cutoff used to build the initial
+  <dt><b>Initial quantile threshold for affected</b></dt>
+  <dd>This type-in box is used to specify the quantile for the significance cutoff 
+    used to build the initial
     set of "putatively affected" elements.  An element is placed in the initial set of
-    putatively affected elements if there is at least one evidence for which the element's significance
-    is less than this "initial p-value cutoff for a single evidence type"; thus, the
+    putatively affected elements if there is at least one evidence for which the quantile of the
+    element's significance
+    is less than this "initial quantile threshold for affected"; thus, the
     initial set is built greedily, and will likely be much larger than the true set of
     affected elements.  This value is initially set to a small default value; you may change
-    it to any positive-definite value.  If you are unsure what value to use, just use the default.</dd>
+    it to any positive-definite value less than 1.0.  If you are unsure what value to use, 
+    just use the default.</dd>
   <dt><b>Fraction of elements to move in each iteration</b></dt>
   <dd>This type-in box is used to specify the initial fraction of elements
     that can be changed from "affected" to "unaffected" within a given iteration.  It
@@ -838,15 +841,31 @@ Here is a screen shot of the Significance Calculator program:
     will cycle through the three different sorting states:  none, ascending, and descending.</dd>
   <dt><b>Results statistics</b></dt>
   <dd>This set of fields shows some statistics pertaining to the inference algorithm.
-    The "iterations" field indicates how many iterations of the inference algorithim
-    occurred before it exited.  The "final separation" field indicates the fraction
+    <ul>
+      <li><b>num iterations</b><br />
+           The "num iterations" field indicates how many iterations of the inference algorithim
+    occurred before it exited. 
+      </li>
+      <li><b>final separation</b><br />
+  The "final separation" field indicates the fraction
     of the area of the (smoothed, nonparametric) overall significance distribution for
     the putative affected elements that is nonoverlapping with the distribution for
-    the unaffected elements.  This value should be very close to 1.0.  The "alpha
-    parameter" field gives an indication of data independence between the different
+    the unaffected elements.  This value should be very close to 1.0.  
+      </li>
+      <li><b>alpha parameter</b><br />
+    The "alpha parameter" field gives an indication of data independence between the different
     evidence types, based on a ratio of the average of the product (over the evidences)
     of significances (over the putatively unaffected elements) to the product (over evidences)
-    of the average (over unaffected elements) of the significances.  It should be very close to 1.0.</dd>
+    of the average (over unaffected elements) of the significances.  It should be very close to 1.0; 
+    if it is not within the range 0.9-1.1, the value will be displayed in red, to indicate a 
+    warning to the user.        
+      </li>
+      <li><b>num affected</b><br />
+    The "num affected" field indicates how many elements were in the final putative
+    set of affected elements.
+      </li>
+    </ul>
+    </dd>
   <dt><b>Save weights</b></dt>
   <dd>This button saves the table of evidence-specific weights to a file.  The currently
     selected delimiter (see above) is used to delimit the columns of the data file
