@@ -10,6 +10,7 @@ public abstract class Simulator
 {
     private static final int DEFAULT_MULTISTEP_TIME_POINTS = 1000;
     private static final int NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION = 15;
+//    private static final int NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION = 10000;
 
     protected String []mDynamicSymbolNames;
     protected double []mDynamicSymbolValues;
@@ -87,12 +88,14 @@ public abstract class Simulator
         mSymbolEvaluator.setTime(pStartTime);
     }
 
-    private void handleMultistepReaction(Reaction pReaction,
-                                         ArrayList pReactions,
-                                         int pReactionIndex,
-                                         ArrayList pDynamicSpecies,
-                                         ArrayList pMultistepReactionSolvers,
-                                         MutableInteger pRecursionDepth)
+
+
+    public static void handleMultistepReaction(Reaction pReaction,
+                                               ArrayList pReactions,
+                                               int pReactionIndex,
+                                               ArrayList pDynamicSpecies,
+                                               ArrayList pMultistepReactionSolvers,
+                                               MutableInteger pRecursionDepth)
     {
         String reactionName = pReaction.getName();
 
@@ -132,56 +135,64 @@ public abstract class Simulator
         Reaction firstReaction = new Reaction(reactionName);
         firstReaction.setRate(rate);
         firstReaction.addReactant(reactant, 1);
-        String intermedSpeciesName = new String("multistep_species_" + product.getName() + "_" + pRecursionDepth);
+        String intermedSpeciesName = new String("multistep_species_" + reactionName + "_" + product.getName() + "_0");
         Compartment reactantCompartment = reactant.getCompartment();
         Species intermedSpecies = new Species(intermedSpeciesName, reactantCompartment);
         intermedSpecies.setSpeciesPopulation(0.0);
         firstReaction.addProduct(intermedSpecies, 1);
         pReactions.set(pReactionIndex, firstReaction);
+        pDynamicSpecies.add(intermedSpecies);
 
         numSteps--;
 
-        Reaction secondReaction = new Reaction("multistep_reaction_" + product.getName() + "_" + pRecursionDepth);
-        secondReaction.setRate(rate);
-        secondReaction.addReactant(intermedSpecies, 1);
-        secondReaction.addProduct(product, 1);
-        secondReaction.setNumSteps(numSteps);
-        pReactions.add(secondReaction);
-        pDynamicSpecies.add(intermedSpecies);
-
-        if(numSteps > 1)
+        if(numSteps < NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION)
         {
-            if(numSteps < NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION)
-            {
-                int recursionDepth = pRecursionDepth.getValue();
-                pRecursionDepth.setValue(recursionDepth + 1);
+            Species lastIntermedSpecies = intermedSpecies;
 
-                // expand into multiple reactions, for computational speed
-                handleMultistepReaction(secondReaction, 
-                                        pReactions, 
-                                        pReactions.size()-1, 
-                                        pDynamicSpecies, 
-                                        pMultistepReactionSolvers,
-                                        pRecursionDepth);
-            }
-            else
+            for(int ctr = 0; ctr < numSteps; ++ctr)
             {
-                // need to use gamma distribution approximation; leave as multi-step reaction;
-                // create a "multistep reaction solver" to store the time-series data for the reactant species
-                MultistepReactionSolver solver = new MultistepReactionSolver(reactant,
-                                                                             intermedSpecies,
-                                                                             DEFAULT_MULTISTEP_TIME_POINTS,
-                                                                             numSteps,
-                                                                             rate);
-                pMultistepReactionSolvers.add(solver);
-                secondReaction.setRate(solver);
+                Reaction reaction = new Reaction("multistep_reaction_" + reactionName + "_" + product.getName() + "_" + ctr);
+                reaction.setRate(rate);
+
+                reaction.addReactant(lastIntermedSpecies, 1);
+
+                if(ctr < numSteps - 1)
+                {
+                    intermedSpeciesName = new String("multistep_species_" + reactionName + "_" + product.getName() + "_" + (ctr + 1));
+                    intermedSpecies = new Species(intermedSpeciesName, reactantCompartment);                    
+                    intermedSpecies.setSpeciesPopulation(0.0);
+                    reaction.addProduct(intermedSpecies, 1);
+                    pDynamicSpecies.add(intermedSpecies);
+                    lastIntermedSpecies = intermedSpecies;
+                }
+                else
+                {
+                    reaction.addProduct(product, 1);
+                }
+
+                pReactions.add(reaction);
             }
         }
         else
         {
-            // this is a standard reaction; leave as single-step reaction
+            Reaction multistepReaction = new Reaction("multistep_reaction_" + reactionName + "_" + product.getName());
+            multistepReaction.setNumSteps(numSteps);
+            multistepReaction.addReactant(intermedSpecies, 1);
+            multistepReaction.addProduct(product, 1);
+            pReactions.add(multistepReaction);
+
+            // need to use gamma distribution approximation; leave as multi-step reaction;
+            // create a "multistep reaction solver" to store the time-series data for the reactant species
+            MultistepReactionSolver solver = new MultistepReactionSolver(reactant,
+                                                                         intermedSpecies,
+                                                                         DEFAULT_MULTISTEP_TIME_POINTS,
+                                                                         numSteps,
+                                                                         rate);
+            pMultistepReactionSolvers.add(solver);
+            multistepReaction.setRate(solver);
         }
     }
+
 
              
 

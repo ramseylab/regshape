@@ -244,6 +244,7 @@ public class Reaction extends SymbolValue
     {
         String speciesName = pSpecies.getName();
         Symbol extSymbol = (Symbol) pSymbolMap.get(speciesName);
+        assert (null != extSymbol) : "could not find species: " + speciesName;
         int extSpeciesIndex = extSymbol.getArrayIndex();
         if(Symbol.NULL_ARRAY_INDEX == extSpeciesIndex)
         {
