@@ -407,7 +407,6 @@ public class SignificanceCalculator
                 }
             }
         }
-//        System.out.println("obs min: " + obsMin + "; obs max: " + obsMax);
         
         double []controls = controlsList.elements();
         double []pdfs = mPDFs;
@@ -422,6 +421,9 @@ public class SignificanceCalculator
         double pdfInt = 0.0;
         
         double []xs = mXs;
+        
+        double pdfLeft = 0.0;
+        double pdfRight = 0.0;
         
         // build the probability distribution
         for(int k = 0; k < pNumBins; ++k)
@@ -440,6 +442,23 @@ public class SignificanceCalculator
             pdfs[k] = pdfx;
             pdfInt += pdfx*binSize;
         }
+        if(! pSingleTailed)
+        {
+            x = obsMin - 0.5*binSize;
+            for(int i = 0; i < numControlValues; ++i)
+            {
+                pdfLeft += Normal.pdf(controls[i], variance, x);
+            }
+            pdfLeft /= numControlsDouble;
+        }
+        x = obsMax + 0.5*binSize;
+        for(int i = 0; i < numControlValues; ++i)
+        {
+            pdfRight += Normal.pdf(controls[i], variance, x);
+        }
+        pdfRight /= numControlsDouble;
+        pdfInt += pdfLeft*binSize;
+        pdfInt += pdfRight*binSize;
 
         // need to rescale the probability distribution function to ensure it has unit integral
         for(int k = 0; k < pNumBins; ++k)
@@ -447,8 +466,10 @@ public class SignificanceCalculator
             pdfs[k] /= pdfInt;
 //            System.out.println("pdf[" + k + "] = " + pdfs[k]);
         }
+        pdfLeft /= pdfInt;
+        pdfRight /= pdfInt;
         
-        pdfInt = 0.0;
+        pdfInt = pdfLeft*binSize;
         double []cdfs = mCDFs;
         for(int k = 0; k < pNumBins; ++k)
         {
@@ -484,22 +505,21 @@ public class SignificanceCalculator
                 }
                 else if(kdouble <= 0.5)
                 {
-                    yLeft = 0.0;
+                    yLeft = pdfLeft*binSize;
                     yRight = cdfs[0];
                     //xLeft = xs[0] - binSize;
-                    xLeft = obsMin;
+                    xLeft = obsMin - 0.5*binSize;
                 }
                 else
                 {
                     yLeft = cdfs[pNumBins - 1];
-                    yRight = 0.0;
+                    yRight = yLeft + pdfRight*binSize;
                     xLeft = xs[pNumBins - 1];
                 }
                 
                 slope = (yRight - yLeft)/binSize;
                 
                 cdf = Math.min(1.0, yLeft + slope*(obsVal - xLeft));                
-                //System.out.println("obs: " + obsVal + "; k: " + k + "; xLeft: " + xLeft + "; yLeft: " + yLeft + "; yRight: " + yRight + "; cdf: " + cdf);
                 sig = 0.0;
                 
                 if(! pSingleTailed)
