@@ -1971,8 +1971,31 @@ Additional exporter plug-ins may be defined in the future.
 </p>
 </isb:docsubsection>
 
+<!-- ========== VIEWER PLUG-INS ========== -->
+
+<isb:docsubsection name="Viewer Plug-Ins" label="viewerplugins">
+  The &appName; system has a framework for pluggable model viewer
+  modules.  The viewer plugins are only available in the
+  <a href="#gui">graphical user interface</a> to &appName;  
+  A viewer is used to display a model, for example, a
+  graphical or textual representation on the screen.  This is 
+  distinct from <a href="#exporterplugins">exporting the model
+  to a different file format</a>.  Each model viewer plug-in has
+  an alias, which is a short texual name that identifies it.  The
+  full list of model viewers is defined here:
+  <blockquote>
+    <dl>
+      <dt><code>cytoscape</code>
+        </dt>
+        <dd><a href="#gui-cytoscape">Display the model in Cytoscape</a></dd>
+      <dt><code>human-readable</code></dt>
+      <dd><a href="#viewhuman">Display the model in human-readable format.</a></dd>
+    </dl>
+  </blockquote> 
+</isb:docsubsection>
+
 <!-- ========== SIMULATOR PLUG-INS ========== -->
-<isb:docsubsection name="Simulator Plug-Ins" label="simplugins">
+  <isb:docsubsection name="Simulator Plug-Ins" label="simplugins">
 <p>
 The &appName; system has a framework for pluggable simulation
 modules.  Each simulator plug-in has a simulator &quot;alias&quot;.
@@ -3675,8 +3698,9 @@ different formats:  <a href="#sbml">SBML</a> and <a href="#cmdl">CMDL</a>.
 Both of those formats may be subsequently loaded into the &appName; system.
 The export feature
 is used by selecting the &quot;Export...&quot; menu
-item from the &quot;Tools&quot; menu.  You will be presented with a dialog 
-box in which you must specify the file format for exporting the model instance.
+item from the &quot;Tools&quot; menu.  A sub-menu listing the available
+<a href="#exporterplugins"></a>export formats</a> appears.  By selecting one of these items, you are
+specifying the file format for exporting the model description.
 You will then be prompted to specify the file name and location for the file
 to which the model instance should be exported.  This feature is useful for
 converting, say, a CMDL model instance into a SBML model instance.   
@@ -3698,14 +3722,24 @@ and then select &quot;Reload&quot; to cause the simulation launcher to reload th
 </p>
 </isb:docsubsection>
 
+<isb:docsubsection name="View Model" label="gui-view">
+Once a model has been loaded into the edit buffer, you may view the 
+model by selecting &quot;View&quot; from the &quot;Tools&quot; menu.
+A sub-menu listing <a href="#viewerplugins">viewers</a> appears.  By
+selecting one of these items, you are specifying how you want to view the
+model.  The displayed format (graphical, textual, etc.) will depend on the 
+viewer selected.
+</isb:docsubsection>
 
 <isb:docsubsection name="Display in Cytoscape" label="gui-cytoscape">
 <p>
-A graphical representation of a model may be displayed by selecting the
-&quot;View in Cytoscape&quot; menu item from the &quot;Tools&quot; menu.
+A graphical representation of a model may be displayed by selecting 
+&quot;cytoscape&quot; from the &quot;View&quot; sub-menu under the &quot;Tools&quot; menu.
 This will cause a new window to open, in which the model is displayed
 as a directed graph, with species and reactions being represented as
-nodes in the graph.  An example of such a graph is shown here:
+nodes in the graph.  The new window is actually an instance of
+the <a href="&cytoscapeURL;">Cytoscape</a> application. 
+An example of such a graph is shown here:
 </p>
 <p>
 <img src="../images/screenshot6.png" alt="&appName; screenshot 6" />
@@ -3724,7 +3758,7 @@ Cytoscape program will be stored in a local cache on your computer.
 
 <isb:docsubsection name="View in human-readable format" label="viewhuman">
 <p>
-This menu item, under the &quot;Tools&quot; menu, is used to display
+This menu item, under the &quot;View&quot; sub-menu of the &quot;Tools&quot; menu, is used to display
 a human-readable representation of a model, in a dialog box.  When this
 menu item is selected, the model definition in the editor buffer 
 is processed by the appropriate parser, and the resulting model is 
