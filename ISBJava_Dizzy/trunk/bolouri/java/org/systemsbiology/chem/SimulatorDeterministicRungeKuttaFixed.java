@@ -54,7 +54,7 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
 
             if(maxRelativeError - relativeError < 0.0)
             {
-                throw new AccuracyException("numeric approximation error exceeded threshold; try a larger value for \"min number of timesteps\"");
+                throw new AccuracyException("numeric approximation error exceeded threshold; try a smaller value for \"fractional step size\"");
             }
 
             double maxAbsoluteError = mRKScratchPad.maxAbsoluteError;
@@ -62,7 +62,7 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
 
             if(maxAbsoluteError - absoluteError < 0.0)
             {
-                throw new AccuracyException("numeric approximation error exceeded threshold; try a larger value for \"min number of timesteps\"");
+                throw new AccuracyException("numeric approximation error exceeded threshold; try a smaller value for \"fractional step size\"");
             }
         }
 
