@@ -49,7 +49,7 @@ public final class EvidenceWeightedInferer
     private DoubleMatrix2D mEffectiveSignificances;
     private DoubleMatrix2D mNonzeroSignificances;
     private DoubleMatrix2D mSignificancesSorted;
-    
+    private DoubleMatrix1D mNumMissingData;
     private DoubleMatrix1D mDistNormAffected;
     private DoubleMatrix1D mDistNormUnaffected;
     
@@ -124,7 +124,8 @@ public final class EvidenceWeightedInferer
 
         mWeights = fac1d.make(mNumEvidences);
         mBiases = fac1d.make(mNumEvidences);
-
+        mNumMissingData = fac1d.make(mNumEvidences);
+        
         mDistributionCombinedSignificances = fac1d.make(mNumBins);
         mDistributionCombinedSignificancesAffected = fac1d.make(mNumBins);
         mDistributionCombinedSignificancesUnaffected = fac1d.make(mNumBins);
@@ -719,8 +720,10 @@ public final class EvidenceWeightedInferer
         
         // calculate the minimum nonzero evidence-specific significances
         double minSig = 0.0;
+        int numMissing;
         for(j = numEvidences; --j >= 0; )
         {
+            numMissing = 0;
             minSig = Double.MAX_VALUE;
             for(i = numElements; --i >= 0; )
             {
@@ -729,12 +732,17 @@ public final class EvidenceWeightedInferer
                 {
                     minSig = sigValue;
                 }
+                if(sigValue < 0.0)
+                {
+                    numMissing++;
+                }
             }
             if(minSig == Double.MAX_VALUE)
             {
                 throw new IllegalArgumentException("evidence type " + j + " has no non-zero significances; cannot proceed");
             }
             mMinimumNonzeroEvidenceSpecificSignificances.set(j, minSig);
+            mNumMissingData.set(j, numMissing);
         }
         
         // handle the special case of significances that are identically zero, by
@@ -744,12 +752,13 @@ public final class EvidenceWeightedInferer
         double minSigQuantile = 0.0;
         for(j = numEvidences; --j >= 0; )
         {
-            minSigQuantile = mSignificancesSorted.get(quantileIndex, j);
+            numMissing = (int) mNumMissingData.get(j);
+            minSigQuantile = mSignificancesSorted.get(quantileIndex + numMissing, j);
             minSig = mMinimumNonzeroEvidenceSpecificSignificances.get(j);
             
             if(minSig > minSigQuantile)
             {
-                throw new IllegalArgumentException("the lowest nonzero significance for evidence number " + j + " is above your initial cutoff; please increase your initial cutoff, or change the zero significances to small positive values.");
+                throw new IllegalArgumentException("the lowest nonzero significance for evidence number " + j + " is above your initial cutoff significance; please increase your initial cutoff, or change the zero significances to small positive values.");
             }
             for(i = numElements; --i >= 0; )
             {
@@ -773,7 +782,8 @@ public final class EvidenceWeightedInferer
             for(j = numEvidences; (--j >= 0) && (! affected); )
             {
                 sigValue = mNonzeroSignificances.get(i, j);
-                if(sigValue >= 0.0 && sigValue <= mSignificancesSorted.get(quantileIndex, j))
+                numMissing = (int) mNumMissingData.get(j);
+                if(sigValue >= 0.0 && sigValue <= mSignificancesSorted.get(quantileIndex + numMissing, j))
                 {
                     affected = true;
                     ++numAffected;
