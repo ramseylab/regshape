@@ -59,6 +59,10 @@ This document contains the version history for the
   <li>Modified <code>org.systemsbiology.inference.SignificancesData.loadFromFile()</code> so that 
     it will interpret a cell containing the string "null" (and not in the first row or first
     column of the data file) as an empty cell.</li>
+  <li>
+    Added the <code>org.systemsbiology.inference</code> package, which has code for
+    inferring a set of affected network elements from multiple evidence types.
+  </li>
 </ul>
 </td>
 </tr>
@@ -79,12 +83,6 @@ This document contains the version history for the
     which may help speed up the initialization process for the help browser.</li>
   <li>Removed <code>cytoscape.jar</code> that was mistakenly being included in the
     <code>ISBJava.tar.gz</code> distribution.</li>
-  <li>
-    Added the <code>org.systemsbiology.inference</code> package, which has code for
-    inferring a set of affected network elements from multiple evidence types.
-  </li>
-  <li>
-    
 </ul>
 </td>
 </tr>
