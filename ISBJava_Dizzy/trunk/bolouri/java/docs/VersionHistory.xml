@@ -38,6 +38,58 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.6.0/&installerDownloadRelURL;">1.6.0</a></td>
+<td>2004/03/08</td>
+<td>
+<ul>
+<li>Added a new stochastic simulator,
+<code>org.systemsbiology.chem.SimulatorStochasticGillespieTauLeap</code>.</li>
+<li>Made some performance improvements to the
+<code>org.systemsbiology.util.Queue</code> class, and added a new
+<code>peekNext()</code> method that is now used by the 
+<code>org.systemsbiology.chem.DelayedReactionSolver</code>.</li>
+<li>Made several speed improvements to the
+<code>org.systemsbiology.util.PriorityQueue</code> class, which
+also required a slight change to the
+<code>org.systemsbiology.util.IndexedPriorityQueue</code> class.</li>
+<li>Added the <code>getExpressionValue()</code> method to the
+<code>org.systemsbiology.math.Value</code> class and the
+<code>org.systemsbiology.math.SymbolEvaluator</code> class.</li>
+<li>Changed several classes to type <code>final</code>, to
+improve run-time performance.</li>
+<li>Added several new methods to the <code>Expression</code> class:
+<code>add()</code>, <code>multiply()</code>, <code>subtract()</code>
+<code>divide()</code>, <code>negate()</code>, and <code>square()</code>.  
+These new methods are used by the <code>SimulatorStochasticGillespieTauLeap</code> 
+simulator, and the <code>Reaction</code> class.</li>
+<li>Changed the <code>simulate()</code> method to return
+a <code>SimulationResults</code> object, to allow for different
+and more complex types of simulation results.</li>
+<li>Switched the <code>org.systemsbiology.chem.DelayedReactionSolver</code>
+to using a faster <code>Queue</code> data structure, instead of the
+slower <code>PriorityQueue</code> data structure.</li>
+<li>Added a feature whereby the <code>Simulator</code> classes are
+now capable of computing the fluctuations of dynamical symbols (species),
+at the final time point of the simulation.  For stochastic simulators,
+a direct ensemble average calculation is done to obtain the fluctuations,
+in <code>org.systemsbiology.chem.SimulatorStochasticBase</code>..
+For ODE simulators, the Jacobian of the model is used to obtain an
+estimate of the fluctuations, in 
+<code>org.systemsbiology.chem.SteadyStateAnalyzer</code>.</li>
+<li>Refactored the <code>org.systemsbiology.math.SymbolEvaluator</code>
+class and subclasses, to improve modularity and performance.  This
+resulted in the creation of the
+<code>org.systemsbiology.chem.ReservedSymbolMapperChemCommandLanguage</code>
+class, and the
+<code>org.systemsbiology.chem.SymbolEvaluationPostProcessorChemMarkupLanguage</code>
+class, and the removal of the
+<code>org.systemsbiology.chem.SymbolEvaluatorChemCommandLanguage</code> class and the
+<code>org.systemsbiology.chem.SymbolEvaluatorChemMarkupLanguage</code> class.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.5.2/&installerDownloadRelURL;">1.5.2</a></td>
 <td>2004/02/25</td>
 <td>
