@@ -216,7 +216,7 @@ public class SimulatorStochasticTauLeapComplex extends SimulatorStochasticTauLea
             for(int i = 0; i < numSpecies; ++i)
             {
                 species = mDynamicSymbols[i];
-                deriv = reaction.computeRatePartialDerivativeExpression(reactionRate, species, pSymbolEvaluator);
+                deriv = computeRatePartialDerivativeExpression(j, reactionRate, species, pSymbolEvaluator);
                 if(! deriv.isSimpleNumber())
                 {
                     partialDerivExpressions.add(deriv);
