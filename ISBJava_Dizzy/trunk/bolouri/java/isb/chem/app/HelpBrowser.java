@@ -36,6 +36,7 @@ public class HelpBrowser
                 if(null != helpPackageURL)
                 {
                     HelpSet hs = new HelpSet(null, helpPackageURL);
+                    hs.setTitle(theApp.getAppConfig().getAppName() + ": help");
                     HelpBroker hb = hs.createHelpBroker();
                     hb.setCurrentID(TOP_MAP_ID);
                     hb.setDisplayed(true);
