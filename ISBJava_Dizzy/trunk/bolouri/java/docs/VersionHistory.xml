@@ -56,6 +56,27 @@ and modified it to use the caching feature added to the
 <code>org.systemsbiology.chem.SimulatorStochasticGillespie</code> and
 <code>org.systemsbiology.chem.SimulatorStochasticGibsonBruck</code> 
 to use the expression value-caching feature in the <code>Value</code> class.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code> so that
+it remembers the directory of the last output file selected, when the output type
+is set to &quot;File&quot;.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code> so that
+the Cancel/Stop/Resume buttons are disabled in the OdeToJava simulators, which do
+not allow interruption by the <code>org.systemsbiology.chem.SimulationController</code>.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code> and the
+<code>org.systemsbiology.chem.TimeSeriesSymbolValuesReporter</code> so that different
+CSV output file formats are supported, for saving simulation results to a file.  This
+also makes it more clear that the choice of
+&quot;File&quot; output type, refers to a comma-separated-value file format.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.MainApp</code> and <code>.MainMenu</code> 
+classes so that they now support the &quot;view model in human-readable format&quot; feature.
+Created a new <code>org.systemsbiology.chem.scripting.ModelExporterHumanReadable</code> model
+exporter, to allow for saving a model description in human-readable format.</li>
+<li>Modified the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>
+to fix a hard-to-understand error message that occurs when there is a syntax error inside 
+nested loops.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code> to permit
+the user to specify a texual label that is added as a subtitle to the simulation results 
+plot.</li>
 </ul>
 </td>
 

@@ -52,6 +52,26 @@ This document contains the version history for the
 by a factor of five.  Slightly improved the speed of the simulators 
 for the case of simple models (all elementary
 reactions, no custom reaction rates).</li>
+<li>Modified the simulation launcher so that it remembers the directory
+of the last output file selected, when the output type is &quot;File&quot;.</li>
+<li>Modified the simulation launcher so that the Cancel/Stop/Resume 
+buttons are disabled in the OdeToJava simulators, which do
+not allow interruption by the simulation launcher.</li>
+<li>Modified the simulation launcher so that different comma-separated-output
+(CSV) output file formats are supported, for saving simulation results to a file.
+Currently there are three options:  CSV-excel, CSV-gnuplot, and CSV-matlab.
+The only difference currently is the choice of character that is used to designate
+the &quot;comment&quot; line, which is the first line of the output file.  This
+also makes it more clear that the choice of &quot;File&quot; output type, 
+refers to a comma-separated-value file format.</li>
+<li>Added a new &quot;view model in human-readable format&quot; feature which displays
+a model description in &quot;human-readable&quot; format, in a dialog box.
+Added an exporter plug-in so that it is possible to save the model description in the
+same human-readable format to a file, using the &quot;Export&quot; menu item.</li>
+<li>Modified the command language parser to fix a hard-to-understand error message 
+that occurs when there is a syntax error inside nested loops.</li>
+<li>Modified the simulation launcher to permit the user to optionally specify a 
+texual label that is added as a subtitle to the simulation results plot.</li>
 </ul>
 </td>
 <td><a href="&javaURL;/1.4.0/&installerDownloadRelURL;">1.4.0</a></td>
