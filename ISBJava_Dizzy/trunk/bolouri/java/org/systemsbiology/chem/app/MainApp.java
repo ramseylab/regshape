@@ -23,7 +23,6 @@ public class MainApp
     private MainMenu mMainMenu;
     private SimulationLauncher mSimulationLauncher;
     private AppConfig mAppConfig;
-    private File mAppDir;
     private ClassRegistry mModelBuilderRegistry;
     private ClassRegistry mModelExporterRegistry;
     private ClassRegistry mModelViewerRegistry;
@@ -67,12 +66,7 @@ public class MainApp
     {
         return(mEditorPane);
     }
-
-    File getAppDir()
-    {
-        return(mAppDir);
-    }
-
+    
     ClassRegistry getModelBuilderRegistry()
     {
         return(mModelBuilderRegistry);
@@ -98,11 +92,6 @@ public class MainApp
         mModelExporterRegistry = pModelExporterRegistry;
     }
 
-
-    private void setAppDir(File pAppDir)
-    {
-        mAppDir = pAppDir;
-    }
 
     private void setAppConfig(AppConfig pAppConfig)
     {
@@ -316,29 +305,6 @@ public class MainApp
         }
     }
 
-    private void initializeAppConfig(String pAppDir) throws DataNotFoundException, InvalidInputException, FileNotFoundException
-    {
-        
-        AppConfig appConfig = null;
-        if(null == pAppDir)
-        {
-            // we don't know where we are installed, so punt and look for 
-            // the config file as a class resource:
-            appConfig = new AppConfig(MainApp.class);
-        }
-        else
-        {
-            File appDirFile = new File(pAppDir);
-            if(! appDirFile.exists())
-            {
-                throw new DataNotFoundException("could not find application directory: " + pAppDir);
-            }
-            setAppDir(appDirFile);
-            String configFileName = appDirFile.getAbsolutePath() + "/config/" + AppConfig.CONFIG_FILE_NAME;
-            appConfig = new AppConfig(new File(configFileName));
-        }
-        setAppConfig(appConfig);
-    }
 
     String getName()
     {
@@ -443,11 +409,10 @@ public class MainApp
         if(pArgs.length > 0)
         {
             appDir = pArgs[0];
-            appDir = FileUtils.fixWindowsCommandLineDirectoryNameMangling(appDir);
         }
 
-        initializeAppConfig(appDir);
-
+        setAppConfig(AppConfig.get(MainApp.class, appDir));
+        
         ClassRegistry modelBuilderRegistry = new ClassRegistry(org.systemsbiology.chem.IModelBuilder.class);
         modelBuilderRegistry.buildRegistry();
         setModelBuilderRegistry(modelBuilderRegistry);
