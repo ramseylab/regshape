@@ -822,7 +822,8 @@ public class SignificanceCalculatorDriver
         JScrollPane observationsScrollPane = new JScrollPane(observationsTable);
         observationsScrollPane.setBorder(BorderFactory.createEtchedBorder());
         observationsScrollPane.setPreferredSize(new Dimension(500, 200));
-        observationsScrollPane.setMaximumSize(new Dimension(500, 200));
+        observationsScrollPane.setMinimumSize(new Dimension(500, 200));
+        observationsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridwidth = GridBagConstraints.REMAINDER;

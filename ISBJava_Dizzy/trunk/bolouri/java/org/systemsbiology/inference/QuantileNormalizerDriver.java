@@ -207,7 +207,8 @@ public class QuantileNormalizerDriver
         gridLayout.setConstraints(appHelpButton, constraints);        
         
         JTable observationsTable = new JTable();
-        mObservationsTable = observationsTable;        
+        mObservationsTable = observationsTable;
+        observationsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         JScrollPane observationsScrollPane = new JScrollPane(observationsTable);
         observationsScrollPane.setBorder(BorderFactory.createEtchedBorder());
         observationsScrollPane.setPreferredSize(new Dimension(500, 200));
@@ -331,6 +332,7 @@ public class QuantileNormalizerDriver
         
         // create results table
         mResultsTable = new JTable();
+        mResultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         JScrollPane resultsPane = new JScrollPane(mResultsTable);
         resultsPane.setBorder(BorderFactory.createEtchedBorder());
         resultsPane.setPreferredSize(new Dimension(500, 250));

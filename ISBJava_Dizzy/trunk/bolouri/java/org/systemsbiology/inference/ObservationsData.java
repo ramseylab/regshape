@@ -70,7 +70,7 @@ public class ObservationsData implements Cloneable
         mEvidenceNames[pEvidenceNumber] = pEvidenceName;
     }
     
-    public void loadFromDataArray(ObservationsData []pObservationsDataArray)
+    public void mergeDataArray(ObservationsData []pObservationsDataArray, boolean pAllowDuplicates)
     {
         int numFiles = pObservationsDataArray.length;
         ObservationsData obsData = null;
@@ -147,8 +147,14 @@ public class ObservationsData implements Cloneable
         ObjectMatrix2D masterMat = ObjectFactory2D.dense.make(totalNumElements, totalNumEvidences);
         masterMat.assign((Object) null);
         
+        DoubleMatrix2D divisorMat = DoubleFactory2D.dense.make(totalNumElements, totalNumEvidences);
+        divisorMat.assign(1.0);
+        
         int ip = 0;
         int jp = 0;
+        
+        Double insertVal = null;
+        Double existingObs = null;
         
         for(k = 0; k < numFiles; ++k)
         {
@@ -167,13 +173,42 @@ public class ObservationsData implements Cloneable
                     if(null != obsObj)
                     {
                         ip = ((Integer) tempElements.get(i)).intValue();
-                        if(null != masterMat.get(ip, jp))
+                        existingObs = (Double) masterMat.get(ip, jp);
+                        if(null != existingObs)
                         {
-                            throw new IllegalArgumentException("conflicting data for element \"" + elementNames[ip] + 
-                                      "\" and evidence \"" +
-                                      evidenceNames[jp] + "\"");
+                            if(pAllowDuplicates)
+                            {
+                                insertVal = new Double(existingObs.doubleValue() + obsObj.doubleValue());
+                                divisorMat.set(ip, jp, divisorMat.get(ip, jp) + 1.0);
+                            }
+                            else
+                            {
+                                throw new IllegalArgumentException("element \"" + elementNames[ip] + "\" has a duplicate observation, in evidence \"" + evidenceNames[jp] + "\"");
+                            }
                         }
-                        masterMat.set(ip, jp, obsObj);
+                        else
+                        {
+                            insertVal = obsObj;
+                        }
+                        masterMat.set(ip, jp, insertVal);
+                    }
+                }
+            }
+        }
+        
+        double divisor = 0.0;
+        for(j = 0; j < totalNumEvidences; ++j)
+        {
+            for(i = 0; i < totalNumElements; ++i)
+            {
+                obsObj = (Double) masterMat.get(i, j);
+                if(null != obsObj)
+                {
+                    divisor = divisorMat.get(i, j);
+                    if(divisor > 1.0)
+                    {
+                        obsObj = new Double(obsObj.doubleValue() / divisor);
+                        masterMat.set(i, j, obsObj);
                     }
                 }
             }

@@ -31,6 +31,7 @@ import javax.swing.JList;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -96,7 +97,11 @@ public class DataManagerDriver
     private JComboBox mSortStatusEvidence;
     private SortStatus []mSortStatuses;
     private JButton mSaveSelectedColumnsButton;
+    private JLabel mElementSortStatusLabel;
+    private JLabel mEvidenceSortStatusLabel;
+    private JCheckBox mAllowDuplicatesBox;
     
+    private static final boolean DEFAULT_ALLOW_DUPLICATES = true;
     private static final String TOOL_TIP_SAVE_SELECTED_COLUMNS = "Save only the columns that you have selected in the data table, to a file.";
     private static final String TOOL_TIP_SORT_STATUS_EVIDENCE = "Specify the sorting status for the evidences (none, ascending, descending).";
     private static final String TOOL_TIP_SORT_STATUS_ELEMENT = "Specify the sorting status for the elements (none, ascending, descending).";
@@ -160,7 +165,7 @@ public class DataManagerDriver
                     }
                 });
         
-        mMoveFileUpButton = new JButton("move selected file up in list");
+        mMoveFileUpButton = new JButton("move file up");
         fileButtonPanel.add(mMoveFileUpButton);
         mMoveFileUpButton.addActionListener(
                 new ActionListener()
@@ -190,6 +195,15 @@ public class DataManagerDriver
         
         firstRowPanel.add(delimitersPanel);
         
+        JPanel allowDuplicatesPanel = new JPanel();
+        JLabel allowDuplicatesLabel = new JLabel("allow duplicates: ");
+        allowDuplicatesPanel.add(allowDuplicatesLabel);
+        mAllowDuplicatesBox = new JCheckBox();
+        mAllowDuplicatesBox.setSelected(DEFAULT_ALLOW_DUPLICATES);
+        allowDuplicatesPanel.add(mAllowDuplicatesBox);
+        
+        firstRowPanel.add(allowDuplicatesPanel);
+        
         JButton appHelpButton = new JButton();
         ImageIcon helpIcon = IconFactory.getIconByName(RESOURCE_HELP_ICON);
 
@@ -207,8 +221,7 @@ public class DataManagerDriver
             {
                 handleHelp();
             }
-                });
-              
+                });            
 
         
         appHelpButton.setToolTipText(TOOL_TIP_HELP);
@@ -280,14 +293,13 @@ public class DataManagerDriver
                         setToolTipsForFields(null != mData);
                     }
                 });
-        
+        mDataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         mDataTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         mDataTable.setRowSelectionAllowed(false);
         mDataTable.setColumnSelectionAllowed(true);
         JScrollPane dataTablePane = new JScrollPane(mDataTable);
         dataTablePane.setPreferredSize(new Dimension(800, 300));
         dataTablePane.setMinimumSize(new Dimension(800, 300));
-        
         
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -302,7 +314,8 @@ public class DataManagerDriver
         
         
         JPanel sortPanel = new JPanel();
-        sortPanel.add(new JLabel("element sort status: "));
+        mElementSortStatusLabel = new JLabel("element sort status: ");
+        sortPanel.add(mElementSortStatusLabel);
         JPanel elementStatusPanel = new JPanel();
         SortStatus []sortStatuses = SortStatus.getAll();
         mSortStatuses = sortStatuses;
@@ -322,7 +335,8 @@ public class DataManagerDriver
                         handleElementSortStatusChange();
                     }
                 });
-        sortPanel.add(new JLabel("evidence sort status: "));
+        mEvidenceSortStatusLabel = new JLabel("evidence sort status: ");
+        sortPanel.add(mEvidenceSortStatusLabel);
         mSortStatusEvidence = new JComboBox(sortStatusNames);
         sortPanel.add(mSortStatusEvidence);
         mSortStatusEvidence.addItemListener(
@@ -644,7 +658,7 @@ public class DataManagerDriver
         }
         boolean newObservationsTableModel = (null == mData);
         mData = new ObservationsData();
-        mData.loadFromDataArray(dataArray);
+        mData.mergeDataArray(dataArray, mAllowDuplicatesBox.isSelected());
         ObservationsTableModel tableModel = null;
         if(! newObservationsTableModel)
         {
@@ -697,6 +711,8 @@ public class DataManagerDriver
         mSortStatusEvidence.setEnabled(pFileLoaded);
         boolean showSaveSelectedColumns = pFileLoaded && (mDataTable.getSelectedColumnCount() > 0);
         mSaveSelectedColumnsButton.setEnabled(showSaveSelectedColumns);
+        mElementSortStatusLabel.setEnabled(pFileLoaded);
+        mEvidenceSortStatusLabel.setEnabled(pFileLoaded);
     }
     
     private void setToolTipsForFields(boolean pFileLoaded)
@@ -759,6 +775,7 @@ public class DataManagerDriver
         setDefaultSortStatusOnControls();
         handleEvidenceSortStatusChange();
         handleElementSortStatusChange();
+        mAllowDuplicatesBox.setSelected(DEFAULT_ALLOW_DUPLICATES);
     }
     
     private void handleMessage(String pMessage, String pTitle, int pMessageType)
@@ -889,7 +906,7 @@ public class DataManagerDriver
     
     private void run(String []pArgs)
     {
-        String programName = "Data Manager";
+        String programName = "Data Manager"; 
         if(pArgs.length > 0)
         {
             programName = pArgs[0] + ": " + programName;

@@ -914,6 +914,7 @@ public class EvidenceWeightedInfererDriver
         scrollPane.setBorder(BorderFactory.createEtchedBorder());
         scrollPane.setPreferredSize(new Dimension(500, 250));
         scrollPane.setMaximumSize(new Dimension(500, 250));
+        significancesTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
