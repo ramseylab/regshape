@@ -86,6 +86,19 @@ This document contains the version history for the
   Fixed confusing error messages in the Runge-Kutta simulator with fixed step-size,
   for the case when the relative error tolerance is exceeded.
 </li>
+<li>
+  Modified the simulation launcher screen and the command-line simulation launcher program
+  to permit disabling the error checking in the fixed-stepsize Runge-Kutta simulator
+  (<code>ODE-RK5-fixed</code>).  In the simulation launcher screen, the error checking
+  is disabled by deleting the relative and/or absolute error tolerance parameters in the 
+  corresponding text entry boxes.  In the simulation launcher command-line program,
+  the error checking is disabled by passing an argument modifier "null" after the
+  corresponding command-line argument, such as 
+  <blockquote>
+    <pre>-relativeTolerance null</pre>
+  </blockquote>
+  Each of the error types can be disabled separately, or they can be disabled together.
+</li>
 </ul>
 </td>
 </tr>
