@@ -205,7 +205,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
         for(int speciesCtr = 0; speciesCtr < numSpecies; ++speciesCtr)
         {
             String speciesName = mMarkupLanguageImporter.getNthBoundarySpeciesName(speciesCtr);
-            String compartmentName = mMarkupLanguageImporter.getNthFloatingSpeciesCompartmentName(speciesCtr);
+            String compartmentName = mMarkupLanguageImporter.getNthBoundarySpeciesCompartmentName(speciesCtr);
             Compartment compartment = (Compartment) compartmentsMap.get(compartmentName);
             if(null == compartment)
             {
