@@ -94,7 +94,7 @@ It can build installers for a variety of platforms, and can (on some
 platforms) provide an installer that does not require the target
 computer to already have a functioning Java Runtime Environment installed.
 <p />
-The InstallAnywhere program is installed on the shared Linux computer,
+The InstallAnywhere program is installed on the <a href="#sharedlinux">shared Linux computer</a>,
 in the directory:
 <blockquote>
 <pre>
@@ -114,7 +114,7 @@ is available online.
 </isb:docsubsection>
 
 <isb:docsubsection name="Matlab" label="matlab">
-The basic Matlab package  is installed on the shared Linux computer, in the
+The basic Matlab package  is installed on the <a href="#sharedlinux">shared Linux computer</a>, in the
 directory:
 <blockquote>
 <pre>
@@ -137,7 +137,7 @@ on that computer (due to cost reasons).
 
 <isb:docsubsection name="Mathematica" label="mathematica">
 <p>
-Mathematica is installed on the shared Linux computer, in the directory:
+Mathematica is installed on the <a href="#sharedlinux">shared Linux computer</a>, in the directory:
 <blockquote>
 <pre>
 /usr/local/Wolfram/Mathematica/5.0
@@ -180,7 +180,7 @@ malfunction.
 </isb:docsubsection>
 
 <isb:docsubsection name="JProfiler" label="jprofiler">
-JProfiler is installed on the shared Linux computer.  This program
+JProfiler is installed on the <a href="#sharedlinux">shared Linux computer</a>.  This program
 is a code profiler and optimizer for the Java language.  It is
 installed in the directory:
 <blockquote>

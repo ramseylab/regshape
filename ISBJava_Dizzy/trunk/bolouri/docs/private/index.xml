@@ -26,11 +26,16 @@
 </isb:docsection>
 
 
-<isb:docsection name="Links" label="links">
+<isb:docsection name="Group Stuff" label="groupstuff">
 <ul>
-<li><a href="../Resources.html">&mainGroup; Resources Page</a></li>
-<li><a href="../models">&mainGroup; Model Repository</a></li>
-<li><a href="GroupMeetings.html">Bolouri Group Meetings schedule</a></li>
+<li><a href="../Resources.html">Resources Page</a></li>
+<li><a href="../models">Model Repository</a></li>
+<li><a href="GroupMeetings.html">Meetings schedule</a></li>
+</ul>
+</isb:docsection>
+
+<isb:docsection name="External Links" label="extlinks">
+<ul>
 <li><a href="http://intranet.systemsbiology.net">&mainAffiliation; Intranet</a></li>
 <li><a href="http://www.sbw-sbml.org">SBW/SBML Project</a></li>
 <li><a href="http://www.cytoscape.org">Cytoscape Project</a></li>
@@ -40,6 +45,7 @@
 </td>
 <td>
 
+
 <isb:docsection name="Documents" label="documents">
 <ul>
 <li><a href="WebPagesManagementManual.html">Web Pages Management Manual</a></li>
@@ -48,9 +54,17 @@
 </ul>
 </isb:docsection>
 
-<isb:docsection name="Software Tools" label="softwaremanuals">
+<isb:docsection name="Software Tools Info" label="softwaremanuals">
 <ul>
-<li><a href="SoftwareTools.html">Software Tools Page</a> (Matlab, Mathematica, etc.)</li>
+<li><a href="SoftwareTools.html">Software Tools Page</a> 
+
+<ul>
+<li><a href="SoftwareTools.html#matlab">Matlab</a></li>
+<li><a href="SoftwareTools.html#mathematica">Mathematica</a></li>
+<li><a href="SoftwareTools.html#jprofiler">JProfiler</a></li>
+<li><a href="SoftwareTools.html#installanywhere">InstallAnywhere</a><br />&nbsp;</li>
+</ul>
+</li>
 <li><a href="&privateRepositoryURL;/InstallAnywhere5_UserManual.pdf">InstallAnywhere User Manual (PDF)</a></li>
 <li><a href="&privateRepositoryURL;/CVSManual.pdf">CVS User Manual (PDF)</a></li>
 </ul>
@@ -93,6 +107,9 @@
 </tr>
 <tr>
 <td><b>Alistair Rust</b></td><td>Senior Researcher</td><td>206-732-1294</td><td><font size="-1"><code>arust at systemsbiology.org</code></font></td><td><a href="&internalWebServerURL;/~arust" target="_new">home page</a></td>
+</tr>
+<tr>
+<td><b>Lesley Wilkerson</b></td><td>Administrator</td><td>206-732-1301</td><td><font size="-1"><code>lwilkerson at systemsbiology.org</code></font></td><td>&nbsp;</td>
 </tr>
 </table>
 </blockquote>
