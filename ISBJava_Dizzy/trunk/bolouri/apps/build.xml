@@ -4,35 +4,42 @@
 
   <target name="compile">
     <ant dir="${basedir}/Dizzy" target="compile" />
+    <ant dir="${basedir}/Pointillist" target="compile" />
     <ant dir="${basedir}/BioTapestry" target="compile" />
   </target>
 
   <target name="clean">
     <ant dir="${basedir}/Dizzy" target="clean" />
+    <ant dir="${basedir}/Pointillist" target="clean" />
     <ant dir="${basedir}/BioTapestry" target="clean" />
   </target>
 
   <target name="buildHTML">
     <ant dir="${basedir}/Dizzy" target="buildHTML" />
+    <ant dir="${basedir}/Pointillist" target="buildHTML" />
     <ant dir="${basedir}/BioTapestry" target="buildHTML" />
   </target>
 
   <target name="buildPDF">
     <ant dir="${basedir}/Dizzy" target="buildPDF" />
+    <ant dir="${basedir}/Poitillist" target="buildPDF" />
     <ant dir="${basedir}/BioTapestry" target="buildPDF" />
   </target>
 
   <target name="buildInstallers">
     <ant dir="${basedir}/Dizzy" target="buildInstallers" />
+    <ant dir="${basedir}/Pointillist" target="buildInstallers" />
   </target>
 
   <target name="copyCommonConfig">
 	<ant dir="${basedir}/Dizzy" target="copyCommonConfig" />
+	<ant dir="${basedir}/Pointillist" target="copyCommonConfig" />
   	<ant dir="${basedir}/BioTapestry" target="copyCommonConfig" />
   </target>
   	
   <target name="build">
     <ant dir="${basedir}/Dizzy" target="build" />
+    <ant dir="${basedir}/Pointillist" target="build" />
     <ant dir="${basedir}/BioTapestry" target="build" />
   </target>
 
