@@ -38,6 +38,19 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.4.1/&installerDownloadRelURL;">1.4.1</a></td>
+<td>2004/02/02</td>
+<td>
+<ul>
+<li>Fixed a bug in <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>
+where an exception is thrown if an include directive occurs after a symbol definition.</li>
+<li>Modified the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>
+so that it gives a more comprehensible error message if the user attempts to define
+a symbol name that is reserved for a default model element.</li>
+</ul>
+</td>
+
+<tr valign="top">
 <td><a href="../1.4.0/&installerDownloadRelURL;">1.4.0</a></td>
 <td>2004/01/30</td>
 <td>
