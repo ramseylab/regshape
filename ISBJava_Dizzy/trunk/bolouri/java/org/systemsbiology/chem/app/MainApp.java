@@ -10,6 +10,7 @@ package org.systemsbiology.chem.app;
 
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
+import org.systemsbiology.chem.cytoscape.CytoscapeViewer;
 import org.systemsbiology.gui.*;
 import javax.swing.*;
 import java.awt.*;
