@@ -26,6 +26,8 @@ import org.systemsbiology.math.*;
 public class ImageTransferHandler extends TransferHandler {
 
 
+    private static final int IMAGE_SIZE_TEST = 10;
+
     private static final DataFlavor flavors[];
 
     static
@@ -79,11 +81,11 @@ public class ImageTransferHandler extends TransferHandler {
     public static boolean checkDoesSystemClipboardSupportImageTransfer()
     {
         JLabel testLabel = new JLabel();
-        BufferedImage bufImg = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufImg = new BufferedImage(IMAGE_SIZE_TEST, IMAGE_SIZE_TEST, BufferedImage.TYPE_INT_RGB);
         ImageIcon imageIcon = new ImageIcon(bufImg);
         testLabel.setIcon(imageIcon);
         MutableBoolean testSucceeded = new MutableBoolean(false);
-        Transferable transferable = createTransferableImage(10, 10, imageIcon.getImage(), testSucceeded);
+        Transferable transferable = createTransferableImage(IMAGE_SIZE_TEST, IMAGE_SIZE_TEST, imageIcon.getImage(), testSucceeded);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferable, null);
         return(testSucceeded.getValue());
     }
