@@ -2678,106 +2678,142 @@ body of the template.
 The following example illustrates a complete CMDL model definition file:
 <blockquote>
 <pre>
-//
-// singlegene&cmdlFileExtension;
-//
-// This document contains a model description of a
-// simple stochastic model of the transcription of
-// a single gene, with two transcription factors
-// TFA and TFB. The length of the coding region is
-// a parameter that is defined at the top of the 
-// file.  
-//
-// The rate constants and initial populations are
-// not taken from any experiments; the purpose of
-// this model is just to explore the effects of
-// stochasticity in comparsion to deterministic 
-// dynamics.
-//
-// The model description is in the CMDL
-// (Chemical Model Definition Language)
-// language, and is meant to be parsed by the
-// "&appName;" software system.  For more information,
-// please refer to the home page for the &appName;
-// software system,
+// Simple model of transcription, in Escherichia coli
+// Written by:  Stephen Ramsey, October 10, 2004
+// Institute for Systems Biology, Seattle, Washington, USA
 // 
-// http://labs.systemsbiology.net/bolouri/&appName;
-//
-//
-// Author:  Stephen Ramsey
-// Date:    2003/04/09 (revised 2003/07/17)
-//
+#model "bacteria";
 
-minBases                 = 45;
-codingRegionLengthBases  = 1000.0;
-transcriptionRate        = 1.0;
-abortProbPerBase         = 0.005;
-
-// setting the initial populations for the chemical species in the model:
-TFA                                   = 5;
-TFB                                   = 5;
-DNA_plus_TFA                          = 0;
-DNA_plus_TFB                          = 0;
-DNA_plus_TFC                          = 0;
-DNA                                   = 1;
-"PCOM_plus_DNA_past_base_[minBases]"  = 0;
-mRNA_product_complete                 = 0;
-mRNA_product_fragment                 = 0;
-PolII                                 = 5;
-
-loop (i, 1, minBases)
+#define fracSatTwoStatesTwoSitesOR( kfp, krp, qp, f0, fracsat )
 {
-        "PCOM_plus_DNA_at_base_[i]"    = 0;
+        kp = kfp / krp;
+        kpf0 = [kp * f0];
+        kpf0_2 = [ kpf0*kpf0 ];
+        numerator = [ qp*kpf0_2 + 
+                      2.0 * kpf0 ];
+        fracsat = [ numerator / (numerator + 1.0) ];
 }
 
-// polymerization complex moving one base along the template
-loop (i, 1, minBases-1)
-{
-"PCOM_moves_one_base_at_base_[i]", "PCOM_plus_DNA_at_base_[i]" -&gt; "PCOM_plus_DNA_at_base_[i+1]",  transcriptionRate;
-}
+cellVolume = 2.5 * 10^(-15); // Liters
+halfLifeMRNA = 5.0; // minutes
+halfLifeProtein = 60.0; // minutes
+transcriptLength = 1000.0;
+proteinLength = transcriptLength / 3.0;  // peptides
+transcriptionTranslocationRate = 2400.0; // nucleotides/minute
+translationTranslocationRate = 96.0; // codons / minute
+minimumInterRibosomeDistanceCodons = 26.6; // codons
+ribosomeMoleculesPerCell = 20000.0;
+mrnaMoleculesPerGene = 15.0;
+rnapMoleculesPerCell = 2000.0;
+proteinToMRNARatio = 600.0; // dimensionless
+protMoleculesPerGene = proteinToMRNARatio * mrnaMoleculesPerGene;
 
-// polymerization complex moving past the "minBases" threshold
-PCOM_passing_threshold, "PCOM_plus_DNA_at_base_[minBases]" -&gt; DNA_plus_TFC + "PCOM_plus_DNA_past_base_[minBases]",  transcriptionRate;
+// --------------------------------------
+// species
+// --------------------------------------
 
-// recruitment of PolII
-PolII_recruitment,    DNA_plus_TFC + PolII -&gt; PCOM_plus_DNA_at_base_1,   1.0;
-PolII_derecruitment,  PCOM_plus_DNA_at_base_1 -&gt; DNA_plus_TFC + PolII,   0.1;
+transfac = 61.0; 
 
-// completion of transcription process
-transcription_completed,   "PCOM_plus_DNA_past_base_[minBases]" -&gt; PolII + mRNA_product_complete, transcriptionRate/codingRegionLengthBases;
+-&gt; transfac, 61.0;
+transfac -&gt;, 1.0;
 
-// aborting of transcription within the first "minBases" bases
-loop (i, 2, minBases)
-{
-"abort_at_base_[i]",   "PCOM_plus_DNA_at_base_[i]" -&gt; DNA_plus_TFC + PolII + mRNA_product_fragment, abortProbPerBase;
-}
+kfp = 6.25 * 10^(-4);
+krp = 1.0;
+qp = 7.5;
 
-// aborting of late-state transcription
-aborting_past_threshold,  "PCOM_plus_DNA_past_base_[minBases]" -&gt; PolII + mRNA_product_fragment, transcriptionRate * abortProbPerBase / codingRegionLengthBases;
+#ref fracSatTwoStatesTwoSitesOR "twoSitesOR" (kfp, krp, qp, transfac, 
+                                              fracsat_twoSitesOR);
 
-// transcription factor A binding to empty DNA template
-TFA_binding_DNA,            DNA + TFA -&gt; DNA_plus_TFA,                  1.0;
-TFA_debinding_DNA,          DNA_plus_TFA -&gt; DNA + TFA,                  0.1;
+fracsat = [fracsat_twoSitesOR];
 
-// transcription factor B binding to empty DNA template
-TFB_binding_DNA,            DNA + TFB -&gt; DNA_plus_TFB,                  1.0;
-TFB_debinding_DNA,          DNA_plus_TFB -&gt; DNA + TFB,                  0.1;
+gene = 1.0;
+rnap = rnapMoleculesPerCell;
+mrna = 0.0;
+protein = 0.0;
+ribosome = ribosomeMoleculesPerCell;
 
-// transcription factor A binding to DNA template (where B is already bound)
-TFA_binding_DNA_plus_TFB,   DNA_plus_TFB + TFA -&gt; DNA_plus_TFC,         1.0;
-TFA_debinding_DNA_plus_TFB, DNA_plus_TFC -&gt; DNA_plus_TFB + TFA,         0.1;
+startTranscript = 0.0;
+mrna = 0.0;
+finishTranscript = 0.0;
 
-// transcription factor B binding to DNA template (where A is already bound)
-TFB_binding_DNA_plus_TFA,   DNA_plus_TFA + TFB -&gt; DNA_plus_TFC,         1.0;
-TFB_debinding_DNA_plus_TFA, DNA_plus_TFC -&gt; DNA_plus_TFA + TFB,         0.1;
+startProtein = 0.0;
+protein = 0.0;
+finishProtein = 0.0;
+
+// --------------------------------------
+// parameters
+// --------------------------------------
+
+log2 = 0.693147181;
+
+kd_mrna = log2/halfLifeMRNA;
+
+kd_prot = log2/halfLifeProtein;
+
+rnapBindingKineticRate = kd_mrna * mrnaMoleculesPerGene / 
+                          rnapMoleculesPerCell;
+
+protMoleculesPerGene = proteinToMRNARatio * mrnaMoleculesPerGene;
+
+ribosomeBindingKineticRate = kd_prot * protMoleculesPerGene / 
+                          (ribosomeMoleculesPerCell * mrnaMoleculesPerGene);
+
+// transcription time delay
+transcriptionTimeDelay = transcriptLength / transcriptionTranslocationRate;
+
+// start transcription rate
+startTranscriptionRate = rnapBindingKineticRate; // per min, per molec
+
+// transcription rate
+transcriptionRate = 1.0 / transcriptionTimeDelay;
+
+// translation time delay
+translationTimeDelay = proteinLength / translationTranslocationRate; // minutes
+
+// start translation rate
+startTranslationRate = ribosomeBindingKineticRate; // per min, per molec
+
+// translation rate
+translationRate = 1.0 / translationTimeDelay; // codons/minute
+
+// --------------------------------------
+// reactions
+// --------------------------------------
+
+// start transcription
+startTranscription, rnap + $gene -&gt; startTranscript, 
+              [fracsat * startTranscriptionRate * rnap * gene];
+
+// transcription
+transcription, startTranscript -&gt; finishTranscript, 
+              transcriptionTranslocationRate, delay: transcriptionTimeDelay;
+
+// finish transcription
+finishTranscription, finishTranscript -&gt; rnap + mrna, transcriptionRate;
+
+// degrade mrna
+degradeTranscript, mrna -&gt; , kd_mrna;
+
+// start translation
+startTranslation, ribosome + $mrna -&gt; startProtein, startTranslationRate;
+
+// translation
+translation, startProtein -&gt; finishProtein, translationRate, 
+              delay: translationTimeDelay;
+
+// finish translation
+finishTranslation, finishProtein -&gt; ribosome + protein, translationRate;
+
+// degrade protein degradeProtein, protein -&gt; , kd_prot; 
 </pre>
-</blockquote>
-This model definition file defines a very simple model of transcription.
-The model contains two transcription factors, <code>TFA</code> and 
-<code>TFB</code>.  
+</blockquote> 
+This model definition file contains a very simple model
+of transcription in <em>Escherichia coli</em>.  Please
+note that this model is provided purely for pedagogical purposes, and
+thus, no citations to the literature are included for the parameters
+in the model.
 </p>
 </isb:docsubsection>
-
 
 <isb:docsubsection name="Symbol Names" label="cmdl-symbolnames">
 In the CMDL, all <a href="#symbols">symbol names</a> defined 
@@ -2801,7 +2837,6 @@ the symbols <code>A</code> and <code>B</code> in the reaction
 rate mathematical expression refer to the molar concentrations
 of species <code>A</code> and <code>B</code>, respectively.
 </isb:docsubsection>
-
 
 </isb:docsection>
 
@@ -3290,7 +3325,7 @@ public class TestSimulator
             model.addReaction(reactionY);
             System.out.println(model.toString());
             SimulatorStochasticGillespie simulator = new SimulatorStochasticGillespie();
-            SimulatorParameters simParams = simulator.getDefaultSimulatorParameters);
+            SimulatorParameters simParams = simulator.getDefaultSimulatorParameters();
             simParams.setEnsembleSize(40);
             simulator.initialize(model);
             String []requestedSymbolNames = { "A", "B" };
@@ -3315,7 +3350,7 @@ public class TestSimulator
             TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(new PrintWriter(System.out),
                                                                         requestedSymbolNames,
                                                                         timeValues,
-                                                                        symbolValues
+                                                                        symbolValues,
                                                                         TimeSeriesOutputFormat.CSV_EXCEL);
         }
 
@@ -3358,7 +3393,7 @@ plug-ins.
 The &appName; application provides the following features:
 <ul>
 <li>load a model definition file</li>
-<li>run a simulation and store, plot, or print the results</li>
+<li>run a simulation and store, plot, or display the results</li>
 <li>export a model instance to a file of a specified format</li>
 <li>display a graphical representation of a model using <a href="&cytoscapeURL;">Cytoscape</a>
 system.</li>
@@ -3400,10 +3435,8 @@ file extension, &appName; will automatically select the correct parser and
 will indicate the alias of the parser next to the &quot;<b>parser:</b>&quot;
 label.  Otherwise, you will be prompted to specify a parser for &appName; to use
 in processing your model definition.  &appName; will remember this parser
-choice until you close the file, or exit the application.  After your model
-definition is processed, the model name and species populations collection name
-should appear in the list boxes marked &quot;<b>model names:</b>&quot;
-and &quot;<b>species population names:</b>&quot;, respectively.
+choice until you close the file, or exit the application.  A simulation launcher
+window will be displayed.
 </p>
 <p>
 To close the file (i.e., clear the editor window), 
@@ -3414,13 +3447,6 @@ your choice to close the file.  If you edit a model definition within
 your changes by selecting the &quot;Save&quot; item under the &quot;File&quot;
 menu.  To save your changes to a specific file, use the &quot;Save as&quot;
 menu item under the &quot;File&quot; menu.
-</p>
-<p> 
-You can view the details of any model or species population collection
-that has been loaded into &appName;, by double-clicking on the name of
-the model or species population collection in the aforementioned list boxes.
-When you do this, information about the model or species population collection
-will be printed in the large text box labeled &quot;runtime output log&quot;.
 </p>
 </isb:docsubsection>
 
@@ -3524,31 +3550,49 @@ mass conservation in an ODE simulation of a model with a
 delayed reaction, try increasing this parameter.
 </p>
 <p>
-The &quot;output type&quot; can be &quot;print&quot; (the default),
-which just prints the values for the species populations, over time,
-in a simple comma-separated-value format, in the &quot;runtime output
-log&quot; text box.  The &quot;plot&quot; output type will cause a
-graphical plot to be generated.  You may optionally define a textual
-label in the field &quot;label:&quot;, which will be added a subtitle
-to the simulation results plot. Note that when plotting the output,
+The &quot;output type&quot; part of the simulation specifies how the
+simulator should process the simulation results.  There are three
+choices:  <b>plot</b>, <b>table</b>, and <b>store</b>.
+<dl>
+<dt><b>table</b></dt>
+<dd>
+The <b>table</b> option just displays the values for the species populations, over time,
+in a tabular format, in a new window.  
+</dd>
+<dt><b>plot</b></dt>
+<dd>
+The <b>plot</b> output type will cause a
+graphical plot to be generated, in a new window.  
+Note that when plotting the output,
 all species selected are displayed on the same graph.  This means that
 one species with values that are much greater than the other species,
 will cause Y-axis scaling that will render the other species data
 points all at the bottom of the graph window.  To avoid this problem,
 you can display a graph without the species with large population
 values, or you can export the data in comma-separated value
-format. This is done by selecting the &quot;file&quot; output
-type. With the data in a file in comma-separated-value format, you may
+format.  This is done by selecting the <b>store</b> output
+type.  With the data in a file in comma-separated-value format, you may
 import the data into a program that has more sophisticated graphing
-capabilities, such as Gnuplot, Octave, Gnumeric, Excel, or Matlab.
+capabilities, such as Gnuplot, Octave, Gnumeric, Excel, or Matlab
+(see the &quot;store&quot; output type below).
+</dd>
+<dt><b>store</b></dt>
+<dd>
+The <b>store</b> output type instructs the simulator to save the 
+simulation results in a file that you specify, in a format chosen
+from the &quot;format:&quot; drop-down.  At present, all possible
+output formats are comma-separated-value text formats, differening
+only in the type of commetn character used in the first line.
 Make sure to select the appropriate output file format depending on
-the application into which you wish to import the results.  This is
+the application into which you wish to import the result.  This is
 necessary because Matlab has a different comment character
 (&quot;%&quot;) than Gnuplot and Excel (&quot;#&quot;).  By default,
-selecting the &quot;file&quot; output type will generate a file for
+selecting the &quot;store&quot; output type will generate a file for
 writing.  If the file selected already exists, you will be asked to
 confirm your choice.  To instead append to the selected file (rather
 than overwrite), click on the &quot;append&quot; check-box.
+</dd>
+</dl>
 </p>
 <p>
 At the bottom of the &quot;&appName;: simulator&quot; frame, you will 
@@ -3565,6 +3609,30 @@ estimate can change by several orders of magnitude during the course of
 a simulation, if the dynamical time scale of the system changes radically.
 As a rule of thumb, the &quot;secs remaining&quot; estimate should only be 
 regarded as reliable when the progress bar is over 75% complete.
+</p>
+<p>
+To the right of the &quot;output type&quot; section of the simulation
+launcher, there is a section &quot;simulation results list&quot;.  The
+list box in this section shows an entry for each simulation that you have
+run, labeled by a combination of the model name, the simulator alias, and
+the date/time at which the simulation concluded.  You may select one of
+the past simulations, and click on the &quot;reprocess results&quot; button,
+which will re-process the results of that past simulation based on the
+output type you specified in the &quot;output type&quot; section of the
+simulation launcher.  Note that only those symbol names that were
+<em>originally</em> specified as your desired results symbol names, at the
+time you launched the simulation, are available to display when you click
+on the &quot;reprocess results&quot; button.  For example, suppose you have
+symbols <code>A</code>, <code>B</code>, and <code>C</code> in your model, 
+and you originally had <code>A</code> and <code>B</code> highlighted in the
+&quot;view symbols&quot; list box when you ran the simulation.  Later,
+if you click on the &quot;reprocess results&quot; button, you will only have
+the results for symbols <code>A</code> and <code>B</code> available to you,
+to display, plot or save.  To get results for symbol <code>C</code> in this
+scenario, you would need to re-run the simulation.  The &quot;reprocess results&quot;
+feature is useful if you decide, based on the plot, that you wish to capture
+the simulation results to a file; you may save the numeric results that you plotted,
+to a comma-separated file, without having to re-run the simulation.
 </p>
 </isb:docsubsection>
 
