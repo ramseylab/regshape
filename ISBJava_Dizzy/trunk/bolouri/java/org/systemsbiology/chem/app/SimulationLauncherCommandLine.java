@@ -450,7 +450,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                 System.err.println("\n\nrunning simulation...\n");
             }
 
-            String []symbolArray = model.getOrderedNonConstantSymbolNamesArray();
+            String []symbolArray = model.getOrderedResultsSymbolNamesArray();
             ArrayList globalSymbolsList = new ArrayList();
             int numTotalSymbols = symbolArray.length;
             for(int i = 0; i < numTotalSymbols; ++i)
