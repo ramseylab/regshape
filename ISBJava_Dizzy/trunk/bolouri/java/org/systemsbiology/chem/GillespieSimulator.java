@@ -17,7 +17,7 @@ import java.util.Random;
 /**
  * Simulates the dynamics of a set of coupled chemical reactions
  * described by {@link Reaction} objects using the Gillespie stochastic
- * algorithm.
+ * algorithm, "direct method".
  *
  * @author Stephen Ramsey
  */
@@ -125,7 +125,6 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
         checkDynamicalSymbolsInitialValues();
         initializeRandomNumberGenerator();
     }
-
 
     public final void simulate(double pStartTime, 
                                double pEndTime,
