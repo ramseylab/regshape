@@ -180,8 +180,8 @@ This means that an installation of the Java Runtime Environment
 (JRE) is required in order to be able to use the &appName; system.
 
 A version of the &appName; system installer program 
-(&quot;<code>ins&appName;.bin</code>&quot; on Unix/Linux, 
-or &quot;<code>ins&appName;.exe</code>&quot; on Windows)
+(&quot;<code>&appInstallerName;.bin</code>&quot; on Unix/Linux, 
+or &quot;<code>&appInstallerName;.exe</code>&quot; on Windows)
 is available which has the Sun JRE version 1.4.1 pre-bundled with it.
 This is the recommended approach for users who are not knowledgeable
 in the use of the Java programming language and runtime environment.
