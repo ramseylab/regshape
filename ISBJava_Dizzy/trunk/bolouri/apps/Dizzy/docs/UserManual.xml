@@ -133,7 +133,39 @@ A PDF version of this manual is also available on-line at:
 The above hyperlinks for the User Manual are for the most recent
 version of the &appName; system.
 </p>
-
+<p>
+The &appName; system depends on a number of external open-source
+libraries, which are shipped with the &appName; system in a compiled
+format (JAR archive).  The source code for each of these libraries is
+freely available at the web sites identified by the hyperlinks shown below:
+<blockquote>
+<table border="1">
+<tr>
+<td>Package name</td><td>JAR name</td><td>Source</td><td>License</td>
+</tr>
+<tr>
+<td>jfreechart</td><td><code>jfreechart-&lt;VERS&gt;.jar</code></td>
+<td><a href="http://www.jfree.org/jfreechart"><code>www.jfree.org/jfreechart/</code></a></td><td>LGPL</td>
+</tr>
+<tr>
+<td>jcommon</td><td><code>jcommon-&lt;VERS&gt;.jar</code></td>
+<td><a href="http://www.jfree.org/jcommon"><code>www.jfree.org/jcommon/</code></a></td><td>LGPL</td>
+</tr>
+<tr>
+<td>SBW (core)</td><td><code>SBWCore.jar</code></td>
+<td><a href="http://www.sbw-sbml.org/sbw/software"><code>www.sbw-sbml.org/sbw/software/</code></a></td><td>LGPL</td>
+</tr>
+<tr>
+<td>SBML Validator</td><td><code>SBMLValidate.jar</code></td>
+<td><a href="http://www.sbw-sbml.org/sbw/software"><code>www.sbw-sbml.org/sbw/software/</code></a></td><td>LGPL</td>
+</tr>
+<tr>
+<td>JavaHelp</td><td><code>jh.jar</code></td>
+<td><a href="http://java.sun.com/products/javahelp"><code>java.sun.com/products/javahelp</code></a></td><td>Sun Binary Code License</td>
+</tr>
+</table>
+</blockquote>
+</p>
 </isb:docsection>
 
 <isb:docsection name="Getting Started" label="gettingstarted">
