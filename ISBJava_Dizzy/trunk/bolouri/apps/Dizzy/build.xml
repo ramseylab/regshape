@@ -25,6 +25,7 @@
 
   <property name="app.buildDir"                 location="${basedir}/build" />
   <property name="app.styleDir"                 location="${app.buildDir}/html" />
+  <property name="app.styleConfDir"             location="${app.buildDir}/config" />
   <property name="app.configDir"                location="${basedir}/config" />
   <property name="app.docsDir"                  location="${basedir}/docs" />
   <property name="app.imagesDir"                location="${basedir}/images" />
@@ -79,6 +80,8 @@
 
   <target name="style" depends="copyCommonConfig">
     <mkdir dir="${app.styleDir}" />
+  	<mkdir dir="${app.styleConfDir}" />
+  		
     <style basedir="${app.docsDir}" 
            destdir="${app.styleDir}" 
            includes="*.xml" 
@@ -91,7 +94,11 @@
            style="${docsStyleSheet}">
          <param name="altWebBaseURL" expression=".." />
     </style>
- 
+  	 
+  	<style in="${app.configDir}/AppConfig.xml"
+  	   	   out="${app.styleConfDir}/AppConfig.xml"
+  	       style="${appConfigStyleSheet}" />
+  	
     <style in="${app.docsDir}/AppHelp.xml"
            out="${app.styleDir}/AppHelp.jhm"
            style="${helpMapStyleSheet}">
