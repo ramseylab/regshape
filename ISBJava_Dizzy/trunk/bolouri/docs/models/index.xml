@@ -38,10 +38,10 @@ The possible formats are:
 </p>
 <p>
 <ul>
-<li><a href="singlegene.dizzy">Simple stochastic model of 
+<li><a href="singlegene.cmdl">Simple stochastic model of 
 transcription of a single gene</a>, with two
 transcription factors TFA and TFB [CCMDL format]</li>
-<li><a href="GAL.dizzy">Simple stochastic model of GAL4 system</a>,
+<li><a href="GAL.cmdl">Simple stochastic model of GAL4 system</a>,
 from <em>S. cerevisiae</em> [CCMDL format]</li>
 </ul>
 </p>
