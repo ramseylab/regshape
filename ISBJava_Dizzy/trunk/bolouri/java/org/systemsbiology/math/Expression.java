@@ -1331,7 +1331,17 @@ public class Expression implements Cloneable
         }
         return(retStr);
     }
-    
+
+    /**
+     * Returns true if the argument is a valid function name, or 
+     * false otherwise.
+     */
+    public static boolean isFunctionName(String pName)
+    {
+        ElementCode function = ElementCode.getFunction(pName);
+        return(null != function && function.isFunction());
+    }
+
     /**
      * Parses the mathematical expression defined by the string 
      * <code>pExpressionString</code> and stores the parse tree within
