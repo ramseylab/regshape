@@ -699,8 +699,7 @@ public class SimulationLauncher
         }
         if(ensembleSize == null)
         {
-            handleBadInput("number of steps missing", "ensemble size / number of steps was not specified");
-            return(retVal);
+            ensembleSize = new Integer(1);
         }
         srp.mNumSteps = ensembleSize.intValue();
 
