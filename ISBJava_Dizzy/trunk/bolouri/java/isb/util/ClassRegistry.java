@@ -73,6 +73,18 @@ public class ClassRegistry
     /*========================================*
      * constructors
      *========================================*/
+    /**
+     * Create a ClassRegistry instance.  The
+     * <code>pInterface</code> argument must specify
+     * an interface that extends the <code>IAliasableClass</code>
+     * interface.  Lets assume the interface is called
+     * &quot;<code>IFoo</code>&quot;.  The class registry
+     * instance (when you call <code>buildRegistry</code>)
+     * will build a list of all objects in the classpath
+     * that implement the <code>IFoo</code> interface, and
+     * that contain the <code>CLASS_ALIAS</code> public static
+     * String field.  
+     */
     public ClassRegistry(Class pInterface) throws IllegalArgumentException
     {
         checkInterface(pInterface);
@@ -110,10 +122,13 @@ public class ClassRegistry
             // interfaces are to be skipped, because they cannot implement interfaces
             return;
         }
+
         if(pInterface.isAssignableFrom(theClass))
         {
+            // this class implements the desired interface
             try
             {
+                // make sure it also implements IAliasbleClass marker interface
                 checkClass(theClass);
             }
             catch(IllegalArgumentException e)
@@ -324,10 +339,19 @@ public class ClassRegistry
      * public methods
      *========================================*/
 
+    /**
+     * Searches the classpath for all classes implementing the interface
+     * that was specified in the constructor.  This method will take a while
+     * to complete, because it is searching the entire classpath.
+     */
     public void buildRegistry() throws ClassNotFoundException, IOException, IllegalArgumentException
     {
         HashSet packagesAlreadySearched = new HashSet();
+
+        // search all packages known to the JRE
         registerAllClassesImplementingInterface(packagesAlreadySearched, getInterface(), getRegistry());
+
+        // search all packages in classpath, under "isb" namespace
         recursivelyRegisterAllClassesUnderPackage("isb",
                                                   packagesAlreadySearched,
                                                   getInterface(),
@@ -335,6 +359,19 @@ public class ClassRegistry
                                                              
     }
 
+    /**
+     * Returns the Class object associated with the specified 
+     * class alias (a string identifier that uniquely identifies
+     * a particular implementation of the interface that was passed
+     * to the constructor for this ClassRegistry object).  If no
+     * class is found corresponding to the specified alias, an 
+     * exception is thrown.
+     *
+     * @param pClassAlias the alias of the class that is to be returned
+     *
+     * @return the Class object associated with the specified 
+     * class alias
+     */
     public Class getClass(String pClassAlias) throws DataNotFoundException
     {
         HashMap registry = getRegistry();
@@ -355,7 +392,20 @@ public class ClassRegistry
         return(retClass);
     }
 
-
+    /**
+     * Returns an instance of the class corresponding to the
+     * specified class alias <code>pClassAlias</code>.  This
+     * object will be an instance of a class that implements the
+     * interface that was passed to the <code>ClassRegistry</code>
+     * constructor.  If no such instance exists, but the class
+     * corresponding to the alias is known, an instance will be
+     * created and the reference will be stored and returned.
+     *
+     * @param pClassAlias the alias of the class that is to be returned
+     *
+     * @return an instance of the class corresponding to the specified
+     * class alias <code>pClassAlias</code>
+     */
     public Object getInstance(String pClassAlias) throws DataNotFoundException
     {
         HashMap registry = getRegistry();
@@ -396,7 +446,12 @@ public class ClassRegistry
 
         return(instance);
     }
-
+    
+    /**
+     * Print out a summary of the contents of the 
+     * class registry, to the specified PrintStream
+     * <code>pString</code>.
+     */
     public void printRegistry(PrintStream pStream)
     {
         HashMap registry = getRegistry();
@@ -410,6 +465,17 @@ public class ClassRegistry
         }
     }
 
+    /**
+     * Return a Set containing copies of all of the
+     * aliases (as strings) for objects implementing
+     * the interface that was passed to the ClassRegistry
+     * constructor.
+     *
+     * @return a Set containing copies of all of the
+     * aliases (as strings) for objects implementing
+     * the interface that was passed to the ClassRegistry
+     * constructor.
+     */
     public Set getRegistryAliasesCopy()
     {
         HashSet newRegistryAliases = new HashSet();
@@ -423,6 +489,9 @@ public class ClassRegistry
         return(newRegistryAliases);
     }
 
+    /**
+     * Test method for this class
+     */
     public static void main(String []pArgs)
     {
         try
