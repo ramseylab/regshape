@@ -488,6 +488,7 @@ public class DataNormalizer
             {
                 throw new IllegalArgumentException("column " + j + " has no raw observations; the data cannot be normalized");
             }
+            columnObservations.sort();
             median = Descriptive.median(columnObservations);
             columnMedians.set(j, median);
         }
