@@ -38,6 +38,35 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.4.3/&installerDownloadRelURL;">1.4.3</a></td>
+<td>2004/02/06</td>
+<td>
+<ul>
+<li>Created a new program <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>
+that runs a simulation in batch mode, saving the results to a file that the user specifies.</li>
+<li>Fixed a bug in <code>org.systemsbiology.util.CommandLineApp</code> regarding
+arguments with short string lengths, causing problems in the method
+<code>checkAndHandleHelpRequest</code>.</li>
+<li>Refactored the string 
+<code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage.NAMESPACE_IDENTIFIER</code>
+to the <code>org.systemsbiology.chem.Model</code> class.</li>
+<li>Added new method <code>getIterationCounter()</code> to the 
+<code>org.systemsbiology.chem.ISimulator</code> interface.  This allows
+users of the simulators to obtain the number of iterations in the previously
+run simulation.</li>
+<li>Converted integer simulation parameters in <code>org.systemsbiology.chem.SimulatorParameters</code>
+to type &quot;long&quot;.</li>
+<li>The <code>org.systemsbiology.chem.SimulatorStochasticBase</code> simulators now
+keep track of the total number of iterations across the entire ensemble average.</li>
+<li>Removed all <code>assert()</code> statements from performance-critical code
+sections within the <code>org.systemsbiology.chem.SimulatorStochasticGillespie</code>
+and the <code>org.systemsbiology.chem.SimulatorStochasticGibsonBruck</code> simulators,
+to increase runtime speed.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.4.2/&installerDownloadRelURL;">1.4.2</a></td>
 <td>2004/02/05</td>
 <td>

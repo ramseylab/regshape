@@ -44,6 +44,28 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.4.3/&installerDownloadRelURL;">1.4.3</a></td>
+<td>2004/02/06</td>
+<td>
+<ul>
+<li>Created a new program &quot;<code>SimulationLauncherCommandLine</code>&quot;
+that runs a simulation in batch mode, saving the results to a file that the user 
+specifies.</li>
+<li>Fixed a bug in the command-line parsing for the &appName; command-line
+applications &quot;<code>ModelLoaderApp</code>&quot; and
+&quot;<code>SimulationLauncherCommandLine</code>&quot;, causing an error
+when a very short command-line option is passed to the parser.</li>
+<li>The &appName; application now prints out the total number of iterations
+that occurred in the simulation, to the console window, after the simulation
+completes.</li>
+<li>The &quot;ensemble size&quot; and &quot;min number of time steps&quot; 
+simulation parameters are now &quot;long&quot; integer parameters.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.4.3/&installerDownloadRelURL;">1.4.3</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.4.2/&installerDownloadRelURL;">1.4.2</a></td>
 <td>2004/02/05</td>
 <td>

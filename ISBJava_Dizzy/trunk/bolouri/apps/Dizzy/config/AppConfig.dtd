@@ -13,8 +13,8 @@
 %CommonConfig;
 
 <!ENTITY appName "Dizzy">
-<!ENTITY appVersion "1.4.2">
-<!ENTITY appDate "2004/02/05">
+<!ENTITY appVersion "1.4.3">
+<!ENTITY appDate "2004/02/06">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
 <!ENTITY appIconURL "images/appLogoIcon.png">
 
