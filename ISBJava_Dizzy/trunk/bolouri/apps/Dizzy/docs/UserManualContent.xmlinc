@@ -1602,12 +1602,16 @@ of the compartment).
 
 </isb:docsection>
 
-<!-- ========== CMDL COMMON CONCEPTS ========== -->
-<isb:docsection name="Chemical Model Definition Language Common Concepts" label="commonconcepts">
+<!-- ========== CMDL ========== -->
+<isb:docsection name="Chemical Model Definition Language (CMDL)" label="cmdl">
 
 <p>
-This section describes some basic concepts that are used in the
-Chemical Model Definition Language (CMDL).
+The Chemical Model Definition Language (CMDL) is a simplified
+model definition language designed to minimize the amount of repetitive
+typing required to define a model.   The default file extension of model
+definition files in the CMDL language is the &quot;<code>&cmdlFileExtension;</code>&quot;
+suffix.  The alternative extension &quot;<code>&appFileExtension;</code>&quot; is also
+understood to indicate a CMDL file.
 </p>
 
 
@@ -1871,21 +1875,8 @@ the simulator alias for the Gillespie algorithm is &quot;<code>gillespie</code>&
 </p>
 </isb:docsubsection>
 
-</isb:docsection>
 
 
-<!-- ========== CMDL ========== -->
-
-<isb:docsection name="Chemical Model Definition Language (CMDL)" label="cmdl">
-
-<p>
-The Chemical Model Definition Language (CMDL) is a simplified
-model definition language designed to minimize the amount of repetitive
-typing required to define a model.   The default file extension of model
-definition files in the CMDL language is the &quot;<code>&cmdlFileExtension;</code>&quot;
-suffix.  The alternative extension &quot;<code>&appFileExtension;</code>&quot; is also
-understood to indicate a CMDL file.
-</p>
 
 <isb:docsubsection name="Default Model Elements" label="defaultmodelelements">
 <p>
@@ -1893,7 +1884,8 @@ One of the distinguishing aspects of the CMDL is that several core
 elements are created by default:
 <ul>
 <li>A <a href="#models">model</a> is created, with model name 
-&quot;<code>model</code>&quot;.</li>
+&quot;<code>model</code>&quot;.  The model name can be modified
+with the &quot;<code>#model</code>&quot; statement.</li>
 <li>A <a href="#compartments">compartment</a> is created, with 
 name &quot;<code>univ</code>&quot; and volume of 1.0 liters</li>
 </ul>
@@ -2430,6 +2422,34 @@ over the range of integer values from 1 to 12, inclusive.
 
 </isb:docsubsection>
 
+<isb:docsubsection name="Commands" label="commands">
+<p>
+In the CMDL, commands are preceded by the pound sign.  Two commands
+are presently permitted:
+<dl>
+<dt><b>#model</b></dt>
+<dd>
+The &quot;<code>#model</code>&quot; command sets the model name, as
+shown here:
+<blockquote>
+<pre>
+#model "mymodel";
+</pre>
+</blockquote>
+If the model name is not explicitly set using this command,
+a default model name will be used.  The &appName; program
+uses the default model name &quot;model&quot;.
+The rules for parsing the model name are the same as for parsing
+other symbol names.  
+</dd>
+<dt><b>#include</b></dt>
+<dd>For information, refer to the section on
+<a href="#fileinclusion">file inclusion</a>.
+</dd>
+</dl>
+</p>
+</isb:docsubsection>
+
 <isb:docsubsection name="Example CMDL model definition file" label="examplefile">
 <p>
 The following example illustrates a complete CMDL model definition file:
@@ -2954,7 +2974,29 @@ you can export the data in comma-separated value format. This is done by
 selecting the &quot;file&quot; output type. With the data in a file in 
 comma-separated-value format, you may import the data into a program that
 has more sophisticated graphing capabilities, such as Gnuplot, Octave,
-Gnumeric, Excel, or Matlab.  
+Gnumeric, Excel, or Matlab.  By default, selecting the &quot;file&quot;
+output type will generate a file for writing.  If the file selected already
+exists, you will be asked to confirm your choice.  To instead append to
+the selected file (rather than overwrite), click on the &quot;append&quot;
+check-box.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Plotting" label="plotting">
+<p>
+You may view a graphical plot of the time-series values for model elements
+that you have selected in the simulation launcher.  This is accomplished by
+clicking on the &quot;Plot&quot; output type, before initiating the simulation.
+The plot may be enlarged or shrunk by re-sizing the plot window.  Please be
+patient, as it takes some time to resize the plot to the desired dimensions.
+</p>
+<p>
+You may save a plot to a file in PNG format, by clicking on the 
+&quot;save as PNG image file&quot; button.  Saving to JPEG is not presently
+supported, because JPEG tends to poorly render line art.  Images in PNG
+format are readable by the most recent versions of Photoshop, Powerpoint, 
+etc.  Because of Unix incompatibilities, saving a plot image to the clipboard
+is not currently supported, but may be added in the future as a 
 </p>
 </isb:docsubsection>
 
@@ -3011,6 +3053,41 @@ invocations of this feature, a network connection is not needed, as the
 Cytoscape program will be stored in a local cache on your computer.
 </p>
 </isb:docsubsection>
+
+</isb:docsection>
+
+<isb:docsection name="Frequently asked Questions" label="faq">
+
+<p>
+<b>How do I graph the time-series data for an algebraic function of
+one or more species, such as the sum of two species, <code>SA + SB</code>?</b>
+</p>
+<p>
+After you have defined species <code>SA</code> and <code>SB</code>
+in your model definition file, define a symbol as shown here:
+<blockquote>
+<pre>
+SumAB = [ SA + SB ];
+</pre>
+</blockquote>
+The symbol <code>SumAB</code> will show up in the &quot;view symbols&quot;
+list-box in the Simulation Launcher window, and you may select 
+<code>SumAB</code> from this list-box in order to view the time-series
+data for the sum of the values for the two species.  This technique
+can be generalized to an arbitrary expression involving any number of
+species or parameters defined previously in the model.
+</p>
+<p>
+<b>Why does the output of the <code>ODEtoJava-imex443-stiff</code> simulator
+look different than the other simulators?</b>
+</p>
+<p>
+The implicit/explicit Runge-Kutta simulator in the &quot;<code>odeToJava</code>&quot;
+package does not currently support interpolation, so the results from that simulation
+will appear to have discontinuous jumps between constant values, when the simulator is
+able to take large time-steps.  The data point at the start of every constant region 
+is the correct value at that time.
+</p>
 
 </isb:docsection>
 
