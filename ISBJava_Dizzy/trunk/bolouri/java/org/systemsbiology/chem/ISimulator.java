@@ -41,7 +41,8 @@ public interface ISimulator
     public void setStatusUpdateIntervalSeconds(double pStatusUpdateIntervalSeconds) throws IllegalArgumentException;
 
     public boolean allowsInterrupt();
-
+    public boolean canComputeFluctuations();
+    
     /**
      * Conduct a simulation of the dynamics of the {@link Model} passed to the
      * {@link #initialize(Model)} method.  The end time

@@ -109,6 +109,11 @@ public abstract class Simulator
         return(mInitialized);
     }
 
+    public boolean canComputeFluctuations()
+    {
+        return(true);
+    }
+    
     private final void clearDelayedReactionSolvers()
     {
         int numDelayedReactionSolvers = mDelayedReactionSolvers.length;
