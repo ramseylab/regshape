@@ -10,17 +10,11 @@ package org.systemsbiology.chem.app;
 
 import org.systemsbiology.chem.*;
 import org.systemsbiology.util.*;
+import org.systemsbiology.gui.*;
 import java.awt.*;
-import java.awt.event.*;
+import javax.swing.event.*;
 import javax.swing.*;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import javax.swing.filechooser.*;
 
 public class EditorPane
@@ -126,10 +120,10 @@ public class EditorPane
 
     private void handleCancel(String pOperation)
     {
-        SimpleDialog messageDialog = new SimpleDialog(mMainFrame, pOperation + " cancelled", 
-                                                      "Your " + pOperation + " operation has been cancelled");
-        messageDialog.setMessageType(JOptionPane.INFORMATION_MESSAGE);
-        messageDialog.show();
+        JOptionPane.showMessageDialog(mMainFrame,
+                                      "Your " + pOperation + " operation has been cancelled",
+                                      pOperation + " cancelled",
+                                      JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void handleCut()
@@ -195,13 +189,13 @@ public class EditorPane
         if(getBufferDirty())
         {
             SimpleTextArea textArea = new SimpleTextArea("Changes have been made to this edit buffer that have not yet been saved to the file:\n" + fileName + "\nThe close operation will discard these change.\nAre you sure you want to proceed?");
-            SimpleDialog messageDialog = new SimpleDialog(mMainFrame,
-                                                          "Discard edits to this file?",
-                                                          textArea);
-            messageDialog.setMessageType(JOptionPane.QUESTION_MESSAGE);
-            messageDialog.setOptionType(JOptionPane.YES_NO_OPTION);
-            messageDialog.show();
-            Integer response = (Integer) messageDialog.getValue();
+            JOptionPane optionPane = new JOptionPane();
+            optionPane.setMessage(textArea);
+            optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
+            optionPane.setOptionType(JOptionPane.YES_NO_OPTION);
+
+            optionPane.createDialog(mMainFrame, "Discard edits to this file?").show();
+            Integer response = (Integer) optionPane.getValue();
             if(null != response && response.intValue() == JOptionPane.YES_OPTION)
             {
                 doClose = true;
@@ -234,14 +228,14 @@ public class EditorPane
     public void open()
     {
         FileChooser fileChooser = new FileChooser(mMainFrame);
-        FileFilter fileFilter = new ChemFileFilter();
-        JFileChooser intFileChooser = fileChooser.getFileChooser();
+        javax.swing.filechooser.FileFilter fileFilter = new ChemFileFilter();
         File currentDirectory = getCurrentDirectory();
         if(null != currentDirectory)
         {
             fileChooser.setCurrentDirectory(currentDirectory);
         }
-        intFileChooser.setFileFilter(fileFilter);
+        fileChooser.setFileFilter(fileFilter);
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setDialogTitle("Please select a file to open");
         fileChooser.show();
         File inputFile = fileChooser.getSelectedFile();
@@ -250,33 +244,21 @@ public class EditorPane
             String fileName = inputFile.getAbsolutePath();
             if(inputFile.exists())
             {
-                if(inputFile.isDirectory())
+                File parentFile = inputFile.getParentFile();
+                if(parentFile.isDirectory())
                 {
-                    SimpleTextArea textArea = new SimpleTextArea("The file you selected is a directory:\n" + fileName + "\n");
-                    SimpleDialog messageDialog = new SimpleDialog(mMainFrame,
-                                                                  "Open cancelled",
-                                                                  textArea);
-                    messageDialog.show();
+                    setCurrentDirectory(parentFile);
+                    mMainApp.setCurrentDirectory(parentFile);
                 }
-                else
-                {
-                    File parentFile = inputFile.getParentFile();
-                    if(parentFile.isDirectory())
-                    {
-                        setCurrentDirectory(parentFile);
-                        mMainApp.setCurrentDirectory(parentFile);
-                    }
-                    loadFileToEditBuffer(fileName);
-                }
+                loadFileToEditBuffer(fileName);
             }
             else
             {
                     SimpleTextArea textArea = new SimpleTextArea("The file you selected does not exist:\n" + fileName + "\n");
-                    SimpleDialog messageDialog = new SimpleDialog(mMainFrame,
-                                                                  "Open cancelled",
-                                                                  textArea);
-                    messageDialog.show();
-                
+                    JOptionPane.showMessageDialog(mMainFrame,
+                                                  textArea,
+                                                  "Open cancelled",
+                                                  JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
@@ -290,9 +272,10 @@ public class EditorPane
     public void saveAs()
     {
         FileChooser fileChooser = new FileChooser(mMainFrame);
-        FileFilter fileFilter = new ChemFileFilter();
+        javax.swing.filechooser.FileFilter fileFilter = new ChemFileFilter();
         fileChooser.setFileFilter(fileFilter);
         fileChooser.setApproveButtonText("Save");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setDialogTitle("Please select a file name to save as");
         fileChooser.show();
         String curFileName = getFileName();
@@ -312,44 +295,32 @@ public class EditorPane
             fileName = outputFile.getAbsolutePath();
             if(outputFile.exists())
             {
-                if(outputFile.isDirectory())
+                if((null != curFileName &&
+                    fileName.equals(curFileName)) ||
+                   null == curFileName)
                 {
-                    SimpleTextArea textArea = new SimpleTextArea("The file you selected is a directory:\n" + fileName + "\n");
-                    SimpleDialog messageDialog = new SimpleDialog(mMainFrame,
-                                                                  "Save cancelled",
-                                                                  textArea);
-                    messageDialog.show();
-                }
-                else
-                {
-                    if((null != curFileName &&
-                       fileName.equals(curFileName)) ||
-                        null == curFileName)
-                    {
-                            SimpleTextArea textArea = new SimpleTextArea("The file you selected already exists:\n" + fileName + "\nThe save operation will overwrite this file.\nAre you sure you want to proceed?");
-                            SimpleDialog messageDialog = new SimpleDialog(mMainFrame,
-                                                                                "Overwrite existing file?",
-                                                                                textArea);
-                            messageDialog.setMessageType(JOptionPane.QUESTION_MESSAGE);
-                            messageDialog.setOptionType(JOptionPane.YES_NO_OPTION);
-                            messageDialog.show();
-                            Integer response = (Integer) messageDialog.getValue();
-                            if(null != response && response.intValue() == JOptionPane.YES_OPTION)
-                            {
-                                doSave = true;
-                            }
-                            else
-                            {
-                                if(null == response)
-                                {
-                                    handleCancel("save");
-                                }
-                            }
-                    }
-                    else
+                    SimpleTextArea textArea = new SimpleTextArea("The file you selected already exists:\n" + fileName + "\nThe save operation will overwrite this file.\nAre you sure you want to proceed?");
+                    JOptionPane optionPane = new JOptionPane();
+                    optionPane.setMessage(textArea);
+                    optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
+                    optionPane.setOptionType(JOptionPane.YES_NO_OPTION);
+                    optionPane.createDialog(mMainFrame, "Overwrite existing file?").show();
+                    Integer response = (Integer) optionPane.getValue();
+                    if(null != response && response.intValue() == JOptionPane.YES_OPTION)
                     {
                         doSave = true;
                     }
+                    else
+                    {
+                        if(null == response)
+                        {
+                            handleCancel("save");
+                        }
+                    }
+                }
+                else
+                {
+                    doSave = true;
                 }
             }
             else
@@ -406,35 +377,40 @@ public class EditorPane
         pMainPane.add(editorPanel);
     }
 
+    private void handleEditorDocumentChange(DocumentEvent e)
+    {
+        if(! getBufferDirty())
+        {
+            setBufferDirty(true);
+        }
+        setTimestampLastChange(System.currentTimeMillis());
+        mMainApp.updateMenus();
+    }
+
     private void initializeEditorTextArea(Container pPane)
     {
-        KeyListener listener = new KeyListener()
-                                     {
-                                         public void keyPressed(KeyEvent e)
-                                         {
-                                             // do nothing
-                                         }
+        DocumentListener listener = new DocumentListener()
+        {
+            public void changedUpdate(DocumentEvent e)
+            {
+                handleEditorDocumentChange(e);
+            }
 
-                                         public void keyReleased(KeyEvent e)
-                                         {
-                                             // do nothing
-                                         }
+            public void insertUpdate(DocumentEvent e)
+            {
+                handleEditorDocumentChange(e);
+            }
 
-                                         public void keyTyped(KeyEvent e)
-                                         {
-                                             if(! getBufferDirty())
-                                             {
-                                                 setBufferDirty(true);
-                                                 
-                                             }
-                                             setTimestampLastChange(System.currentTimeMillis());
-                                             mMainApp.updateMenus();
-                                         }
-                                     };
+            public void removeUpdate(DocumentEvent e)
+            {
+                handleEditorDocumentChange(e);
+            }
+        };
+
         JTextArea editorTextArea = new JTextArea(EDITOR_TEXT_AREA_NUM_ROWS,
                                                  EDITOR_TEXT_AREA_NUM_COLS);
         editorTextArea.setEditable(true);
-        editorTextArea.addKeyListener(listener);
+        editorTextArea.getDocument().addDocumentListener(listener);
         mEditorPaneTextArea = editorTextArea;
         
         JScrollPane scrollPane = new JScrollPane(editorTextArea);
@@ -526,8 +502,8 @@ public class EditorPane
 
         catch(Exception e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame, "error saving file: " + shortFileName, e);
-            dialog.show();
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(mMainFrame, "error saving file: " + shortFileName).show();
             return;
         }
 
@@ -579,8 +555,8 @@ public class EditorPane
 
         catch(Exception e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame, "error loading file: " + shortFileName, e);
-            dialog.show();
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(mMainFrame, "error loading file: " + shortFileName).show();
             return;
         }
     }
