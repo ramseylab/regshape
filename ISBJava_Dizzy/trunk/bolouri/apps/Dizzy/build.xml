@@ -40,7 +40,7 @@
     <filter token="VERSION" value="${app.version}" />
     <filter token="PROJROOT" value="${projRoot}" />
     <filter token="APPNAME" value="${ant.project.name}" />
-    <filter token="APPJAVARUNTIMEFLAGS" value="&appJavaRuntimeFlags;" />
+    <filter token="APPJAVAMAXHEAPSIZEBYTES" value="&appJavaMaxHeapSizeBytes;" />
   </target>
 
   <target name="compile">
@@ -71,8 +71,7 @@
     <mkdir dir="${app.buildDir}/bin" />
     <copy todir="${app.buildDir}/bin" filtering="true">
       <fileset dir="${app.binDir}">
-        <include name="*.bat" />
-        <include name="*.sh" />
+        <include name="runmodel.sh" />
       </fileset>
     </copy>
   </target>
