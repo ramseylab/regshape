@@ -24,7 +24,7 @@ package org.systemsbiology.math;
  */
 public class MutableDouble
 {
-    private double mDouble;
+    double mDouble;
 
     public double getValue()
     {

@@ -116,7 +116,7 @@ public class Value
         {
             if(mExpressionValueCached)
             {
-                return(mNumericValue.doubleValue());
+                return(mNumericValue.mDouble);
             }
             else
             {
@@ -128,7 +128,7 @@ public class Value
         }
         else
         {
-            return(mNumericValue.doubleValue());
+            return(mNumericValue.mDouble);
         }
     }
 
@@ -142,7 +142,7 @@ public class Value
         }
         else
         {
-            return(mNumericValue.doubleValue());
+            return(mNumericValue.mDouble);
         }
     }
 

@@ -23,8 +23,9 @@ public class SymbolEvaluatorHashMap extends SymbolEvaluator
 {
     protected HashMap mSymbolMap;
 
-    public SymbolEvaluatorHashMap(HashMap pSymbolMap)
+    public SymbolEvaluatorHashMap(HashMap pSymbolMap, boolean pUseExpressionValueCaching)
     {
+        super(pUseExpressionValueCaching);
         mSymbolMap = pSymbolMap;
     }
 
@@ -54,10 +55,9 @@ public class SymbolEvaluatorHashMap extends SymbolEvaluator
         return(value);
     }
 
-    public double getValue(Symbol pSymbol) throws DataNotFoundException
+    public double getUnindexedValue(Symbol pSymbol) throws DataNotFoundException
     {
-        String symbolName = pSymbol.getName();
-        return(getValue(symbolName));
+        return(getValue(pSymbol.getName()));
     }
 
     public boolean hasValue(Symbol pSymbol)
@@ -69,7 +69,7 @@ public class SymbolEvaluatorHashMap extends SymbolEvaluator
 
     public Object clone()
     {
-        SymbolEvaluatorHashMap newObj = new SymbolEvaluatorHashMap(mSymbolMap);
+        SymbolEvaluatorHashMap newObj = new SymbolEvaluatorHashMap(mSymbolMap, mUseExpressionValueCaching);
         return((Object) newObj);
     }
 }

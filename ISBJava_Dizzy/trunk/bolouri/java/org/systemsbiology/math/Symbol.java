@@ -20,10 +20,11 @@ import org.systemsbiology.util.*;
  */
 public class Symbol
 {
-    private final String mSymbolName;
-    private int mArrayIndex;
-    private double []mDoubleArray;
-    private Value []mValueArray;
+    final String mSymbolName;
+    // for performance reasons, this field is set to public:
+    int mArrayIndex;
+    double []mDoubleArray;
+    Value []mValueArray;
 
     public static final int NULL_ARRAY_INDEX = -1;
     
@@ -109,29 +110,5 @@ public class Symbol
         return(sb.toString());
     }
 
-    public final double getIndexedValue(SymbolEvaluator pSymbolEvaluator) throws IllegalStateException, DataNotFoundException
-    {
-        double []doubleArray = mDoubleArray;
-        if(null != doubleArray)
-        {
-            return(doubleArray[mArrayIndex]);
-        }
-        else
-        {
-            return(mValueArray[mArrayIndex].getValue(pSymbolEvaluator));
-        }
-    }
 
-    public final double getIndexedValueWithCaching(SymbolEvaluator pSymbolEvaluator) throws IllegalStateException, DataNotFoundException
-    {
-        double []doubleArray = mDoubleArray;
-        if(null != doubleArray)
-        {
-            return(doubleArray[mArrayIndex]);
-        }
-        else
-        {
-            return(mValueArray[mArrayIndex].getValueWithCaching(pSymbolEvaluator));
-        }
-    }
 }

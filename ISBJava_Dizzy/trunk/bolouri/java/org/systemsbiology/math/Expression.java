@@ -666,7 +666,8 @@ public class Expression implements Cloneable
     {
         if(null == mSymbolEvaluator)
         {
-            mSymbolEvaluator = new SymbolEvaluatorHashMap(pSymbolMap);
+            boolean useExpressionValueCaching = false;
+            mSymbolEvaluator = new SymbolEvaluatorHashMap(pSymbolMap, useExpressionValueCaching);
         }
         else
         {

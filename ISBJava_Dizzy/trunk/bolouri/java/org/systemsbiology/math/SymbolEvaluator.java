@@ -20,6 +20,13 @@ import org.systemsbiology.util.DataNotFoundException;
  */
 public abstract class SymbolEvaluator implements Cloneable
 {
+    protected final boolean mUseExpressionValueCaching;
+
+    public SymbolEvaluator(boolean pUseExpressionValueCaching)
+    {
+        mUseExpressionValueCaching = pUseExpressionValueCaching;
+    }
+
     /**
      * Returns the floating-point value associated with the specified
      * {@link Symbol}.
@@ -30,7 +37,33 @@ public abstract class SymbolEvaluator implements Cloneable
      * @return the floating-point value associated with the specified
      * symbol.
      */
-    public abstract double getValue(Symbol pSymbol) throws DataNotFoundException;
+    public final double getValue(Symbol pSymbol) throws DataNotFoundException
+    {
+        int arrayIndex = pSymbol.mArrayIndex;
+        if(NULL_ARRAY_INDEX == arrayIndex)
+        {
+            return(getUnindexedValue(pSymbol));
+        }
+        else
+        {
+            double []doubleArray = pSymbol.mDoubleArray;
+            if(null != doubleArray)
+            {
+                return(doubleArray[arrayIndex]);
+            }
+            else
+            {
+                if(! mUseExpressionValueCaching)
+                {
+                    return(pSymbol.mValueArray[arrayIndex].getValue(this));
+                }
+                else
+                {
+                    return(pSymbol.mValueArray[arrayIndex].getValueWithCaching(this));
+                }
+            }
+        }
+    }
 
     /**
      * Returns true if the object has a {@link Value} defined,
@@ -42,4 +75,9 @@ public abstract class SymbolEvaluator implements Cloneable
     public abstract boolean hasValue(Symbol pSymbol);
 
     public abstract Object clone();
+
+    public abstract double getUnindexedValue(Symbol pSymbol) throws DataNotFoundException;
+
+    protected static final int NULL_ARRAY_INDEX = Symbol.NULL_ARRAY_INDEX;
+
 }
