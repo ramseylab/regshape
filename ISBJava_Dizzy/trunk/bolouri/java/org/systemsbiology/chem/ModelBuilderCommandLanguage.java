@@ -544,7 +544,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         Token token = null;
         boolean inQuote = false;
         StringBuffer quotedString = new StringBuffer();
-        boolean gotFirstToken = false;
+        int parenDepth = 0;
         while(pTokenIter.hasNext())
         {
             token = getNextToken(pTokenIter);
@@ -552,8 +552,25 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             {
                 if(token.mCode.equals(Token.Code.PAREN_END))
                 {
-                    pTokenIter.previous();
-                    break;
+                    if(0 == parenDepth)
+                    {
+                        pTokenIter.previous();
+                        break;
+                    }
+                    else
+                    {
+                        --parenDepth;
+                        if(parenDepth < 0)
+                        {
+                            throw new InvalidInputException("mismatched number of parentheses detected within expression");
+                        }
+                        pTokens.add(token);
+                    }
+                }
+                else if(token.mCode.equals(Token.Code.PAREN_BEGIN))
+                {
+                    ++parenDepth;
+                    pTokens.add(token);
                 }
                 else if(token.mCode.equals(Token.Code.SEMICOLON))
                 {
@@ -561,24 +578,23 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                 }
                 else if(token.mCode.equals(Token.Code.COMMA))
                 {
-                    pTokenIter.previous();
-                    break;
+                    if(parenDepth == 0)
+                    {
+                        pTokenIter.previous();
+                        break;
+                    }
+                    else
+                    {
+                        pTokens.add(token);
+                    }
                 }
                 else if(token.mCode.equals(Token.Code.QUOTE))
                 {
                     inQuote = true;
-                    if(! gotFirstToken)
-                    {
-                        gotFirstToken = true;
-                    }
                 }
                 else
                 {
                     pTokens.add(token);
-                    if(! gotFirstToken)
-                    {
-                        gotFirstToken = true;
-                    }
                 }
             }
             else
@@ -598,9 +614,9 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                     quotedString.append(token.toString());
                 }
             }
-
         }
-        if(! gotFirstToken)
+        
+        if(pTokens.size() == 0)
         {
             throw new InvalidInputException("a symbol token was expected in list environment");
         }
@@ -678,7 +694,21 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     // For places where the parser expects to be able to obtain a value, this
     // function walks the token list and attempts to parse a value.  The value
     // may be either a "deferred evaluation" expression, or a simple numeric value.
-    private Value obtainValue(ListIterator pTokenIter, HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
+    private Value obtainValue(ListIterator pTokenIter, 
+                              HashMap pSymbolMap, 
+                              boolean pAllowDeferred) throws InvalidInputException, DataNotFoundException
+    {
+        boolean allowTerminateOnParen = false;
+        return obtainValue(pTokenIter, pSymbolMap, pAllowDeferred, allowTerminateOnParen);
+    }
+                              
+    // For places where the parser expects to be able to obtain a value, this
+    // function walks the token list and attempts to parse a value.  The value
+    // may be either a "deferred evaluation" expression, or a simple numeric value.
+    private Value obtainValue(ListIterator pTokenIter, 
+                              HashMap pSymbolMap, 
+                              boolean pAllowDeferred,
+                              boolean pAllowTerminateOnParen) throws InvalidInputException, DataNotFoundException
     {
         boolean firstToken = true;
         StringBuffer expressionBuffer = new StringBuffer();
@@ -686,6 +716,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         
         StringBuffer quoteBuffer = new StringBuffer();
         boolean inQuote = false;
+        int parenDepth = 0;
         
         while(pTokenIter.hasNext())
         {
@@ -713,8 +744,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             {
                 // we are not within a quotation
                 
-                if(token.mCode.equals(Token.Code.COMMA) ||
-                   token.mCode.equals(Token.Code.SEMICOLON))
+                if(token.mCode.equals(Token.Code.SEMICOLON) ||
+                   (token.mCode.equals(Token.Code.COMMA) && parenDepth == 0))
                 {
                     if(firstToken)
                     {
@@ -722,6 +753,10 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                     }
                     else
                     {
+                        if(parenDepth > 0)
+                        {
+                            throw new InvalidInputException("expression ended with mismatched parentheses");
+                        }
                         pTokenIter.previous();
                         break;
                     }
@@ -729,9 +764,20 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
                 // we are not within a quotation, and the token is not a comma, or semicolon
                     
-                if(firstToken && token.mCode.equals(Token.Code.BRACKET_BEGIN))
+                if(token.mCode.equals(Token.Code.BRACKET_BEGIN))
                 {
-                    deferredExpression = true;
+                    if(! pAllowDeferred)
+                    {
+                        throw new InvalidInputException("deferred evaluation expression not allowed here, so this token was unexpected: \"" + token.mCode + "\"");
+                    }
+                    if(firstToken)
+                    {
+                        deferredExpression = true;
+                    }
+                    else
+                    {
+                        throw new InvalidInputException("unexpected token encountered in an expression: \"" + token.mCode + "\"");
+                    }
                 }
                 else if(token.mCode.equals(Token.Code.QUOTE))
                 {
@@ -739,6 +785,10 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                 }
                 else if(token.mCode.equals(Token.Code.BRACKET_END))
                 {
+                    if(! pAllowDeferred)
+                    {
+                        throw new InvalidInputException("deferred evaluation expression not allowed here, so this token was unexpected: \"" + token.mCode + "\"");
+                    }
                     if(! deferredExpression)
                     {
                         throw new InvalidInputException("encountered closing bracket without an opening bracket");
@@ -750,6 +800,28 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                     }
                     
                     break;
+                }
+                else if(token.mCode.equals(Token.Code.PAREN_BEGIN))
+                {
+                    expressionBuffer.append(token.toString());
+                    ++parenDepth;
+                }
+                else if(token.mCode.equals(Token.Code.PAREN_END))
+                {
+                   if(parenDepth == 0 && pAllowTerminateOnParen)
+                   {
+                       pTokenIter.previous();
+                       break;
+                   }
+                   else
+                   {
+                       expressionBuffer.append(token.toString());
+                       --parenDepth;
+                       if(parenDepth < 0)
+                       {
+                           throw new InvalidInputException("mismatched number of parentheses detected within an expression");
+                       }
+                   }
                 }
                 else if(token.mCode.equals(Token.Code.SYMBOL))
                 {
@@ -810,7 +882,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         }
         catch(IllegalArgumentException e)
         {
-            throw new InvalidInputException("invalid mathematical formula; cause is: " + e.getMessage() + ";", e);
+            throw new InvalidInputException("invalid mathematical formula \"" + expressionString + "\"; cause is: " + e.getMessage() + ";", e);
         }
         Value value = null;
         if(deferredExpression)
@@ -910,7 +982,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             }
         }
         
-        Value value = obtainValue(pTokenIter, pSymbolMap);
+        boolean allowDeferred = true;
+        Value value = obtainValue(pTokenIter, pSymbolMap, allowDeferred);
         SymbolValue symbolValue = new SymbolValue(symbolName, value);
         SymbolValue foundSymbolValue = (SymbolValue) pSymbolMap.get(symbolName);
         if(null != foundSymbolValue)
@@ -1201,7 +1274,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             throw new InvalidInputException("incomplete reaction definition; expected to find reaction rate specifier");
         }
 
-        Value rateValue = obtainValue(pTokenIter, pSymbolMap);
+        boolean allowDeferred = true;
+        Value rateValue = obtainValue(pTokenIter, pSymbolMap, allowDeferred);
         reaction.setRate(rateValue);
 
         if(null != pSymbolMap.get(reactionName))
@@ -1251,7 +1325,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
     private void handleDelayedReaction(Reaction pReaction, HashMap pSymbolMap, ListIterator pTokenIter) throws InvalidInputException, DataNotFoundException
     {
-        Value delayValue = obtainValue(pTokenIter, pSymbolMap);
+        boolean allowDeferred = false;
+        Value delayValue = obtainValue(pTokenIter, pSymbolMap, false);
         if(delayValue.isExpression())
         {
             throw new InvalidInputException("reaction delay must be specified as a number, not a deferred-evaluation expression");
@@ -1266,7 +1341,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
     private void handleMultistepReaction(Reaction pReaction, HashMap pSymbolMap, ListIterator pTokenIter) throws InvalidInputException, DataNotFoundException
     {
-        Value stepsValue = obtainValue(pTokenIter, pSymbolMap);
+        boolean allowDeferred = false;
+        Value stepsValue = obtainValue(pTokenIter, pSymbolMap, allowDeferred);
         if(stepsValue.isExpression())
         {
             throw new InvalidInputException("number of reaction steps must be specified as a number, not a deferred-evaluation expression");
@@ -1701,60 +1777,46 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             throw new InvalidInputException("missing loop starting value");
         }
 
-        StringBuffer sb = new StringBuffer();
-        while(pTokenIter.hasNext())
-        {
-            token = getNextToken(pTokenIter);
-            if(token.mCode.equals(Token.Code.COMMA))
-            {
-                break; 
-            }
-
-            sb.append(token.toString());
-        }
-        
-        String startExpressionString = sb.toString();
-        Expression startExpression = new Expression(startExpressionString);
-
-        int startValue = (int) (startExpression.computeValue(pSymbolMap));
+        boolean allowDeferred = false;
+        Value startValueObj = obtainValue(pTokenIter, pSymbolMap, allowDeferred);
+                
+        int startValue = (int) (startValueObj.getValue());
         if(! pTokenIter.hasNext())
         {
             throw new InvalidInputException("missing loop ending value");
         }
 
-        sb.delete(0, sb.toString().length());
-        Token prevToken = null;
-        while(pTokenIter.hasNext())
+        token = getNextToken(pTokenIter);
+        if(! token.mCode.equals(Token.Code.COMMA))
         {
-            token = getNextToken(pTokenIter);
-            if(token.mCode.equals(Token.Code.BRACE_BEGIN))
-            {
-                if(null != prevToken)
-                {
-                    if(prevToken.mCode.equals(Token.Code.PAREN_END))
-                    {
-                        sb.deleteCharAt(sb.toString().length() - 1);
-                        break;
-                    }
-                    else
-                    {
-                        throw new InvalidInputException("found begin-brace token without preceding end-paren token");
-                    }
-                }
-                else
-                {
-                    throw new InvalidInputException("did not find end-paren token in loop statement");
-                }
-            }
+            throw new InvalidInputException("expected a comma separating the start expression from the end expression, in a loop statement; instead found the token \"" + token.mCode + "\"");
+        }
+        
+        boolean allowTerminateOnParen = true;
+        Value stopValueObj = obtainValue(pTokenIter, pSymbolMap, allowDeferred, allowTerminateOnParen);
 
-            prevToken = token;
-            sb.append(token.toString());
-        }      
+        int endValue = (int) (stopValueObj.getValue());
 
-        String endExpressionString = sb.toString();
-        Expression endExpression = new Expression(endExpressionString);
-        int endValue = (int) (endExpression.computeValue(pSymbolMap));
-
+        if(! pTokenIter.hasNext())
+        {
+            throw new InvalidInputException("missing paren at end of loop statement");
+        }
+        token = getNextToken(pTokenIter);
+        if(! token.mCode.equals(Token.Code.PAREN_END))
+        {
+            throw new InvalidInputException("expected a paren at the end of the loop statement; instead found the token \"" + token.mCode + "\"");
+        }
+        
+        if(! pTokenIter.hasNext())
+        {
+            throw new InvalidInputException("missing curly brace after loop statement");
+        }
+        token = getNextToken(pTokenIter);
+        if(! token.mCode.equals(Token.Code.BRACE_BEGIN))
+        {
+            throw new InvalidInputException("expected a curly brace after the loop statement; instead found the token \"" + token.mCode + "\"");
+        }
+        
         SymbolValue loopIndexSymbolValue = (SymbolValue) pSymbolMap.get(loopIndexSymbolName);
         LoopIndex loopIndexObj = null;
         if(null != loopIndexSymbolValue)
@@ -1867,7 +1929,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
             boolean expectSymbol = true;
             boolean gotEndParen = false;
-
+            boolean allowDeferred = true;
+            
             LinkedList tokenList = new LinkedList();
             while(pTokenIter.hasNext())
             {
@@ -1880,7 +1943,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                     if(tokenList.size() > 1 )
                     {
                         // cannot be a single symbol; must be an expression
-                        Value valueObj = obtainValue(tokenList.listIterator(), pSymbolMap);
+                        Value valueObj = obtainValue(tokenList.listIterator(), pSymbolMap, allowDeferred);
                         externalSymbolsList.add(valueObj);
                     }
                     else
