@@ -29,6 +29,7 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
     private static final long NUMBER_FIRINGS = 1;
 
     private Object []mReactionDependencies;
+    private Integer []mReactionsRecomputeAfterEachIteration;
     private IndexedPriorityQueue mPutativeTimeToNextReactions;
 
 
@@ -44,11 +45,92 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
         mPutativeTimeToNextReactions = putativeTimeToNextReactions;
     }
 
+    class ExpressionDependencyGetter implements Expression.IVisitor
+    {
+        private Collection mDependentSymbols;
+        public ExpressionDependencyGetter(Collection pDependentSymbols)
+        {
+            setDependentSymbols(pDependentSymbols);
+        }
+        public void setDependentSymbols(Collection pDependentSymbols)
+        {
+            mDependentSymbols = pDependentSymbols;
+        }
+        public Collection getDependentSymbols()
+        {
+            return(mDependentSymbols);
+        }
+        public void visit(Symbol pSymbol)
+        {
+            Symbol indexedSymbol = (Symbol) mSymbolMap.get(pSymbol.getName());
+            if(null != indexedSymbol)
+            {
+                if(null != indexedSymbol.getValueArray())
+                {
+                    Value symbolValue = mNonDynamicSymbolValues[indexedSymbol.getArrayIndex()];
+                    if(symbolValue.isExpression())
+                    {
+                        symbolValue.getExpressionValue().visit(this);
+                    }
+                    else
+                    {
+                        // do nothing, it is a non-important dependence
+                    }
+                }
+                else
+                {
+                    mDependentSymbols.add(pSymbol.getName());
+                }
+            }
+            else
+            {
+                mDependentSymbols.add(pSymbol.getName());
+            }
+        }
+        
+    }
+
+    private void processExpressionDependencies(Collection pDependentSymbolNames,
+                                               HashMap pSpeciesReactions,
+                                               boolean pTimeSymbolAllowed,
+                                               HashSet pReactionsRecomputeAfterEachIteration,
+                                               Integer pReactionIndex)
+    {
+        Iterator dependentSymbolNames = pDependentSymbolNames.iterator();
+        HashSet speciesReactionDependencies = null;
+        while(dependentSymbolNames.hasNext())
+        {
+            String dependentSymbolName = (String) dependentSymbolNames.next();
+            speciesReactionDependencies = (HashSet) pSpeciesReactions.get(dependentSymbolName);
+            if(null != speciesReactionDependencies)
+            {
+                if(! pReactionsRecomputeAfterEachIteration.contains(pReactionIndex))
+                {
+                    speciesReactionDependencies.add(pReactionIndex);
+                }
+            }
+            else
+            {
+                if(pTimeSymbolAllowed && dependentSymbolName.equals(ReservedSymbolMapperChemCommandLanguage.SYMBOL_TIME))
+                {
+                    pReactionsRecomputeAfterEachIteration.add(pReactionIndex);
+                }
+                else
+                {
+                    // do nothing, since the symbol is not dynamical and not an expression, and not "time"
+                }
+            }
+        }        
+    }
 
     private void createDependencyGraph(Model pModel) throws DataNotFoundException
     {
         Reaction []reactions = mReactions;
         int numReactions = reactions.length;
+
+        HashSet dependencySet = new HashSet();
+        ExpressionDependencyGetter dependencyGetter = new ExpressionDependencyGetter(dependencySet);
+        HashSet reactionsRecomputeAfterEachIteration = new HashSet();
 
         // for each species, obtain the set of all reactions that contain the given species
         // as a reactant
@@ -60,134 +142,157 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
         {
             String speciesName = speciesArray[ctr];
             speciesReactions.put(speciesName, new HashSet());
-            // find all reactions that contain this species
-            for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
-            {
-                Reaction reaction = reactions[reactionCtr];
-                if(reaction.containsReactant(speciesName))
-                {
-                    ((HashSet) speciesReactions.get(speciesName)).add(new Integer(reactionCtr));
-                }
-            }
         }
 
-        boolean checkCompartmentValues = false;
+        ReservedSymbolMapper reservedSymbolMapper = mSymbolEvaluator.getReservedSymbolMapper();
+        boolean timeSymbolAllowed = (reservedSymbolMapper != null &&
+                                     (reservedSymbolMapper instanceof ReservedSymbolMapperChemCommandLanguage));
 
-        SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = mSymbolEvaluator.getSymbolEvaluationPostProcessor();
-        if(null != symbolEvaluationPostProcessor &&
-           (symbolEvaluationPostProcessor instanceof SymbolEvaluationPostProcessorChemMarkupLanguage))
+        for(int j = 0; j < numReactions; ++j)
         {
-            checkCompartmentValues = true;
-        }
-
-        HashSet customSpecies = new HashSet();
-        for(int ctr = 0; ctr < numSpecies; ++ctr)
-        {
-            String speciesName = speciesArray[ctr];
-            Symbol speciesSymbol = (Symbol) mSymbolMap.get(speciesName);
-            if(null != speciesSymbol)
+            Reaction reaction = reactions[j];
+            Value reactionRate = reaction.getRate();
+            Integer reactionIndex = new Integer(j);
+            if(! reactionRate.isExpression())
             {
-                boolean addSpeciesToCustomList = false;
-                if(null != speciesSymbol.getValueArray())
+                Symbol []reactants = (Symbol []) mReactionsReactantsSpecies[j];
+                
+                int numReactants = reactants.length;
+                for(int k = 0; k < numReactants; ++k)
                 {
-                    // this is a boundary species with a custom population expression
-                    addSpeciesToCustomList = true;
-                }
-                else
-                {
-                    if(checkCompartmentValues)
+                    Symbol reactant = reactants[k];
+                    String reactantName = reactant.getName();
+                    HashSet speciesReactionDependencies = (HashSet) speciesReactions.get(reactantName);
+                    if(null != speciesReactionDependencies)
                     {
-                        Compartment compartment = pModel.getSpeciesByName(speciesName).getCompartment();
-                        if(compartment.getValue().isExpression())
+                        if(! reactionsRecomputeAfterEachIteration.contains(reactionIndex))
                         {
-                            addSpeciesToCustomList = true;
+                            speciesReactionDependencies.add(reactionIndex);
+                        }
+                    }
+                    else
+                    {
+                        Symbol indexedReactantSymbol = (Symbol) mSymbolMap.get(reactantName);
+                        if(null != indexedReactantSymbol)
+                        {
+                            if(null != indexedReactantSymbol.getValueArray())
+                            {
+                                Value indexedReactantValue = mNonDynamicSymbolValues[indexedReactantSymbol.getArrayIndex()];
+                                if(indexedReactantValue.isExpression())
+                                {
+                                    // need to find out all the other symbols it depends on
+                                    dependencySet.clear();
+                                    indexedReactantValue.getExpressionValue().visit(dependencyGetter);
+                                    processExpressionDependencies(dependencySet,
+                                                                  speciesReactions,
+                                                                  timeSymbolAllowed,
+                                                                  reactionsRecomputeAfterEachIteration,
+                                                                  reactionIndex);
+                                }
+                                else
+                                {
+                                    // do nothing, since the dependent symbol is not dynamical and not an expression
+                                }
+                            }
+                            else
+                            {
+                                throw new IllegalStateException("symbol has not been indexed: " + reactantName + " in reaction: " + reaction);
+                            }
+                        }
+                        else
+                        {
+                            throw new IllegalStateException("unrecognized symbol: " + reactantName + " in reaction: " + reaction.getName());
                         }
                     }
                 }
-                if(addSpeciesToCustomList)
-                {
-                    customSpecies.add(speciesName);
-                }
+            }
+            else
+            {
+                // need to find out all the other symbols it depends on
+                dependencySet.clear();
+                reactionRate.getExpressionValue().visit(dependencyGetter);
+                processExpressionDependencies(dependencySet,
+                                              speciesReactions,
+                                              timeSymbolAllowed,
+                                              reactionsRecomputeAfterEachIteration,
+                                              reactionIndex);
             }
         }
 
-        HashSet customReactions = new HashSet();
-        for(int ctr = 0; ctr < numReactions; ++ctr)
-        {
-            Reaction reaction = reactions[ctr];
-            if(reaction.getRate().isExpression() || reaction.getReactantsMap().size() == 0)
-            {
-                customReactions.add(new Integer(ctr));
-                continue;
-            }
-            
-            HashMap reactantsMap = reaction.getReactantsMap();
-            Collection reactantSpecies = reactantsMap.keySet();
-            Iterator reactantIter = reactantSpecies.iterator();
-            while(reactantIter.hasNext())
-            {
-                String reactantSpeciesName = (String) reactantIter.next();
-                if(customSpecies.contains(reactantSpeciesName))
-                {
-                    customReactions.add(new Integer(ctr));
-                }
-            }
-        }
+        Integer []dummyArray = new Integer[0];
+        mReactionsRecomputeAfterEachIteration = (Integer []) reactionsRecomputeAfterEachIteration.toArray(dummyArray);
 
         HashSet []reactionDependencies = new HashSet[numReactions];
-        for(int ctr = 0; ctr < numReactions; ++ctr)
+        for(int j = 0; j < numReactions; ++j)
         {
-            reactionDependencies[ctr] = new HashSet();
+            Reaction reaction = reactions[j];
+            HashSet dependentReactions = new HashSet();
+
             // go through the list of products for this reaction
-            
-            Reaction reaction = reactions[ctr];
-            Collection productSpecies = reaction.getProductsMap().keySet();
-            Iterator productIter = productSpecies.iterator();
-            while(productIter.hasNext())
+
+            Symbol []productsSpecies = (Symbol []) mReactionsProductsSpecies[j];
+            boolean []productsDynamic = (boolean []) mReactionsProductsDynamic[j];
+            int numProducts = productsSpecies.length;
+            for(int i = 0; i < numProducts; ++i)
             {
-                String productSpeciesName = (String) productIter.next();
-                HashSet dependentReactions = (HashSet) speciesReactions.get(productSpeciesName);
-                if(null != dependentReactions)
+                if(productsDynamic[i])
                 {
-                    reactionDependencies[ctr].addAll(dependentReactions);
+                    Symbol productSpecies = productsSpecies[i];
+                    String productSpeciesName = productSpecies.getName();
+                    HashSet speciesDependentReactions = (HashSet) speciesReactions.get(productSpeciesName);
+                    if(null != speciesDependentReactions)
+                    {
+                        dependentReactions.addAll(speciesDependentReactions);
+                    }
+
                 }
             }
 
-            Collection reactantSpecies = reaction.getReactantsMap().keySet();
-            Iterator reactantIter = reactantSpecies.iterator();
-            while(reactantIter.hasNext())
+            Symbol []reactantsSpecies = (Symbol []) mReactionsReactantsSpecies[j];
+            boolean []reactantsDynamic = (boolean []) mReactionsReactantsDynamic[j];
+
+            int numReactants = reactantsSpecies.length;
+            for(int i = 0; i < numReactants; ++i)
             {
-                String reactantSpeciesName = (String) reactantIter.next();
-                HashSet dependentReactions = (HashSet) speciesReactions.get(reactantSpeciesName);
-                if(null != dependentReactions)
+                if(reactantsDynamic[i])
                 {
-                    reactionDependencies[ctr].addAll(dependentReactions);
+                    Symbol reactantSpecies = reactantsSpecies[i];
+                    String reactantSpeciesName = reactantSpecies.getName();
+                    HashSet speciesDependentReactions = (HashSet) speciesReactions.get(reactantSpeciesName);
+                    if(null != speciesDependentReactions)
+                    {
+                        dependentReactions.addAll(speciesDependentReactions);
+                    }
                 }
             }
 
-            reactionDependencies[ctr].addAll(customReactions);
+            reactionDependencies[j] = dependentReactions;
         }
 
         mReactionDependencies = new Object[numReactions];
         for(int ctr = 0; ctr < numReactions; ++ctr)
         {
             HashSet dependentReactions = reactionDependencies[ctr];
+            Integer reactionCtr = new Integer(ctr);
+            if(dependentReactions.contains(reactionCtr))
+            {
+                dependentReactions.remove(reactionCtr);
+            }
             Integer []fakeArray = new Integer[0];
             mReactionDependencies[ctr] = (Integer []) dependentReactions.toArray(fakeArray);
         }
     }
 
-    private static double computeTimeToNextReaction(double []pReactionProbabilities,
-                                                    int pIndex,
-                                                    double pTime,
-                                                    RandomElement pRandomNumberGenerator)
+    private double computeTimeToNextReaction(double []pReactionProbabilities,
+                                             int pIndex,
+                                             double pTime,
+                                             RandomElement pRandomNumberGenerator)
     {
         double probRate = pReactionProbabilities[pIndex];
         double timeOfNextReaction = 0.0;
         if(0.0 < probRate)
         {
-            timeOfNextReaction = pTime + chooseDeltaTimeToNextReaction(pRandomNumberGenerator,
-                                                                       pReactionProbabilities[pIndex]);
+            timeOfNextReaction = pTime + chooseDeltaTimeToNextReaction(pReactionProbabilities[pIndex]);
         }
         else
         {
@@ -217,115 +322,88 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
         }
     }
 
-    private static void updateReactionRateAndTime(SymbolEvaluatorChem pSymbolEvaluator,
-                                                  IndexedPriorityQueue pPutativeTimeToNextReactions,
-                                                  int pReactionIndex,
-                                                  Reaction []pReactions,
-                                                  double []pReactionProbabilities,
-                                                  RandomElement pRandomNumberGenerator,
-                                                  int pLastReactionIndex) throws DataNotFoundException
+    private void updateReactionRateAndTime(double pCurrentTime,
+                                           int pReactionIndex,
+                                           int pLastReactionIndex) throws DataNotFoundException
     {
-        double time = pSymbolEvaluator.getTime();
-        MutableDouble timeOfNextReactionEventObj = (MutableDouble) pPutativeTimeToNextReactions.get(pReactionIndex);
-        double oldTimeOfNextReactionEvent = timeOfNextReactionEventObj.getValue();
-        double oldRate = pReactionProbabilities[pReactionIndex];
-        Reaction reaction = pReactions[pReactionIndex];
-        double newRate = reaction.computeRate(pSymbolEvaluator, true);
-        double newTimeOfNextReactionEvent = 0.0;
+        MutableDouble timeOfNextReactionEventObj = (MutableDouble) mPutativeTimeToNextReactions.get(pReactionIndex);
+        double newRate = computeReactionRate(pReactionIndex);
+
         if(pLastReactionIndex != pReactionIndex)
         {
-            if(newRate > 0.0 && oldRate > 0.0)
+            if(newRate > 0.0 && mReactionProbabilities[pReactionIndex] > 0.0)
             {
-                newTimeOfNextReactionEvent = (oldTimeOfNextReactionEvent - time)*oldRate/newRate + time;
+                timeOfNextReactionEventObj.setValue(((timeOfNextReactionEventObj.getValue() - pCurrentTime)*
+                                                     mReactionProbabilities[pReactionIndex]/newRate) + pCurrentTime);
             }
             else
             {
                 if(newRate > 0.0)
                 {
-                    newTimeOfNextReactionEvent = time + chooseDeltaTimeToNextReaction(pRandomNumberGenerator, newRate);
+                    timeOfNextReactionEventObj.setValue(pCurrentTime + chooseDeltaTimeToNextReaction(newRate));
                 }
                 else
                 {
-                    newTimeOfNextReactionEvent = Double.POSITIVE_INFINITY;
+                    timeOfNextReactionEventObj.setValue(Double.POSITIVE_INFINITY);
                 }
             }
         }
         else
         {
-            newTimeOfNextReactionEvent = time + chooseDeltaTimeToNextReaction(pRandomNumberGenerator, newRate);
+            timeOfNextReactionEventObj.setValue(pCurrentTime + chooseDeltaTimeToNextReaction(newRate));
         }
 
-        timeOfNextReactionEventObj.setValue(newTimeOfNextReactionEvent);
-        pPutativeTimeToNextReactions.update(pReactionIndex, timeOfNextReactionEventObj);
-        pReactionProbabilities[pReactionIndex] = newRate;
+        mPutativeTimeToNextReactions.update(pReactionIndex, timeOfNextReactionEventObj);
+        mReactionProbabilities[pReactionIndex] = newRate;
     }
                                                  
 
-    protected void prepareForStochasticSimulation(SymbolEvaluatorChem pSymbolEvaluator,
-                                                  double pStartTime,
-                                                  RandomElement pRandomNumberGenerator,
-                                                  Reaction []pReactions,
-                                                  double []pReactionProbabilities,
+    protected void prepareForStochasticSimulation(double pStartTime,
                                                   SimulatorParameters pSimulatorParameters) throws DataNotFoundException
     {
-        computeReactionProbabilities(pSymbolEvaluator,
-                                     pReactionProbabilities,
-                                     pReactions,
-                                     mHasExpressionValues,
-                                     mNonDynamicSymbolValues,
-                                     true);
+        computeReactionProbabilities();
 
-        computePutativeTimeToNextReactions(pRandomNumberGenerator,
+        computePutativeTimeToNextReactions(mRandomNumberGenerator,
                                            pStartTime,
-                                           pReactionProbabilities,
-                                           pReactions);
+                                           mReactionProbabilities,
+                                           mReactions);
     }
 
-    protected double iterate(SymbolEvaluatorChem pSymbolEvaluator,
-                             double pEndTime,
-                             Reaction []pReactions,
-                             double []pReactionProbabilities,
-                             RandomElement pRandomNumberGenerator,
-                             double []pDynamicSymbolValues,
-                             MutableInteger pLastReactionIndex,
-                             DelayedReactionSolver []pDelayedReactionSolvers,
-                             boolean pHasExpressionValues,
-                             Value []pNonDynamicSymbolValues) throws DataNotFoundException, IllegalStateException
+    protected double iterate(MutableInteger pLastReactionIndex) throws DataNotFoundException, IllegalStateException
     {
         IndexedPriorityQueue putativeTimeToNextReactions = mPutativeTimeToNextReactions;
         Object []reactionDependencies = mReactionDependencies;
 
-        double time = pSymbolEvaluator.getTime();
+        double time = mSymbolEvaluator.getTime();
 
         int lastReactionIndex = pLastReactionIndex.getValue();
         if(NULL_REACTION != lastReactionIndex)
         {
-            Reaction lastReaction = pReactions[lastReactionIndex];
-
-            updateSymbolValuesForReaction(pSymbolEvaluator,
-                                          lastReaction,
-                                          pDynamicSymbolValues,
-                                          pDelayedReactionSolvers,
+            updateSymbolValuesForReaction(lastReactionIndex,
+                                          mDynamicSymbolValues,
+                                          mDynamicSymbolDelayedReactionAssociations,
                                           NUMBER_FIRINGS);
-            if(pHasExpressionValues)
+            if(mHasExpressionValues)
             {
-                clearExpressionValueCaches(pNonDynamicSymbolValues);
+                clearExpressionValueCaches(mNonDynamicSymbolValues);
             }
-                                          
+                           
+            updateReactionRateAndTime(time, lastReactionIndex, lastReactionIndex);
+
+            int numReactionsRecomputeAfterEachIteration = mReactionsRecomputeAfterEachIteration.length;
+            for(int j = numReactionsRecomputeAfterEachIteration; --j >= 0; )
+            {
+                int reactionCtr = mReactionsRecomputeAfterEachIteration[j].intValue();
+                updateReactionRateAndTime(time, j, lastReactionIndex);
+            }
+            
             Integer []dependentReactions = (Integer []) reactionDependencies[lastReactionIndex];
             int numDependentReactions = dependentReactions.length;
             for(int ctr = numDependentReactions; --ctr >= 0; )
             {
                 Integer dependentReactionCtrObj = dependentReactions[ctr];
                 int dependentReactionCtr = dependentReactionCtrObj.intValue();
-
-                updateReactionRateAndTime(pSymbolEvaluator,
-                                          putativeTimeToNextReactions,
-                                          dependentReactionCtr,
-                                          pReactions,
-                                          pReactionProbabilities,
-                                          pRandomNumberGenerator,
-                                          lastReactionIndex);
+                updateReactionRateAndTime(time, dependentReactionCtr, lastReactionIndex);
 
 //                System.out.println("dependent reaction: " + dependentReaction + "; old time: " + oldPutativeTimeToNextReaction + "; new time: " + newPutativeTimeToNextReaction);
             }
@@ -335,16 +413,16 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
         MutableDouble timeOfNextReactionObj = (MutableDouble) putativeTimeToNextReactions.get(reactionIndex);
         double timeOfNextReaction = timeOfNextReactionObj.getValue();
 
-        if(0 == pDelayedReactionSolvers.length)
+        if(null == mDelayedReactionSolvers)
         {
             // do nothing
         }
         else
         {
-            int nextDelayedReactionIndex = getNextDelayedReactionIndex(pDelayedReactionSolvers);
+            int nextDelayedReactionIndex = getNextDelayedReactionIndex(mDelayedReactionSolvers);
             if(nextDelayedReactionIndex >= 0)
             {
-                DelayedReactionSolver solver = pDelayedReactionSolvers[nextDelayedReactionIndex];
+                DelayedReactionSolver solver = mDelayedReactionSolvers[nextDelayedReactionIndex];
                 double nextDelayedReactionTime = solver.peekNextReactionTime();
 //                System.out.println("next delayed reaction will occur at: " + nextDelayedReactionTime);
                 if(nextDelayedReactionTime < timeOfNextReaction)
@@ -352,31 +430,18 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
                     // execute delayed reaction
                     timeOfNextReaction = nextDelayedReactionTime;
                     reactionIndex = solver.getReactionIndex();
-//                    System.out.println("delayed reaction selected: " + pReactions[reactionIndex]);
+//                    System.out.println("delayed reaction selected: " + mReactions[reactionIndex]);
                     solver.pollNextReactionTime();
                 }
             }
         }
 
         pLastReactionIndex.setValue(reactionIndex);
-        Reaction nextReaction = pReactions[reactionIndex];
+//        System.out.println("reaction selected: " + mReactions[reactionIndex].toString() + " at time: " + time);
 
-        double newTime = timeOfNextReaction;
+        time = timeOfNextReaction;
 
-//        System.out.println("reaction selected: " + nextReaction);
-//        System.out.println("time after reaction: " + newTime);
-
-        if(newTime < pEndTime)
-        {
-            // set time to new time value
-            time = newTime;
-        }
-        else
-        {
-            time = pEndTime;
-//            System.out.println("end of simulation");
-        }
-        pSymbolEvaluator.setTime(time);
+        mSymbolEvaluator.setTime(time);
 
         return(time);
     }
@@ -401,4 +466,5 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
     }
 }
     
+
 
