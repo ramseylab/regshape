@@ -318,7 +318,7 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
                                                                   pStartTime,
                                                                   pRandomNumberGenerator);
             MutableDouble storeTimeToNextReaction = new MutableDouble(timeToNextReaction);
-            putativeTimeToNextReactions.offer(storeTimeToNextReaction);
+            putativeTimeToNextReactions.add(storeTimeToNextReaction);
         }
     }
 
