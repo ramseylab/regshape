@@ -184,11 +184,11 @@ public class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDetermini
             throw new IllegalArgumentException("max fractional error must be specified");
         }
 
-        int minNumSteps;
-        Integer minNumStepsObj = pSimulatorParams.getMinNumSteps();
+        long minNumSteps;
+        Long minNumStepsObj = pSimulatorParams.getMinNumSteps();
         if(null != minNumStepsObj)
         {
-            minNumSteps = minNumStepsObj.intValue();
+            minNumSteps = minNumStepsObj.longValue();
             if(minNumSteps <= 0)
             {
                 throw new IllegalArgumentException("illegal value for number of steps");

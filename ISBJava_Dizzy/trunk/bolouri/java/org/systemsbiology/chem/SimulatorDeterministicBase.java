@@ -395,6 +395,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         Object []dynamicSymbolAdjustmentVectors = mDynamicSymbolAdjustmentVectors;
 
         double time = pStartTime;        
+
         prepareForSimulation(time);
 
         // set "last" values for dynamic symbols to be same as initial values
@@ -403,8 +404,6 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
         int timeCtr = 0;
             
-        int minNumSteps = pNumResultsTimePoints;
-
         int numDelayedReactionSteps = 0;
         int numReactions = reactions.length;
         for(int ctr = 0; ctr < numReactions; ++ctr)
@@ -418,15 +417,17 @@ public abstract class SimulatorDeterministicBase extends Simulator
         }
         numDelayedReactionSteps *= 5;
 
+        long minNumSteps = pNumResultsTimePoints;
+
         if(minNumSteps < numDelayedReactionSteps)
         {
             minNumSteps = numDelayedReactionSteps;
         }
 
-        Integer minNumStepsObj = pSimulatorParameters.getMinNumSteps();
+        Long minNumStepsObj = pSimulatorParameters.getMinNumSteps();
         if(null != minNumStepsObj)
         {
-            if(minNumStepsObj.intValue() < minNumSteps)
+            if(minNumStepsObj.longValue() < minNumSteps)
             {
                 pSimulatorParameters.setMinNumSteps(minNumSteps);
             }
