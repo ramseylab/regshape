@@ -2056,9 +2056,9 @@ the dollar sign is used, as shown in the following
 example:
 <blockquote>
 <pre>
-my_reaction, $A -&gt; B, 2.0;
 A = 100;
 B = 100;
+my_reaction, $A -&gt; B, 2.0;
 </pre>
 </blockquote>
 In the above example, species <code>A</code> is 
@@ -2080,21 +2080,15 @@ simplified in the following way:
 <blockquote>
 <pre>
 A = 100;
-my_reaction,  -&gt; B, [2.0 * A];
 B = 100;
+my_reaction,  -&gt; B, [2.0 * A];
 </pre>
 </blockquote>
 In the above example, <code>A</code> has been
-changed into a numeric macro, and eliminated as
+changed into a parameter, and eliminated as
 a species in the reaction that produces species 
 <code>B</code>.  The reaction rate has been increased
 by a factor of the value of <code>A</code>.
-This method of defining the reaction is slightly
-preferred for reasons of computation speed.  The
-fewer species in a model, and the simpler the
-reactions in the model (in terms of number of 
-reactant and product species), the faster it will
-be to simulate the reaction kinetics of the model.
 </p>
 <p>
 As with floating species, the population definition
@@ -2143,8 +2137,8 @@ is governed by a mathematical expression involving the
 special symbol <code>time</code>, as in the following example:
 <blockquote>
 <pre>
-A = "10 * time";
-B = 100;m
+A = [10 * time];
+B = 100;
 y_reaction, $A -&gt; B, 2.0;
 </pre>
 </blockquote>
@@ -2499,19 +2493,10 @@ use of the following parser aliases:
 <dd>specifies the model definition file to be processed by the scripting 
 engine</dd>
 </dl>
-The case of the SBML parser described above deserves some special
-explanation.  Because the SBML Level 1 standard does not provide for 
-embedding action-performing statements in the model definition file
-(such as a statement instructing that a simulation should be executed),
-the command-line interface to the scripting engine handles SBML files
-differently from other file input types.  SBML files are automatically
-converted to CMDL format, and the resulting CMDL statements are printed
-to standard output (the console).  This output can be redirected to
-a new CMDL file (e.g., &quot;<code>myModel.&cmdlExtension;</code>&quot;)
-using standard operating system shell indirection.  One can then append
-action-performing statements to the end of the CMDL model definition file,
-and re-load the file in the scripting engine, in order to execute 
-simulations or the like.
+When you invoke the command-line interface to &appName;, the model definition
+file that you specify will be automatically loaded into the Simulator.  At
+that point, a simulation driver window will appear, and you can start a
+simulation.
 </p>
 <p>
 In order to be able to use the command-line interface to the &appName;
@@ -2724,15 +2709,6 @@ choice until you close the file, or exit the application.  After your model
 definition is processed, the model name and species populations collection name
 should appear in the list boxes marked &quot;<b>model names:</b>&quot;
 and &quot;<b>species population names:</b>&quot;, respectively.
-</p>
-<p>
-<b>NOTE:</b> only definition statements appearing in the model definition file
-will be processed.  If the model definition file contains 
-<a href="#actionperformingstatements">action-performing statements</a>,
-they will be ignored by the scripting engine in the GUI application.  This is
-the case because the GUI application provides all of the same functionality
-of the action-performing statements; the action-performing statements are intended
-only for use in the command-line scripting environment.
 </p>
 <p>
 To close the file (i.e., clear the editor window), 
