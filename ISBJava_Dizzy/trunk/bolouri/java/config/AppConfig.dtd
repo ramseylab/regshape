@@ -13,8 +13,8 @@
 %CommonConfig;
 
 <!ENTITY appName "&localJavaLibraryName;">
-<!ENTITY appVersionMajor "1">
-<!ENTITY appVersionMinor "9">
+<!ENTITY appVersionMajor "2">
+<!ENTITY appVersionMinor "0">
 <!ENTITY appVersionPatch "0">
 <!ENTITY appVersion "&appVersionMajor;.&appVersionMinor;.&appVersionPatch;">
 <!ENTITY appDate "2004/11/12">
