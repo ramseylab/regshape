@@ -410,9 +410,8 @@ public class MainApp
         frame.pack();
         int frameWidth = frame.getWidth();
         int frameHeight = frame.getHeight();
-        Point frameLocation = FramePlacer.placeInCenterOfScreen(frameWidth,
-                                                                frameHeight);
-        frame.setLocation(frameLocation);
+        
+        FramePlacer.placeInCenterOfScreen(frame);
         mOriginalWidthPixels = frameWidth;
         mOriginalHeightPixels = frameHeight;
         
