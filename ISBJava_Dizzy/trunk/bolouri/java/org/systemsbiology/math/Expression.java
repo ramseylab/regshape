@@ -1253,8 +1253,9 @@ public class Expression implements Cloneable
         }        
     }
 
-
-    // this method is PERFORMANCE CRITICAL code; that is why it is so ugly
+    /*
+     * IMPORTANT:  this method contains PERFORMANCE-CRITICAL code
+     */
     private static final double valueOfSubtreeNonSimple(Element pElement, SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
     {
         double valueOfFirstOperand;
@@ -1365,6 +1366,9 @@ public class Expression implements Cloneable
         }
     }
 
+    /*
+     * IMPORTANT:  this method contains PERFORMANCE-CRITICAL code.
+     */
     private static final double valueOfSubtree(Element pElement, SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
     {
         int elementCodeInt = pElement.mCode.mIntCode;
