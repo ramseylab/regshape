@@ -79,6 +79,8 @@ be displayed in the simulation results plot window on the Windows platform,
 in some cases.</li>
 <li>Fixed a bug where selecting &quot;view in Cytoscape&quot; with a syntactically
 incorrect model in the editor pane, leads to a <code>NullPointerException</code>.</li>
+<li>Fixed a bug where models were not displaying correctly within Cytoscape, since
+version 1.0.0.  This is because the Cytoscape SBML reader requires SBML Level 1, version 1.</li>
 </ul>
 </td>
 <td><a href="&javaURL;/1.2.0/&installerDownloadRelURL;">1.2.0</a></td>
