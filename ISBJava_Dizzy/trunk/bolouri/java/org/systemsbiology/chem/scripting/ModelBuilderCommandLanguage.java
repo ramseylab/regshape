@@ -1363,7 +1363,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
         }
 
-        if(statementBuffer.toString().length() != 0)
+        if(statementBuffer.toString().trim().length() != 0)
         {
             throw new InvalidInputException("model definition file ended without a statement-ending token (semicolon); at line " + lineCtr + " of model definition file");
         }
@@ -1389,7 +1389,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                              IncludeHandler pIncludeHandler ) throws InvalidInputException, IOException
     {
         assert (null != pIncludeHandler) : "null include handler";
-        Model model = new Model(DEFAULT_MODEL_NAME);
+        Model model = new Model();
         HashMap symbolMap = new HashMap();
         MutableInteger numReactions = new MutableInteger(0);
         parseModelDefinition(pInputReader, model, pIncludeHandler, symbolMap, numReactions);
