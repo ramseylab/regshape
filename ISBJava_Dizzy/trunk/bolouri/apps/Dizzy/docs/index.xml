@@ -34,20 +34,17 @@
 &appName; is a chemical kinetics stochastic simulation software package 
 written in Java.  It provides a model definition environment and an implementation of the 
 <a href="docs/UserManual.html#gillespie">Gillespie stochastic algorithm</a>.
-The software is based on the <a href="../&localJavaLibraryName;">&localJavaLibraryName;</a>
-library. &appName; requires the Java Runtime Environment (JRE) version 1.4 or newer.
-<br />
-&nbsp;
-<br />
+The software is based on the 
+<a href="../&localJavaLibraryName;">&localJavaLibraryName; library</a>. 
+The software is available for download within a self-extracting installer 
+(see the &quot;Download &appName;&quot; link above), subject
+to the terms of the <a href="../License.html">software license agreement</a>.
+The license agreement is the GNU Lesser General Public License (LGPL), 
+which is a standard &quot;free software&quot; and &quot;open source&quot; license.  
+&appName; requires the Java Runtime Environment (JRE) version 1.4 or newer,
+or an equivalent JRE.
 For more information about the &appName; system, please consult the 
-<a href="docs/UserManual.html">User Manual</a>.
-<br />
-&nbsp;
-<br />
-This software is made available under the GNU Lesser General Public License (LGPL), 
-which is a standard &quot;free software&quot;
-and &quot;open source&quot; license.  A <a href="../License.html">copy of the 
-text of the license agreement</a> is available.
+<a href="docs/UserManual.html">&appName; User Manual</a>.
 </p>
 <p>
 <a href="images/screenshot1.png"><img src="images/screenshot1-small.png" alt="screenshot" /></a>Screen shot of the &appName; program
