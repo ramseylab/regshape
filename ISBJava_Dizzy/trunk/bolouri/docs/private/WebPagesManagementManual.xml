@@ -395,7 +395,8 @@ web content!
 
 <isb:docsection name="Generating PDF" label="generatingpdf">
 <p>
-If you wish to be able to build PDF documentation, you will need to
+If you wish to be able to build PDF documentation in an automated
+fashion through the Ant build system, you will need to
 have several additional software installed on your computer:
 <ol>
 <li><b>html2ps</b><br />
@@ -496,6 +497,33 @@ Note that the &quot;<code>pdfdoclet</code>&quot; software product
 (used to generate a PDF version of Javadoc API documentation) is
 still quite experimental, and its support for fancy HTML constructs
 in Javadoc comments is rather shaky.
+</p>
+<p>
+If you wish to generate PDF documentation &quot;by hand&quot; from
+a HTML document, you can chain together the following tools in order
+to accomplish the task.  Assuming that your HTML document is named
+&quot;<code>myDoc.html</code>&quot;, the following steps should convert
+the document into &quot;<code>myDoc.pdf</code>&quot;:
+<blockquote>
+<pre>
+tidy myDoc.html &gt; myDoc-tidy.html
+html2ps myDoc-tidy.html &gt; myDoc.ps
+ps2pdf myDoc.ps myDoc.pdf
+</pre>
+</blockquote>
+Note that <code>tidy</code> always spits out a lot of warning
+messages, unless you use the <code>-quiet</code> directive.
+If your document &quot;<code>myDoc.html</code>&quot; is strict
+XHTML rather than ordinary HTML, the <code>tidy</code> command
+would be a bit different:
+<blockquote>
+<pre>
+tidy -xml -asxhtml myDoc.xhtml &gt; myDoc.xhtml
+</pre>
+</blockquote>
+The reason why <code>tidy</code> is necessary is because the
+<code>html2ps</code> program is very sensitive to correct input
+formatting.  
 </p>
 </isb:docsection>
 
