@@ -3,6 +3,7 @@
 <!DOCTYPE Overview [
   <!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
   %CommonConfig;
+  <!ENTITY internalWebServerURL "http://sun01.systemsbiology.net">
    ]>
 
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
@@ -40,13 +41,13 @@ The members of our research group are:
 <td><b>Larissa Kamenkovich</b></td><td>Research Programmer</td><td>206-732-1366</td><td><code>lkamenko @ systemsbiology.org</code></td><td>&nbsp;</td>
 </tr>
 <tr>
-<td><b>David Orrell</b></td><td>Senior Researcher</td><td>206-732-1334</td><td><code>dorrell @ systemsbiology.org</code></td><td><a href="/~dorrell/index.html" target="_new">home page</a></td>
+<td><b>David Orrell</b></td><td>Senior Researcher</td><td>206-732-1334</td><td><code>dorrell @ systemsbiology.org</code></td><td><a href="&internalWebServerURL;/~dorrell/index.html" target="_new">home page</a></td>
 </tr>
 <tr>
-<td><b>Stephen Ramsey</b></td><td>Senior Researcher</td><td>206-732-1335</td><td><code>sramsey at systemsbiology.org</code></td><td><a href="/~sramsey/index.html" target="_new">home page</a></td>
+<td><b>Stephen Ramsey</b></td><td>Senior Researcher</td><td>206-732-1335</td><td><code>sramsey at systemsbiology.org</code></td><td><a href="&internalWebServerURL;/~sramsey/index.html" target="_new">home page</a></td>
 </tr>
 <tr>
-<td><b>Alistair Rust</b></td><td>Senior Researcher</td><td>206-732-1294</td><td><code>arust @ systemsbiology.org</code></td><td><a href="/~arust" target="_new">home page</a></td>
+<td><b>Alistair Rust</b></td><td>Senior Researcher</td><td>206-732-1294</td><td><code>arust @ systemsbiology.org</code></td><td><a href="&internalWebServerURL;/~arust" target="_new">home page</a></td>
 </tr>
 </table>
 </blockquote>
