@@ -39,7 +39,7 @@ This document contains the version history for the
 
 <tr valign="top">
 <td>0.0.5</td>
-<td>2003/10/20</td>
+<td>2003/10/22</td>
 <td>Fixed a bug in the <code>GibsonSimulator</code> initialization code, for the case of a boundary
 reactant species.  Fixed a bug in the <code>ModelBuilderCommandLanguage</code> tokenizer, so that
 it can now accept a tab character as valid whitespace in a model definition file.  Modified the
