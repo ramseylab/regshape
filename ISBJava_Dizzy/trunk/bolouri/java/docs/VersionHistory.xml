@@ -38,6 +38,22 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td>0.0.8</td>
+<td>2003/11/20</td>
+<td>
+<ul>
+<li>Created a new <code>org.systemsbiology.chem.SimulatorParameters</code> mechanism to pass
+simulator-specific parameters to the simulator object.</li>
+<li>Modified the fixed-stepsize deterministic simulator, so that it can detect when the step-size
+is insufficient.</li>
+<li>Fixed an error-handling bug in the <code>org.systemsbiology.chem.app.Plotter</code> class.</li>
+<li>Modified the <code>SimulationLauncher</code> so that default simulator-specific parameters
+are auto-filled, and are updated when the simulator selection is changed.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td>0.0.7</td>
 <td>2003/11/07</td>
 <td>
