@@ -106,8 +106,8 @@ library.
 <p />
 The classes in this library
 have been tested on the Sun JDK v1.4.1, on the Red Hat
-Linux 8.0 platform.  On other platforms, your mileage 
-may vary.  
+Linux 8.0 platform and on Windows XP.  On other platforms,
+your mileage may vary.
 <p />
 Ant is required to use the "build.xml" file in this directory.
 You can download and install Ant from 

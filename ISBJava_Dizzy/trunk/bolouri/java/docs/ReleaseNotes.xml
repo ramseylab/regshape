@@ -53,11 +53,12 @@ stemming from the use of this software, as stated in the license agreement.
 </isb:docsection>
 
 <isb:docsection name="Supported Platforms" label="platforms">
+This software requires a Java Runtime Environment (JRE) version 1.4 or
+newer, because it uses Java 1.4 language features and extensions.
 This software has been tested on Windows XP and Red Hat Linux 8.0.
 It should function properly on most Windows and Linux distributions.
-It has not been tested on the Mac OSX operating system, but it is
-made available for Mac OSX operating system on an unsupported,
-&quot;as-is&quot; basis.
+On other operating systems, you may download the &quot;Other Java-Enabled
+Platforms&quot; version of the installer.
 </isb:docsection>
 
 <isb:docsection name="Source Code" label="sourcecode">

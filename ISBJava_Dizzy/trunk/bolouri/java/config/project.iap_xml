@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This script was automatically generated using Zero G's InstallAnywhere 5.0.7 Standard, Build 1680
      STATUS: Fully Functional LICENSED Edition
-     DATE:   Tue Apr 29 15:10:07 PDT 2003 -->
-<InstallAnywhere_Deployment_Project increments="1342">
+     DATE:   Wed Apr 30 14:44:10 PDT 2003 -->
+<InstallAnywhere_Deployment_Project increments="1256">
 	<!-- ** DO NOT EDIT ** Essential authorization and configuration data ** DO NOT EDIT ** -->
 	<essentialScriptInfo>
 		<versionID major="5" minor="0" revision="7"/>
@@ -10,9 +10,9 @@
 		<scriptID>12,42,11,90,80,49,55,54,52,57,88,55,86,67,77,68</scriptID>
 		<buildID>3,13,71,76,105,110,117,120,44,32,50,46,52,46,49,56,45,49,52,44,32,105,51,56,54,59,32,74,97,118,97,32,49,46,51,46,49,95,48,52,44,32,83,117,110,32,77,105,99,114,111,115,121,115,116,101,109,115,32,73,110,99,46,44,32,104,116,116,112,58,47,47,106,97,118,97,46,115,117,110,46,99,111,109,47,59,32,101,110,44,32,85,83,59,32,85,84,70,45,56</buildID>
 		<!-- The authorizationID may change between project saves and builds.  This does not effect the integrity of the project, nor do changes in this value represent changes in the actual InstallAnywhere project. -->
-		<authorizationID>1,0,0,-16,-45,117,-80,-48,80,112,114,103,83,98,113,97,113,49,51,67,58,65,70,68,86,69,64,69,66,69,48,63,87,5,2,8,8,25,123,4,0,0,0</authorizationID>
+		<authorizationID>1,0,0,-16,-29,-123,80,16,80,112,114,103,83,98,113,97,113,49,51,67,58,65,70,68,86,69,64,69,66,69,48,63,87,5,2,1,3,24,112,4,0,0,0</authorizationID>
 	</essentialScriptInfo>
-	<installationObjects uniqueObjects="55">
+	<installationObjects uniqueObjects="53">
 		<object class="com.zerog.ia.installer.Installer" objectID="a72af448bd04">
 			<property name="classpath">
 				<object class="java.util.Vector"/>
@@ -45,9 +45,6 @@
 						<string><![CDATA[Introduction]]></string>
 					</method>
 					<method name="addElement">
-						<string><![CDATA[Unsupported Platform]]></string>
-					</method>
-					<method name="addElement">
 						<string><![CDATA[License Agreement]]></string>
 					</method>
 					<method name="addElement">
@@ -74,7 +71,7 @@
 				</object>
 			</property>
 			<property name="installProgressLabelIndex">
-				<int>6</int>
+				<int>5</int>
 			</property>
 			<property name="installProgressLabelOption">
 				<int>2</int>
@@ -164,109 +161,6 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 						</object>
 					</method>
 					<method name="addElement">
-						<object class="com.zerog.ia.installer.actions.ImportantNoteAction" objectID="eefa96c4937c">
-							<property name="imageOption">
-								<int>1</int>
-							</property>
-							<property name="labelOption">
-								<int>2</int>
-							</property>
-							<property name="labelIndex">
-								<int>1</int>
-							</property>
-							<property name="title">
-								<string><![CDATA[Unsupported Platform]]></string>
-							</property>
-							<property name="stepPrompt">
-								<string><![CDATA[Please note that this is an unsupported platform!]]></string>
-							</property>
-							<property name="sourceFileType">
-								<int>0</int>
-							</property>
-							<property name="requiresUserChoice">
-								<boolean>false</boolean>
-							</property>
-							<property name="agreeWithLicenseByDefault">
-								<boolean>false</boolean>
-							</property>
-							<property name="openExternalLinks">
-								<boolean>true</boolean>
-							</property>
-							<rules logicalOperation="AND">
-								<object class="com.zerog.ia.installer.rules.PlatformChk" objectID="eefadf36937c">
-									<property name="installOnPlatformList">
-										<object class="java.util.Vector">
-											<method name="addElement">
-												<string><![CDATA[Mac OS X]]></string>
-											</method>
-										</object>
-									</property>
-									<property name="doNotInstallOnPlatformList">
-										<object class="java.util.Vector">
-											<method name="addElement">
-												<string><![CDATA[Windows 95]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[Windows 98]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[Windows NT]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[Windows Me]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[Windows 2000]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[Windows XP]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[Mac OS]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[OS/2]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[Solaris]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[SunOS]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[HP-UX]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[Linux]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[AIX]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[Irix]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[DG-UX]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[Compaq's Digital UNIX]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[FreeBSD]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[Rhapsody]]></string>
-											</method>
-											<method name="addElement">
-												<string><![CDATA[Unlisted Platforms]]></string>
-											</method>
-										</object>
-									</property>
-								</object>
-							</rules>
-						</object>
-					</method>
-					<method name="addElement">
 						<object class="com.zerog.ia.installer.actions.LicenseAgrAction" objectID="aa87ab8dbd07">
 							<property name="imageOption">
 								<int>1</int>
@@ -275,7 +169,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<int>2</int>
 							</property>
 							<property name="labelIndex">
-								<int>2</int>
+								<int>1</int>
 							</property>
 							<property name="title">
 								<string><![CDATA[License Agreement]]></string>
@@ -327,7 +221,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<int>2</int>
 							</property>
 							<property name="labelIndex">
-								<int>3</int>
+								<int>2</int>
 							</property>
 						</object>
 					</method>
@@ -358,7 +252,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<int>2</int>
 							</property>
 							<property name="labelIndex">
-								<int>4</int>
+								<int>3</int>
 							</property>
 						</object>
 					</method>
@@ -401,7 +295,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<int>2</int>
 							</property>
 							<property name="labelIndex">
-								<int>5</int>
+								<int>4</int>
 							</property>
 							<property name="fieldList">
 								<object class="java.util.Vector"/>
@@ -437,7 +331,7 @@ Press ""Done"" to quit the installer.]]></string>
 								<int>2</int>
 							</property>
 							<property name="labelIndex">
-								<int>7</int>
+								<int>6</int>
 							</property>
 							<rules logicalOperation="AND">
 								<object class="com.zerog.ia.installer.rules.CompareVariable" objectID="a72af46abd09">
@@ -463,7 +357,7 @@ Press ""Done"" to quit the installer.]]></string>
 								<int>2</int>
 							</property>
 							<property name="labelIndex">
-								<int>8</int>
+								<int>7</int>
 							</property>
 							<property name="title">
 								<string><![CDATA[Release Notes]]></string>
@@ -514,7 +408,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 								<int>2</int>
 							</property>
 							<property name="labelIndex">
-								<int>9</int>
+								<int>8</int>
 							</property>
 							<rules logicalOperation="AND">
 								<object class="com.zerog.ia.installer.rules.CompareVariable" objectID="a72af46abd0a">
@@ -605,7 +499,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 				<object class="java.util.Properties">
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.project.save.last.date]]></string>
-						<string><![CDATA[Tue Apr 29 15:10:07 PDT 2003]]></string>
+						<string><![CDATA[Wed Apr 30 14:44:10 PDT 2003]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.merge]]></string>
@@ -621,7 +515,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.linux.vm]]></string>
-						<string><![CDATA[true]]></string>
+						<string><![CDATA[false]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.named_unix.vm]]></string>
@@ -629,7 +523,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.unix.novm]]></string>
-						<string><![CDATA[false]]></string>
+						<string><![CDATA[true]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.cdrom]]></string>
@@ -680,6 +574,10 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<string><![CDATA[false]]></string>
 					</method>
 					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.platform.java.novm]]></string>
+						<string><![CDATA[true]]></string>
+					</method>
+					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.windows.novm]]></string>
 						<string><![CDATA[true]]></string>
 					</method>
@@ -705,7 +603,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.macosx.novm]]></string>
-						<string><![CDATA[true]]></string>
+						<string><![CDATA[false]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.output.cdrom]]></string>
@@ -717,7 +615,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.windows.vm]]></string>
-						<string><![CDATA[true]]></string>
+						<string><![CDATA[false]]></string>
 					</method>
 				</object>
 			</property>
