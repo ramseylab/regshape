@@ -72,7 +72,7 @@ public class FileOpenAction
                     {
                         throw new IllegalStateException("no data file delimiter found");
                     }
-                    DataFileDelimiter delimiter = DataFileDelimiter.forName(delimiterName);
+                    DataFileDelimiter delimiter = DataFileDelimiter.get(delimiterName);
                     if(null == delimiter)
                     {
                         throw new IllegalStateException("unknown delimiter name: " + delimiterName);
