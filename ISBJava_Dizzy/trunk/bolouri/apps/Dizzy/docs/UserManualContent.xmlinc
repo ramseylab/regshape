@@ -4102,20 +4102,20 @@ or the fixed-stepsize Runge-Kutta integrator with
 <p>
 If you find that the &appName; program does not function in accordance
 with the descriptions in this manual, or if there are sections of
-this manual that are incorrect or unclear, the authors would like to 
+this manual that are incorrect or unclear, the author would like to 
 hear about it, so that we can make improvements and fix bugs in the
-software.  Furthermore, the authors would appreciate feedback
+software.  Furthermore, the author would appreciate feedback
 regarding new features or improvements that would be useful to
-users of this software.  Before e-mailing the authors, it is a good
+users of this software.  Before e-mailing the author, it is a good
 idea to check the <a href="&appHomePage;">&appName; application home page</a>
 to see if a new version has been released, in which your specific
 problem may have been corrected.  All releases are documented in
 the &quot;version history&quot; page accessible from the home page.
-The best way to contact the authors is to send e-mail to:
+The best way to contact the author is to send e-mail to:
 <blockquote>
 <code>&appMaintainerEmailSafe;</code>.
 </blockquote>
-The authors will attempt to respond to your e-mail as quickly as
+The author will attempt to respond to your e-mail as quickly as
 possible.
 </p>
 <p>
@@ -4134,7 +4134,7 @@ please include the full stack backtrace text in your bug report.
 Please also send us the text of any error message that you may 
 have been reported by the application, in a dialog box or the like.
 Providing this information will dramatically increase the likelihood
-that the authors will be able to quickly and successfully resolve
+that the author will be able to quickly and successfully resolve
 the problem that you are encountering.
 </p>
 
