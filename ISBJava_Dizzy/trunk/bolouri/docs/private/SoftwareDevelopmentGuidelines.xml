@@ -1,0 +1,581 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
+  %CommonConfig;
+   ]>
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+
+<isb:doctitle>Software Development Guidelines</isb:doctitle>
+<isb:docdate>$Date: 2003/04/16 16:49:11 $</isb:docdate>
+<isb:docversion>[DRAFT] $Revision$, $Date$</isb:docversion>
+
+<isb:doccontents />
+
+<isb:docsection name="Introduction" label="introduction">
+
+<p />
+This document is a draft compilation of recommendations for
+software development practices for the Bolouri group at the
+Institute for Systems Biology.  None of the statements
+contained herein should be construed as a &quot;hard-and-fast&quot;
+rule.  Instead, the statements should be interpreted as guidelines
+or recommendations for software development practices and quality
+evaluation.  The purpose of these guidelines is primarily to help 
+ensure that software tools <em>released</em> by the Bolouri group 
+are of sufficient quality to reflect favorably on the group, and to 
+(hopefully) win widespread acceptance in the relevant scientific
+community.  Here, &quot;release&quot; can mean making the source 
+code available locally, or to selected collaborators, or to the 
+general public.
+<p />
+In this document, &quot;quality&quot; is taken to mean software
+quality in the general sense, beyond just whether the software program
+meets its functional specification.  It includes completeness and
+sufficiency of the documentation, ease and straightforwardness of
+installation, intuitiveness of the user interface, portability to
+other operating systems and runtime environments, and the extent
+to which the source code is amenable to extension and re-use.
+<p />
+This is meant to be an evolving document, reflecting contributions
+and feedback from all members of the group.
+<p />
+
+</isb:docsection>
+
+
+<isb:docsection name="Other Resources" label="otherresources">
+
+This section describes a few textbooks that are useful for someone
+who writes software, whether on a daily basis or just once in a while.
+<p />
+These references should be on <em>every</em> programmer's bookshelf:
+<dl>
+<dt><b>The Pragmatic Programmer</b>:</dt>
+<dd>
+It is strongly recommended that everyone in the group read the book
+<em>The Pragmatic Programmer</em> by Andrew Hunt and David Thomas
+(Addison-Wesley, 1999).  This book is very readable, and it
+contains a wealth of practical advice on good programming practices.
+<p /></dd>
+
+<dt><b>The Practice of Programming</b>:</dt>
+<dd>
+Another excellent book on programming &quot;best practices&quot;
+is <em>The Practice of Programming</em>, by Brian Kernighan (of 
+the C programing language fame) and Rob Pike (Addison-Wesley, 1999).  
+It has excellent examples that are translated into C++, Java, and other 
+languages.
+<p /></dd>
+</dl>
+
+<p />
+
+Here are some additional resources that you may find useful:
+<dl>
+
+<dt><b>Design Patterns</b>:</dt>
+<dd>A classic book on object-oriented software design
+is <em>Design Patterns</em> by Gamma, Helm, Johnson and Vlissides
+(Addison-Wesley, 1995).
+<p /></dd>
+
+<dt><b>Effective C++</b>:</dt>
+<dd>
+Scott Meyers' book on C++ programming techniques is a must-have for
+any C++ programmer, <em>Effective C++</em> (Addison-Wesley, 1997).
+The follow-up book <em>More Effective C++</em> (Addition-Wesley, 1995)
+is also useful.
+<p /></dd>
+
+<dt><b>Open Source Development with CVS</b>:</dt>
+<dd>A great overall reference for CVS, with emphasis on
+open-source development:  <em>Open Source Development with CVS</em>,
+by Karl Franz Fogel (out of print, look on Amazon for availability).<p /></dd>
+
+</dl>
+</isb:docsection>
+
+<isb:docsection name="CVS Repository Rules of the Road" label="cvsrules">
+Our group uses a <b>source code control system</b> in order to track changes
+to software source files.  Our source code control system is CVS, which is
+an open-source product based on the RCS revision control system.  This section
+describes recommendations and local conventions for how the CVS repository
+should be used.
+<p />
+
+<dl>
+
+<dt><b>file locking and pipes</b>:</dt>
+<dd>
+Please be advised that CVS has a file-locking mechanism built
+into it, such that when a CVS operation is occurring for a
+given file or directory, no one else may initiate a CVS operation
+involving that file or directory.  Normally CVS operations complete
+very rapidly so this is of minimal consequence.  However, if you 
+(on a Unix-like computer) execute a command like this:
+<blockquote>
+<pre>
+cvs log MyFile.cpp | more
+</pre>
+</blockquote>
+please be aware that it will <em>lock</em> the file
+<code>MyFile.cpp</code> until you terminate the 
+&quot;<code>more</code>&quot; program.  So, please do not leave
+CVS operations locked for long periods of time.  It is OK to use
+&quot;more&quot; in the above fashion, provided that you do not
+leave the file in a locked state for a long period of time.
+<p />
+</dd>
+
+<dt><b>binary files</b>:</dt>
+<dd>
+Importing large binary files into a CVS project directory
+is discouraged because it can make CVS operations involving 
+that directory very slow.  Furthermore, the purpose of CVS is
+to track and manage changes to <em>source</em> files.  Most
+binary files are derivative in nature (e.g., compiled object files,
+distilled PDF files, linked binary executables, etc.).  Files 
+created directly by human editing are (almost) always textual.
+In general, if you have a choice between importing a derivative
+binary file into CVS or its textual source file, please consider
+importing the source file.  As an example, suppose you have a document
+written in LaTeX, and the PDF distillation of the processed LaTeX
+file. It would be preferable to check the (LaTeX) source file
+into CVS rather than the (PDF) derivative binary file.  A corollary
+to this is that it is discouraged to check compressed (e.g.,
+gzipped) files into CVS, since this thwarts CVS's ability to
+distinguish line-by-line changes in the file.  Many times a project
+makefile produces a &quot;build file&quot; or &quot;tarball&quot;
+that represents the distribution of the project.  It is discouraged
+to check these build files or tarballs into CVS as well, for the
+reasons described above.  These files should be archived and
+versioned outside of CVS, for example, in a group software 
+&quot;build archive&quot; adjacent to the group CVS archive.
+It is OK to import small binary files that have no textual
+&quot;source&quot; format, into CVS.  Examples include small 
+PNG or JPEG image files taken from scanned images or clipart.
+<p /></dd>
+
+<dt><b>external libraries and packages</b></dt>
+<dd>
+Most software projects involve some number of external
+<b>dependencies</b>.  These dependencies usually take the form
+of libraries or packages that are downloaded and against which
+the project source files are compiled/linked.  In general, it is
+discouraged to check external libraries and packages into CVS.
+The exception to this is in the case where you intend to
+make non-trivial modifications to the source code of an external
+library.  In that case, importing the sources (just the sources,
+not the binaries) for the library into CVS would make sense,
+so that the local modifications to the sources can be tracked.
+External libraries are best archived outside of CVS, for example,
+in a group software &quot;external library archive&quot; adjacent
+to the group CVS archive.  If you do import an external package
+into CVS, please include a README file in the package directory
+describing the package, where you obtained it, and indicating
+the version number of the package.  A similar principle applies
+in general to any dependencies:  you will want to include a
+documentation text file (or some other format such as HTML)
+describing all external library/package dependencies of your
+application/project, and the specific versions you are using
+in your own builds.  This file will evolve over time, as you
+upgrade your external library packages on your development
+machine.  By including thie README file in CVS with your project,
+you can go back and determine what version of a given external
+library you were using, for any previous version of your project.
+<p /></dd>
+
+<dt><b>version number in directory names</b></dt>
+<dd>
+Creating directory names that contain version numbers is
+discouraged, within the context of a CVS archive.  For example,
+if you want to create a project directory for a project &quot;Babar&quot;,
+and first major version number of the Babar project is 1.0, please do
+not create a CVS project directory
+<blockquote>
+<code>
+CVSARCHIVE/babar-1.0
+</code>
+</blockquote>
+or the like.  This scheme would require moving the sources to a 
+new directory when work commences on the next major release; this
+is something best handled through the branching facility provided
+by CVS.  In the case of the Babar project, it is better to create
+a project directory such as this:
+<blockquote>
+<code>
+CVSARCHIVE/babar
+</code>
+</blockquote>
+You may use the &quot;cvs tag&quot; feature to designate the
+snapshot of source files for the 1.0 release of the project.
+<p /></dd>
+
+<dt><b>tabs vs. spaces in source files</b></dt>
+<dd>
+There is no hard-and-fast standard on this issue, but please be
+mindful of the distinction between &quot;hard tabs&quot; and
+normal whitespace (space characters).  Many editors embed
+the &quot;tab&quot; character into a source file when you hit
+the &quot;tab&quot; key in order to indent your source code.
+Most editors can be configured to indent the code using spaces
+instead; this way, when you hit the &quot;tab&quot; key,
+the editor indents just as it always did, but it does so by
+inserting the appropriate number of spaces into your source
+file.  This will be appreciated by the next developer who 
+may be working with your source file using a different editor, 
+that will likely have different &quot;tab stops&quot;. Configuring
+your editor to avoid inserting tab characters into the source
+file (and instead insert space characters) will ensure consistent
+indentation and avoid formatting problems when your source file
+is opened in a different editor than the one you used to create
+the file, and is considered to be a sound multi-developer 
+programming practice.
+<p /></dd>
+
+<dt><b>release tagging conventions</b></dt>
+<dd>
+Before you release a new version of your software, please tag
+the snapshot of source files corresponding to this release,
+in the CVS archive.  This ensures that the build for this 
+release will always be &quot;reproducible&quot;.  If the build
+is somehow lost or destroyed, or needs to be validated, you 
+can just export the source snapshot corresponding to your release
+tag, and build from the source snapshot (even if there have been
+changes to the trunk of the CVS repository since your last
+release).  Here is an illustration of the process for the
+case of the &quot;Babar&quot; example project described above.
+When you have committed all your source changes that you want
+to go into the 1.0 release of &quot;Babar&quot;, issue the
+following command in your CVS enlistment (working directory):
+<blockquote>
+<pre>
+cvs tag -F BABAR-1_0
+</pre>
+</blockquote>
+Note that the period character has been changed to an underscore.
+This is due to a peculiarity in the CVS program, namely, that 
+CVS does not permit periods in &quot;tag&quot; names.  The tag
+name specified above is &quot;<code>BABAR-1_0</code>&quot;.
+This command recursively tags all the source code under your
+working directory.  
+<blockquote>
+<b>WARNING:</b> if your CVS working
+directory is the entire group CVS archive, do not issue this
+command in the top-level CVS directory, or you will be tagging sources for
+other projects (other than the Babar project).  Instead, you  would
+issue this command in the &quot;<code>babar</code>&quot; subdirectory.
+</blockquote>
+You may opt to use a different nomenclature for your release tags
+than the one suggested above.  Please try to maintain consistency 
+from version to version, in your choice of release version tag
+nomenclature.  For example, if you use &quot;REL-1_0&quot; in 
+version 1.0, please use &quot;REL-1_1&quot; in version 1.1.
+<p /></dd>
+
+<dt><b>file naming conventions:</b></dt>
+<dd>
+At this time, there are no hard-and-fast naming conventions for files.
+However, you are encouraged to use &quot;standard&quot; file naming
+conventions where possible.  This will help others (and the compiler
+or software developtment tools they are using) to understand the file
+types you have imported into CVS.  This means that your file extensions
+should generally be lower-case (i.e., use &quot;<code>.c</code>&quot; 
+rather than &quot;<code>.C</code>&quot;).  Furthermore, your file 
+extensions should be <em>consistent within your project</em>.  It is no
+longer necessary to restrict file extensions to three characters.  For
+example, &quot;.html&quot; is an acceptable extension (and preferred
+over the Windows-centric &quot;.htm&quot; extension).  Please try to
+refrain from using spaces or non-alphanumeric characters in your
+file names, except for hyphens and underscores.  The period should only
+be used to separate the filename from the extension.  Please use
+&quot;.txt&quot; to designate ASCII text files, which helps enable
+people viewing the file using a GUI-type file browser.  In general, most
+files should have extensions indicating their file type.  Exceptions to
+this are &quot;makefiles&quot;, which usually have the special name 
+&quot;Makefile&quot; (with no extension).  The following are &quot;good&quot; filenames:
+<blockquote>
+<pre>
+Babar.cc
+Babar.hh
+Babar.java
+README.txt
+Makefile
+Babar-UserGuide.html
+Babar_UserGuide.html
+</pre>
+</blockquote>
+The following are examples of poor filename choices:
+<blockquote>
+<pre>
+Babar.CPP
+'Babar Main.cc'
+Foo$Bar.cc
+</pre>
+</blockquote>
+Above all else, consistency of file nomenclature within your project
+is the most important principle to observe.
+<p /></dd>
+
+<dt><b>RCS keywords</b>:</dt>
+<dd>
+RCS keywords (see the CVS manual for an explanation of their purpose)
+can be useful for embedding version information of a source file,
+into the source file.  However, the use of the specific RCS keyword 
+&quot;$Log$&quot; is strongly discouraged.  It tends (over time) to
+horribly clutter up the source file, and is merely a repetition of
+information that is available in the CVS commit logs.  Please note
+that RCS keywords should be used with care, as they can cause merge
+conflicts when merging source files (e.g., from a branch into the main
+development trunk).  Ideally, RCS keywords will be used sparingly and
+with a clear purpose as to why they are needed (rather than indiscriminatly
+using them in every source file's header comment).
+<p /></dd>
+
+<dt><b>atomicity of check-ins</b>:</dt>
+<dd>
+After the initial import of the source code for your project into
+CVS, it is recommended that future check-ins (or &quot;commits&quot;)
+into the repository be as <em>atomic</em> as possible.  This means
+striving to commit the changes for a specific feature request or bug
+fix, rather than commiting changes for multiple features and
+bug fixes at the same time.  There are many cases where this is not
+practical or advisable.  However, in general it is a good practice
+to keep your changes as atomic as possible.  This helps others who
+are tracking/using your project's source code to determine <em>which</em>
+change may have broken something for them.  Furthermore, it will make
+it easy for future maintainers of your software to understand the
+past development history of the project.
+<p /></dd>
+
+<dt><b>keeping documentation in CVS</b>:</dt>
+<dd>
+It is strongly recommended that you import your documentation
+source files (i.e., &quot;.tex&quot; files or &quot;.html&quot;
+files) into CVS, alongside the source code for your project.  The
+source code is in many cases all but useless without the documentation,
+and the documentation can and should be versioned as it evolves. 
+Documentation that is essentially derivative (e.g., javadoc HTML
+that is extracted from the source code) need not be imported
+into CVS, since the information contained in the documentation
+is already contained (in source comment form) in the source files.
+<p /></dd>
+
+<dt><b>branching vs development in the trunk</b>:</dt>
+<dd>
+This issue is still under discussion.  Branching is a very powerful
+feature of CVS for enabling major forward-looking development work on 
+a project while not disturbing ongoing maintenance work (i.e., small bug 
+fixes and feature improvements) on the previous release of the project.
+However, branching can be tricky and requires a good understanding
+of CVS.  It is recommended that users who are new to CVS do their
+development work on the &quot;main trunk&quot; (this is the default),
+until such time branching is really needed.
+<p /></dd>
+
+<dt><b>DOS/Unix linefeed issue</b>:</dt>
+<dd>
+Please be advised that there is a vexing, long-standing
+incompatibility for ASCII (text) files between DOS/Windows systems
+and Unix-type operating systems.  The problem stems from the fact that
+text files on DOS/Windows systems include an extra linefeed character
+at the end of each line in addition to the carriage-return character.
+In contrast, Unix-type operating systems just use a single carriage-return
+character to designate the end of the line.  For maximum compatibility
+with Unix text editors, it is recommended that you try to strip out
+linefeed characters from text files, before importing your files into
+CVS.  Most editors should have the capability of doing this.  Note that
+this is not a requirement of CVS, just a good practice for projects that
+have shared development between Windows and Unix systems.
+<p /></dd>
+
+<dt><b>makefiles and build tools:</b></dt>
+<dd>
+Most software projects eventually grow to the point where some
+scripts or makefile-type tools are used for the &quot;build&quot;
+and/or installation proces.  These files should be checked into
+CVS, in their most basic source format.  For example, if you have
+a plain make &quot;Makefile&quot; for your project, it should be
+checked into CVS alongside your source code.  On the other hand,
+if you are using GNU autoconf/configure, then you would want to
+instead import your <code>Makefile.in</code> into CVS, since in this
+case your <code>Makefile</code> is derivative (it is generated by 
+<code>configure</code>).  Similarly, other scripts used for building
+and testing your project, should be imported into CVS so they can
+be properly versioned.
+<p /></dd>
+
+<dt><b>meddling with the CVS archive:</b></dt>
+<dd>
+A CVS setup consists of a central <b>archive (repository)</b> and people's
+working directories (<b>enlistments</b>).  The central archive is
+(almost) never manually modified in any way; it is (almost) always
+modified using the various CVS commands.  As a general rule, only the
+CVS archive maintainer should touch the CVS archive directly. 
+Deleting directories or files out of the archive can cause problems
+for users, ranging in severity from annoying to catastrophic.  Please
+only interact with CVS through the CVS commands, and not through 
+direct manipulation of the archive files.  
+<p /></dd>
+
+<dt><b>renaming a directory in CVS:</b></dt>
+<dd>
+If you wish to rename a directory, the easiest thing is to
+create the new directory, and add it to your enlistment 
+using &quot;<code>cvs add &lt;dirname&gt;</code>&quot;.
+Then copy the source files to the new directory, and add them
+using &quot;<code>cvs add &lt;filename&gt;</code>&quot;.
+Finally, remove the files from the old directory and 
+issue the &quot;<code>cvs remove &lt;filename&gt;</code>&quot;
+command, in order to mark them (in the archive) as removed.
+In so doing, you will lose the version history of the source files,
+but you have avoided the need to manipulate the CVS repository/archive
+directly.  If you <em>absolutely must</em> keep the version history
+for your files, please contact the CVS archive maintainer to have
+the directory moved.  Note that when using the above technique, there
+is no need to &quot;remove&quot; the old file.  If you run 
+&quot;<code>cvs update</code>&quot; with the &quot;-P&quot; option,
+the empty old directory will automatically be removed from your
+enlistment, by the CVS program.  In fact, if you attempt to remove
+the old directory yourself (from your enlistment), it can cause
+problems.  
+<p /></dd>
+
+</dl>
+</isb:docsection>
+
+<isb:docsection name="Documentation Standards" label="docstandards">
+
+This section describes some suggestions for minimum standards for
+documentation, for a software project to be considered of sufficient 
+quality to be &quot;released&quot;.  
+<p />
+
+<dl>
+
+<dt><a name="headercomments" /><b>source file header comments</b>:</dt>
+<dd>
+Each source file should have a header comment that provides the
+following information:
+<ul>
+<li>the purpose of the file, i.e., what function it provides for
+the project or the application</li>
+<li>the original author or authors who implemented the file
+(later maintainers do not get to put their names on the file, 
+unless they significantly overhaul the implementation)
+</li>
+<li>the license terms (e.g., GPL).  It is not clear whether the
+full text of the license needs to be included.  At the minimum,
+a pointer to a file containing the text of the license (which 
+should be in the CVS repository for the project) should be included. 
+</li>
+</ul>
+It is helpful if these header comments are in some structured
+format that can be extracted by a documentation-generating system,
+in order to provide developers (or users of your library/package)
+with documentation of your classes and/or modules.  Examples
+include Javadoc (for java classes), doc++ (for C++ classes),
+POD (for Perl modules), etc.
+<p /></dd>
+
+<dt><b>README.txt file</b>:</dt>
+<dd>
+The project should include an overall <code>README</code>-type
+file that explains what the project is, provides a roadmap of the
+documentation, gives the version number and date of the release,
+and gives contact information for contacting the authors.
+This README should include, or provide links to a document
+containing, a summary of all external package/library dependencies.
+Each package or library subdirectory within your project should
+contain a summary file (e.g., <code>README</code> or 
+<code>package.html</code> file) that describes the purpose and
+function of the package or library contained in that subdirectory.
+<p /></dd>
+
+<dt><b>INSTALL.txt file</b>:</dt>
+<dd>
+The project should include an overall <code>INSTALL</code>-type
+file that explains how to (if applicable, build and) install
+the software and set it up so that a given user can run it.  This
+should include a disclaimer about the specific operating system
+and build/runtime environment in which the author/developer tested
+the software.  For a Java package, you would want to indicate the
+specific JDK (vendor and version number) you used, as well as
+the host operating system type and version, as well as any runtime
+flags or other information passed to the JVM.  For a C++ program,
+even more detail about the host operating system (including the
+kernel version number and compiler/linker vendor and version number) 
+might be appropriate to include.  The level of detail should be sufficient
+that a determined and reasonably sophisticated user can successfully
+replicate the process that the author used to install and configure
+the software on his/her development machine.
+<p /></dd>
+
+<dt><b>user guide or tutorial</b>:</dt>
+<dd>
+For most projects, it will be appropriate and useful to include
+a user guide or tutorial.  The idea is to have a document 
+(referenced in the main <code>README.txt</code> file) that 
+explains how to actually use the software once it has been
+installed.  Ideally this would include sample use scenarios
+(with screen shots, in the case of a GUI application), or
+sample code (in the case of a library or package).  In general, 
+the level of detail that is appropriate for this document depends 
+on the size (complexity) and level of maturity (stage in its 
+life-cycle) of the software project.
+<p /></dd>
+
+<dt><b>coding standards</b>:</dt>
+<dd>
+This is a whole subject unto itself.  Please see the 
+<a href="#coding standards">&quot;coding standards&quot;</a>
+section below, for more information.
+<p /></dd>
+</dl>
+
+</isb:docsection>
+
+<isb:docsection name="Coding Standards" label="codingstandards">
+
+<dl>
+<dt><b>variable names:</b></dt>
+<dd>
+Variable names should be descriptive of their meaning.  It is
+discouraged to use variable names that convey nothing about how 
+they are used, such as &quot;A&quot; or &quot;B&quot;.
+Instead, variable names should convey how the variable is used,
+such as &quot;<code>simulation_start_time_seconds</code>&quot;.  
+Note that including units in the variable name, for numeric
+data types, is often helpful to others who are reading your code.
+<p /></dd>
+
+<dt><b>method/function header comments:</b></dt>
+<dd>
+In addition to the class/module header comments described 
+<a href="#headercomments">above</a>, it is helpful if the public
+methods in a class (or external functions in a C module) have 
+header comments that explain their functional purpose and 
+the nature of their arguments and return value.  It is even
+better if exceptional conditions can be documented (i.e.,
+exceptions thrown or error codes returned).
+<p /></dd>
+
+<dt><b>method/function names:</b></dt>
+<dd>
+Method or function names should be description of what the 
+method or function does.  If a method is so long and complex that
+its purpose/function is not completely clear from the method name, 
+class context, and a short header comment, it is probably advisable
+to break up (&quot;refactor&quot;) the method into sub-methods
+or sub-functions.
+<p /></dd>
+</dl>
+
+</isb:docsection>
+</isb:document>
+
+
+
+
