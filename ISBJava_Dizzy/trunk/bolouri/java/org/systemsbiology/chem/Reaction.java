@@ -205,7 +205,7 @@ public final class Reaction extends SymbolValue
 
     public void addParameter(Parameter pParameter)
     {
-        SymbolValueChemSimulation.addSymbolValueToMap(mLocalSymbolsValuesMap, pParameter.getSymbolName(), pParameter);
+        pParameter.addSymbolToMap(mLocalSymbolsValuesMap, pParameter.getSymbolName());
     }
 
     public void setNumSteps(int pNumSteps)
@@ -258,9 +258,7 @@ public final class Reaction extends SymbolValue
     {
         String speciesName = pSpecies.getName();
         Symbol extSymbol = (Symbol) pSymbolMap.get(speciesName);
-        assert (null != extSymbol) : "could not find species: " + speciesName;
         int extSpeciesIndex = extSymbol.getArrayIndex();
-        assert (Symbol.NULL_ARRAY_INDEX != extSpeciesIndex) : "invalid array index for species: " + speciesName;
         Species species = null;
         if(null != extSymbol.getDoubleArray())
         {
@@ -461,7 +459,7 @@ public final class Reaction extends SymbolValue
         return(dynamicSymbolVector);
     }
 
-    private void addSymbolsToGlobalSymbolsMap(HashMap pReactionSpecies, HashMap pSymbols)
+    private void addSymbolsToGlobalSymbolsMap(HashMap pReactionSpecies, HashMap pSymbols, ReservedSymbolMapper pReservedSymbolMapper)
     {
         Collection speciesCollection = pReactionSpecies.values();
         Iterator speciesIter = speciesCollection.iterator();
@@ -471,12 +469,11 @@ public final class Reaction extends SymbolValue
             Species species = reactionElement.getSpecies();
             String speciesSymbolName = species.getSymbol().getName();
 
-            SymbolValueChemSimulation.addSymbolValueToMap(pSymbols, speciesSymbolName, species);
-
+            species.addSymbolToMap(pSymbols, speciesSymbolName, pReservedSymbolMapper);
         }
     }
 
-    private void addDynamicSpeciesFromReactionSpeciesMapToGlobalSpeciesMap(HashMap pReactionSpecies, HashMap pDynamicSpecies)
+    private void addDynamicSpeciesFromReactionSpeciesMapToGlobalSpeciesMap(HashMap pReactionSpecies, HashMap pDynamicSpecies, ReservedSymbolMapper pReservedSymbolMapper)
     {
         Collection speciesCollection = pReactionSpecies.values();
         Iterator speciesIter = speciesCollection.iterator();
@@ -487,18 +484,18 @@ public final class Reaction extends SymbolValue
             {
                 Species species = reactionElement.getSpecies();
                 String speciesSymbolName = species.getSymbol().getName();
-                SymbolValueChemSimulation.addSymbolValueToMap(pDynamicSpecies, speciesSymbolName, species);
+                species.addSymbolToMap(pDynamicSpecies, speciesSymbolName, pReservedSymbolMapper);
             }
         }
     }
 
-    void addDynamicSpeciesToGlobalSpeciesMap(HashMap pDynamicSpecies)
+    void addDynamicSpeciesToGlobalSpeciesMap(HashMap pDynamicSpecies, ReservedSymbolMapper pReservedSymbolMapper)
     {
-        addDynamicSpeciesFromReactionSpeciesMapToGlobalSpeciesMap(getReactantsMap(), pDynamicSpecies);
-        addDynamicSpeciesFromReactionSpeciesMapToGlobalSpeciesMap(getProductsMap(), pDynamicSpecies);
+        addDynamicSpeciesFromReactionSpeciesMapToGlobalSpeciesMap(getReactantsMap(), pDynamicSpecies, pReservedSymbolMapper);
+        addDynamicSpeciesFromReactionSpeciesMapToGlobalSpeciesMap(getProductsMap(), pDynamicSpecies, pReservedSymbolMapper);
     }
     
-    void addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(HashMap pReactionSpeciesMap, HashMap pSymbolMap)
+    void addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(HashMap pReactionSpeciesMap, HashMap pSymbolMap, ReservedSymbolMapper pReservedSymbolMapper)
     {
         Collection speciesCollection = pReactionSpeciesMap.values();
         Iterator speciesIter = speciesCollection.iterator();
@@ -506,14 +503,14 @@ public final class Reaction extends SymbolValue
         {
             ReactionElement reactionElement = (ReactionElement) speciesIter.next();
             Species species = reactionElement.getSpecies();
-            species.addSymbolsToGlobalSymbolMap(pSymbolMap);
+            species.addSymbolsToGlobalSymbolMap(pSymbolMap, pReservedSymbolMapper);
         }        
     }
 
-    void addSymbolsToGlobalSymbolMap(HashMap pSymbolMap)
+    void addSymbolsToGlobalSymbolMap(HashMap pSymbolMap, ReservedSymbolMapper pReservedSymbolMapper)
     {
-        addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(getReactantsMap(), pSymbolMap);
-        addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(getProductsMap(), pSymbolMap);
+        addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(getReactantsMap(), pSymbolMap, pReservedSymbolMapper);
+        addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(getProductsMap(), pSymbolMap, pReservedSymbolMapper);
     }
 
     public Symbol getSymbol()
@@ -789,7 +786,8 @@ public final class Reaction extends SymbolValue
                                                       SymbolValue pSymbolValue,
                                                       SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
     {
-        boolean speciesSymbolsRepresentConcentration = (pSymbolEvaluator instanceof SymbolEvaluatorChemMarkupLanguage);
+        SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = pSymbolEvaluator.getSymbolEvaluationPostProcessor();
+        boolean speciesSymbolsRepresentConcentration = (null != symbolEvaluationPostProcessor && (symbolEvaluationPostProcessor instanceof SymbolEvaluationPostProcessorChemMarkupLanguage));
 
         Symbol derivSymbol = pSymbolValue.getSymbol();
         pSymbolEvaluator.setLocalSymbolsMap(mLocalSymbolsMap);

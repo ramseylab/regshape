@@ -9,10 +9,7 @@ package org.systemsbiology.chem;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import org.systemsbiology.math.SymbolValue;
-import org.systemsbiology.math.Expression;
-import org.systemsbiology.math.Value;
-import org.systemsbiology.math.Symbol;
+import org.systemsbiology.math.*;
 
 /**
  * Represents a named, well-mixed reaction compartment,

@@ -10,10 +10,7 @@ package org.systemsbiology.chem;
 
 import java.util.HashMap;
 
-import org.systemsbiology.math.Expression;
-import org.systemsbiology.math.SymbolValue;
-import org.systemsbiology.math.Value;
-import org.systemsbiology.math.Symbol;
+import org.systemsbiology.math.*;
 
 /**
  * Represents a distinct, named chemical species.  Must
@@ -59,11 +56,11 @@ public final class Species extends SymbolValue
         setValue(new Value(pSpeciesPopulation));
     }
 
-    void addSymbolsToGlobalSymbolMap(HashMap pSymbolMap)
+    void addSymbolsToGlobalSymbolMap(HashMap pSymbolMap, ReservedSymbolMapper pReservedSymbolMapper)
     {
-        SymbolValueChemSimulation.addSymbolValueToMap(pSymbolMap, getName(), this);
+        addSymbolToMap(pSymbolMap, getName(), pReservedSymbolMapper);
         Compartment compartment = getCompartment();
-        SymbolValueChemSimulation.addSymbolValueToMap(pSymbolMap, compartment.getName(), compartment);
+        compartment.addSymbolToMap(pSymbolMap, compartment.getName(), pReservedSymbolMapper);
     }
 
     public String getName()

@@ -29,7 +29,8 @@ public final class Model
     private HashMap mSymbolsMap;
     private HashMap mParametersMap;
     public static final String NAMESPACE_IDENTIFIER = "::";
-    private SymbolEvaluatorChem mSymbolEvaluator;
+    private SymbolEvaluationPostProcessor mSymbolEvaluationPostProcessor;
+    private ReservedSymbolMapper mReservedSymbolMapper;
 
     public Model()
     {
@@ -37,18 +38,29 @@ public final class Model
         mDynamicSymbolsMap = new HashMap();
         mSymbolsMap = new HashMap();
         mParametersMap = new HashMap();
-        mSymbolEvaluator = new SymbolEvaluatorChemCommandLanguage();
+        mSymbolEvaluationPostProcessor = null;
+        mReservedSymbolMapper = null;
         setName(null);
     }
 
-    public void setSymbolEvaluator(SymbolEvaluatorChem pSymbolEvaluator)
+    public ReservedSymbolMapper getReservedSymbolMapper()
     {
-        mSymbolEvaluator = pSymbolEvaluator;
+        return(mReservedSymbolMapper);
     }
 
-    public SymbolEvaluatorChem getSymbolEvaluator()
+    public void setReservedSymbolMapper(ReservedSymbolMapper pReservedSymbolMapper)
     {
-        return(mSymbolEvaluator);
+        mReservedSymbolMapper = pReservedSymbolMapper;
+    }
+
+    public void setSymbolEvaluationPostProcessor(SymbolEvaluationPostProcessor pSymbolEvaluationPostProcessor)
+    {
+        mSymbolEvaluationPostProcessor = pSymbolEvaluationPostProcessor;
+    }
+
+    public SymbolEvaluationPostProcessor getSymbolEvaluationPostProcessor()
+    {
+        return(mSymbolEvaluationPostProcessor);
     }
 
     public Model(String pName)
@@ -168,13 +180,13 @@ public final class Model
 
     public void addParameter(Parameter pParameter)
     {
-        SymbolValueChemSimulation.addSymbolValueToMap(mSymbolsMap, pParameter.getSymbolName(), pParameter);
-        SymbolValueChemSimulation.addSymbolValueToMap(mParametersMap, pParameter.getSymbolName(), pParameter);
+        pParameter.addSymbolToMap(mSymbolsMap, pParameter.getSymbolName(), mReservedSymbolMapper);
+        pParameter.addSymbolToMap(mParametersMap, pParameter.getSymbolName(), mReservedSymbolMapper);
     }
 
     public void addSpecies(Species pSpecies)
     {
-        pSpecies.addSymbolsToGlobalSymbolMap(mSymbolsMap);
+        pSpecies.addSymbolsToGlobalSymbolMap(mSymbolsMap, mReservedSymbolMapper);
     }
 
     public Collection getDynamicSymbols()
@@ -209,8 +221,8 @@ public final class Model
             mReactionsMap.put(reactionName, pReaction);
         }
 
-        pReaction.addDynamicSpeciesToGlobalSpeciesMap(getDynamicSymbolsMap());
-        pReaction.addSymbolsToGlobalSymbolMap(getSymbolsMap());
+        pReaction.addDynamicSpeciesToGlobalSpeciesMap(getDynamicSymbolsMap(), mReservedSymbolMapper);
+        pReaction.addSymbolsToGlobalSymbolMap(getSymbolsMap(), mReservedSymbolMapper);
     }
 
     public Species getSpeciesByName(String pSpeciesName) throws DataNotFoundException
