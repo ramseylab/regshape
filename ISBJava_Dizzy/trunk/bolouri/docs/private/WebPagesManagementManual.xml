@@ -8,7 +8,7 @@
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
 <isb:doctitle>Web Pages Management Manual</isb:doctitle>
-<isb:docversion>Last updated: $Date$</isb:docversion>
+<isb:docdate>$Date$</isb:docdate>
 
 <isb:doccontents />
 
@@ -242,7 +242,7 @@ http://projects.systemsbiology.net/bolouri_group
 </pre>
 </blockquote>
 If you have any questions about this process, please contact the
-web site maintainer at: <code>&mainEmailSafe;</code>.
+web site maintainer at: <code>&mainGroupEmailSafe;</code>.
 </isb:docsection>
 
 <isb:docsection name="Private Web Pages" label="privatepages">

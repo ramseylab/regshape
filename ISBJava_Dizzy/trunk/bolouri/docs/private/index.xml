@@ -9,10 +9,7 @@
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
 <isb:doctitle>Internal Home Page</isb:doctitle>
-<isb:docversion>Last updated: $Date$</isb:docversion>
-
-<!-- <isb:doccontents /> -->  <!-- commented this out because the contents took up too much space -->
-
+<isb:docdate>$Date$</isb:docdate>
 
 <isb:docsection name="Tools" label="tools">
 <ul>

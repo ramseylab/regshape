@@ -5,7 +5,7 @@
 <!ENTITY mainGroup          "Bolouri Group">
 <!ENTITY mainGroupURL       "http://projects.systemsbiology.net/bolouri_group/Resources.html">
 <!ENTITY mainAffiliation    "Institute for Systems Biology">
-<!ENTITY mainEmailSafe      "bolourilab at systemsbiology.org">
+<!ENTITY mainGroupEmailSafe "bolourilab at systemsbiology.org">
 
 <!-- these definitions are used in styled XHTML files: -->
 <!ENTITY eacute "&#x00E9;">

@@ -5,6 +5,7 @@
   <property name="app.buildDir"                 location="${basedir}/build" />
   <property name="app.configDir"                location="${basedir}/config" />
   <property name="app.webDir"                   location="${projWebDir}/${ant.project.name}" />
+  <property name="app.installerDir"             location="${app.webDir}/installer" />
 
   <target name="compile">
     <!-- nothing to do -->
@@ -45,6 +46,14 @@
         <include name="*.html" />
       </fileset>
     </copy>
+    <mkdir dir="${app.installerDir}" />
+
+    <!-- create symbolic link for InstallAnywhere build output: -->
+    <exec executable="ln">
+      <arg value="-s" />
+      <arg value="${app.installerDir}" />
+      <arg value="${app.buildDir}/project_Build_Output" />
+    </exec>
   </target>
 
   <target name="build" depends="style, copyCommonConfig">

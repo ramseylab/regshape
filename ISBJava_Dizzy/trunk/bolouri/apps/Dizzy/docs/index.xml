@@ -12,14 +12,16 @@
 <isb:doctitle>&appName; Home Page</isb:doctitle>
 <isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
 <isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+<isb:docdate>$Date$</isb:docdate>
 
 <p>
 <ul>
 <li><a href="installer/Web_Installers/install.htm">Download &appName;</a></li>
 <li><a href="UserManual.html">&appName; User Manual</a></li>
-<li><a href="README.html">&appName; Release Notes</a></li>
+<li><a href="ReleaseNotes.html">&appName; Release Notes</a></li>
 <li><a href="VersionHistory.html">&appName; Version History</a></li>
-<li><a href="../LICENSE.txt">License Agreement</a></li>
+<li><a href="../License.html">License Agreement</a></li>
 <li><a href="../javadoc">ISBJava Javadoc API</a></li>
 </ul>
 </p>
@@ -63,18 +65,8 @@ patience is appreciated.
 This program is distributed under the GNU Public License (GPL), 
 which is a standard &quot;free software&quot;
 and &quot;open source&quot; license.  A copy of the 
-The text of the license agreement is available <a href="../LICENSE.txt">here</a>.
+The text of the license agreement is available <a href="../License.html">here</a>.
 </p>
-<p>
-<a href="installer/Web_Installers/install.htm">Download an installer for the 
-&appName; program</a>
-</p>
-<p>
-&appOriginalAuthorFullName;<br />
-&appMaintainerFullName;, &appMaintainerAffiliation;<br />
-Seattle, Washington<br />
-</p>
-<p>
-Email:  &appMaintainerEmailSafe;
-</p>
+
+
 </isb:document>

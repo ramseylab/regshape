@@ -8,7 +8,7 @@
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
 <isb:doctitle>Biomolecular Model Repository</isb:doctitle>
-<isb:docversion>Last updated: $Date$</isb:docversion>
+<isb:docdate>$Date$</isb:docdate>
 
 <p>
 This page is an archive of model definition files for biomolecular 

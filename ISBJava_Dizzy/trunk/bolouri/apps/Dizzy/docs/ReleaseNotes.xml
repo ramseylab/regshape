@@ -13,6 +13,8 @@
 <isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
 <isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
 <isb:docversion>Version &appVersion;, Released &appDate;</isb:docversion>
+<isb:docdate>$Date$</isb:docdate>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 
 <isb:doccontents />
 
@@ -59,27 +61,18 @@ please consult the
 For detailed documentation of the application programming
 interface (API) to the &appName; system, please consult the
 <a href="&appHomePage;/../javadoc">ISBJava</a> home page.
-</p>
-<p>
-You will find examples of all three languages in the "samples"
-subdirectory of the directory in which you install the &appName; software.
+You will find examples of model defrnition in the "samples"
+subdirectory of the directory in which you install the 
+&appName; software.
 </p>
 </isb:docsection>
 <isb:docsection name="Contact Information" label="contactinfo">
 <p>
-<blockquote>
-<pre>
-&appMaintainerFullName;
-&appMaintainerAffiliation;
-</pre>
-</blockquote>
-</p>
-<p>
-<blockquote>
-<pre>
-Email:  &appMaintainerEmailSafe;
-</pre>
-</blockquote>
+If you have questions about this software, or if you
+have a bug report that you would like to submit,
+please contact the &appMaintainerFullName; at  
+&appMaintainerAffiliation; by sending email to: 
+<code>&appMaintainerEmailSafe;</code>.
 </p>
 </isb:docsection>
 </isb:document>

@@ -12,7 +12,9 @@
 <isb:doctitle>&appName; User Manual</isb:doctitle>
 <isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
 <isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
-<isb:docversion>Last updated: $Date$ &nbsp;&nbsp;&nbsp;&nbsp;Author: &appOriginalAuthorFullName;</isb:docversion>
+<isb:docdate>$Date$</isb:docdate>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+<isb:docauthor>&appOriginalAuthorFullName; (<code>&appMaintainerEmailSafe;</code>)</isb:docauthor>
 
 <isb:doccontents />
 
@@ -82,6 +84,9 @@ The file extension of the CCMDL scripting language is &quot;<code>.dizzy</code>&
 </ol>
 You will find examples of all three languages in the "samples"
 subdirectory of the directory in which you install the &appName; software.
+In addition, there is a <a href="../models">repository of
+biomolecular models</a> maintained by the &mainGroup;, that
+will serve as a good source of sample model definition files.
 </p>
 <p>
 This document is the user manual for the &appName; program.

@@ -8,8 +8,9 @@
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
 <isb:doctitle>Software, Publications, and News</isb:doctitle>
-<isb:docversion>Last updated: $Date$</isb:docversion>
 <isb:docowner>&mainGroup;, &mainAffiliation;</isb:docowner>
+<isb:docowneremail>&mainGroupEmailSafe;</isb:docowneremail>
+<isb:docdate>$Date$</isb:docdate>
 
 <isb:doccontents />
 
@@ -518,14 +519,5 @@ are available by request from Susan Harbison
 </isb:docsubsection>
 
 </isb:docsection>
-
-
-<hr />
-
-<p>
-This page was last updated on: <code>2003/04/09</code><br />
-For corrections, please e-mail: <code>&mainEmailSafe;</code>.
-</p>
-
 
 </isb:document>
