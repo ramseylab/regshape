@@ -21,7 +21,7 @@
               xmlns="http://www.w3.org/TR/xhtml1">
 
 <isb:doctitle>&appName; Download Page</isb:doctitle>
-<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docauthor>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 <isb:docversion>&appName; Version: &appVersion;, &nbsp; &appDate;</isb:docversion>
 <isb:docdate>$Date$</isb:docdate>
