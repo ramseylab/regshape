@@ -17,7 +17,7 @@
 <!ENTITY appVersionMinor "2">
 <!ENTITY appVersionPatch "0">
 <!ENTITY appVersion "&appVersionMajor;.&appVersionMinor;.&appVersionPatch;">
-<!ENTITY appDate "2005/03/09">
+<!ENTITY appDate "2005/04/05">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
 <!ENTITY appIconURL "images/appLogoIcon.jpg">
 
