@@ -112,11 +112,17 @@ A PDF version of this manual is also available on-line at:
 The above hyperlinks for the User Manual are for the most recent
 version of the &appName; system.
 </p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Publications" label="pubs">
 <p>
-A <a href="&appPublicationURL;">preprint of an article</a> describing &appName;
+A <a href="&appPublicationURL;/2005_JBCB.pdf">preprint of an article [PDF]</a> describing &appName;
 is available (to be published in the Journal of Bioinformatics and Computational
-Biology, May 2005).
+Biology, May 2005).  The 
+<a href="&appPublicationURL;/2005_JBCB_Supp.pdf">Supplementary Material [PDF]</a> 
+for the article is also available.
 </p>
+  
 </isb:docsubsection>
 
   <isb:docsubsection name="External Libraries" label="extlib">
