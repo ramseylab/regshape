@@ -28,6 +28,11 @@
     <ant dir="${basedir}/Dizzy" target="buildInstallers" />
   </target>
 
+  <target name="copyCommonConfig">
+	<ant dir="${basedir}/Dizzy" target="copyCommonConfig" />
+  	<ant dir="${basedir}/BioTapestry" target="copyCommonConfig" />
+  </target>
+  	
   <target name="build">
     <ant dir="${basedir}/Dizzy" target="build" />
     <ant dir="${basedir}/BioTapestry" target="build" />

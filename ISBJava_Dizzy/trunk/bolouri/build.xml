@@ -38,6 +38,11 @@
     <delete dir="${projBuildDir}" quiet="yes" />
   </target>
 
+  <target name="copyCommonConfig">
+  	<ant dir="${projJavaDir}" target="copyCommonConfig" />
+  	<ant dir="${projAppsDir}" target="copyCommonConfig" />
+  </target>
+	
   <target name="style">
     <mkdir dir="${projStyleDir}" />
     <style basedir="${projDocsDir}" 
