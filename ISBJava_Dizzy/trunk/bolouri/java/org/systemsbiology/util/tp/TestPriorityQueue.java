@@ -33,11 +33,11 @@ public class TestPriorityQueue
             Integer o5 = new Integer(-13);
             Integer o3 = new Integer(3);
             Integer o4 = new Integer(7);
-            pq.offer(o1);
-            pq.offer(o2);
-            pq.offer(o3);
-            pq.offer(o4);
-            pq.offer(o5);
+            pq.add(o1);
+            pq.add(o2);
+            pq.add(o3);
+            pq.add(o4);
+            pq.add(o5);
             pq.update(4, new Integer(10));
 
             System.out.println(pq);
