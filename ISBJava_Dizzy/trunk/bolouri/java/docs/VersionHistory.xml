@@ -38,6 +38,28 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td>1.0.0</td>
+<td>2003/12/04</td>
+<td>
+<ul>
+<li>Added new deterministic (ODE) simulators to the <code>org.systemsbiology.chem</code> package,
+based on the &quot;odeToJava&quot; library for numerical solution of ODEs.  This library
+includes a Dortmand-Prince 4/5 Runge-Kuta solver with adaptive step-size control, and
+an implicit/explicit Runge-Kutta solver with adaptive step-size control (for models
+with a high degree of stiffness).</li>
+<li>Modified the <code>org.systemsbiology.chem.scripting.ModelBuilderMarkupLanguage</code>
+to permit inclusion of &quot;rules&quot; in SBML models</li>
+<li>Modified the <code>org.systemsbiology.chem.scripting.ModelExporterMarkupLanguage</code>
+to export models in SBML level 1, version 2.</li>
+<li>Fixing bug in <code>org.systemsbiology.chem.app.MainApp</code> when model-building
+fails after the user selects &quot;Export&quot; from the &quot;Tools&quot; menu.</li>
+<li>Created separate fields in <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+for specifying the matximum allowed relative and absolute errors</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td>0.0.8</td>
 <td>2003/11/21</td>
 <td>
