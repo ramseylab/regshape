@@ -168,6 +168,10 @@ public class MainApp
         outputTextPane.setBorder(BorderFactory.createEtchedBorder());
         outputTextPane.setLayout(new FlowLayout());
 
+        JPanel labelButtonPane = new JPanel();
+        BoxLayout layout = new BoxLayout(labelButtonPane, BoxLayout.Y_AXIS);
+        labelButtonPane.setLayout(layout);
+
         JButton clearButton = new JButton("clear runtime output log");
         mClearOutputButton = clearButton;
         clearButton.addActionListener( new ActionListener()
@@ -177,7 +181,15 @@ public class MainApp
                                               clearOutputText();
                                           }
                                       });
-        outputTextPane.add(clearButton);
+
+        labelButtonPane.add(clearButton);
+        JPanel labelPanel = new JPanel();
+        JLabel outputTextLabel = new JLabel("runtime output log:");
+        labelPanel.add(outputTextLabel);
+        labelPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        labelButtonPane.add(labelPanel);
+
+        outputTextPane.add(labelButtonPane);
 
         JTextArea outputTextArea = new JTextArea(OUTPUT_TEXT_AREA_NUM_ROWS,
                                                  OUTPUT_TEXT_AREA_NUM_COLS);
