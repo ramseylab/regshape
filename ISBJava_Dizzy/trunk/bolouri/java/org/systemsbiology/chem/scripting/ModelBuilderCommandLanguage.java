@@ -834,6 +834,15 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         return(string);
     }
 
+    private void handleStatementModel(ListIterator pTokenIter, 
+                                      Model pModel,
+                                      HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
+    {
+        String modelName = obtainSymbol(pTokenIter, pSymbolMap);
+        pModel.setName(modelName);
+        getEndOfStatement(pTokenIter);
+    }
+
     private void handleStatementInclude(ListIterator pTokenIter, 
                                         Model pModel, 
                                         HashMap pSymbolMap, 
@@ -880,16 +889,20 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         while(tokenIter.hasNext())
         {
             token = (Token) tokenIter.next();
+
             if(token.mCode.equals(Token.Code.EQUALS))
             {
+                // if an "=" token is detected, this is definitely a symbol definition statement
                 handleStatementDefine(tokenIter, pModel, pSymbolMap);
             }
             else if(token.mCode.equals(Token.Code.ATSIGN))
             {
+                // if an "@" token is detected, this is definitely a compartment association statement
                 handleStatementAssociate(tokenIter, pModel, pSymbolMap);
             }
             else if(token.mCode.equals(Token.Code.GREATER_THAN))
             {
+                // if a ">" token immediately follows a "-" token, this is definitely a reaction statement
                 if(null != prevToken)
                 {
                     if(prevToken.mCode.equals(Token.Code.HYPHEN))
@@ -906,22 +919,20 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                     throw new InvalidInputException("encountered \">\" with no preceding hyphen and outside of an expression context"); 
                 }
             }
-            else if(token.mCode.equals(Token.Code.SYMBOL) && token.mSymbol.equals("include"))
+            else if(token.mCode.equals(Token.Code.SYMBOL) && null != prevToken && prevToken.mCode.equals(Token.Code.POUNDSIGN))
             {
-                if(null != prevToken)
+                assert (null != token.mSymbol) : "null symbol string found in symbol token";
+                if(token.mSymbol.equals("include"))
                 {
-                    if(prevToken.mCode.equals(Token.Code.POUNDSIGN))
-                    {
-                        handleStatementInclude(tokenIter, pModel, pSymbolMap, pNumReactions, pIncludeHandler);
-                    }
-                    else
-                    {
-                        // do nothing
-                    }
+                    handleStatementInclude(tokenIter, pModel, pSymbolMap, pNumReactions, pIncludeHandler);
+                }
+                else if(token.mSymbol.equals("model"))
+                {
+                    handleStatementModel(tokenIter, pModel, pSymbolMap);
                 }
                 else
                 {
-                    // do nothing
+                    throw new InvalidInputException("unknown command: " + token.mSymbol);
                 }
             }
             else if(token.mCode.equals(Token.Code.PAREN_BEGIN))
@@ -1390,6 +1401,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     {
         assert (null != pIncludeHandler) : "null include handler";
         Model model = new Model();
+        model.setName(DEFAULT_MODEL_NAME);
         HashMap symbolMap = new HashMap();
         MutableInteger numReactions = new MutableInteger(0);
         parseModelDefinition(pInputReader, model, pIncludeHandler, symbolMap, numReactions);

@@ -31,8 +31,6 @@ import org.systemsbiology.util.DataNotFoundException;
  */
 public class Model
 {
-    public static final String DEFAULT_MODEL_NAME = "model";
-
     private HashMap mReactionsMap;
     private String mName;
     private HashMap mDynamicSymbolsMap;
@@ -42,17 +40,27 @@ public class Model
 
     public Model()
     {
-        this(DEFAULT_MODEL_NAME);
-    }
-
-    public Model(String pName)
-    {
-        mName = pName;
         mReactionsMap = new HashMap();
         mDynamicSymbolsMap = new HashMap();
         mSymbolsMap = new HashMap();
         mParametersMap = new HashMap();
         setSpeciesRateFactorEvaluator(new SpeciesRateFactorEvaluatorCombinatoric());
+        setName(null);
+    }
+
+    public Model(String pName)
+    {
+        this();
+        setName(pName);
+    }
+
+    /**
+     * Sets the model name to be the string contained in <code>pName</code>.
+     * This overrides the model name passed to the constructor.
+     */
+    public void setName(String pName)
+    {
+        mName = pName;
     }
 
     public String getName()
