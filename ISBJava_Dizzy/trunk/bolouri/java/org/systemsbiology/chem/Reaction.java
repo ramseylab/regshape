@@ -566,12 +566,5 @@ public final class Reaction extends SymbolValue
         return(retVal);
     }
 
-    double evaluateExpressionWithLocalSymbolTranslation(Expression pExpression,
-                                                        SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
-    {
-        pSymbolEvaluator.setLocalSymbolsMap(mLocalSymbolsMap);
-        double value = pExpression.computeValue(pSymbolEvaluator);
-        pSymbolEvaluator.setLocalSymbolsMap(null);
-        return(value);
-    }
+
 }

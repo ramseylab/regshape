@@ -92,7 +92,9 @@ public class SimulatorStochasticTauLeapComplex extends SimulatorStochasticTauLea
             }
             else
             {
-                derivVal = reactions[j].evaluateExpressionWithLocalSymbolTranslation(derivExp, symbolEvaluator);
+                symbolEvaluator.setLocalSymbolsMap(mReactionsLocalParamSymbolsMaps[j]);
+                derivVal = derivExp.computeValue(symbolEvaluator);
+                symbolEvaluator.setLocalSymbolsMap(null);
             }
 
             Fj = (double []) F[j];
