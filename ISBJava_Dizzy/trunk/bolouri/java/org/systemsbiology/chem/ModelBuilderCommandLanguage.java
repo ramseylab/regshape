@@ -16,6 +16,12 @@ import java.nio.charset.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.math.*;
 
+/**
+ * Builds a {@link Model} object from a CMDL model description.
+ * 
+ * @author sramsey
+ */
+
 public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableClass
 {
     private HashMap mDefaultModelSymbols;
@@ -886,7 +892,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         SymbolValue foundSymbolValue = (SymbolValue) pSymbolMap.get(symbolName);
         if(null != foundSymbolValue)
         {
-            // :BUGBUG: this is a hack until I can get an "if/then/else" construct working
+            // :TODO: this is a hack until I can get an "if/then/else" construct working
             // in the CMDL.  When defining a vector of species inside a loop, it is
             // often useful to be able to have a nonzero value for just one element of
             // the vector.  With multiple nested loops, this is difficult to accomplish.
