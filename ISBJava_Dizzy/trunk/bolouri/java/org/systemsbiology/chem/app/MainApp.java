@@ -15,12 +15,8 @@ import org.systemsbiology.chem.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.*;
-import java.io.File;
-import java.io.FileNotFoundException;
 
 public class MainApp
 {
@@ -167,7 +163,8 @@ public class MainApp
         }
         catch(Throwable e)
         {
-            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to create the simulation launcher window");
+            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to create the simulation launcher window: " + e.getMessage());
+            e.printStackTrace(System.err);
             setTimestampModelLastLoaded(null);
             setSimulationLauncher(null);
             updateMenus();
@@ -191,6 +188,7 @@ public class MainApp
         catch(Throwable e)
         {
             UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to export the model: " + e.getMessage());
+            e.printStackTrace(System.err);
             errorDialog.show();
         }
     }
@@ -209,6 +207,7 @@ public class MainApp
         catch(Throwable e)
         {
             UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to view the model in Cytoscape: " + e.getMessage());
+            e.printStackTrace(System.err);
             errorDialog.show();            
         }
     }
@@ -453,11 +452,6 @@ public class MainApp
     public static MainApp getApp()
     {
         return(mApp);
-    }
-
-    public void exit(int pCode)
-    {
-        System.exit(pCode);
     }
 
     public static void main(String []pArgs)
