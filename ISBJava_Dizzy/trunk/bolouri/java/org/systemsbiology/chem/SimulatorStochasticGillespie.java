@@ -96,7 +96,7 @@ public final class SimulatorStochasticGillespie extends SimulatorStochasticBase 
                     // execute delayed reaction
                     deltaTimeToNextReaction = nextDelayedReactionTime - time;
                     reactionIndex = solver.getReactionIndex();
-//                    System.out.println("delayed reaction selected: " + pReactions[reactionIndex]);
+//                    System.out.println("delayed reaction \"" + pReactions[reactionIndex] + "\" occurring at time: " + nextDelayedReactionTime );
                     solver.pollNextReactionTime();
                 }
             }
