@@ -10,6 +10,7 @@ package org.systemsbiology.chem.app;
 
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
+import org.systemsbiology.gui.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -61,8 +62,10 @@ public class ModelExporter
                 }
                 catch(DataNotFoundException e)
                 {
-                    UnexpectedErrorDialog dialog = new UnexpectedErrorDialog(mMainFrame, "unable to create an instance of exporter: " + exporterAlias);
-                    dialog.show();
+                    JOptionPane.showMessageDialog(mMainFrame, 
+                                                  "unable to create an instance of exporter: " + exporterAlias,
+                                                  MainApp.UNEXPECTED_ERROR_MESSAGE,
+                                                  JOptionPane.ERROR_MESSAGE);
                 }
                 if(null != exporter)
                 {
@@ -73,15 +76,14 @@ public class ModelExporter
                     if(! fileNameMatchesRegex)
                     {
                         SimpleTextArea textArea = new SimpleTextArea("Your export file name has a non-standard extension:\n" + fileName + "\nThe preferred extension regex is: " + fileRegex + 
-                                                                     "\nUsing this file name may make it difficult to load the model in the future.  Are you sure you want to proceed?");
-                        
-                        SimpleDialog messageDialog = new SimpleDialog(mMainFrame, 
-                                                                      "Non-standard export filename specified",
-                                                                      textArea);
-                        messageDialog.setMessageType(JOptionPane.WARNING_MESSAGE);
-                        messageDialog.setOptionType(JOptionPane.YES_NO_OPTION);
-                        messageDialog.show();
-                        Integer response = (Integer) messageDialog.getValue();
+                                         "\nUsing this file name may make it difficult to load the model in the future.  Are you sure you want to proceed?");
+                        JOptionPane exportOptionPane = new JOptionPane();
+                        exportOptionPane.setMessageType(JOptionPane.WARNING_MESSAGE);
+                        exportOptionPane.setOptionType(JOptionPane.YES_NO_OPTION);
+                        exportOptionPane.setMessage(textArea);
+                        exportOptionPane.createDialog(mMainFrame,
+                                                      "Non-standard export filename").show();
+                        Integer response = (Integer) exportOptionPane.getValue();
                         if(null != response &&
                            response.intValue() == JOptionPane.YES_OPTION)
                         {
@@ -116,13 +118,16 @@ public class ModelExporter
                         }
                         catch(Exception e)
                         {
-                            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame, "Export operation failed: " + shortName, e);
-                            dialog.show();
+                            ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e);
+                            errorOptionPane.createDialog(mMainFrame, "Export operation failed: " + shortName).show();
+
                         }
                         if(showSuccessfulDialog)
                         {
-                            SimpleDialog successDialog = new SimpleDialog(mMainFrame, "Export was successful", "The file export operation succeeded.\nThe output was saved in file: " + shortName);
-                            successDialog.show();
+                            JOptionPane.showMessageDialog(mMainFrame,
+                                                          "The file export operation succeeded.\nThe output was saved in file: " + shortName,
+                                                          "Export was successful",
+                                                          JOptionPane.INFORMATION_MESSAGE);
                         }
                     }
                 }

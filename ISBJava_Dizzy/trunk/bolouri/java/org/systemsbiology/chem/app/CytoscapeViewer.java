@@ -11,6 +11,7 @@ package org.systemsbiology.chem.app;
 import org.systemsbiology.chem.*;
 import org.systemsbiology.chem.sbml.*;
 import org.systemsbiology.util.*;
+import org.systemsbiology.gui.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -65,7 +66,7 @@ public class CytoscapeViewer
             File tempJNLPFile = File.createTempFile("cytoscpe", ".jnlp");
             FileWriter tempJNLPFileWriter = new FileWriter(tempJNLPFile);
             PrintWriter tempJNLPPrintWriter = new PrintWriter(tempJNLPFileWriter);
-            String tempJNLPFileURLString = URLUtils.createFileURL(tempJNLPFile);
+            String tempJNLPFileURLString = FileUtils.createFileURL(tempJNLPFile);
             URL tempJNLPFileURL = new URL(tempJNLPFileURLString);
 
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -111,9 +112,8 @@ public class CytoscapeViewer
         }
         catch(Exception e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame, "View-in-Cytoscape operation failed: " + e.getMessage(), e);
-            dialog.show();
-
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(mMainFrame, "View-in-Cytoscape operation failed: " + e.getMessage()).show();
         }
     }
 }

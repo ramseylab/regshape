@@ -79,7 +79,7 @@ public class AppConfig
     private static InputSource getConfigSource(File pAppFile) throws FileNotFoundException
     {
         InputSource retSource = null;
-        String uri = URLUtils.createFileURL(pAppFile);
+        String uri = FileUtils.createFileURL(pAppFile);
         
         FileInputStream fileInputStream = new FileInputStream(pAppFile);
         retSource = new InputSource(fileInputStream);

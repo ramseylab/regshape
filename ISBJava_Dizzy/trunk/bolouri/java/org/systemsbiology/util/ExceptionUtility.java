@@ -27,11 +27,11 @@ public class ExceptionUtility
      * @return the stack backtrace of an exception, as
      * a string. 
      */
-    public static String getStackTrace(Exception pException)
+    public static String getStackTrace(Throwable pThrowable)
     {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
-        pException.printStackTrace(printWriter);
+        pThrowable.printStackTrace(printWriter);
         return(stringWriter.toString());
     }
 }

@@ -14,6 +14,7 @@ package org.systemsbiology.chem.app;
 import org.systemsbiology.chem.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.math.*;
+import org.systemsbiology.gui.*;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -509,10 +510,10 @@ public class SimulationLauncher
 
     private void showCancelledSimulationDialog()
     {
-        SimpleDialog messageDialog = new SimpleDialog(getLauncherFrame(), "Simulation cancelled", 
-                                                      "Your simulation has been cancelled");
-        messageDialog.setMessageType(JOptionPane.INFORMATION_MESSAGE);
-        messageDialog.show();
+        JOptionPane.showMessageDialog(getLauncherFrame(),
+                                      "Your simulation has been cancelled",
+                                      "simulation cancelled",
+                                      JOptionPane.INFORMATION_MESSAGE);
     }
 
     private boolean mSimulationInProgress;
@@ -667,20 +668,19 @@ public class SimulationLauncher
                                                                             mScientificNumberFormat,
                                                                             outputFileFormat);
                 printWriter.flush();
-                JOptionPane optionPane = new JOptionPane("output saved to file:\n" + outputFileName);
-                JDialog dialog = optionPane.createDialog(getLauncherFrame(), "output saved");
-                dialog.show();
+                JOptionPane.showMessageDialog(getLauncherFrame(),
+                                              "output saved to file:\n" + outputFileName,
+                                              "output saved",
+                                              JOptionPane.INFORMATION_MESSAGE);
             }
 
             success = true;
         }
         catch(Exception e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
-                                                                                             "Failure processing simulation results",
-                                                                                             e);
-            dialog.show();
-            
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(getLauncherFrame(),
+                                    "Failure processing simulation results").show();
         }
 
         return(success);
@@ -718,21 +718,18 @@ public class SimulationLauncher
         catch(Exception e)
         {
             simulationEndCleanup(simulator);
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
-                                                                                             "Failure running simulation",
-                                                                                             e);
-            dialog.show();
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(getLauncherFrame(),
+                                    "Failure running simulation").show();
             return;
         }
 
         catch(Throwable e)
         {
             simulationEndCleanup(simulator);
-            e.printStackTrace(System.err);
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
-                                                                                             "Failure running simulation",
-                                                                                             new Exception(e.toString()));
-            dialog.show();
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(getLauncherFrame(),
+                                    "Failure running simulation").show();
             return;
         }
 
@@ -858,8 +855,10 @@ public class SimulationLauncher
         String simulatorAlias = (String) mSimulatorsList.getModel().getElementAt(pSimulatorIndex);
         if(null == simulatorAlias)
         {
-            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(getLauncherFrame(), "no simulator selected");
-            errorDialog.show();
+            JOptionPane.showMessageDialog(getLauncherFrame(), 
+                                          "no simulator selected",
+                                          MainApp.UNEXPECTED_ERROR_MESSAGE,
+                                          JOptionPane.ERROR_MESSAGE);
         }
         else
         {
@@ -954,10 +953,9 @@ public class SimulationLauncher
             }
             catch(Exception e)
             {
-                ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
-                                                                                                 "Failed to instantiate simulator",
-                                                                                                 e);
-                dialog.show();
+                ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+                optionPane.createDialog(getLauncherFrame(),
+                                        "Failed to instantiate simulator").show();
             }
         }
     }
@@ -1226,10 +1224,10 @@ public class SimulationLauncher
 
     private void handleBadInput(String pTitle, String pMessage)
     {
-        SimpleDialog dialog = new SimpleDialog(getLauncherFrame(),
-                                               pTitle,
-                                               pMessage);
-        dialog.show();
+        JOptionPane.showMessageDialog(getLauncherFrame(),
+                                      pTitle,
+                                      pMessage,
+                                      JOptionPane.INFORMATION_MESSAGE);
     }
 
     private String []createSelectedSymbolNames()
@@ -1402,10 +1400,9 @@ public class SimulationLauncher
         }
         catch(Exception e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
-                                                                                             "Failed to instantiate simulator",
-                                                                                             e);
-            dialog.show();
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(getLauncherFrame(),
+                                    "Failed to instantiate simulator").show();
             return(retVal);
         }
 
@@ -1611,6 +1608,7 @@ public class SimulationLauncher
         if(outputType.equals(OutputType.FILE))
         {
             FileChooser outputFileChooser = new FileChooser(mLauncherFrame);
+            outputFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             outputFileChooser.setDialogTitle("Please specify the output file; the extension \".csv\" is recommended");
             File currentDirectory = getCurrentDirectory();
             if(null != mOutputFile)
@@ -1693,10 +1691,9 @@ public class SimulationLauncher
         }
         catch(Exception e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
-                                                                                             "Failed to process simulation output",
-                                                                                             e);
-            
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(getLauncherFrame(),
+                                    "Failed to process simulation output").show();
         }
     }
 

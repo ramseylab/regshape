@@ -9,6 +9,7 @@ package org.systemsbiology.chem.app;
  */
 
 import org.systemsbiology.chem.*;
+import org.systemsbiology.gui.*;
 import java.awt.*;
 import javax.swing.*;
 
@@ -41,9 +42,9 @@ public class ModelViewerHumanReadable
 
         catch(Exception e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame, "View-model operation failed: " + modelName, e);
-            dialog.show();
-            
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(mMainFrame,
+                                    "View-model operation failed: " + modelName).show();
         }
     }
 }

@@ -26,6 +26,7 @@ import javax.imageio.*;
 import java.awt.datatransfer.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
+import org.systemsbiology.gui.*;
 
 /**
  * Displays a plot of simulation results.
@@ -128,9 +129,9 @@ public class SimulationResultsPlot extends JFrame
                     }
                     catch(Exception e)
                     {
-                        ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(SimulationResultsPlot.this, "failed to copy plot image", e);
-                        dialog.show();
-                        
+                        ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+                        optionPane.createDialog(SimulationResultsPlot.this,
+                                                "failed to copy plot image").show();
                     }
                 }
             });
@@ -229,12 +230,10 @@ public class SimulationResultsPlot extends JFrame
                     if(-1 != selectedFileName.indexOf('.'))
                     {
                         SimpleTextArea textArea = new SimpleTextArea("The output file you selected has a non-standard name for this image type:\n" + selectedFileName + "\nAre you sure that you wish to save the image using this name?");
-                        SimpleDialog messageDialog = new SimpleDialog(this, 
-                                                                      "Use non-standard file name?",
-                                                                      textArea);
+                        JOptionPane messageDialog = new JOptionPane(textArea);
                         messageDialog.setMessageType(JOptionPane.QUESTION_MESSAGE);
                         messageDialog.setOptionType(JOptionPane.YES_NO_OPTION);
-                        messageDialog.show();
+                        messageDialog.createDialog(this, "Use non-standard file name?").show();
                         Integer response = (Integer) messageDialog.getValue();
                         if(null != response &&
                            response.intValue() == JOptionPane.YES_OPTION)
@@ -257,8 +256,9 @@ public class SimulationResultsPlot extends JFrame
                 }
                 catch(Exception e)
                 {
-                    ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(this, "failed to save plot image", e);
-                    dialog.show();
+                    ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+                    optionPane.createDialog(this, 
+                                            "failed to save plot image").show();
                 }
             }
         }

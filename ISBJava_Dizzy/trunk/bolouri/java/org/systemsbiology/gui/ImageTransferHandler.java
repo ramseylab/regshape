@@ -1,4 +1,4 @@
-package org.systemsbiology.util;
+package org.systemsbiology.gui;
 /*
  * Copyright (C) 2003 by Institute for Systems Biology,
  * Seattle, Washington, USA.  All rights reserved.

@@ -8,6 +8,7 @@ package org.systemsbiology.chem.app;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
+import org.systemsbiology.util.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -15,16 +16,23 @@ import java.io.File;
 import java.io.IOException;
 import java.net.*;
 
-public class AboutDialog extends SimpleDialog
+public class AboutDialog
 {
+    private Component mMainFrame;
+    private AppConfig mAppConfig;
+    private JOptionPane mOptionPane;
 
     public AboutDialog(Component pMainFrame)
     {
-        super(pMainFrame, "About " + MainApp.getApp().getAppConfig().getAppName(), (Object) 
-              new String(MainApp.getApp().getAppConfig().getAppName() + " version " + 
-                         MainApp.getApp().getAppConfig().getAppVersion() + "\nReleased " + 
-                         MainApp.getApp().getAppConfig().getAppDate() + "\nHome page: " +
-                         MainApp.getApp().getAppConfig().getAppHomePage() ));
+        mAppConfig = MainApp.getApp().getAppConfig();
+
+        String message = new String( mAppConfig.getAppName() + " version " + 
+                                     mAppConfig.getAppVersion() + "\nReleased " + 
+                                     mAppConfig.getAppDate() + "\nHome page: " +
+                                     mAppConfig.getAppHomePage() );
+
+        JOptionPane optionPane = new JOptionPane();
+        optionPane.setMessage(message);
 
         String iconRelativeURL = MainApp.getApp().getAppConfig().getAppIconURL();
         if(iconRelativeURL != null && iconRelativeURL.trim().length() > 0)
@@ -33,8 +41,16 @@ public class AboutDialog extends SimpleDialog
             if(null != iconResource)
             {
                 ImageIcon imageIcon = new ImageIcon(iconResource);
-                setIcon((Icon) imageIcon);
+                optionPane.setIcon((Icon) imageIcon);
             }
         }
+
+        mOptionPane = optionPane;
+    }
+
+    public void show()
+    {
+        mOptionPane.createDialog(mMainFrame,
+                                 "About " + mAppConfig.getAppName()).show();
     }
 }

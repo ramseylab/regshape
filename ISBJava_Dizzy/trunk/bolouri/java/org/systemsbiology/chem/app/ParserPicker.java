@@ -15,6 +15,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
+import org.systemsbiology.gui.*;
 
 public class ParserPicker
 {
@@ -30,10 +31,10 @@ public class ParserPicker
 
     private void handleCancel()
     {
-        SimpleDialog messageDialog = new SimpleDialog(mMainFrame, "Model processing cancelled", 
-                                                      "Your model processing has been cancelled");
-        messageDialog.setMessageType(JOptionPane.INFORMATION_MESSAGE);
-        messageDialog.show();
+        JOptionPane.showMessageDialog(mMainFrame,
+                                      "Your model processing has been cancelled",
+                                      "Model processing cancelled",
+                                      JOptionPane.INFORMATION_MESSAGE);
     }
 
     private static java.util.List getModelBuilderAliasesList(ClassRegistry modelBuilderRegistry)

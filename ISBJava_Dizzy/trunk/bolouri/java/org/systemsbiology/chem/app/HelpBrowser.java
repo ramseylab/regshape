@@ -13,8 +13,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
 import java.io.File;
-import org.systemsbiology.util.*;
 import javax.help.*;
+import org.systemsbiology.util.*;
+import org.systemsbiology.gui.*;
 
 public class HelpBrowser
 {
@@ -62,24 +63,25 @@ public class HelpBrowser
                 }
                 else
                 {
-                    SimpleDialog notFoundDialog = new SimpleDialog(mMainFrame, "Help file not found", 
-                                                                   "The help file was not found: " + helpSetName);
-                    notFoundDialog.show();
+                    JOptionPane.showMessageDialog(mMainFrame,
+                                                  "The help file was not found: " + helpSetName,
+                                                  "Help file not found",
+                                                  JOptionPane.WARNING_MESSAGE);
                 }
             }
             else
             {
-                    SimpleDialog notFoundDialog = new SimpleDialog(mMainFrame, "No help is available", 
-                                                                   "Sorry, no on-line help is available");
-                    notFoundDialog.show();
+                JOptionPane.showMessageDialog(mMainFrame,
+                                              "Sorry, no on-line help is available",
+                                              "No help is available",
+                                              JOptionPane.INFORMATION_MESSAGE);
             }
         }
         catch(Exception e)
         {
-            ExceptionDialogOperationCancelled exceptionDialog = new ExceptionDialogOperationCancelled(mMainFrame,
-                                                                                                      "Error displaying online help",
-                                                                                                      e);
-            exceptionDialog.show();
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(mMainFrame,
+                                    "Error displaying online help").show();
             return;
         }        
     }

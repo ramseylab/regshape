@@ -10,6 +10,7 @@ package org.systemsbiology.chem.app;
 
 import org.systemsbiology.chem.*;
 import org.systemsbiology.util.*;
+import org.systemsbiology.gui.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -44,6 +45,8 @@ public class ModelProcessor
         MainApp app = MainApp.getApp();
         ClassRegistry modelBuilderRegistry = app.getModelBuilderRegistry();
 
+        System.out.println("building model");
+
         try
         {
             IModelBuilder modelBuilder = (IModelBuilder) modelBuilderRegistry.getInstance(pParserAlias);
@@ -52,22 +55,25 @@ public class ModelProcessor
 
         catch(InvalidInputException e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame, "error in input file: " + shortFileName, e);
-            dialog.show();
+            System.out.println("invalid input exception");
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(mMainFrame, "error in input file: " + shortFileName).show();
             return(model);
         }
 
         catch(DataNotFoundException e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame, "error in input file: " + shortFileName, e);
-            dialog.show();
+            System.out.println("data not found exception");
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(mMainFrame, "error in input file: " + shortFileName).show();
             return(model);
         }
 
         catch(IOException e)
         {
-            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame, "I/O error loading input file: "+shortFileName, e);
-            dialog.show();
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(mMainFrame,
+                                    "I/O error loaging input file: " + shortFileName).show();
             return(model);
         }
 

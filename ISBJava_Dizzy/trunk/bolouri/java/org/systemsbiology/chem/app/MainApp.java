@@ -11,6 +11,7 @@ package org.systemsbiology.chem.app;
 import java.util.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
+import org.systemsbiology.gui.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -33,6 +34,7 @@ public class MainApp
     private Long mTimestampModelLastLoaded;
     private static final String DEFAULT_HELP_SET_VIEW = "TOC";  // this string must correspond to
                                                                 // a <view> block in AppHelp.hs
+    static final String UNEXPECTED_ERROR_MESSAGE = "an unexpected error has occurred";
     private File mCurrentDirectory;
 
     void setCurrentDirectory(File pCurrentDirectory)
@@ -174,12 +176,11 @@ public class MainApp
         }
         catch(Throwable e)
         {
-            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to create the simulation launcher window: " + e.getMessage());
-            e.printStackTrace(System.err);
+            ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e);
             setTimestampModelLastLoaded(null);
             setSimulationLauncher(null);
             updateMenus();
-            errorDialog.show();            
+            errorOptionPane.createDialog(mMainFrame, "unable to simulate the model: " + e.getMessage()).show();
         }
     }
 
@@ -198,9 +199,8 @@ public class MainApp
 
         catch(Throwable e)
         {
-            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to export the model: " + e.getMessage());
-            e.printStackTrace(System.err);
-            errorDialog.show();
+            ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e);
+            errorOptionPane.createDialog(mMainFrame, "unable to export the model: " + e.getMessage()).show();
         }
     }
 
@@ -217,9 +217,8 @@ public class MainApp
         }
         catch(Throwable e)
         {
-            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to view the model in Cytoscape: " + e.getMessage());
-            e.printStackTrace(System.err);
-            errorDialog.show();            
+            ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e);
+            errorOptionPane.createDialog(mMainFrame, "unable to view the model in Cytoscape: " + e.getMessage()).show();
         }
     }
 
@@ -236,9 +235,8 @@ public class MainApp
         }
         catch(Throwable e)
         {
-            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to view the model in human-readable format: " + e.getMessage());
-            e.printStackTrace(System.err);
-            errorDialog.show(); 
+            ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e);
+            errorOptionPane.createDialog(mMainFrame, "unable to view the model in human-readable format: " + e.getMessage()).show();
         }
     }
 
@@ -257,9 +255,11 @@ public class MainApp
             SimulationLauncher.SetModelResult result = simulationLauncher.setModel(model);
             if(result == SimulationLauncher.SetModelResult.FAILED_RUNNING)
             {
-                SimpleDialog dialog = new SimpleDialog(mMainFrame, "unable to reload model", 
-                                                       "Sorry, the model cannot be reloaded while a simulation is running.  Please wait for the simulation to complete and then try again.");
-                dialog.show();
+                JOptionPane.showMessageDialog(mMainFrame,
+                                              "Sorry, the model cannot be reloaded while a simulation is running.  Please wait for the simulation to complete and then try again.",
+                                              "unable to reload model",
+                                              JOptionPane.INFORMATION_MESSAGE);
+
             }
             else if(result == SimulationLauncher.SetModelResult.FAILED_CLOSED)
             {
@@ -286,8 +286,8 @@ public class MainApp
         }
         catch(Exception e)
         {
-            ExceptionDialogOperationCancelled errorDialog = new ExceptionDialogOperationCancelled(mMainFrame, "unable to reload the mode", e);
-            errorDialog.show();            
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(mMainFrame, "unable to reload the model").show();
         }
     }
 
