@@ -278,9 +278,10 @@ public final class Reaction extends SymbolValue
                 
     private static double computeRateFactorForSpecies(double pSpeciesValue,
                                                       int pStoichiometry,
-                                                      boolean pIsStochastic)
+                                                      boolean pIsStochastic,
+                                                      boolean pIsDynamic)
     {
-        if(pIsStochastic)
+        if(pIsStochastic && pIsDynamic)
         {
             if(pSpeciesValue >= pStoichiometry)
             {
@@ -681,19 +682,14 @@ public final class Reaction extends SymbolValue
         if(! mRateIsExpression)
         {
             double rate = mValue.getValue();
-            Species []reactants = mReactantsSpeciesArray;
-            int []stoichiometries = mReactantsStoichiometryArray;
-
-            int numReactants = reactants.length;
-            double speciesValue = 0.0;
+            int numReactants = mReactantsSpeciesArray.length;
             for(int reactantCtr = numReactants; --reactantCtr >= 0; )
             {
-                speciesValue = pSymbolEvaluator.getValue(reactants[reactantCtr].getSymbol());
-                rate *= computeRateFactorForSpecies(speciesValue, 
-                                                    stoichiometries[reactantCtr],
-                                                    pIsStochastic);
+                rate *= computeRateFactorForSpecies(pSymbolEvaluator.getValue(mReactantsSpeciesArray[reactantCtr].getSymbol()), 
+                                                    mReactantsStoichiometryArray[reactantCtr],
+                                                    pIsStochastic,
+                                                    mReactantsDynamicArray[reactantCtr]);
             }
-
             return(rate);
         }
         else
@@ -703,7 +699,6 @@ public final class Reaction extends SymbolValue
             pSymbolEvaluator.setLocalSymbolsMap(null);
             return(rate);
         }
-
     }
 
 
