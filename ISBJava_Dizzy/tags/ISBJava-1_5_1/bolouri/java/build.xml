@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+<!DOCTYPE BuildFile [
+<!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
+%CommonConfig;
+<!ENTITY % AppConfig SYSTEM "config/AppConfig.dtd">
+%AppConfig;
+<!ENTITY BuildHeader SYSTEM "../config/BuildHeader.xmlinc">
+]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This source code is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<project name="localJava" default="compile" basedir=".">
+  <property name="projRoot"                      location=".." />
+
+  &BuildHeader;
+
+
+  <property name="app.styleDir"                location="${basedir}/html" />
+  <property name="app.srcDir"                  location="${basedir}/org" />
+  <property name="app.configDir"               location="${basedir}/config" />
+  <property name="app.buildDir"                location="${basedir}/build" />
+  <property name="app.docsDir"                 location="${basedir}/docs" />
+  <property name="app.extLibDir"               location="${basedir}/extlib" />
+  <property name="app.buildDir"                location="${projBuildDir}" />
+  <property name="app.classesDir"              location="${projClassesDir}" />
+  <property name="app.imagesDir"               location="${basedir}/images" />
+  <property name="app.webDir"                  location="${projWebDir}/&appName;" />
+  <property name="app.javadocDir"              location="${app.webDir}/javadoc" />
+  <property name="app.version"                 value="&appVersion;" />
+  <property name="app.downloadDir"             location="${app.webDir}/&appVersion;" />
+  <property name="app.installerDir"            location="${app.downloadDir}/installer" />
+  <property name="app.rootPackage"             value="org" />
+
+  <property name="app.sourceCompileFlag"       value="1.4" />
+
+  <property name="app.jarFile"                 location="${projBuildDir}/&appName;.jar" />
+  <property name="app.srcFile"                 location="${projBuildDir}/&appName;-src.tar.gz" />
+
+  <path id="app.classpath">
+    <pathelement location="${app.classesDir}" />
+    <fileset dir="${app.extLibDir}"> 
+      <include name="*.jar" />
+      <include name="*.zip" />
+    </fileset>
+  </path>
+
+  <path id="app.docletclasspath">
+    <pathelement location="${app.classesDir}" />
+    <fileset dir="${app.extLibDir}/doclet"> 
+      <include name="pdfdoclet.jar" />
+      <include name="jakarta-regexp.jar" />
+      <include name="itext.jar" />
+    </fileset>
+  </path>
+
+  <target name="copyCommonConfig">
+    <copy file="${projConfigDir}/CommonConfig.dtd" todir="${app.configDir}" />
+  </target>
+
+  <target name="style" depends="copyCommonConfig">
+    <mkdir dir="${app.styleDir}" />
+    <style basedir="${app.docsDir}" 
+           destdir="${app.styleDir}" 
+           includes="*.xml" 
+           style="${docsStyleSheet}" />
+  </target>
+
+  <target name="copyImages">
+    <mkdir dir="${app.webDir}/images" />
+    <copy todir="${app.webDir}/images">
+      <fileset dir="${app.imagesDir}">
+        <include name="*.png" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="copyHtml">
+    <mkdir dir="${app.webDir}" />
+    <copy todir="${app.webDir}" file="${app.styleDir}/index.html" />
+
+    <mkdir dir="${app.webDir}/docs" />
+    <copy todir="${app.webDir}/docs">
+      <fileset dir="${app.styleDir}">
+        <include name="*.html" />
+        <exclude name="JavadocTitlePage.html" />
+        <exclude name="index.html" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="copyResources">
+    <copy todir="${app.classesDir}">
+      <fileset dir="${basedir}">
+        <include name="${app.rootPackage}/**/*.xml" />
+        <include name="${app.rootPackage}/**/*.dtd" />
+        <include name="${app.rootPackage}/**/*.html" />
+        <exclude name="**/tp/*" />
+        <exclude name="docs/*.xml" />
+        <exclude name="build.xml" />
+        <exclude name="**/package.html" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="buildInstallers">
+    <!-- make the build directory -->
+    <mkdir dir="${app.buildDir}" />
+
+    <filter token="APPNAME" value="&appName;" />
+    <filter token="VERSION" value="${app.version}" />
+    <filter token="PROJROOT" value="${projRoot}" />
+
+    <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
+    <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />
+
+    <exec executable="${binInstallAnywhere}" failonerror="true">
+      <arg value="${app.buildDir}/project.iap_xml" />
+    </exec>
+
+    <!-- make the installer directory -->
+    <mkdir dir="${app.installerDir}" />
+
+    <!-- copy the InstallAnywhere web installer stuff to the web directory -->
+    <copy todir="${app.installerDir}">
+      <fileset dir="${app.buildDir}/project_Build_Output" />
+    </copy>
+  </target>
+
+  <target name="javadocPDF">
+    <filter token="APP_VERSION" value="${app.version}" />
+    <filter token="APP_OWNER" value="&appMaintainerFullName;" />
+    <filter token="APP_OWNER_EMAIL" value="&appMaintainerFullName;" />
+
+    <mkdir dir="${app.webDir}/docs" />
+    <javadoc source="${app.sourceCompileFlag}"
+             Overview="${app.styleDir}/JavadocTitlePage.html"
+             sourcepath="${basedir}"
+             packageList="${app.configDir}/packageList.txt"
+             docletpathref="app.docletclasspath"
+             doclet="com.tarsec.javadoc.pdfdoclet.PDFDoclet"
+             additionalparam="-pdf ${app.webDir}/docs/APIDocumentation.pdf -config ${app.configDir}/PDFDoclet.properties">
+      <classpath refid="app.classpath" />
+    </javadoc>                 
+  </target>
+
+  <target name="javadoc">
+    <mkdir dir="${app.javadocDir}" />
+    <javadoc source="${app.sourceCompileFlag}" 
+             Overview="${app.styleDir}/JavadocTitlePage.html" 
+             sourcepath="${basedir}" 
+             destdir="${app.javadocDir}"
+             packageList="${app.configDir}/packageList.txt"
+             additionalparam="-breakiterator"> 
+      <classpath refid="app.classpath" />
+    </javadoc>
+  </target>
+ 
+  <target name="buildHTML" depends="style, srcTar, copyHtml, copyImages, javadoc" />
+
+  <target name="buildPDF" depends="javadocPDF" />
+
+  <target name="compile">
+    <mkdir dir="${app.classesDir}" />
+    <javac srcdir="${app.srcDir}" 
+           destdir="${app.classesDir}" 
+           source="${app.sourceCompileFlag}" 
+           debug="on" 
+           excludes="**/tp/*.java">
+      <classpath refid="app.classpath" />
+    </javac>
+  </target>
+
+  <target name="compiletests" depends="compile">
+    <mkdir dir="${app.classesDir}" />
+    <javac srcdir="${app.srcDir}" 
+           destdir="${app.classesDir}" 
+           source="${app.sourceCompileFlag}" 
+           debug="on" 
+           includes="**/tp/*.java" />
+  </target>  
+ 
+  <target name="srcTar">
+    <mkdir dir="${projBuildDir}" />
+    <tar destfile="${app.srcFile}" 
+         basedir="${basedir}"
+         includes="${app.rootPackage}/**/*.java,${app.rootPackage}/**/*.xml,html/*.html,${app.rootPackage}/**/.dtd" 
+         compression="gzip">
+    </tar>
+  </target>
+
+  <target name="build" depends="jar" />
+
+  <target name="test" depends="compiletests" />
+  
+  <target name="jar" depends="clean, compile, copyResources">
+    <mkdir dir="${projBuildDir}" />
+    <jar destfile="${app.jarFile}">
+      <fileset dir="${app.classesDir}">
+        <include name="${app.rootPackage}/**/*.class" />
+        <include name="${app.rootPackage}/**/*.xml" />
+        <include name="${app.rootPackage}/**/*.html" />
+        <include name="${app.rootPackage}/**/*.dtd" />
+        <exclude name="${app.rootPackage}/**/tp/*.class" />
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="clean">
+    <delete dir="${app.styleDir}" quiet="yes" />
+    <delete quiet="yes">
+      <fileset dir="${app.srcDir}">
+        <include name="**/*.class" />
+      </fileset>
+    </delete>
+    <delete dir="${app.buildDir}" quiet="yes" />
+    <delete quiet="yes">
+      <fileset dir="${app.classesDir}/${app.rootPackage}">
+        <include name="**/*.class" />
+        <include name="**/*.xml" />
+        <include name="**/*.dtd" />
+      </fileset>
+    </delete>
+    <delete file="${app.configDir}/CommonConfig.dtd" quiet="yes" />
+  </target>
+
+  <target name="distClean" depends="clean">
+    <delete dir="${projClassesDir}" quiet="yes" />
+    <delete dir="${projBuildDir}" quiet="yes" />
+  </target>
+  
+</project>
