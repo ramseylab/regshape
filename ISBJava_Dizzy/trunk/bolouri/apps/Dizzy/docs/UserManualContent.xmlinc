@@ -2815,7 +2815,7 @@ system.</li>
 A sample screen shot of the &appName; graphical user interface follows:
 </p>
 <p>
-<a href="../images/screenshot1.png"><img src="../images/screenshot1-small.png" alt="screenshot" /></a>
+<a href="../images/screenshot1-big.png"><img src="../images/screenshot1.png" alt="screenshot" /></a>
 </p>
 <p>
 Each of the above features will be described in turn.
@@ -2918,10 +2918,18 @@ will halt with an exception (and it will suggest that you re-run the simulation
 with a large minimum number of time steps).
 </p>
 <p>
-The &quot;maximum allowed error&quot; text box is used to define a floating
+The &quot;max allowed relative error&quot; text box is used to define a floating
 point number (greater than 0.0 and less than 1.0) that specifies the maximum
-allowed aggregate fractional simulation error.  This is only used by the
-deterministic (ODE) simulators.  
+allowed aggregate fractional relative simulation error.  This is only used by the
+deterministic (ODE) simulators.  A good starting value for this parameter is about
+0.0001.
+</p>
+<p>
+The &quot;max allowed absolute error&quot; text box is used to define a floating
+point number (greater than 0.0 and less than 1.0) that specifies the maximum
+allowed aggregate absolute simulation error.  This is only used by the
+deterministic (ODE) simulators.  Care should be exercised before setting
+this parameter to too small a value.  A good starting value would be 0.01.
 </p>
 <p>
 The &quot;output type&quot; can 
