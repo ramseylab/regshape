@@ -10,38 +10,74 @@ package org.systemsbiology.chem;
 
 public class SimulatorParameters
 {
-    private Long mEnsembleSize;
-    private Long mMinNumSteps;
+    private Integer mEnsembleSize;
     private Double mMaxAllowedRelativeError;
     private Double mMaxAllowedAbsoluteError;
-    private Boolean mFlagGetFinalSymbolFluctuations;
+    private Double mStepSizeFraction;
+    private Integer mNumHistoryBins;
+    private Boolean mComputeFluctuations;
+
+    public String toString()
+    {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("ensembleSize: " + mEnsembleSize + "\n");
+        sb.append("maxAllowedRelativeError: " + mMaxAllowedRelativeError + "\n");
+        sb.append("maxAllowedAbsoluteError: " + mMaxAllowedAbsoluteError + "\n");
+        sb.append("stepSizeFraction: " + mStepSizeFraction + "\n");
+        sb.append("numHistoryBins: " + mNumHistoryBins + "\n");
+        sb.append("computeFluctuations: " + mComputeFluctuations + "\n");
+
+        return(sb.toString());
+    }
 
     public SimulatorParameters()
     {
         mEnsembleSize = null;
-        mMinNumSteps = null;
         mMaxAllowedRelativeError = null;
-        mFlagGetFinalSymbolFluctuations = null;
+        mComputeFluctuations = null;
+        mNumHistoryBins = null;
+        mStepSizeFraction = null;
     }
 
-    public void setFlagGetFinalSymbolFluctuations(boolean pFlagGetFinalSymbolFluctuations)
+    public void setStepSizeFraction(double pStepSizeFraction)
     {
-        mFlagGetFinalSymbolFluctuations = new Boolean(pFlagGetFinalSymbolFluctuations);
+        mStepSizeFraction = new Double(pStepSizeFraction);
     }
 
-    public Boolean getFlagGetFinalSymbolFluctuations()
+    public Double getStepSizeFraction()
     {
-        return(mFlagGetFinalSymbolFluctuations);
+        return(mStepSizeFraction);
     }
 
-    public void setEnsembleSize(long pEnsembleSize)
+    public void setNumHistoryBins(int pNumHistoryBins)
     {
-        mEnsembleSize = new Long(pEnsembleSize);
+        mNumHistoryBins = new Integer(pNumHistoryBins);
     }
 
-    public void setMinNumSteps(long pMinNumSteps)
+    public Integer getNumHistoryBins()
     {
-        mMinNumSteps = new Long(pMinNumSteps);
+        return(mNumHistoryBins);
+    }
+
+    public void setComputeFluctuations(boolean pComputeFluctuations)
+    {
+        mComputeFluctuations = new Boolean(pComputeFluctuations);
+    }
+
+    public Boolean getComputeFluctuations()
+    {
+        return(mComputeFluctuations);
+    }
+
+    public void setEnsembleSize(int pEnsembleSize)
+    {
+        mEnsembleSize = new Integer(pEnsembleSize);
+    }
+
+    public Integer getEnsembleSize()
+    {
+        return(mEnsembleSize);
     }
 
 
@@ -63,15 +99,5 @@ public class SimulatorParameters
     public Double getMaxAllowedAbsoluteError()
     {
         return(mMaxAllowedAbsoluteError);
-    }
-
-    public Long getMinNumSteps()
-    {
-        return(mMinNumSteps);
-    }
-
-    public Long getEnsembleSize()
-    {
-        return(mEnsembleSize);
     }
 }
