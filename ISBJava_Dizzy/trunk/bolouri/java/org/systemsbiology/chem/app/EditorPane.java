@@ -28,6 +28,10 @@ public class EditorPane
 {
     private static final int EDITOR_TEXT_AREA_NUM_ROWS = 40;
     private static final int EDITOR_TEXT_AREA_NUM_COLS = 80;
+
+    private static final int EDITOR_TEXT_AREA_MIN_WIDTH_CHARS = 4;
+    private static final int EDITOR_TEXT_AREA_MIN_HEIGHT_CHARS = 2;
+
     private static final String LABEL_FILE =   "file: ";
     private static final String LABEL_PARSER = "parser: ";
 
@@ -40,6 +44,9 @@ public class EditorPane
     private String mParserAlias;
     private boolean mBufferDirty;
     private File mCurrentDirectory;
+    private int mOriginalWidthPixels;
+    private int mOriginalHeightPixels;
+
 
     private String getParserAlias()
     {
@@ -120,6 +127,38 @@ public class EditorPane
     {
         JTextArea textArea = getEditorPaneTextArea();
         textArea.copy();
+    }
+    
+    public void handleResize(int changeWidthPixels, int changeHeightPixels)
+    {
+        if(0 == mOriginalWidthPixels)
+        {
+            mOriginalWidthPixels = mEditorPaneTextArea.getWidth();
+            mOriginalHeightPixels = mEditorPaneTextArea.getHeight();
+        }
+        int originalWidthPixels = mOriginalWidthPixels;
+        int originalHeightPixels = mOriginalHeightPixels;
+        int widthPixels = originalWidthPixels + changeWidthPixels;
+        int heightPixels = originalHeightPixels + changeHeightPixels;
+        if(widthPixels > 0 && heightPixels > 0)
+        {
+            int widthChars = (int) Math.floor( ((double) widthPixels)/((double) originalWidthPixels) * 
+                                     ((double) EDITOR_TEXT_AREA_NUM_COLS));
+
+            int heightChars = (int) Math.floor( ((double) heightPixels)/((double) originalHeightPixels) * 
+                                     ((double) EDITOR_TEXT_AREA_NUM_ROWS));
+            if(widthChars < EDITOR_TEXT_AREA_MIN_WIDTH_CHARS)
+            {
+                widthChars = EDITOR_TEXT_AREA_MIN_WIDTH_CHARS;
+            }
+            if(heightChars < EDITOR_TEXT_AREA_MIN_HEIGHT_CHARS)
+            {
+                heightChars = EDITOR_TEXT_AREA_MIN_HEIGHT_CHARS;
+            }
+
+            mEditorPaneTextArea.setRows(heightChars);
+            mEditorPaneTextArea.setColumns(widthChars);
+        }
     }
 
     public void close()
@@ -316,7 +355,6 @@ public class EditorPane
 
         editorPanel.add(labelPanel);
 
-
         mParserAliasLabel = parserLabel;
         
         JPanel labelEditorPane = new JPanel();
@@ -362,9 +400,14 @@ public class EditorPane
         editorTextArea.setEditable(true);
         editorTextArea.addKeyListener(listener);
         mEditorPaneTextArea = editorTextArea;
+        
         JScrollPane scrollPane = new JScrollPane(editorTextArea);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
+        mOriginalWidthPixels = 0;
+        mOriginalHeightPixels = 0;
+
         pPane.add(scrollPane);
     }
 

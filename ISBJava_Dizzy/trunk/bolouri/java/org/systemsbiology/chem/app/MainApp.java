@@ -33,6 +33,8 @@ public class MainApp
     private ClassRegistry mModelBuilderRegistry;
     private ClassRegistry mModelExporterRegistry;
     private EditorPane mEditorPane;
+    private int mOriginalWidthPixels;
+    private int mOriginalHeightPixels;
 
     EditorPane getEditorPane()
     {
@@ -249,12 +251,24 @@ public class MainApp
         Container mainPane = createComponents();
         frame.setContentPane(mainPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension frameSize = frame.getSize();
-        frame.setLocation((screenSize.width - frameSize.width) / 2,
-                          (screenSize.height - frameSize.height) / 2);
-
+        frame.pack();
+        frame.setLocation((screenSize.width - frame.getWidth())/2,
+                          (screenSize.height - frame.getHeight())/2);
+        mOriginalWidthPixels = frame.getWidth();
+        mOriginalHeightPixels = frame.getHeight();
+        frame.addComponentListener(new ComponentAdapter()
+        {
+            public void componentResized(ComponentEvent e)
+            {
+                int heightPixels = mMainFrame.getHeight();
+                int widthPixels = mMainFrame.getWidth();
+                int changeWidthPixels = widthPixels - mOriginalWidthPixels;
+                int changeHeightPixels = heightPixels - mOriginalHeightPixels;
+                mEditorPane.handleResize(widthPixels - mOriginalWidthPixels,
+                                         heightPixels - mOriginalHeightPixels);
+            }
+        });
         frame.setVisible(true);
     }
 
