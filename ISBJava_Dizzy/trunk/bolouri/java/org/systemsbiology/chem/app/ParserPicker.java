@@ -63,17 +63,16 @@ public class ParserPicker
             try
             {
                 modelBuilder = (IModelBuilder) modelBuilderRegistry.getInstance(modelBuilderAlias);
+                String fileRegex = modelBuilder.getFileRegex();
+                if(pFileName.matches(fileRegex))
+                {
+                    retModelBuilderAlias = modelBuilderAlias;
+                    break;
+                }
             }
             catch(DataNotFoundException e)
             {
                 e.printStackTrace(System.err);
-            }
-            assert (null != modelBuilder): "unexpected exception thrown in scriptBuilder.getModelBuilder()";
-            String fileRegex = modelBuilder.getFileRegex();
-            if(pFileName.matches(fileRegex))
-            {
-                retModelBuilderAlias = modelBuilderAlias;
-                break;
             }
         }
 
