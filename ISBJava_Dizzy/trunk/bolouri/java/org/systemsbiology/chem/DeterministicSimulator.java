@@ -22,7 +22,7 @@ import java.util.Random;
 public abstract class DeterministicSimulator extends Simulator
 {
     protected static final double MAX_FRACTIONAL_ERROR = 0.001;
-    private static final int NUM_ITERATIONS_CHECK_CANCELLED = 10;
+    private static final int NUM_ITERATIONS_CHECK_CANCELLED = 100;
 
     class RKScratchPad
     {
