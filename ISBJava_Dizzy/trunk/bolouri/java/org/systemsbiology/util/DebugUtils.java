@@ -16,6 +16,23 @@ import java.util.Iterator;
 
 public class DebugUtils
 {
+    private static boolean sDebug;
+
+    static
+    {
+        sDebug = false;
+    }
+
+    public static void setDebug(boolean pDebug)
+    {
+        sDebug = pDebug;
+    }
+
+    public static boolean getDebug()
+    {
+        return(sDebug);
+    }
+
     public static void printDoubleVector(double []pVec)
     {
         int numElements = pVec.length;
