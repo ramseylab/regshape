@@ -316,6 +316,9 @@
       <xsl:if test="@alt != ''">
         <xsl:attribute name="alt"><xsl:value-of select="@alt" /></xsl:attribute>
       </xsl:if>
+      <xsl:if test="@border != ''">
+        <xsl:attribute name="border"><xsl:value-of select="@border" /></xsl:attribute>
+      </xsl:if>
       <xsl:apply-templates/>
     </xsl:element>
   </xsl:template>

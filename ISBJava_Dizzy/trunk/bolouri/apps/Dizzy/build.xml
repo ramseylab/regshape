@@ -11,6 +11,8 @@
   <property name="app.styleDir"                 location="${basedir}/html" />
   <property name="app.buildDir"                 location="${basedir}/build" />
   <property name="app.configDir"                location="${basedir}/config" />
+  <property name="app.docsDir"                  location="${basedir}/docs" />
+  <property name="app.imagesDir"                location="${basedir}/images" />
   <property name="app.webDir"                   location="${projWebDir}/${ant.project.name}" />
   <property name="app.installerDir"             location="${app.webDir}/&appVersion;/installer" />
   <property name="app.version"                  value="&appVersion;" />
@@ -31,7 +33,7 @@
 
   <target name="style" depends="copyCommonConfig">
     <mkdir dir="${app.styleDir}" />
-    <style basedir="${basedir}/docs" 
+    <style basedir="${app.docsDir}" 
            destdir="${app.styleDir}" 
            includes="*.xml" 
            style="${docsStyleSheet}"
@@ -47,16 +49,22 @@
     </copy>
   </target>
 
-  <target name="buildWeb" depends="style">
+  <target name="copyImages">
+    <mkdir dir="${app.webDir}" />
+    <copy todir="${app.webDir}">
+      <fileset dir="${app.imagesDir}">
+        <include name="*.png" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="buildWeb" depends="style, copyImages, copyHtml">
     <mkdir dir="${app.webDir}" />
     <copy todir="${app.webDir}">
       <fileset dir="${app.styleDir}">
         <include name="*.html" />
       </fileset>
     </copy>
-
-    <!-- make the installer directory -->
-    <mkdir dir="${app.installerDir}" />
 
     <!-- make the build directory -->
     <mkdir dir="${app.buildDir}" />
@@ -66,19 +74,20 @@
     <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
     <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />
 
-    <!-- create symbolic link for InstallAnywhere build output: -->
-    <exec executable="ln">
-      <arg value="-s" />
-      <arg value="${app.installerDir}" />
-      <arg value="${app.buildDir}/project_Build_Output" />
-    </exec>
-
     <exec executable="${binInstallAnywhere}">
       <arg value="${app.buildDir}/project.iap_xml" />
     </exec>
+
+    <!-- make the installer directory -->
+    <mkdir dir="${app.installerDir}" />
+
+    <!-- copy the InstallAnywhere web installer stuff to the web directory -->
+    <copy todir="${app.installerDir}">
+      <fileset dir="${app.buildDir}/project_Build_Output" />
+    </copy>
   </target>
 
-  <target name="build" depends="style, copyCommonConfig">
+  <target name="build">
     <!-- do nothing -->
   </target>
 

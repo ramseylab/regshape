@@ -359,7 +359,7 @@ and any path to a file to read from that file]]></string>
 				<string><![CDATA[The installer cannot run on your configuration. It will now quit.]]></string>
 			</property>
 			<property name="userSplashPath">
-				<string><![CDATA[$IA_PROJECT_DIR$/../../../docs/]]></string>
+				<string><![CDATA[$IA_PROJECT_DIR$/../../../images/]]></string>
 			</property>
 			<property name="userSplashName">
 				<string><![CDATA[logo-isb.png]]></string>

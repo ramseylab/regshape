@@ -6,6 +6,7 @@
   <property name="projAppsDir"        location="${basedir}/apps" />
   <property name="projConfigDir"      location="${basedir}/config" />
   <property name="projDocsDir"        location="${basedir}/docs" />
+  <property name="projImagesDir"      location="${basedir}/images" />
   <property name="projBuildDir"       location="${basedir}/build" />
   <property name="projStyleDir"       location="${basedir}/build/html" />
   <property name="projWebDir"         location="${basedir}/build/web" />
@@ -83,7 +84,7 @@
   <target name="copyImages">
     <mkdir dir="${projWebDir}/images" />
     <copy todir="${projWebDir}/images">
-      <fileset dir="${projDocsDir}">
+      <fileset dir="${projImagesDir}">
         <include name="*.png" />
       </fileset>
     </copy>
