@@ -203,6 +203,8 @@
     <copy todir="${app.webDir}/images">
       <fileset dir="${app.imagesDir}">
         <include name="*.png" />
+      	<include name="*.jpg" />
+      	<include name="*.gif" />
       </fileset>
     </copy>
   </target>
