@@ -52,6 +52,11 @@ public abstract class Simulator
     protected DelayedReactionSolver []mReactionsDelayedReactionAssociations;
     protected Symbol []mReactionSymbols;
 
+    protected boolean hasDelayedReactionSolvers()
+    {
+        return(null != mDelayedReactionSolvers);
+    }
+
     /**
      * Go through all the SymbolValue objects in pSymbolArray, and
      * for each such object, obtain the Symbol object, index it, 
@@ -107,6 +112,19 @@ public abstract class Simulator
         {
             DelayedReactionSolver solver = mDelayedReactionSolvers[ctr];
             solver.clear();
+        }
+    }
+
+    protected final void resizeDelayedReactionSolvers(int pNumHistoryBins)
+    {
+        int numDelayedReactionSolvers = mDelayedReactionSolvers.length;
+        for(int ctr = 0; ctr < numDelayedReactionSolvers; ++ctr)
+        {
+            DelayedReactionSolver solver = mDelayedReactionSolvers[ctr];
+            if(pNumHistoryBins != solver.getNumHistoryBins())
+            {
+                solver.setNumHistoryBins(pNumHistoryBins);
+            }
         }
     }
 
@@ -674,12 +692,12 @@ public abstract class Simulator
         return(symbols);
     }
 
-    protected final void conductPreSimulationCheck(double pStartTime,
-                                                   double pEndTime,
-                                                   SimulatorParameters pSimulatorParameters,
-                                                   int pNumResultsTimePoints) throws IllegalArgumentException, IllegalStateException
+    public final void checkSimulationParameters(double pStartTime,
+                                                double pEndTime,
+                                                SimulatorParameters pSimulatorParameters,
+                                                int pNumResultsTimePoints) throws IllegalArgumentException, IllegalStateException
     {
-       if(! mInitialized)
+        if(! mInitialized)
         {
             throw new IllegalStateException("simulator has not been initialized yet");
         }
@@ -693,8 +711,14 @@ public abstract class Simulator
         {
             throw new IllegalArgumentException("end time must be greater than the start time");
         }
+
+        checkSimulationParametersImpl(pSimulatorParameters,
+                                      pNumResultsTimePoints);
     }
 
+    protected abstract void checkSimulationParametersImpl(SimulatorParameters pSimulatorParameters,
+                                                          int pNumResultsTimePoints);
+    
     protected final void computeReactionProbabilities() throws DataNotFoundException
     {
         // loop through all reactions, and for each reaction, compute the reaction probability
@@ -728,8 +752,7 @@ public abstract class Simulator
 
     protected static final void clearExpressionValueCaches(Value []pNonDynamicSymbolValues)
     {
-        int numNonDynamicSymbols = pNonDynamicSymbolValues.length;
-        for(int ctr = numNonDynamicSymbols; --ctr >= 0; )
+        for(int ctr = pNonDynamicSymbolValues.length; --ctr >= 0; )
         {
             pNonDynamicSymbolValues[ctr].clearExpressionValueCache();
         }
@@ -956,5 +979,78 @@ public abstract class Simulator
             a[j] = reaction.getRateExpression();
         }
         return(a);
+    }
+
+    protected void checkSimulationParametersForDeterministicSimulator(SimulatorParameters pSimulatorParameters,
+                                                                      int pNumResultsTimePoints)
+    {
+        Boolean flagGetFinalSymbolFluctuations = pSimulatorParameters.getComputeFluctuations();
+        if(null == flagGetFinalSymbolFluctuations)
+        {
+            throw new IllegalArgumentException("missing flag for whether to obtain the final symbol fluctuations");
+        }
+
+        Double maxAllowedRelativeErrorObj = pSimulatorParameters.getMaxAllowedRelativeError();
+        if(null == maxAllowedRelativeErrorObj)
+        {
+            throw new IllegalArgumentException("missing max allowed relative error");
+        }
+        double maxAllowedRelativeError = maxAllowedRelativeErrorObj.doubleValue();
+        if(maxAllowedRelativeError <= 0.0)
+        {
+            throw new IllegalArgumentException("invalid max allowed relative error: " + maxAllowedRelativeError);
+        }
+
+        Double maxAllowedAbsoluteErrorObj = pSimulatorParameters.getMaxAllowedAbsoluteError();
+        if(null == maxAllowedAbsoluteErrorObj)
+        {
+            throw new IllegalArgumentException("missing max allowed absolute error");
+        }
+        double maxAllowedAbsoluteError = maxAllowedAbsoluteErrorObj.doubleValue();
+        if(maxAllowedAbsoluteError <= 0.0)
+        {
+            throw new IllegalArgumentException("invalid max allowed absolute error: " + maxAllowedAbsoluteError);
+        }
+
+        // validate the requested fractional step size
+        Double stepSizeObj = pSimulatorParameters.getStepSizeFraction();
+        double stepSize = 0.0;
+        if(null != stepSizeObj)
+        {
+            stepSize = stepSizeObj.doubleValue();
+            if(stepSize <= 0.0)
+            {
+                throw new IllegalArgumentException("invalid step size fraction: " + stepSize);
+            }
+        }
+        else
+        {
+            throw new IllegalArgumentException("no step size fraction defined, for deterministic simulator");
+        }
+
+        if(stepSize > (1.0 / ((double) pNumResultsTimePoints)))
+        {
+            throw new IllegalArgumentException("step size is too large, given the granularity of the results requested; please either decrease the step size fraction, or decrease the number of requested results time points");
+        }
+
+        if(hasDelayedReactionSolvers())
+        {
+            // validate the number of requested history bins
+            Integer numHistoryBinsObj = pSimulatorParameters.getNumHistoryBins();
+            if(null == numHistoryBinsObj)
+            {
+                throw new IllegalArgumentException("no number of history bins defined");
+            }       
+            int numHistoryBins = numHistoryBinsObj.intValue();
+            if(numHistoryBins <= DelayedReactionSolver.MIN_NUM_HISTORY_BINS)
+            {
+                throw new IllegalArgumentException("invalid number of history bins: " + numHistoryBins + "; minimum value is: " + DelayedReactionSolver.MIN_NUM_HISTORY_BINS);
+            }
+            double maxStepSizeDueToDelayedReactions = getMinDelayedReactionDelay()/((double) numHistoryBins);
+            if(stepSize > maxStepSizeDueToDelayedReactions)
+            {
+                throw new IllegalArgumentException("step size exceeds maximum allowed for a delayed reaction; please use a smaller step size fraction");
+            }
+        }
     }
 }
