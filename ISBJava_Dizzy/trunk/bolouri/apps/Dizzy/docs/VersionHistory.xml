@@ -44,6 +44,26 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.5.2/&installerDownloadRelURL;">1.5.2</a></td>
+<td>2004/02/25</td>
+<td>
+<ul>
+<li>Fixed a problem with the translation of CMDL ("dizzy") model
+descriptions into SBML.  Kinetic Laws and other formulas are now
+correctly output to SBML, with the species symbols in the formulas 
+representing concentrations, rather than substance amounts.</li>
+<li>Slightly improved performance by some code refactoring in
+the simulation engine.</li>
+<li>Fixed a problem whereby formulas in imported SBML models were not
+being interpreted correctly by the simulator; species symbols
+were not being interpreted as representing a concentration.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.5.2/&installerDownloadRelURL;">1.5.2</a></td>
+</tr>
+
+
+<tr valign="top">
 <td><a href="../1.5.1/&installerDownloadRelURL;">1.5.1</a></td>
 <td>2004/02/24</td>
 <td>
@@ -60,7 +80,7 @@ just when a simulation is running.  This reduces annoying flicker of
 the user interface controls when a simulation starts and stops.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/1.5.0/&installerDownloadRelURL;">1.5.0</a></td>
+<td><a href="&javaURL;/1.5.1/&installerDownloadRelURL;">1.5.1</a></td>
 </tr>
 
 <tr valign="top">

@@ -38,6 +38,31 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.5.2/&installerDownloadRelURL;">1.5.2</a></td>
+<td>2004/02/25</td>
+<td>
+<ul>
+<li>Modified the <code>org.systemsbiology.math.Expression</code>
+class so that it is possible to use a custom <code>SymbolPrinter</code>
+class to print symbols in any format desired.  This is used by the
+<code>org.systemsbiology.chem.sbml.ModelExporterMarkupLanguage</code>
+to export a model built from CMDL, into SBML.</li>
+<li>Fixed bugs in <code>org.systemsbiology.chem.sbml.ModelExporterMarkupLanguage</code>,
+so that it now exports correct <code>kineticLaw</code> formulas in
+the case where the model was originally built from a CMDL description.</li>
+<li>Removed the <code>SpeciesRateFactorEvaluator</code> class and
+subclasses, for performance reasons.</li>
+<li>Created a new <code>SymbolEvaluatorChem</code> class and subclasses,
+to handle the different ways that <code>Species</code> symbols are
+interpreted in models built from SBML and CMDL.</li>
+<li>Fixed a problem whereby formulas in SBML models were not
+being interpreted correctly by the simulator; species symbols
+were not being interpreted as representing a concentration.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.5.1/&installerDownloadRelURL;">1.5.1</a></td>
 <td>2004/02/24</td>
 <td>
