@@ -1009,7 +1009,7 @@ public class SimulationLauncher
 
     private void populateSymbolListPanel()
     {
-        Object []symbolArray = mModel.getOrderedNonConstantSymbolNamesArray();
+        Object []symbolArray = mModel.getOrderedResultsSymbolNamesArray();
         mSymbolList.setListData(symbolArray);
     }
 
