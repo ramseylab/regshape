@@ -499,7 +499,8 @@ The <code>pdfdoclet</code> program is used to generate Javadoc documentation
 in PDF format.  This program is available from
 <a href="http://pdfdoclet.sourceforge.net"><code>pdfdoclet.sourceforget.net</code></a>.
 This program must be installed and the three libraries that ship with it
-must be in your <code>CLASSPATH</code>:
+must be installed in a directory that exists within your <code>CLASSPATH</code>
+environment variable.  The libraries are:
 <blockquote>
 <pre>
 pdfdoclet.jar
@@ -507,7 +508,8 @@ itext.jar
 jakarta-regexp.jar
 </pre>
 </blockquote>
-Make sure that the Ant program is capable
+The <code>pdfdoclet.jar</code> library uses the <code>itext.jar</code>
+and <code>jakarta-regexp.jar</code> libraries.
 </li>
 </ol>
 The above three items are needed <em>only</em> if you are going to
