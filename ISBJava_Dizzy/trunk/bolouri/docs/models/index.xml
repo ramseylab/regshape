@@ -3,7 +3,6 @@
 <!DOCTYPE Overview [
   <!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
   %CommonConfig;
-  <!ENTITY internalWebServerURL "http://sun01.systemsbiology.net">
    ]>
 
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
@@ -24,6 +23,11 @@ described in the
 <a href="../Dizzy/UserManual.html#introduction">Dizzy User Manual</a>.
 </p>
 
+<hr />
+
+<p>
+<b>The list of models is here:</b>
+</p>
 <p>
 <ul>
 <li><a href="singlegene.dizzy">Simple stochastic model of 
@@ -33,7 +37,7 @@ transcription factors TFA and TFB</li>
 from <em>S. cerevisiae</em></li>
 </ul>
 </p>
-
+ 
 
 </isb:document>
 

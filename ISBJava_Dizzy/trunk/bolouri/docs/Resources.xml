@@ -3,7 +3,6 @@
 <!DOCTYPE Overview [
   <!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
   %CommonConfig;
-  <!ENTITY internalWebServerURL "http://sun01.systemsbiology.net">
    ]>
 
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">

@@ -70,6 +70,7 @@
   <target name="copyModels">
     <copy todir="${projWebDir}">
       <fileset dir="${projDocsDir}">
+        <exclude name="models/index.xml" />
         <include name="models/*.dizzy" />
         <include name="models/*.xml" />
         <include name="models/*.isbchem" />
