@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This script was automatically generated using Zero G's InstallAnywhere 6.1 Enterprise, Build 2325
      STATUS: Fully Functional LICENSED Edition
-     DATE:   Thu Feb 03 17:03:17 PST 2005 -->
-<InstallAnywhere_Deployment_Project increments="1841">
+     DATE:   Fri Feb 04 10:03:54 PST 2005 -->
+<InstallAnywhere_Deployment_Project increments="1851">
 	<!-- ** DO NOT EDIT ** Essential authorization and configuration data ** DO NOT EDIT ** -->
 	<essentialScriptInfo>
 		<versionID major="6" minor="1" revision="-1"/>
@@ -10,7 +10,7 @@
 		<scriptID>12,42,11,90,81,49,55,50,54,52,82,82,68,90,65,82</scriptID>
 		<buildID>3,13,71,76,105,110,117,120,44,32,50,46,52,46,50,50,45,49,46,50,49,57,57,46,110,112,116,108,44,32,105,51,56,54,59,32,74,97,118,97,32,49,46,51,46,49,95,48,57,44,32,83,117,110,32,77,105,99,114,111,115,121,115,116,101,109,115,32,73,110,99,46,44,32,104,116,116,112,58,47,47,106,97,118,97,46,115,117,110,46,99,111,109,47,59,32,101,110,44,32,85,83,59,32,85,84,70,45,56</buildID>
 		<!-- The authorizationID may change between project saves and builds.  This does not effect the integrity of the project, nor do changes in this value represent changes in the actual InstallAnywhere project. -->
-		<authorizationID>1,0,0,0,-45,-32,96,-64,80,112,116,103,88,98,113,97,113,65,65,88,74,65,72,71,70,69,64,69,66,69,48,79,87,5,2,0,8,36,106,1,1,0,0</authorizationID>
+		<authorizationID>1,0,0,0,-45,-128,-48,-64,80,112,116,103,88,98,113,97,113,65,65,88,74,65,72,71,70,69,64,69,66,69,48,79,87,5,2,15,2,42,110,1,1,0,0</authorizationID>
 	</essentialScriptInfo>
 	<installationObjects uniqueObjects="108">
 		<object class="com.zerog.ia.installer.Installer" objectID="ee39ca108441">
@@ -569,16 +569,16 @@ Press "Done" to quit the installer.]]></string>
 						<object refID="ee396c238434"/>
 					</property>
 					<property name="solarisMagicFolderPath">
-						<string><![CDATA[$PRODUCT_NAME$]]></string>
+						<string><![CDATA[@APPNAME@]]></string>
 					</property>
 					<property name="macMagicFolderPath">
 						<string><![CDATA[product]]></string>
 					</property>
 					<property name="macXMagicFolderPath">
-						<string><![CDATA[$PRODUCT_NAME$]]></string>
+						<string><![CDATA[@APPNAME@]]></string>
 					</property>
 					<property name="win32MagicFolderPath">
-						<string><![CDATA[$PRODUCT_NAME$]]></string>
+						<string><![CDATA[@APPNAME@]]></string>
 					</property>
 				</object>
 			</property>
@@ -606,7 +606,7 @@ Press "Done" to quit the installer.]]></string>
 						<string><![CDATA[]]></string>
 					</property>
 					<property name="win32MagicFolderPath">
-						<string><![CDATA[$PRODUCT_NAME$]]></string>
+						<string><![CDATA[@APPNAME@]]></string>
 					</property>
 				</object>
 			</property>
@@ -625,87 +625,7 @@ Press "Done" to quit the installer.]]></string>
 			<property name="buildSettings">
 				<object class="java.util.Properties">
 					<method name="put">
-						<string><![CDATA[com.zerog.ia.project.save.last.date]]></string>
-						<string><![CDATA[February 3, 2005 5:03:16 PM PST]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.merge]]></string>
-						<string><![CDATA[false]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.installer.options.heap.size.max]]></string>
-						<string><![CDATA[50331648]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.vmpack.unix.path]]></string>
-						<string><![CDATA[SunJRE142_03LinuxINTEL.vm]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.linux.vm]]></string>
-						<string><![CDATA[true]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.solaris.vm]]></string>
-						<string><![CDATA[false]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.named_unix.vm]]></string>
-						<string><![CDATA[false]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.hpux.vm]]></string>
-						<string><![CDATA[false]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.unix.novm]]></string>
-						<string><![CDATA[false]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.options.output.merge.read.only]]></string>
-						<string><![CDATA[true]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.cdrom]]></string>
-						<string><![CDATA[false]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.installer.options.platform.macosx.vm.version]]></string>
-						<string><![CDATA[1.3.1]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.options.auto-populate.labels]]></string>
-						<string><![CDATA[true]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.options.webpage.language]]></string>
-						<string><![CDATA[en]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.aix.vm]]></string>
-						<string><![CDATA[false]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.named_unix.novm]]></string>
-						<string><![CDATA[false]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.installer.options.heap.size.initial]]></string>
-						<string><![CDATA[16777216]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.vmpack.linux.path]]></string>
-						<string><![CDATA[SunJRE142_03LinuxINTEL.vm]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.installer.options.platform.macosx.authentication]]></string>
-						<string><![CDATA[false]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.aix.novm]]></string>
-						<string><![CDATA[false]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.options.output.merge]]></string>
+						<string><![CDATA[com.zerog.ia.build.platform.hpux.novm]]></string>
 						<string><![CDATA[false]]></string>
 					</method>
 					<method name="put">
@@ -713,27 +633,35 @@ Press "Done" to quit the installer.]]></string>
 						<string><![CDATA[true]]></string>
 					</method>
 					<method name="put">
-						<string><![CDATA[com.zerog.ia.installer.options.platform.unix.ui.default]]></string>
-						<string><![CDATA[GUI]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.java.novm]]></string>
-						<string><![CDATA[false]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.hpux.novm]]></string>
-						<string><![CDATA[false]]></string>
-					</method>
-					<method name="put">
-						<string><![CDATA[com.zerog.ia.installer.options.platform.macosx.authentication.gui]]></string>
+						<string><![CDATA[com.zerog.ia.build.platform.linux.vm]]></string>
 						<string><![CDATA[true]]></string>
 					</method>
 					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.windows.novm]]></string>
+						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.merge]]></string>
 						<string><![CDATA[false]]></string>
 					</method>
 					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.solaris.novm]]></string>
+						<string><![CDATA[com.zerog.ia.installer.options.platform.macosx.authentication]]></string>
+						<string><![CDATA[false]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.platform.macosx.novm]]></string>
+						<string><![CDATA[true]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.platform.aix.novm]]></string>
+						<string><![CDATA[false]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.installer.options.heap.size.max]]></string>
+						<string><![CDATA[50331648]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.options.auto-populate.labels]]></string>
+						<string><![CDATA[true]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.platform.solaris.vm]]></string>
 						<string><![CDATA[false]]></string>
 					</method>
 					<method name="put">
@@ -742,27 +670,107 @@ Press "Done" to quit the installer.]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.valid.vm.list]]></string>
-						<string><![CDATA[J2 J1 MSJ]]></string>
+						<string><![CDATA[J2 J1 MSJ MRJ]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.platform.windows.vm]]></string>
+						<string><![CDATA[true]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.output.web]]></string>
 						<string><![CDATA[true]]></string>
 					</method>
 					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.macosx.novm]]></string>
+						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.web]]></string>
 						<string><![CDATA[false]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.vmpack.linux.path]]></string>
+						<string><![CDATA[SunJRE142_05LinuxINTEL.vm]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.platform.named_unix.vm]]></string>
+						<string><![CDATA[false]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.platform.unix.novm]]></string>
+						<string><![CDATA[true]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.output.cdrom]]></string>
 						<string><![CDATA[false]]></string>
 					</method>
 					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.web]]></string>
+						<string><![CDATA[com.zerog.ia.build.platform.hpux.vm]]></string>
 						<string><![CDATA[false]]></string>
 					</method>
 					<method name="put">
-						<string><![CDATA[com.zerog.ia.build.platform.windows.vm]]></string>
+						<string><![CDATA[com.zerog.ia.build.vmpack.unix.path]]></string>
+						<string><![CDATA[SunJRE142_03LinuxINTEL.vm]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.platform.named_unix.novm]]></string>
 						<string><![CDATA[false]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.installer.options.stderr.redirect]]></string>
+						<string><![CDATA[insPoint.log]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.options.output.merge.read.only]]></string>
+						<string><![CDATA[true]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.platform.solaris.novm]]></string>
+						<string><![CDATA[false]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.platform.windows.novm]]></string>
+						<string><![CDATA[true]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.platform.aix.vm]]></string>
+						<string><![CDATA[false]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.installer.options.stdout.redirect]]></string>
+						<string><![CDATA[insPoint.log]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.project.save.last.date]]></string>
+						<string><![CDATA[February 4, 2005 10:03:54 AM PST]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.cdrom]]></string>
+						<string><![CDATA[false]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.installer.options.platform.unix.ui.default]]></string>
+						<string><![CDATA[GUI]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.installer.options.heap.size.initial]]></string>
+						<string><![CDATA[16777216]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.options.output.merge]]></string>
+						<string><![CDATA[false]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.installer.options.platform.macosx.authentication.gui]]></string>
+						<string><![CDATA[true]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.installer.options.platform.macosx.vm.version]]></string>
+						<string><![CDATA[1.4+]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.options.webpage.language]]></string>
+						<string><![CDATA[en]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.platform.java.novm]]></string>
+						<string><![CDATA[true]]></string>
 					</method>
 				</object>
 			</property>
@@ -899,17 +907,23 @@ Press "Done" to quit the installer.]]></string>
 							</method>
 						</object>
 					</property>
+					<property name="productURL">
+						<string><![CDATA[@WEBBASEURL@/@APPNAME@]]></string>
+					</property>
 					<property name="productVersionMajor">
-						<int>1</int>
+						<int>@APPVERSIONMAJOR@</int>
 					</property>
 					<property name="productVersionMinor">
-						<int>0</int>
+						<int>@APPVERSIONMINOR@</int>
 					</property>
 					<property name="productVersionRevision">
-						<int>0</int>
+						<int>@APPVERSIONPATCH@</int>
 					</property>
 					<property name="productVersionSubRevision">
 						<int>0</int>
+					</property>
+					<property name="supportURL">
+						<string><![CDATA[@WEBBASEURL@/@APPNAME@]]></string>
 					</property>
 					<property name="vendorName">
 						<string><![CDATA[Institute for Systems Biology]]></string>
@@ -921,8 +935,11 @@ Press "Done" to quit the installer.]]></string>
 							</method>
 						</object>
 					</property>
+					<property name="vendorURL">
+						<string><![CDATA[http://www.systemsbiology.org]]></string>
+					</property>
 					<property name="email">
-						<string><![CDATA[sramsey@systemsbiology.org]]></string>
+						<string><![CDATA[bolourilab@systemsbiology.org]]></string>
 					</property>
 					<property name="copyright">
 						<string><![CDATA[2005]]></string>
@@ -959,7 +976,7 @@ Press "Done" to quit the installer.]]></string>
 				<boolean>true</boolean>
 			</property>
 			<property name="defaultTargetCheckKind">
-				<int>4</int>
+				<int>1</int>
 			</property>
 			<property name="preUninstallActions">
 				<object class="java.util.Vector">
@@ -1886,7 +1903,7 @@ it will search for ones in this list]]></string>
 														</object>
 													</method>
 													<method name="addElement">
-														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="ee63f9b4852a">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="f20bb16287d7">
 															<property name="propertyValue">
 																<string><![CDATA[org.systemsbiology.inference.EvidenceWeightedInfererDriver]]></string>
 															</property>
@@ -2121,7 +2138,7 @@ it will search for ones in this list]]></string>
 														</object>
 													</method>
 													<method name="addElement">
-														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="ee63f9c1852f">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="f20bb17187dc">
 															<property name="propertyValue">
 																<string><![CDATA[org.systemsbiology.inference.SignificanceCalculatorDriver]]></string>
 															</property>
