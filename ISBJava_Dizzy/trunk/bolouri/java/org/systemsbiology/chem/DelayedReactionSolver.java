@@ -41,7 +41,6 @@ public final class DelayedReactionSolver
 
     // used only for deterministic simulation
     private SlidingWindowTimeSeriesQueue mReactantHistory;
-    private SlidingWindowTimeSeriesQueue mIntermedSpeciesHistory;
     private int mNumTimePoints;
 
     private final boolean mIsStochasticSimulator;
@@ -95,7 +94,6 @@ public final class DelayedReactionSolver
         else
         {
             mReactantHistory.initialize(mNumTimePoints);
-            mIntermedSpeciesHistory.initialize(mNumTimePoints);
         }
     }
 
@@ -140,12 +138,10 @@ public final class DelayedReactionSolver
             }
             mReactionTimesDoublePool = new LinkedList();
             mReactantHistory = null;
-            mIntermedSpeciesHistory = null;
         }
         else
         {
             mReactantHistory = new SlidingWindowTimeSeriesQueue(1);
-            mIntermedSpeciesHistory = new SlidingWindowTimeSeriesQueue(1);
             mReactionTimes = null;
             mReactionTimesDoublePool = null;
         }
@@ -238,7 +234,6 @@ public final class DelayedReactionSolver
         else
         {
             mReactantHistory.clear();
-            mIntermedSpeciesHistory.clear();
             mFirstTimePoint = true;
         }
     }
@@ -263,7 +258,6 @@ public final class DelayedReactionSolver
     public void update(SymbolEvaluator pSymbolEvaluator, double pTime) throws DataNotFoundException
     {
         SlidingWindowTimeSeriesQueue reactantHistory = mReactantHistory;
-        SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
         if(! mFirstTimePoint)
         {
             double lastTime = reactantHistory.getLastTimePoint();
@@ -283,7 +277,6 @@ public final class DelayedReactionSolver
                 reactantHistory.insertPoint(lastTime, reactantValue);
 
                 assert (intermedSpeciesValue >= 0.0) : "invalid value";
-                intermedSpeciesHistory.insertPoint(lastTime, intermedSpeciesValue);
             }
         }
         else
@@ -295,7 +288,6 @@ public final class DelayedReactionSolver
             assert (intermedSpeciesValue >= 0.0) : "invalid value";
 
             reactantHistory.insertPoint(pTime, reactantValue);
-            intermedSpeciesHistory.insertPoint(pTime, intermedSpeciesValue);
 
             mFirstTimePoint = false;
         }
@@ -329,7 +321,6 @@ public final class DelayedReactionSolver
        double currentTime = symbolEvaluator.getTime();
 
        SlidingWindowTimeSeriesQueue reactantSpeciesHistory = mReactantHistory;
-       SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
 
        double reactantValue = pSymbolEvaluator.getValue(mReactant.getSymbol());
             
@@ -338,9 +329,7 @@ public final class DelayedReactionSolver
        double peakTimeRel = mDelay;
        double peakTime = currentTime - peakTimeRel;
 
-       double averageIntermedValue = mIntermedSpeciesHistory.getAverageValue();
-
-       if(intermedSpeciesValue > 0.0 && averageIntermedValue > 0.0)
+       if(intermedSpeciesValue > 0.0)
        {
            prodRate = computeIntegral(reactantSpeciesHistory,
                                       mTimeResolution,
@@ -367,7 +356,6 @@ public final class DelayedReactionSolver
         double currentTime = symbolEvaluator.getTime();
 
         SlidingWindowTimeSeriesQueue reactantSpeciesHistory = mReactantHistory;
-        SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
 
         double reactantValue = pSymbolEvaluator.getValue(mReactant.getSymbol());
             
@@ -404,117 +392,6 @@ public final class DelayedReactionSolver
 
         return(prodRate);
     }
-
-    // used for deterministic simulator
-    private double computeRateDelaySave2(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
-    {
-        double prodRate = 0.0;
-
-        SymbolEvaluatorChem symbolEvaluator = (SymbolEvaluatorChem) pSymbolEvaluator;
-
-        double currentTime = symbolEvaluator.getTime();
-
-        SlidingWindowTimeSeriesQueue reactantSpeciesHistory = mReactantHistory;
-        SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
-
-        double reactantValue = pSymbolEvaluator.getValue(mReactant.getSymbol());
-            
-        double intermedSpeciesValue = symbolEvaluator.getValue(mIntermedSpecies.getSymbol());
-        double minTime = reactantSpeciesHistory.getMinTime();
-        double peakTimeRel = mDelay;
-        double peakTime = currentTime - peakTimeRel;
-
-        double averageIntermedValue = mIntermedSpeciesHistory.getAverageValue();
-
-        if(intermedSpeciesValue > 0.0 && averageIntermedValue > 0.0 && peakTime >= minTime)
-        {
-            double averageReactantValue = reactantSpeciesHistory.getAverageValue();
-
-            double minIntermed = Math.min(intermedSpeciesValue, averageIntermedValue);
-
-            double numIntermedSpeciesExpected = (mDelay * mRate * averageReactantValue);
-
-            double excessIntermed = minIntermed - numIntermedSpeciesExpected;
-            if(excessIntermed < 0.0)
-            {
-                excessIntermed = 0.0;
-            }
-
-            double peakValue = 0.0;
-
-            double peakIndexDouble = (peakTime - minTime)/mTimeResolution;
-            double peakIndexDoubleFloor = Math.floor(peakIndexDouble);
-            int peakIndex = (int) peakIndexDouble;
-            if( peakIndexDouble > peakIndexDoubleFloor )
-            {
-                double valueLeft = reactantSpeciesHistory.getValue(peakIndex);
-                peakValue = valueLeft + ((peakIndexDouble - peakIndexDoubleFloor) * 
-                                         (reactantSpeciesHistory.getValue(peakIndex + 1) - 
-                                          valueLeft) / mTimeResolution);
-            }
-            else
-            {
-                peakValue = reactantSpeciesHistory.getValue(peakIndex);
-            }
-
-            prodRate = mRate * Math.max(peakValue, excessIntermed);
-        }
-        else
-        {
-            // do nothing; rate of production is zero
-        }
-
-        return(prodRate);
-    }
-
-    // used for deterministic simulator
-    private double computeRateDelaySave(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
-    {
-        double prodRate = 0.0;
-
-        SymbolEvaluatorChem symbolEvaluator = (SymbolEvaluatorChem) pSymbolEvaluator;
-
-        double currentTime = symbolEvaluator.getTime();
-
-        SlidingWindowTimeSeriesQueue reactantSpeciesHistory = mReactantHistory;
-        SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
-
-        double reactantValue = pSymbolEvaluator.getValue(mReactant.getSymbol());
-            
-        double intermedSpeciesValue = symbolEvaluator.getValue(mIntermedSpecies.getSymbol());
-        double minTime = reactantSpeciesHistory.getMinTime();
-        double peakTimeRel = mDelay;
-        double peakTime = currentTime - peakTimeRel;
-
-        double averageIntermedValue = mIntermedSpeciesHistory.getAverageValue();
-
-        if(intermedSpeciesValue > 0.0 && averageIntermedValue > 0.0 && peakTime >= minTime)
-        {
-            double averageReactantValue = reactantSpeciesHistory.getAverageValue();
-
-            double minIntermed = Math.min(intermedSpeciesValue, averageIntermedValue);
-
-            double numIntermedSpeciesExpected = (mDelay * mRate * averageReactantValue);
-
-            double excessIntermed = minIntermed - numIntermedSpeciesExpected;
-            if(excessIntermed < 0.0)
-            {
-                excessIntermed = 0.0;
-            }
-
-            int peakIndex = (int) Math.floor( (peakTime - minTime)/mTimeResolution );
-            double peakValue = reactantSpeciesHistory.getValue(peakIndex);
-
-            prodRate = mRate * Math.max(peakValue, excessIntermed);
-        }
-        else
-        {
-            // do nothing; rate of production is zero
-        }
-
-        return(prodRate);
-    }
-
 
     // keeping this around for historical purposes
     private static double computeIntegral(SlidingWindowTimeSeriesQueue history,
