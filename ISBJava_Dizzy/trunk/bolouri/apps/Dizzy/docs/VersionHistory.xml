@@ -44,6 +44,41 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.4.2/&installerDownloadRelURL;">1.4.2</a></td>
+<td>2004/02/05</td>
+<td>
+<ul>
+<li>Fixed a bug where if the user had made a change to the model definition 
+editor buffer, and then selected &quot;Open...&quot; from the &quot;File&quot;
+menu, the application would disregard the user&apos;s answer to the subsequent
+confirmation dialog box.  If the user answered &quot;no&quot; to the prompt 
+for whether to proceed, the application would still open the file and discard 
+the previous edits to the buffer.</li>
+<li>Modified the simulator engine to prevent huge unnecessary memory allocations 
+when performing a stochastic of a models with an extremely large number of 
+reactions and species.  This potentially improves performance in such cases by 
+avoiding the use of large amounts of swap space on the disk drive.</li>
+<li>Fixed a problem where the application was not properly handling the exceptional 
+case of the system running out of memory during the initialization of a simulator.</li>
+<li>Modified the simulation launcher so that when the user clicks on the
+&quot;start&quot; button, the response of the button control is immediate.  
+In cases of very large and complex models and certain simulators (namely, 
+&quot;<code>gibson-bruck</code>&quot;),
+initialization was taking a long time, which was delaying the response of the 
+button control.  Now, initialization of the simulator is performed in the
+background, just prior to execution of the actual simulation.</li>
+<li>Modified the simulation launcher to rename the &quot;stop&quot; button 
+to the &quot;pause&quot; button.</li>
+<li>Changed the way that the deterministic simulators handle delayed
+(or multi-step) reactions, to improve numerical stability and performance.</li>
+<li>Modified the &quot;<code>odeToJava-dopr54-adaptive</code>&quot; simulator, so
+that it is now possible to pause or cancel a running simulation within this simulator.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.4.2/&installerDownloadRelURL;">1.4.2</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.4.1/&installerDownloadRelURL;">1.4.1</a></td>
 <td>2004/02/02</td>
 <td>

@@ -38,6 +38,52 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.4.2/&installerDownloadRelURL;">1.4.2</a></td>
+<td>2004/02/05</td>
+<td>
+<ul>
+<li>Fixed a bug in <code>org.systemsbiology.chem.app.EditorPane</code>
+where if the user had made a change to the model definition editor buffer,
+and then selected &quot;open&quot; to open a new file, the system would
+disregard the user&apos;s answer to the confirmation dialog box.  If the
+user answered &quot;no&quot; to the prompt for whether to proceed, the
+system would still open the file and discard the previous edits to the buffer.</li>
+<li>Modified the <code>org.systemsbiology.chem.Simulator</code> class
+and the <code>org.systemsbiology.chem.SimulatorDeterministicBase</code> class,
+and the <code>org.systemsbiology.chem.SimulatorOdeToJavaBase</code> class, so that
+the <code>initializeDynamicSymbolAdjustmentVectors()</code> method is only 
+called for deterministic (not stochastic) simulators.  This prevents huge
+unnecessary memory allocations when performing purely stochastic simulations
+of models with a very large number of reactions and species.</li>
+<li>Fixed problem where an <code>OutOfMemoryError</code> occuring within
+the <code>org.systemsbiology.chem.Simulator.initialize()</code> method was
+not being caught and handled properly.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+so that the <code>org.systemsbiology.chem.Simulator.initialize()</code>
+method is no longer called on the AWT event thread.  Instead, it is called
+from the <code>org.systemsbiology.chem.app.SimulationLauncher.SimulationRunner</code>
+thread.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+to rename the &quot;stop&quot; button to the &quot;pause&quot; button.</li>
+<li>Modified the <code>org.systemsbiology.chem.SimulatorDeterministicBase</code>
+so that it calls the <code>org.systemsbiology.chem.DelayedReactionSolver.update()</code>
+directly, rather than implicitly through the <code>DelayedReactionSolver.computeValue()</code>
+method.  This increases stability of the numeric integrator, as well as speed.</li>
+<li>Refactored the interation counter to the <code>org.systemsbiology.chem.Simulator</code>
+class, from the <code>SimulatorStochasticBase</code> and <code>SimulatorDeterministicBase</code>
+classes.  The new method is 
+<code>Simulator.incrementIterationCounterAndCheckForCancellation()</code>.</li>
+<li>Modified the <code>SimulatorOdeToJavaBase</code> and 
+<code>SimulatorOdeToJavaRungeKuttaAdaptive</code> classes, to permit pause/cancel
+of the running simulation via the <code>SimulationController</code> class.</li>
+<li>Modified the <code>SimulatorOdeToJavaBase</code> class to call the
+<code>DelayedReactionSolver.update()</code> method after each successful iteration
+of the integrator.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.4.1/&installerDownloadRelURL;">1.4.1</a></td>
 <td>2004/02/02</td>
 <td>
