@@ -119,9 +119,21 @@ public class MainApp
 
     void handleExport()
     {
-        Model model = mEditorPane.processModel();
-        ModelExporter exporter = new ModelExporter(getMainFrame());
-        exporter.exportModel(model, mModelExporterRegistry);
+        Model model = null;
+        try
+        {
+            model = mEditorPane.processModel();
+        }
+        catch(Exception e)
+        {
+            ExceptionDialogOperationCancelled errorDialog = new ExceptionDialogOperationCancelled(mMainFrame, "unable to export model", e);
+            errorDialog.show();
+        }
+        if(null != model)
+        {
+            ModelExporter exporter = new ModelExporter(getMainFrame());
+            exporter.exportModel(model, mModelExporterRegistry);
+        }
     }
 
     void handleViewInCytoscape()
