@@ -102,4 +102,10 @@ public class SymbolValue implements Comparable
     {
         return(mSymbol.getName().compareTo(((SymbolValue) pObject).mSymbol.getName()));
     }
+
+    public Object clone()
+    {
+        SymbolValue retObj = new SymbolValue(mSymbol.getName(), mValue);
+        return(retObj);
+    }
 }

@@ -69,4 +69,11 @@ public class Compartment extends SymbolValue
         sb.append("]");
         return(sb.toString());
     }
+
+    public Object clone()
+    {
+        Compartment compartment = new Compartment(mName);
+        compartment.setValue((Value) getValue().clone());
+        return(compartment);
+    }
 }

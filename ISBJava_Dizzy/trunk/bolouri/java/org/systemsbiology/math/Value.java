@@ -145,4 +145,18 @@ public class Value
         }
         return(sb.toString());
     }
+
+    public Object clone()
+    {
+        Value value = null;
+        if(null != mExpressionValue)
+        {
+            value = new Value((Expression) mExpressionValue.clone());
+        }
+        else
+        {
+            value = new Value(mNumericValue.doubleValue());
+        }
+        return(value);
+    }
 }

@@ -22,8 +22,6 @@ public class Species extends SymbolValue
 {
     private final String mName;  // species name; does not have to be globally unique
     private final Compartment mCompartment;
-    private Value mSpeciesPopulation; // species population,  in molecules
-    private Symbol mSymbol;
 
     public Species(String pName, Compartment pCompartment) throws IllegalArgumentException
     {
@@ -72,6 +70,13 @@ public class Species extends SymbolValue
                super.equals(pSpecies) &&
                mCompartment.equals(pSpecies.mCompartment));
     }   
+
+    public Object clone()
+    {
+        Species species = new Species(mName, mCompartment);
+        species.setValue((Value) getValue().clone());
+        return(species);
+    }
 
     public String toString()
     {
