@@ -8,11 +8,10 @@ import SBMLValidate.NOMService;
 /**
  * Proxy class for interrogating a parsed SBML document.
  * Uses the SBMLValidate.NOMService class to parse and
- * query an SBML document contained in a String.  Used
- * by the {@link isb.chem.scripting.MarkupLanguageScriptBuildingUtility}
+ * query an SBML document contained in a String.  Used by
+ * the {@link ModelBuilderMarkupLanguage} class.
  *
- * @see isb.chem.scripting.MarkupLanguageScriptBuildingUtility
- * @see isb.chem.scripting.IModelInstanceImporter
+ * @see org.systemsbiology.chem.scripting.ModelBuilderMarkupLanguage
  *
  * @author Stephen Ramsey
  *

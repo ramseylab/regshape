@@ -62,7 +62,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
     }
 
     /**
-     * Processes an SBML model into a {@link Script}, and returns the model name.
+     * Processes an SBML model into a {@link Model} object, and returns the model name.
      * Note that according to the SBML specification, there can be only one model
      * per SBML document or data stream.
      */

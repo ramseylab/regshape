@@ -68,7 +68,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
 
 
    /**
-    * Given a {@link isb.chem.Model} and a {@link isb.chem.SpeciesPopulations}
+    * Given a {@link org.systemsbiology.chem.Model} object
     * defining a system of chemical reactions and the initial species populations,
     * writes out the SBML description of the model and initial species
     * populations, to the output stream contained in <code>pOutputWriter</code>.
