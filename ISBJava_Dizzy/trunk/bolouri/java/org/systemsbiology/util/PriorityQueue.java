@@ -35,7 +35,7 @@ public class PriorityQueue
         }
     }
 
-    protected AbstractComparator mAbstractComparator;
+    protected final AbstractComparator mAbstractComparator;
     protected Node mRoot;
 
     public PriorityQueue(AbstractComparator pAbstractComparator)
@@ -83,7 +83,7 @@ public class PriorityQueue
         }
     }
 
-    protected void remove(Node pNode)
+    protected final void remove(Node pNode, AbstractComparator pAbstractComparator)
     {
         Node firstChild = pNode.mFirstChild;
         Node secondChild = pNode.mSecondChild;
@@ -95,17 +95,17 @@ public class PriorityQueue
         {
             if(null != secondChild)
             {
-                int comp = mAbstractComparator.compare(firstChild.mPayload, secondChild.mPayload);
+                int comp = pAbstractComparator.compare(firstChild.mPayload, secondChild.mPayload);
                 if(comp > 0)
                 {
                     // second child is smaller than first child
-                    insert(secondChild, firstChild);
+                    insert(secondChild, firstChild, pAbstractComparator);
                     replacement = secondChild;
                 }
                 else
                 {
                     // first child is smaller than second child
-                    insert(firstChild, secondChild);
+                    insert(firstChild, secondChild, pAbstractComparator);
                     replacement = firstChild;
                 }
             }
@@ -144,10 +144,8 @@ public class PriorityQueue
         }
         else
         {
-            assert (pNode.equals(mRoot)) : "non-root node without parent";
             mRoot = replacement;
         }
-
     }
 
     public Object poll()
@@ -156,59 +154,47 @@ public class PriorityQueue
         if(null != mRoot)
         {
             retObj = mRoot.mPayload;
-            remove(mRoot);
+            remove(mRoot, mAbstractComparator);
         }
         return(retObj);
     }
 
-    protected void insert(Node pTree, Node pNode)
+    protected static final void insert(Node pTree, Node pNode, AbstractComparator pAbstractComparator)
     {
-        assert(mAbstractComparator.compare(pNode.mPayload, pTree.mPayload) >= 0) : "invalid node passed to insert()";
-
-        int nodeSubtreePop = pNode.mSubtreePopulation;
-
-        if(null != pTree.mFirstChild)
+        Node child1 = pTree.mFirstChild;
+        if(null != child1)
         {
-            if(null != pTree.mSecondChild)
+            Node child2 = pTree.mSecondChild;
+            if(null != child2)
             {
-                int firstPop = pTree.mFirstChild.mSubtreePopulation;
-
-                int secondPop = pTree.mSecondChild.mSubtreePopulation;
-
-                if(secondPop > firstPop)
+                if(child2.mSubtreePopulation > child1.mSubtreePopulation)
                 {
-                    int firstComp = mAbstractComparator.compare(pTree.mFirstChild.mPayload, pNode.mPayload);
-
-                    if(firstComp >= 0)
+                    if(pAbstractComparator.compare(child1.mPayload, pNode.mPayload) >= 0)
                     {
                         // pNode is smaller than first child of pTree
-                        Node subtree = pTree.mFirstChild; 
                         pTree.mFirstChild = pNode;
                         pNode.mParent = pTree;
-                        insert(pNode, subtree);
+                        insert(pNode, child1, pAbstractComparator);
                     }
                     else
                     {
                         // pNode is bigger than first child
-                        insert(pTree.mFirstChild, pNode);
+                        insert(child1, pNode, pAbstractComparator);
                     }
                 }
                 else
                 {
-                    int secondComp = mAbstractComparator.compare(pTree.mSecondChild.mPayload, pNode.mPayload);
-
-                    if(secondComp >= 0)
+                    if(pAbstractComparator.compare(child2.mPayload, pNode.mPayload) >= 0)
                     {
                         // pNode is smaller than second child
-                        Node subtree = pTree.mSecondChild;
                         pTree.mSecondChild = pNode;
                         pNode.mParent = pTree;
-                        insert(pNode, subtree);
+                        insert(pNode, child2, pAbstractComparator);
                     }
                     else
                     {
                         // pNode is bigger than second child
-                        insert(pTree.mSecondChild, pNode);
+                        insert(child2, pNode, pAbstractComparator);
                     }
                 }
             }
@@ -224,10 +210,10 @@ public class PriorityQueue
             pNode.mParent = pTree;
         }
 
-        pTree.mSubtreePopulation += nodeSubtreePop + 1;
+        pTree.mSubtreePopulation += pNode.mSubtreePopulation + 1;
     }
 
-    protected void insertRoot(Node pNode)
+    protected final void insertRoot(Node pNode)
     {
         if(null != mRoot)
         {
@@ -235,7 +221,7 @@ public class PriorityQueue
 
             if(mAbstractComparator.compare(rootObj, pNode.mPayload) < 0)
             {
-                insert(mRoot, pNode);
+                insert(mRoot, pNode, mAbstractComparator);
                 // pElement is bigger than mRoot
             }
             else
@@ -254,10 +240,7 @@ public class PriorityQueue
 
     public boolean offer(Object pElement)
     {
-        Node node = new Node(pElement);
-
-        insertRoot(node);
-
+        insertRoot(new Node(pElement));
         return(true);
     }
 
