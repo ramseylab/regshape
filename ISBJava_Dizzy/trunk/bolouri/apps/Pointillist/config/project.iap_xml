@@ -2992,35 +2992,6 @@ and any path to a file to read from that file]]></string>
 												<int>0</int>
 											</property>
 										</object>
-										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="39fda649846d">
-											<property name="unixPermissions">
-												<string><![CDATA[664]]></string>
-											</property>
-											<property name="sourceName">
-												<string><![CDATA[stattest.m]]></string>
-											</property>
-											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
-											</property>
-											<property name="sourcePath">
-												<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/matlab/]]></string>
-											</property>
-											<property name="shouldUninstall">
-												<boolean>true</boolean>
-											</property>
-											<property name="destinationName">
-												<string><![CDATA[stattest.m]]></string>
-											</property>
-											<property name="fileSize">
-												<long>-1</long>
-											</property>
-											<property name="macBinary">
-												<boolean>false</boolean>
-											</property>
-											<property name="targetCheckKind">
-												<int>0</int>
-											</property>
-										</object>
 										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="39fda640846a">
 											<property name="unixPermissions">
 												<string><![CDATA[775]]></string>
@@ -3060,7 +3031,6 @@ and any path to a file to read from that file]]></string>
 												<object refID="39fda647846c"/>
 												<object refID="39fda648846c"/>
 												<object refID="39fda64a846c"/>
-												<object refID="39fda649846d"/>
 											</visualChildren>
 										</object>
 									</installChildren>
