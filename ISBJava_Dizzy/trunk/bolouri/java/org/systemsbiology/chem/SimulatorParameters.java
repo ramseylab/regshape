@@ -10,8 +10,8 @@ package org.systemsbiology.chem;
 
 public class SimulatorParameters
 {
-    private Integer mEnsembleSize;
-    private Integer mMinNumSteps;
+    private Long mEnsembleSize;
+    private Long mMinNumSteps;
     private Double mMaxAllowedRelativeError;
     private Double mMaxAllowedAbsoluteError;
 
@@ -22,14 +22,14 @@ public class SimulatorParameters
         mMaxAllowedRelativeError = null;
     }
 
-    public void setEnsembleSize(int pEnsembleSize)
+    public void setEnsembleSize(long pEnsembleSize)
     {
-        mEnsembleSize = new Integer(pEnsembleSize);
+        mEnsembleSize = new Long(pEnsembleSize);
     }
 
-    public void setMinNumSteps(int pMinNumSteps)
+    public void setMinNumSteps(long pMinNumSteps)
     {
-        mMinNumSteps = new Integer(pMinNumSteps);
+        mMinNumSteps = new Long(pMinNumSteps);
     }
 
 
@@ -53,12 +53,12 @@ public class SimulatorParameters
         return(mMaxAllowedAbsoluteError);
     }
 
-    public Integer getMinNumSteps()
+    public Long getMinNumSteps()
     {
         return(mMinNumSteps);
     }
 
-    public Integer getEnsembleSize()
+    public Long getEnsembleSize()
     {
         return(mEnsembleSize);
     }
