@@ -23,6 +23,8 @@ import org.systemsbiology.util.*;
  */
 public final class Model
 {
+    public static final String INTERNAL_SYMBOL_PREFIX = "___";
+
     private HashMap mReactionsMap;
     private String mName;
     private HashMap mDynamicSymbolsMap;
@@ -255,10 +257,11 @@ public final class Model
         return((String []) speciesNamesList.toArray(new String[0]));
     }
 
-    public String []getOrderedNonConstantSymbolNamesArray() throws IllegalStateException
+    public String []getOrderedResultsSymbolNamesArray() throws IllegalStateException
     {
         List symbolNamesList = new LinkedList();
         Iterator symbolValuesIter = mSymbolsMap.values().iterator();
+        String symbolName = null;
         while(symbolValuesIter.hasNext())
         {
             SymbolValue symbolValue = (SymbolValue) symbolValuesIter.next();
@@ -266,11 +269,13 @@ public final class Model
             {
                 throw new IllegalStateException("symbol has no value associated with it: " + symbolValue.getSymbol().getName());
             }
-            if(symbolValue.getValue().isExpression() ||
-               symbolValue instanceof Species)
+            if((symbolValue.getValue().isExpression() &&
+                !(symbolValue instanceof Reaction) )||
+                symbolValue instanceof Species)
             {
-                symbolNamesList.add(symbolValue.getSymbol().getName());
-            }
+                symbolName = symbolValue.getSymbol().getName();
+                symbolNamesList.add(symbolName);
+             }
         }
         Collections.sort(symbolNamesList);
         return((String []) symbolNamesList.toArray(new String[0]));
