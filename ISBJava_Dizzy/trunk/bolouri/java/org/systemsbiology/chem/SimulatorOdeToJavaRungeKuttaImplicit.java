@@ -15,7 +15,7 @@ import org.systemsbiology.util.*;
 
 public class SimulatorOdeToJavaRungeKuttaImplicit extends SimulatorOdeToJavaBase implements IAliasableClass, ISimulator
 {
-    public static final String CLASS_ALIAS = "ODE-imex443-stiff";
+    public static final String CLASS_ALIAS = "ODEtoJava-imex443-stiff";
 
     protected void runExternalSimulation(Span pSimulationTimeSpan,
                                          double []pInitialDynamicSymbolValues,

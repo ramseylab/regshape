@@ -15,7 +15,7 @@ import org.systemsbiology.util.*;
 
 public class SimulatorOdeToJavaRungeKuttaAdaptive extends SimulatorOdeToJavaBase implements IAliasableClass, ISimulator
 {
-    public static final String CLASS_ALIAS = "ODE-dopr54-adaptive";
+    public static final String CLASS_ALIAS = "ODEtoJava-dopr54-adaptive";
 
     protected void runExternalSimulation(Span pSimulationTimeSpan,
                                          double []pInitialDynamicSymbolValues,
