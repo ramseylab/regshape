@@ -87,7 +87,9 @@ Supported targets are:
                     requires that the InstallAnywhere program be
                     installed on your computer.
 
-  uploadWeb:      upload the entire web content tree to the web server
+  uploadWeb:      upload the built web content tree to the web server;
+                  only the part of the web content tree that has been 
+                  built (with buildWeb target), will be uploaded to the web server.
 
   test:           Compile all test code (eventually, compile and run
                   unit tests)
@@ -106,6 +108,12 @@ with the external "NetComponents.jar" library in the CLASSPATH
 * In order to use the "buildPDF" target, you will need additional
 software installed (please read the 
   docs/private/WebPagesManagementManual.xml document).
+
+* You can run most of the above targets from within an individual
+project directory (e.g., "apps/Dizzy" or "apps/Mogul").  However,
+the "buildWeb" and "uploadWeb" targets may only be run in the 
+top-level directory.  To build only the HTML for a given sub-project,
+change to the project's directory and run the "ant buildHTML" command.
 
 
 -Stephen Ramsey
