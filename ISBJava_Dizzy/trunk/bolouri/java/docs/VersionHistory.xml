@@ -38,6 +38,24 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.5.1/&installerDownloadRelURL;">1.5.1</a></td>
+<td>2004/02/24</td>
+<td>
+<ul>
+<li>Fixed a bug in how the &quot;secs remaining&quot; text field in
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> behaves
+when the &quot;Pause&quot; button is pressed, to pause the simulation.</li>
+<li>The progress bar and &quot;secs remaining&quot; text field in
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> are now 
+always visible, rather than only when a simulation is running.</li>
+<li>Fixed a bug in how the &quot;secs remaining&quot; text field in
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> behaves
+when the &quot;Cancel&quot; button is pressed, to cancel the simulation.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.5.0/&installerDownloadRelURL;">1.5.0</a></td>
 <td>2004/02/13</td>
 <td>

@@ -44,6 +44,26 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.5.1/&installerDownloadRelURL;">1.5.1</a></td>
+<td>2004/02/24</td>
+<td>
+<ul>
+<li>Fixed several bugs in the behavior of the progress indicator
+bar and the &quot;secs remaining&quot; text field, in the simulation
+launcher frame.  The progress indicator and &quot;secs remaining&quot;
+text field should now behave properly when the &quot;pause&quot;,
+&quot;cancel&quot;, and &quot;resume&quot; buttons are used to 
+control the simulation.</li>
+<li>Modified the simulation launcher frame so that the progress indicator
+and the &quot;secs remaining&quot; text field are always visible, not
+just when a simulation is running.  This reduces annoying flicker of
+the user interface controls when a simulation starts and stops.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.5.0/&installerDownloadRelURL;">1.5.0</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.5.0/&installerDownloadRelURL;">1.5.0</a></td>
 <td>2004/02/13</td>
 <td>

@@ -3255,14 +3255,20 @@ the selected file (rather than overwrite), click on the &quot;append&quot;
 check-box.
 </p>
 <p>
-While a simulation is running, you will see a progress bar at the bottom
-of the &quot;&appName;: simulator&quot; frame.  This progress bar gives
-an indication of the fraction of the time range for the simulation that
-has been completed.  However, it does not give an accurate indication
-of the estimated time to completion.  This is because simulations
-may frequently slow down or speed up, depending on the concentration
-levels of the species in the model.  At best, it is a rough guideline 
-indicating the progress of the simulator.  
+At the bottom of the &quot;&appName;: simulator&quot; frame, you will 
+see a progress bar and a text field &quot;secs remaining&quot;.
+The progress bar gives an indication of the fraction of the time range 
+for the simulation that has been completed.  However, it does not give 
+an accurate indication of the estimated time to completion.  This is 
+because simulations may frequently slow down or speed up, depending on 
+the concentration levels of the species in the model.  At best, the
+progress bar is a rough guideline indicating the progress of the simulator.  
+The &quot;secs remaining&quot; field is an estimate of the number of
+seconds remaining (in real time) for the simulation to complete.  The
+estimate can change by several orders of magnitude during the course of
+a simulation, if the dynamical time scale of the system changes radically.
+As a rule of thumb, the &quot;secs remaining&quot; estimate should only be 
+regarded as reliable when the progress bar is over 75% complete.
 </p>
 </isb:docsubsection>
 
