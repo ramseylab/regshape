@@ -343,9 +343,9 @@ you should see a plot window appear that resembles the following image:
 </p>
 <p>
 For longer-running simulations, you can use the &quot;cancel&quot;,
-&quot;stop&quot;, and &quot;resume&quot; buttons to control a running
+&quot;pause&quot;, and &quot;resume&quot; buttons to control a running
 simulation.  It is possible to pause and resume a simulation using the
-&quot;stop&quot; and &quot;resume&quot; buttons.  You may terminate a
+&quot;pause&quot; and &quot;resume&quot; buttons.  You may terminate a
 running simulation at any time using the &quot;cancel&quot; button.
 The &quot;start&quot; button is only used to initiate a simulation.
 Only one simulation may be running at a time, in the &appName; application.
@@ -1026,23 +1026,10 @@ Example:  <code>ceil(A)</code>, <code>ceil(1.7)</code></dd>
 <dd>Computes the value of the square root of the argument.
 The argument must be nonnegative.</dd>
 
-<dt><b>gammaln</b></dt>
-<dd>Computes the value of the natural logarithm of the
-gamma function of the argument.</dd>
-
 <dt><b>theta</b></dt>
 <dd>Returns 0.0 if the argument is negative, or 1.0 if
 the argument is nonnegative (i.e., zero or positive)</dd>
 
-<dt><b>rand</b></dt>
-<dd>The <code>rand()</code> function has no arguments.  It
-returns a floating-point random number selected from the 
-unit interval <code>[0, 1)</code> with uniform distribution.  
-Example:  <code>rand()</code>.  It is worth noting that
-unlike all of the other built-in mathematical functions,
-<code>rand()</code> takes no arguments.  But the pair of
-parentheses shown after the &quot;<code>rand</code>&quot; 
-are still required.</dd>
 </dl>
 </blockquote>
 New built-in mathematical functions may be added in 
@@ -2039,7 +2026,7 @@ The text inside the quotes is parsed as a
 that typically involves species name symbols, numeric literals,
 and arithmetic operators.  In addition, a mathematical
 expression may involve built-in functions (e.g., 
-<code>log()</code> or <code>gammaln()</code>) and
+<code>log()</code> or <code>sin()</code>) and
 special symbols such as &quot;<code>time</code>&quot;.
 In the above example, the reaction rate will be computed
 as the product of the number <code>2.0</code> times the
