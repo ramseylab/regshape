@@ -9,6 +9,7 @@ package org.systemsbiology.util;
  */
 
 import java.awt.*;
+import javax.swing.*;
 
 /**
  * Methods for selecting the default location for a GUI frame.
@@ -16,6 +17,7 @@ import java.awt.*;
 public class FramePlacer
 {
     private static final int PLOT_POSITION_STAGGER_AMOUNT_PIXELS = 20;
+    private static final int INITIAL_STAGGER = 50;
     private static Dimension sScreenSize;
     private int mFrameCtr;
     
@@ -30,15 +32,26 @@ public class FramePlacer
         mFrameCtr = 0;
     }
 
+    public void placeInCascadeFormat(JFrame pFrame)
+    {
+        Dimension frameSize = pFrame.getSize();
+        Point location = placeInCascadeFormat(frameSize.width,
+                                              frameSize.height);
+        pFrame.setLocation(location);
+    }
+
     /**
      * Arranges subsequent frames in a diagonal cascade (down and to the right).
      */
     public Point placeInCascadeFormat(int pFrameWidth, int pFrameHeight)
     {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int numPixelsStagger = mFrameCtr * PLOT_POSITION_STAGGER_AMOUNT_PIXELS;
-        int placeX = (sScreenSize.width - pFrameWidth)/4 + numPixelsStagger;
-        int placeY = (sScreenSize.height - pFrameHeight)/4 + numPixelsStagger;
+        int screenWidth = screenSize.width;
+        int screenHeight = screenSize.height;
+        double aspectRatio = screenWidth / screenHeight;
+        int numPixelsStagger = INITIAL_STAGGER + (mFrameCtr * PLOT_POSITION_STAGGER_AMOUNT_PIXELS);
+        int placeY = numPixelsStagger;
+        int placeX = (int) (numPixelsStagger * aspectRatio);
         if(numPixelsStagger < (sScreenSize.height - pFrameHeight)/4)
         {
             ++mFrameCtr;
@@ -49,6 +62,14 @@ public class FramePlacer
         }        
         Point point = new Point(placeX, placeY);
         return(point);
+    }
+
+    public void placeInCenterOfScreen(JFrame pFrame)
+    {
+        Dimension frameSize = pFrame.getSize();
+        Point location = placeInCenterOfScreen(frameSize.width,
+                                               frameSize.height);
+        pFrame.setLocation(location);
     }
 
     /**
