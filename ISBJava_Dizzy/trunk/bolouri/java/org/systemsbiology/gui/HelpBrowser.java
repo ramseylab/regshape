@@ -23,6 +23,7 @@ public class HelpBrowser
     private Component mMainFrame;
     private static final int MAX_WIDTH = 800;
     private static final int MAX_HEIGHT = 600;
+    private HelpBroker mHelpBroker;
     
     public HelpBrowser(Component pMainFrame, String pHelpSetName, String pAppName)
     {
@@ -35,6 +36,7 @@ public class HelpBrowser
         setFrameSize(new Dimension(width, height));
         setFrameTitle(pAppName + ": help");
         setFrameLocation(null);
+        mHelpBroker = null;
     }
 
     public void setFrameTitle(String pTitle)
@@ -54,60 +56,77 @@ public class HelpBrowser
     
     public void displayHelpBrowser(String pMapID, String pView)
     {
-        try
+        if(null == mHelpBroker)
         {
-            String helpSetName = mHelpSetName;
-
-            if(helpSetName != null && helpSetName.trim().length() > 0)
+            try
             {
+                String helpSetName = mHelpSetName;
 
-                URL helpPackageURL = HelpSet.findHelpSet(null, helpSetName);
-                if(null != helpPackageURL)
+                if(helpSetName != null && helpSetName.trim().length() > 0)
                 {
-
-                    HelpSet hs = new HelpSet(null, helpPackageURL);
-                    hs.setTitle(mTitle);
-                    HelpBroker hb = hs.createHelpBroker();
-                    if(null != pMapID)
+                    
+                    URL helpPackageURL = HelpSet.findHelpSet(null, helpSetName);
+                    if(null != helpPackageURL)
                     {
-                        hb.setCurrentID(pMapID);
+                        HelpSet hs = new HelpSet(null, helpPackageURL);
+                        hs.setTitle(mTitle);
+                        HelpBroker hb = hs.createHelpBroker();
+                        hb.initPresentation();
+                        hb.setSize(mFrameSize);
+                        Point location = mLocation;
+                        if(null == location)
+                        {
+                            location = FramePlacer.placeInCenterOfScreen(mFrameSize.width, mFrameSize.height);
+                        }
+                        hb.setLocation(location);
+                        mHelpBroker = hb;
                     }
-                    if(null != pView)
+                    else
                     {
-                        hb.setCurrentView(pView);
+                        JOptionPane.showMessageDialog(mMainFrame,
+                                "The help file was not found: " + helpSetName,
+                                "Help file not found",
+                                JOptionPane.WARNING_MESSAGE);
+                        return;
                     }
-                    hb.setSize(mFrameSize);
-                    Point location = mLocation;
-                    if(null == location)
-                    {
-                        location = FramePlacer.placeInCenterOfScreen(mFrameSize.width, mFrameSize.height);
-                    }
-                    hb.setLocation(location);
-                    hb.initPresentation();
-                    hb.setDisplayed(true);
                 }
                 else
                 {
                     JOptionPane.showMessageDialog(mMainFrame,
-                                                  "The help file was not found: " + helpSetName,
-                                                  "Help file not found",
-                                                  JOptionPane.WARNING_MESSAGE);
+                            "Sorry, no on-line help is available",
+                            "No help is available",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    return;
                 }
             }
-            else
+            catch(Exception e)
             {
-                JOptionPane.showMessageDialog(mMainFrame,
-                                              "Sorry, no on-line help is available",
-                                              "No help is available",
-                                              JOptionPane.INFORMATION_MESSAGE);
+                ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+                optionPane.createDialog(mMainFrame,
+                "Error displaying online help").show();
+                return;
+            }        
+        }
+        
+        try
+        {
+            mHelpBroker.setDisplayed(false);
+            if(null != pView)
+            {
+                mHelpBroker.setCurrentView(pView);
             }
+            if(null != pMapID)
+            {
+                mHelpBroker.setCurrentID(pMapID);
+            }            
+            mHelpBroker.setDisplayed(true);
         }
         catch(Exception e)
         {
             ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
             optionPane.createDialog(mMainFrame,
-                                    "Error displaying online help").show();
+            "Error displaying online help").show();
             return;
-        }        
+        }
     }
 }
