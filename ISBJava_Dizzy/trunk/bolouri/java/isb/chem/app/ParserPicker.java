@@ -22,8 +22,8 @@ public class ParserPicker
 
     private void handleCancel()
     {
-        SimpleDialog messageDialog = new SimpleDialog(mMainFrame, "File open cancelled", 
-                                                      "Your file open operation has been cancelled");
+        SimpleDialog messageDialog = new SimpleDialog(mMainFrame, "Model processing cancelled", 
+                                                      "Your model processing has been cancelled");
         messageDialog.setMessageType(JOptionPane.INFORMATION_MESSAGE);
         messageDialog.show();
     }
@@ -76,7 +76,7 @@ public class ParserPicker
             Object []parserOptions = parserAliasesList.toArray();
             File inputFile = new File(pFileName);
             String shortName = inputFile.getName();
-            SimpleTextArea textArea = new SimpleTextArea("The file you selected has an unrecognized file extension: " + shortName + "\nIn order to import this file, you will need to specify which parser to use.  Which parser plugin do you wish to use?\n[To cancel, just click the close box in the upper-right corner.]");
+            SimpleTextArea textArea = new SimpleTextArea("In order to process this model definition, you will need to specify which parser to use.  Which parser plugin do you wish to use?\n[To cancel, just click the close box in the upper-right corner.]");
             JOptionPane parserOptionPane = new JOptionPane(textArea,
                                                            JOptionPane.WARNING_MESSAGE,
                                                            JOptionPane.DEFAULT_OPTION,
@@ -104,10 +104,7 @@ public class ParserPicker
                 String selectedOption = (String) dialog.getValue();
                 if(null == selectedOption)
                 {
-                    SimpleDialog messageDialog = new SimpleDialog(mMainFrame, "Selection cancelled", 
-                                                                  "Your file selection has been cancelled");
-                    messageDialog.setMessageType(JOptionPane.INFORMATION_MESSAGE);
-                    messageDialog.show();
+                    handleCancel();
                     parserAlias = null;
                 }
                 else
