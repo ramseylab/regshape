@@ -8,21 +8,9 @@ package org.systemsbiology.chem;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import java.util.List;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Collection;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Collections;
-
-import org.systemsbiology.math.Expression;
-import org.systemsbiology.math.SymbolValue;
-import org.systemsbiology.math.Value;
-import org.systemsbiology.math.Symbol;
-import org.systemsbiology.math.SymbolEvaluator;
-import org.systemsbiology.util.DataNotFoundException;
-import org.systemsbiology.util.DebugUtils;
+import java.util.*;
+import org.systemsbiology.math.*;
+import org.systemsbiology.util.*;
 
 /**
  * Represents a chemical process that can take
@@ -657,6 +645,7 @@ public class Reaction extends SymbolValue
 // ---------------------------------------------------------------------
 // FOR DEBUGGING PURPOSES:
         Iterator reactantsIter = getReactantsMap().keySet().iterator();
+        sb.append(getName() + ", ");
         while(reactantsIter.hasNext())
         {
             String reactant = (String) reactantsIter.next();
@@ -677,18 +666,8 @@ public class Reaction extends SymbolValue
                 sb.append(" + ");
             }
         }
-// ---------------------------------------------------------------------
-//         sb.append("Reaction: ");
-//         sb.append(getName());
-//         sb.append(" [Rate: ");
-//         sb.append(getRate().toString());
-//         sb.append(", Reactants: ");
-//         DebugUtils.describeSortedObjectList(sb, mReactantsMap);
-//         sb.append(", Products: ");
-//         DebugUtils.describeSortedObjectList(sb, mProductsMap);
-//         sb.append(", Parameters: ");
-//         DebugUtils.describeSortedObjectList(sb, mLocalSymbolsValuesMap);
-//         sb.append("]");
+        sb.append(", ");
+        sb.append(getRate().toString());
         return(sb.toString());
     }
 }
