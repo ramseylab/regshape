@@ -33,6 +33,8 @@ public class SimulationLauncher
     private JList mSimulatorsList;
     private JList mSpeciesList;
     private JTextField mEnsembleField;
+    private JTextField mNumStepsField;
+    private JTextField mAllowedErrorField;
     private String mOutputType;
     private JButton mStartButton;
     private JButton mStopButton;
@@ -271,8 +273,8 @@ public class SimulationLauncher
 
             simulator.simulate(pSimulationRunParameters.mStartTime,
                                pSimulationRunParameters.mEndTime,
+                               pSimulationRunParameters.mSimulatorParameters,
                                pSimulationRunParameters.mNumTimePoints,
-                               pSimulationRunParameters.mNumSteps,
                                pSimulationRunParameters.mRequestedSymbolNames,
                                pSimulationRunParameters.mRetTimeValues,
                                pSimulationRunParameters.mRetSymbolValues);
@@ -304,8 +306,8 @@ public class SimulationLauncher
         ISimulator mSimulator;
         double mStartTime;
         double mEndTime;
+        SimulatorParameters mSimulatorParameters;
         int mNumTimePoints;
-        int mNumSteps;
         OutputType mOutputType;
         String mOutputFileName;
         String []mRequestedSymbolNames;
@@ -403,6 +405,60 @@ public class SimulationLauncher
         return(stopButton);
     }    
 
+    private void handleSimulatorSelection(int pSimulatorIndex)
+    {
+        String simulatorAlias = (String) mSimulatorsList.getModel().getElementAt(pSimulatorIndex);
+        if(null == simulatorAlias)
+        {
+            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "no simulator selected");
+            errorDialog.show();
+        }
+        else
+        {
+            ISimulator simulator = null;
+
+            try
+            {
+                simulator = (ISimulator) getSimulatorRegistry().getInstance(simulatorAlias);
+                SimulatorParameters simParams = simulator.getDefaultSimulatorParameters();
+                Integer ensembleSize = simParams.getEnsembleSize();
+                if(null != ensembleSize)
+                {
+                    mEnsembleField.setText(ensembleSize.toString());
+                }
+                else
+                {
+                    mEnsembleField.setText("");
+                }
+                Integer minNumSteps = simParams.getMinNumSteps();
+                if(null != minNumSteps)
+                {
+                    mNumStepsField.setText(minNumSteps.toString());
+                }
+                else
+                {
+                    mNumStepsField.setText("");
+                }
+                Double maxAllowedError = simParams.getMaxAllowedError();
+                if(null != maxAllowedError)
+                {
+                    mAllowedErrorField.setText(maxAllowedError.toString());
+                }
+                else
+                {
+                    mAllowedErrorField.setText("");
+                }
+            }
+            catch(Exception e)
+            {
+                ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame,
+                                                                                                 "Failed to instantiate simulator",
+                                                                                                 e);
+                dialog.show();
+            }
+        }
+    }
+
     private JList createSimulatorsList()
     {
         Set simulatorAliases = getSimulatorAliasesCopy();
@@ -410,12 +466,24 @@ public class SimulationLauncher
         java.util.List simulatorAliasesList = new LinkedList(simulatorAliases);
         Collections.sort(simulatorAliasesList);
         Object []simulatorAliasObjects = simulatorAliasesList.toArray();
-        JList simulatorsList = new JList();
+        final JList simulatorsList = new JList();
         mSimulatorsList = simulatorsList;
         simulatorsList.setVisibleRowCount(4);
         simulatorsList.setListData(simulatorAliasObjects);
         simulatorsList.setSelectedIndex(0);
+        handleSimulatorSelection(0);
         simulatorsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        ListSelectionListener listSelectionListener = new ListSelectionListener()
+        {
+            public void valueChanged(ListSelectionEvent e)
+            {
+                if(e.getValueIsAdjusting())
+                {
+                    handleSimulatorSelection(simulatorsList.getSelectedIndex());
+                }
+            }
+        };
+        simulatorsList.addListSelectionListener(listSelectionListener);
         return(simulatorsList);
     }
 
@@ -532,16 +600,38 @@ public class SimulationLauncher
         JPanel ensemblePanel = new JPanel();
         JPanel ensembleLabelPanel = new JPanel();
         Box ensembleLabelBox = new Box(BoxLayout.Y_AXIS);
-        JLabel ensembleLabel1 = new JLabel("number of ensembles /");
-        JLabel ensembleLabel2 = new JLabel("number of timesteps");
+        JLabel ensembleLabel1 = new JLabel("number of ensembles:");
         ensembleLabelBox.add(ensembleLabel1);
-        ensembleLabelBox.add(ensembleLabel2);
         ensembleLabelPanel.add(ensembleLabelBox);
         ensemblePanel.add(ensembleLabelPanel);
         JTextField ensembleField = new JTextField(NUM_COLUMNS_TIME_FIELD);
         mEnsembleField = ensembleField;
         ensemblePanel.add(ensembleField);
         box.add(ensemblePanel);
+
+        JPanel numStepsPanel = new JPanel();
+        JPanel numStepsLabelPanel = new JPanel();
+        Box numStepsLabelBox = new Box(BoxLayout.Y_AXIS);
+        JLabel numStepsLabel = new JLabel("min number of timesteps:");
+        numStepsLabelBox.add(numStepsLabel);
+        numStepsLabelPanel.add(numStepsLabelBox);
+        numStepsPanel.add(numStepsLabelPanel);
+        JTextField numStepsField = new JTextField(NUM_COLUMNS_TIME_FIELD);
+        mNumStepsField = numStepsField;
+        numStepsPanel.add(numStepsField);
+        box.add(numStepsPanel);
+
+        JPanel allowedErrorPanel = new JPanel();
+        JPanel allowedErrorLabelPanel = new JPanel();
+        Box allowedErrorLabelBox = new Box(BoxLayout.Y_AXIS);
+        JLabel allowedErrorLabel = new JLabel("max allowed fractional error:");
+        allowedErrorLabelBox.add(allowedErrorLabel);
+        allowedErrorLabelPanel.add(allowedErrorLabelBox);
+        allowedErrorPanel.add(allowedErrorLabelPanel);
+        JTextField allowedErrorField = new JTextField(NUM_COLUMNS_TIME_FIELD);
+        mAllowedErrorField = allowedErrorField;
+        allowedErrorPanel.add(allowedErrorField);
+        box.add(allowedErrorPanel);
 
         panel.add(box);
         panel.setBorder(BorderFactory.createEtchedBorder());
@@ -694,6 +784,9 @@ public class SimulationLauncher
 
         String ensembleStr = mEnsembleField.getText();
         
+        SimulatorParameters simulatorParameters = simulator.getDefaultSimulatorParameters();
+        srp.mSimulatorParameters = simulatorParameters;
+
         Integer ensembleSize = null;
         if(null != ensembleStr && ensembleStr.trim().length() > 0)
         {
@@ -711,11 +804,49 @@ public class SimulationLauncher
                 return(retVal);
             }
         }
-        if(ensembleSize == null)
+        if(null != ensembleSize)
         {
-            ensembleSize = new Integer(1);
+            simulatorParameters.setEnsembleSize(ensembleSize.intValue());
         }
-        srp.mNumSteps = ensembleSize.intValue();
+
+        String numStepsStr = mNumStepsField.getText();
+
+        Integer numSteps = null;
+        if(null != numStepsStr && numStepsStr.trim().length() > 0)
+        {
+            try
+            {
+                numSteps = new Integer(numStepsStr);
+            }
+            catch(NumberFormatException e)
+            {
+                handleBadInput("invalid number of steps", "The number of steps you specified is invalid");
+                return(retVal);
+            }
+        }
+        if(null != numSteps)
+        {
+            simulatorParameters.setMinNumSteps(numSteps.intValue());
+        }
+
+        String allowedErrorStr = mAllowedErrorField.getText();
+        Double allowedError = null;
+        if(null != allowedErrorStr && allowedErrorStr.trim().length() > 0)
+        {
+            try
+            {
+                allowedError = new Double(allowedErrorStr);
+            }
+            catch(NumberFormatException e)
+            {
+                handleBadInput("invalid allowed fractional error", "The allowed fractional error you specified is invalid");
+                return(retVal);
+            }
+        }
+        if(null != allowedError)
+        {
+            simulatorParameters.setMaxAllowedError(allowedError.doubleValue());
+        }
 
         Object []speciesSelected = mSpeciesList.getSelectedValues();
         if(speciesSelected.length == 0)
@@ -910,9 +1041,9 @@ public class SimulationLauncher
         JPanel midPanel = new JPanel();
         JPanel buttonPanel = createButtonPanel();
         midPanel.add(buttonPanel);
+        JPanel startStopTimePanel = createStartStopTimePanel();
         JPanel simulatorsListPanel = createSimulatorsListPanel();
         midPanel.add(simulatorsListPanel);
-        JPanel startStopTimePanel = createStartStopTimePanel();
         midPanel.add(startStopTimePanel);
         JPanel speciesListPanel = createSpeciesListPanel();
         midPanel.add(speciesListPanel);
@@ -943,7 +1074,7 @@ public class SimulationLauncher
         {
             JInternalFrame myFrame = (JInternalFrame) frame;
             myFrame.addInternalFrameListener(new InternalFrameAdapter() {
-                public void internalFarmeClosed(InternalFrameEvent e) {
+                public void internalFrameClosed(InternalFrameEvent e) {
                     handleCloseSimulationLauncher();
                 }
             });
