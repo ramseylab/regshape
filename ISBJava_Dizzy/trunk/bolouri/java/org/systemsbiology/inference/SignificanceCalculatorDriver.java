@@ -704,7 +704,8 @@ public class SignificanceCalculatorDriver
             {
                 mHelpBrowser = new HelpBrowser(mParent, RESOURCE_HELP_SET, mProgramName);
             }
-            mHelpBrowser.displayHelpBrowser(HELP_SET_MAP_ID, null);
+            //mHelpBrowser.displayHelpBrowser(HELP_SET_MAP_ID, null);  // :TODO: uncomment this, when setCurrentID() bug in JavaHelp is fixed
+            mHelpBrowser.displayHelpBrowser(null, null); 
         }
         catch(Exception e)
         {
