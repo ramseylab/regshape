@@ -2852,7 +2852,7 @@ At this stage, the model has not yet been processed by the scripting runtime,
 so no parser is listed next to the &quot;<b>parser:</b>&quot; label.
 </p>
 <p>
-To process the model, select the &quot;Process model&quot; option from the
+To simulate the model, select the &quot;Simulate...&quot; option from the
 &quot;Tools&quot; menu.  If the model definition file has a recognized
 file extension, &appName; will automatically select the correct parser and
 will indicate the alias of the parser next to the &quot;<b>parser:</b>&quot;
@@ -2884,10 +2884,9 @@ will be printed in the large text box labeled &quot;runtime output log&quot;.
 
 <isb:docsubsection name="Run a simulation" label="gui-runsimulation">
 <p>
-Once a <a href="#models">model</a> and a <a href="#speciespopulations">species
-population collection</a> have been selected (with a single click on
-the name of each in their corresponding list boxes), the &quot;Simulate...&quot;
-menu option under the &quot;Tools&quot; menu becomes enabled (no longer
+Once a <a href="#models">model</a> has been loaded into the text editor, 
+the &quot;Simulate...&quot; menu option under the &quot;Tools&quot; 
+menu becomes enabled (no longer
 greyed out).  Selecting the &quot;Simulate...&quot; menu option causes a
 dialog box entitled &quot;&appName;: simulator&quot; to be displayed.
 In this dialog box, you must specify the start and stop time for the 
@@ -2976,6 +2975,19 @@ variety of modeling and visualization tools that support the SBML format for
 model interchange.
 </p>
 </isb:docsubsection>
+
+<isb:docsubsection name="Reload Model" label="gui-reload">
+<p>
+Once a model has been loaded into the <a href="#gui-runsimulation">simulator</a>,
+you may update the model in the simulator by selecting the &quot;Reload&quot;
+menu item under the &quot;Tools&quot; menu.  This operation may only be performed
+when the simulation launcher window is open, and when a simulation is not actively
+underway.  While a simulation is being run, the &quot;Reload&quot; menu item
+is disabled (greyed out).  You may modify your model definition file in the editor,
+and then select &quot;Reload&quot; to cause the simulation launcher to reload the model.
+</p>
+</isb:docsubsection>
+
 
 <isb:docsubsection name="Display in Cytoscape" label="gui-cytoscape">
 <p>
