@@ -105,7 +105,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
         }
         catch(Exception e)
         {
-            throw new InvalidInputException("unable to load XML file", e);
+            throw new InvalidInputException("unable to load XML file; please check to ensure that the file has the proper encoding and is valid XML", e);
         }
         return retString;
     }
