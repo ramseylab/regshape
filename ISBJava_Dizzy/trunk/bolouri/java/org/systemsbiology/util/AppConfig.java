@@ -104,7 +104,7 @@ public class AppConfig
         return(inputSource);
     }
 
-    protected String getProperty(String pPropertyName)
+    public String getProperty(String pPropertyName)
     {
         String propertyValue = null;
         NodeList nodeList = mConfigFileDocument.getElementsByTagName(pPropertyName);
