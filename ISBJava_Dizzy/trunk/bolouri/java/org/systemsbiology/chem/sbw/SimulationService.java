@@ -12,7 +12,7 @@ import java.util.*;
 import java.io.*;
 import org.systemsbiology.math.*;
 import org.systemsbiology.chem.*;
-import org.systemsbiology.chem.scripting.*;
+import org.systemsbiology.chem.sbml.*;
 import org.systemsbiology.util.*;
 import edu.caltech.sbw.*;
 
@@ -132,7 +132,8 @@ public abstract class SimulationService implements ISimulationService
 
             ISimulator simulator = getSimulator();
             SimulationController simulationController = getSimulationController();
-            simulator.initialize(model, simulationController);
+            simulator.initialize(model);
+            simulator.setController(simulationController);
 
             return(floatingSpecies);
         }
