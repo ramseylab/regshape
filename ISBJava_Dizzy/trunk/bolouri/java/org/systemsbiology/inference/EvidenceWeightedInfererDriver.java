@@ -60,6 +60,8 @@ public class EvidenceWeightedInfererDriver
     private static final String TOOL_TIP_BINS_FIELD = "set this to something between 10 (if you have just a few dozen elements) and 1000 (if you have over 10000 elements)";
     private static final String TOOL_TIP_SMOOTHING_LENGTH_FIELD = "Set this to the smoothing length for obtaining the nonparametric distribution of the significances.";
     private static final String RESOURCE_HELP_ICON = "Help24.gif";
+    private static final String RESOURCE_HELP_SET = "html/AppHelp.hs";
+    private static final String HELP_SET_MAP_ID = "evidenceweightedinferer";
     
     private Container mContentPane;
     
@@ -80,7 +82,9 @@ public class EvidenceWeightedInfererDriver
     private EvidenceWeightedInferer mEvidenceWeightedInferer;
     private EvidenceWeightedInfererResults mEvidenceWeightedInfererResults;
     private EmptyTableModel mEmptyTableModel;
-    
+    private String mProgramName;
+    private HelpBrowser mHelpBrowser;
+        
     private JButton mClearFileButton;
     private JTable mSignificancesTable;
     private JLabel mFileNameLabel;
@@ -442,11 +446,13 @@ public class EvidenceWeightedInfererDriver
         mEvidenceWeightedInferer = new EvidenceWeightedInferer();
     }
 
-    public void initialize(Container pContentPane, Component pParent)
+    public void initialize(Container pContentPane, Component pParent, String pProgramName)
     {
         mContentPane = pContentPane;
         mParent = pParent;
+        mProgramName = pProgramName;
         mWorkingDirectory = null;
+        mHelpBrowser = null;
         mSignificancesData = null;
         mEvidenceWeightedInfererResults = null;
         mWeightsTable = null;
@@ -1339,8 +1345,19 @@ public class EvidenceWeightedInfererDriver
     
     private void handleHelp()
     {
-        JOptionPane.showMessageDialog(mParent, "Sorry, no help is currently available", "No help available", 
-                                      JOptionPane.INFORMATION_MESSAGE);
+        try
+        {
+            if(null == mHelpBrowser)
+            {
+                mHelpBrowser = new HelpBrowser(mParent, RESOURCE_HELP_SET, mProgramName);
+            }
+            mHelpBrowser.displayHelpBrowser(HELP_SET_MAP_ID, null);
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(mParent, "Sorry, no help is currently available; error message is: " + e.getMessage(), "No help available", 
+                                          JOptionPane.INFORMATION_MESSAGE);            
+        }
     }
     
     private void handleClearResults()
@@ -1461,7 +1478,7 @@ public class EvidenceWeightedInfererDriver
         JFrame frame = new JFrame(programName);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Container contentPane = frame.getContentPane();
-        initialize(contentPane, frame);
+        initialize(contentPane, frame, programName);
         frame.pack();
         FramePlacer.placeInCenterOfScreen(frame);
         frame.setVisible(true);

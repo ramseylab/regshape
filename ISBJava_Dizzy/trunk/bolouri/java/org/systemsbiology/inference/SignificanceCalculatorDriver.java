@@ -16,7 +16,6 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableColumn;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,7 +53,6 @@ public class SignificanceCalculatorDriver
     private static final String TOOL_TIP_FILE_CLEAR_BUTTON = "Clear the file of normalized observations that was loaded into this form.";
     private static final String TOOL_TIP_DELIMITER = "Indicates the type of separator that is used in the data file you want to load.";
     private static final String TOOL_TIP_HELP = "Display the help screen that explains how to use this program";
-    private static final String RESOURCE_HELP_ICON = "Help24.gif";
     private static final String TOOL_TIP_OBSERVATIONS_TABLE = "This is the table of observations that you loaded from the data file.";
     private static final String TOOL_TIP_SET_NEGATIVE_CONTROL_DATA = "Select the file containing the negative control data for this evidence type.";
     private static final String TOOL_TIP_CLEAR_NEGATIVE_CONTROL_DATA = "Clear the negative control data for this evidence type.";
@@ -65,6 +63,9 @@ public class SignificanceCalculatorDriver
     private static final String TOOL_TIP_TEXT_CLEAR_RESULTS_BUTTON = "Clear the calculated significances from the form.";
     private static final String TOOL_TIP_TEXT_SAVE_RESULTS_BUTTON = "Save the calculated significances to a file using the same delimiter type as the observations data file.";
     private static final String TOOL_TIP_RESET_FORM_BUTTON = "Reset the form to the original default values.";
+    private static final String RESOURCE_HELP_ICON = "Help24.gif";
+    private static final String RESOURCE_HELP_SET = "html/AppHelp.hs";
+    private static final String HELP_SET_MAP_ID = "significancecalculator";
     
     private static final double DEFAULT_MAX_CHI_SQUARE = 1.0;
     private static final int MIN_NUM_BINS = 10;
@@ -75,6 +76,8 @@ public class SignificanceCalculatorDriver
     
     private Component mParent;
     private Container mContentPane;
+    private HelpBrowser mHelpBrowser;
+    private String mProgramName;
     private ScientificNumberFormat mNumberFormat;
     private JLabel mFormulaLabel;
     private JComboBox mFormulasBox;
@@ -485,11 +488,11 @@ public class SignificanceCalculatorDriver
         mNumberFormat = new ScientificNumberFormat(new SignificantDigitsCalculator());
     }
     
-    public void initialize(Container pContentPane, Component pParent)
+    public void initialize(Container pContentPane, Component pParent, String pProgramName)
     {
         mContentPane = pContentPane;
-        
         mParent = pParent;
+        mProgramName = pProgramName;
         mEmptyTableModel = new EmptyTableModel();
         mWorkingDirectory = null;
         mObservationsData = null;
@@ -695,8 +698,19 @@ public class SignificanceCalculatorDriver
     
     private void handleHelp()
     {
-        JOptionPane.showMessageDialog(mParent, "Sorry, no help is currently available", "No help available", 
-                                      JOptionPane.INFORMATION_MESSAGE);
+        try
+        {
+            if(null == mHelpBrowser)
+            {
+                mHelpBrowser = new HelpBrowser(mParent, RESOURCE_HELP_SET, mProgramName);
+            }
+            mHelpBrowser.displayHelpBrowser(HELP_SET_MAP_ID, null);
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(mParent, "Sorry, no help is currently available; error message is: " + e.getMessage(), "No help available", 
+                    JOptionPane.INFORMATION_MESSAGE);            
+        }             
     }
     
     private void initializeContentPane()
@@ -1520,7 +1534,7 @@ public class SignificanceCalculatorDriver
         JFrame frame = new JFrame(programName);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Container contentPane = frame.getContentPane();
-        initialize(contentPane, frame);
+        initialize(contentPane, frame, programName);
         frame.pack();
         FramePlacer.placeInCenterOfScreen(frame);
         frame.setVisible(true);

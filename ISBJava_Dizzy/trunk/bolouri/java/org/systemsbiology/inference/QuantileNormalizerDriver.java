@@ -15,6 +15,7 @@ import java.awt.event.*;
 import java.io.*;
 import cern.colt.matrix.*;
 import javax.swing.*;
+
 import org.systemsbiology.data.DataFileDelimiter;
 import org.systemsbiology.gui.*;
 import org.systemsbiology.math.*;
@@ -66,6 +67,8 @@ public class QuantileNormalizerDriver
     private JLabel mErrorText;
     private JLabel mMaxIterationsLabel;
     private JTextField mMaxIterationsField;
+    private String mProgramName;
+    private HelpBrowser mHelpBrowser;
     
     private static final String TOOL_TIP_MAX_ITERATIONS = "Specify the maximum number of iterations that may be used to compute the normalized observations.";
     private static final int DEFAULT_MAX_ITERATIONS = 10;
@@ -80,12 +83,14 @@ public class QuantileNormalizerDriver
     private static final String TOOL_TIP_FILE_CLEAR_BUTTON = "Clear the file of normalized observations that was loaded into this form.";
     private static final String TOOL_TIP_DELIMITER = "Indicates the type of separator that is used in the data file you want to load.";
     private static final String TOOL_TIP_HELP = "Display the help screen that explains how to use this program";
-    private static final String RESOURCE_HELP_ICON = "Help24.gif";
     private static final String TOOL_TIP_OBSERVATIONS_TABLE = "This is the table of observations that you loaded from the data file.";
     private static final String TOOL_TIP_FIX_NEGATIVES = "Shift all observations by an additive constant to ensure no observation is less than or equal to zero.";
     private static final String TOOL_TIP_ITERATION_COUNT = "The number of iterations the normalization algorithm needed in order to converge, to the requested accuracy.";
     private static final String TOOL_TIP_FINAL_ERROR = "The final fractional error, for missing data estimation, at the point where the normalization algorithm exited.";
-            
+    private static final String RESOURCE_HELP_ICON = "Help24.gif";
+    private static final String RESOURCE_HELP_SET = "html/AppHelp.hs";
+    private static final String HELP_SET_MAP_ID = "quantilenormalizer";
+    
     private static final QuantileNormalizationScale DEFAULT_QUANTILE_NORMALIZATION_METHOD = QuantileNormalizationScale.NORM_ONLY;
     private static final DataFileDelimiter DEFAULT_DATA_FILE_DELIMITER = DataFileDelimiter.COMMA;
     private static final int NUM_COLUMNS_TEXT_FIELD_FLOAT = 10;
@@ -400,10 +405,12 @@ public class QuantileNormalizerDriver
         clearFile();        
     }
     
-    public void initialize(Container pContentPane, Component pParent)
+    public void initialize(Container pContentPane, Component pParent, String pProgramName)
     {
         mContentPane = pContentPane;
         mParent = pParent;
+        mProgramName = pProgramName;
+        mHelpBrowser = null;
         mQuantileNormalizer = new QuantileNormalizer();
         mObservationsData = null;
         mWorkingDirectory = null;
@@ -611,8 +618,19 @@ public class QuantileNormalizerDriver
         
     private void handleHelp()
     {
-        JOptionPane.showMessageDialog(mParent, "Sorry, no help is currently available", "No help available", 
-                                      JOptionPane.INFORMATION_MESSAGE);
+        try
+        {
+            if(null == mHelpBrowser)
+            {
+                mHelpBrowser = new HelpBrowser(mParent, RESOURCE_HELP_SET, mProgramName);
+            }
+            mHelpBrowser.displayHelpBrowser(HELP_SET_MAP_ID, null);
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(mParent, "Sorry, no help is currently available; error message is: " + e.getMessage(), "No help available", 
+                    JOptionPane.INFORMATION_MESSAGE);            
+        }          
     }
     
     private void clearFile()
@@ -818,7 +836,7 @@ public class QuantileNormalizerDriver
         JFrame frame = new JFrame(programName);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Container contentPane = frame.getContentPane();
-        initialize(contentPane, frame);
+        initialize(contentPane, frame, programName);
         frame.pack();
         FramePlacer.placeInCenterOfScreen(frame);
         frame.setVisible(true);

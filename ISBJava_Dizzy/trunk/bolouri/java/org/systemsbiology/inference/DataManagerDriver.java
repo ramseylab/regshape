@@ -54,6 +54,7 @@ import org.systemsbiology.gui.IconFactory;
 import org.systemsbiology.gui.RegexFileFilter;
 import org.systemsbiology.gui.SimpleTextArea;
 import org.systemsbiology.gui.SortStatus;
+import org.systemsbiology.gui.HelpBrowser;
 import org.systemsbiology.math.ScientificNumberFormat;
 import org.systemsbiology.math.SignificantDigitsCalculator;
 import org.systemsbiology.util.InvalidInputException;
@@ -75,6 +76,8 @@ public class DataManagerDriver
 {
     private Container mContentPane;
     private Component mParent;
+    private String mProgramName;
+    private HelpBrowser mHelpBrowser;
     private EmptyTableModel mEmptyTableModel;
     private File mWorkingDirectory;
     private NumberFormat mNumberFormat;
@@ -116,6 +119,8 @@ public class DataManagerDriver
     private static final String TOOL_TIP_DELIMITER = "Indicates the type of separator that is used in the data file you want to load.";
     private static final String TOOL_TIP_HELP = "Display the help screen that explains how to use this program";
     private static final String RESOURCE_HELP_ICON = "Help24.gif";
+    private static final String RESOURCE_HELP_SET = "html/AppHelp.hs";
+    private static final String HELP_SET_MAP_ID = "datamanager";
     private static final SortStatus DEFAULT_SORT_STATUS = SortStatus.NONE;
     private static final DataFileDelimiter DEFAULT_DATA_FILE_DELIMITER = DataFileDelimiter.COMMA;
     
@@ -910,17 +915,19 @@ public class DataManagerDriver
         JFrame frame = new JFrame(programName);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Container contentPane = frame.getContentPane();
-        initialize(contentPane, frame);
+        initialize(contentPane, frame, programName);
         frame.pack();
         FramePlacer.placeInCenterOfScreen(frame);
         frame.setVisible(true);
     }
     
-    public void initialize(Container pContentPane, Component pParent)
+    public void initialize(Container pContentPane, Component pParent, String pProgramName)
     {
         mContentPane = pContentPane;
         mParent = pParent;
+        mProgramName = pProgramName;
         mWorkingDirectory = null;
+        mHelpBrowser = null;
         mEmptyTableModel = new EmptyTableModel();
         mNumberFormat = new ScientificNumberFormat(new SignificantDigitsCalculator());
         mFileNameList = new LinkedList();
@@ -946,8 +953,19 @@ public class DataManagerDriver
         
     private void handleHelp()
     {
-        JOptionPane.showMessageDialog(mParent, "Sorry, no help is currently available", "No help available", 
-                                      JOptionPane.INFORMATION_MESSAGE);
+        try
+        {
+            if(null == mHelpBrowser)
+            {
+                mHelpBrowser = new HelpBrowser(mParent, RESOURCE_HELP_SET, mProgramName);
+            }
+            mHelpBrowser.displayHelpBrowser(HELP_SET_MAP_ID, null);
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(mParent, "Sorry, no help is currently available; error message is: " + e.getMessage(), "No help available", 
+                                          JOptionPane.INFORMATION_MESSAGE);            
+        }        
     }    
     
     public static final void main(String []pArgs)
