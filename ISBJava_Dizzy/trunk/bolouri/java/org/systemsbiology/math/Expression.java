@@ -1428,6 +1428,37 @@ public class Expression implements Cloneable
         return(computeValue(symbolEvaluator));
     }
 
+    public interface IVisitor
+    {
+        public void visit(Symbol pSymbol);
+    }
+
+    private static void visit(IVisitor pVisitor, Element pElement)
+    {
+        if(null != pElement.mSymbol)
+        {
+            pVisitor.visit(pElement.mSymbol);
+        }
+        if(null != pElement.mFirstOperand)
+        {
+            visit(pVisitor, pElement.mFirstOperand);
+        }
+        if(null != pElement.mSecondOperand)
+        {
+            visit(pVisitor, pElement.mSecondOperand);
+        }
+    }
+ 
+    public void visit(IVisitor pVisitor)
+    {
+        Element rootElement = getRootElement();
+        if(null == rootElement)
+        {
+            throw new IllegalStateException("attempted to compute value of a math expression object that has no expression defined");
+        }
+        visit(pVisitor, rootElement);
+    }
+
     /**
      * Return the computed value of the expression (must have been defined
      * already in the constructor, or in a call to {@link #setExpression(String)}),
