@@ -51,8 +51,9 @@ This document contains the version history for the
 <li>
   Please note that there have been some changes in the
   &localJavaLibraryName; API in this release.  For more
-  information, please refer to the release notes for the
-  <a href="&javaURL;">&localJavaLibraryName; API</a>.
+  information, please refer to the description of changes in 
+  version 2.0.0 in the 
+  <a href="&javaURL;/docs/VersionHistory.html">&localJavaLibraryName; Version History</a>.
 </li>
 <li>
 Fixed a bug in the simulation results table window,
