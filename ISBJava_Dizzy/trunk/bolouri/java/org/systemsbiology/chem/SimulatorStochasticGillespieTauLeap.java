@@ -313,7 +313,7 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
             {
                 if(pDynamicSymbolValues[i] < 0.0)
                 {
-                    System.err.println("species has a negative value: " + mDynamicSymbols[i].getName() + "; value: " + pDynamicSymbolValues[i]);
+                    System.err.println("species has a negative value: " + mDynamicSymbols[i].getName() + "; value: " + pDynamicSymbolValues[i] + "; at time: " + time);
                     pDynamicSymbolValues[i] = 0.0;
                 }
             }
@@ -485,7 +485,7 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
                 newSpeciesValue = oldSpeciesValue + pEstimatedSpeciesChange[i];
                 if(newSpeciesValue < 0.0)
                 {
-                    frac = 0.2 * oldSpeciesValue/(-1.0 * pEstimatedSpeciesChange[i]);
+                    frac = 0.5 * oldSpeciesValue/(-1.0 * pEstimatedSpeciesChange[i]);
                     if(frac < minFrac)
                     {
                         minFrac = frac;
