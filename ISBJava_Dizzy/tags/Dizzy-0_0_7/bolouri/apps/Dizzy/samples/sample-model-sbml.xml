@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level1" level="1" version="1">
+
+ <model name="pathway">
+
+   <listOfCompartments>
+     <compartment name="uVol" volume="1"/>
+   </listOfCompartments>
+
+   <listOfSpecies>
+     <specie name="X0" compartment="uVol" boundaryCondition="true" initialAmount="0.304032227778358e-19"/> 
+     <specie name="X1" compartment="uVol" boundaryCondition="true" initialAmount="0"/> 
+     <specie name="S1" compartment="uVol" boundaryCondition="false" initialAmount="66.6917316144474e-19"/> 
+     <specie name="S2" compartment="uVol" boundaryCondition="false" initialAmount="66.6917316144474e-19"/> 
+     <specie name="S3" compartment="uVol" boundaryCondition="false" initialAmount="66.6917316144474e-19"/> 
+     <specie name="S4" compartment="uVol" boundaryCondition="false" initialAmount="1.20736596676089e-19"/> 
+   </listOfSpecies>
+
+   <listOfParameters>
+     <parameter name="Vm1" value="20"/>
+     <parameter name="Ki" value="1"/>
+     <parameter name="h" value="12"/>
+     <parameter name="k1" value="0.01"/>
+     <parameter name="k2" value="0.01"/>
+     <parameter name="k3" value="0.01"/>
+     <parameter name="V4" value="20"/>
+     <parameter name="KS4" value="35"/>
+   </listOfParameters>
+
+   <listOfReactions>
+
+    <reaction name="_J1" reversible="false">
+      <listOfReactants>
+        <specieReference specie="X0" stoichiometry="1"/>
+      </listOfReactants>
+      <listOfProducts>
+        <specieReference specie="S1" stoichiometry="1"/>
+      </listOfProducts>
+
+      <kineticLaw formula="Vm1*X0/(2+X0+Ki*S4^h)">
+      </kineticLaw>
+    </reaction>
+
+   <reaction name="_J2" reversible="false">
+     <listOfReactants>
+       <specieReference specie="S1" stoichiometry="1"/>
+     </listOfReactants>
+     <listOfProducts>
+       <specieReference specie="S2" stoichiometry="1"/>
+     </listOfProducts>
+
+     <kineticLaw formula="k1*S1">
+     </kineticLaw>
+   </reaction>
+
+   <reaction name="_J3" reversible="false">
+     <listOfReactants>
+       <specieReference specie="S2" stoichiometry="1"/>
+     </listOfReactants>
+     <listOfProducts>
+       <specieReference specie="S3" stoichiometry="1"/>
+     </listOfProducts>
+
+     <kineticLaw formula="k2*S2">
+     </kineticLaw>
+   </reaction>
+
+   <reaction name="_J4" reversible="false">
+     <listOfReactants>
+       <specieReference specie="S3" stoichiometry="1"/>
+     </listOfReactants>
+     <listOfProducts>
+       <specieReference specie="S4" stoichiometry="1"/>
+     </listOfProducts>
+
+     <kineticLaw formula="k3*S3">
+     </kineticLaw>
+   </reaction>
+
+   <reaction name="_J5" reversible="false">
+     <listOfReactants>
+       <specieReference specie="S4" stoichiometry="1"/>
+     </listOfReactants>
+     <listOfProducts>
+       <specieReference specie="X1" stoichiometry="1"/>
+     </listOfProducts>
+
+     <kineticLaw formula="V4*S4/(S4+KS4)">
+     </kineticLaw>
+   </reaction>
+
+  </listOfReactions>
+ </model>
+</sbml>
