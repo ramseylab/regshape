@@ -99,7 +99,9 @@
     <ant dir="${projAppsDir}" target="buildPDF" />
   </target>
 
-  <target name="buildHTML">
+  <target name="buildLocalHTML" depends="style, copyHtml, copyImages, copyModels" />
+
+  <target name="buildHTML" depends="buildLocalHTML">
     <ant dir="${projJavaDir}" target="buildHTML" />
     <ant dir="${projAppsDir}" target="buildHTML" />
   </target>
