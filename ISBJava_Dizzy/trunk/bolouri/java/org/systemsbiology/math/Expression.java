@@ -2234,41 +2234,6 @@ public class Expression implements Cloneable
         return(mRootElement.mNumericValue);
     }
 
-    public static final void main(String []pArgs)
-    {
-        try
-        {
-            HashMap symbolsMap = new HashMap();
-            // make the assignment Y = [Z^2];
-            SymbolValue Y = new SymbolValue("Y");
-            Y.setValue(new Value(new Expression("Z^2 + 100.0")));
-            symbolsMap.put("Y", Y);
-            
-            SymbolValue Z = new SymbolValue("Z");
-            Z.setValue(new Value(new Expression("1.0")));
-            symbolsMap.put("Z", Z);
-
-            SymbolEvaluatorHashMap symEval = new SymbolEvaluatorHashMap();
-            symEval.setSymbolsMap(symbolsMap);
-
-            InputStream in = System.in;
-            InputStreamReader reader = new InputStreamReader(in);
-            BufferedReader bufReader = new BufferedReader(reader);
-            String line = null;
-            while(null != (line = bufReader.readLine()))
-            {
-                Expression expression = new Expression(line);
-                Symbol X = new Symbol("X");
-                System.out.println(expression.computePartialDerivative(X, symEval).toString());
-                System.out.println("");
-            }
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace(System.err);
-        }
-    }
-
     public static Expression square(Expression A)
     {
         Expression retVal = null;
@@ -2495,4 +2460,40 @@ public class Expression implements Cloneable
         }
         return(retVal);
     }
+
+    public static final void main(String []pArgs)
+    {
+        try
+        {
+            HashMap symbolsMap = new HashMap();
+            // make the assignment Y = [Z^2];
+            SymbolValue Y = new SymbolValue("Y");
+            Y.setValue(new Value(new Expression("Z^2 + 100.0")));
+            symbolsMap.put("Y", Y);
+            
+            SymbolValue Z = new SymbolValue("Z");
+            Z.setValue(new Value(new Expression("1.0")));
+            symbolsMap.put("Z", Z);
+
+            SymbolEvaluatorHashMap symEval = new SymbolEvaluatorHashMap();
+            symEval.setSymbolsMap(symbolsMap);
+
+            InputStream in = System.in;
+            InputStreamReader reader = new InputStreamReader(in);
+            BufferedReader bufReader = new BufferedReader(reader);
+            String line = null;
+            while(null != (line = bufReader.readLine()))
+            {
+                Expression expression = new Expression(line);
+                Symbol X = new Symbol("X");
+                System.out.println(expression.computePartialDerivative(X, symEval).toString());
+                System.out.println("");
+            }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace(System.err);
+        }
+    }
+
 }
