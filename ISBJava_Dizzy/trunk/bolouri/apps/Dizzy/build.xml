@@ -62,7 +62,7 @@
       <arg value="-modify" />
       <arg value="-quiet" />
       <arg value="-xml" />
-      <arg value="-ashtml" />
+      <arg value="-asxhtml" />
       <srcfile />
     </apply>
   </target>

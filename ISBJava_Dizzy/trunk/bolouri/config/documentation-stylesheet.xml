@@ -11,7 +11,7 @@
                 xmlns:html="http://www.w3.org/TR/xhtml1"
                 xmlns="http://www.w3.org/TR/xhtml1"
                 >              
-  <xsl:output method="html" indent="yes" encoding="ISO-8859-1" />
+  <xsl:output method="xml" indent="yes" encoding="ISO-8859-1" />
 
   <xsl:template match="html:*|html:*/@*">
     <xsl:copy>
