@@ -8,7 +8,6 @@ package org.systemsbiology.chem.sbml;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import org.systemsbiology.chem.*;
 import org.systemsbiology.util.InvalidInputException;
 import edu.caltech.sbw.SBWException;
 import edu.caltech.sbml.SBMLReader;

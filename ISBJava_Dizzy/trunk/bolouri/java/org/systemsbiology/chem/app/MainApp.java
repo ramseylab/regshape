@@ -8,7 +8,6 @@ package org.systemsbiology.chem.app;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import java.util.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
 import org.systemsbiology.gui.*;
@@ -16,7 +15,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
 
 public class MainApp
 {

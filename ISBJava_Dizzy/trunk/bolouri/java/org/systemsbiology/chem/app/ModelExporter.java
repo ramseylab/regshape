@@ -12,7 +12,6 @@ import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
 import org.systemsbiology.gui.*;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 import java.io.*;

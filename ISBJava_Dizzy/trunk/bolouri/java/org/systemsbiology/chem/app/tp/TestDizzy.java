@@ -13,9 +13,6 @@ import org.systemsbiology.chem.*;
 import org.systemsbiology.chem.sbml.*;
 import org.systemsbiology.chem.app.*;
 import java.io.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
 
 public class TestDizzy
 {

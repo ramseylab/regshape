@@ -10,11 +10,9 @@ package org.systemsbiology.chem.app;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.net.URL;
 import java.io.File;
 import javax.help.*;
-import org.systemsbiology.util.*;
 import org.systemsbiology.gui.*;
 
 public class HelpBrowser

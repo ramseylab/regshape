@@ -12,14 +12,12 @@ package org.systemsbiology.gui;
 
 import org.systemsbiology.data.*;
 import org.systemsbiology.util.*;
-import org.systemsbiology.math.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 
 public class DataSelector extends JFrame
 {
@@ -252,7 +250,7 @@ public class DataSelector extends JFrame
             {
                 if(selectedFile.exists())
                 {
-                    boolean proceed = fileChooser.handleOutputFileAlreadyExists(this, selectedFile.getName());
+                    boolean proceed = FileChooser.handleOutputFileAlreadyExists(this, selectedFile.getName());
                     if(! proceed)
                     {
                         selectedFile = null;

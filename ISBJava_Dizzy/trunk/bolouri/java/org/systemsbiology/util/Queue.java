@@ -13,7 +13,6 @@ package org.systemsbiology.util;
  * Queue interface.
  */
 
-import java.util.*;
 
 public abstract class Queue
 {

@@ -10,8 +10,6 @@ package org.systemsbiology.gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.filechooser.*;
 import java.io.File;
 
 public class FileChooser extends JFileChooser

@@ -9,11 +9,8 @@ package org.systemsbiology.chem;
  */
 
 
-import org.systemsbiology.math.*;
 import org.systemsbiology.util.*;
-
 import java.io.*;
-import java.util.*;
 
 /**
  * Writes the model output in human-readable format

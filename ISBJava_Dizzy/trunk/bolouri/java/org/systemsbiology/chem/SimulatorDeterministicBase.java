@@ -12,10 +12,6 @@ package org.systemsbiology.chem;
 import org.systemsbiology.math.*;
 import org.systemsbiology.util.*;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Random;
-
 /**
  * Simulates the dynamics of a set of coupled chemical reactions
  * described by {@link Reaction} objects using the Runge-Kutta

@@ -9,13 +9,11 @@ package org.systemsbiology.chem.app;
  */
 
 import org.systemsbiology.chem.*;
-import org.systemsbiology.util.*;
 import org.systemsbiology.gui.*;
 import java.awt.*;
 import javax.swing.event.*;
 import javax.swing.*;
 import java.io.*;
-import javax.swing.filechooser.*;
 
 public class EditorPane
 {

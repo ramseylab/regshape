@@ -9,14 +9,9 @@ package org.systemsbiology.chem.app;
  */
 
 import org.systemsbiology.chem.*;
-import org.systemsbiology.util.*;
-import java.util.*;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.table.*;
-import java.io.*;
 import java.text.*;
 
 /**

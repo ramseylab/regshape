@@ -8,7 +8,6 @@ package org.systemsbiology.math;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import org.systemsbiology.util.*;
 
 /**
  * Contains a string identifier and an (optional)

@@ -8,7 +8,6 @@ package org.systemsbiology.util;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import java.util.*;
 
 public class PriorityQueue extends Queue
 {

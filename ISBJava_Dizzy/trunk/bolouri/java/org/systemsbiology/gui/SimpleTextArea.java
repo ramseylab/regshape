@@ -8,8 +8,6 @@ package org.systemsbiology.gui;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 public class SimpleTextArea extends JTextArea

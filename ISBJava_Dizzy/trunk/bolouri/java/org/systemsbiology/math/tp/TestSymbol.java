@@ -8,7 +8,6 @@ package org.systemsbiology.math.tp;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import org.systemsbiology.math.Symbol;
 
 public class TestSymbol
 {

@@ -11,7 +11,6 @@ package org.systemsbiology.math;
 
 import java.io.*;
 import java.text.*;
-import java.util.*;
 
 /**
  * Truncates and formats a floating-point number based on a relative and

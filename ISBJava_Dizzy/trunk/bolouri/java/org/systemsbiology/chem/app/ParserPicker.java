@@ -11,7 +11,6 @@ package org.systemsbiology.chem.app;
 import java.io.File;
 import java.util.*;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;

@@ -11,10 +11,6 @@ package org.systemsbiology.chem;
 import org.systemsbiology.math.*;
 import org.systemsbiology.util.*;
 
-import java.util.*;
-import edu.cornell.lassp.houle.RngPack.*;
-import cern.jet.random.*;
-
 /**
  * Simulates the dynamics of a set of coupled chemical reactions
  * described by {@link Reaction} objects using the Gillespie stochastic

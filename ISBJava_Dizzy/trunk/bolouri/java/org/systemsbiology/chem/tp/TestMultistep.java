@@ -9,7 +9,6 @@ package org.systemsbiology.chem.tp;
  */
 
 import org.systemsbiology.chem.*;
-import org.systemsbiology.math.Expression;
 import java.io.PrintWriter;
 
 public class TestMultistep

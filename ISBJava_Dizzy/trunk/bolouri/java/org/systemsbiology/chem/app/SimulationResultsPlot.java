@@ -21,10 +21,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import javax.swing.*;
-import java.text.*;
 import javax.imageio.*;
 import java.awt.datatransfer.*;
-import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
 import org.systemsbiology.gui.*;
 

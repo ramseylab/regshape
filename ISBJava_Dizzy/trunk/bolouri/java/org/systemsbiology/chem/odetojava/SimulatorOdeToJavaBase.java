@@ -11,7 +11,6 @@ package org.systemsbiology.chem.odetojava;
 
 import java.io.*;
 import java.util.*;
-import odeToJava.*;
 import odeToJava.modules.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.math.*;

@@ -9,7 +9,6 @@ package org.systemsbiology.gui;
  */
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 
 import org.systemsbiology.util.*;

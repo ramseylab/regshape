@@ -9,7 +9,6 @@ package org.systemsbiology.util.tp;
  */
 
 import org.systemsbiology.util.*;
-import java.util.*;
 
 public class TestPriorityQueue
 {

@@ -10,7 +10,6 @@ package org.systemsbiology.chem;
 
 import java.io.PrintWriter;
 import java.text.*;
-import java.util.*;
 
 /**
  * Class for printing time-series data to a file.

@@ -9,9 +9,6 @@ package org.systemsbiology.math;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
 
 /**
  * Calculates the number of significant digits in a floating-point

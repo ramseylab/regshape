@@ -9,12 +9,10 @@ package org.systemsbiology.chem.app;
  */
 
 import javax.help.plaf.basic.*;
-import javax.help.plaf.*;
 import javax.help.*;
 import javax.help.search.SearchEvent;
 import javax.swing.*;
 import javax.swing.tree.*;
-import javax.swing.event.*;
 import java.awt.event.*;
 import java.util.Enumeration;
 import java.awt.*;

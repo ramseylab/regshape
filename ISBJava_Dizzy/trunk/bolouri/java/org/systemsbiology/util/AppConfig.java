@@ -10,7 +10,6 @@ package org.systemsbiology.util;
 
 import org.w3c.dom.*;
 import org.xml.sax.*;
-import java.util.jar.*;
 import java.io.*;
 import javax.xml.parsers.*;
 import java.net.*;

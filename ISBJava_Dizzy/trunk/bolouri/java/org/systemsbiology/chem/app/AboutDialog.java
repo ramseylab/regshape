@@ -11,9 +11,6 @@ package org.systemsbiology.chem.app;
 import org.systemsbiology.util.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
 import java.net.*;
 
 public class AboutDialog

@@ -10,7 +10,6 @@ package org.systemsbiology.chem;
 
 import org.systemsbiology.util.*;
 import org.systemsbiology.math.*;
-import java.util.*;
 import edu.cornell.lassp.houle.RngPack.*;
 import cern.jet.random.*;
 

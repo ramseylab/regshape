@@ -10,7 +10,6 @@ package org.systemsbiology.chem;
 
 import org.systemsbiology.util.*;
 import org.systemsbiology.math.*;
-import java.util.*;
 
 /**
  * Implementation of Gillespie's "Tau-Leap" simulator that
