@@ -396,7 +396,7 @@ web content!
 <isb:docsection name="Generating PDF" label="generatingpdf">
 <p>
 If you wish to be able to build PDF documentation, you will need to
-have the following software installed on your computer:
+have several additional software installed on your computer:
 <ol>
 <li><b>html2ps</b><br />
 In order to be able to convert HTML documentation to PostScript format
@@ -404,6 +404,15 @@ In order to be able to convert HTML documentation to PostScript format
 will need to have the <code>html2ps</code> program installed on your computer.
 This simple program is availble from the 
 <a href="http://www.tdb.uu.se/~jan/html2ps.html">HTML2PS Home Page</a>.
+</li>
+<li><b>htmltidy</b><br />
+In order to work around bugs in the <code>html2ps</code> program, it
+is necessary to &quot;tidy&quot; the XHTML output from the Xalan XSL
+translator, before converting the XHTML to PostScript.  This requires
+the use of the &quot;htmltidy&quot; program, available at
+<a href="http://tidy.sourceforge.net">the htmltidy home page</a>.  The
+executable program installed by this software package is called 
+&quot;<code>tidy</code>&quot;.
 </li>
 <li><b>ps2pdf</b><br />
 The <code>ps2pdf</code> program is used to convert PostScript files to
@@ -428,6 +437,45 @@ Make sure that the Ant program is capable
 </ol>
 The above three items are needed <em>only</em> if you are going to
 (re-)generate PDF documentation from the original XML/Javadoc sources.
+You will need to make sure that your <code>PATH</code> environment
+variable is updated so that the <code>html2ps</code> and <code>tidy</code>
+programs appear in your command path.  This means that when you type, for example,
+<blockquote>
+<pre>
+tidy -help
+</pre>
+</blockquote>
+at the shell prompt, you see the usage information for the <code>tidy</code>
+program:
+<blockquote>
+<pre>
+tidy [option...] [file...] [option...] [file...]
+Utility to clean up and pretty print HTML/XHTML/XML
+see http://tidy.sourceforge.net/
+...
+</pre>
+</blockquote>
+And similarly for <code>html2ps</code>, you should be able to enter
+at the command prompt:
+<blockquote>
+<pre>
+html2ps -help
+</pre>
+</blockquote>
+and you should see the following result:
+<blockquote>
+<pre>
+unknown option: -help
+Usage:
+ html2ps [-2cdDFghHLnORtTuUv] [-b URL] [-C string] [-e encoding]
+  [-f file[:file[:...]]] [-i num] [-k file] [-l lang] [-m num] [-N num]
+  [-o file] [-r path] [-s num] [-S string] [-W string] [-x num]
+  [file|URL [file|URL [...]]]
+</pre>
+</blockquote>
+The above steps will ensure that the Ant build system is able to find
+the required external programs <code>html2ps</code> and <code>tiny</code>
+that are needed in order to generate documentation in PDF format.
 </p>
 <p>
 All of the PDF documentation for the &mainGroup; software

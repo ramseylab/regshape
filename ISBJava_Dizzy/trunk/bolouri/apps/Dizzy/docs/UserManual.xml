@@ -2895,6 +2895,7 @@ exporter plug-in.  The default (if this element is not specified) is the
 <a href="#sbml">Systems Biology Markup Language</a> exporter plug-in. [optional]
     <p />
     </dd>
+  </dl>
 An example use of the <code>exportModelInstance</code> keyword is shown here:
 <blockquote>
 <pre>
@@ -2912,8 +2913,6 @@ exportModelInstance "m1": speciesPopulations "sp1", outputFile "model.isbchem",
 </blockquote>
 which will export the same model and species populations data, to the file
 <code>model.isbchem</code>, in CMDL format.
-  </dl>
-
 <p />
 </dd>
 

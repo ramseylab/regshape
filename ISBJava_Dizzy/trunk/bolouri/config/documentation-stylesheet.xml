@@ -115,7 +115,8 @@
         </h4>
       </xsl:if>
  
-      <h4>Please e-mail comments or corrections regarding this web page to: 
+      <p>
+      <b>Please e-mail comments or corrections regarding this web page to: 
         <code>
           <xsl:if test="/isb:document/isb:docowneremail != ''">
             <xsl:value-of select="isb:docowneremail" />
@@ -124,7 +125,8 @@
             &mainGroupEmailSafe;
           </xsl:if>
         </code>
-      </h4>  
+      </b>
+      </p>  
 
     </body>
   </xsl:template>

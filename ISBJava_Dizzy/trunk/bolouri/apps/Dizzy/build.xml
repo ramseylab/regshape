@@ -42,6 +42,18 @@
   </target>
 
   <target name="convertHtmlToPDF">
+
+    <apply executable="${binHtmlTidy}" failonerror="true">
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.html" />
+      </fileset>
+      <arg value="-modify" />
+      <arg value="-quiet" />
+      <arg value="-xml" />
+      <arg value="-asxhtml" />
+      <srcfile />
+    </apply>
+
     <apply executable="${binHtml2PS}" failonerror="true" dest="${app.webDir}/docs">
       <mapper type="regexp" from="^(.*)\.html$$" to="\1\.ps" />
       <fileset dir="${app.webDir}/docs">
