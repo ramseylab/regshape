@@ -44,6 +44,31 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.3.0/&installerDownloadRelURL;">1.3.0</a></td>
+<td>2004/01/23</td>
+<td>
+<ul>
+<li>Added a macro feature to the Chemical Model Definition Language (CMDL).</li>
+<li>Improved the efficiency of the first pass of the command-language parser.  Improved
+syntax error detection in the command-language parser.</li>
+<li>Fixed a bug in the SBML parser where
+it was not catching the case of a parameter defined without any value (or parameter rule) being provided.
+This was leading to the application aborting unexpectedly, when a SBML file is loaded containing this
+type of semantic error.</li>
+<li>Added support to the SBML reader for reading an SBML model containing a reaction with an intrinsic 
+time delay.  The <code>kineticLaw</code> must conform to a strict format rule.  The application
+can now export (to SBML) a model containing a time delay, and read the model back into the simulator.</li>
+<li>Improved error handling by adding debugging code to the console, in cases of 
+exceptions.  The application should no longer abort when an unexpected exception occurs in processing
+a model.</li>
+<li>Modified the SBML writer so that it can properly export a model containing a reaction
+with an intrinsic time delay.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.3.0/&installerDownloadRelURL;">1.3.0</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.2.0/&installerDownloadRelURL;">1.2.0</a></td>
 <td>2004/01/13</td>
 <td>

@@ -38,6 +38,53 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.3.0/&installerDownloadRelURL;">1.3.0</a></td>
+<td>2004/01/23</td>
+<td>
+<ul>
+<li>Added a macro feature to the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>.</li>
+<li>Refactored the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code> class 
+to use the <code>java.io.StreamTokenizer</code> for initial tokenization pass.  Improved syntax error
+detection by rewinding the token stream completely to the beginning of the statement, 
+before calling the handler function for a statement.</li>
+<li>Fixed a bug in the <code>org.systemsbiology.chem.scripting.ModelBuilderMarkupLanguage</code> where
+it was not catching the case of a parameter defined without any value (or parameter rule) being provided.
+This was leading to a <code>NullPointerException</code> within the <code>org.systemsbiology.chem.Model</code>
+class.</li>
+<li>Added support to the 
+<code>org.systemsbiology.chem.scripting.ModelBuilderMarkupLanguage</code> 
+for reading an SBML model containing a reaction with an intrinsic time delay.</li>
+<li>Added a function <code>isFunctionName()</code> to the <code>org.systemsbiology.math.Expression</code>
+class, that is used to determine if a given string matches any known built-in mathematical function
+names.</li>
+<li>Moved the <code>isValidSymbol()</code> method from the
+<code>org.systemsbiology.math.Symbol</code> class to the
+<code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>, which moves
+the naming policy out of the base <code>Symbol</code> class and into a more appropriate
+layer; this change was also to facilitate the macro definition feature in the CMDL.</li>
+<li>Modified the <code>org.systemsbiology.math.SymbolEvaluatorHashMap</code> to add a new
+protected <code>getValue(String)</code> method, which is used by the 
+<code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code> class in
+processing macro references.</li>
+<li>Improved error handling in the <code>org.systemsbiology.chem.app.MainApp</code> class,
+by adding debugging code to standard error in cases of exceptions.  Removed an unneeded exit()
+method from same class.</li>
+<li>Fixed the <code>org.systemsbiology.chem.app.ModelProcessor</code> so that it no longer
+calls <code>System.exit()</code> when an error is detected.</li>
+<li>Removed some unneeded code from <code>org.systemsbiology.chem.Simulator</code>,
+pertaining to the handling of multi-step or delayed reactions.</li>
+<li>Modified the <code>org.systemsbiology.chem.scripting.ModelExporterMarkupLanguage</code>
+so that it translates illegal "<code>::</code>" characters in symbol names, to permitted
+"<code>__</code>" characters.  Fixed a bug where delayed reactions were not being
+written to the <code>kineticLaw</code> field using the "<code>delay(species,time)</code>"
+construct.</li>
+<li>Modified the <code>org.systemsbiology.chem.scripting.ModelExporterMarkupLanguage</code>
+so that it can properly export a model containing a reaction with an intrinsic time delay.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.2.0/&installerDownloadRelURL;">1.2.0</a></td>
 <td>2004/01/13</td>
 <td>
