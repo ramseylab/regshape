@@ -10,11 +10,7 @@ package org.systemsbiology.chem;
 
 import java.util.*;
 
-import org.systemsbiology.data.AbstractComparator;
-import org.systemsbiology.data.ListQueue;
-import org.systemsbiology.data.PriorityQueue;
-import org.systemsbiology.data.Queue;
-import org.systemsbiology.data.SlidingWindowTimeSeriesQueue;
+import org.systemsbiology.data.*;
 import org.systemsbiology.math.*;
 import org.systemsbiology.util.*;
 import cern.jet.random.*;
