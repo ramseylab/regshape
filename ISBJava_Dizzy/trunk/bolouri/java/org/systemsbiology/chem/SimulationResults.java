@@ -8,7 +8,8 @@ package org.systemsbiology.chem;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import java.util.Date;
+import java.util.*;
+import java.text.*;
 
 /**
  * Data structure that contains the results of a simulation.
@@ -27,6 +28,7 @@ public final class SimulationResults
     private Object []mResultsSymbolValues;
     private double []mResultsFinalSymbolFluctuations;
     private Date mResultsDateTime;
+    private String mModelName;
 
     public SimulationResults()
     {
@@ -37,6 +39,17 @@ public final class SimulationResults
         mResultsTimeValues = null;
         mResultsSymbolValues = null;
         mResultsFinalSymbolFluctuations = null;
+        mModelName = null;
+    }
+
+    public void setModelName(String pModelName)
+    {
+        mModelName = pModelName;
+    }
+
+    public String getModelName()
+    {
+        return(mModelName);
     }
 
     public double []getResultsFinalSymbolFluctuations()
@@ -145,6 +158,36 @@ public final class SimulationResults
     public Date getResultsDateTime()
     {
         return(mResultsDateTime);
+    }
+
+    private static final int LENGTH_ABBREV_MODEL_NAME = 10;
+
+    private static String generateSimulationResultsLabel(String pModelName,
+                                                         String pSimulatorAlias,
+                                                         Date pResultsDateTime)
+    {
+        DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT,
+                                                   Locale.FRANCE);
+        String timeString = df.format(pResultsDateTime);
+        df = DateFormat.getDateInstance(DateFormat.SHORT);
+        String dateString = df.format(pResultsDateTime);
+        String abbrevModelName = pModelName;
+        if(pModelName.length() > LENGTH_ABBREV_MODEL_NAME)
+        {
+            abbrevModelName = abbrevModelName.substring(0,LENGTH_ABBREV_MODEL_NAME - 1);
+        }
+        StringBuffer retStr = new StringBuffer();
+        retStr.append("[" + dateString + " " + timeString + "] ");
+        retStr.append("[" + abbrevModelName + "] ");
+        retStr.append("[" + pSimulatorAlias + "]");
+        return(retStr.toString());
+    }
+
+    public String createLabel()
+    {
+        return(generateSimulationResultsLabel(mModelName,
+                                              mSimulatorAlias,
+                                              mResultsDateTime));
     }
 }
 
