@@ -84,6 +84,17 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
 
         double initialStepSize = (pEndTime - pStartTime)/((double) DEFAULT_MIN_NUM_STEPS);
 
+        Double minDelayObj = getMinDelayedReactionDelay();
+        double minDelay = Double.MAX_VALUE;
+        if(null != minDelayObj)
+        {
+            minDelay = 0.1 * minDelayObj.doubleValue();
+        }
+
+        if(initialStepSize > minDelay)
+        {
+            initialStepSize = minDelay;
+        }
 
         Double maxAllowedRelativeErrorObj = pSimulatorParameters.getMaxAllowedRelativeError();
         if(null == maxAllowedRelativeErrorObj)
