@@ -63,7 +63,7 @@ public class CytoscapeViewer
             }
             InputStream jnlpFileInputStream = jnlpFileResource.openStream();
             
-            File tempJNLPFile = File.createTempFile("cytoscpe", ".jnlp");
+            File tempJNLPFile = File.createTempFile("cytoscape", ".jnlp");
             FileWriter tempJNLPFileWriter = new FileWriter(tempJNLPFile);
             PrintWriter tempJNLPPrintWriter = new PrintWriter(tempJNLPFileWriter);
             String tempJNLPFileURLString = FileUtils.createFileURL(tempJNLPFile);
