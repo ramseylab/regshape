@@ -52,7 +52,7 @@ public class QuantileNormalizer
     private DoubleMatrix2D mRawObservationsFixedForScaling;
     private DoubleMatrix2D mRawObservationsFilledIn;
     private DoubleMatrix2D mRescaledRawObservations;
-    private DoubleArrayList mColumnObservations;
+    private DoubleArrayList mRowObservations;
     private IntArrayList mColumnMissingObservationsIndices;
     private DoubleMatrix1D mAverageObservations;
     private int mNumColumns;
@@ -60,7 +60,9 @@ public class QuantileNormalizer
     private Object []mColumnIndices;
     private ElementComparator mElementComparator;
     private DoubleMatrix2D mNormalizedObservations;
-    private DoubleMatrix1D mRawColumnMediansNonNegative;
+    private DoubleMatrix1D mColumnMedians;
+    private DoubleMatrix1D mRowMedians;
+    private Object []mRanks;
     
     static class ElementComparator implements IntComparator
     {
@@ -92,7 +94,7 @@ public class QuantileNormalizer
         mNumColumns = 0;
         mNumRows = 0;
         mRawObservationsFilledIn = null;
-        mColumnObservations = null;
+        mRowObservations = null;
         mColumnMissingObservationsIndices = null;
         mRescaledRawObservations = null;
         mAverageObservations = null;
@@ -100,8 +102,10 @@ public class QuantileNormalizer
         mNormalizedObservations = null;
         mRawObservations = null;
         mRawObservationsFixedForScaling = null;
-        mRawColumnMediansNonNegative = null;
+        mColumnMedians = null;
+        mRanks = null;
         mElementComparator = new ElementComparator();
+        mRowMedians = null;
     }
 
     private void initializeIfNecessary(ObjectMatrix2D pRawObservations, ObjectMatrix2D pNormalizedObservations)
@@ -138,24 +142,26 @@ public class QuantileNormalizer
         mNumColumns = pNumColumns;
         mRawObservationsFilledIn = DoubleFactory2D.dense.make(pNumRows, pNumColumns);
         mRescaledRawObservations = DoubleFactory2D.dense.make(pNumRows, pNumColumns);
-        mColumnObservations = new DoubleArrayList();
+        mRowObservations = new DoubleArrayList();
         mColumnMissingObservationsIndices = new IntArrayList();
         mAverageObservations = DoubleFactory1D.dense.make(pNumRows);
         mRawObservationsFixedForScaling = DoubleFactory2D.dense.make(pNumRows, pNumColumns);
-        mRawColumnMediansNonNegative = DoubleFactory1D.dense.make(pNumColumns);
+        mColumnMedians = DoubleFactory1D.dense.make(pNumColumns);
         mNormalizedObservations = DoubleFactory2D.dense.make(pNumRows, pNumColumns);
         mColumnIndices = new Object[pNumColumns];
+        mRanks = new Object[pNumColumns];
+        mRowMedians = DoubleFactory1D.dense.make(pNumRows);
         for(int j = pNumColumns; --j >= 0; )
         {
             mColumnIndices[j] = new int[pNumRows];
+            mRanks[j] = new int[pNumRows];
         }
     }
     
-    
-    private void unscaleRawColumnMedians(QuantileNormalizationScale pScale)
+    private void unscaleRawRowMedians(QuantileNormalizationScale pScale)
     {
-        DoubleMatrix1D rawColumns = mRawColumnMediansNonNegative;
-        int numColumns = rawColumns.size();
+        DoubleMatrix1D rawRowMedians = mRowMedians;
+        int numRows = rawRowMedians.size();
         double value = 0.0;
         boolean doExp = false;
         if(pScale.equals(QuantileNormalizationScale.LOGARITHM))
@@ -171,9 +177,9 @@ public class QuantileNormalizer
             throw new IllegalArgumentException("unknown quantile normalization scale: " + pScale.getName());
         }
         double unscaledVal = 0.0;
-        for(int j = numColumns; --j >= 0; )
+        for(int i = numRows; --i >= 0; )
         {
-            value = rawColumns.get(j);
+            value = rawRowMedians.get(i);
             if(doExp)
             {
                 unscaledVal = Math.pow(2.0, value);
@@ -182,39 +188,71 @@ public class QuantileNormalizer
             {
                 unscaledVal = value;
             }
-            rawColumns.set(j, unscaledVal);
+            rawRowMedians.set(i, unscaledVal);
         }
     }
-
+    
     // mAverageObservations => mNormalizedObservations
     private void normalizeObservations()
     {
         int numColumns = mRescaledRawObservations.columns();
         int numRows = mRescaledRawObservations.rows();
         int j = 0;
-        int i = 0;
-        int index = 0;
-        int []columnIndices = null;
+        int []columnRanks = null;
         double value = 0.0;
+        Object []columnRanksArray = mRanks;
         Object []columnIndicesArray = mColumnIndices;
         DoubleMatrix1D rowAverages = mAverageObservations;
         DoubleMatrix2D normalizedObservations = mNormalizedObservations;
         ObjectMatrix2D rawObservations = mRawObservations;
         double rawObs = 0.0;
+        double lastObs = 0.0;
+        Double rawObsObj = null;
+        int rank = 0;
+        int []columnIndices = null;
+        double rescaledRawObservation = 0.0;
+        double lastRescaledRawObservation = 0.0;
+        double obsSum = 0.0;
+        int obsCtr = 0;
+        double avg = 0.0;
+        int k = 0;
+        int index = 0;
         for(j = numColumns; --j >= 0; )
         {
+            columnRanks = (int []) columnRanksArray[j];
             columnIndices = (int []) columnIndicesArray[j];
-            for(i = numRows; --i >= 0; )
+            for(rank = 0; rank < numRows + 1; ++rank)
             {
-                index = columnIndices[i];
-                value = rowAverages.get(i);
-                if(null != mRawObservations.get(index, j))
+                if(rank < numRows)
                 {
-                    normalizedObservations.set(index, j, value);
+                    rescaledRawObservation = mRescaledRawObservations.get(rank, j);
                 }
+
+                if(rank > 0)
+                {
+                    obsSum += rowAverages.get(rank-1);
+                    ++obsCtr;
+                    if(lastRescaledRawObservation != rescaledRawObservation || rank == numRows)
+                    {
+                        avg = obsSum / ((double) obsCtr);
+                        
+                        for(k = 0; k < obsCtr; ++k)
+                        {
+                            index = columnIndices[rank-k-1];
+                            normalizedObservations.set(index, j, avg);
+                        }
+                        obsSum = 0.0;
+                        obsCtr = 0;
+                    }
+                }
+                lastRescaledRawObservation = rescaledRawObservation;
             }
         }
+        
     }
+    
+    
+
     
     // mLogRawObservations -> mAverageObservations
     private void getRowAverages()
@@ -253,18 +291,28 @@ public class QuantileNormalizer
         }
         ElementComparator elementComparator = mElementComparator;
         Object []columnIndicesArray = mColumnIndices;
-        DoubleMatrix2D logRawObservations = mRescaledRawObservations;
+        DoubleMatrix2D rescaledRawObservations = mRescaledRawObservations;
+        int []columnRanks = null;
+        int index = 0;
+        int rank = 0;
         for(j = numColumns; --j >= 0; )
         {        
             columnIndices = (int []) columnIndicesArray[j];
-            columnMatrix = logRawObservations.viewColumn(j);
+            columnMatrix = rescaledRawObservations.viewColumn(j);
             elementComparator.setColumnValues(columnMatrix);
             Sorting.mergeSort(columnIndices, 0, numRows, elementComparator);
             columnMatrix.assign(cern.colt.matrix.doublealgo.Sorting.mergeSort.sort(columnMatrix));
+            columnRanks = (int []) mRanks[j];
+            for(i = 0; i < numRows; ++i)
+            {
+                index = columnIndices[i];
+                rank = i;
+                columnRanks[index] = rank;
+            }
         }
     }
         
-    // mRawObservationsFilledIn => mLogRawObservations
+    // mRawObservationsFilledIn => mRescaledRawObservations
     public void rescaleRawObservations(QuantileNormalizationScale pScale)
     {
         int numColumns = mRawObservationsFilledIn.columns();
@@ -328,10 +376,10 @@ public class QuantileNormalizer
         double oldVal = 0.0;
         double avgVal = 0.0;
         Double rawObs = null;
-        for(j = numColumns; --j >= 0; )
+        for(i = numRows; --i >= 0; )
         {
-            median = mRawColumnMediansNonNegative.get(j);
-            for(i = numRows; --i >= 0; )
+            median = mRowMedians.get(i);
+            for(j = numColumns; --j >= 0; )
             {
                 rawObs = (Double) mRawObservations.get(i, j);
                 if(null != rawObs)
@@ -376,29 +424,31 @@ public class QuantileNormalizer
     }
     
     // [mNormalizedObservations|mRawObservationsNonNegative] -> mRawColumnMediansNonNegative
-    private void computeColumnMediansForRawObservationsFixedForScaling(DoubleMatrix2D pObs)
+    private void computeRowMediansForRawObservationsFixedForScaling(DoubleMatrix2D pObs)
     {
         int numColumns = pObs.columns();
         int numRows = pObs.rows();
-        DoubleArrayList columnObs = mColumnObservations;
+        DoubleArrayList rowObs = mRowObservations;
         double median = 0.0;
         Double obsObj = null;
         int i = 0;
-        for(int j = numColumns; --j >= 0; )
+        int j = 0;
+        for(i = numRows; --i >= 0; )
         {
-            columnObs.clear();
-            for(i = numRows; --i >= 0; )
+            rowObs.clear();
+            for(j = numColumns; --j >= 0; )
             {
                 obsObj = (Double) mRawObservations.get(i, j);
                 if(null != obsObj)
                 {
-                    columnObs.add(pObs.get(i, j));
+                    rowObs.add(pObs.get(i, j));
                 }
             }
-            median = Descriptive.median(columnObs);
-            mRawColumnMediansNonNegative.set(j, median);
+            median = Descriptive.median(rowObs);
+            mRowMedians.set(i, median);
         }
     }
+    
     
     // mRawObservations => mRawObservationsFixedForScaling
     private void fixRawObservationsForScaling(boolean pFixNonpositiveValues, QuantileNormalizationScale pScale)
@@ -497,7 +547,7 @@ public class QuantileNormalizer
 
         fixRawObservationsForScaling(fixNonpositiveValues, scale);
         
-        computeColumnMediansForRawObservationsFixedForScaling(mRawObservationsFixedForScaling);
+        computeRowMediansForRawObservationsFixedForScaling(mRawObservationsFixedForScaling);
         fillInMissingObservations(false);
         
         boolean computeErrors = false;
@@ -526,8 +576,8 @@ public class QuantileNormalizer
 //            System.out.println("sorted log obs:\n" + mLogRawObservations.toString());
             getRowAverages();
             normalizeObservations();
-            computeColumnMediansForRawObservationsFixedForScaling(mNormalizedObservations);
-            unscaleRawColumnMedians(scale);
+            computeRowMediansForRawObservationsFixedForScaling(mNormalizedObservations);
+            unscaleRawRowMedians(scale);
             errSum = fillInMissingObservations(computeErrors);
             ++iterationCtr;
         }
