@@ -44,11 +44,26 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
     /*========================================*
      * accessor/mutator methods
      *========================================*/
-    public void setErrorTolerance(double pErrorTolerance)
+
+    /**
+     * Set the error tolerance of the ODE simulator, for
+     * each time-step.  By default this is set to 0.01.
+     * The tolerance specified must be a positive number.
+     */
+    public void setErrorTolerance(double pErrorTolerance) throws IllegalArgumentException
     {
+        if(pErrorTolerance <= 0.0)
+        {
+            throw new IllegalArgumentException("invalid error tolerance");
+        }
         mErrorTolerance = pErrorTolerance;
     }
 
+    /**
+     * Returns the error tolerance of the ODE simulator, for
+     * each time-step.  By default this is set to 0.01.
+     * The tolerance will always be a positive number.
+     */
     public double getErrorTolerance()
     {
         return(mErrorTolerance);
@@ -287,7 +302,7 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
 
     
 
-    // modifies first argument
+    // modifies second argument
     private void vectorAddFloatingSpecies(Vector pFloatingSpecies, 
                                           SpeciesPopulations operand, 
                                           SpeciesPopulations addToOperand) throws DataNotFoundException
@@ -302,7 +317,7 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
         }
     }
 
-    // modifies first argument
+    // modifies second argument
     private void scalarMultFloatingSpecies(Vector pFloatingSpecies, 
                                            SpeciesPopulations operand, 
                                            double multiplier) throws DataNotFoundException
@@ -316,7 +331,7 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
         }
     }
 
-    // modifies first argument
+    // modifies second argument
     private void absFloatingSpecies(Vector pFloatingSpecies, 
                                     SpeciesPopulations operand) throws DataNotFoundException
     {
@@ -338,12 +353,11 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
         {
             String speciesName = (String) pFloatingSpecies.elementAt(speciesCtr);
             double operandValue = operand.getSpeciesPopulation(speciesName);
-//            System.out.println(pLabel + ";  species: " + speciesName + "; value: " + operandValue);
         }        
     }
 
 
-    // modifies first argument
+    // modifies second argument
     private void scalarAddFloatingSpecies(Vector pFloatingSpecies, 
                                            SpeciesPopulations operand, 
                                            double adder) throws DataNotFoundException
@@ -394,7 +408,6 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
             {
                 maxErr = err;
             }
-//            System.out.println("species: " + speciesName + "; y1val: " + y1val + "; y2val: " + y2val + "; yscalval: " + yscalval + "; err: " + err);
         }
 
         
@@ -427,9 +440,6 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
             reaction.adjustSpeciesPopulationForReaction(pDerivSpeciesPopulations,
                                                         reactionRate);
         }
-
-//        printFloatingSpecies("SpeciesPops", pFloatingSpecies, pSpeciesPopulations);
-//        printFloatingSpecies("Derivatives", pFloatingSpecies, pDerivSpeciesPopulations);
     }
 
     private void rk4step(Vector pFloatingSpecies,
@@ -551,7 +561,10 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
 
             maxErr = computeError(ymid2, yfull, pSpeciesPopulationScales, pFloatingSpecies);
             
+// -------------------------------------------------------------------------------
+// UNCOMMENT THIS FOR DEBUGGING PURPOSES:
 //            System.out.println("at time: " + time + "; using stepsize: " + stepSize + "; maxerr: " + maxErr);
+// -------------------------------------------------------------------------------
 
             double errRatio = maxErr / pErrorTolerance;
 
@@ -756,7 +769,7 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
 
    /**
      * This method calls <a href="#evolve"><code>evolve()</code></a> in order
-     * to run a stochastic simulation.  The species populations are sampled
+     * to run a deterministic simulation.  The species populations are sampled
      * on even time intervals equal to the <code>pStopTime</code> variable
      * divided by the number of entries in the <code>pPopulationSamples</code>
      * array.  
@@ -801,7 +814,7 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
 
 
     /**
-     * Conducts a stochastic simulation of the specified {@link Model} with 
+     * Conducts a deterministic simulation of the specified {@link Model} with 
      * the specified {@linkplain SpeciesPopulations inital data}, for the
      * time range from 0 to <code>pStopTime</code>, in units of the inverse
      * of the reaction parameters specified for each of the reactions with the 
@@ -870,7 +883,7 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
 
     /**
      * <a name="evolve"></a>
-     * Conducts a stochastic simulation of the specified {@link Model} with 
+     * Conducts a deterministic simulation of the specified {@link Model} with 
      * the specified {@linkplain SpeciesPopulations inital data}, for the
      * time range from 0 to <code>pStopTime</code>, in units of the inverse
      * of the reaction parameters specified for each of the reactions with the 
