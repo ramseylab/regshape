@@ -16,6 +16,7 @@ import java.awt.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.*;
+
 import java.io.*;
 
 public class EditorPane
@@ -349,6 +350,7 @@ public class EditorPane
             {
                 saveEditBufferToFile(fileName);
                 mMainApp.updateMenus();
+                setCurrentDirectory(outputFile.getParentFile());
             }        
         }
     }
@@ -472,25 +474,71 @@ public class EditorPane
         fileEditorTextArea.replaceRange(null, 0, textLen);
     }
 
+    private IModelBuilder queryModelBuilder(String pFileName)
+    {
+        IModelBuilder modelBuilder = null;
+        ParserPicker parserPicker = new ParserPicker(mMainFrame);
+        String parserAlias = null;
+
+        // if file name is not null, attempt to get parser from file name
+        if(null != pFileName)
+        {
+            parserAlias = parserPicker.selectParserAliasFromFileName(pFileName);
+        }
+        else
+        {
+            parserAlias = parserPicker.selectParserAliasManually();
+        }
+
+        if(null != parserAlias)
+        {
+            ClassRegistry modelBuilderRegistry = mMainApp.getModelBuilderRegistry();
+            try
+            {
+                modelBuilder = (IModelBuilder) modelBuilderRegistry.getInstance(parserAlias);
+            }
+            catch(DataNotFoundException e)
+            {
+                throw new IllegalStateException("error creating model builder for alias: " + parserAlias);
+            }
+            if(null != modelBuilder)
+            {
+                setModelBuilder(modelBuilder);
+                setParserAliasLabel(parserAlias);
+            }
+        }    
+        return modelBuilder;
+    }
+    
     public Model processModel()
     {
         Model model = null;
         try
         {
             IModelBuilder modelBuilder = getModelBuilder();
-            assert (null != modelBuilder) : "null model builder";
-            
-            String modelText = getEditorPaneTextArea().getText();
-            byte []bytes = modelText.getBytes();
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-            
             String fileName = getFileName();
-            File file = new File(fileName);
-            File dir = file.getParentFile();
-            IncludeHandler includeHandler = new IncludeHandler();
-            includeHandler.setDirectory(mCurrentDirectory);
-
-            model = modelBuilder.buildModel(inputStream, includeHandler);
+            if(null == modelBuilder)
+            {
+                modelBuilder = queryModelBuilder(fileName);
+            }
+            if(null == modelBuilder)
+            {
+                JOptionPane.showMessageDialog(mMainFrame,
+                        "Your model processing has been cancelled",
+                        "Model processing cancelled",
+                        JOptionPane.INFORMATION_MESSAGE);                
+            }
+            else
+            {
+                String modelText = getEditorPaneTextArea().getText();
+                byte []bytes = modelText.getBytes();
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+                
+                IncludeHandler includeHandler = new IncludeHandler();
+                includeHandler.setDirectory(mCurrentDirectory);
+                
+                model = modelBuilder.buildModel(inputStream, includeHandler);
+            }
         }
         
         catch(InvalidInputException e)
@@ -555,14 +603,16 @@ public class EditorPane
             
         try
         {
-            ParserPicker parserPicker = new ParserPicker(mMainFrame);
-            String parserAlias = parserPicker.selectParserAliasFromFileName(pFileName);
-
-            if(null != parserAlias)
+            IModelBuilder modelBuilder = queryModelBuilder(pFileName);
+            if(null == modelBuilder)
             {
-                ClassRegistry modelBuilderRegistry = mMainApp.getModelBuilderRegistry();
-                IModelBuilder modelBuilder = (IModelBuilder) modelBuilderRegistry.getInstance(parserAlias);
-                setModelBuilder(modelBuilder);
+                JOptionPane.showMessageDialog(mMainFrame,
+                        "Your file loading has been cancelled",
+                        "File loading cancelled",
+                        JOptionPane.INFORMATION_MESSAGE);                
+            }
+            else
+            {
                 InputStream inputStream = new FileInputStream(file);
                 BufferedReader bufferedReader = modelBuilder.getBufferedReader(inputStream);
                 
@@ -589,7 +639,6 @@ public class EditorPane
                 }
 
                 setFileNameLabel(pFileName);
-                setParserAliasLabel(parserAlias);
                 setBufferDirty(false);
                 setTimestampLastChange(System.currentTimeMillis());
                 mMainApp.updateMenus();
