@@ -17,6 +17,7 @@ public abstract class Simulator
 {
     private static final int NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION = 15;
     public static final int MIN_NUM_TIME_POINTS = 2;
+    protected static final int NUM_ITERATIONS_CHECK_CANCELLED = 1000;
 
     protected String []mDynamicSymbolNames;
     protected double []mDynamicSymbolValues;
@@ -32,7 +33,7 @@ public abstract class Simulator
     protected DelayedReactionSolver []mDelayedReactionSolvers;
     protected Species []mDynamicSymbols;
     protected Object []mDynamicSymbolAdjustmentVectors;
-
+    private int mIterationCtr;
     protected boolean mInitialized;
 
     public static final int NULL_REACTION = -1;
@@ -99,6 +100,7 @@ public abstract class Simulator
         clearDelayedReactionSolvers();
         clearExpressionValueCaches();
         mSymbolEvaluator.setTime(pStartTime);
+        mIterationCtr = 0;
     }
 
 
@@ -191,19 +193,12 @@ public abstract class Simulator
             double delay = 0.0;
             if(numSteps > 0)
             {
-//                delayedReaction.setNumSteps(numSteps);
                 delay = (numSteps - 1) / rate;
             }
             else
             {
                 delay = pReaction.getDelay();
-//                if(delay / rate > 1.0)
-//                {
-//                    // :BUGBUG: why are we setting number of steps here?
-//                    delayedReaction.setNumSteps( (int) (delay / rate) );
-//                }
             }
-//            delayedReaction.setDelay(delay);
 
             DelayedReactionSolver solver = new DelayedReactionSolver(reactant,
                                                                      intermedSpecies,
@@ -406,6 +401,7 @@ public abstract class Simulator
         mDelayedReactionSolvers = null;
         mDynamicSymbols = null;
         mDynamicSymbolAdjustmentVectors = null;
+        mIterationCtr = 0;
     }
 
     public Simulator()
@@ -656,5 +652,16 @@ public abstract class Simulator
             
             MathFunctions.vectorAdd(pTempDynamicSymbolValues, pDynamicSymbolDerivatives, pDynamicSymbolDerivatives);
         }
+    }
+
+    protected final boolean incrementIterationCounterAndCheckForCancellation()
+    {
+        boolean cancelled = false;
+        ++mIterationCtr;
+        if(0 == (mIterationCtr % NUM_ITERATIONS_CHECK_CANCELLED))
+        {
+            cancelled = checkSimulationControllerStatus();
+        }
+        return(cancelled);
     }
 }
