@@ -64,7 +64,10 @@ Environment (JRE) version 1.4 or newer, or an equivalent JRE.  For
 more information about the &appName; system, please consult the 
 <a href="docs/UserManual.html">&appName; User Manual</a>.
 </p>
-
+<p>
+Coming soon:  Pointillist will be made available as a
+<a href="http://www.cytoscape.org">Cytoscape</a> plug-in.
+</p>
 <p>
 <b>Current version:</b>  <a href="docs/VersionHistory.html">&appVersion;</a>, released on &appDate;
 </p>
