@@ -196,18 +196,21 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
                                                                                                  mDynamicSymbols,
                                                                                                  mDynamicSymbolAdjustmentVectors,
                                                                                                  mSymbolEvaluator);
-                int numRequestedSymbols = pRequestedSymbolNames.length;
-                finalSpeciesFluctuations = new double[numRequestedSymbols];
-                for(int i = 0; i < numRequestedSymbols; ++i)
+                if(null != allFinalSpeciesFluctuations)
                 {
-                    Symbol requestedSymbol = requestedSymbols[i];
-                    int arrayIndex = requestedSymbol.getArrayIndex();
-                    finalSpeciesFluctuations[i] = 0.0;
-                    if(Symbol.NULL_ARRAY_INDEX != arrayIndex)
+                    int numRequestedSymbols = pRequestedSymbolNames.length;
+                    finalSpeciesFluctuations = new double[numRequestedSymbols];
+                    for(int i = 0; i < numRequestedSymbols; ++i)
                     {
-                        if(null != requestedSymbol.getDoubleArray())
+                        Symbol requestedSymbol = requestedSymbols[i];
+                        int arrayIndex = requestedSymbol.getArrayIndex();
+                        finalSpeciesFluctuations[i] = 0.0;
+                        if(Symbol.NULL_ARRAY_INDEX != arrayIndex)
                         {
-                            finalSpeciesFluctuations[i] = allFinalSpeciesFluctuations[arrayIndex];
+                            if(null != requestedSymbol.getDoubleArray())
+                            {
+                                finalSpeciesFluctuations[i] = allFinalSpeciesFluctuations[arrayIndex];
+                            }
                         }
                     }
                 }
