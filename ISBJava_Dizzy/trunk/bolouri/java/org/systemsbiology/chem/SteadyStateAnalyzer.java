@@ -14,6 +14,17 @@ import cern.colt.matrix.*;
 import cern.colt.matrix.linalg.*;
 import java.util.*;
 
+/**
+ * Class providing functions for analyzing the
+ * steady-state behavior of a {@link Model}.  To use
+ * this class, you must have previously run a
+ * simulation using a {@link ISimulator}, and have
+ * references to the {@link SymbolEvaluatorChem} object
+ * that will return the final values for species concentrations
+ * in the model, resulting from the simulation. 
+ *
+ * @author Stephen Ramsey
+ */
 public final class SteadyStateAnalyzer
 {
     private Model mModel;
@@ -50,8 +61,6 @@ public final class SteadyStateAnalyzer
                 partialsi[j] = reaction.computeRatePartialDerivative(reactionRateExpression,
                                                                      species,
                                                                      pSymbolEvaluator);
-//                System.out.println("a[" + j + "] = " + reactionRateExpression);
-//                System.out.println("x[" + i + "] = " + species.getName());
             }
         }
 
@@ -75,9 +84,16 @@ public final class SteadyStateAnalyzer
         return(jac);
     }
 
+    /**
+     * For the supplied reactions and species, estimates the
+     * steady-state species fluctuations in the model.  If the
+     * estimate is unsuccessful (e.g., because of the absence of 
+     * an eigenvalue with negative real part), null is returned.
+     */
     public static double []estimateSpeciesFluctuations(Reaction []pReactions,
                                                        Species []pSpecies,
                                                        Object []pReactionSpeciesAdjustmentVectors,
+                                                       double []pReactionProbabilities,
                                                        SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
     {
         int numReactions = pReactions.length;
@@ -105,14 +121,27 @@ public final class SteadyStateAnalyzer
         DoubleMatrix1D u = eigenvalueDecomposition.getRealEigenvalues();
         DoubleMatrix2D T = df.make(numSpecies, numSpecies);
 
+        double eigenvalueRealPart = 0.0;
+        double matElem = 0.0;
+        boolean gotNegEigenvalue = false;
         for(int i = 0; i < numSpecies; ++i)
         {
-            double eigenvalueRealPart = u.get(i);
-            if(eigenvalueRealPart > 0.0)
+            eigenvalueRealPart = u.get(i);
+            if(eigenvalueRealPart < 0.0)
             {
-                return(null);
+                matElem = 1.0/Math.sqrt(Math.abs(eigenvalueRealPart));
+                gotNegEigenvalue = true;
             }
-            T.set(i, i, 1.0/Math.sqrt(Math.abs(eigenvalueRealPart)));
+            else
+            {
+                matElem = 0.0;
+            }
+            T.set(i, i, matElem);
+        }
+
+        if(! gotNegEigenvalue)
+        {
+            return(null);
         }
 
         DoubleMatrix2D Pinv = algebra.inverse(P);
@@ -140,59 +169,8 @@ public final class SteadyStateAnalyzer
             }
         }
         
-//         DoubleMatrix2D UTreal = df.make(numSpecies, numSpecies, 0.0);
-//         DoubleMatrix2D UTimag = df.make(numSpecies, numSpecies, 0.0);
-//         DoubleMatrix2D Ureal = df.make(numSpecies, numSpecies, 0.0);
-//         DoubleMatrix2D Uimag = df.make(numSpecies, numSpecies, 0.0);
-        
-//         DoubleMatrix1D u_imag = eigenvalueDecomposition.getImagEigenvalues();
-
-//         double norm = 1.0/Math.sqrt(2.0);
-
-//         for(int i = 0; i < numSpecies; ++i)
-//         {
-//             double imaginary_part_of_ith_eigenvalue = u_imag.get(i);
-//             if(imaginary_part_of_ith_eigenvalue > 0.0)
-//             {
-//                 UTreal.set(i, i, norm);
-//                 UTreal.set(i + 1, i, norm);
-//                 UTreal.set(i, i + 1, 0.0);
-//                 UTreal.set(i + 1, i + 1, 0.0);
-                
-//                 UTimag.set(i, i, 0.0);
-//                 UTimag.set(i + 1, i, 0.0);
-//                 UTimag.set(i, i + 1, -1.0*norm);
-//                 UTimag.set(i + 1, i + 1, norm);
-
-//                 Ureal.set(i, i, norm);
-//                 Ureal.set(i + 1, i, 0.0);
-//                 Ureal.set(i, i + 1, norm);
-//                 Ureal.set(i + 1, i + 1, 0.0);
-                
-//                 Uimag.set(i, i, 0.0);
-//                 Uimag.set(i + 1, i, norm);
-//                 Uimag.set(i, i + 1, 0.0);
-//                 Uimag.set(i + 1, i + 1, -1.0*norm);
-                
-//                 ++i;
-//             }
-//             else
-//             {
-//                 UTreal.set(i, i, 1.0);
-//                 UTimag.set(i, i, 0.0);
-//                 Ureal.set(i, i, 1.0);
-//                 Uimag.set(i, i, 0.0);
-//             }
-//         }
-        
-//         System.out.println("Ureal: " + Ureal.toString());
-//         System.out.println("Uimag: " + Uimag.toString());
-//         System.out.println("UTreal: " + UTreal.toString());
-//         System.out.println("UTimag: " + UTimag.toString());
-
-        
-        DoubleMatrix2D w = df.make(numSpecies, numReactions);
         DoubleMatrix2D Qr = algebra.mult(Q, r);
+        DoubleMatrix2D w = df.make(numSpecies, numReactions);
 
         for(int i = 0; i < numSpecies; ++i)
         {
@@ -202,7 +180,7 @@ public final class SteadyStateAnalyzer
             }
         }
 
-        DoubleFactory1D df1 = DoubleFactory1D.sparse;
+        DoubleFactory1D df1 = DoubleFactory1D.dense;
 
         DoubleMatrix1D s = df1.make(numReactions);
 
@@ -210,8 +188,9 @@ public final class SteadyStateAnalyzer
         {
             Expression reactionRateExpression = a[j];
             Reaction reaction = pReactions[j];
-            double rate = reaction.computeRate(pSymbolEvaluator);
-            s.set(j, rate);
+//            double rate = reaction.computeRate(pSymbolEvaluator);
+//            s.set(j, rate);
+            s.set(j, pReactionProbabilities[j]);
         }
 
         DoubleMatrix1D var = algebra.mult(w, s);
