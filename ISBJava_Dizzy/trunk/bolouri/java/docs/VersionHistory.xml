@@ -38,6 +38,43 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.7.1/download.html">1.7.1</a></td>
+<td>???</td>
+<td>
+<ul>
+<li>
+Fixed a bug in the build file that was preventing the source code from
+being included in the source distribution archives 
+<code>ISBJava.tar.gz</code> and <code>ISBJava.zip</code>.
+</li>
+<li>
+Modified the chemical model definition language to disallow user definition
+of a symbol that begins with an underscore character.  This ensures that
+user-defined symbols will not conflict with the names of automatically
+defined symbols (such as automatically defined chemical reaction names).
+</li>
+<li>
+Refactored <code>Model.java</code>, <code>Simulator.java</code>, and
+<code>ModelBuilderCommandLanguage.java</code> so that the internal symbol
+prefix does not appear as a quoted string in these classes, but is 
+abstracted to a String field variable of the 
+<code>org.systemsbiology.chem.Model</code> class.
+</li>
+<li>
+Modified <code>org.systemsbiology.chem.Model</code> so that internal
+symbols are never displayed in the listbox of symbols in the 
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> window,
+and the <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>
+text output.
+</li>
+<li>
+Modified build system to enable optimization during compilation, by default.
+</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.7.0/download.html">1.7.0</a></td>
 <td>2004/06/08</td>
 <td>

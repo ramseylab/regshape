@@ -44,6 +44,41 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.7.1/&installerDownloadRelURL;">1.7.1</a></td>
+<td>???</td>
+<td>
+<ul>
+<li>
+Fixed a bug in the build file that was preventing the source code from
+being included in the <code>&localJavaLibraryName;</code> source distribution archives.
+</li>
+<li>
+Modified the chemical model definition language to disallow user definition
+of a symbol that begins with an underscore character.  This ensures that
+user-defined symbols will not conflict with the names of automatically
+defined symbols (such as automatically defined chemical reaction names).
+</li>
+<li>
+Modified the simulation launcher window so that internal
+symbols are never displayed in the listbox of symbols,
+and in the text output of the command-line simulation launcher.
+</li>
+<li>
+Fixed a bug in the <code>repressilator.xml</code> sample file; the
+<code>listOfUnitDefinitions</code> section was omitted, which was
+causing the initial species populations to be interpreted in terms
+of moles (the default), rather than molecules.
+</li>
+<li>
+From this release forward, release builds of &appName; will be 
+compiled with optimization enabled.
+</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.7.1/download.html">1.7.1</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.7.0/&installerDownloadRelURL;">1.7.0</a></td>
 <td>2004/06/08</td>
 <td>
