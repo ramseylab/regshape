@@ -156,8 +156,10 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
 
             final HashMap globalSymbolValues = new HashMap();
 
-            SymbolEvaluator symbolEvaluatorChem = pModel.getSymbolEvaluator();
-            boolean speciesSymbolsInFormulasAreConcentrations = (symbolEvaluatorChem instanceof SymbolEvaluatorChemMarkupLanguage);
+            SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = pModel.getSymbolEvaluationPostProcessor();
+            boolean speciesSymbolsInFormulasAreConcentrations = (null != symbolEvaluationPostProcessor &&
+                                                                 (symbolEvaluationPostProcessor instanceof SymbolEvaluationPostProcessorChemMarkupLanguage));
+
 
             // set volume units to dimensionless, and substance units to "item"
             Element listOfUnitDefinitionsElement = document.createElement(ELEMENT_NAME_LIST_OF_UNIT_DEFINITIONS);
@@ -351,15 +353,18 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
             Element listOfRulesElement = document.createElement(ELEMENT_NAME_LIST_OF_RULES);
 
             ListIterator rulesListIter = null;
-            SymbolEvaluatorHashMap symbolEvaluator = new SymbolEvaluatorHashMap();
-            symbolEvaluator.setSymbolsMap(globalSymbolValues);
-            HashSet reservedSymbolNames = new HashSet();
-            SymbolEvaluatorChemCommandLanguage.getReservedSymbolNames(reservedSymbolNames);
-            Iterator reservedSymbolNamesIter = reservedSymbolNames.iterator();
-            while(reservedSymbolNamesIter.hasNext())
+            SymbolEvaluatorHashMap symbolEvaluator = new SymbolEvaluatorHashMap(globalSymbolValues);
+            
+            ReservedSymbolMapper reservedSymbolMapper = pModel.getReservedSymbolMapper();
+            if(null != reservedSymbolMapper)
             {
-                String reservedSymbolName = (String) reservedSymbolNamesIter.next();
-                globalSymbolValues.put(reservedSymbolName, new SymbolValue(reservedSymbolName, 0.0));
+                Collection reservedSymbolNames = reservedSymbolMapper.getReservedSymbolNames();
+                Iterator reservedSymbolNamesIter = reservedSymbolNames.iterator();
+                while(reservedSymbolNamesIter.hasNext())
+                {
+                    String reservedSymbolName = (String) reservedSymbolNamesIter.next();
+                    globalSymbolValues.put(reservedSymbolName, new SymbolValue(reservedSymbolName, 0.0));
+                }
             }
 
             Vector orderedRules = new Vector();
