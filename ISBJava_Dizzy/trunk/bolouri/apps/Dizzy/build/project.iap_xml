@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This script was automatically generated using Zero G's InstallAnywhere 5.0.7 Now, Build 1680
      STATUS: Fully-Functional UNLICENSED Trial Edition
-     DATE:   Fri Apr 11 14:35:49 PDT 2003 -->
+     DATE:   Fri Apr 11 14:48:48 PDT 2003 -->
 <InstallAnywhere_Deployment_Project increments="1680">
 	<!-- ** DO NOT EDIT ** Essential authorization and configuration data ** DO NOT EDIT ** -->
 	<essentialScriptInfo>
@@ -10,7 +10,7 @@
 		<scriptID>12,42,11,85,78,76,73,67,69,78,83,69,68</scriptID>
 		<buildID>3,13,71,76,105,110,117,120,44,32,50,46,52,46,49,56,45,49,52,44,32,105,51,56,54,59,32,74,97,118,97,32,49,46,51,46,49,95,48,52,44,32,83,117,110,32,77,105,99,114,111,115,121,115,116,101,109,115,32,73,110,99,46,44,32,104,116,116,112,58,47,47,106,97,118,97,46,115,117,110,46,99,111,109,47,59,32,101,110,44,32,85,83,59,32,85,84,70,45,56</buildID>
 		<!-- The authorizationID may change between project saves and builds.  This does not effect the integrity of the project, nor do changes in this value represent changes in the actual InstallAnywhere project. -->
-		<authorizationID>1,0,0,-16,120,-91,-48,96,64,99,70,101,125,121,100,96,105,48,48,49,56,52,67,98,113,112,124,44,81,100,99,62,57,15,14,5,8,39,126,4,0,0,0</authorizationID>
+		<authorizationID>1,0,0,-16,120,-75,-80,48,64,99,70,101,125,121,100,96,105,48,48,49,56,52,67,98,113,112,124,44,81,100,99,62,57,15,14,1,11,35,126,4,0,0,0</authorizationID>
 	</essentialScriptInfo>
 	<installationObjects uniqueObjects="91">
 		<object class="com.zerog.ia.installer.Installer" objectID="4a0be70e9aea">
@@ -166,7 +166,7 @@ it will search for ones in this list]]></string>
 								</object>
 							</method>
 							<method name="addElement">
-								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="92284fee9af5">
+								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="9234e43c9af3">
 									<property name="propertyValue">
 										<string><![CDATA[isb.chem.sbw.SimulationModule]]></string>
 									</property>
@@ -771,7 +771,7 @@ Press ""Done"" to quit the installer.]]></string>
 				<object class="java.util.Properties">
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.project.save.last.date]]></string>
-						<string><![CDATA[Fri Apr 11 14:35:48 PDT 2003]]></string>
+						<string><![CDATA[Fri Apr 11 14:48:48 PDT 2003]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.merge]]></string>
@@ -811,7 +811,7 @@ Press ""Done"" to quit the installer.]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.project.build.last.date]]></string>
-						<string><![CDATA[Fri Apr 11 14:35:04 PDT 2003]]></string>
+						<string><![CDATA[Fri Apr 11 14:48:48 PDT 2003]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.heap.size.initial]]></string>
@@ -1486,7 +1486,7 @@ it will search for ones in this list]]></string>
 														</object>
 													</method>
 													<method name="addElement">
-														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="9228504a9afe">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="9234e4a59afb">
 															<property name="propertyValue">
 																<string><![CDATA[isb.chem.app.MainApp]]></string>
 															</property>
@@ -1977,7 +1977,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[UserManual.html]]></string>
 											</property>
 											<property name="fileSize">
-												<long>81041</long>
+												<long>81076</long>
 											</property>
 											<property name="macBinary">
 												<boolean>false</boolean>
