@@ -21,36 +21,46 @@ import org.systemsbiology.util.*;
  * @author Stephen Ramsey
  */
 
-public class DelayedReactionSolver extends Expression
+public final class DelayedReactionSolver extends Expression
 {
     private static final double LAMBDA_MAX = 4.0;
     private static final int MIN_NUM_TIME_POINTS = 4000;
     private static final int REACTION_TIMES_DOUBLE_POOL_SIZE = 100;
 
-    private Species mReactant;
-    private Species mIntermedSpecies;
-    private double mRate;
+    private final Species mReactant;
+    private final Species mIntermedSpecies;
+    private final double mRate;
+    private final double mTimeResolution;
+    private final double mPeakTimeRel;
     private boolean mFirstTimePoint;
-    private double mTimeResolution;
-    private double mPeakTimeRel;
 
     // used only for stochastic simulations
-    private PriorityQueue mReactionTimes;
-    private LinkedList mReactionTimesDoublePool;
+    private final Queue mReactionTimes;
+    private final LinkedList mReactionTimesDoublePool;
 
     // used only for deterministic simulation
-    private SlidingWindowTimeSeriesQueue mReactantHistory;
-    private SlidingWindowTimeSeriesQueue mIntermedSpeciesHistory;
-    private int mNumTimePoints;
+    private final SlidingWindowTimeSeriesQueue mReactantHistory;
+    private final SlidingWindowTimeSeriesQueue mIntermedSpeciesHistory;
+    private final int mNumTimePoints;
 
-    private boolean mIsStochasticSimulator;
+    private final boolean mIsStochasticSimulator;
 
-    private int mReactionIndex;
-    private double mDelay;
+    private final int mReactionIndex;
+    private final double mDelay;
 
     public String toString()
     {
         return(mIntermedSpecies.getName());
+    }
+
+    public double getRate()
+    {
+        return(mRate);
+    }
+
+    public Species getIntermedSpecies()
+    {
+        return(mIntermedSpecies);
     }
 
     public DelayedReactionSolver(Species pReactant,
@@ -88,14 +98,15 @@ public class DelayedReactionSolver extends Expression
 
         if(mIsStochasticSimulator)
         {
-            mReactionTimes = new PriorityQueue( new AbstractComparator()
-            {
-                public int compare(Object p1, Object p2)
-                {
-                    return(MutableDouble.compare((MutableDouble) p1, (MutableDouble) p2));
-                }
-            });
-            
+//             mReactionTimes = new PriorityQueue( new AbstractComparator()
+//             {
+//                 public final int compare(Object p1, Object p2)
+//                 {
+//                     return(MutableDouble.compare((MutableDouble) p1, (MutableDouble) p2));
+//                 }
+//             });
+            mReactionTimes = new Queue();
+
             mReactionTimesDoublePool = new LinkedList();
             for(int ctr = 0; ctr < REACTION_TIMES_DOUBLE_POOL_SIZE; ++ctr)
             {
@@ -127,13 +138,9 @@ public class DelayedReactionSolver extends Expression
 
     void addReactant(SymbolEvaluatorChem pSymbolEvaluator)
     {
-        double time = pSymbolEvaluator.getTime();
         MutableDouble newReactionTime = null;
-
-        double reactionTime = time + mPeakTimeRel;
-
+        double reactionTime = pSymbolEvaluator.getTime() + mPeakTimeRel;
         LinkedList reactionTimesDoublePool = mReactionTimesDoublePool;
-
 
         if(reactionTimesDoublePool.size() > 0)
         {
@@ -146,12 +153,36 @@ public class DelayedReactionSolver extends Expression
             newReactionTime = new MutableDouble(reactionTime);
         }
 
-        mReactionTimes.offer(newReactionTime);
+        mReactionTimes.add(newReactionTime);
     }
+
+//     void addReactantOld(SymbolEvaluatorChem pSymbolEvaluator)
+//     {
+//         double time = pSymbolEvaluator.getTime();
+//         MutableDouble newReactionTime = null;
+
+//         double reactionTime = time + mPeakTimeRel;
+
+//         LinkedList reactionTimesDoublePool = mReactionTimesDoublePool;
+
+
+//         if(reactionTimesDoublePool.size() > 0)
+//         {
+//             newReactionTime = (MutableDouble) reactionTimesDoublePool.getLast();
+//             reactionTimesDoublePool.removeLast();
+//             newReactionTime.setValue(reactionTime);
+//         }
+//         else
+//         {
+//             newReactionTime = new MutableDouble(reactionTime);
+//         }
+
+//         mReactionTimes.offer(newReactionTime);
+//     }
 
     double pollNextReactionTime() throws IllegalStateException
     {
-        MutableDouble reactionTime = (MutableDouble) mReactionTimes.poll();
+        MutableDouble reactionTime = (MutableDouble) mReactionTimes.getNext();
         if(null == reactionTime)
         {
             throw new IllegalStateException("no molecules are in the multistep reaction queue");
@@ -165,13 +196,13 @@ public class DelayedReactionSolver extends Expression
     // used for stochastic simulator
     boolean canHaveReaction() 
     {
-        return(null != mReactionTimes.peek());
+        return(null != mReactionTimes.peekNext());
     }
 
     // used for stochastic simulator
     double peekNextReactionTime() throws IllegalStateException
     {
-        MutableDouble reactionTime = (MutableDouble) mReactionTimes.peek();
+        MutableDouble reactionTime = (MutableDouble) mReactionTimes.peekNext();
         if(null == reactionTime)
         {
             throw new IllegalStateException("no molecules are in the multistep reaction queue");
@@ -189,9 +220,9 @@ public class DelayedReactionSolver extends Expression
     {
         if(mIsStochasticSimulator)
         {
-            while(null != mReactionTimes.peek())
+            while(null != mReactionTimes.peekNext())
             {
-                MutableDouble reactionTime = (MutableDouble) mReactionTimes.poll();
+                MutableDouble reactionTime = (MutableDouble) mReactionTimes.getNext();
                 reactionTime.setValue(0.0);
                 mReactionTimesDoublePool.addLast(reactionTime);
             }
@@ -208,15 +239,17 @@ public class DelayedReactionSolver extends Expression
                                   Species []pDynamicSymbolValues, // a vector of all species in the model
                                   SymbolValue []pNonDynamicSymbolValues) throws IllegalStateException
     {
-        mIntermedSpecies = Reaction.getIndexedSpecies(mIntermedSpecies,
-                                                      pSymbolMap,
-                                                      pDynamicSymbolValues,
-                                                      pNonDynamicSymbolValues);
+        Symbol intermedSymbol = mIntermedSpecies.getSymbol();
+        intermedSymbol.copyIndexInfo(Reaction.getIndexedSpecies(mIntermedSpecies,
+                                                                pSymbolMap,
+                                                                pDynamicSymbolValues,
+                                                                pNonDynamicSymbolValues).getSymbol());
 
-        mReactant = Reaction.getIndexedSpecies(mReactant,
-                                               pSymbolMap,
-                                               pDynamicSymbolValues,
-                                               pNonDynamicSymbolValues);
+        Symbol reactantSymbol = mReactant.getSymbol();
+        reactantSymbol.copyIndexInfo(Reaction.getIndexedSpecies(mReactant,
+                                                                pSymbolMap,
+                                                                pDynamicSymbolValues,
+                                                                pNonDynamicSymbolValues).getSymbol());
     }
 
     public void update(SymbolEvaluator pSymbolEvaluator, double pTime) throws DataNotFoundException
@@ -331,13 +364,13 @@ public class DelayedReactionSolver extends Expression
     }
 
     // keeping this around for historical purposes
-    private static final double computeIntegral(SlidingWindowTimeSeriesQueue history,
-                                                double h,
-                                                int numTimePoints,
-                                                double sqrtTwoPiNumStepsCorrected,
-                                                double numStepsCorrected,
-                                                double rate,
-                                                double currentTime)
+    private static double computeIntegral(SlidingWindowTimeSeriesQueue history,
+                                          double h,
+                                          int numTimePoints,
+                                          double sqrtTwoPiNumStepsCorrected,
+                                          double numStepsCorrected,
+                                          double rate,
+                                          double currentTime)
     {
         double value = 0.0;
         double prodRate = 0.0;
@@ -370,13 +403,13 @@ public class DelayedReactionSolver extends Expression
         return(prodRate);
     }
 
-    private static final double computeIntegrandValue(SlidingWindowTimeSeriesQueue pReactantHistory,
-                                                      int pTimePointIndex,
-                                                      double pRate,
-                                                      double pRateSquared,
-                                                      double pSqrtTwoPiNumStepsCorrected,
-                                                      double numStepsCorrected,
-                                                      double pCurrentTime)
+    private static double computeIntegrandValue(SlidingWindowTimeSeriesQueue pReactantHistory,
+                                                int pTimePointIndex,
+                                                double pRate,
+                                                double pRateSquared,
+                                                double pSqrtTwoPiNumStepsCorrected,
+                                                double numStepsCorrected,
+                                                double pCurrentTime)
     {
         double reactantValue = pReactantHistory.getValue(pTimePointIndex);
         double timePoint = pReactantHistory.getTimePoint(pTimePointIndex);
