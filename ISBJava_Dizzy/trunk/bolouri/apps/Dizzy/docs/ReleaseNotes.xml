@@ -22,18 +22,15 @@
 
 <!-- ========== INTRODUCTION ========== -->
 <isb:docsection name="Introduction" label="introduction">
-<p>
 &appName; is a chemical kinetics simulation software 
 package implemented in Java.  This software can be 
 used to define a system of interacting chemical species,
 and the reactions through which they interact.  The 
 software can then be used to simulate the reaction 
 kinetics of the system of interacting species.
-</p>
 </isb:docsection>
 
 <isb:docsection name="License Agreement" label="licenseagreement">
-<p>
 This software is licensed under the GNU Lesser General Public 
 License (LGPL), which is a standard &quot;free software&quot;
 and &quot;open source&quot; license.  A 
@@ -41,31 +38,25 @@ and &quot;open source&quot; license.  A
 license agreement is available online</a>, as well as in the
 &quot;<code>docs/License.html</code>&quot; file in the 
 installation directory for this software.
-</p>
 </isb:docsection>
 
 <isb:docsection name="Disclaimer" label="disclaimer">
-<p>
 This version is alpha (experimental) software.  Please be patient while we fix 
 bugs, add new features, and add (much needed) documentation.  Your 
 patience is appreciated.  Please be advised that the
 &mainAffiliation; and the authors disclaim any liability 
 stemming from the use of this software, as stated in the license agreement.
-</p>
 </isb:docsection>
 
 <isb:docsection name="Source Code" label="sourcecode">
-<p>
 The source code for this application and the 
 associated &localJavaLibraryName; library 
 &quot;<code>&localJavaLibraryName;.jar</code>&quot; can be found in the file 
 &quot;<code>&localJavaLibraryName;-src.tar.gz</code>&quot;
 that was installed in the &quot;<code>src</code>&quot;
 subdirectory of the installation directory for this program.
-</p>
 </isb:docsection>
 <isb:docsection name="Documentation" label="documentation">
-<p>
 For documentation on how to use the &appName; program,
 please consult the 
 <a href="&appHomePage;/docs/UserManual.html">&appName; User Manual</a>.
@@ -75,10 +66,8 @@ interface (API) to the &appName; system, please consult the
 You will find examples of model defrnition in the "samples"
 subdirectory of the directory in which you install the 
 &appName; software.
-</p>
 </isb:docsection>
 <isb:docsection name="Contact Information" label="contactinfo">
-<p>
 If you have questions about this software, or if you
 have a bug report that you would like to submit,
 please contact the &appMaintainerFullName; at  
@@ -86,7 +75,6 @@ please contact the &appMaintainerFullName; at
 <blockquote>
 <code>&appMaintainerEmailSafe;</code>.
 </blockquote>
-</p>
 </isb:docsection>
 </isb:document>
 

@@ -2251,7 +2251,8 @@ The default value of this parameter is 0 (no debugging output),
 which is (by far) the most efficient in terms of performance.
     </dd>
     <dt><code>simulator &quot;gillespie&quot;</code></dt>
-    <dd>Specifies the simulator plug-in to use for the simulation.
+    <dd>Specifies the <a href="simplugins">simulator plug-in</a> 
+to use for the simulation.
 The default is &quot;<code>gillespie</code>&quot;, the Gillespie
 simulator plug-in.</dd>
     </dl>
@@ -2413,12 +2414,13 @@ menu option under the &quot;Tools&quot; menu becomes enabled (no longer
 greyed out).  Selecting the &quot;Simulate...&quot; menu option causes a
 dialog box entitled &quot;&appName;: simulator&quot; to be displayed.
 In this dialog box, you must specify the start and stop time for the 
-simulation, as well as the output type, the type of simulator, and the
+simulation, as well as the output type, the type of simulator (i.e.,
+which <a href="#simplugins">simulator plug-in</a> to use), and the
 list of species to be included in the &quot;output&quot;.  The start 
 time defaults to 0.0, and it is rarely necessary to use a different value.
 The simulator defaults to the 
 <a href="&webBaseURL;/&localJavaLibraryName;/javadoc/isb/chem/GillespieSimulator.html">
-Gillespie Simulator</a>, which is presently the only simulator available.
+Gillespie Simulator</a>.
 You must select at least one species to be included in the &quot;output&quot;.
 The other species not selected, may still participate in the simulation,
 but their population values over time will not be included in the data
