@@ -37,7 +37,10 @@ written in Java.  It provides a model definition environment and an implementati
 <a href="&appHomePage;/docs/UserManual.html#gibsonbruck">Gibson-Bruck,</a> and 
 <a href="&appHomePage;/docs/UserManual.html#tauleap">Tau-Leap</a>
 stochastic algorithms.  The software is based on the 
-<a href="../../&localJavaLibraryName;">&localJavaLibraryName;</a> library. 
+<a href="../../&localJavaLibraryName;">&localJavaLibraryName;</a> library.
+A <a href="&appPublicationURL;">preprint of an article</a> describing &appName;
+is available (to be published in the Journal of Bioinformatics and Computational
+Biology, May 2005).
 </isb:docsection>
 
 <isb:docsection name="License and Disclaimer" label="licenseagreement">
