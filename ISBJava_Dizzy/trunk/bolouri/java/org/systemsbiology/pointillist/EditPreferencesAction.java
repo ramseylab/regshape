@@ -9,6 +9,8 @@
  *   http://www.gnu.org/copyleft/lesser.html
  */
 package org.systemsbiology.pointillist;
+
+import org.systemsbiology.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -31,6 +33,8 @@ public class EditPreferencesAction extends JFrame
     private App mApp;
     private static final int NUM_COLUMNS_MATLAB_TEXT_FIELD = 20;
     private static final int NUM_COLUMNS_MISSING_DATA_VALUE_FIELD = 10;
+    private static final int NUM_COLUMNS_PVALUE_CUTOFF = 10;
+    
     private JTextField mMatlabLocationField;
     private String mOriginalMatlabLocation;
     private JButton mSaveButton;
@@ -45,6 +49,8 @@ public class EditPreferencesAction extends JFrame
     private JTextField mMatlabScriptsLocationField;
     private String mOriginalMatlabScriptsLocation;
     private static final int NUM_COLUMNS_MATLAB_SCRIPTS_LOCATION = 20;
+    private String mOriginalPValueCutoff;
+    private JTextField mPValueCutoffField;
     
     public EditPreferencesAction(App pApp)
     {
@@ -123,13 +129,32 @@ public class EditPreferencesAction extends JFrame
                 mOriginalMissingDataValue = missingDataValue;
             }
 
+            String pvalueCutoff = mPValueCutoffField.getText().trim();
+            if(pvalueCutoff.length() == 0)
+            {
+                JOptionPane.showMessageDialog(mApp, "invalid p-value cutoff, must not be empty", "invalid p-value cutoff", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            boolean isValidNumber = true;
+            double doubleCutoff = 0.0;
+            try
+            {
+                doubleCutoff = NetworkIntegrationAction.parseCutoff(pvalueCutoff);
+            }
+            catch(InvalidInputException e)
+            {
+                JOptionPane.showMessageDialog(mApp, "invalid p-value cutoff \"" + pvalueCutoff + "\"", "invalid p-value cutoff",
+                                              JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             
             Preferences prefs = mApp.getPreferences();
             prefs.put(App.PREFERENCES_KEY_MATLAB_LOCATION, matlabFile.getAbsolutePath());
             prefs.put(App.PREFERENCES_KEY_DATA_FILE_DELIMITER, dataFileDelimiterName);
             prefs.put(App.PREFERENCES_KEY_MISSING_DATA_VALUE, missingDataValue);
             prefs.put(App.PREFERENCES_KEY_MATLAB_SCRIPTS_LOCATION, matlabScriptsFile.getAbsolutePath());
-
+            prefs.put(App.PREFERENCES_KEY_PVALUE_CUTOFF, pvalueCutoff);
+            
             updateButtonStates();
             
             if(needToNotifyMatlabOfNewScriptsLocation)
@@ -187,6 +212,13 @@ public class EditPreferencesAction extends JFrame
         {
             hasChanged = true;
         }
+        
+        String pvalueCutoff = mPValueCutoffField.getText().trim();
+        if(! pvalueCutoff.equals(mOriginalPValueCutoff))
+        {
+            hasChanged = true;
+        }
+        
         return hasChanged;
     }
     
@@ -227,6 +259,7 @@ public class EditPreferencesAction extends JFrame
         
         mMissingDataField.setText(mOriginalMissingDataValue);
         mMatlabScriptsLocationField.setText(mOriginalMatlabScriptsLocation);
+        mPValueCutoffField.setText(mOriginalPValueCutoff);
         
         updateButtonStates();
     }
@@ -336,7 +369,7 @@ public class EditPreferencesAction extends JFrame
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
         constraints.weightx = 0;
-        constraints.weighty = 0.25;
+        constraints.weighty = 1;
         constraints.gridx = 0;
         constraints.gridy = 0; 
         layout.setConstraints(matlabLabel, constraints);
@@ -371,7 +404,7 @@ public class EditPreferencesAction extends JFrame
         constraints.gridwidth = 3;
         constraints.gridheight = 1;
         constraints.weightx = 1;
-        constraints.weighty = 0.25;
+        constraints.weighty = 1;
         constraints.gridx = 1;
         constraints.gridy = 0;        
         layout.setConstraints(matlabTextField, constraints);
@@ -391,7 +424,7 @@ public class EditPreferencesAction extends JFrame
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
         constraints.weightx = 0;
-        constraints.weighty = 0.25;
+        constraints.weighty = 1;
         constraints.gridx = 4;
         constraints.gridy = 0;          
         layout.setConstraints(browseButton, constraints);
@@ -401,7 +434,7 @@ public class EditPreferencesAction extends JFrame
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
         constraints.weightx = 0;
-        constraints.weighty = 0.25;
+        constraints.weighty = 1;
         constraints.gridx = 0;
         constraints.gridy = 1;
         prefsPanel.add(delimiterLabel);
@@ -444,7 +477,7 @@ public class EditPreferencesAction extends JFrame
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
         constraints.weightx = 0.5;
-        constraints.weighty = 0.25;
+        constraints.weighty = 1;
         constraints.gridx = 1;
         constraints.gridy = 1;
         prefsPanel.add(delimitersComboBox);
@@ -468,7 +501,7 @@ public class EditPreferencesAction extends JFrame
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
         constraints.weightx = 0;
-        constraints.weighty = 0.25;
+        constraints.weighty = 1;
         constraints.gridx = 0;
         constraints.gridy = 2;
         layout.setConstraints(missingDataLabel, constraints);
@@ -483,7 +516,7 @@ public class EditPreferencesAction extends JFrame
         constraints.gridwidth = 2;
         constraints.gridheight = 1;
         constraints.weightx = 1.0;
-        constraints.weighty = 0.25;
+        constraints.weighty = 1;
         constraints.gridx = 1;
         constraints.gridy = 2;
         layout.setConstraints(missingDataField, constraints);   
@@ -495,7 +528,7 @@ public class EditPreferencesAction extends JFrame
         constraints.gridwidth = 2;
         constraints.gridheight = 1;
         constraints.weightx = 0;
-        constraints.weighty = 0.25;
+        constraints.weighty = 1;
         constraints.gridx = 3;
         constraints.gridy = 2;
         layout.setConstraints(missingDataExplanationLabel, constraints);
@@ -508,7 +541,7 @@ public class EditPreferencesAction extends JFrame
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
         constraints.weightx = 0;
-        constraints.weighty = 0.25;
+        constraints.weighty = 1;
         constraints.gridx = 0;
         constraints.gridy = 3;
         layout.setConstraints(matlabScriptsLocationLabel, constraints);
@@ -523,7 +556,7 @@ public class EditPreferencesAction extends JFrame
         constraints.gridwidth = 3;
         constraints.gridheight = 1;
         constraints.weightx = 1;
-        constraints.weighty = 0.25;
+        constraints.weighty = 1;
         constraints.gridx = 1;
         constraints.gridy = 3;
         layout.setConstraints(matlabScriptsLocationField, constraints);
@@ -536,7 +569,7 @@ public class EditPreferencesAction extends JFrame
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
         constraints.weightx = 0;
-        constraints.weighty = 0.25;
+        constraints.weighty = 1;
         constraints.gridx = 4;
         constraints.gridy = 3;
         matlabScriptsLocationButton.addActionListener(
@@ -548,6 +581,48 @@ public class EditPreferencesAction extends JFrame
                     }
                 });
         layout.setConstraints(matlabScriptsLocationButton, constraints);
+        
+        // default p-value cutoff
+        JLabel cutoffLabel = new JLabel("Default p-value cutoff: ");
+        prefsPanel.add(cutoffLabel);
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        constraints.weightx = 0;
+        constraints.weighty = 1;
+        constraints.gridx = 0;
+        constraints.gridy = 4;        
+        layout.setConstraints(cutoffLabel, constraints);
+        
+        String pvalueCutoff = prefs.get(App.PREFERENCES_KEY_PVALUE_CUTOFF, "");
+        if(pvalueCutoff.length() == 0)
+        {
+            throw new IllegalStateException("undefined p-value cutoff");
+        }
+        JTextField cutoffField = new JTextField(pvalueCutoff, NUM_COLUMNS_PVALUE_CUTOFF);
+        prefsPanel.add(cutoffField);
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridwidth = 2;
+        constraints.gridheight = 1;
+        constraints.weightx = 0;
+        constraints.weighty = 1;
+        constraints.gridx = 1;
+        constraints.gridy = 4;        
+        layout.setConstraints(cutoffField, constraints);
+        mOriginalPValueCutoff = pvalueCutoff;
+        mPValueCutoffField = cutoffField;
+        cutoffField.getDocument().addDocumentListener(documentListener);
+        
+        JLabel pvalueCutoffExpl = new JLabel("(for network integration)");
+        prefsPanel.add(pvalueCutoffExpl);
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridwidth = 2;
+        constraints.gridheight = 1;
+        constraints.weightx = 0;
+        constraints.weighty = 1;
+        constraints.gridx = 3;
+        constraints.gridy = 4;        
+        layout.setConstraints(pvalueCutoffExpl, constraints);
         
         // REVERT button
         
@@ -568,7 +643,7 @@ public class EditPreferencesAction extends JFrame
         constraints.weightx = 0.333;
         constraints.weighty = 0;
         constraints.gridx = 1;
-        constraints.gridy = 4;               
+        constraints.gridy = 5;               
         layout.setConstraints(revertButton, constraints);
         
         JPanel buttonPanel = new JPanel();
@@ -592,7 +667,7 @@ public class EditPreferencesAction extends JFrame
         constraints.weightx = 0.333;
         constraints.weighty = 0;
         constraints.gridx = 2;
-        constraints.gridy = 4; 
+        constraints.gridy = 5; 
         layout.setConstraints(saveButton, constraints);
         
         // CANCEL button
@@ -613,7 +688,7 @@ public class EditPreferencesAction extends JFrame
         constraints.weightx = 0.333;
         constraints.weighty = 0;
         constraints.gridx = 3;
-        constraints.gridy = 4;         
+        constraints.gridy = 5;         
         layout.setConstraints(cancelButton, constraints);
 
         setContentPane(prefsPanel);

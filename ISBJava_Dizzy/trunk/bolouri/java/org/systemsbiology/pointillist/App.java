@@ -42,6 +42,9 @@ public class App extends JFrame
     public static final String PREFERENCES_KEY_DATA_FILE_DELIMITER = "dataFileDelimiter";
     public static final String PREFERENCES_KEY_MISSING_DATA_VALUE = "missingDataValue";
     public static final String PREFERENCES_KEY_MATLAB_SCRIPTS_LOCATION = "matlabScriptsLocation";
+    public static final String PREFERENCES_KEY_PVALUE_CUTOFF = "pvalueCutoff";
+    public static final String DEFAULT_PVALUE_CUTOFF = "0.05";
+    
     public static final DataFileDelimiter DEFAULT_DATA_FILE_DELIMITER = DataFileDelimiter.TAB;
     
     public File getWorkingDirectory()
@@ -83,6 +86,15 @@ public class App extends JFrame
             appConfig = new AppConfig(new File(configFileName));
         }
         mAppConfig = appConfig;
+    }
+    
+    private void configureDefaultPValueCutoff()
+    {
+        String pvalueCutoff = mPreferences.get(App.PREFERENCES_KEY_PVALUE_CUTOFF, "");
+        if(pvalueCutoff.length() == 0)
+        {
+            mPreferences.put(App.PREFERENCES_KEY_PVALUE_CUTOFF, DEFAULT_PVALUE_CUTOFF);
+        }
     }
     
     private void configureDefaultMatlabScriptsLocation()
@@ -174,6 +186,88 @@ public class App extends JFrame
         return mAppConfig;
     }
     
+    public File handleInputFileSelection()
+    {
+        // user must select filename
+        File currentDirectory = getWorkingDirectory();
+        FileChooser fileChooser = new FileChooser(currentDirectory);
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int result = fileChooser.showOpenDialog(this);
+        if(result != JFileChooser.APPROVE_OPTION)
+        {
+            return null;
+        }
+        
+        File selectedFile = fileChooser.getSelectedFile();
+        if(! selectedFile.exists())
+        {
+            JOptionPane.showMessageDialog(this, "The file you selected does not exist: " + selectedFile.getName(), 
+                                          "File does not exist", JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+        File selectedFileDirectory = selectedFile.getParentFile();
+        if(null == currentDirectory || !selectedFileDirectory.equals(currentDirectory))
+        {
+            setWorkingDirectory(selectedFileDirectory);
+        }
+        return selectedFile;
+    }
+
+    public File handleOutputFileSelection(File pSelectedFile, String ppOutputFileSuffix)
+    {
+        String selectedFileName = pSelectedFile.getAbsolutePath();
+        String outputDataFileName = FileUtils.addSuffixToFilename(selectedFileName, ppOutputFileSuffix);
+        File outputDataFile = new File(outputDataFileName);
+        if(outputDataFile.exists())
+        {
+            boolean overwriteFile = FileChooser.handleOutputFileAlreadyExists(this,
+                                                                              outputDataFileName);
+            if(! overwriteFile)
+            {
+                return null;
+            }
+            outputDataFile.delete();
+        }      
+        return outputDataFile;
+    }
+    
+    public boolean handleMatlabResult(String pMatlabResult,
+                                      String pActionName,
+                                      File pOutputFile)
+    {
+        boolean success = true;
+        
+        int responseLength = pMatlabResult.length();
+        if(responseLength > 0)
+        {
+            SimpleTextArea simpleTextArea = new SimpleTextArea("matlab response:\n" + pMatlabResult);
+            JOptionPane.showMessageDialog(this,
+                    simpleTextArea,
+                    "matlab response",
+                    JOptionPane.WARNING_MESSAGE);
+            success = false;
+        }
+        else
+        {
+            if(pOutputFile.exists() && pOutputFile.isFile())
+            {
+                JOptionPane.showMessageDialog(this, 
+                        "normalization succeeded, saved as:\n" + pOutputFile.getName(), 
+                        "normalization succeeded", 
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this,
+                        "normalization failed; cannot locate normalized file:\n" + pOutputFile.getName(),
+                        "normalization failed",
+                        JOptionPane.WARNING_MESSAGE);
+                success = false;
+            }
+        }        
+        return success;
+    }
+   
     public void run(String []pArgs)
     {
         mPreferences = Preferences.userNodeForPackage(this.getClass());
@@ -187,6 +281,7 @@ public class App extends JFrame
             configureDefaultDataFileDelimiterPreference();
             initializeAppConfig(pArgs);
             configureDefaultMatlabScriptsLocation();
+            configureDefaultPValueCutoff();
         }
         catch(Exception e)
         {
@@ -199,10 +294,14 @@ public class App extends JFrame
         setVisible(true);
     }
     
-    public void handleNotConnectedToMatlab()
+    public void checkIfConnectedToMatlab()
     {
-        JOptionPane.showMessageDialog(this, "Please connect to Matlab first, using the \"Connections\" menu", 
+        boolean connected = this.mMatlabConnectionManager.isConnected();
+        if(! connected)
+        {
+            JOptionPane.showMessageDialog(this, "Please connect to Matlab first, using the \"Connections\" menu", 
                 "Not connected to Matlab", JOptionPane.WARNING_MESSAGE);
+        }
     }
     
     public static final void main(String []pArgs)

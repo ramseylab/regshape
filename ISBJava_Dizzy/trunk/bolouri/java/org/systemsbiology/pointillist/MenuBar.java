@@ -34,64 +34,75 @@ public class MenuBar extends JMenuBar
     public static final String ACTION_MATLAB_DISCONNECT = "Disconnect from Matlab";
     public static final String ACTION_PREFERENCES = "Preferences...";
     public static final String ACTION_OPEN = "Open...";
+    public static final String ACTION_INTEGRATE = "Network integration...";
     
     private App mApp;
     protected final HashMap mMenuItems;
+    
+    private void handleMenuChoice(String pActionCommand)
+    {
+        if(pActionCommand.equals(ACTION_QUIT))
+        {
+            QuitAction quitAction = new QuitAction(mApp);
+            quitAction.doAction();
+        }
+        else if(pActionCommand.equals(ACTION_NORMALIZE))
+        {
+            NormalizeAction normalizeAction = new NormalizeAction(mApp);
+            normalizeAction.doAction();
+        }
+        else if(pActionCommand.equals(ACTION_STATISTICAL_TESTS))
+        {
+            StatisticalTestsAction statisticalTestsAction = new StatisticalTestsAction(mApp);
+            statisticalTestsAction.doAction();
+        }
+        else if(pActionCommand.equals(ACTION_HELP))
+        {
+            DisplayHelpAction helpAction = new DisplayHelpAction(mApp);
+            helpAction.doAction();
+        }
+        else if(pActionCommand.equals(ACTION_ABOUT))
+        {
+            AboutAction aboutAction = new AboutAction(mApp);
+            aboutAction.doAction();
+        }
+        else if(pActionCommand.equals(ACTION_MATLAB_CONNECT))
+        {
+            MatlabConnectAction matlabAction = new MatlabConnectAction(mApp);
+            matlabAction.doAction();
+        }
+        else if(pActionCommand.equals(ACTION_MATLAB_DISCONNECT))
+        {
+            MatlabDisconnectAction matlabAction = new MatlabDisconnectAction(mApp);
+            matlabAction.doAction();
+        }            
+        else if(pActionCommand.equals(ACTION_PREFERENCES))
+        {
+            EditPreferencesAction preferencesAction = new EditPreferencesAction(mApp);
+            preferencesAction.doAction();
+        }
+        else if(pActionCommand.equals(ACTION_OPEN))
+        {
+            FileOpenAction fileOpenAction = new FileOpenAction(mApp);
+            fileOpenAction.doAction();
+        }
+        else if(pActionCommand.equals(ACTION_INTEGRATE))
+        {
+            NetworkIntegrationAction networkIntegrationAction = new NetworkIntegrationAction(mApp);
+            networkIntegrationAction.doAction();
+        }
+        else
+        {
+            throw new IllegalStateException("unknown action selected \"" + pActionCommand + "\"");
+        }           
+    }
     
     class MenuListener implements ActionListener
     {
         public void actionPerformed(ActionEvent pEvent)
         {
             String actionCommand = pEvent.getActionCommand();
-            if(actionCommand.equals(ACTION_QUIT))
-            {
-                QuitAction quitAction = new QuitAction(mApp);
-                quitAction.doAction();
-            }
-            else if(actionCommand.equals(ACTION_NORMALIZE))
-            {
-                NormalizeAction normalizeAction = new NormalizeAction(mApp);
-                normalizeAction.doAction();
-            }
-            else if(actionCommand.equals(ACTION_STATISTICAL_TESTS))
-            {
-                StatisticalTestsAction statisticalTestsAction = new StatisticalTestsAction(mApp);
-                statisticalTestsAction.doAction();
-            }
-            else if(actionCommand.equals(ACTION_HELP))
-            {
-                DisplayHelpAction helpAction = new DisplayHelpAction(mApp);
-                helpAction.doAction();
-            }
-            else if(actionCommand.equals(ACTION_ABOUT))
-            {
-                AboutAction aboutAction = new AboutAction(mApp);
-                aboutAction.doAction();
-            }
-            else if(actionCommand.equals(ACTION_MATLAB_CONNECT))
-            {
-                MatlabConnectAction matlabAction = new MatlabConnectAction(mApp);
-                matlabAction.doAction();
-            }
-            else if(actionCommand.equals(ACTION_MATLAB_DISCONNECT))
-            {
-                MatlabDisconnectAction matlabAction = new MatlabDisconnectAction(mApp);
-                matlabAction.doAction();
-            }            
-            else if(actionCommand.equals(ACTION_PREFERENCES))
-            {
-                EditPreferencesAction preferencesAction = new EditPreferencesAction(mApp);
-                preferencesAction.doAction();
-            }
-            else if(actionCommand.equals(ACTION_OPEN))
-            {
-                FileOpenAction fileOpenAction = new FileOpenAction(mApp);
-                fileOpenAction.doAction();
-            }
-            else
-            {
-                throw new IllegalStateException("unknown action selected \"" + actionCommand + "\"");
-            }   
+            handleMenuChoice(actionCommand);
         }
     }
     
@@ -166,6 +177,7 @@ public class MenuBar extends JMenuBar
         Menu analysisMenu = new Menu("Analysis", menuActionListener);
         analysisMenu.createMenuItem(ACTION_NORMALIZE, 'N');
         analysisMenu.createMenuItem(ACTION_STATISTICAL_TESTS, 'S');
+        analysisMenu.createMenuItem(ACTION_INTEGRATE, 'N');
         add(analysisMenu);
         
         Menu helpMenu = new Menu("Help", menuActionListener);

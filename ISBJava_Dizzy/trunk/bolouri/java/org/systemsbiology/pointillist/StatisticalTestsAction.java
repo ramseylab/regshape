@@ -14,7 +14,6 @@ import java.io.*;
 import javax.swing.*;
 import java.util.*;
 import org.systemsbiology.gui.*;
-import org.systemsbiology.util.*;
 
 /**
  * @author sramsey
@@ -91,50 +90,14 @@ public class StatisticalTestsAction
     
     public void doAction()
     {
-        // check to see if we are connected
-        MatlabConnectionManager mgr = mApp.getMatlabConnectionManager();
-        if(! mgr.isConnected())
-        {
-            mApp.handleNotConnectedToMatlab();
-            return;
-        }
+        mApp.checkIfConnectedToMatlab();
         
-        // user must select filename
-        File currentDirectory = mApp.getWorkingDirectory();
-        FileChooser fileChooser = new FileChooser(currentDirectory);
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        int result = fileChooser.showOpenDialog(mApp);
-        if(result != JFileChooser.APPROVE_OPTION)
+        File inputFile = mApp.handleInputFileSelection();
+        if(null == inputFile)
         {
             return;
         }
-        
-        File selectedFile = fileChooser.getSelectedFile();
-        if(! selectedFile.exists())
-        {
-            JOptionPane.showMessageDialog(mApp, "The file you selected does not exist: " + selectedFile.getName(), 
-                                          "File does not exist", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        File selectedFileDirectory = selectedFile.getParentFile();
-        if(null == currentDirectory || !selectedFileDirectory.equals(currentDirectory))
-        {
-            mApp.setWorkingDirectory(selectedFileDirectory);
-        }
-
-        String selectedFileName = selectedFile.getAbsolutePath();
-        String statisticalTestsDataFileName = FileUtils.addSuffixToFilename(selectedFileName, TESTED_FILE_SUFFIX);
-        File statisticalTestsDataFile = new File(statisticalTestsDataFileName);
-        if(statisticalTestsDataFile.exists())
-        {
-            boolean overwriteFile = FileChooser.handleOutputFileAlreadyExists(mApp,
-                                                                              statisticalTestsDataFileName);
-            if(! overwriteFile)
-            {
-                return;
-            }
-            statisticalTestsDataFile.delete();
-        }
+        File outputFile = mApp.handleOutputFileSelection(inputFile, TESTED_FILE_SUFFIX);
         
         DataType []dataTypes = DataType.getAll();
         int numDataTypes = dataTypes.length;
@@ -167,6 +130,7 @@ public class StatisticalTestsAction
         
         StringBuffer commandBuf = new StringBuffer();
         commandBuf.append(MATLAB_FUNCTION_NAME + "(\'");
+        String selectedFileName = inputFile.getAbsolutePath();
         commandBuf.append(selectedFileName);
         commandBuf.append("\', ");
         commandBuf.append(dataTypeCode + ");");
@@ -175,7 +139,7 @@ public class StatisticalTestsAction
         
         try
         {
-            response = mgr.executeMatlabCommand(matlabCommand);
+            response = mApp.getMatlabConnectionManager().executeMatlabCommand(matlabCommand);
             System.out.println(response);
         }
         catch(IOException e)
@@ -184,32 +148,7 @@ public class StatisticalTestsAction
             optionPane.createDialog(mApp, "unable to execute matlab command \"" + matlabCommand + "\"").show();
         }
         
-        int responseLength = response.length();
-        if(responseLength > 0)
-        {
-            SimpleTextArea simpleTextArea = new SimpleTextArea("matlab response:\n" + response);
-            JOptionPane.showMessageDialog(mApp,
-                    simpleTextArea,
-                    "matlab response",
-                    JOptionPane.WARNING_MESSAGE);
-        }
-        else
-        {
-            File outputFile = new File(statisticalTestsDataFileName);
-            if(outputFile.exists() && outputFile.isFile())
-            {
-                JOptionPane.showMessageDialog(mApp, 
-                        "statistical test succeeded, saved as:\n" + outputFile.getName(), 
-                        "statistical test succeeded", 
-                         JOptionPane.INFORMATION_MESSAGE);
-            }
-            else
-            {
-                JOptionPane.showMessageDialog(mApp,
-                        "statistical test failed; cannot locate output file:\n" + outputFile.getName(),
-                        "statistical test failed",
-                        JOptionPane.WARNING_MESSAGE);
-            }            
-        }
+        boolean success = mApp.handleMatlabResult(response, "statistical tests", outputFile);
+
     }
 }
