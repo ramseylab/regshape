@@ -276,6 +276,9 @@ public class Model
         sb.append("Compartments: \n");
         DebugUtils.describeSortedObjectList(sb, mSymbolsMap, Compartment.class, separatorString);
         sb.append("\n\n");
+        sb.append("Species: \n");
+        DebugUtils.describeSortedObjectList(sb, mSymbolsMap, Species.class, separatorString);
+        sb.append("\n\n");
         sb.append("Reactions: \n");
         DebugUtils.describeSortedObjectList(sb, mReactionsMap, separatorString);
         return(sb.toString());
