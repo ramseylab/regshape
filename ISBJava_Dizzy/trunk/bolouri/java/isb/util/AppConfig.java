@@ -71,7 +71,6 @@ public class AppConfig
         InputSource retSource = null;
         String uri = URLUtils.createFileURL(pAppFile);
         
-        System.out.println("opening URL: " + uri);
         FileInputStream fileInputStream = new FileInputStream(pAppFile);
         retSource = new InputSource(fileInputStream);
         retSource.setSystemId(uri);
