@@ -502,6 +502,12 @@ public class ClassRegistry
         return(newRegistryAliases);
     }
 
+    public void clearInstances()
+    {
+        HashMap instances = getInstances();
+        instances.clear();
+    }
+
     /**
      * Test method for this class
      */

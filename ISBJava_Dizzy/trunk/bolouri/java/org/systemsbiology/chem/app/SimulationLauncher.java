@@ -1536,6 +1536,7 @@ public class SimulationLauncher
                 // set the model
 
                 mModel = pModel;
+                mSimulatorRegistry.clearInstances();
                 populateSymbolListPanel();
                 setModelLabel(pModel.getName());
 
