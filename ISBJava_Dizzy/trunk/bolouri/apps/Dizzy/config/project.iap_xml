@@ -209,10 +209,10 @@ and any path to a file to read from that file]]></string>
 								<string><![CDATA[appLogoIcon.gif]]></string>
 							</property>
 							<property name="smallIconPath">
-								<string><![CDATA[@PROJROOT@/apps/Dizzy/images/]]></string>
+								<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
 							</property>
 							<property name="largeIconPath">
-								<string><![CDATA[@PROJROOT@/apps/Dizzy/images/]]></string>
+								<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
 							</property>
 						</object>
 					</property>
@@ -403,7 +403,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@PROJROOT@/build/web/Dizzy/]]></string>
+								<string><![CDATA[@PROJROOT@/build/web/@APPNAME@/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -451,16 +451,16 @@ and any path to a file to read from that file]]></string>
 				</object>
 			</property>
 			<property name="installerName">
-				<string><![CDATA[insDizzy]]></string>
+				<string><![CDATA[ins@APPNAME@]]></string>
 			</property>
 			<property name="productName">
-				<string><![CDATA[Dizzy v@VERSION@]]></string>
+				<string><![CDATA[@APPNAME@ v@VERSION@]]></string>
 			</property>
 			<property name="rulesFailedMessage">
 				<string><![CDATA[The installer cannot run on your configuration. It will now quit.]]></string>
 			</property>
 			<property name="userSplashPath">
-				<string><![CDATA[@PROJROOT@/apps/Dizzy/images/]]></string>
+				<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
 			</property>
 			<property name="userSplashName">
 				<string><![CDATA[appLogo.png]]></string>
@@ -754,7 +754,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<string><![CDATA[Please read the following release notes]]></string>
 							</property>
 							<property name="resourcePath">
-								<string><![CDATA[@PROJROOT@/apps/Dizzy/html/]]></string>
+								<string><![CDATA[@PROJROOT@/apps/@APPNAME@/html/]]></string>
 							</property>
 							<property name="resourceName">
 								<string><![CDATA[ReleaseNotes.html]]></string>
@@ -819,16 +819,16 @@ Press ""Done"" to quit the installer.]]></string>
 						<object refID="4a0b0db39aea"/>
 					</property>
 					<property name="solarisMagicFolderPath">
-						<string><![CDATA[Dizzy]]></string>
+						<string><![CDATA[@APPNAME@]]></string>
 					</property>
 					<property name="macMagicFolderPath">
-						<string><![CDATA[Dizzy]]></string>
+						<string><![CDATA[@APPNAME@]]></string>
 					</property>
 					<property name="macXMagicFolderPath">
-						<string><![CDATA[Dizzy]]></string>
+						<string><![CDATA[@APPNAME@]]></string>
 					</property>
 					<property name="win32MagicFolderPath">
-						<string><![CDATA[Dizzy]]></string>
+						<string><![CDATA[@APPNAME@]]></string>
 					</property>
 				</object>
 			</property>
@@ -856,7 +856,7 @@ Press ""Done"" to quit the installer.]]></string>
 						<string><![CDATA[]]></string>
 					</property>
 					<property name="win32MagicFolderPath">
-						<string><![CDATA[Dizzy]]></string>
+						<string><![CDATA[@APPNAME@]]></string>
 					</property>
 				</object>
 			</property>
@@ -1081,7 +1081,7 @@ Press ""Done"" to quit the installer.]]></string>
 					<method name="addElement">
 						<object class="com.zerog.ia.installer.Project" objectID="4a0be7a49af5">
 							<property name="name">
-								<string><![CDATA[Dizzy]]></string>
+								<string><![CDATA[@APPNAME@]]></string>
 							</property>
 							<property name="projectLocation">
 								<string><![CDATA[Same as current product]]></string>
@@ -1102,7 +1102,7 @@ Press ""Done"" to quit the installer.]]></string>
 			<property name="installerInfoData">
 				<object class="com.zerog.ia.installer.util.InstallerInfoData" objectID="4a0be7189aea">
 					<property name="productName">
-						<string><![CDATA[Dizzy]]></string>
+						<string><![CDATA[@APPNAME@]]></string>
 					</property>
 					<property name="productID">
 						<object class="com.zerog.registry.UUID">
@@ -1112,10 +1112,10 @@ Press ""Done"" to quit the installer.]]></string>
 						</object>
 					</property>
 					<property name="productURL">
-						<string><![CDATA[http://labs.systemsbiology.net/bolouri/Dizzy]]></string>
+						<string><![CDATA[http://labs.systemsbiology.net/bolouri/@APPNAME@]]></string>
 					</property>
 					<property name="productDescription">
-						<string><![CDATA[Dizzy:  a chemical kinetics stochastic simulation system]]></string>
+						<string><![CDATA[@APPNAME@:  a chemical kinetics stochastic simulation system]]></string>
 					</property>
 					<property name="productVersionMajor">
 						<int>0</int>
@@ -1130,7 +1130,7 @@ Press ""Done"" to quit the installer.]]></string>
 						<int>0</int>
 					</property>
 					<property name="supportURL">
-						<string><![CDATA[http://labs.systemsbiology.net/bolouri/Dizzy]]></string>
+						<string><![CDATA[http://labs.systemsbiology.net/bolouri/@APPNAME@]]></string>
 					</property>
 					<property name="vendorName">
 						<string><![CDATA[Institute for Systems Biology]]></string>
@@ -1399,7 +1399,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[Uninstall Dizzy]]></string>
+												<string><![CDATA[Uninstall @APPNAME@]]></string>
 											</property>
 											<property name="featureUninstallEnabled">
 												<boolean>false</boolean>
@@ -1627,7 +1627,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[Dizzy]]></string>
+												<string><![CDATA[@APPNAME@]]></string>
 											</property>
 											<property name="executableIcon">
 												<object class="com.zerog.ia.installer.util.BindingWin32" objectID="d56935849381">
@@ -1638,10 +1638,10 @@ and any path to a file to read from that file]]></string>
 														<string><![CDATA[appLogoIcon.gif]]></string>
 													</property>
 													<property name="smallIconPath">
-														<string><![CDATA[@PROJROOT@/apps/Dizzy/images/]]></string>
+														<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
 													</property>
 													<property name="largeIconPath">
-														<string><![CDATA[@PROJROOT@/apps/Dizzy/images/]]></string>
+														<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
 													</property>
 												</object>
 											</property>
@@ -1691,19 +1691,19 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[664]]></string>
 											</property>
 											<property name="sourceName">
-												<string><![CDATA[GAL.dizzy]]></string>
+												<string><![CDATA[GAL.cmdl]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/Dizzy/samples/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[GAL.dizzy]]></string>
+												<string><![CDATA[GAL.cmdl]]></string>
 											</property>
 											<property name="fileSize">
 												<long>4394</long>
@@ -1725,7 +1725,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/Dizzy/samples/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1751,7 +1751,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/Dizzy/samples/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1771,19 +1771,19 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[664]]></string>
 											</property>
 											<property name="sourceName">
-												<string><![CDATA[singlegene.dizzy]]></string>
+												<string><![CDATA[singlegene.cmdl]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/Dizzy/samples/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[singlegene.dizzy]]></string>
+												<string><![CDATA[singlegene.cmdl]]></string>
 											</property>
 											<property name="fileSize">
 												<long>3623</long>
@@ -1830,7 +1830,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/Dizzy/html/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1882,7 +1882,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/Dizzy/config/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1908,7 +1908,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/Dizzy/config/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1928,19 +1928,19 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[664]]></string>
 											</property>
 											<property name="sourceName">
-												<string><![CDATA[dizzycmd.bat]]></string>
+												<string><![CDATA[@APPNAMECOMMANDLINE@.bat]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/Dizzy/bin/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/bin/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[dizzycmd.bat]]></string>
+												<string><![CDATA[@APPNAMECOMMANDLINE@.bat]]></string>
 											</property>
 											<property name="fileSize">
 												<long>70</long>
@@ -1954,19 +1954,19 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[664]]></string>
 											</property>
 											<property name="sourceName">
-												<string><![CDATA[dizzycmd.sh]]></string>
+												<string><![CDATA[@APPNAMECOMMANDLINE@.sh]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/Dizzy/bin/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/bin/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[dizzycmd.sh]]></string>
+												<string><![CDATA[@APPNAMECOMMANDLINE@.sh]]></string>
 											</property>
 											<property name="fileSize">
 												<long>87</long>
@@ -1986,7 +1986,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/Dizzy/../../config/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/../../config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2037,7 +2037,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/Dizzy/../../build/web/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/../../build/web/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2063,7 +2063,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/Dizzy/html/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2138,7 +2138,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/build/web/Dizzy/docs/]]></string>
+												<string><![CDATA[@PROJROOT@/build/web/@APPNAME@/docs/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2193,7 +2193,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/Dizzy/config/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>

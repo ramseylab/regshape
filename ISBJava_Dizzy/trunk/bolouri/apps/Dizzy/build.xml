@@ -7,16 +7,25 @@
 %AppConfig;
 ]>
 
-<project name="Dizzy" default="compile" basedir=".">
+<project name="&appName;" default="compile" basedir=".">
   <property name="app.styleDir"                 location="${basedir}/html" />
   <property name="app.buildDir"                 location="${basedir}/build" />
   <property name="app.configDir"                location="${basedir}/config" />
   <property name="app.docsDir"                  location="${basedir}/docs" />
   <property name="app.imagesDir"                location="${basedir}/images" />
+  <property name="app.samplesDir"               location="${basedir}/samples" />
+  <property name="app.binDir"                   location="${basedir}/bin" />
   <property name="app.webDir"                   location="${projWebDir}/${ant.project.name}" />
   <property name="app.downloadDir"              location="${app.webDir}/&appVersion;" />
   <property name="app.installerDir"             location="${app.downloadDir}/installer" />
   <property name="app.version"                  value="&appVersion;" />
+
+  <target name="setFilters">
+    <filter token="VERSION" value="${app.version}" />
+    <filter token="PROJROOT" value="${projRoot}" />
+    <filter token="APPNAME" value="${ant.project.name}" />
+    <filter token="APPNAMECOMMANDLINE" value="&appNameCommandLine;" />
+  </target>
 
   <target name="compile">
     <!-- nothing to do -->
@@ -30,6 +39,26 @@
 
   <target name="copyCommonConfig">
     <copy file="${projConfigDir}/CommonConfig.dtd" todir="${app.configDir}" />
+  </target>
+
+  <target name="copySamples" depends="setFilters">
+    <mkdir dir="${app.buildDir}/samples" />
+    <copy todir="${app.buildDir}/samples" filtering="true">
+      <fileset dir="${app.samplesDir}">
+        <include name="*.cmdl" />
+        <include name="*.xml" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="copyScripts" depends="setFilters">
+    <mkdir dir="${app.buildDir}/bin" />
+    <copy todir="${app.buildDir}/bin" filtering="true">
+      <fileset dir="${app.binDir}">
+        <include name="*.bat" />
+        <include name="*.sh" />
+      </fileset>
+    </copy>
   </target>
 
   <target name="style" depends="copyCommonConfig">
@@ -130,12 +159,9 @@
     </copy>
   </target>
 
-  <target name="buildInstallers">
+  <target name="buildInstallers" depends="setFilters, copySamples, copyScripts">
     <!-- make the build directory -->
     <mkdir dir="${app.buildDir}" />
-
-    <filter token="VERSION" value="${app.version}" />
-    <filter token="PROJROOT" value="${projRoot}" />
 
     <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
     <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />

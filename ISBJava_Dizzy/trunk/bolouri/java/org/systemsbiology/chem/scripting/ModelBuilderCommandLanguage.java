@@ -1386,6 +1386,6 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
     public String getFileRegex()
     {
-        return(".*\\.dizzy$");
+        return(".*\\.(dizzy|cmdl)$");
     }
 }
