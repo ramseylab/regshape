@@ -8,6 +8,9 @@ package org.systemsbiology.chem.app;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
+/**
+ * Provides a GUI interface for initiating simulations.
+ */
 import org.systemsbiology.chem.*;
 import org.systemsbiology.chem.scripting.*;
 import org.systemsbiology.util.*;
@@ -22,18 +25,29 @@ public class SimulationLauncher
 {
     private static final int OUTPUT_TEXT_AREA_NUM_ROWS = 20;
     private static final int OUTPUT_TEXT_AREA_NUM_COLS = 40;
-    private static final int SPECIES_LIST_BOX_ROW_COUNT = 10;
+    private static final int SYMBOL_LIST_BOX_ROW_COUNT = 10;
     private static final int SIMULATORS_LIST_BOX_ROW_COUNT = 10;
     private static final int OUTPUT_FILE_TEXT_FIELD_SIZE_CHARS = 20;
 
     private ClassRegistry mSimulatorRegistry;
-    private Component mLauncherFrame;
     private Model mModel;
+    private ArrayList mListeners;
+    private boolean mHandleOutputInternally;
+
+    // simulation runner stuff
+    private Thread mSimulationRunnerThread;
+    private SimulationRunner mSimulationRunner;
+    private SimulationRunParameters mSimulationRunParameters;
+    private SimulationController mSimulationController;
+    private Queue mResultsQueue;
+
+    // swing controls for the basic launcher
+    private Component mLauncherFrame;
     private JTextField mStartTimeField;
     private JTextField mStopTimeField;
     private JTextField mNumPointsField;
     private JList mSimulatorsList;
-    private JList mSpeciesList;
+    private JList mSymbolList;
     private JTextField mEnsembleField;
     private JLabel mEnsembleFieldLabel;
     private JTextField mNumStepsField;
@@ -42,23 +56,21 @@ public class SimulationLauncher
     private JLabel mAllowedRelativeErrorFieldLabel;
     private JTextField mAllowedAbsoluteErrorField;
     private JLabel mAllowedAbsoluteErrorFieldLabel;
-    private OutputType mOutputType;
     private JButton mStartButton;
     private JButton mStopButton;
     private JButton mResumeButton;
     private JButton mCancelButton;
-    private SimulationController mSimulationController;
-    private Thread mSimulationRunnerThread;
-    private SimulationRunner mSimulationRunner;
-    private SimulationRunParameters mSimulationRunParameters;
     private String mAppName;
-    private boolean mExitOnClose;
     private JLabel mModelNameLabel;
-    private ArrayList mListeners;
+
+    // variables used for the "output panel", which controls what should be
+    // done with the simulation results:
+    private OutputType mOutputType;
     private File mOutputFile;
     private JTextField mOutputFileField;
     private JCheckBox mOutputFileAppendCheckBox;
     private JLabel mOutputFileAppendLabel;
+    private Plotter mPlotter;
 
     /**
      * Enumerates the possible results of calling {@link #setModel(org.systemsbiology.chem.Model)}.
@@ -85,23 +97,68 @@ public class SimulationLauncher
 
     /**
      * Creates a simulation launcher window in a JFrame.
-     * The boolean <code>pExitOnClose</code> controls whether
-     * the event handler should call <code>System.exit()</code>
-     * when the window-close event is detected.
+     *
+     * @param pAppName A string that is embedded in the title bar of the launcher frame.  It should
+     * be kept short, to ensure that it displays nicely in the launcher frame title bar.
+     *
+     * @param pModel The {@link org.systemsbiology.chem.Model model} is a required parameter.
+     * The model may be changed by calling {@link #setModel(org.systemsbiology.chem.Model)}.
+     *
+     * @param pHandleOutputInternally Controls whether the launcher should handle the simulation output
+     * itself, or delegate that responsibility to the calling application.  If this parameter is "true",
+     * the launcher will handle the output internally, and the caller will not have access to the 
+     * simulation results in a structured format.  If instead the parameter is "false", the caller will
+     * be able to access the simulation results in a structured format by calling {@link #getNextResults()},
+     * and the launcher will not handle the simulation results data.
+     * 
      */
     public SimulationLauncher(String pAppName,
                               Model pModel,
-                              boolean pExitOnClose) throws ClassNotFoundException, IOException
+                              boolean pHandleOutputInternally) throws ClassNotFoundException, IOException, InstantiationException
     {
-        JFrame frame = new JFrame();
-        setLauncherFrame(frame);
-        if(pExitOnClose)
-        {
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        }
+        mAppName = pAppName;
+        mHandleOutputInternally = pHandleOutputInternally;
         mListeners = new ArrayList();
-        createLauncher(pAppName, pModel);
+        if(mHandleOutputInternally)
+        {
+            mResultsQueue = null;
+            mPlotter = new Plotter();
+        }
+        else
+        {
+            mResultsQueue = new Queue();
+            mPlotter = null;
+        }
         mOutputFile = null;
+        setSimulationRunParameters(null);
+
+        createSimulationController();
+        createSimulatorRegistry();
+        createSimulationRunnerThread();
+
+        // create the launcher frame with all its controls
+        createLauncherFrame(JFrame.class);
+
+        // set the model and fill the symbol list-box
+        setModel(pModel);
+
+        // pack the launcher frame and set its location
+        activateLauncherFrame();
+    }
+
+
+    private void createSimulatorRegistry() throws ClassNotFoundException, IOException
+    {
+        // create simulator aliases
+        ClassRegistry classRegistry = new ClassRegistry(org.systemsbiology.chem.ISimulator.class);
+        classRegistry.buildRegistry();
+        mSimulatorRegistry = classRegistry;
+    }
+
+    private void createSimulationController()
+    {
+        SimulationController controller = new SimulationController();
+        mSimulationController = controller;
     }
 
     private void setLauncherLocation()
@@ -111,6 +168,29 @@ public class SimulationLauncher
         Dimension frameSize = frame.getSize();
         frame.setLocation((screenSize.width - frameSize.width) / 2,
                           (screenSize.height - frameSize.height) / 2);
+    }
+
+    private void activateLauncherFrame()
+    {
+        Component frame = getLauncherFrame();
+
+        if(frame instanceof JFrame)
+        {
+            JFrame myFrame = (JFrame) frame;
+            myFrame.pack();
+        }
+        else if(frame instanceof JInternalFrame)
+        {
+            JInternalFrame myFrame = (JInternalFrame) frame;
+            myFrame.pack();
+        }
+        else
+        {
+            throw new IllegalStateException("unknown container type");
+        }
+        
+        setLauncherLocation();
+        frame.setVisible(true);
     }
 
     synchronized Component getLauncherFrame()
@@ -294,11 +374,9 @@ public class SimulationLauncher
         }
         else if(pOutputType.equals(OutputType.PLOT))
         {
-            Plotter plotter = new Plotter(getLauncherFrame());
-
             String modelName = mModel.getName();
             String simulatorAlias = mSimulationRunParameters.mSimulatorAlias;
-            plotter.plot(mAppName, outputBuffer.toString(), simulatorAlias, modelName);
+            mPlotter.plot(mAppName, outputBuffer.toString(), simulatorAlias, modelName);
         }
         else
         {
@@ -332,12 +410,26 @@ public class SimulationLauncher
 
             if(! mSimulationController.getCancelled())
             {
-                handleOutput(pSimulationRunParameters.mOutputType,
-                             pSimulationRunParameters.mOutputFileName,
-                             pSimulationRunParameters.mOutputFileAppend,
-                             pSimulationRunParameters.mRequestedSymbolNames, 
-                             pSimulationRunParameters.mRetTimeValues, 
-                             pSimulationRunParameters.mRetSymbolValues);
+                if(mHandleOutputInternally)
+                {
+                    handleOutput(pSimulationRunParameters.mOutputType,
+                                 pSimulationRunParameters.mOutputFileName,
+                                 pSimulationRunParameters.mOutputFileAppend,
+                                 pSimulationRunParameters.mRequestedSymbolNames, 
+                                 pSimulationRunParameters.mRetTimeValues, 
+                                 pSimulationRunParameters.mRetSymbolValues);
+                }
+                else
+                {
+                    SimulationResults simulationResults = new SimulationResults();
+                    simulationResults.setSimulatorAlias(pSimulationRunParameters.mSimulatorAlias);
+                    simulationResults.setStartTime(pSimulationRunParameters.mStartTime);
+                    simulationResults.setEndTime(pSimulationRunParameters.mEndTime);
+                    simulationResults.setResultsTimeValues(pSimulationRunParameters.mRetTimeValues);
+                    simulationResults.setResultsSymbolNames(pSimulationRunParameters.mRequestedSymbolNames);
+                    simulationResults.setResultsSymbolValues(pSimulationRunParameters.mRetSymbolValues);
+                    mResultsQueue.add(simulationResults);
+                }
             }
         }
                 
@@ -355,7 +447,7 @@ public class SimulationLauncher
             simulationEndCleanup();
             ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
                                                                                              "Failure running simulation",
-                                                                                             new Exception(e));
+                                                                                             new Exception(e.toString()));
             dialog.show();
             
         }
@@ -666,28 +758,28 @@ public class SimulationLauncher
         return(panel);
     }
 
-    private JList createSpeciesList()
+    private JList createSymbolList()
     {
-        JList speciesListBox = new JList();
-        mSpeciesList = speciesListBox;
-        speciesListBox.setVisibleRowCount(SPECIES_LIST_BOX_ROW_COUNT);
-        speciesListBox.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        return(speciesListBox);
+        JList symbolListBox = new JList();
+        mSymbolList = symbolListBox;
+        symbolListBox.setVisibleRowCount(SYMBOL_LIST_BOX_ROW_COUNT);
+        symbolListBox.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        return(symbolListBox);
     }
 
-    private void populateSpeciesListPanel()
+    private void populateSymbolListPanel()
     {
-        Object []speciesArray = mModel.getOrderedSpeciesNamesArray();
-        mSpeciesList.setListData(speciesArray);
+        Object []symbolArray = mModel.getOrderedNonConstantSymbolNamesArray();
+        mSymbolList.setListData(symbolArray);
     }
 
-    private JPanel createSpeciesListPanel()
+    private JPanel createSymbolListPanel()
     {
         JPanel panel = new JPanel();
-        JLabel label = new JLabel("view species:");
+        JLabel label = new JLabel("view symbol:");
         Box box = new Box(BoxLayout.Y_AXIS);
         box.add(label);
-        JList list = createSpeciesList();
+        JList list = createSymbolList();
         JScrollPane scrollPane = new JScrollPane(list);
         box.add(scrollPane);
         panel.add(box);
@@ -1018,21 +1110,21 @@ public class SimulationLauncher
             simulatorParameters.setMaxAllowedAbsoluteError(allowedAbsoluteError.doubleValue());
         }
 
-        Object []speciesSelected = mSpeciesList.getSelectedValues();
-        if(speciesSelected.length == 0)
+        Object []symbolSelected = mSymbolList.getSelectedValues();
+        if(symbolSelected.length == 0)
         {
-            handleBadInput("no species selected", "Please select at least one species to observe");
+            handleBadInput("no symbol selected", "Please select at least one symbol to observe");
             return(retVal);
         }
-        int numSpecies = speciesSelected.length;
+        int numSymbol = symbolSelected.length;
 
-        String []speciesSelectedNames = new String[numSpecies];
-        for(int ctr = 0; ctr < numSpecies; ctr++)
+        String []symbolSelectedNames = new String[numSymbol];
+        for(int ctr = 0; ctr < numSymbol; ctr++)
         {
-            String speciesName = (String) speciesSelected[ctr];
-            speciesSelectedNames[ctr] = speciesName;
+            String symbolName = (String) symbolSelected[ctr];
+            symbolSelectedNames[ctr] = symbolName;
         }
-        srp.mRequestedSymbolNames = speciesSelectedNames;
+        srp.mRequestedSymbolNames = symbolSelectedNames;
 
         double []timeValues = new double[numTimePoints];
         srp.mRetTimeValues = timeValues;
@@ -1040,32 +1132,41 @@ public class SimulationLauncher
         Object []symbolValues = new Object[numTimePoints];
         srp.mRetSymbolValues = symbolValues;
      
-        String outputTypeStr = mOutputType.toString();
-        OutputType outputType = OutputType.get(outputTypeStr);
-        assert (null != outputType) : "null output type";
-
-        if(outputType.equals(OutputType.PLOT))
+        if(mHandleOutputInternally)
         {
-            if(numSpecies > Plotter.MAX_NUM_SPECIES_TO_PLOT)
+            String outputTypeStr = mOutputType.toString();
+            OutputType outputType = OutputType.get(outputTypeStr);
+            assert (null != outputType) : "null output type";
+            
+            if(outputType.equals(OutputType.PLOT))
             {
-                handleBadInput("too many species to plot", "maximum number of species that can be plotted simultaneously is: " + Plotter.MAX_NUM_SPECIES_TO_PLOT);
+                if(numSymbol > Plotter.MAX_NUM_SYMBOLS_TO_PLOT)
+                {
+                    handleBadInput("too many symbols to plot", "maximum number of symbol that can be plotted simultaneously is: " + Plotter.MAX_NUM_SYMBOLS_TO_PLOT);
+                }
+            }
+            
+            srp.mOutputType = outputType;
+            if(mOutputType.equals(OutputType.FILE))
+            {
+                File outputFile = mOutputFile;
+                if(null == outputFile)
+                {
+                    handleBadInput("output file name was not specified", "Saving the results to a file requires specifying a file name");
+                    return(retVal);
+                }
+                String fileName = outputFile.getAbsolutePath();
+                assert (null != fileName && fileName.trim().length() > 0) : "invalid output file name";
+                srp.mOutputFileName = fileName;
+                boolean append = mOutputFileAppendCheckBox.isSelected();
+                srp.mOutputFileAppend = append;
             }
         }
-
-        srp.mOutputType = outputType;
-        if(mOutputType.equals(OutputType.FILE))
+        else
         {
-            File outputFile = mOutputFile;
-            if(null == outputFile)
-            {
-                handleBadInput("output file name was not specified", "Saving the results to a file requires specifying a file name");
-                return(retVal);
-            }
-            String fileName = outputFile.getAbsolutePath();
-            assert (null != fileName && fileName.trim().length() > 0) : "invalid output file name";
-            srp.mOutputFileName = fileName;
-            boolean append = mOutputFileAppendCheckBox.isSelected();
-            srp.mOutputFileAppend = append;
+            srp.mOutputFileName = null;
+            srp.mOutputFileAppend = false;
+            srp.mOutputType = null;
         }
 
         retVal = srp;
@@ -1232,17 +1333,13 @@ public class SimulationLauncher
         mOutputType = OutputType.PLOT;
         enableOutputFieldSection(false);
 
-        //----------------------------------------------------
-        // :TODO:  initialize "append" checkbox and create label
-        //----------------------------------------------------
-
         outputBox.add(filePanel);
 
         outputPanel.add(outputBox);
         return(outputPanel);
     }
 
-    private JPanel createModelSpeciesLabelPanel()
+    private JPanel createModelSymbolLabelPanel()
     {
         JPanel labelPanel = new JPanel();
         labelPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -1274,24 +1371,26 @@ public class SimulationLauncher
         setLauncherFrame(null);
     }
 
-    private void createLauncher(String pAppName, Model pModel) throws IOException, ClassNotFoundException
+    private void createLauncherFrame(Class pFrameClass)
     {
-        Component frame = getLauncherFrame();
-        mAppName = pAppName;
-        String appTitle = pAppName + ": simulator";
+        // create the launcher frame
+        Component frame = null;
+        try
+        {
+            frame = (Component) pFrameClass.newInstance();
+        }
+        catch(Exception e)
+        {
+            throw new IllegalStateException("unable to instantiate class: " + pFrameClass.getName() + " as an AWT container");
+        }
+        setLauncherFrame(frame);
 
-        // create simulator aliases
-        ClassRegistry classRegistry = new ClassRegistry(org.systemsbiology.chem.ISimulator.class);
-        classRegistry.buildRegistry();
-        mSimulatorRegistry = classRegistry;
-
-        SimulationController controller = new SimulationController();
-        mSimulationController = controller;
+        String appTitle = mAppName + ": simulator";
 
         JPanel controllerPanel = new JPanel();
         Box box = new Box(BoxLayout.Y_AXIS);
 
-        JPanel labelPanel = createModelSpeciesLabelPanel();
+        JPanel labelPanel = createModelSymbolLabelPanel();
         box.add(labelPanel);
 
         JPanel midPanel = new JPanel();
@@ -1301,26 +1400,31 @@ public class SimulationLauncher
         JPanel simulatorsListPanel = createSimulatorsListPanel();
         midPanel.add(simulatorsListPanel);
         midPanel.add(startStopTimePanel);
-        JPanel speciesListPanel = createSpeciesListPanel();
-        midPanel.add(speciesListPanel);
+        JPanel symbolListPanel = createSymbolListPanel();
+        midPanel.add(symbolListPanel);
 
         box.add(midPanel);
 
-        JPanel outputPanel = createOutputPanel();
-        box.add(outputPanel);
+        if(mHandleOutputInternally)
+        {
+            JPanel outputPanel = createOutputPanel();
+            box.add(outputPanel);
+        }
+        else
+        {
+            mOutputType = null;
+            mOutputFileField = null;
+            mOutputFileAppendCheckBox = null;
+            mOutputFileAppendLabel = null;
+        }
 
         controllerPanel.add(box);
 
         Container contentPane = null;
 
-        setSimulationRunParameters(null);
-
         updateSimulationControlButtons();
-        createSimulationRunnerThread();
 
-        setModel(pModel);
-
-        // Add listener for "window-close" event
+         // Add listener for "window-close" event
         if(frame instanceof JFrame)
         {
             JFrame myFrame = (JFrame) frame;
@@ -1332,7 +1436,6 @@ public class SimulationLauncher
                     handleCloseSimulationLauncher();
                 }
             });
-            myFrame.pack();
         }
         else if(frame instanceof JInternalFrame)
         {
@@ -1345,17 +1448,18 @@ public class SimulationLauncher
             myFrame.setTitle(appTitle);
             contentPane = myFrame.getContentPane();
             contentPane.add(controllerPanel);
-            myFrame.pack();
         }
         else
         {
             throw new IllegalStateException("unknown container type");
         }
 
-        setLauncherLocation();
-        frame.setVisible(true);
     }
 
+    /**
+     * Registers a {@link SimulationLauncher.Listener} object to receive
+     * events for this simulation launcher.
+     */
     public void addListener(Listener pListener)
     {
         Component frame = getLauncherFrame();
@@ -1391,6 +1495,11 @@ public class SimulationLauncher
         }
     }
 
+    /**
+     * Sets the underlying {@link org.systemsbiology.chem.Model} data structure
+     * to be <code>pModel</code>.  The possible results are the enumerated class
+     * {@link SimulationLauncher.SetModelResults}.
+     */
     public SetModelResult setModel(Model pModel)
     {
         SetModelResult result = null;
@@ -1402,7 +1511,7 @@ public class SimulationLauncher
                 // set the model
 
                 mModel = pModel;
-                populateSpeciesListPanel();
+                populateSymbolListPanel();
                 setModelLabel(pModel.getName());
 
                 result = SetModelResult.SUCCESS;
@@ -1420,6 +1529,11 @@ public class SimulationLauncher
         return(result);
     }
 
+    /**
+     * Brings the SimulationLauncher frame "to the front".  Does not
+     * necessarily transfer focus to the SimulationLauncher (that depends 
+     * on the window manager).
+     */
     public void toFront()
     {
         Component launcherFrame = mLauncherFrame;
@@ -1435,6 +1549,20 @@ public class SimulationLauncher
         {
             assert false : "unknown internal frame type";
         }
+    }
+
+    /**
+     * Returns the next {@link org.systemsbiology.chem.SimulationResults} object in the queue.
+     * If the queue is empty, null is returned.
+     */
+    public SimulationResults getNextResults() throws IllegalStateException
+    {
+        if(mHandleOutputInternally)
+        {
+            throw new IllegalStateException("cannot access getNextResults() if HandleOutputInternally flag was passed to the SimulationLauncher constructor");
+        }
+
+        return((SimulationResults) mResultsQueue.getNext());
     }
 }
     
