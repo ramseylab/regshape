@@ -10,7 +10,7 @@ package org.systemsbiology.util;
 
 import java.util.*;
 
-public class PriorityQueue
+public class PriorityQueue extends Queue
 {
     protected class Node
     {
@@ -44,7 +44,7 @@ public class PriorityQueue
         mRoot = null;
     }
 
-    public Object peek()
+    public Object peekNext()
     {
         Object retObj = null;
         if(null != mRoot)
@@ -148,7 +148,7 @@ public class PriorityQueue
         }
     }
 
-    public Object poll()
+    public Object getNext()
     {
         Object retObj = null;
         if(null != mRoot)
@@ -238,7 +238,7 @@ public class PriorityQueue
         }
     }
 
-    public boolean offer(Object pElement)
+    public boolean add(Object pElement)
     {
         insertRoot(new Node(pElement));
         return(true);

@@ -10,42 +10,14 @@ package org.systemsbiology.util;
  */
 
 /**
- * Imports a thread-safe FIFO queue.
+ * Queue interface.
  */
 
 import java.util.*;
 
-public final class Queue
+public abstract class Queue
 {
-    private List mQueue;
-    public Queue()
-    {
-        mQueue = new LinkedList();
-    }
-
-    public synchronized void add(Object pElement)
-    {
-        mQueue.add(pElement);
-    }
-
-    public synchronized Object peekNext()
-    {
-        Object element = null;
-        if(mQueue.size() > 0)
-        {
-            element = (Object) mQueue.get(0);
-        }
-        return(element);
-    }
-
-    public synchronized Object getNext()
-    {
-        Object element = null;
-        if(mQueue.size() > 0)
-        {
-            element = (Object) mQueue.remove(0);
-        }
-        return(element);
-    }
-    
+    public abstract boolean add(Object pElement);
+    public abstract Object peekNext();
+    public abstract Object getNext();
 }

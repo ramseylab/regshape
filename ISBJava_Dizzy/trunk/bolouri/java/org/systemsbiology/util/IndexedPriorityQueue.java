@@ -59,7 +59,7 @@ public class IndexedPriorityQueue extends PriorityQueue
         super.clear();   
     }
 
-    public Object poll()
+    public Object getNext()
     {
         throw new IllegalStateException("poll() operation not supported on an IndexedPriorityQueue");
     }
@@ -79,7 +79,7 @@ public class IndexedPriorityQueue extends PriorityQueue
         return(((Node) mIndex.get(pIndex)).mPayload);
     }
 
-    public boolean offer(Object pElement)
+    public boolean add(Object pElement)
     {
         IndexedNode node = new IndexedNode(pElement);
         
