@@ -51,7 +51,7 @@ public class CytoscapeViewer
             String tempFileName = tempFile.getAbsolutePath();
             FileWriter fileWriter = new FileWriter(tempFile);
             PrintWriter printWriter = new PrintWriter(fileWriter);
-            exporterMarkupLanguage.export(pModel, printWriter);
+            exporterMarkupLanguage.export(pModel, printWriter, ModelExporterMarkupLanguage.Specification.LEVEL1_VERSION1);
             URL jnlpFileResource = this.getClass().getResource(JNLP_TEMPLATE_FILE_NAME);
             if(null == jnlpFileResource)
             {
