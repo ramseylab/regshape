@@ -35,6 +35,7 @@
     <ant dir="${projAppsDir}" target="clean" />
     <delete dir="${projStyleDir}" quiet="yes" />
     <delete dir="${projWebDir}" quiet="yes" />
+    <delete dir="${projBuildDir}" quiet="yes" />
   </target>
 
   <target name="style">
