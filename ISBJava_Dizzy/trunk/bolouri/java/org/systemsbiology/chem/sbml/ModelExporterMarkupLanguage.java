@@ -468,14 +468,14 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                 reactionElement.setAttribute(ATTRIBUTE_REVERSIBLE, "false");
 
                 // handle reactant species
-                int numReactants = reaction.getNumParticipants(Reaction.ParticipantType.REACTANT);
+                int numReactants = reaction.getNumParticipants(ReactionParticipant.Type.REACTANT);
                 Species []reactantSpecies = new Species[numReactants];
                 int []reactantStoichiometries = new int[numReactants];
                 boolean []reactantDynamic = new boolean[numReactants];
                 reaction.constructSpeciesArrays(reactantSpecies, 
                                                 reactantStoichiometries, 
                                                 reactantDynamic, 
-                                                Reaction.ParticipantType.REACTANT);
+                                                ReactionParticipant.Type.REACTANT);
 
                 Element listOfReactantsElement = document.createElement(ELEMENT_NAME_LIST_OF_REACTANTS);
                 reactionElement.appendChild(listOfReactantsElement);
@@ -506,14 +506,14 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                 }
 
                 // handle product species
-                int numProducts = reaction.getNumParticipants(Reaction.ParticipantType.PRODUCT);
+                int numProducts = reaction.getNumParticipants(ReactionParticipant.Type.PRODUCT);
                 Species []productSpecies = new Species[numProducts];
                 int []productStoichiometries = new int[numProducts];
                 boolean []productDynamic = new boolean[numProducts];
                 reaction.constructSpeciesArrays(productSpecies, 
                                                 productStoichiometries, 
                                                 productDynamic, 
-                                                Reaction.ParticipantType.PRODUCT);
+                                                ReactionParticipant.Type.PRODUCT);
 
                 Element listOfProductsElement = document.createElement(ELEMENT_NAME_LIST_OF_PRODUCTS);
                 reactionElement.appendChild(listOfProductsElement);
