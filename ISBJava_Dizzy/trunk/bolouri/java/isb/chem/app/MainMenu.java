@@ -10,13 +10,13 @@ public class MainMenu extends JMenuBar
     private JMenuItem mSimulateMenuItem;
     private JMenuItem mExportMenuItem;
 
-    private static final String ACTION_COMMAND_FILE_OPEN = "Open";
+    private static final String ACTION_COMMAND_FILE_OPEN = "Open...";
     private static final String ACTION_COMMAND_FILE_QUIT = "Quit";
 
-    private static final String ACTION_COMMAND_HELP_ABOUT = "About";
+    private static final String ACTION_COMMAND_HELP_ABOUT = "About...";
 
-    private static final String ACTION_COMMAND_TOOLS_EXPORT = "Export";
-    private static final String ACTION_COMMAND_TOOLS_SIMULATE = "Simulate";
+    private static final String ACTION_COMMAND_TOOLS_EXPORT = "Export...";
+    private static final String ACTION_COMMAND_TOOLS_SIMULATE = "Simulate...";
 
 
 
