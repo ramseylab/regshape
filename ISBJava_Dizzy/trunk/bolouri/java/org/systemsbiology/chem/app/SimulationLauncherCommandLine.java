@@ -345,6 +345,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                 {
                     handleCommandLineError("invalid output format alias: " + outputFormatAlias);
                 }
+                mOutputFileFormat = outputFormat;
             }
         }
 
@@ -471,6 +472,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                 SimulationProgressReporter reporter = new SimulationProgressReporter();
                 if(null != mPrintStatusSeconds)
                 {
+                    System.out.println("status update interval: " + mPrintStatusSeconds);
                     simulator.setStatusUpdateIntervalSeconds(mPrintStatusSeconds.doubleValue());
                 }
                 simulator.setProgressReporter(reporter);
@@ -515,7 +517,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                                                                         resultsSymbolValues,
                                                                         mOutputFileFormat);
 
-            if(getDebug())
+            if(mPrintStatus || getDebug())
             {
                 System.err.println("elapsed time to carry out the simulation: " + elapsedTimeSeconds + " seconds");
             }
@@ -545,7 +547,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                     }
                     else
                     {
-                        mOutputFilePrintWriter.println("unable to compute steady-state fluctuations, because the Jacobian has an eigenvalue with a positive-definite real part; this means the system is not in steady-state");
+                        mOutputFilePrintWriter.println("unable to compute steady-state fluctuations, because all of the the eigenvalues of the Jacobian have positive-definite real parts; this means the system is not in steady-state");
                     }
                 }
             }
