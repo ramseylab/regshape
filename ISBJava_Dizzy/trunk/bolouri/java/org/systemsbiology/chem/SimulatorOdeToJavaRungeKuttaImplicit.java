@@ -17,6 +17,11 @@ public class SimulatorOdeToJavaRungeKuttaImplicit extends SimulatorOdeToJavaBase
 {
     public static final String CLASS_ALIAS = "ODEtoJava-imex443-stiff";
 
+    public boolean allowsInterrupt()
+    {
+        return(false);
+    }
+
     protected void runExternalSimulation(Span pSimulationTimeSpan,
                                          double []pInitialDynamicSymbolValues,
                                          double pInitialStepSize,
@@ -27,15 +32,18 @@ public class SimulatorOdeToJavaRungeKuttaImplicit extends SimulatorOdeToJavaBase
         Btableau simulationButcherTableau = new Btableau("imex443");
         ODE simulationModel = (ODE) this;
 
-        ImexSD.imex_sd(simulationModel, 
-                       pSimulationTimeSpan, 
-                       pInitialDynamicSymbolValues, 
-                       pInitialStepSize,
-                       simulationButcherTableau,
-                       pMaxAllowedAbsoluteError,
-                       pMaxAllowedRelativeError,
-                       pTempOutputFileName,
-                       "Stats_Off");
+        ImexSD imexsd = new ImexSD(simulationModel, 
+                                   pSimulationTimeSpan, 
+                                   pInitialDynamicSymbolValues, 
+                                   pInitialStepSize,
+                                   simulationButcherTableau,
+                                   pMaxAllowedAbsoluteError,
+                                   pMaxAllowedRelativeError,
+                                   pTempOutputFileName,
+                                   "Stats_Off");
+        imexsd.setRecorder(this);
+
+        imexsd.routine();
     }
 
     
