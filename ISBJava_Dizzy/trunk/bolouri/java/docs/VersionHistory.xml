@@ -66,6 +66,8 @@ This document contains the version history for the
     column of the data file) as an empty cell.</li>
   <li>Modified <code>org.systemsbiology.gui.HelpBrowser</code> to cache the <code>HelpBroker</code>, 
     which may help speed up the initialization process for the help browser.</li>
+  <li>Removed <code>cytoscape.jar</code> that was mistakenly being included in the
+    <code>ISBJava.tar.gz</code> distribution.</li>
 </ul>
 </td>
 </tr>
