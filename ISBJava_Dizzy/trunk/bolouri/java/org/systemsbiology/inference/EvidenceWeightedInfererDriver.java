@@ -1278,7 +1278,7 @@ public class EvidenceWeightedInfererDriver
         mMaxIterationsLabel = new JLabel("Maximum number of iterations: ");
         mMaxIterationsField = new JTextField(NUM_COLUMNS_NUMERIC_FIELD);
         
-        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.fill = GridBagConstraints.NONE;
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
         constraints.weightx = 1;
@@ -1289,7 +1289,7 @@ public class EvidenceWeightedInfererDriver
         topPanel.add(mMaxIterationsLabel);
         gridLayout.setConstraints(mMaxIterationsLabel, constraints);        
         
-        constraints.fill = GridBagConstraints.NONE;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.gridheight = 1;
         constraints.weightx = 1;
