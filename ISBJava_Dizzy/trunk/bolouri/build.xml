@@ -122,6 +122,10 @@
     <ant dir="${projAppsDir}" target="build" />
   </target>
 
+  <target name="test">
+    <ant dir="${projJavaDir}" target="test" />
+  </target>
+
   <target name="uploadWeb">
     <ftp server="${webServerHostname}"
          userid="${webServerUsername}"

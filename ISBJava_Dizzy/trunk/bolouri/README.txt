@@ -31,6 +31,9 @@ directory:
   build:  Temporary directory created by build system, to hold 
           things like built Jar files, Web content, etc.
 
+  test:   Compile all test code (eventually, compile and run
+          unit tests)
+
 The build system used underneath this directory tree is "Ant"
 (http://ant.apache.org).  Invoking "Ant" is just like invoking
 the "make" program familiar from Unix operating systems, as shown
