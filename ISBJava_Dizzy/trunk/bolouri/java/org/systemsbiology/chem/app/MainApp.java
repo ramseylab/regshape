@@ -36,6 +36,8 @@ public class MainApp
     private int mOriginalWidthPixels;
     private int mOriginalHeightPixels;
     private Long mTimestampModelLastLoaded;
+    private static final String DEFAULT_HELP_SET_VIEW = "TOC";  // this string must correspond to
+                                                                // a <view> block in AppHelp.hs
 
     private void setTimestampModelLastLoaded(Long pTimestampModelLastLoaded)
     {
@@ -127,7 +129,7 @@ public class MainApp
     void handleHelpBrowser()
     {
         HelpBrowser helpBrowser = new HelpBrowser(getMainFrame());
-        helpBrowser.displayHelpBrowser();
+        helpBrowser.displayHelpBrowser(DEFAULT_HELP_SET_VIEW);
     }
 
     void handleExport()
@@ -367,12 +369,15 @@ public class MainApp
         Container mainPane = createComponents();
         frame.setContentPane(mainPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.pack();
-        frame.setLocation((screenSize.width - frame.getWidth())/2,
-                          (screenSize.height - frame.getHeight())/2);
-        mOriginalWidthPixels = frame.getWidth();
-        mOriginalHeightPixels = frame.getHeight();
+        int frameWidth = frame.getWidth();
+        int frameHeight = frame.getHeight();
+        Point frameLocation = FramePlacer.placeInCenterOfScreen(frameWidth,
+                                                                frameHeight);
+        frame.setLocation(frameLocation);
+        mOriginalWidthPixels = frameWidth;
+        mOriginalHeightPixels = frameHeight;
+
         frame.addComponentListener(new ComponentAdapter()
         {
             public void componentResized(ComponentEvent e)
