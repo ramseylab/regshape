@@ -26,7 +26,7 @@ import edu.cornell.lassp.houle.RngPack.Ranmar;
  */
 public class TestEvidenceWeightedInferer
 {
-    public static final SignificanceCalculationFormula USE_CDF = SignificanceCalculationFormula.CDF;
+    public static final SignificanceCalculationMethod USE_CDF = SignificanceCalculationMethod.CDF_NONPARAMETRIC;
     public static final double SMOOTHING_LENGTH = 0.05;
     public static final int NUM_BINS = 100;
     public static final double MIN_BIN_SIZE_SIG = 1.0e-8;
@@ -256,7 +256,7 @@ public class TestEvidenceWeightedInferer
             for(int j = 0; j < pNumEvidences; ++j)
             {
                 sigParams.setNumBins(new Integer(NUM_BINS));
-                sigParams.setSignificanceCalculationFormula(SignificanceCalculationFormula.CDF);
+                sigParams.setSignificanceCalculationMethod(SignificanceCalculationMethod.CDF_NONPARAMETRIC);
                 sigParams.setSingleTailed(new Boolean(false));
                 sigParams.setSmoothingLength(new Double(pSmoothingLength));
                 

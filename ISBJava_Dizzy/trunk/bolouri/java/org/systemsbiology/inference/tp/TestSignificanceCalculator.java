@@ -93,22 +93,24 @@ public class TestSignificanceCalculator
             {
                 obsCol = obsMatrix.viewColumn(j);
                 obsCol.toArray(obsColDbl);
-                sigCalc.calculateSignificancesCDF(obsColDbl, 
+                sigCalc.calculateSignificancesNonParametric(obsColDbl, 
                                                   obsColDbl,
                                                   NUM_BINS, 
                                                   singleTailed[j],
-                                                  MAX_SMOOTHING_LENGTH, 
+                                                  MAX_SMOOTHING_LENGTH,
+                                                  SignificanceCalculationMethod.CODE_CDF_NONPARAMETRIC,
                                                   results);
                 
                 sigsCDF.viewColumn(j).assign(results.mSignificances);
             
                 allowEmpirical = false;
                 
-                sigCalc.calculateSignificancesPDF(obsColDbl, 
+                sigCalc.calculateSignificancesNonParametric(obsColDbl, 
                                                   obsColDbl,
                                                   NUM_BINS, 
                                                   singleTailed[j],
-                                                  MAX_CHI_SQUARE, 
+                                                  MAX_CHI_SQUARE,
+                                                  SignificanceCalculationMethod.CODE_PDF_NONPARAMETRIC,
                                                   results);
                 
                 sigsPDF.viewColumn(j).assign(results.mSignificances);
