@@ -6,8 +6,9 @@
 
 <!ENTITY ccmdlExtension ".dizzy">
 <!ENTITY cmdlExtension ".isbchem">
+<!ENTITY sbmlExtension ".xml">
 <!ENTITY sbmlURL "http://www.sbw-sbml.org">
-
+<!ENTITY appNameLowerCase "dizzy">
    ]>
 
 <!-- ========== PREAMBLE ========== -->
@@ -3267,12 +3268,218 @@ successful import of most of the SBML models available.
 </p>
 </isb:docsection>
 
+<!-- ========== COMMAND-LINE INTERFACE ========== -->
+
+<isb:docsection name="&appName; Command-line Interface" label="commandline">
+<p>
+A command-line interface to the &appName; scripting engine is available.
+On Windows and Linux/Unix operating systems, the <code>&appNameLowerCase;.bat</code> (Windows)
+and <code>&appNameLowerCase;.sh</code> (Linux/Unix) shell scripts can be used to run the 
+command-line interface to the scripting engine.  These shell scripts should
+be located in the &quot;<code>bin</code>&quot; subdirectory of the directory in 
+you installed &appName;.  For the purposes of illustration, we will assume
+that the <code>&appNameLowerCase;.sh</code> is being used.  If you are using a Windows machine,
+<code>&appNameLowerCase;.bat</code> should be substituted wherever <code>&appNameLowerCase;.sh</code> appears
+in the following.
+</p>
+<p>
+The usage synopsis for the <code>&appNameLowerCase;.sh</code> is as follows:
+<blockquote>
+<pre>
+&appNameLowerCase;.sh [-debug] [-parser &lt;parserAlias&gt;] &lt;scriptFile&gt;
+</pre>
+</blockquote>
+The symbols above are defined as follows:
+<dl>
+<dt>&lt;<code>parserAlias</code>&gt;</dt>
+<dd>The alias of the parser plug-in to use.  This should correspond to the type
+of file being processed.  The alias identifies a class implementing the interface
+<code>isb.chem.scripting.IScriptBuildingParser</code>.  By default, the parser
+is selected based on the file extension of the file <code>&lt;scriptFile&gt;</code>.
+If the file extension is &quot;&ccmdlExtension;&quot;, the <a href="#ccmdl">CCMDL</a>
+parser will be used.  If the file extension is &quot;&cmdlExtension;&quot;, the
+<a href="#cmdl">CMDL</a> parser will be used.  If the file extension is 
+&quot;&sbmlExtension;&quot;, the <a href="#sbml">SBML</a> parser will be used.
+If the file suffix does not match any of the above, the CMDL parser is assumed.
+To specify a parser rather than using the default parser for the file extension,
+use of the following parser aliases:
+    <dl>
+    <dt><code>condensed-command-language</code></dt>
+    <dd>Condensed Chemical Model Definition Language (CCMDL)</dd>
+    <dt><code>command-language</code></dt>
+    <dd>Chemical Model Definition Language input (CMDL)</dd>
+    <dt><code>markup-language</code></dt>
+    <dd>Systems Biology Markup Language (SBML)</dd>
+    </dl>
+</dd>
+<dt>&lt;<code>scriptFile</code>&gt;</dt>
+<dd>specifies the model definition file to be processed by the scripting 
+engine</dd>
+</dl>
+The case of the SBML parser described above deserves some special
+explanation.  Because the SBML Level 1 standard does not provide for 
+embedding action-performing statements in the model definition file
+(such as a statement instructing that a simulation should be executed),
+the command-line interface to the scripting engine handles SBML files
+differently from other file input types.  SBML files are automatically
+converted to CMDL format, and the resulting CMDL statements are printed
+to standard output (the console).  This output can be redirected to
+a new CMDL file (e.g., &quot;<code>myModel.&cmdlExtension;</code>&quot;)
+using standard operating system shell indirection.  One can then append
+action-performing statements to the end of the CMDL model definition file,
+and re-load the file in the scripting engine, in order to execute 
+simulations or the like.
+</p>
+<p>
+In order to be able to use the command-line interface to the &appName;
+system, you will need to set up your Java <code>CLASSPATH</code>
+variable properly.  On most operating systems, this is an environment
+variable.  You will need to modify the <code>CLASSPATH</code> and add
+the <code>&localJavaLibraryName;.jar</code> file to the path.  This file
+is installed in the &quot;<code>lib</code>&quot; subdirectory of the
+directory in which you installed the &appName; system.  In addition,
+if you wish to be able to import or export SBML, you will need to add
+the <code>SBMLValidate.jar</code> file and the <code>SBWCore.jar</code>
+file to your <code>CLASSPATH</code>.  Both of these JAR files are in
+the &quot;<code>lib</code>&quot; subdirectory where you installed &appName;.
+</p>
+</isb:docsection>
+
+<isb:docsection name="&appName; Programmatic Interface" label="api">
+<p>
+The &appName; system is entirely implemented in the Java programming
+language.  All of the Java classes that make up the  &appName; system
+are provided within a library of Java packages called &localJavaLibraryName;.
+The packages within this library were designed to be reusable and extensible.
+This library represents the programmatic interface to the &appName; system.
+</p>
+<p>
+<a href="&webBaseURL;/&localJavaLibraryName;/javadoc">Javadoc application 
+programming interface (API) documentation</a> to the &localJavaLibraryName; library
+(including &appName;) can be
+found on the <a href="&webBaseURL;/&localJavaLibraryName;">&localJavaLibraryName;
+home page</a>.  The source code and compiled Java archive (JAR) file for this
+library can be downloaded from the same home page.  In addition, a downloadable
+PDF version of the user manual for the library is available.
+</p>
+<p>
+As a concrete illustration of a possible use of the API to &appName;,
+here is an example of a Java program that makes use of the programmatic
+interface to the &appName; system, to run a stochastic simulation of
+a simple system of chemical species and reactions:
+<blockquote>
+<pre>
+package isb.chem.tp;
+
+import isb.chem.*;
+import java.util.Date;
+
+/**
+ * Sample program that uses the GillespieSimulator algorithm to simulate
+ * the dynamics of an ion channel system (two species representing a switch
+ * being in the &quot;open&quot; or &quot;closed&quot; states, respectively.
+ * For more information, refer to Chapter 11 of: 
+ * Computational cell biology, by C. P. Fall, E. S. Marland,
+ * J. M. Wagner, and J. J. Tyson. Springer-Verlag, New York, 2002.
+ * This book defines the model system being simulated in this test program,
+ * and shows what output (in terms of steady-state species populations) is 
+ * expected.
+ */
+public class IonChannel
+{
+    public static final int NUMBER_TIME_POINTS = 10;
+
+    public static void main(String []pArgs)
+    {
+        try
+        {
+            Compartment universal = new Compartment("universal");
+            Species s1 = new Species("s1", universal);
+            Species s2 = new Species("s2", universal);
+
+            Reaction r1 = new Reaction("r1");
+            r1.addReactant(s1);
+            r1.addProduct(s2);
+            r1.setRate(1.0);
+
+            Reaction r2 = new Reaction("r2");
+            r2.addReactant(s2);
+            r2.addProduct(s1);
+            r2.setRate(3.0);
+
+            SpeciesPopulations initialData = new SpeciesPopulations();
+            initialData.setSpeciesPopulation(s1, 500);
+            initialData.setSpeciesPopulation(s2, 500);
+
+            Model model = new Model("IonChannel");
+            model.addReaction(r1);
+            model.addReaction(r2);
+
+            System.out.println(model.toString());
+
+            GillespieSimulator gillespie = new GillespieSimulator();
+
+            System.out.println("date: " + new Date(System.currentTimeMillis()));
+
+            SpeciesPopulations speciesPops = new SpeciesPopulations();
+
+            double startTime = 0.0;
+
+            for(int simCtr = 0; simCtr &lt; 500; ++simCtr)
+            {
+  
+                double timeConstant = gillespie.computeInitialAggregateTimeConstant(model, initialData, 0.0);
+                gillespie.evolve(model, 
+                                 initialData, 
+                                 startTime,
+                                 5000,
+                                 speciesPops);
+
+                long s1pop = speciesPops.getSpeciesPopulation(s1);
+                long s2pop = speciesPops.getSpeciesPopulation(s2);
+                System.out.println(s1pop + "," + s2pop);
+            }
+
+            System.out.println("date: " + new Date(System.currentTimeMillis()));
+            System.out.println("model: " + model.toString());
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace(System.err);
+        }
+    }
+}
+</pre>
+</blockquote>
+</p>
+<p>
+For more information on how to use the &localJavaLibraryName; library,
+please refer to the 
+<a href="&webBaseURL;/&localJavaLibraryName;/docs/UserManual.html">&localJavaLibraryName;
+User Manual</a>.
+</p>
+
+</isb:docsection>
+
+<!-- ========== GRAPHICAL USER INTERFACE ========== -->
+
 <isb:docsection name="&appName; Graphical User Interface" label="gui">
 <p>
 The &appName; system has a graphical user interface (GUI) application 
 that is layered on top of the previously described 
 <a href="#ccmdl">scripting engine</a>.  This GUI is a work in progress.
-It provides the following features:
+This section presumes that you have already installed the &appName;
+application using the 
+<a href="&appHomePage;/&appVersion;/installer/Web_Installers/install.htm">downloadable, self-extracting 
+installer</a>.  To start the &appName; application, find the link 
+entitled &quot;&appName;&quot; in your home directory or start menu.
+Launch the executable file that this symbolic link points to.  This should
+launch the &appName; application.  It takes a moment to load, because it
+must first start up the Java virtual machine and search your classpath for
+plug-ins.
+</p>
+<p>
+The &appName; application provides the following features:
 <ul>
 <li>load a model definition file</li>
 <li>run a simulation and store, plot, or print the results</li>
