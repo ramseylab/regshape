@@ -170,8 +170,10 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
         }
         catch(IOException e)
         {
-            throw new SimulationFailedException("unable to parse the output from the simulator; error message is: " + e.toString());
+            throw new SimulationFailedException("unable to read the temporary simulation output file; error message is: " + e.toString());
         }
+
+        tempOutputFile.delete();
     }
 
     protected void readSimulationOutput(File pSimulationResultsFile, 
