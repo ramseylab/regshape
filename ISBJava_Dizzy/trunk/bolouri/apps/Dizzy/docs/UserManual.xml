@@ -8,7 +8,7 @@
 <!ENTITY sbmlFileExtension ".xml">
 <!ENTITY localJavaLibraryURL "&webBaseURL;/&localJavaLibraryName;">
 <!ENTITY userManualContent SYSTEM "UserManualContent.xmlinc">
-
+<!ENTITY ExternalLibraries SYSTEM "../../../java/docs/ExternalLibraries.xmlinc">
    ]>
 
 <!--
