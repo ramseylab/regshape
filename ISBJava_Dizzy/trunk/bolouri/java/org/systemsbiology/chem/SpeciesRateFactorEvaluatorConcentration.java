@@ -27,11 +27,15 @@ public class SpeciesRateFactorEvaluatorConcentration extends SpeciesRateFactorEv
         double concentration = speciesValue / compartmentVolume;
 
         double rateFactor = concentration;
-        if(pStoichiometry - 2 == 0)
+        if(pStoichiometry == 1)
+        {
+            // do nothing; rateFactor has already been set
+        }
+        else if(pStoichiometry == 2)
         {
             rateFactor *= concentration;
         }
-        else
+        else 
         {
             rateFactor = Math.pow(concentration, (double) pStoichiometry);
         }
