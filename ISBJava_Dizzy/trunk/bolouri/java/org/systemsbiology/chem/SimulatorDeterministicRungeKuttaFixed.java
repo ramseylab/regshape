@@ -75,51 +75,22 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
         return(mSymbolEvaluator.getTime());
     }
 
-    protected void setupScratchPad(double pStartTime,
-                                   double pEndTime,
-                                   SimulatorParameters pSimulatorParams, 
-                                   RKScratchPad pRKScratchPad)
+    protected double getMaxStepSize(double pDeltaTime,
+                                    long pNumResultsTimePoints,
+                                    SimulatorParameters pSimulatorParams)
     {
-        Double maxAbsoluteErrorObj = pSimulatorParams.getMaxAllowedAbsoluteError();
-        if(null != maxAbsoluteErrorObj)
-        {
-            double maxAbsoluteError = maxAbsoluteErrorObj.doubleValue();
-            pRKScratchPad.maxAbsoluteError = maxAbsoluteError;
-        }
-        else
-        {
-            throw new IllegalArgumentException("max absolute error must be specified");
-        }
+        // let the maximum step-size be constrained only by the number of results
+        // time-points requested 
+        double maxStepSize = pDeltaTime / ((double) pNumResultsTimePoints);
+        return(maxStepSize);
+    }
 
-        Double maxRelativeErrorObj = pSimulatorParams.getMaxAllowedRelativeError();
-        if(null != maxRelativeErrorObj)
-        {
-            double maxRelativeError = maxRelativeErrorObj.doubleValue();
-            pRKScratchPad.maxRelativeError = maxRelativeError;
-        }
-        else
-        {
-            throw new IllegalArgumentException("max relative error must be specified");
-        }
-
-        long minNumSteps;
-        Long minNumStepsObj = pSimulatorParams.getMinNumSteps();
-        if(null != minNumStepsObj)
-        {
-            minNumSteps = minNumStepsObj.longValue();
-            if(minNumSteps <= 0)
-            {
-                throw new IllegalArgumentException("illegal value for number of steps");
-            }
-        }
-        else
-        {
-            throw new IllegalArgumentException("required minimum number of steps was not provided");
-        }
-
-        double stepSize = (pEndTime - pStartTime) / ((double) minNumSteps);
-
-        pRKScratchPad.stepSize = stepSize;
+    protected void setupImpl(double pDeltaTime,
+                             int pNumResultsTimePoints,
+                             SimulatorParameters pSimulatorParams,
+                             RKScratchPad pRKScratchPad)
+    {
+        // nothing to do
     }
 
     public String getAlias()

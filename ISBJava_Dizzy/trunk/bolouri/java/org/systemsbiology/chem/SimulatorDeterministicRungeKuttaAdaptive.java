@@ -115,52 +115,26 @@ public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDet
         return(nextStepSize);
     }
 
-    protected void setupScratchPad(double pStartTime,
-                                   double pEndTime,
-                                   SimulatorParameters pSimulatorParams, 
-                                   RKScratchPad pRKScratchPad)
+    protected void setupImpl(double pDeltaTime,
+                             int pNumResultsTimePoints,
+                             SimulatorParameters pSimulatorParams,
+                             RKScratchPad pRKScratchPad)
     {
-        Double maxRelativeErrorObj = pSimulatorParams.getMaxAllowedRelativeError();
-        if(null != maxRelativeErrorObj)
-        {
-            double maxRelativeError = maxRelativeErrorObj.doubleValue();
-            pRKScratchPad.maxRelativeError = maxRelativeError;
-        }
-        else
-        {
-            throw new IllegalArgumentException("max fractional error must be specified");
-        }
+        // let the maximum step-size be constrained only by the number of results
+        // time-points requested 
+        double maxStepSize = pDeltaTime / ((double) pNumResultsTimePoints);
 
-        Double maxAbsoluteErrorObj = pSimulatorParams.getMaxAllowedAbsoluteError();
-        if(null != maxAbsoluteErrorObj)
+        if(hasDelayedReactionSolvers())
         {
-            double maxAbsoluteError = maxAbsoluteErrorObj.doubleValue();
-            pRKScratchPad.maxAbsoluteError = maxAbsoluteError;
-        }
-        else
-        {
-            throw new IllegalArgumentException("max fractional error must be specified");
-        }
+            int numHistoryBins = pSimulatorParams.getNumHistoryBins().intValue();
 
-        long minNumSteps;
-        Long minNumStepsObj = pSimulatorParams.getMinNumSteps();
-        if(null != minNumStepsObj)
-        {
-            minNumSteps = minNumStepsObj.longValue();
-            if(minNumSteps <= 0)
+            double maxStepSizeDueToDelayedReactions = getMinDelayedReactionDelay()/((double) numHistoryBins);
+            if(maxStepSize > maxStepSizeDueToDelayedReactions)
             {
-                throw new IllegalArgumentException("illegal value for number of steps");
+                maxStepSize = maxStepSizeDueToDelayedReactions;
             }
         }
-        else
-        {
-            throw new IllegalArgumentException("required minimum number of steps was not provided");
-        }
 
-        double maxStepSize = (pEndTime - pStartTime) / ((double) minNumSteps);
-        double stepSize = maxStepSize / 5.0;
-
-        pRKScratchPad.stepSize = stepSize;
         pRKScratchPad.maxStepSize = maxStepSize;
     }
 

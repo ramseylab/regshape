@@ -19,10 +19,11 @@ import org.systemsbiology.chem.*;
 
 public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, ODERecorder
 {
-    public static final int DEFAULT_MIN_NUM_STEPS = 10000;
     public static final double DEFAULT_MAX_ALLOWED_RELATIVE_ERROR = 0.0001;
     public static final double DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR = 0.0001;
     public static final boolean DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS = false;
+    protected static final int DEFAULT_NUM_HISTORY_BINS = 400;
+    private static final double DEFAULT_STEP_SIZE_FRACTION = 0.001;
 
     private long mIterationCounter;
     private double []mDerivative;
@@ -47,10 +48,17 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
                                       int pNumResultsTimePoints,
                                       String []pRequestedSymbolNames) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException, SimulationFailedException
     {
-        conductPreSimulationCheck(pStartTime,
+        checkSimulationParameters(pStartTime,
                                   pEndTime,
                                   pSimulatorParameters,
                                   pNumResultsTimePoints);
+
+        // set the number of history bins for the delayed reaction solvers
+        int numHistoryBins = pSimulatorParameters.getNumHistoryBins().intValue();
+        if(null != mDelayedReactionSolvers)
+        {
+            resizeDelayedReactionSolvers(numHistoryBins);
+        }
 
         double []retTimeValues = new double[pNumResultsTimePoints];
         Object []retSymbolValues = new Object[pNumResultsTimePoints];
@@ -81,48 +89,11 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
         Symbol []requestedSymbols = createRequestedSymbolArray(mSymbolMap,
                                                                pRequestedSymbolNames);
 
-        double initialStepSize = (pEndTime - pStartTime)/((double) DEFAULT_MIN_NUM_STEPS);
+        double deltaTime = pEndTime - pStartTime;
+        double initialStepSize = pSimulatorParameters.getStepSizeFraction().doubleValue() * deltaTime;
 
-        
-        double minDelay = Double.MAX_VALUE;
-        if(null != mDelayedReactionSolvers)
-        {
-            minDelay = 0.01 * getMinDelayedReactionDelay();
-        }
-
-        if(initialStepSize > minDelay)
-        {
-            initialStepSize = minDelay;
-        }
-
-        Double maxAllowedRelativeErrorObj = pSimulatorParameters.getMaxAllowedRelativeError();
-        if(null == maxAllowedRelativeErrorObj)
-        {
-            throw new IllegalArgumentException("no maximum allowed relative error was supplied");
-        }
-
-        double maxAllowedRelativeError = maxAllowedRelativeErrorObj.doubleValue();
-        if(maxAllowedRelativeError <= 0.0)
-        {
-            throw new IllegalArgumentException("invalid maximum allowed relative error was specified");
-        }
-
-        Double maxAllowedAbsoluteErrorObj = pSimulatorParameters.getMaxAllowedAbsoluteError();
-        if(null == maxAllowedAbsoluteErrorObj)
-        {
-            throw new IllegalArgumentException("no maximum allowed absolute error was supplied");
-        }
-
-        double maxAllowedAbsoluteError = maxAllowedAbsoluteErrorObj.doubleValue();
-        if(maxAllowedAbsoluteError <= 0.0)
-        {
-            throw new IllegalArgumentException("invalid maximum allowed absolute error was specified");
-        }
-
-        if(pNumResultsTimePoints <= 0)
-        {
-            throw new IllegalArgumentException("invalid number of time points requested");
-        }
+        double maxAllowedRelativeError = pSimulatorParameters.getMaxAllowedRelativeError().doubleValue();
+        double maxAllowedAbsoluteError = pSimulatorParameters.getMaxAllowedAbsoluteError().doubleValue();
 
         Span simulationTimeSpan = new Span(timesArray);
 
@@ -142,7 +113,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
         mSimulationCancelled = false;
         mSimulationCancelledEventNegReturnFlag = false;
 
-        mTimeRangeMult = 1.0/(pEndTime - pStartTime);
+        mTimeRangeMult = 1.0 / deltaTime;
 
         runExternalSimulation(simulationTimeSpan,
                               mDynamicSymbolValues,
@@ -194,7 +165,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
             tempOutputFile.delete();
 
             boolean estimateFinalSpeciesFluctuations = DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS;
-            Boolean flagGetFinalSymbolFluctuations = pSimulatorParameters.getFlagGetFinalSymbolFluctuations();
+            Boolean flagGetFinalSymbolFluctuations = pSimulatorParameters.getComputeFluctuations();
             double []finalSpeciesFluctuations = null;
             if(null != flagGetFinalSymbolFluctuations)
             {
@@ -346,7 +317,6 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
         return(mDerivative);
     }
 
-
     public final double[] g(double t, double[] x)
     {   // empty implementation of g because there are no events associated
         double[] event = new double[1];   // with this function
@@ -439,12 +409,22 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
         SimulatorParameters sp = new SimulatorParameters();
         sp.setMaxAllowedRelativeError(DEFAULT_MAX_ALLOWED_RELATIVE_ERROR);
         sp.setMaxAllowedAbsoluteError(DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR);
+        sp.setComputeFluctuations(DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS);
+        sp.setStepSizeFraction(DEFAULT_STEP_SIZE_FRACTION);
+        sp.setNumHistoryBins(DEFAULT_NUM_HISTORY_BINS);
         return(sp);
     }
 
     public boolean isStochasticSimulator()
     {
         return(false);
+    }
+
+    public void checkSimulationParametersImpl(SimulatorParameters pSimulatorParameters,
+                                              int pNumResultsTimePoints)
+    {
+        checkSimulationParametersForDeterministicSimulator(pSimulatorParameters,
+                                                           pNumResultsTimePoints);
     }
 
 }

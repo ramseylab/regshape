@@ -25,10 +25,11 @@ import java.util.Random;
  */
 public abstract class SimulatorDeterministicBase extends Simulator
 {
-    public static final int DEFAULT_MIN_NUM_STEPS = 10000;
+    private static final double DEFAULT_STEP_SIZE_FRACTION = 0.001;
     public static final double DEFAULT_MAX_ALLOWED_RELATIVE_ERROR = 0.0001;
     public static final double DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR = 0.01;
     public static final boolean DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS = false;
+    protected static final int DEFAULT_NUM_HISTORY_BINS = 400;
 
     class RKScratchPad
     {
@@ -90,11 +91,6 @@ public abstract class SimulatorDeterministicBase extends Simulator
     }
 
     protected RKScratchPad mRKScratchPad;
-
-    protected abstract void setupScratchPad(double pStartTime,
-                                            double pEndTime,
-                                            SimulatorParameters pSimulatorParams, 
-                                            RKScratchPad pRKScratchPad);
 
 
 
@@ -283,7 +279,31 @@ public abstract class SimulatorDeterministicBase extends Simulator
         pRetAggregateAbsoluteError.setValue(aggregateAbsoluteError);
     }
 
+    private void setupErrorTolerances(SimulatorParameters pSimulatorParams,
+                                      RKScratchPad pRKScratchPad)
+    {
+        Double maxRelativeErrorObj = pSimulatorParams.getMaxAllowedRelativeError();
+        if(null != maxRelativeErrorObj)
+        {
+            double maxRelativeError = maxRelativeErrorObj.doubleValue();
+            pRKScratchPad.maxRelativeError = maxRelativeError;
+        }
+        else
+        {
+            throw new IllegalArgumentException("max fractional error must be specified");
+        }
 
+        Double maxAbsoluteErrorObj = pSimulatorParams.getMaxAllowedAbsoluteError();
+        if(null != maxAbsoluteErrorObj)
+        {
+            double maxAbsoluteError = maxAbsoluteErrorObj.doubleValue();
+            pRKScratchPad.maxAbsoluteError = maxAbsoluteError;
+        }
+        else
+        {
+            throw new IllegalArgumentException("max fractional error must be specified");
+        }
+    }
 
     public SimulationResults simulate(double pStartTime, 
                                       double pEndTime,
@@ -291,10 +311,17 @@ public abstract class SimulatorDeterministicBase extends Simulator
                                       int pNumResultsTimePoints,
                                       String []pRequestedSymbolNames) throws DataNotFoundException, IllegalStateException, SimulationAccuracyException
     {
-        conductPreSimulationCheck(pStartTime,
+        checkSimulationParameters(pStartTime,
                                   pEndTime,
                                   pSimulatorParameters,
                                   pNumResultsTimePoints);
+
+        // set the number of history bins for the delayed reaction solvers
+        int numHistoryBins = pSimulatorParameters.getNumHistoryBins().intValue();
+        if(null != mDelayedReactionSolvers)
+        {
+            resizeDelayedReactionSolvers(numHistoryBins);
+        }
 
         double []retTimeValues = new double[pNumResultsTimePoints];
         Object []retSymbolValues = new Object[pNumResultsTimePoints];
@@ -349,41 +376,22 @@ public abstract class SimulatorDeterministicBase extends Simulator
         System.arraycopy(dynamicSymbolValues, 0, newSimulationSymbolValues, 0, numDynamicSymbolValues);
 
         int timeCtr = 0;
-            
-        long minNumSteps = pNumResultsTimePoints;
-
-        Long minNumStepsObj = pSimulatorParameters.getMinNumSteps();
-        if(null != minNumStepsObj)
-        {
-            long userSpecifiedMinNumSteps = minNumStepsObj.longValue();
-            if(userSpecifiedMinNumSteps > minNumSteps)
-            {
-                minNumSteps = userSpecifiedMinNumSteps;
-            }
-        }
-
-        double minDelay = Double.MAX_VALUE;
-        if(null != mDelayedReactionSolvers)
-        {
-            minDelay = 0.1 * getMinDelayedReactionDelay();
-        }
-
-        double initialStepSize = (pEndTime - pStartTime)/((double) minNumSteps);
-        if(initialStepSize > minDelay)
-        {
-            minNumSteps = (long) ((pEndTime - pStartTime)/minDelay);
-        }
-        
-        pSimulatorParameters.setMinNumSteps(minNumSteps);
-
         
         RKScratchPad scratchPad = mRKScratchPad;
         scratchPad.clear();
 
-        setupScratchPad(pStartTime,
-                        pEndTime,
-                        pSimulatorParameters,
-                        scratchPad);
+        setupErrorTolerances(pSimulatorParameters,
+                             scratchPad);
+
+        double deltaTime = pEndTime - pStartTime;
+
+        double initialStepSize = pSimulatorParameters.getStepSizeFraction().doubleValue() * deltaTime;
+        scratchPad.stepSize = initialStepSize;
+
+        setupImpl(deltaTime,
+                  pNumResultsTimePoints,
+                  pSimulatorParameters,
+                  scratchPad);
 
         boolean isCancelled = false;
 
@@ -462,7 +470,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         if(! isCancelled)
         {
             boolean estimateFinalSpeciesFluctuations = DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS;
-            Boolean flagGetFinalSymbolFluctuations = pSimulatorParameters.getFlagGetFinalSymbolFluctuations();
+            Boolean flagGetFinalSymbolFluctuations = pSimulatorParameters.getComputeFluctuations();
             if(null != flagGetFinalSymbolFluctuations)
             {
                 estimateFinalSpeciesFluctuations = flagGetFinalSymbolFluctuations.booleanValue();
@@ -515,10 +523,11 @@ public abstract class SimulatorDeterministicBase extends Simulator
     public SimulatorParameters getDefaultSimulatorParameters()
     {
         SimulatorParameters sp = new SimulatorParameters();
-        sp.setMinNumSteps(DEFAULT_MIN_NUM_STEPS);
         sp.setMaxAllowedRelativeError(DEFAULT_MAX_ALLOWED_RELATIVE_ERROR);
         sp.setMaxAllowedAbsoluteError(DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR);
-        sp.setFlagGetFinalSymbolFluctuations(DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS);
+        sp.setComputeFluctuations(DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS);
+        sp.setStepSizeFraction(DEFAULT_STEP_SIZE_FRACTION);
+        sp.setNumHistoryBins(DEFAULT_NUM_HISTORY_BINS);
         return(sp);
     }
 
@@ -531,5 +540,17 @@ public abstract class SimulatorDeterministicBase extends Simulator
     {
         return(true);
     }
+
+    public void checkSimulationParametersImpl(SimulatorParameters pSimulatorParameters,
+                                              int pNumResultsTimePoints)
+    {
+        checkSimulationParametersForDeterministicSimulator(pSimulatorParameters,
+                                                           pNumResultsTimePoints);
+    }
+
+    protected abstract void setupImpl(double pDeltaTime,
+                                      int pNumResultsTimePoints,
+                                      SimulatorParameters pSimulatorParams,
+                                      RKScratchPad pRKScratchPad);
 
 }

@@ -26,7 +26,7 @@ public abstract class SimulatorStochasticTauLeapBase extends SimulatorStochastic
 {
     private static final long NUM_FIRINGS_GILLESPIE = 1;
     private static final double DEFAULT_MAX_ALLOWED_RELATIVE_ERROR = 0.005;
-    private static final long DEFAULT_MIN_RATIO_OF_LEAP_TIME_TO_REACTION_TIME_SCALE = 10;
+    private static final double DEFAULT_STEP_SIZE_FRACTION = 0.1;
     private static final long MULTIPLIER_FOR_MIN_NUM_GILLESPIE_STEPS = 4;
     private static final int MAX_FAILED_LEAP_ATTEMPTS_BEFORE_ABORT = 40;
     private static final int NUM_EVALUATIONS_BEFORE_RECOMPUTE_FJJP = 10;
@@ -52,13 +52,13 @@ public abstract class SimulatorStochasticTauLeapBase extends SimulatorStochastic
         }
         mAllowedError = maxAllowedError.doubleValue();
 
-        Long minNumSteps = pSimulatorParameters.getMinNumSteps();
-        if(null == minNumSteps)
+        Double stepSizeFraction = pSimulatorParameters.getStepSizeFraction();
+        if(null == stepSizeFraction)
         {
-            throw new IllegalArgumentException("required simulator parameter minNumSteps was not specified");
+            throw new IllegalArgumentException("required simulator step size fraction was not supplied");
         }
 
-        mMinRatioOfLeapTimeToReactionTimeScale = minNumSteps.longValue();
+        mMinRatioOfLeapTimeToReactionTimeScale = (long) (1.0 / stepSizeFraction.doubleValue());
         mNumNonLeapIterationsSinceLastLeapCheck = 0;
         mLastIterationWasLeap = true;
     }
@@ -376,8 +376,35 @@ public abstract class SimulatorStochasticTauLeapBase extends SimulatorStochastic
     {
         SimulatorParameters sp = pSimulatorParameters;
         sp.setMaxAllowedRelativeError(DEFAULT_MAX_ALLOWED_RELATIVE_ERROR);
-        sp.setMinNumSteps(DEFAULT_MIN_RATIO_OF_LEAP_TIME_TO_REACTION_TIME_SCALE);
+        sp.setStepSizeFraction(DEFAULT_STEP_SIZE_FRACTION);
     }
 
+    protected void checkSimulationParametersImpl(SimulatorParameters pSimulatorParameters,
+                                                 int pNumResultsTimePoints)
+    {
+        super.checkSimulationParametersImpl(pSimulatorParameters,
+                                            pNumResultsTimePoints);
+
+        Double maxAllowedRelativeErrorObj = pSimulatorParameters.getMaxAllowedRelativeError();
+        if(null == maxAllowedRelativeErrorObj)
+        {
+            throw new IllegalArgumentException("missing max allowed relative error");
+        }
+        double maxAllowedRelativeError = maxAllowedRelativeErrorObj.doubleValue();
+        if(maxAllowedRelativeError <= 0.0)
+        {
+            throw new IllegalArgumentException("invalid max allowed relative error: " + maxAllowedRelativeError);
+        }
+        Double stepSizeFractionObj = pSimulatorParameters.getStepSizeFraction();
+        if(null == stepSizeFractionObj)
+        {
+            throw new IllegalArgumentException("missing step size fraction");
+        }
+        double stepSizeFraction = stepSizeFractionObj.doubleValue();
+        if(stepSizeFraction <= 0.0)
+        {
+            throw new IllegalArgumentException("invalid step size fraction: " + stepSizeFraction);
+        }
+    }
 
 }

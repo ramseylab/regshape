@@ -23,21 +23,13 @@ public abstract class SimulatorStochasticBase extends Simulator
 {
     public static final int DEFAULT_ENSEMBLE_SIZE = 1;
     public static final boolean DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS = false;
+    public static final int DEFAULT_NUM_HISTORY_BINS = 400;
 
     protected RandomElement mRandomNumberGenerator;
     protected Poisson mPoissonEventGenerator;
     protected DelayedReactionSolver []mDynamicSymbolDelayedReactionAssociations;
 
     protected abstract void modifyDefaultSimulatorParameters(SimulatorParameters pSimulatorParameters);
-
-    public SimulatorParameters getDefaultSimulatorParameters()
-    {
-        SimulatorParameters sp = new SimulatorParameters();
-        sp.setEnsembleSize(DEFAULT_ENSEMBLE_SIZE);
-        sp.setFlagGetFinalSymbolFluctuations(DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS);
-        modifyDefaultSimulatorParameters(sp);
-        return(sp);
-    }
 
     protected void setRandomNumberGenerator(RandomElement pRandomNumberGenerator)
     {
@@ -284,10 +276,17 @@ public abstract class SimulatorStochasticBase extends Simulator
                                             int pNumResultsTimePoints,
                                             String []pRequestedSymbolNames) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException
     {
-        conductPreSimulationCheck(pStartTime,
+        checkSimulationParameters(pStartTime,
                                   pEndTime,
                                   pSimulatorParameters,
                                   pNumResultsTimePoints);
+
+        // set the number of history bins for the delayed reaction solvers
+        int numHistoryBins = pSimulatorParameters.getNumHistoryBins().intValue();
+        if(null != mDelayedReactionSolvers)
+        {
+            resizeDelayedReactionSolvers(numHistoryBins);
+        }
 
         double []retTimeValues = new double[pNumResultsTimePoints];
         Object []retSymbolValues = new Object[pNumResultsTimePoints];
@@ -335,16 +334,7 @@ public abstract class SimulatorStochasticBase extends Simulator
         RandomElement randomNumberGenerator = mRandomNumberGenerator;
         Poisson poissonEventGenerator = mPoissonEventGenerator;
         
-        Long ensembleSizeObj = pSimulatorParameters.getEnsembleSize();
-        if(null == ensembleSizeObj)
-        {
-            throw new IllegalArgumentException("ensemble size was not defined");
-        }            
-        long ensembleSize = ensembleSizeObj.longValue();
-        if(ensembleSize <= 0)
-        {
-            throw new IllegalArgumentException("illegal value for ensemble size");
-        }
+        int ensembleSize = pSimulatorParameters.getEnsembleSize().intValue();
 
         boolean isCancelled = false;
 
@@ -359,24 +349,20 @@ public abstract class SimulatorStochasticBase extends Simulator
         double time = 0.0;
         long currentTimeMilliseconds = 0;
 
-        long simCtr = ensembleSize;
+        int simCtr = ensembleSize;
 
-        Boolean getFinalSymbolFluctuationsObj = pSimulatorParameters.getFlagGetFinalSymbolFluctuations();
+        Boolean getFinalSymbolFluctuationsObj = pSimulatorParameters.getComputeFluctuations();
 
         Object []finalSymbolValues = null;
         double []finalSymbolValuesElem = null;
-        if(null != getFinalSymbolFluctuationsObj && getFinalSymbolFluctuationsObj.booleanValue())
+        if(true == getFinalSymbolFluctuationsObj.booleanValue())
         {
-            if(ensembleSize > Integer.MAX_VALUE)
-            {
-                throw new IllegalArgumentException("it is not possible to obtain final symbol fluctuations when the ensemble size is greater than: " + Integer.MAX_VALUE);
-            }
             if(ensembleSize < 2)
             {
                 throw new IllegalArgumentException("an ensemble size of greater than one is required, in order to compute the final species fluctuations");
             }
             
-            finalSymbolValues = new Object[(int) ensembleSize];
+            finalSymbolValues = new Object[ensembleSize];
         }
 
         while( --simCtr >= 0 )
@@ -399,9 +385,7 @@ public abstract class SimulatorStochasticBase extends Simulator
 
             while(pNumResultsTimePoints - timePointIndex > 0)
             {
-//                System.out.println("calling iterate");
                 time = iterate(lastReactionIndex);
-//                System.out.println("returne from iterate, time is: " + time);
                 if(time > pEndTime)
                 {
                     time = pEndTime;
@@ -441,7 +425,6 @@ public abstract class SimulatorStochasticBase extends Simulator
                                                               requestedSymbols,
                                                               timesArray,
                                                               retSymbolValues);
-//                    System.out.println("time point index after iteration is: " + timePointIndex + "; time is: " + time);
                 }
 
             }   // end of this particular simulation
@@ -455,7 +438,7 @@ public abstract class SimulatorStochasticBase extends Simulator
                 if(null != finalSymbolValues)
                 {
                     finalSymbolValuesElem = new double[numRequestedSymbols];
-                    finalSymbolValues[(int) simCtr] = finalSymbolValuesElem;
+                    finalSymbolValues[simCtr] = finalSymbolValuesElem;
                     for(int i = numRequestedSymbols; --i >= 0; )
                     {
                         finalSymbolValuesElem[i] = symbolEvaluator.getValue(requestedSymbols[i]);
@@ -523,5 +506,51 @@ public abstract class SimulatorStochasticBase extends Simulator
     public boolean allowsInterrupt()
     {
         return(true);
+    }
+
+    protected void checkSimulationParametersImpl(SimulatorParameters pSimulatorParameters,
+                                                 int pNumResultsTimePoints)
+    {
+        Boolean flagGetFinalSymbolFluctuations = pSimulatorParameters.getComputeFluctuations();
+        if(null == flagGetFinalSymbolFluctuations)
+        {
+            throw new IllegalArgumentException("missing flag for whether to obtain the final symbol fluctuations");
+        }
+
+        Integer ensembleSizeObj = pSimulatorParameters.getEnsembleSize();
+        if(null == ensembleSizeObj)
+        {
+            throw new IllegalArgumentException("missing ensemble size");
+        }
+        int ensembleSize = ensembleSizeObj.intValue();
+        if(ensembleSize <= 0)
+        {
+            throw new IllegalStateException("illegal ensemble size: " + ensembleSize);
+        }
+
+        if(hasDelayedReactionSolvers())
+        {
+            // validate the number of requested history bins
+            Integer numHistoryBinsObj = pSimulatorParameters.getNumHistoryBins();
+            if(null == numHistoryBinsObj)
+            {
+                throw new IllegalArgumentException("no number of history bins defined");
+            }       
+            int numHistoryBins = numHistoryBinsObj.intValue();
+            if(numHistoryBins <= 0)
+            {
+                throw new IllegalArgumentException("invalid number of history bins: " + numHistoryBins);
+            }
+        }
+    }
+
+    public SimulatorParameters getDefaultSimulatorParameters()
+    {
+        SimulatorParameters sp = new SimulatorParameters();
+        sp.setEnsembleSize(DEFAULT_ENSEMBLE_SIZE);
+        sp.setComputeFluctuations(DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS);
+        sp.setNumHistoryBins(DEFAULT_NUM_HISTORY_BINS);
+        modifyDefaultSimulatorParameters(sp);
+        return(sp);
     }
 }
