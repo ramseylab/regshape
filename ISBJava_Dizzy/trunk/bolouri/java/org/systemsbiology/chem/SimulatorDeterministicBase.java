@@ -489,7 +489,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         // copy array of time points 
         System.arraycopy(timesArray, 0, pRetTimeValues, 0, timeCtr);     
 
-        System.out.println("number of iterations: " + iterationCtr);
+//        System.out.println("number of iterations: " + iterationCtr);
     }
 
 
