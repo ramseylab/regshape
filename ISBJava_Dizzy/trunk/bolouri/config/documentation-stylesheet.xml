@@ -46,7 +46,6 @@
       <xsl:value-of select="/isb:document/isb:docpreamble" />
 
     </xsl:if>
-    <center>
     <table cellpadding="20">
       <tr>
         <xsl:if test="not( $hideMainLogo != '' )">
@@ -128,7 +127,6 @@
       </xsl:if>
       </tr>
       </table>
-      </center>
       <hr noshade="true" />
       <xsl:apply-templates/>
 
