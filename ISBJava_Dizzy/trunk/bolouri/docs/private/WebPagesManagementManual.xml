@@ -59,10 +59,30 @@ If you are using Linux, the JDK software is already available in the
 network directory &quot;<code>/tools/java/sdk</code>&quot;.
 </li>
 <li><b>Ant</b><br />
-The <a href="http://ant.apache.org">Ant</a> program is the software
+The Ant program is the software
 tool used for &quot;building&quot; the web site.  To confirm that Ant 
 is installed correctly, you should be able to run 
-&quot;<code>ant -version</code>&quot; from the command prompt.
+&quot;<code>ant -version</code>&quot; from the command prompt. If you
+do not have Ant installed on your desktop computer, you can download
+the source code from the Apache web site:
+<blockquote>
+<a href="http://ant.apache.org"><code>http://ant.apache.org</code></a>
+</blockquote>
+Whether you use an already-built version, or build your own from
+sources, you will need to have a version of the Ant program that contains
+the optional &quot;<code>ftp</code>&quot; task.  This task appears
+to only be included in the Ant program if you build the Ant program
+with a special library called &quot;<code>NetComponents.jar</code>&quot;
+in your <code>CLASSPATH</code>.  The <code>NetComponents.jar</code>
+library is available from the web site:
+<blockquote>
+<a href="http://www.savarese.org/java/"><code>http://www.savarese.org/java</code></a>
+</blockquote>
+Make sure that a copy of the <code>NetComponents.jar</code> file is placed
+in the &quot;<code>lib</code>&quot; subdirectory of the installation
+directory you selected for installing Ant (normally this is something 
+like <code>/local/ant</code>). Alternatively, <code>NetComponents.jar</code> 
+must be in your <code>CLASSPATH</code> each time your invoke the Ant program.
 </li>
 <li><b>Xalan/Crimson</b><br />
 The Xalan XSL processor and the Crimson XML parser Java libraries are 
@@ -78,18 +98,25 @@ java org.apache.xalan.xslt.Process -v
 </blockquote>
 from the command prompt.
 </li>
-<li><b>NCFTP</b><br />
-The <a href="http://www.ncftpd.com">NCFTP</a> Client program. You do not 
-need NCFTPD, just the "client" program.  To confirm that it is installed
-correctly, you should be able to run "ncftpput" from the command prompt.
+<li><b>html2ps</b><br />
+In order to be able to convert HTML documentation to PostScript format
+(which is a necessary step in order to convert it to PDF format), you 
+will need to have the <code>html2ps</code> program installed on your computer.
+This simple program is availble from the 
+<a href="http://www.tdb.uu.se/~jan/html2ps.html">HTML2PS Home Page</a>.
+</li>
+<li><b>ps2pdf</b><br />
+The <code>ps2pdf</code> program is used to convert PostScript files to
+PDF format.  This program should already be installed on your
+computer, if you have a modern desktop Linux distribution. 
 </li>
 </ol>
 All of the above software programs are free (open source), and easy to
-build and install on your computer.  Building and installing Ant and
-NCFTP should just take a few minutes each.  On Linux, if you use the JDK 
-(&quot;<code>java</code>&quot;) found in the network directory
-<code>/tools/java/sdk</code>, you should not have to worry about
-items (2) and (4) above.
+build and install on your computer.  Building Ant, and installing Ant 
+and <code>NetComponents.jar</code>, should just take a few minutes.  
+On Linux, if you use the JDK (&quot;<code>java</code>&quot;) found 
+in the network directory <code>/tools/java/sdk</code>, you should not 
+have to worry about items (2) and (4) above.
 </p>
 <p>
 In addition, your computer will need to be connected to the network, and
