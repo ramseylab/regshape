@@ -103,7 +103,7 @@ Murray Patterson and Raymond Spiteri and obtained from <a href="http://www.netli
 </tr>
 <tr>
 <td>SBML Reader</td><td><code>SBMLReader.jar</code></td>
-<td><a href="&appHomePage;"><code>&appHomePage;</code></a> (based on <code>SBMLValidate</code> by Herbert Sauro and the Systems Biology Workbench (SBW) Project team)</td><td>LGPL</td>
+<td><a href="&appHomePage;"><code>&appHomePage;</code></a> (based on <code>SBMLValidate</code> by Herbert Sauro and the <a href="&sbwURL;">Systems Biology Workbench (SBW) Project</a> team)</td><td>LGPL</td>
 </tr>
 </table>
 </blockquote>

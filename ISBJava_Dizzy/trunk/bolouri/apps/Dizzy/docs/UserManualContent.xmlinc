@@ -150,7 +150,7 @@ Murray Patterson and Raymond Spiteri and obtained from Netlib)</td><td>included 
 <td>SBMLReader</td><td><code>SBMLReader.jar</code></td>
 <td><a href="&localJavaLibraryURL;"><code>&localJavaLibraryURL;</code></a> (based on 
 the <code>SBMLValidate</code> library by Herbert Sauro and the 
-Systems Biology Workbench (SBW) Project team)</td><td>LGPL</td>
+<a href="&sbwURL;">Systems Biology Workbench (SBW) Project</a> team)</td><td>LGPL</td>
 </tr>
 </table>
 </blockquote>
