@@ -95,6 +95,9 @@
         <td>
           <a href="&mainPublicURL;"><img src="&mainLogoURL;" alt="ISB" border="0" /></a>
         </td>
+        <td>
+          <a href="&mainGroupURL;"><img src="&groupLogoURL;" alt="Bolouri Group" border="0" width="60" /></a>
+        </td>
       </tr>
       </table>
       <hr noshade="true" />

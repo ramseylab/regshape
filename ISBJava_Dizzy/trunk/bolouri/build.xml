@@ -97,6 +97,7 @@
     <copy todir="${projWebDir}/images">
       <fileset dir="${projImagesDir}">
         <include name="*.png" />
+        <include name="*.gif" />
       </fileset>
     </copy>
   </target>
