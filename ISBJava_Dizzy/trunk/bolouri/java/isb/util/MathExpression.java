@@ -23,7 +23,7 @@ import java.util.*;
  * <code>cos()</code>, <code>tan()</code>, <code>asin()</code>, 
  * <code>acos()</code>, <code>atan()</code>, <code>abs()</code>, 
  * <code>floor()</code>, <code>ceil()</code>, <code>sqrt()</code>,
- * <code>rand()</code>.
+ * <code>rand()</code>, <code>theta()</code>.
  * The arguments of the trigonometric functions (<code>sin, cos, tan</code>)
  * <em>must</em> be in radians.  The return values of the inverse trigonometric
  * functions (<code>asin, acos, atan</code>) are in radians as well.  For more
@@ -365,6 +365,12 @@ public class MathExpression implements Cloneable
          * of the argument
          */
         public static final ElementCode GAMMALN = new ElementCode("gammaln", true);
+
+        /**
+         * element code specifying the natural logarithm of the gamma function 
+         * of the argument
+         */
+        public static final ElementCode THETA = new ElementCode("theta", true);
 
         /**
          * element code specifying a random number chosen from the unit interval
@@ -1133,6 +1139,10 @@ public class MathExpression implements Cloneable
                 else if(elementCode == ElementCode.GAMMALN)
                 {
                     valueOfSubtree = MathFunctions.gammaln(valueOfFirstOperand);
+                }
+                else if(elementCode == ElementCode.THETA)
+                {
+                    valueOfSubtree = MathFunctions.thetaFunction(valueOfFirstOperand);
                 }
                 else if(elementCode == ElementCode.RAND)
                 {

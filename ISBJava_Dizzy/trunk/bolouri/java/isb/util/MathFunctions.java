@@ -269,6 +269,23 @@ public class MathFunctions
     }
 
     /**
+     * Returns 0 if the argument is negative, and 1 if the
+     * argument is nonnegative.
+     *
+     * @return 0 if the argument is negative, and 1 if the
+     * argument is nonnegative.
+     */
+    public static double thetaFunction(double pArg)
+    {
+        double retVal = 0.0;
+        if(pArg > 0.0)
+        {
+            retVal = 1.0;
+        }
+        return(retVal);
+    }
+
+    /**
      * This function computes N choose M, for small values of M.  It is required
      * that  N > 0, M >= 0, and M <= N.  
      * <p />
