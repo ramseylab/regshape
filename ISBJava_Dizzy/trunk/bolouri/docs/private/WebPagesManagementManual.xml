@@ -591,4 +591,44 @@ to the Biomolecular Model Repository on the public web site.
 </p>
 </isb:docsection>
 
+<isb:docsection name="Personal Home Pages" label="pershomepages">
+<p>
+This section presents specific instructions to publish 
+your personal web page on the lab intranet.  To begin, 
+simply write (or export) the web page as a HTML document.
+For example, my personal home page is <code>sramsey.html</code>.
+Next, use the FTP program to transfer the document to
+the FTP server <code>projects.systemsbiology.net</code>,
+as shown here:
+<blockquote>
+<pre>
+ftp projects.systemsbiology.net
+username:  bolouri_group
+password:  XXXXXXX
+cd publicRepository
+put sramsey.html
+</pre>
+</blockquote>
+<b>IMPORTANT NOTE:</b>  make sure you store the file in the "publicRepository"
+directory on the FTP server.  
+The HTML file uploaded in the previous example will be visible as the
+following URL:
+<blockquote>
+<pre>
+<a href="../publicRepository/sramsey.html">http://projects.systemsbiology.net/bolouri_group/publicRepository/sramsey.html</a>
+</pre>
+</blockquote>
+At this point, your home page is visible to the outside world.  If you wish
+to have your home page only visible within the Institute, you should store
+the home page in the directory &quot;<code>privateRepository</code>&quot;,
+rather than &quot;<code>publicRepository</code>&quot; as shown above.
+</p>
+<p>
+You can then e-mail Tatiana Gill (<code>tgill at systemsbiology.net</code>) \
+and ask her to add a hyperlink to your personal home page, on the external-facing
+Bolouri Group home page.
+</p>
+
+</isb:docsection>
+
 </isb:document>
