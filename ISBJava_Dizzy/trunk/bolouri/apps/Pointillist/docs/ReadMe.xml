@@ -67,11 +67,21 @@ Runtime Environment is available.
 </isb:docsection>
 
 <isb:docsection name="Source Code" label="sourcecode">
+<p>
 The source code for this application is included with the 
 application installer. You can find the code in the file 
 &quot;<code>&localJavaLibraryName;-src.tar.gz</code>&quot;
 that is installed in the &quot;<code>src</code>&quot;
 subdirectory of the installation directory for this program.
+</p>
+<p>
+A separate Matlab implementation of the &appName; algorithms is
+included with the application installer.  You can find the
+code in the "<code>matlab</code>" subdirectory of the installation
+directory for this program.  For more information, please refer
+to the <a href="UserManual.html#matlabcode">matlab codes section 
+of the user manual</a>.
+</p>
 </isb:docsection>
 
 <isb:docsection name="External Libraries and Credits" label="extlib">

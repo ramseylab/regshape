@@ -220,22 +220,28 @@ own Java programs and just using the &localJavaLibraryName; API.
 
 </isb:docsubsection>
 
-<isb:docsubsection name="Tutorial" label="tutorial">
+<isb:docsubsection name="Launching &appName;" label="launching">
 
 <p>
-&appName; is launched by executing the &quot;&appName;&quot; executable
-that was installed as a symbolic link by the installation program.  The
-default location of this symbolic link depends on your operating system.
-If you are installing on a Windows computer, the symbolic link is created
-in a new Program Group &quot;&appName;&quot;, which will show up in the
-&quot;Start&quot; menu.  If you are installing on a Linux computer, the
-symbolic link is created in your home directory, by default.  Note that
+&appName; is launched by executing the one of the four executable
+programs (<a href="#datamanager">Data Manager</a>,
+<a href="#quantilenormalizer">Quantile Normalizer</a>,
+<a href="#significancecalculator">Significance Calculator</a>,
+<a href="#evidenceweightedinferer">Evidence-Weighted Inferer</a>)
+that were installed as a symbolic link by the installation program 
+under the "&appName;/bin" directory.  The
+default location of the "&appName;" directory depends on your operating system.
+If you are installing on a Windows computer, the directory will show up as
+a sub-menu in the
+&quot;Start&quot; menu.  If you are installing on a Linux computer, a
+symbolic link is created (by default) in your home directory for each 
+executable program in the &appName; directory.  Note that
 the installation program permits you to override the default location for
-the symbolic link to be created, so the symbolic link may not be in the 
+the symbolic links to be created, so the symbolic links may not be in the 
 default location on your computer, if you selected a different location
-in the installation process.  By double-clicking on the &quot;&appName;&quot;
-symbolic link, the &appName; program should start up.  You should see an
-application window appear that looks like the following picture
+in the installation process.  By double-clicking on the one of the
+four symbolic links, the corresponding program should start up.  
+Each of the four programs is described in a section below.
 </p>
 
 </isb:docsubsection>
@@ -867,6 +873,43 @@ Here is a screen shot of the Evidence-Weighted Inferer program:
 </p>
 <p>
   <a href="../images/EvidenceWeightedInferer-big.png"><img src="../images/EvidenceWeightedInferer.png" alt="Evidence-Weighted Inferer screenshot" /></a>
+</p>  
+</isb:docsection>
+
+<isb:docsection name="Matlab Codes" label="matlabcodes">
+<p>
+The &appName; algorithms are also available as a set of Matlab
+M-files.  These files can be found in the <code>matlab</code>
+subdirectory of the directory where you installed &appName;.
+Note that one of these Matlab codes, <code>pcomp.m</code>,
+requires the Matlab Statistics Toolbox.  
+<dl>
+  <dt><b>mainpointillist.m</b></dt>
+  <dd>This program is the evidence-weighted inferer.  The
+    function <code>mainpointillist(filename, cutoff)</code> is called with the 
+    name of a data file containing the significances, <code>filename</code>, 
+    and the significance cutoff <code>cutoff</code>.</dd>
+  <dt><b>pcomp.m</b></dt>
+  <dd>This program is the significance calculator.  The
+    function <code>pcomp(filename,dt)</code> is called
+    with the name of a data file containing the observations, <code>filename</code>,
+    and an integer argument <code>dt</code> indicating the data type.
+    A data type of "0" indicates "static" data, such as steady-state
+    expression levels or protein abundance levels.  A data type of "1" 
+    indicates "dynamic" (time-course) data.  A data type of "3"
+    indicates data from "deletion" (knock-out) experiments.
+    <b>Note:</b> this program requires the <code>statgetargs.m</code>
+    program from the Matlab Statistics Toolbox.</dd>
+  <dt><b>qnorm.m</b></dt>
+  <dd>This program is the quantile normalizer.  The
+    function <code>qnorm(filename, missing)</code> is called
+    with the name of a data file containing the observations,
+    <code>filename</code>, and an optional numeric argument <code>missing</code>
+    that indicates the special value corresponding to missing data.</dd>
+</dl>
+These Matlab codes have been tested with Matlab R13 and R14.  They
+are not used by the Java implementation of &appName;, but are a 
+separate implementation of the &appName; algorithms.
 </p>  
 </isb:docsection>
 
