@@ -273,7 +273,13 @@ dialog box.  Second, you will need to select one or more species whose
 populations are to be returned as time-series data resultant from the simulation.
 For the purposes of demonstration, select the &quot;<code>G3D_G80D</code>&quot;
 species in the list box under the &quot;view species&quot; label in the dialog
-box.  Finally, you will need to specify the &quot;output type&quot; for the
+box.  
+<blockquote>
+<b>TIP:</b> You can select two species that are not adjacent to one another
+in the list box of species, by holding down the &quot;control&quot; key, and
+(while holding down the key) clicking on a species name with the mouse.
+</blockquote>
+Finally, you will need to specify the &quot;output type&quot; for the
 simulation.  For demonstration purposes, click on the circular button next
 to the &quot;plot&quot; label on the dialog box.  Go ahead and change the
 number of samples to 30 samples, by editing the &quot;100&quot; appearing
@@ -887,6 +893,10 @@ The argument must be nonnegative.</dd>
 <dt><b>gammaln</b></dt>
 <dd>Computes the value of the natural logarithm of the
 gamma function of the argument.</dd>
+
+<dt><b>theta</b></dt>
+<dd>Returns 0.0 if the argument is negative, or 1.0 if
+the argument is nonnegative (i.e., zero or positive)</dd>
 
 <dt><b>rand</b></dt>
 <dd>The <code>rand()</code> function has no arguments.  It
