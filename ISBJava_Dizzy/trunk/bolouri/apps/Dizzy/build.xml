@@ -19,7 +19,7 @@
 
 <project name="&appName;" default="compile" basedir=".">
 
-  <property name="projRoot"                      location="../.." />
+  <property name="projRoot"                     location="../.." />
 
   &BuildHeader;
 
