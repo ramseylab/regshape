@@ -8,13 +8,13 @@ package org.systemsbiology.chem.scripting;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import org.systemsbiology.util.InvalidInputException;
-import org.systemsbiology.util.IAliasableClass;
-import org.systemsbiology.math.Expression;
+
+import org.systemsbiology.util.*;
+import org.systemsbiology.math.*;
 import org.systemsbiology.chem.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.HashMap;
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
 
 /**
  * Builds a {@link org.systemsbiology.chem.Model model} from
@@ -37,6 +37,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
     private static final String DEFAULT_MODEL_NAME = "model";
     public static final String CLASS_ALIAS = "markup-language";
 
+    private static final String DELAYED_REACTION_REGEX_PATTERN = "delay\\(([^\\)\\(]*)\\,([^\\)\\(]*)\\)";
     /*========================================*
      * inner classes
      *========================================*/
@@ -95,6 +96,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
 
         mMarkupLanguageImporter.readModelDescription(modelDefinition);
 
+        Pattern delayedReactionRegexPattern = Pattern.compile(DELAYED_REACTION_REGEX_PATTERN);
 
         // process model name
         String modelName = mMarkupLanguageImporter.getModelName();
@@ -282,6 +284,16 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
             }
         }
 
+        // all global parameters must have values; if not, there is a bug
+        Iterator paramsIter = globalParamsMap.values().iterator();
+        while(paramsIter.hasNext())
+        {
+            SymbolValue symbolValue = (SymbolValue) paramsIter.next();
+            if(null == symbolValue.getValue())
+            {
+                throw new InvalidInputException("parameter has no value or rule defined: " + symbolValue.getSymbol().getName());
+            }
+        }
 
         int numReactions = mMarkupLanguageImporter.getNumReactions();
         assert (numReactions >= 0) : "invalid number of reactions";
@@ -360,9 +372,78 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
             {
                 throw new InvalidInputException("missing or empty kinetic law for reaction number: " + reactionCtr);
             }
-            
-            Expression rateExpression = new Expression(kineticLaw);
-            reaction.setRate(rateExpression);
+
+            Matcher matcher = delayedReactionRegexPattern.matcher(kineticLaw);
+            boolean expressionRate = true;
+
+            if(matcher.find())
+            {
+                if(numReactants != 1)
+                {
+                    throw new InvalidInputException("cannot process a model containing a delayed reaction with number of reactants not equal to 1; the number of reactants is: " + numReactants + "; reaction is: " + reactionName);
+                }
+                if(numProducts != 1)
+                {
+                    throw new InvalidInputException("cannot process a model containing a delayed reaction with number of products not equal to 1; the number of products is: " + numProducts + "; reaction is: " + reactionName);
+                }
+                String delayedSpecies = matcher.group(1).trim();
+                String delayTime = matcher.group(2).trim();
+                int numParams = mMarkupLanguageImporter.getNumParameters(reactionCtr);
+                double delayTimeDouble = 0.0;
+                try
+                {
+                    delayTimeDouble = Double.parseDouble(delayTime);
+                }
+                catch(NumberFormatException e)
+                {
+                    throw new InvalidInputException("unable to parse delay time in kinetic law; delay time must be a valid numeric literal: " + delayTime);
+                }
+                HashMap symbolValueMap = new HashMap();
+                for(int i = 0; i < numParams; ++i)
+                {
+                    String paramName = mMarkupLanguageImporter.getNthParameterName(reactionCtr, i);
+                    assert (null != paramName) : "unexpected null parameter name";
+                    double paramValue = mMarkupLanguageImporter.getNthParameterValue(reactionCtr, i);
+                    SymbolValue symbolValue = new SymbolValue(paramName, paramValue);
+                    symbolValueMap.put(paramName, symbolValue);
+                }
+                String modifiedKineticLaw = matcher.replaceFirst("1.0");
+                Expression rateExpression = null;
+                try
+                {
+                    rateExpression = new Expression(modifiedKineticLaw);
+                }
+                catch(IllegalArgumentException e)
+                {
+                    throw new InvalidInputException("unable to parse kinetic law expression: " + kineticLaw);
+                }
+                double rateValue = 0.0;
+                try
+                {
+                    rateValue = rateExpression.computeValue(symbolValueMap);
+                }
+                catch(DataNotFoundException e)
+                {
+                    throw new InvalidInputException("unable to compute rate of reaction \"" + reactionName + "\"; symbol not found: " + e.getMessage());
+                }
+                reaction.setRate(rateValue);
+                reaction.setDelay(delayTimeDouble);
+                expressionRate = false;
+            }
+
+            if(expressionRate)
+            {
+                Expression rateExpression = null;
+                try
+                {
+                    rateExpression = new Expression(kineticLaw);
+                }
+                catch(IllegalArgumentException e)
+                {
+                    throw new InvalidInputException("invalid kinetic law expression: " + kineticLaw);
+                }
+                reaction.setRate(rateExpression);
+            }
 
             // get number of parameters
             int numParams = mMarkupLanguageImporter.getNumParameters(reactionCtr);
