@@ -30,7 +30,6 @@ public class DeterministicSimulatorFixed extends DeterministicSimulator implemen
                                    Reaction []pReactions,
                                    double []pReactionProbabilities,
                                    RKScratchPad pRKScratchPad,
-                                   double pMaxFractionalError,
                                    double []pDynamicSymbolValues,
                                    double []pNewDynamicSymbolValues) throws DataNotFoundException
     {

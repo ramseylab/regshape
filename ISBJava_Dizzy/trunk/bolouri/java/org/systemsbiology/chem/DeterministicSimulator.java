@@ -42,6 +42,7 @@ public abstract class DeterministicSimulator extends Simulator
         double []dydt;
         double stepSize;
         double maxStepSize;
+        double maxFractionalError;
 
         public RKScratchPad(int pNumVariables)
         {
@@ -72,6 +73,7 @@ public abstract class DeterministicSimulator extends Simulator
             MathFunctions.vectorZeroElements(dydt);
             stepSize = 0.0;
             maxStepSize = 0.0;
+            maxFractionalError = 0.0;
         }
     }
 
@@ -114,7 +116,6 @@ public abstract class DeterministicSimulator extends Simulator
                                         Reaction []pReactions,
                                         double []pReactionProbabilities,
                                         RKScratchPad pRKScratchPad,
-                                        double pMaxFractionalError,
                                         double []pDynamicSymbolValues,
                                       double []pNewDynamicSymbolValues) throws DataNotFoundException;
 
@@ -303,17 +304,20 @@ public abstract class DeterministicSimulator extends Simulator
         {
             pNumSteps = pNumTimePoints;
         }
+        double maxStepSize = (pEndTime - pStartTime) / ((double) pNumSteps);
+        double stepSize = maxStepSize / 5.0;
+
+        RKScratchPad scratchPad = mRKScratchPad;
+        scratchPad.clear();
+        scratchPad.stepSize = stepSize;
+        scratchPad.maxStepSize = maxStepSize;
+
         double maxFractionalError = 1.0 / ((double) pNumSteps);
         if(maxFractionalError > MAX_FRACTIONAL_ERROR)
         {
             maxFractionalError = MAX_FRACTIONAL_ERROR;
         }
-        double maxStepSize = (pEndTime - pStartTime) / ((double) pNumSteps);
-        double stepSize = maxStepSize / 5.0;
-        RKScratchPad scratchPad = mRKScratchPad;
-        scratchPad.clear();
-        scratchPad.stepSize = stepSize;
-        scratchPad.maxStepSize = maxStepSize;
+        scratchPad.maxFractionalError = maxFractionalError;
 
         boolean isCancelled = false;
 
@@ -324,7 +328,6 @@ public abstract class DeterministicSimulator extends Simulator
                            reactions,
                            reactionProbabilities,
                            scratchPad,
-                           maxFractionalError,
                            dynamicSymbolValues,
                            newSimulationSymbolValues);
                 

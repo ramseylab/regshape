@@ -28,18 +28,18 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
                                           Reaction []pReactions,
                                           double []pReactionProbabilities,
                                           RKScratchPad pRKScratchPad,
-                                          double pMaxFractionalError,
                                           double []pDynamicSymbolValues,
                                           double []pNewDynamicSymbolValues) throws DataNotFoundException
     {
         double stepSize = pRKScratchPad.stepSize;
+        double maxFractionalError = pRKScratchPad.maxFractionalError;
 
         double nextStepSize = adaptiveStep(pSpeciesRateFactorEvaluator,
                                            pSymbolEvaluator,
                                            pReactions,
                                            pReactionProbabilities,
                                            pRKScratchPad,
-                                           pMaxFractionalError,
+                                           maxFractionalError,
                                            stepSize,
                                            pDynamicSymbolValues,
                                            pNewDynamicSymbolValues);
