@@ -20,11 +20,11 @@ import org.systemsbiology.util.*;
  *
  * @author Stephen Ramsey
  */
-public class Reaction extends SymbolValue
+public final class Reaction extends SymbolValue
 {
     private static final long MIN_POPULATION_FOR_COMBINATORIC_EFFECTS = 100000;
 
-    public static class ParticipantType 
+    public final static class ParticipantType 
     {
         private final String mName;
         private ParticipantType(String pName)
@@ -41,8 +41,7 @@ public class Reaction extends SymbolValue
         public static final ParticipantType PRODUCT = new ParticipantType("product");
     }
 
-
-    class ReactionElement implements Comparable
+    final class ReactionElement implements Comparable
     {
         private final Species mSpecies;
         private final int mStoichiometry;
@@ -105,7 +104,7 @@ public class Reaction extends SymbolValue
         }
     }
 
-    private String mName;
+    private final String mName;
     private HashMap mReactantsMap;
     private HashMap mProductsMap;
     private static final boolean DEFAULT_REACTANT_DYNAMIC = true;
@@ -275,7 +274,7 @@ public class Reaction extends SymbolValue
     }
                 
 
-    private static final double computeRateFactorForSpecies(SymbolEvaluator pSymbolEvaluator,
+    private static double computeRateFactorForSpecies(SymbolEvaluator pSymbolEvaluator,
                                                             Species pSpecies,
                                                             int pStoichiometry) throws DataNotFoundException
     {
@@ -589,7 +588,7 @@ public class Reaction extends SymbolValue
      * (3) Using "*=" operator which is faster than the 'A = A * X" expression.
      *
      */
-    final double computeRate(SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
+    double computeRate(SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
     {
 
         if(! mRateIsExpression)
@@ -720,6 +719,162 @@ public class Reaction extends SymbolValue
         sb.append(getRate().toString());
         sb.append("]");
         return(sb.toString());
+    }
+
+    Expression getRateExpression() throws DataNotFoundException
+    {
+        Expression retVal = null;
+
+        if(mRateIsExpression)
+        {
+            Expression rateExpression = getValue().getExpressionValue();
+            if(! (rateExpression instanceof DelayedReactionSolver))
+            {
+                retVal = rateExpression;
+            }
+            else
+            {
+//                DelayedReactionSolver solver = (DelayedReactionSolver) rateExpression;
+//                double rateValue = solver.getRate();
+//                Species intermedSpecies = solver.getIntermedSpecies();
+//                retVal = Expression.multiply(new Expression(rateValue),
+//                                             new Expression(intermedSpecies.getName()));
+                retVal = Expression.ZERO;
+            }
+        }
+        else
+        {
+            int numReactants = mReactantsSpeciesArray.length;
+            StringBuffer expBuf = new StringBuffer();
+
+            boolean firstReactant = true;
+            for(int i = 0; i < numReactants; ++i)
+            {
+                Species species = mReactantsSpeciesArray[i];
+                String speciesName = species.getName();
+                int stoic = mReactantsStoichiometryArray[i];
+                if(! firstReactant)
+                {
+                    expBuf.append("*");
+                }
+                else
+                {
+                    firstReactant = false;
+                }
+                if(stoic > 1)
+                {
+                    expBuf.append(speciesName + "^" + stoic);
+                }
+                else
+                {
+                    expBuf.append(speciesName);
+                }
+            }
+
+            double rateVal = getValue().getValue();
+            Expression rateExp = new Expression(rateVal);
+            if(expBuf.length() > 0)
+            {
+                retVal = Expression.multiply(rateExp, new Expression(expBuf.toString()));
+            }
+            else
+            {
+                retVal = rateExp;
+            }
+        }
+        return(retVal);
+    }
+
+    Expression computeRatePartialDerivativeExpression(Expression pRateExpression,
+                                                      SymbolValue pSymbolValue,
+                                                      SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
+    {
+        boolean speciesSymbolsRepresentConcentration = (pSymbolEvaluator instanceof SymbolEvaluatorChemMarkupLanguage);
+
+        Symbol derivSymbol = pSymbolValue.getSymbol();
+        pSymbolEvaluator.setLocalSymbolsMap(mLocalSymbolsMap);
+        Expression retVal = pRateExpression.computePartialDerivative(derivSymbol, pSymbolEvaluator);
+        if(speciesSymbolsRepresentConcentration && (pSymbolValue instanceof Species))
+        {
+            Species species = (Species) pSymbolValue;
+            Compartment compartment = species.getCompartment();
+            Value compartmentVolumeValue = compartment.getValue();
+            if(compartmentVolumeValue.isExpression())
+            {
+                Expression compartmentVolumeExpression = compartmentVolumeValue.getExpressionValue();
+                Expression compartmentVolumeDeriv = compartmentVolumeExpression.computePartialDerivative(derivSymbol,
+                                                                                                         pSymbolEvaluator);
+                if(! compartmentVolumeDeriv.isSimpleNumber()  || compartmentVolumeDeriv.getSimpleNumberValue() != 0.0)
+                {
+                    Expression speciesExpression = new Expression(species.getName());
+                    Expression concExpression = Expression.divide(speciesExpression, compartmentVolumeExpression);
+                    Expression concDerivExpression = Expression.divide(compartmentVolumeDeriv, compartmentVolumeExpression);
+                    Expression prod = Expression.multiply(concExpression, concDerivExpression);
+                    Expression oneOverVolume = Expression.divide(Expression.ONE, compartmentVolumeExpression);
+                    Expression compartmentVolumeModifier = Expression.subtract(oneOverVolume, prod);
+                    retVal = Expression.multiply(retVal, compartmentVolumeModifier);
+                }
+                else
+                {
+                    retVal = Expression.divide(retVal, compartmentVolumeExpression);
+                }
+            }
+            else
+            {
+                Expression compartmentVolumeExpression = new Expression(compartmentVolumeValue.getValue());
+                retVal = Expression.divide(retVal, compartmentVolumeExpression);
+            }
+        }
+        pSymbolEvaluator.setLocalSymbolsMap(null);
+
+        return(retVal);
+    }
+
+    Expression computeRatePartialDerivativeExpression(SymbolValue pSymbolValue,
+                                                      SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
+    {
+        return(computeRatePartialDerivativeExpression(getRateExpression(),
+                                                      pSymbolValue,
+                                                      pSymbolEvaluator));
+    }
+
+    double evaluateExpressionWithReactionRateLocalSymbolTranslation(Expression pExpression,
+                                                                    SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
+    {
+        pSymbolEvaluator.setLocalSymbolsMap(mLocalSymbolsMap);
+        double value = pExpression.computeValue(pSymbolEvaluator);
+        pSymbolEvaluator.setLocalSymbolsMap(null);
+        return(value);
+    }
+
+    double computeRatePartialDerivative(Expression pRateExpression,
+                                        SymbolValue pSymbolValue,
+                                        SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
+    {
+        Expression deriv = computeRatePartialDerivativeExpression(pRateExpression, pSymbolValue, pSymbolEvaluator);
+        double value = evaluateExpressionWithReactionRateLocalSymbolTranslation(deriv, pSymbolEvaluator);
+        return(value);
+    }
+
+    public double computeRatePartialDerivative(SymbolValue pSymbolValue,
+                                               SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
+    {
+        Expression rateExpression = getRateExpression();
+        Expression deriv = computeRatePartialDerivativeExpression(rateExpression, pSymbolValue, pSymbolEvaluator);
+        double value = evaluateExpressionWithReactionRateLocalSymbolTranslation(deriv, pSymbolEvaluator);
+        return(value);
+    }
+
+    public static Expression []getReactionRateExpressions(Reaction []pReactions) throws DataNotFoundException
+    {
+        int numReactions = pReactions.length;
+        Expression []a = new Expression[numReactions];
+        for(int j = 0; j < numReactions; ++j)
+        {
+            Reaction reaction = pReactions[j];
+            a[j] = reaction.getRateExpression();
+        }
+        return(a);
     }
 
 }
