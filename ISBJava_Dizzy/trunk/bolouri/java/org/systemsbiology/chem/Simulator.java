@@ -15,9 +15,9 @@ import java.util.*;
 
 public abstract class Simulator 
 {
-    private static final int NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION = 15;
-    public static final int MIN_NUM_TIME_POINTS = 2;
-    protected static final long NUM_ITERATIONS_CHECK_CANCELLED = 1000;
+    private static final int MIN_NUM_REACTION_STEPS_FOR_USING_DELAY_FUNCTION = 15;
+    protected static final long DEFAULT_MIN_NUM_MILLISECONDS_FOR_UPDATE = 1000;
+    protected static final int NULL_REACTION = -1;
 
     protected String []mDynamicSymbolNames;
     protected double []mDynamicSymbolValues;
@@ -33,10 +33,9 @@ public abstract class Simulator
     protected DelayedReactionSolver []mDelayedReactionSolvers;
     protected Species []mDynamicSymbols;
     protected Object []mDynamicSymbolAdjustmentVectors;
-    private long mIterationCtr;
     protected boolean mInitialized;
-
-    public static final int NULL_REACTION = -1;
+    protected long mMinNumMillisecondsForUpdate;
+    protected SimulationProgressReporter mSimulationProgressReporter;
 
     static void indexSymbolArray(SymbolValue []pSymbolArray, 
                                  HashMap pSymbolMap, 
@@ -92,7 +91,7 @@ public abstract class Simulator
         }
     }
 
-    protected void prepareForSimulation(double pStartTime) 
+    protected final void prepareForSimulation(double pStartTime) 
     {
         // set initial values for dynamic symbols 
         System.arraycopy(mInitialDynamicSymbolValues, 0, mDynamicSymbolValues, 0, mDynamicSymbolValues.length);
@@ -102,12 +101,15 @@ public abstract class Simulator
         mSymbolEvaluator.setTime(pStartTime);
     }
 
+    public abstract boolean usesExpressionValueCaching();
+
     private static void handleDelayedReaction(Reaction pReaction,
-                                                ArrayList pReactions,
-                                                int pReactionIndex,
-                                                ArrayList pDynamicSpecies,
-                                                ArrayList pDelayedReactionSolvers,
-                                                MutableInteger pRecursionDepth)
+                                              ArrayList pReactions,
+                                              int pReactionIndex,
+                                              ArrayList pDynamicSpecies,
+                                              ArrayList pDelayedReactionSolvers,
+                                              MutableInteger pRecursionDepth,
+                                              boolean pIsStochasticSimulator)
     {
         String reactionName = pReaction.getName();
 
@@ -153,7 +155,7 @@ public abstract class Simulator
 
         numSteps--;
 
-        if(numSteps > 0 && numSteps < NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION)
+        if(numSteps > 0 && numSteps < MIN_NUM_REACTION_STEPS_FOR_USING_DELAY_FUNCTION)
         {
             Species lastIntermedSpecies = intermedSpecies;
 
@@ -202,7 +204,8 @@ public abstract class Simulator
                                                                      intermedSpecies,
                                                                      delay,
                                                                      rate,
-                                                                     pReactions.size() - 1);
+                                                                     pReactions.size() - 1,
+                                                                     pIsStochasticSimulator);
             pDelayedReactionSolvers.add(solver);
             delayedReaction.setRate(solver);
         }
@@ -210,18 +213,7 @@ public abstract class Simulator
 
     public abstract boolean isStochasticSimulator();
 
-    protected void initializeDelayedReactionSolvers()
-    {
-        DelayedReactionSolver []delayedSolvers = mDelayedReactionSolvers;
-        int numDelayedSolvers = delayedSolvers.length;
-        for(int ctr = 0; ctr < numDelayedSolvers; ++ctr)
-        {
-            DelayedReactionSolver solver = delayedSolvers[ctr];
-            solver.initialize((ISimulator) this);
-        }
-    }
-
-    protected void initializeSimulator(Model pModel, SimulationController pSimulationController) throws DataNotFoundException
+    protected void initializeSimulator(Model pModel) throws DataNotFoundException
     {
         clearSimulatorState();
 
@@ -237,6 +229,8 @@ public abstract class Simulator
         int numNonDynamicSymbols = nonDynamicSymbols.length;
 
         ArrayList delayedReactionSolvers = new ArrayList();
+
+        boolean isStochasticSimulator = isStochasticSimulator();
 
         // for each multi-step reaction, split the reaction into two separate reactions
         for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
@@ -255,12 +249,11 @@ public abstract class Simulator
                                   reactionCtr, 
                                   dynamicSymbolsList,
                                   delayedReactionSolvers,
-                                  recursionDepth);
+                                  recursionDepth,
+                                  isStochasticSimulator);
         }
 
         mDelayedReactionSolvers = (DelayedReactionSolver []) delayedReactionSolvers.toArray(new DelayedReactionSolver[0]);
-        initializeDelayedReactionSolvers();
-
         int numDelayedReactions = mDelayedReactionSolvers.length;
 
         Species []dynamicSymbols = (Species []) dynamicSymbolsList.toArray(new Species[0]);;
@@ -338,7 +331,8 @@ public abstract class Simulator
                                             
         }
 
-        SymbolEvaluatorChemSimulation evaluator = new SymbolEvaluatorChemSimulation(symbolMap, 0.0);
+        SymbolEvaluatorChemSimulation evaluator = new SymbolEvaluatorChemSimulation(symbolMap, 0.0, 
+                                                                                    usesExpressionValueCaching());
         mSymbolEvaluator = evaluator;
 
         checkSymbolsValues();
@@ -355,8 +349,6 @@ public abstract class Simulator
         mReactionProbabilities = new double[numReactions];
 
         checkReactionRates();
-
-        mSimulationController = pSimulationController;
 
         mInitialized = true;
     }
@@ -399,7 +391,7 @@ public abstract class Simulator
         mDelayedReactionSolvers = null;
         mDynamicSymbols = null;
         mDynamicSymbolAdjustmentVectors = null;
-        setIterationCounter(0);
+        setMinNumMillisecondsForUpdate(DEFAULT_MIN_NUM_MILLISECONDS_FOR_UPDATE);
     }
 
     public Simulator()
@@ -423,18 +415,6 @@ public abstract class Simulator
         mDynamicSymbolAdjustmentVectors = dynamicSymbolAdjustmentVectors;
     }
 
-    protected boolean checkSimulationControllerStatus()
-    {
-        boolean isCancelled = false;
-        if(null != mSimulationController)
-        {
-            if(mSimulationController.checkIfCancelled())
-            {
-                isCancelled = true;
-            }
-        }
-        return(isCancelled);
-    }
 
     protected final int addRequestedSymbolValues(double pCurTime,
                                                  int pLastTimeIndex,
@@ -542,9 +522,9 @@ public abstract class Simulator
             throw new IllegalArgumentException("number of time points must be greater than or equal to 1");
         }
 
-        if(pStartTime > pEndTime)
+        if(pStartTime >= pEndTime)
         {
-            throw new IllegalArgumentException("end time must come after start time");
+            throw new IllegalArgumentException("end time must be greater than the start time");
         }
         
         if(pRetTimeValues.length != pNumResultsTimePoints)
@@ -651,24 +631,52 @@ public abstract class Simulator
         }
     }
 
-    protected void setIterationCounter(long pIterationCtr)
+    public void setProgressReporter(SimulationProgressReporter pSimulationProgressReporter)
     {
-        mIterationCtr = pIterationCtr;
+        mSimulationProgressReporter = pSimulationProgressReporter;
     }
 
-    public long getIterationCounter()
+    public void setController(SimulationController pSimulationController)
     {
-        return(mIterationCtr);
+        mSimulationController = pSimulationController;
     }
 
-    protected final boolean incrementIterationCounterAndCheckForCancellation()
+    protected final boolean handleSimulationController()
     {
-        boolean cancelled = false;
-        ++mIterationCtr;
-        if(0 == (mIterationCtr % NUM_ITERATIONS_CHECK_CANCELLED))
+        boolean isCancelled = false;
+        SimulationController simulationController = mSimulationController;
+        if(null != simulationController)
         {
-            cancelled = checkSimulationControllerStatus();
+            if(simulationController.handlePauseOrCancel())
+            {
+                isCancelled = true;
+            }
         }
-        return(cancelled);
+        return(isCancelled);
     }
+
+    protected final void updateSimulationProgressReporter(double pFractionComplete, long pIterationCounter)
+    {
+        SimulationProgressReporter progressReporter = mSimulationProgressReporter;
+        if(null != progressReporter)
+        {
+            progressReporter.updateProgressStatistics(pFractionComplete, pIterationCounter);
+        }
+    }
+
+    public void setStatusUpdateIntervalSeconds(double pUpdateIntervalSeconds) throws IllegalArgumentException
+    {
+        if(pUpdateIntervalSeconds <= 0.0)
+        {
+            throw new IllegalArgumentException("invalid minimum number of seconds for update: " + pUpdateIntervalSeconds);
+        }
+        long updateIntervalMilliseconds = (long) (1000.0 * pUpdateIntervalSeconds);
+        setMinNumMillisecondsForUpdate(updateIntervalMilliseconds);
+    }
+
+    protected void setMinNumMillisecondsForUpdate(long pMinNumMillisecondsForUpdate)
+    {
+        mMinNumMillisecondsForUpdate = pMinNumMillisecondsForUpdate;
+    }
+
 }
