@@ -48,7 +48,7 @@ This document contains the version history for the
 <td>2004/01/26</td>
 <td>
 <ul>
-<li>Added a macro feature to the Chemical Model Definition Language (CMDL).</li>
+<li>Added a template feature to the Chemical Model Definition Language (CMDL).</li>
 <li>Improved the efficiency of the first pass of the command-language parser.  Improved
 syntax error detection in the command-language parser.</li>
 <li>Fixed a bug in the SBML parser where

@@ -2491,8 +2491,8 @@ other symbol names.
 <dt><b>#define</b></dt>
 <dd>
 The &quot;<code>#define</code>&quot; command is used to define
-a macro.  Each macro has a name, that usually is indicative of
-its function.  An example macro definition is shown here:
+a template.  Each template has a name, that usually is indicative of
+its function.  An example template definition is shown here:
 <blockquote>
 <pre>
 #define Gene (X, Y)
@@ -2503,30 +2503,30 @@ its function.  An example macro definition is shown here:
 }
 </pre>
 </blockquote>
-In the above example, &quot;Gene&quot; is the macro name.  The
+In the above example, &quot;Gene&quot; is the template name.  The
 symbols &quot;X&quot; and &quot;Y&quot; are &quot;dummy symbols&quot;
-that act like parameters for the macro.  You may refer to "X" and
-"Y" inside the body of the macro definition.  The body of the macro
+that act like parameters for the template.  You may refer to "X" and
+"Y" inside the body of the template definition.  The body of the template
 definition is typed inside the curly braces.  The symbols "X" and "Y"
 as shown above, should <em>not</em> have been previously defined.
-The body of the macro definition must be completely self-contained;
+The body of the template definition must be completely self-contained;
 it may not refer to any external symbols except &quot;dummy symbols&quot;
 provided in the parenthetically delimited list at the beginning of the
-macro definition (e.g., "X" and "Y" in the above example).  The symbol
-&quot;I&quot; defined within the macro is known as an <em>internal symbol</em>.
+template definition (e.g., "X" and "Y" in the above example).  The symbol
+&quot;I&quot; defined within the template is known as an <em>internal symbol</em>.
 It is "scoped" by the command language parser so that its name does not 
-conflict with any symbols defined outside the body of the macro definition.
+conflict with any symbols defined outside the body of the template definition.
 </dd>
 </dl>
 
 <dt><b>#ref</b></dt>
 <dd>
-The "<code>#ref</code>" command is used to reference a macro.
-The macro must have been previous defined using the "<code>#define</code>"
-command.  In a macro reference, you must provide a parenthetic list of
-symbols for all of the dummy symbols in the macro definition.  These
+The "<code>#ref</code>" command is used to reference a template.
+The template must have been previous defined using the "<code>#define</code>"
+command.  In a template reference, you must provide a parenthetic list of
+symbols for all of the dummy symbols in the template definition.  These
 symbols <em>must</em> have been previously defined, before your
-"<code>#ref</code>" macro reference occurs in the model definition file.
+"<code>#ref</code>" template reference occurs in the model definition file.
 An example is shown here:
 <blockquote>
 <pre>
@@ -2535,7 +2535,7 @@ B = 0.0;
 #ref Gene "GAL4" (A, B);
 </pre>
 </blockquote>
-After the macro is substituted into the model definition by the 
+After the template is substituted into the model definition by the 
 parser, the model definition would be as follows:
 <blockquote>
 <pre>
@@ -2548,11 +2548,11 @@ GAL4::r2, GAL4::I -> B, 0.0;
 </blockquote>
 The prepending of the "<code>GAL4::</code>" before each symbol name
 is the "scoping" that ensures that symbols defined within the body of
-the macro definition do not have names that conflict with symbols defined
-outside the macro definition.  Macro references may exist within macro
-definitions (this is simply nesting a macro expansion within another 
-macro definition), but it is illegal to nest a macro definition within the
-body of another macro definition.
+the template definition do not have names that conflict with symbols defined
+outside the template definition.  Template references may exist within template
+definitions (this is simply nesting a template expansion within another 
+template definition), but it is illegal to nest a template definition within the
+body of another template definition.
 </dd>
 
 </p>
