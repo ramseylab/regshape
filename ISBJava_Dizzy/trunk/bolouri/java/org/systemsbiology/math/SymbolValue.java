@@ -78,6 +78,18 @@ public class SymbolValue implements Comparable
         }
     }
 
+    public final void addSymbolToMap(HashMap pMap, String pSymbolName, ReservedSymbolMapper pReservedSymbolMapper) throws IllegalArgumentException, IllegalStateException
+    {
+        if(null != pReservedSymbolMapper)
+        {
+            if(pReservedSymbolMapper.isReservedSymbol(getSymbol()))
+            {
+                throw new IllegalArgumentException("reserved symbol used: \"" + pSymbolName + "\"");
+            }
+        }
+        addSymbolToMap(pMap, pSymbolName);
+    }
+
     public boolean equals(SymbolValue pSymbolValue)
     {
         return(mValue.equals(pSymbolValue.mValue) &&
