@@ -26,14 +26,6 @@ public class ModelExporter
         mMainFrame = pMainFrame;
     }
 
-    private void handleCancel()
-    {
-        SimpleDialog messageDialog = new SimpleDialog(mMainFrame, "Export cancelled", 
-                                                      "Your export operation has been cancelled");
-        messageDialog.setMessageType(JOptionPane.INFORMATION_MESSAGE);
-        messageDialog.show();
-    }
-
     public void exportModel(Model pModel, ClassRegistry pModelExporterRegistry)
     {
         MainApp app = MainApp.getApp();
@@ -58,9 +50,10 @@ public class ModelExporter
             FileChooser fileChooser = new FileChooser(mMainFrame);
             fileChooser.setDialogTitle("Please specify the file to export");
             fileChooser.show();
-            String fileName = fileChooser.getFileName();
-            if(null != fileName)
+            File outputFile = fileChooser.getSelectedFile();
+            if(null != outputFile)
             {
+                String fileName = outputFile.getAbsolutePath();
                 IModelExporter exporter = null;
                 try
                 {
@@ -96,10 +89,7 @@ public class ModelExporter
                         }
                         else
                         {
-                            if(null == response)
-                            {
-                                handleCancel();
-                            }
+                            // do nothing
                         }
                     }
                     else
@@ -107,36 +97,10 @@ public class ModelExporter
                         doExport = true;
                     }
                     
-                    File outputFile = new File(fileName);
-
-                    if(doExport)
+                    if(doExport && outputFile.exists())
                     {
-                        if(outputFile.exists())
-                        {
-                            // need to ask user to confirm whether the file should be overwritten
-                            SimpleTextArea textArea = new SimpleTextArea("The export file you selected already exists:\n" + fileName + "\nThe export operation will overwrite this file.\nAre you sure you want to proceed?");
-                            
-                            SimpleDialog messageDialog = new SimpleDialog(mMainFrame, 
-                                                                          "Overwrite existing file?",
-                                                                          textArea);
-                            messageDialog.setMessageType(JOptionPane.QUESTION_MESSAGE);
-                            messageDialog.setOptionType(JOptionPane.YES_NO_OPTION);
-                            messageDialog.show();
-                            Integer response = (Integer) messageDialog.getValue();
-                            if(null != response &&
-                               response.intValue() == JOptionPane.YES_OPTION)
-                            {
-                                // do nothing, export of file will happen below
-                            }
-                            else
-                            {
-                                doExport = false;
-                                if(null == response)
-                                {
-                                    handleCancel();
-                                }
-                                }
-                        }
+                        doExport = FileChooser.handleOutputFileAlreadyExists(mMainFrame,
+                                                                             fileName);
                     }
                     
                     if(doExport)
@@ -174,8 +138,7 @@ public class ModelExporter
         }
         else
         {
-            // display "operation cancelled" in case user accidentally hit close button
-            handleCancel();
+            // do nothing
         }
     }
 }

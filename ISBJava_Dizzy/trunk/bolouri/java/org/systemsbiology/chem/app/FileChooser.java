@@ -18,7 +18,7 @@ public class FileChooser
 {
     private Component mMainFrame;
     private JFileChooser mFileChooser;
-    private String mFileName;
+    private File mSelectedFile;
 
     protected Component getMainFrame()
     {
@@ -35,17 +35,12 @@ public class FileChooser
 
         return(mFileChooser);
     }
-
-    String getFileName()
+    
+    File getSelectedFile()
     {
-        return(mFileName);
+        return(mSelectedFile);
     }
-
-    protected void setFileName(String pFileName)
-    {
-        mFileName = pFileName;
-    }
-
+    
     void setDialogTitle(String pTitle)
     {
         mFileChooser.setDialogTitle(pTitle);
@@ -55,11 +50,36 @@ public class FileChooser
     {
         JFileChooser fileChooser = new JFileChooser();
         mFileChooser = fileChooser;
+        mSelectedFile = null;
 
         disableDoubleMouseClick(fileChooser);
 
         mMainFrame = pMainFrame;
-        setFileName(null);
+    }
+
+    public static boolean handleOutputFileAlreadyExists(Component pFrame, String pOutputFileName)
+    {
+        boolean proceed = true;
+        // need to ask user to confirm whether the file should be overwritten
+        SimpleTextArea textArea = new SimpleTextArea("The output file you selected already exists:\n" + pOutputFileName + "\nThis operation will overwrite this file.\nAre you sure you want to proceed?");
+        
+        SimpleDialog messageDialog = new SimpleDialog(pFrame, 
+                                                      "Overwrite existing file?",
+                                                      textArea);
+        messageDialog.setMessageType(JOptionPane.QUESTION_MESSAGE);
+        messageDialog.setOptionType(JOptionPane.YES_NO_OPTION);
+        messageDialog.show();
+        Integer response = (Integer) messageDialog.getValue();
+        if(null != response &&
+           response.intValue() == JOptionPane.YES_OPTION)
+        {
+            // do nothing
+        }
+        else
+        {
+            proceed = false;
+        }
+        return(proceed);
     }
 
     public void show()
@@ -67,9 +87,23 @@ public class FileChooser
         int returnVal = mFileChooser.showOpenDialog(mMainFrame);
         if(returnVal == JFileChooser.APPROVE_OPTION)
         {
-            File inputFile = mFileChooser.getSelectedFile();
-            setFileName(inputFile.getAbsolutePath());
+            mSelectedFile = mFileChooser.getSelectedFile();
         }
+    }
+
+    void setApproveButtonText(String pApproveButtonText)
+    {
+        mFileChooser.setApproveButtonText(pApproveButtonText);
+    }
+
+    void setSelectedFile(File pSelectedFile)
+    {
+        mFileChooser.setSelectedFile(pSelectedFile);
+    }
+
+    void setFileFilter(FileFilter pFileFilter)
+    {
+        mFileChooser.setFileFilter(pFileFilter);
     }
 
     private void disableDoubleMouseClick(Component c) 

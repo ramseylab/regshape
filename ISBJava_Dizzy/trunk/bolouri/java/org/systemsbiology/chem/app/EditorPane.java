@@ -236,13 +236,13 @@ public class EditorPane
         intFileChooser.setFileFilter(fileFilter);
         fileChooser.setDialogTitle("Please select a file to open");
         fileChooser.show();
-        String fileName = fileChooser.getFileName();
-        if(null != fileName)
+        File inputFile = fileChooser.getSelectedFile();
+        if(null != inputFile)
         {
-            File file = new File(fileName);
-            if(file.exists())
+            String fileName = inputFile.getAbsolutePath();
+            if(inputFile.exists())
             {
-                if(file.isDirectory())
+                if(inputFile.isDirectory())
                 {
                     SimpleTextArea textArea = new SimpleTextArea("The file you selected is a directory:\n" + fileName + "\n");
                     SimpleDialog messageDialog = new SimpleDialog(mMainFrame,
@@ -252,7 +252,7 @@ public class EditorPane
                 }
                 else
                 {
-                    File parentFile = file.getParentFile();
+                    File parentFile = inputFile.getParentFile();
                     if(parentFile.isDirectory())
                     {
                         setCurrentDirectory(parentFile);
@@ -282,21 +282,28 @@ public class EditorPane
     {
         FileChooser fileChooser = new FileChooser(mMainFrame);
         FileFilter fileFilter = new ChemFileFilter();
-        JFileChooser intFileChooser = fileChooser.getFileChooser();
-        intFileChooser.setFileFilter(fileFilter);
-        intFileChooser.setApproveButtonText("Save");
+        fileChooser.setFileFilter(fileFilter);
+        fileChooser.setApproveButtonText("Save");
         fileChooser.setDialogTitle("Please select a file name to save as");
         fileChooser.show();
-        String fileName = fileChooser.getFileName();
-        boolean doSave = false;
-        if(null != fileName)
+        String curFileName = getFileName();
+        if(null != curFileName)
         {
-            String curFileName = getFileName();
-
-            File file = new File(fileName);
-            if(file.exists())
+            File curFile = new File(curFileName);
+            if(curFile.exists())
             {
-                if(file.isDirectory())
+                fileChooser.setSelectedFile(curFile);
+            }
+        }
+        File outputFile = fileChooser.getSelectedFile();
+        boolean doSave = false;
+        String fileName = null;
+        if(null != outputFile)
+        {
+            fileName = outputFile.getAbsolutePath();
+            if(outputFile.exists())
+            {
+                if(outputFile.isDirectory())
                 {
                     SimpleTextArea textArea = new SimpleTextArea("The file you selected is a directory:\n" + fileName + "\n");
                     SimpleDialog messageDialog = new SimpleDialog(mMainFrame,
