@@ -30,7 +30,7 @@ import org.systemsbiology.math.Symbol;
  *
  * @author Stephen Ramsey
  */
-public class Species extends SymbolValue
+public final class Species extends SymbolValue
 {
     private final String mName;  // species name; does not have to be globally unique
     private final Compartment mCompartment;

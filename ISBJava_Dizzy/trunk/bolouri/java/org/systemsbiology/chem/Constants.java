@@ -13,7 +13,7 @@ package org.systemsbiology.chem;
  * Definitions of constants that are useful in simulations of
  * coupled chemical reactions.
  */
-public class Constants
+public final class Constants
 {
     /**
      * The number of molecules per mole.  Value taken from the 1998

@@ -12,7 +12,7 @@ import org.systemsbiology.math.SymbolValue;
 import org.systemsbiology.math.Value;
 import org.systemsbiology.math.Expression;
 
-public class Parameter extends SymbolValue
+public final class Parameter extends SymbolValue
 {
     private String mName;
     

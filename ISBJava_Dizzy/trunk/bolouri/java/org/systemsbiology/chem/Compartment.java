@@ -20,7 +20,7 @@ import org.systemsbiology.math.Symbol;
  *
  * @author Stephen Ramsey
  */
-public class Compartment extends SymbolValue
+public final class Compartment extends SymbolValue
 {
     private final String mName;
     public static final double DEFAULT_VOLUME = 1.0;
