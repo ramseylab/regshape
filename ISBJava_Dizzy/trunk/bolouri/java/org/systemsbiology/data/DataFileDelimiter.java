@@ -102,4 +102,16 @@ public class DataFileDelimiter implements Comparable
         mDefaultExtension = pDefaultExtension;
         sMap.put(pName, this); 
     }
+    
+    public String scrubIdentifier(String pName)
+    {
+        String scrubbedIdentifier = pName;
+        
+        if(-1 != scrubbedIdentifier.indexOf(mDelimiter))
+        {
+            scrubbedIdentifier = scrubbedIdentifier.replaceAll(mDelimiter, "_");
+        }
+        
+        return scrubbedIdentifier;
+    }
 }
