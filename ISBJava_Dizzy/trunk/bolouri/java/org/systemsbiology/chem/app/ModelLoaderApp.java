@@ -15,16 +15,12 @@ import java.util.*;
 import java.io.*;
 
 /**
- * Command-line interface to the {@link IScriptBuildingParser}
- * and {@link ScriptRuntime} classes.  Allows for specifying
- * a script file to be parsed and executed, using the
- * script parser class specified (the class must implement
- * {@link IScriptBuildingParser}).   The user must specify a simulator
- * class to use, which must be a class implementing 
- * {@link ISimulator}.
+ * Command-line interface for building a {@link org.systemsbiology.chem.Model}
+ * object from a model definition file, and for passing the model to
+ * the {@link SimulationLauncher}. 
  *
- * @see IScriptBuildingParser
- * @see ScriptRuntime
+ * @see org.systemsbiology.chem.Model
+ * @see SimulationLauncher
  *
  * @author Stephen Ramsey
  */
