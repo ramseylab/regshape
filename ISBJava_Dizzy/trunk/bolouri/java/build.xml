@@ -185,6 +185,7 @@
 
   <target name="distClean" depends="clean">
     <delete dir="${projClassesDir}" quiet="yes" />
+    <delete dir="${projBuildDir}" quiet="yes" />
   </target>
   
 </project>
