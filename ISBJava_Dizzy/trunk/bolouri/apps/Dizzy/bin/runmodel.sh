@@ -15,4 +15,4 @@ ${INSTALL_DIR}/lib/Jama.jar:\
 ${INSTALL_DIR}/lib/jh.jar:\
 ${INSTALL_DIR}/lib/colt.jar
 
-${JAVA_BIN} -Xmx@APPJAVAMAXHEAPSIZEBYTES@ -cp "${CLASSPATH}" 'org.systemsbiology.chem.app.SimulationLauncherCommandLine' $@
+${JAVA_BIN} -Xmx@APP_JAVA_MAX_HEAP_SIZE_BYTES@ -cp "${CLASSPATH}" 'org.systemsbiology.chem.app.SimulationLauncherCommandLine' $@
