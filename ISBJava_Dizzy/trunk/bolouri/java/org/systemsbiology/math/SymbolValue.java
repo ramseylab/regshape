@@ -93,7 +93,7 @@ public class SymbolValue implements Comparable
         return(mValue);
     }
 
-    protected void setValue(Value pValue)
+    public void setValue(Value pValue)
     {
         mValue = pValue;
     }
