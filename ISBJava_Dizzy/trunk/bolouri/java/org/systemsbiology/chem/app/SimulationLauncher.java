@@ -812,6 +812,7 @@ public class SimulationLauncher
         JPanel printPlotPanel = new JPanel();
         JRadioButton printButton = new JRadioButton(OutputType.PRINT.toString(), true);
         printButton.addActionListener(buttonListener);
+        printButton.setSelected(false);
         buttonGroup.add(printButton);
         printPlotPanel.add(printButton);
 
