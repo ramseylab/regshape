@@ -1388,7 +1388,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						</object>
 					</property>
 					<property name="productURL">
-						<string><![CDATA[http://labs.systemsbiology.net/bolouri/@APPNAME@]]></string>
+						<string><![CDATA[@WEBBASEURL@/@APPNAME@]]></string>
 					</property>
 					<property name="productDescription">
 						<string><![CDATA[@APPNAME@:  a chemical kinetics stochastic simulation system]]></string>
@@ -1406,7 +1406,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<int>0</int>
 					</property>
 					<property name="supportURL">
-						<string><![CDATA[http://labs.systemsbiology.net/bolouri/@APPNAME@]]></string>
+						<string><![CDATA[@WEBBASEURL@/@APPNAME@]]></string>
 					</property>
 					<property name="vendorName">
 						<string><![CDATA[Institute for Systems Biology]]></string>
