@@ -14,6 +14,8 @@ import java.util.Random;
 
 public abstract class StochasticSimulator extends Simulator
 {
+    public static final int DEFAULT_ENSEMBLE_SIZE = 1;
+
     protected Random mRandomNumberGenerator;
 
     protected void setRandomNumberGenerator(Random pRandomNumberGenerator)
@@ -160,5 +162,14 @@ public abstract class StochasticSimulator extends Simulator
         double deltaTime = timeConstant * logInverseRandomNumberUniformInterval;
         return(deltaTime);
     }
+
+    public SimulatorParameters getDefaultSimulatorParameters()
+    {
+        SimulatorParameters sp = new SimulatorParameters();
+        sp.setEnsembleSize(DEFAULT_ENSEMBLE_SIZE);
+        return(sp);
+    }
+
+
 
 }

@@ -173,8 +173,8 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
 
     public final void simulate(double pStartTime, 
                                double pEndTime,
-                               int pNumTimePoints,
-                               int pNumSteps,
+                               SimulatorParameters pSimulatorParameters,
+                               int pNumResultsTimePoints,
                                String []pRequestedSymbolNames,
                                double []pRetTimeValues,
                                Object []pRetSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException
@@ -184,12 +184,19 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
             throw new IllegalStateException("simulator not initialized yet");
         }
 
-        if(pNumSteps <= 0)
+        Integer ensembleSizeObj = pSimulatorParameters.getEnsembleSize();
+        if(null == ensembleSizeObj)
         {
-            throw new IllegalArgumentException("illegal value for number of steps");
+            throw new IllegalArgumentException("ensemble size was not defined");
+        }
+            
+        int ensembleSize = ensembleSizeObj.intValue();
+        if(ensembleSize <= 0)
+        {
+            throw new IllegalArgumentException("illegal value for ensemble size");
         }
 
-        if(pNumTimePoints <= 0)
+        if(pNumResultsTimePoints <= 0)
         {
             throw new IllegalArgumentException("number of time points must be nonnegative");
         }
@@ -199,12 +206,12 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
             throw new IllegalArgumentException("end time must come after start time");
         }
         
-        if(pRetTimeValues.length != pNumTimePoints)
+        if(pRetTimeValues.length != pNumResultsTimePoints)
         {
             throw new IllegalArgumentException("illegal length of pRetTimeValues array");
         }
 
-        if(pRetSymbolValues.length != pNumTimePoints)
+        if(pRetSymbolValues.length != pNumResultsTimePoints)
         {
             throw new IllegalArgumentException("illegal length of pRetSymbolValues array");
         }
@@ -219,11 +226,11 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
         HashMap symbolMap = mSymbolMap;
         MultistepReactionSolver []multistepReactionSolvers = mMultistepReactionSolvers;
 
-        double []timesArray = new double[pNumTimePoints];
+        double []timesArray = new double[pNumResultsTimePoints];
 
         prepareTimesArray(pStartTime, 
                           pEndTime,
-                          pNumTimePoints,
+                          pNumResultsTimePoints,
                           timesArray);        
 
         Symbol []requestedSymbols = prepareRequestedSymbolArray(symbolMap,
@@ -237,7 +244,7 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
 
         MutableInteger lastReactionIndex = new MutableInteger(NULL_REACTION);
 
-        for(int simCtr = pNumSteps; --simCtr >= 0; )
+        for(int simCtr = ensembleSize; --simCtr >= 0; )
         {
             timeCtr = 0;
 
@@ -247,7 +254,7 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
 
 //            int numIterations = 0;
 
-            while(pNumTimePoints - timeCtr > 0)
+            while(pNumResultsTimePoints - timeCtr > 0)
             {
                 time = iterate(speciesRateFactorEvaluator,
                                symbolEvaluator,
@@ -287,7 +294,7 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
 
         }
 
-        double ensembleMult = 1.0 / ((double) pNumSteps);
+        double ensembleMult = 1.0 / ((double) ensembleSize);
 
         for(int timePointCtr = timeCtr; --timePointCtr >= 0; )
         {
