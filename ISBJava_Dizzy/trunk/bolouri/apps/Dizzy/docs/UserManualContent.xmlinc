@@ -3270,6 +3270,14 @@ Compartments:
 Compartment: univ [Value: 1.0]
 }
 
+Species: 
+{
+Species: A [Value: 100.0, Compartment: univ],
+Species: B [Value: 0.0, Compartment: univ],
+Species: C [Value: 1000.0, Compartment: univ],
+Species: D [Value: 0.0, Compartment: univ]
+}
+
 Reactions: 
 {
 Reaction: r1, A -&gt; B,  [Rate: 0.1],
