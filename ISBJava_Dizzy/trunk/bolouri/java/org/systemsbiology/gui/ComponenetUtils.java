@@ -11,7 +11,7 @@ package org.systemsbiology.gui;
 import java.awt.*;
 import javax.swing.*;
 
-public class ComponentUtil
+public class ComponentUtils
 {
     public static void disableDoubleMouseClick(Component c) 
     {
