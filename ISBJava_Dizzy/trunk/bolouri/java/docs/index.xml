@@ -27,9 +27,7 @@
 <li><a href="docs/APIDocumentation.pdf">Javadoc API documentation [PDF]</a></li>
 </ul>
 
-<img src="images/appLogo.png" border="1" />
-
-<p>
+<img src="images/appLogo.png" border="1" alt="&appName; logo" align="left" />
 The &appName; project is a library (collection) of classes
 written in the <a href="http://java.sun.com">Java</a>
 programming language, that are intended to be used for
@@ -38,12 +36,14 @@ of source code for these Java classes are available for download
 within a self-extracting installer 
 (see the &quot;Download &appName;&quot; link above), subject
 to the terms of the <a href="../License.html">license agreement</a>.
-</p> 
-<p>
+<br />
+&nbsp;
+<br />
 This software is made available under the GNU Lesser General Public License (LGPL), 
 which is a standard &quot;free software&quot;
 and &quot;open source&quot; license.  A copy of the 
 The text of the license agreement is available <a href="../License.html">here</a>.
-</p>
+
+<br clear="left" />
 
 </isb:document>

@@ -30,25 +30,26 @@
 </p>
 
 <p>
-<img src="images/appLogo.png" alt="&appName; logo" border="1" />
-</p>
-
-<p>
+<img src="images/appLogo.png" alt="&appName; logo" border="1" align="left"/>
 &appName; is a chemical kinetics simulation software package implemented in Java.
 This software can be used to define a system of interacting chemical species,
 and the reactions through which they interact.  The software can then be
 used to simulate the reaction kinetics of the system of interacting species.
 The software is based on the <a href="../&localJavaLibraryName;">&localJavaLibraryName;</a>
-library. For more information about the &appName; system, please consult the 
+library. 
+<br />
+&nbsp;
+<br />
+For more information about the &appName; system, please consult the 
 <a href="docs/UserManual.html">User Manual</a>.
-</p>
-<p>
+<br />
+&nbsp;
+<br />
 This software is made available under the GNU Lesser General Public License (LGPL), 
 which is a standard &quot;free software&quot;
-and &quot;open source&quot; license.  A copy of the 
-The text of the license agreement is available <a href="../License.html">here</a>.
+and &quot;open source&quot; license.  A <a href="../License.html">copy of the 
+text of the license agreement</a> is available.
 </p>
-
 <p>
 <a href="images/screenshot1.png"><img src="images/screenshot1-small.png" alt="screenshot" /></a>Screen shot of the &appName; program
 </p>
