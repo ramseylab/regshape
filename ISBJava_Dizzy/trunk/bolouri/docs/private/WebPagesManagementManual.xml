@@ -267,4 +267,55 @@ subdirectory than it is for files in the
 </p>
 </isb:docsection>
 
+<isb:docsection name="Simpler Method" label="simpler">
+<p>
+If you wish to rapidly publish a new web page, and the above
+instructions are too burdensome, there is a more direct method
+to publish a new web page, and bypass CVS and the aforementioned
+&quot;stylesheet&quot; framework.  Simply write a HTML document
+using your favorite HTML editor, and FTP the document to the
+FTP server:
+<blockquote>
+<pre>
+projects.systemsbiology.net
+</pre>
+</blockquote>
+You should log into the FTP server using username
+&quot;<code>bolouri_group</code>&quot;.  The password
+can be obtained by asking one of the permanent staff
+in the &mainGroup;.  Once your FTP connection is established,
+your next step depends on whether you want the HTML 
+document to be publically visible (outside of the
+&mainAffiliation;) or not:
+<ol>
+<li>If you do want the document
+to be accessible from outside, simply upload the file
+to the main directory in the FTP account. 
+</li>
+<li>If you do <em>not</em> want the
+document to be accessible from outside, you will need to
+&quot;change directory&quot; to the &quot;<code>private</code>&quot;
+subdirectory, using the &quot;<code>cd</code>&quot; command.
+Then upload the HTML document.
+</li>
+</ol>
+At this point, your document should be visible on the
+external web server, at one of the two following URLs:
+<blockquote>
+<pre>
+http://projects.systemsbiology.net/bolouri_group
+http://projects.systemsbiology.net/bolouri_group/private
+</pre>
+</blockquote>
+depending on whether you selected (1) or (2) above.
+</p>
+<p>
+<blockquote>
+<b>WARNING:</b> please be careful not to accidentally
+overwrite any of the web content that is already on the
+web server, when you are uploading your HTML file!
+</blockquote>
+</p>
+</isb:docsection>
+
 </isb:document>
