@@ -31,7 +31,8 @@
   <target name="build">
     <ant dir="${basedir}/Dizzy" target="build" />
     <ant dir="${basedir}/BioTapestry" target="build" />
-    <ant dir="${basedir}/Pointillist" target="build" />
+<!--    <ant dir="${basedir}/Pointillist" target="build" /> -->  
+    <!-- Pointillist needs Matlab in order to build correctly -->
   </target>
 
 </project>
