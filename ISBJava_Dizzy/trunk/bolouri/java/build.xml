@@ -115,7 +115,6 @@
              sourcepath="${basedir}"
              packageList="${basedir}/packageList.txt"
              doclet="com.tarsec.javadoc.pdfdoclet.PDFDoclet"
-             docletpath="/local/lib/pdfdoclet.jar:/local/lib/itext.jar:/local/lib/jakarta-regexp.jar"
              additionalparam="-pdf ${app.webDir}/docs/APIDocumentation.pdf -config ${app.configDir}/PDFDoclet.properties">
       <classpath refid="app.classpath" />
     </javadoc>                 
