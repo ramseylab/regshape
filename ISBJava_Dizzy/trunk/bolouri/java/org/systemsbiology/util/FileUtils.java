@@ -53,7 +53,23 @@ public class FileUtils
         }
         return(retFileName);
     }
-
+    
+    public static String fixWindowsCommandLineDirectoryNameMangling(String pDirName)
+    {
+        String retString = pDirName;
+        if(retString.endsWith("\""))
+        {
+            retString = retString.substring(0, retString.length() - 1);
+            if(! retString.endsWith(File.separator) &&
+               ! retString.endsWith("\\") &&
+               ! retString.endsWith("/"))
+            {
+                retString += File.separator;
+            }
+        }
+        return(retString);
+    }
+    
     public static String createFileURL(File pFile)
     {
         String fileName = pFile.getAbsolutePath();
