@@ -388,6 +388,7 @@ public class MainApp
         enableMenuItem(MainMenu.MenuItem.FILE_SAVE_AS, ! bufferEmpty);
         enableMenuItem(MainMenu.MenuItem.FILE_SAVE, bufferDirty && (null != bufferFilename));
         enableMenuItem(MainMenu.MenuItem.TOOLS_CYTOSCAPE, ! bufferEmpty);
+        enableMenuItem(MainMenu.MenuItem.TOOLS_HUMAN_READABLE, ! bufferEmpty);
         enableMenuItem(MainMenu.MenuItem.TOOLS_EXPORT, ! bufferEmpty);
         enableMenuItem(MainMenu.MenuItem.TOOLS_SIMULATE, ! bufferEmpty && null == simulationLauncher);
         enableMenuItem(MainMenu.MenuItem.TOOLS_RELOAD, ! bufferEmpty && null != simulationLauncher &&

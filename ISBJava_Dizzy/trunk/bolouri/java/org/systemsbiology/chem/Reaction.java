@@ -640,6 +640,7 @@ public class Reaction extends SymbolValue
         StringBuffer sb = new StringBuffer();
 // ---------------------------------------------------------------------
 // FOR DEBUGGING PURPOSES:
+        sb.append("Reaction: ");
         Iterator reactantsIter = getReactantsMap().keySet().iterator();
         sb.append(getName() + ", ");
         while(reactantsIter.hasNext())
@@ -663,7 +664,9 @@ public class Reaction extends SymbolValue
             }
         }
         sb.append(", ");
+        sb.append(" [Rate: ");
         sb.append(getRate().toString());
+        sb.append("]");
         return(sb.toString());
     }
 }
