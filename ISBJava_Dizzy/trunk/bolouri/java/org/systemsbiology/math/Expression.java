@@ -11,6 +11,7 @@ package org.systemsbiology.math;
 import org.systemsbiology.util.*;
 import java.util.*;
 import java.io.*;
+import java.util.regex.*;
 
 /**
  * This class is a general-purpose facility for parsing simple mathematical 
@@ -140,6 +141,9 @@ import java.io.*;
  * is <code>ElementCode.SYMBOL</code>, and whose <b>symbol name</b> field
  * is set to the string &quot;A&quot;.
  *
+ * This class is capable of parsing numeric literals in scientific notation,
+ * such as 1.0e-7 and 2.7e+14.  The "e" may be in either lower- or upper-case.
+ * 
  * @author Stephen Ramsey
  */
 public class Expression implements Cloneable
@@ -194,6 +198,7 @@ public class Expression implements Cloneable
         public static final TokenCode MOD = new TokenCode("mod");
         public static final TokenCode SYMBOL = new TokenCode("symbol");
         public static final TokenCode EXPRESSION = new TokenCode("expression");
+        public static final TokenCode SPACE = new TokenCode("space");
     }
 
     static final class ElementCode
@@ -613,6 +618,24 @@ public class Expression implements Cloneable
         Element mParsedExpression;
         double mNumericValue;
 
+        public String toString()
+        {
+            String retVal = null;
+            if(mCode.equals(TokenCode.SYMBOL))
+            {
+                retVal = mSymbolName;
+            }
+            else if(mCode.equals(TokenCode.NUMBER))
+            {
+                retVal = Double.toString(mNumericValue);
+            }
+            else
+            {
+                retVal = mCode.toString();
+            }
+            return retVal;
+        }
+        
         public Token()
         {
             mCode = TokenCode.NONE;
@@ -704,6 +727,62 @@ public class Expression implements Cloneable
         }            
     }
 
+ 
+    private Double parseDoubleSafe(String pString)
+    {
+        Double retVal = null;
+        try
+        {
+            retVal = new Double(pString);
+        }
+        catch(NumberFormatException e)
+        {
+            // do nothing
+        }
+        return(retVal);
+    }
+    
+    private Integer parseIntegerSafe(String pString)
+    {
+        Integer retVal = null;
+        
+        try
+        {
+            retVal = new Integer(pString);
+        }
+        catch(NumberFormatException e)
+        {
+            // do nothing
+        }   
+        return(retVal);
+    }
+    
+    private void handleScientificNotationNumericToken(String pPrefix,
+                                                      StringTokenizer pStringTokenizer,
+                                                      Token pToken,
+                                                      List pTokenizedFormula,
+                                                      double pMultiplier)
+    {
+        Double prefixValue = parseDoubleSafe(pPrefix);
+        assert (null != prefixValue) : "invalid scientific notation prefix";
+
+        // get next token, to obtain the power of 10
+        if(! pStringTokenizer.hasMoreTokens())
+        {
+            throw new IllegalArgumentException("scientific notation number missing exponent, \"" + pPrefix + "\"");
+        }
+        String nextTokenString = pStringTokenizer.nextToken();
+        Integer nextTokenInt = parseIntegerSafe(nextTokenString);
+        if(null == nextTokenInt)
+        {
+            throw new IllegalArgumentException("scientific notation number missing exponent, \"" + nextTokenString + "\""); 
+        }
+        double value = prefixValue.doubleValue() * Math.pow(10.0, pMultiplier * ((double) nextTokenInt.intValue()));
+        pTokenizedFormula.remove(pTokenizedFormula.size() - 1);
+        pToken.mCode = TokenCode.NUMBER;
+        pToken.mNumericValue = value;
+    }
+    
     private List tokenizeExpression(String pFormula) throws IllegalArgumentException
     {
         checkForReservedCharacters(pFormula);                              
@@ -711,18 +790,20 @@ public class Expression implements Cloneable
         List tokenizedFormula = new LinkedList();
         boolean returnDelims = true;
         StringTokenizer stringTokenizer = new StringTokenizer(pFormula, TOKEN_DELIMITERS, returnDelims);
+        
+        Pattern scientificNotationPattern = Pattern.compile("(\\d+(\\.\\d*)?)[eE]");
+        
         while(stringTokenizer.hasMoreTokens())
         {
             String tokenStr = stringTokenizer.nextToken();
-            if(0 == tokenStr.trim().length())
-            {
-                // ignore empty (whitespace) tokens
-                continue;
-            }
 
             Token token = new Token();
 
-            if(tokenStr.equals(TOKEN_STRING_OPEN_PAREN))
+            if(0 == tokenStr.trim().length())
+            {
+                token.mCode = TokenCode.SPACE;
+            }
+            else if(tokenStr.equals(TOKEN_STRING_OPEN_PAREN))
             {
                 token.mCode = TokenCode.OPEN_PAREN;
             }
@@ -736,11 +817,77 @@ public class Expression implements Cloneable
             }
             else if(tokenStr.equals(TOKEN_STRING_PLUS))
             {
-                token.mCode = TokenCode.PLUS;
+                // check previous token to see if it is a number
+                Token lastToken = null;
+                int formulaSize = tokenizedFormula.size();
+                if(formulaSize > 0)
+                {
+                    lastToken = (Token) tokenizedFormula.get(formulaSize - 1);
+                    assert (null != lastToken) : "invalid null token found";
+                    if(lastToken.mCode.equals(TokenCode.SYMBOL))
+                    {
+                        String lastTokenName = lastToken.mSymbolName;
+                        Matcher scientificNotationMatcher = scientificNotationPattern.matcher(lastTokenName);
+                        if(scientificNotationMatcher.matches())
+                        {
+                            String scientificNotationPrefix = scientificNotationMatcher.group(1);
+                            handleScientificNotationNumericToken(scientificNotationPrefix,
+                                                                 stringTokenizer,
+                                                                 token,
+                                                                 tokenizedFormula,
+                                                                 1.0);
+                        }
+                        else
+                        {
+                            token.mCode = TokenCode.PLUS;
+                        }
+                    }
+                    else
+                    {
+                        token.mCode = TokenCode.PLUS;
+                    }
+                }
+                else
+                {
+                    token.mCode = TokenCode.PLUS;
+                }
             }
             else if(tokenStr.equals(TOKEN_STRING_MINUS))
             {
-                token.mCode = TokenCode.MINUS;
+                // check previous token to see if it is a number
+                Token lastToken = null;
+                int formulaSize = tokenizedFormula.size();
+                if(formulaSize > 0)
+                {
+                    lastToken = (Token) tokenizedFormula.get(formulaSize - 1);
+                    assert (null != lastToken) : "invalid null token found";
+                    if(lastToken.mCode.equals(TokenCode.SYMBOL))
+                    {
+                        String lastTokenName = lastToken.mSymbolName;
+                        Matcher scientificNotationMatcher = scientificNotationPattern.matcher(lastTokenName);
+                        if(scientificNotationMatcher.matches())
+                        {
+                            String scientificNotationPrefix = scientificNotationMatcher.group(1);
+                            handleScientificNotationNumericToken(scientificNotationPrefix,
+                                                                 stringTokenizer,
+                                                                 token,
+                                                                 tokenizedFormula,
+                                                                 -1.0);                            
+                        }
+                        else
+                        {
+                            token.mCode = TokenCode.MINUS;
+                        }
+                    }
+                    else
+                    {
+                        token.mCode = TokenCode.MINUS;
+                    }
+                }    
+                else
+                {
+                    token.mCode = TokenCode.MINUS;
+                }
             }
             else if(tokenStr.equals(TOKEN_STRING_DIV))
             {
@@ -756,13 +903,14 @@ public class Expression implements Cloneable
             }
             else
             {
-                try
+                Double valueObj = parseDoubleSafe(tokenStr);
+                if(null != valueObj)
                 {
-                    double value = Double.parseDouble(tokenStr);
+                    double value = valueObj.doubleValue();
                     token.mCode = TokenCode.NUMBER;
-                    token.mNumericValue = value;
+                    token.mNumericValue = value;                    
                 }
-                catch(NumberFormatException e)
+                else
                 {
                     token.mCode = TokenCode.SYMBOL;
                     token.mSymbolName = tokenStr;
@@ -770,55 +918,21 @@ public class Expression implements Cloneable
             }
             tokenizedFormula.add(token);
         }
+        
+        // strip all the whitespace tokens out of the final tokenized formula
+        ListIterator listIter = tokenizedFormula.listIterator();
+        while(listIter.hasNext())
+        {
+            Token token = (Token) listIter.next();
+            if(token.mCode.equals(TokenCode.SPACE))
+            {
+                listIter.remove();
+            }
+        }
+        
         return(tokenizedFormula);
     }
-
-
-    private Element parseTokenizedExpression(List pFormula) throws IllegalArgumentException
-    {
-        // parse for parentheses (sub-expressions)
-        parseParentheses(pFormula);
-
-        // parse for built-in function calls (exp, ln, sin, cos, tan, etc.)
-        parseFunctionCalls(pFormula);
-
-        // parse for unary operators
-        HashMap unaryMap = new HashMap();
-        unaryMap.put(TokenCode.MINUS, ElementCode.NEG);
-        parseUnaryOperator(unaryMap, pFormula);
-        
-        // parse for pow        
-        HashMap binaryMap = new HashMap();
-        binaryMap.put(TokenCode.POW, ElementCode.POW);
-        parseBinaryOperator(binaryMap, pFormula);
-
-        // parse for mult and div
-        binaryMap.clear();
-        binaryMap.put(TokenCode.MULT, ElementCode.MULT);
-        binaryMap.put(TokenCode.DIV, ElementCode.DIV);        
-        binaryMap.put(TokenCode.MOD, ElementCode.MOD);        
-        parseBinaryOperator(binaryMap, pFormula);
-       
-        // parse for add and subt
-        binaryMap.clear();
-        binaryMap.put(TokenCode.PLUS, ElementCode.ADD);
-        binaryMap.put(TokenCode.MINUS, ElementCode.SUBT);        
-        parseBinaryOperator(binaryMap, pFormula);
-
-        Iterator iter = pFormula.listIterator();
-        if(! iter.hasNext())
-        {
-            throw new IllegalArgumentException("no elements found in the parse tree for this expression");
-        }
-        Token finalToken = (Token) iter.next();
-        if(iter.hasNext())
-        {
-            throw new IllegalArgumentException("found more than one element at the root of the parsed formula tree");
-        }
-        return(convertTokenToElement(finalToken));
-    }
-
-
+    
     private Element convertTokenToElement(Token pToken) throws IllegalArgumentException
     {
         TokenCode tokCode = pToken.mCode;
@@ -1041,7 +1155,7 @@ public class Expression implements Cloneable
             token = (Token) iter.next();
             TokenCode tokenCode = token.mCode;
 
-            if(tokenCode == TokenCode.EXPRESSION)
+            if(tokenCode.equals(TokenCode.EXPRESSION))
             {
                 continue;
             }
@@ -1104,7 +1218,7 @@ public class Expression implements Cloneable
             token = (Token) iter.next();
             TokenCode tokenCode = token.mCode;
 
-            if(tokenCode == TokenCode.EXPRESSION)
+            if(tokenCode.equals(TokenCode.EXPRESSION))
             {
                 continue;
             }
@@ -1271,6 +1385,51 @@ public class Expression implements Cloneable
         }
     }
 
+    private Element parseTokenizedExpression(List pFormula) throws IllegalArgumentException
+    {
+        // parse for parentheses (sub-expressions)
+        parseParentheses(pFormula);
+
+        // parse for built-in function calls (exp, ln, sin, cos, tan, etc.)
+        parseFunctionCalls(pFormula);
+
+        // parse for unary operators
+        HashMap unaryMap = new HashMap();
+        unaryMap.put(TokenCode.MINUS, ElementCode.NEG);
+        parseUnaryOperator(unaryMap, pFormula);
+        
+        // parse for pow        
+        HashMap binaryMap = new HashMap();
+        binaryMap.put(TokenCode.POW, ElementCode.POW);
+        parseBinaryOperator(binaryMap, pFormula);
+
+        // parse for mult and div
+        binaryMap.clear();
+        binaryMap.put(TokenCode.MULT, ElementCode.MULT);
+        binaryMap.put(TokenCode.DIV, ElementCode.DIV);        
+        binaryMap.put(TokenCode.MOD, ElementCode.MOD);        
+        parseBinaryOperator(binaryMap, pFormula);
+       
+        // parse for add and subt
+        binaryMap.clear();
+        binaryMap.put(TokenCode.PLUS, ElementCode.ADD);
+        binaryMap.put(TokenCode.MINUS, ElementCode.SUBT);        
+        parseBinaryOperator(binaryMap, pFormula);
+
+        Iterator iter = pFormula.listIterator();
+        if(! iter.hasNext())
+        {
+            throw new IllegalArgumentException("no elements found in the parse tree for this expression");
+        }
+        Token finalToken = (Token) iter.next();
+        if(iter.hasNext())
+        {
+            throw new IllegalArgumentException("found more than one element at the root of the parsed formula tree");
+        }
+        return(convertTokenToElement(finalToken));
+    }
+
+    
     /*========================================*
      * protected methods
      *========================================*/
@@ -2481,17 +2640,7 @@ public class Expression implements Cloneable
     {
         try
         {
-            HashMap symbolsMap = new HashMap();
-            // make the assignment Y = [Z^2];
-            SymbolValue Y = new SymbolValue("Y");
-            Y.setValue(new Value(new Expression("Z^2 + 100.0")));
-            symbolsMap.put("Y", Y);
-            
-            SymbolValue Z = new SymbolValue("Z");
-            Z.setValue(new Value(new Expression("1.0")));
-            symbolsMap.put("Z", Z);
 
-            SymbolEvaluatorHashMap symEval = new SymbolEvaluatorHashMap(symbolsMap);
 
             InputStream in = System.in;
             InputStreamReader reader = new InputStreamReader(in);
@@ -2500,9 +2649,7 @@ public class Expression implements Cloneable
             while(null != (line = bufReader.readLine()))
             {
                 Expression expression = new Expression(line);
-                Symbol X = new Symbol("X");
-                System.out.println(expression.computePartialDerivative(X, symEval).toString());
-                System.out.println("");
+                System.out.println(expression.toString());
             }
         }
         catch(Exception e)
