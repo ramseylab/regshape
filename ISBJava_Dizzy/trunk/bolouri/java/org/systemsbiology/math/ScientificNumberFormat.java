@@ -101,7 +101,7 @@ public class ScientificNumberFormat extends DecimalFormat
         double log10val = 0.0;
         if(pValue != 0.0)
         {
-            log10val = MathFunctions.log10(pValue);
+            log10val = MathFunctions.log10(Math.abs(pValue));
         }
         
         if(Math.abs(log10val) < mMinimumDigitsForScientificNotation)
