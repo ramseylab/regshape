@@ -12,6 +12,7 @@ package org.systemsbiology.chem.app;
  * Provides a GUI interface for initiating and controlling simulations.
  */
 import org.systemsbiology.chem.*;
+import org.systemsbiology.data.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.math.*;
 import org.systemsbiology.gui.*;
