@@ -49,8 +49,7 @@ This document contains the version history for the
 <td>
 <ul>
 <li>
-Speeded up the initialization of the help browser, for subsequent invocations
-of the help browser (after the first).
+
 </li>
 </ul>
 </td>
