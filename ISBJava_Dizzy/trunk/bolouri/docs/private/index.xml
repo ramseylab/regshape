@@ -50,7 +50,7 @@
 
 <isb:docsection name="Software Tools" label="softwaremanuals">
 <ul>
-<li><a href="SoftwareTools.html">Software Tools Page</a></li>
+<li><a href="SoftwareTools.html">Software Tools Page</a> (Matlab, Mathematica, etc.)</li>
 <li><a href="&privateRepositoryURL;/InstallAnywhere5_UserManual.pdf">InstallAnywhere User Manual (PDF)</a></li>
 <li><a href="&privateRepositoryURL;/CVSManual.pdf">CVS User Manual (PDF)</a></li>
 </ul>
