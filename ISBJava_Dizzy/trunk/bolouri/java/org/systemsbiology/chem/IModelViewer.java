@@ -10,8 +10,6 @@
  */
 package org.systemsbiology.chem;
 
-import org.systemsbiology.chem.*;
-
 /**
  * @author sramsey
  *
