@@ -21,7 +21,7 @@ import org.systemsbiology.util.*;
  *
  * @author Stephen Ramsey
  */
-public class Model
+public final class Model
 {
     private HashMap mReactionsMap;
     private String mName;
@@ -284,4 +284,6 @@ public class Model
         DebugUtils.describeSortedObjectList(sb, mReactionsMap, separatorString);
         return(sb.toString());
     }
+
+
 }
