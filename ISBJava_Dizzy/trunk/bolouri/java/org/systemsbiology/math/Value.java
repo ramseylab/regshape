@@ -23,7 +23,6 @@ public final class Value
     private Expression mExpressionValue;
     private boolean mExpressionValueCached;
     private MutableDouble mNumericValue;
-    private MutableDouble mExpressionCacheValue;
 
     /**
      * Constructs a {@link Value} composed of the 
