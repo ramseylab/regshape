@@ -83,7 +83,8 @@ numeric literals expressed in scientific notation, such as
 <li>
 Fixed a bug where ISO-8859-1 characters greater than 127 in the CMDL 
 model definition file were causing exceptions when the model was 
-processed, on Red Hat Linux.  This will ensure that CMDL model processing
+processed, on Red Hat Linux.  CMDL files are now always processed using
+UTF-8 encoding.  This will ensure that CMDL model processing
 is consistent across different locales.  Files opened using the "include" 
 directive will be processed in the same character set as the parent file.
 </li>
