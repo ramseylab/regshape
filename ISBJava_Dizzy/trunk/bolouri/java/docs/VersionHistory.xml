@@ -38,8 +38,8 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
-<td><a href="../1.1.2/&installerDownloadRelURL;">1.1.2</a></td>
-<td>2004/01/??</td>
+<td><a href="../1.2.0/&installerDownloadRelURL;">1.2.0</a></td>
+<td>2004/01/13</td>
 <td>
 <ul>
 <li>Fixed a bug in the layout of the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
@@ -66,6 +66,10 @@ that registers the various
 with the SBW broker, to add the <code>DeterministicService</code>
 and the <code>GibsonBruckService</code> services to the list of services
 offered by this module.</li>
+<li>Fixed a bug in the <code>org.systemsbiology.util.ImageTransferHandler</code>, where the
+<code>createTransferableImage()</code> method was returning a <code>Transferable</code> object
+that was failing to properly set the &quot;<code>transfredSuccessfully</code>&quot; flag in 
+some cases.</li>
 </ul>
 </td>
 </tr>
