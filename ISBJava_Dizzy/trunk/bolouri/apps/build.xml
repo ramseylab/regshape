@@ -16,10 +16,12 @@
 
   <target name="buildHTML">
     <ant dir="${basedir}/Dizzy" target="buildHTML" />
+    <ant dir="${basedir}/BioTapestry" target="buildHTML" />
   </target>
 
   <target name="buildPDF">
     <ant dir="${basedir}/Dizzy" target="buildPDF" />
+    <ant dir="${basedir}/BioTapestry" target="buildPDF" />
   </target>
 
   <target name="buildInstallers">
@@ -29,6 +31,7 @@
   <target name="build">
     <ant dir="${basedir}/Dizzy" target="build" />
     <ant dir="${basedir}/BioTapestry" target="build" />
+    <ant dir="${basedir}/Pointillist" target="build" />
   </target>
 
 </project>
