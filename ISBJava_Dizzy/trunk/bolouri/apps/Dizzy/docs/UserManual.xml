@@ -8,7 +8,8 @@
 <!ENTITY cmdlExtension ".isbchem">
 <!ENTITY sbmlExtension ".xml">
 <!ENTITY sbmlURL "http://www.sbw-sbml.org">
-<!ENTITY appNameLowerCase "dizzy">
+<!ENTITY appNameCommandLine "dizzycmd">
+
    ]>
 
 <!-- ========== PREAMBLE ========== -->
@@ -3280,20 +3281,20 @@ successful import of most of the SBML models available.
 <isb:docsection name="&appName; Command-line Interface" label="commandline">
 <p>
 A command-line interface to the &appName; scripting engine is available.
-On Windows and Linux/Unix operating systems, the <code>&appNameLowerCase;.bat</code> (Windows)
-and <code>&appNameLowerCase;.sh</code> (Linux/Unix) shell scripts can be used to run the 
+On Windows and Linux/Unix operating systems, the <code>&appNameCommandLine;.bat</code> (Windows)
+and <code>&appNameCommandLine;.sh</code> (Linux/Unix) shell scripts can be used to run the 
 command-line interface to the scripting engine.  These shell scripts should
 be located in the &quot;<code>bin</code>&quot; subdirectory of the directory in 
 you installed &appName;.  For the purposes of illustration, we will assume
-that the <code>&appNameLowerCase;.sh</code> is being used.  If you are using a Windows machine,
-<code>&appNameLowerCase;.bat</code> should be substituted wherever <code>&appNameLowerCase;.sh</code> appears
+that the <code>&appNameCommandLine;.sh</code> is being used.  If you are using a Windows machine,
+<code>&appNameCommandLine;.bat</code> should be substituted wherever <code>&appNameCommandLine;.sh</code> appears
 in the following.
 </p>
 <p>
-The usage synopsis for the <code>&appNameLowerCase;.sh</code> is as follows:
+The usage synopsis for the <code>&appNameCommandLine;.sh</code> is as follows:
 <blockquote>
 <pre>
-&appNameLowerCase;.sh [-debug] [-parser &lt;parserAlias&gt;] &lt;scriptFile&gt;
+&appNameCommandLine;.sh [-debug] [-parser &lt;parserAlias&gt;] &lt;scriptFile&gt;
 </pre>
 </blockquote>
 The symbols above are defined as follows:
