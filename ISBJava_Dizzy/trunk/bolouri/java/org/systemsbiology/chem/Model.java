@@ -31,12 +31,19 @@ import org.systemsbiology.util.DataNotFoundException;
  */
 public class Model
 {
+    public static final String DEFAULT_MODEL_NAME = "model";
+
     private HashMap mReactionsMap;
     private String mName;
     private HashMap mDynamicSymbolsMap;
     private HashMap mSymbolsMap;
     private HashMap mParametersMap;
     private SpeciesRateFactorEvaluator mSpeciesRateFactorEvaluator;
+
+    public Model()
+    {
+        this(DEFAULT_MODEL_NAME);
+    }
 
     public Model(String pName)
     {
