@@ -104,7 +104,7 @@ in the &quot;<code>docs</code>&quot; subdirectory of the installation
 directory.
 For detailed documentation of the application programming
 interface (API) to the &appName; system, please consult the
-<a href="&webBaseURL;/&localJavaLibraryName;">ISBJava</a> home page.
+<a href="&webBaseURL;/software/&localJavaLibraryName;">&localJavaLibraryName;</a> home page.
 In addition, the &appName; system provides a set of
 <a href="&appHomePage;/docs/UserManual.html#samplefiles">
 sample model definition files</a>.
