@@ -35,8 +35,8 @@ public final class SimulationProgressReporter
     }
 
     public synchronized void updateProgressStatistics(boolean pSimulationFinished, 
-                                                            double pFractionComplete, 
-                                                            long pIterationCounter)
+                                                      double pFractionComplete, 
+                                                      long pIterationCounter)
     {
         mSimulationFinished = pSimulationFinished;
         mFractionComplete = pFractionComplete;
