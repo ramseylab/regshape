@@ -130,7 +130,7 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
     /*========================================*
      * constants
      *========================================*/
-    public static final String CLASS_ALIAS = "gillespie";
+    public static final String CLASS_ALIAS = "gillespie"; 
     private static final int SIMULATION_CANCELLED = -1;
 
     /*========================================*
