@@ -3,7 +3,6 @@
 <!DOCTYPE BuildFile [
 <!ENTITY % CommonConfig SYSTEM "config/CommonConfig.dtd">
 %CommonConfig;
-<!ENTITY BuildHeader SYSTEM "config/BuildHeader.xmlinc">
 ]>
 
 <!--
@@ -17,13 +16,20 @@
 
 <project name="bolouri" default="compile" basedir=".">
   <property name="projRoot"           location="${basedir}" />  
-  
-  &BuildHeader;
+	  <property name="projConfigDir"      location="${projRoot}/config" />
+	  <property name="projWebDir"         location="${projRoot}/build/web" />
+	  <property name="docsStyleSheet"     location="${projRoot}/config/&mainDocumentStylesheet;" />
+	  <property name="projJavaDir"        location="${projRoot}/java" />
+	  <property name="projAppsDir"        location="${projRoot}/apps" />
+	  <property name="projDocsDir"        location="${projRoot}/docs" />
+	  <property name="projImagesDir"      location="${projRoot}/images" />
+	  <property name="projBuildDir"       location="${projRoot}/build" />
+	  <property name="projStyleDir"       location="${projRoot}/build/html" />
+	  <property name="projClassesDir"     location="${projRoot}/classes" />
 
-  <property name="webServerUsername"  value="bolouri_group" />
-  <property name="webServerPassword"  value="b2G4cIc" />  <!-- icky: find some way to obfuscate this -->
-  <property name="webServerHostname"  value="labs.systemsbiology.net" />
-  <property name="webServerRemoteDir" value="software" />
+	<property file="${projConfigDir}/CommonConfig.properties" />
+
+
 
   <target name="compile">
     <ant dir="${projJavaDir}" target="compile" />

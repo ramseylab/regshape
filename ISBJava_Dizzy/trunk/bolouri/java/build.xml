@@ -5,7 +5,6 @@
 %CommonConfig;
 <!ENTITY % AppConfig SYSTEM "config/AppConfig.dtd">
 %AppConfig;
-<!ENTITY BuildHeader SYSTEM "../config/BuildHeader.xmlinc">
 ]>
 
 <!--
@@ -18,11 +17,14 @@
  -->
 
 <project name="localJava" default="compile" basedir=".">
-  <property name="projRoot"                      location=".." />
 
-  &BuildHeader;
+	  <property name="globalRoot"                     location="../.." />
+	  <property name="globalConfig"                   location="${globalRoot}/config" />
+	  <property name="globalStyle"                 location="${globalRoot}/build/html" />
+	
+	  <property file="${globalConfig}/CommonConfig.properties" />
 
-  <property name="app.srcDir"                  location="${basedir}/org" />
+	<property name="app.srcDir"                  location="${basedir}/org" />
   <property name="app.configDir"               location="${basedir}/config" />
   <property name="app.buildDir"                location="${basedir}/build" />
   <property name="app.styleDir"                location="${app.buildDir}/html" />
@@ -30,13 +32,12 @@
   <property name="app.extLibDir"               location="${basedir}/extlib" />
   <property name="app.classesDir"              location="${app.buildDir}/classes" />
   <property name="app.imagesDir"               location="${basedir}/images" />
-  <property name="app.webDir"                  location="${projWebDir}/&appName;" />
+  <property name="app.webDir"                  location="${globalRoot}/build/web/&appName;" />
   <property name="app.javadocDir"              location="${app.webDir}/javadoc" />
   <property name="app.version"                 value="&appVersion;" />
   <property name="app.downloadDir"             location="${app.webDir}/&appVersion;" />
   <property name="app.installerDir"            location="${app.downloadDir}/installer" />
   <property name="app.rootPackage"             value="org" />
-  <property name="javadocLink"                 value="http://java.sun.com/j2se/1.4.2/docs/api" />
 
   <property name="compile.debug"               value="false" />
   <property name="compile.deprecation"         value="false" />
@@ -65,7 +66,7 @@
   </path>
 
   <target name="copyCommonConfig">
-    <copy file="${projConfigDir}/CommonConfig.dtd" todir="${app.configDir}" />
+    <copy file="${globalConfig/CommonConfig.dtd" todir="${app.configDir}" />
   </target>
 
   <target name="style" depends="copyCommonConfig">
@@ -73,7 +74,7 @@
     <style basedir="${app.docsDir}" 
            destdir="${app.styleDir}" 
            includes="*.xml" 
-           style="${docsStyleSheet}" />
+           style="${globalConfig}/${docsStyleSheet}" />
   </target>
 
   <target name="copyImages">
@@ -157,7 +158,7 @@
     </copy>
 
     <!-- copy the license file -->
-    <copy todir="${app.buildDir}/&appName;/docs" file="${projStyleDir}/License.html" />
+    <copy todir="${app.buildDir}/&appName;/docs" file="${globalStyle}/License.html" />
 
     <!-- copy PDF documentation -->
     <copy todir="${app.buildDir}/&appName;/docs" file="${app.webDir}/docs/APIDocumentation.pdf" />
@@ -242,7 +243,7 @@
         <include name="${app.rootPackage}/**/*.dtd" />
         <include name="${app.rootPackage}/**/*.xml" />
       </tarfileset>
-      <tarfileset dir="${projStyleDir}" prefix="">
+      <tarfileset dir="${globalStyle}" prefix="">
         <include name="License.html" />
       </tarfileset>
     </tar>
