@@ -148,6 +148,10 @@ This document contains the version history for the
     two-element constructor for <code>org.systemsbiology.util.ExceptionNotificationOptionPane.</code></li>
   <li>Added a static method <code>org.systemsbiology.math.probability.Normal.cdf()</code>,
     which is simply a wrapper to a call in the  Colt library .</li>
+  <li>Fixed bug in <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>
+    where the command-line simulation launcher was not obtaining the defualt 
+relative and absolute error tolerances for the simulator, so the user would get an error
+if both tolerances were not explicitly specified on the command-line.</li>
 </ul>
 </td>
 </tr>
