@@ -46,10 +46,10 @@ public class ModelExporter
         String exporterAlias = (String) optionPane.getValue();
         if(null != exporterAlias)
         {
-            FileChooser fileChooser = new FileChooser(mMainFrame);
+            FileChooser fileChooser = new FileChooser();
             fileChooser.setApproveButtonText("export");
             fileChooser.setDialogTitle("Please specify the file to export");
-            fileChooser.show();
+            fileChooser.showSaveDialog(mMainFrame);
             File outputFile = fileChooser.getSelectedFile();
             if(null != outputFile)
             {

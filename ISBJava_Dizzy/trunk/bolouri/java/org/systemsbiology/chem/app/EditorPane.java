@@ -225,7 +225,7 @@ public class EditorPane
 
     public void open()
     {
-        FileChooser fileChooser = new FileChooser(mMainFrame);
+        FileChooser fileChooser = new FileChooser();
         javax.swing.filechooser.FileFilter fileFilter = new ChemFileFilter();
         File currentDirectory = getCurrentDirectory();
         if(null != currentDirectory)
@@ -235,10 +235,10 @@ public class EditorPane
         fileChooser.setFileFilter(fileFilter);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setDialogTitle("Please select a file to open");
-        fileChooser.show();
-        File inputFile = fileChooser.getSelectedFile();
-        if(null != inputFile)
+        int result = fileChooser.showOpenDialog(mMainFrame);
+        if(JFileChooser.APPROVE_OPTION == result)
         {
+            File inputFile = fileChooser.getSelectedFile();
             String fileName = inputFile.getAbsolutePath();
             if(inputFile.exists())
             {
@@ -249,14 +249,14 @@ public class EditorPane
                     mMainApp.setCurrentDirectory(parentFile);
                 }
                 loadFileToEditBuffer(fileName);
-            }
+            }   
             else
             {
-                    SimpleTextArea textArea = new SimpleTextArea("The file you selected does not exist:\n" + fileName + "\n");
-                    JOptionPane.showMessageDialog(mMainFrame,
-                                                  textArea,
-                                                  "Open cancelled",
-                                                  JOptionPane.INFORMATION_MESSAGE);
+                SimpleTextArea textArea = new SimpleTextArea("The file you selected does not exist:\n" + fileName + "\n");
+                JOptionPane.showMessageDialog(mMainFrame,
+                                              textArea,
+                                              "Open cancelled",
+                                              JOptionPane.INFORMATION_MESSAGE);                
             }
         }
     }
@@ -269,33 +269,36 @@ public class EditorPane
 
     public void saveAs()
     {
-        FileChooser fileChooser = new FileChooser(mMainFrame);
+        FileChooser fileChooser = new FileChooser();
         javax.swing.filechooser.FileFilter fileFilter = new ChemFileFilter();
         fileChooser.setFileFilter(fileFilter);
         fileChooser.setApproveButtonText("Save");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setDialogTitle("Please select a file name to save as");
-        fileChooser.show();
         String curFileName = getFileName();
+        File curFile = null;
         if(null != curFileName)
         {
-            File curFile = new File(curFileName);
+            curFile = new File(curFileName);
             if(curFile.exists())
             {
                 fileChooser.setSelectedFile(curFile);
             }
         }
-        File outputFile = fileChooser.getSelectedFile();
-        boolean doSave = false;
-        String fileName = null;
-        if(null != outputFile)
+        int result = fileChooser.showSaveDialog(mMainFrame);
+                if(JFileChooser.APPROVE_OPTION == result)
         {
-            fileName = outputFile.getAbsolutePath();
+            boolean doSave = false;
+            File outputFile = fileChooser.getSelectedFile();
+            String fileName = outputFile.getAbsolutePath();
             if(outputFile.exists())
             {
-                if((null != curFileName &&
-                    fileName.equals(curFileName)) ||
-                   null == curFileName)
+                if(null == curFile ||
+                   curFileName.equals(fileName))
+                {
+                    doSave = true;
+                }
+                else
                 {
                     SimpleTextArea textArea = new SimpleTextArea("The file you selected already exists:\n" + fileName + "\nThe save operation will overwrite this file.\nAre you sure you want to proceed?");
                     JOptionPane optionPane = new JOptionPane();
@@ -316,26 +319,22 @@ public class EditorPane
                         }
                     }
                 }
-                else
-                {
-                    doSave = true;
-                }
             }
             else
             {
                 doSave = true;
             }
-
+            
             if(doSave && null != curFileName && !(curFileName.equals(fileName)))
             {
                 setParserAliasLabel(null);
             }
-        }
 
-        if(doSave)
-        {
-            saveEditBufferToFile(fileName);
-            mMainApp.updateMenus();
+            if(doSave)
+            {
+                saveEditBufferToFile(fileName);
+                mMainApp.updateMenus();
+            }        
         }
     }
 
