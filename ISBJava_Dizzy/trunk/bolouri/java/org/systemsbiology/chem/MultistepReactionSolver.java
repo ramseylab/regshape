@@ -34,14 +34,18 @@ public class MultistepReactionSolver extends Expression
     private double mRate;
     private int mNumSteps;
     private boolean mFirstTimePoint;
-    private SlidingWindowTimeSeriesQueue mReactantHistory;
-    private SlidingWindowTimeSeriesQueue mIntermedSpeciesHistory;
     private double mTimeResolution;
-    private int mNumTimePoints;
     private double mPeakTimeRel;
 
+    // used only for stochastic simulations
     private PriorityQueue mReactionTimes;
     private LinkedList mReactionTimesDoublePool;
+
+    // used only for deterministic simulation
+    private SlidingWindowTimeSeriesQueue mReactantHistory;
+    private SlidingWindowTimeSeriesQueue mIntermedSpeciesHistory;
+    private int mNumTimePoints;
+
     private boolean mIsStochasticSimulator;
 
     private double mRateSquared;
@@ -89,11 +93,11 @@ public class MultistepReactionSolver extends Expression
         mReactionIndex = pReactionIndex;
     }
 
-    public void initialize(boolean pIsStochasticSimulator)
+    public void initialize(ISimulator pSimulator)
     {
-        mIsStochasticSimulator = pIsStochasticSimulator;
+        mIsStochasticSimulator = pSimulator.isStochasticSimulator();
 
-        if(pIsStochasticSimulator)
+        if(mIsStochasticSimulator)
         {
             mReactionTimes = new PriorityQueue( new AbstractComparator()
             {
@@ -171,11 +175,13 @@ public class MultistepReactionSolver extends Expression
         return(nextReactionTime);
     }
 
+    // used for stochastic simulator
     boolean canHaveReaction() 
     {
         return(null != mReactionTimes.peek());
     }
 
+    // used for stochastic simulator
     double peekNextReactionTime() throws IllegalStateException
     {
         MutableDouble reactionTime = (MutableDouble) mReactionTimes.peek();
@@ -268,7 +274,7 @@ public class MultistepReactionSolver extends Expression
         }
     }
 
-
+    // used for deterministic simulator
     public double computeValue(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
     {
         double prodRate = 0.0;
