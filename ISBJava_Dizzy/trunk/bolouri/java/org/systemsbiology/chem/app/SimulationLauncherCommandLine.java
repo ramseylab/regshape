@@ -594,10 +594,6 @@ public class SimulationLauncherCommandLine extends CommandLineApp
 
             if(mComputeFluctuations)
             {
-                NumberFormat nf = NumberFormat.getInstance();
-                nf.setMaximumFractionDigits(6);
-                nf.setGroupingUsed(false);
-
                 if(! (simulator instanceof Simulator))
                 {
                     System.err.println("this simulator is not capable of computing the species fluctuations");
@@ -612,7 +608,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                         {
                             String speciesName = globalSymbolsArray[i];
                             double speciesFluctuations = finalSymbolFluctuations[i];
-                            mOutputFilePrintWriter.println(speciesName + ", " + nf.format(speciesFluctuations));
+                            mOutputFilePrintWriter.println(speciesName + ", " + mScientificNumberFormat.format(speciesFluctuations));
                         }
                     }
                     else
