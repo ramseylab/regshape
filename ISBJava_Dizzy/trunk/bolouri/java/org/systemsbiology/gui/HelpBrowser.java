@@ -21,15 +21,18 @@ public class HelpBrowser
     private String mTitle;
     private Point mLocation;
     private Component mMainFrame;
-
+    private static final int MAX_WIDTH = 800;
+    private static final int MAX_HEIGHT = 600;
+    
     public HelpBrowser(Component pMainFrame, String pHelpSetName, String pAppName)
     {
         mMainFrame = pMainFrame;
         mHelpSetName = pHelpSetName;
         mAppName = pAppName;
         Dimension screenSize = FramePlacer.getScreenSize();
-        setFrameSize(new Dimension((int) (screenSize.width * 0.8),
-                                   (int) (screenSize.height * 0.8)));
+        int width = Math.min(MAX_WIDTH, (int) (screenSize.width * 0.8));
+        int height = Math.min(MAX_HEIGHT, (int) (screenSize.height * 0.8));
+        setFrameSize(new Dimension(width, height));
         setFrameTitle(pAppName + ": help");
         setFrameLocation(null);
     }
@@ -65,7 +68,10 @@ public class HelpBrowser
                     HelpSet hs = new HelpSet(null, helpPackageURL);
                     hs.setTitle(mTitle);
                     HelpBroker hb = hs.createHelpBroker();
-                    hb.setCurrentID(pMapID);
+                    if(null != pMapID)
+                    {
+                        hb.setCurrentID(pMapID);
+                    }
                     if(null != pView)
                     {
                         hb.setCurrentView(pView);
