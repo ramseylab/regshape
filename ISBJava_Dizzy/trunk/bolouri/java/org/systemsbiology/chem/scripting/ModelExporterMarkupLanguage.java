@@ -80,6 +80,11 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
     private static final String LEVEL_NAME = "level";
     private static final String VERSION_NAME = "version";
 
+    public static final String DEFAULT_REACTION_PARAMETER_SYMBOL_NAME = "__RATE__";
+
+    public static final Specification DEFAULT_SPECIFICATION = Specification.LEVEL1_VERSION2;
+
+
     public static class Specification
     {
         private final String mName;
@@ -107,18 +112,19 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
         public static final Specification LEVEL1_VERSION2 = new Specification("1", "2");
     }
 
-    public static final Specification DEFAULT_SPECIFICATION = Specification.LEVEL1_VERSION2;
-
     public ModelExporterMarkupLanguage()
     {
         // do nothing
     }
 
-    private static final String DEFAULT_REACTION_PARAMETER_SYMBOL_NAME = "__RATE__";
-
     public void export(Model pModel, PrintWriter pOutputWriter) throws IllegalArgumentException, DataNotFoundException, IllegalStateException, UnsupportedOperationException, ModelExporterException
     {
         export(pModel, pOutputWriter, DEFAULT_SPECIFICATION);
+    }
+
+    private String convertSymbolToLegalSName(String pSymbol)
+    {
+        return(pSymbol.replace(':', '_'));
     }
 
    /**
@@ -207,7 +213,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                 Compartment compartment = (Compartment) compartmentsIter.next();
                 Element compartmentElement = document.createElement(ELEMENT_NAME_COMPARTMENT);
                 String compartmentName = compartment.getName();
-                compartmentElement.setAttribute(ATTRIBUTE_NAME, compartmentName);
+                compartmentElement.setAttribute(ATTRIBUTE_NAME, convertSymbolToLegalSName(compartmentName));
                 Value volumeValueObj = compartment.getValue();
                 if(volumeValueObj.isExpression())
                 {
@@ -250,12 +256,12 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     speciesElement = document.createElement(ELEMENT_NAME_SPECIES_V2);
                 }
                 String speciesName = species.getName();
-                speciesElement.setAttribute(ATTRIBUTE_NAME, speciesName);
+                speciesElement.setAttribute(ATTRIBUTE_NAME, convertSymbolToLegalSName(speciesName));
                 Boolean boundaryObj = new Boolean(! dynamicSymbolNames.contains(speciesName));
                 speciesElement.setAttribute(ATTRIBUTE_BOUNDARY_CONDITION, boundaryObj.toString());
                 Compartment compartment = species.getCompartment();
                 String compartmentName = compartment.getName();
-                speciesElement.setAttribute(ATTRIBUTE_COMPARTMENT, compartmentName);
+                speciesElement.setAttribute(ATTRIBUTE_COMPARTMENT, convertSymbolToLegalSName(compartmentName));
                 double initialSpeciesPopulation = 0.0;
                 Value initialValueObj = species.getValue();
                 if(initialValueObj.isExpression())
@@ -298,7 +304,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                 Parameter parameter = (Parameter) parametersIter.next();
                 Element parameterElement = document.createElement(ELEMENT_NAME_PARAMETER);
                 String parameterName = parameter.getName();
-                parameterElement.setAttribute(ATTRIBUTE_NAME, parameterName);
+                parameterElement.setAttribute(ATTRIBUTE_NAME, convertSymbolToLegalSName(parameterName));
                 Value paramValueObj = parameter.getValue();
                 if(paramValueObj.isExpression())
                 {
@@ -372,8 +378,8 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     Value compartmentVolumeObj = compartment.getValue();
                     assert (compartmentVolumeObj.isExpression()) : "compartment value not an expression";
                     Element compartmentRuleElement = document.createElement(ELEMENT_NAME_COMPARTMENT_VOLUME_RULE);
-                    compartmentRuleElement.setAttribute(ATTRIBUTE_COMPARTMENT, name);
-                    compartmentRuleElement.setAttribute(ATTRIBUTE_FORMULA, compartmentVolumeObj.getExpressionString());
+                    compartmentRuleElement.setAttribute(ATTRIBUTE_COMPARTMENT, convertSymbolToLegalSName(name));
+                    compartmentRuleElement.setAttribute(ATTRIBUTE_FORMULA, convertSymbolToLegalSName(compartmentVolumeObj.getExpressionString()));
                     listOfRulesElement.appendChild(compartmentRuleElement);
                 }
                 else if(rule instanceof Species)
@@ -384,13 +390,13 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     Element speciesConcentrationRuleElement = document.createElement(ELEMENT_NAME_SPECIES_CONCENTRATION_RULE);
                     if(pSpecification.equals(Specification.LEVEL1_VERSION1))
                     {
-                        speciesConcentrationRuleElement.setAttribute(ATTRIBUTE_SPECIES_V1, name);
+                        speciesConcentrationRuleElement.setAttribute(ATTRIBUTE_SPECIES_V1, convertSymbolToLegalSName(name));
                     }
                     else
                     {
-                        speciesConcentrationRuleElement.setAttribute(ATTRIBUTE_SPECIES_V2, name);
+                        speciesConcentrationRuleElement.setAttribute(ATTRIBUTE_SPECIES_V2, convertSymbolToLegalSName(name));
                     }
-                    speciesConcentrationRuleElement.setAttribute(ATTRIBUTE_FORMULA, speciesConcentrationObj.getExpressionString());
+                    speciesConcentrationRuleElement.setAttribute(ATTRIBUTE_FORMULA, convertSymbolToLegalSName(speciesConcentrationObj.getExpressionString()));
                     listOfRulesElement.appendChild(speciesConcentrationRuleElement);
                 }
                 else if(rule instanceof Parameter)
@@ -399,8 +405,8 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     Value parameterValueObj = parameter.getValue();
                     Element parameterRuleElement = document.createElement(ELEMENT_NAME_PARAMETER_RULE);
                     assert (parameterValueObj.isExpression()) : "parameter value not an expression";
-                    parameterRuleElement.setAttribute(ATTRIBUTE_NAME, name);
-                    parameterRuleElement.setAttribute(ATTRIBUTE_FORMULA, parameterValueObj.getExpressionString());
+                    parameterRuleElement.setAttribute(ATTRIBUTE_NAME, convertSymbolToLegalSName(name));
+                    parameterRuleElement.setAttribute(ATTRIBUTE_FORMULA, convertSymbolToLegalSName(parameterValueObj.getExpressionString()));
                     listOfRulesElement.appendChild(parameterRuleElement);
                 }
                 else
@@ -424,7 +430,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                 String reactionName = reaction.getName();
                 Element reactionElement = document.createElement(ELEMENT_NAME_REACTION);
                 listOfReactionsElement.appendChild(reactionElement);
-                reactionElement.setAttribute(ATTRIBUTE_NAME, reactionName);
+                reactionElement.setAttribute(ATTRIBUTE_NAME, convertSymbolToLegalSName(reactionName));
                 reactionElement.setAttribute(ATTRIBUTE_REVERSIBLE, "false");
 
                 // handle reactant species
@@ -456,11 +462,11 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     }
                     if(pSpecification.equals(Specification.LEVEL1_VERSION1))
                     {
-                        specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES_V1, speciesName);
+                        specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES_V1, convertSymbolToLegalSName(speciesName));
                     }
                     else
                     {
-                        specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES_V2, speciesName);
+                        specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES_V2, convertSymbolToLegalSName(speciesName));
                     }
                     specieReferenceElement.setAttribute(ATTRIBUTE_STOICHIOMETRY, Integer.toString(stoic));
                     listOfReactantsElement.appendChild(specieReferenceElement);
@@ -495,11 +501,11 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     }
                     if(pSpecification.equals(Specification.LEVEL1_VERSION1))
                     {
-                        specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES_V1, speciesName);
+                        specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES_V1, convertSymbolToLegalSName(speciesName));
                     }
                     else
                     {
-                        specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES_V2, speciesName);
+                        specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES_V2, convertSymbolToLegalSName(speciesName));
                     }
                     specieReferenceElement.setAttribute(ATTRIBUTE_STOICHIOMETRY, Integer.toString(stoic));
                     listOfProductsElement.appendChild(specieReferenceElement);
@@ -522,9 +528,12 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     StringBuffer kineticLawBuf = new StringBuffer();
                     String reactionParameterSymbolName = DEFAULT_REACTION_PARAMETER_SYMBOL_NAME;
                     kineticLawBuf.append(reactionParameterSymbolName);
-                    kineticLawBuf.append("*");
+                    if(numReactants > 0)
+                    {
+                        kineticLawBuf.append("*");
+                    }
                     Element reactionParameterElement = document.createElement(ELEMENT_NAME_PARAMETER);
-                    reactionParameterElement.setAttribute(ATTRIBUTE_NAME, reactionParameterSymbolName);
+                    reactionParameterElement.setAttribute(ATTRIBUTE_NAME, convertSymbolToLegalSName(reactionParameterSymbolName));
                     listOfParametersElement.appendChild(reactionParameterElement);
                     
                     for(int ctr = 0; ctr < numReactants; ++ctr)
@@ -540,7 +549,19 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                         rescaledReactionParameter /= ((double) MathFunctions.factorial(stoic));
                         if(1 == numReactionSteps)
                         {
-                            kineticLawBuf.append(reactantName);
+                            double delayTime = reaction.getDelay();
+                            if(delayTime == 0.0)
+                            {
+                                kineticLawBuf.append(reactantName);
+                            }
+                            else
+                            {
+                                if(rescaledReactionParameter == 0.0)
+                                {
+                                    throw new IllegalArgumentException("delayed reaction with zero reaction parameter");
+                                }
+                                kineticLawBuf.append("(delay(" + reactantName + ", " + delayTime + "))");
+                            }
                         }
                         else
                         {
@@ -566,7 +587,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     reactionParameterElement.setAttribute(ATTRIBUTE_VALUE, rescaledReactionParameterObj.toString());
                     addParametersElement = true;
                 }
-                kineticLawElement.setAttribute(ATTRIBUTE_FORMULA, kineticLaw);
+                kineticLawElement.setAttribute(ATTRIBUTE_FORMULA, convertSymbolToLegalSName(kineticLaw));
                 // handle reaction parameters
 
                 parametersList = new LinkedList(reaction.getParameters());
@@ -581,7 +602,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     Parameter parameter = (Parameter) parametersIter.next();
                     Element parameterElement = document.createElement(ELEMENT_NAME_PARAMETER);
                     listOfParametersElement.appendChild(parameterElement);
-                    parameterElement.setAttribute(ATTRIBUTE_NAME, parameter.getName());
+                    parameterElement.setAttribute(ATTRIBUTE_NAME, convertSymbolToLegalSName(parameter.getName()));
                     Value valueObj = parameter.getValue();
                     if(valueObj.isExpression())
                     {
