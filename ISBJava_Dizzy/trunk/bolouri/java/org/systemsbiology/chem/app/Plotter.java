@@ -56,7 +56,7 @@ public class Plotter
 
     }
 
-    public void plot(String pData) throws IOException
+    public void plot(String pData) throws IOException, NumberFormatException
     {
         StringReader stringReader = new StringReader(pData);
         BufferedReader bufferedReader = new BufferedReader(stringReader);
@@ -82,9 +82,18 @@ public class Plotter
                 seriesVec.add(series);
             }
         }
+        int lineCtr = 0;
         while((line = bufferedReader.readLine()) != null)
         {
-            readDataLine(seriesVec, line);
+            try
+            {
+                readDataLine(seriesVec, line);
+            }
+            catch(NumberFormatException e)
+            {
+                throw new NumberFormatException("invalid number encountered on line: " + lineCtr);
+            }
+            lineCtr++;
         }
         XYSeriesCollection seriesColl = new XYSeriesCollection();
         Iterator seriesIter = seriesVec.iterator();
