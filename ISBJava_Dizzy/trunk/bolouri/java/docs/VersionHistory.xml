@@ -38,6 +38,19 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.6.1/&installerDownloadRelURL;">1.6.1</a></td>
+<td>2004/03/12</td>
+<td>
+<ul>
+<li>Fixed some instability problems with the 
+<code>org.systemsbiology.chem.SimulatorStochasticGillespieTauLeap</code> simulator.</li>
+<li>Optimized the 
+<code>org.systemsbiology.chem.SimulatorStochasticGillespieTauLeap</code> simulator.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.6.0/&installerDownloadRelURL;">1.6.0</a></td>
 <td>2004/03/10</td>
 <td>
