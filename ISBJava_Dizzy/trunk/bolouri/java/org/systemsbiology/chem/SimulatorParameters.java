@@ -14,12 +14,24 @@ public class SimulatorParameters
     private Long mMinNumSteps;
     private Double mMaxAllowedRelativeError;
     private Double mMaxAllowedAbsoluteError;
+    private Boolean mFlagGetFinalSymbolFluctuations;
 
     public SimulatorParameters()
     {
         mEnsembleSize = null;
         mMinNumSteps = null;
         mMaxAllowedRelativeError = null;
+        mFlagGetFinalSymbolFluctuations = null;
+    }
+
+    public void setFlagGetFinalSymbolFluctuations(boolean pFlagGetFinalSymbolFluctuations)
+    {
+        mFlagGetFinalSymbolFluctuations = new Boolean(pFlagGetFinalSymbolFluctuations);
+    }
+
+    public Boolean getFlagGetFinalSymbolFluctuations()
+    {
+        return(mFlagGetFinalSymbolFluctuations);
     }
 
     public void setEnsembleSize(long pEnsembleSize)
