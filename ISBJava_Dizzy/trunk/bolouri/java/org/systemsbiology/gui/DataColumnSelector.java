@@ -24,16 +24,16 @@ import java.awt.event.*;
  * 
  * @author sramsey
  */
-public class TableFrame extends JFrame
+public class DataColumnSelector extends JFrame
 {
     private MatrixStringTableModel mMatrixStringTableModel;
     private MatrixString mMatrixString;
-    private static final String DEFAULT_DELIMITER = "\t";
+    private static final DataFileDelimiter DEFAULT_DELIMITER = DataFileDelimiter.TAB;
     private File mDirectory;
-    private String mDelimiter;
+    private DataFileDelimiter mDelimiter;
     private boolean mShowSaveButton;
     
-    public void setDelimiter(String pDelimiter)
+    public void setDelimiter(DataFileDelimiter pDelimiter)
     {
         mDelimiter = pDelimiter;
     }
@@ -149,7 +149,12 @@ public class TableFrame extends JFrame
 
         public int getRowCount()
         {
-            return mMatrixString.getRowCount();
+            int count = mMatrixString.getRowCount();
+            if(! mShowSaveButton)
+            {
+                count--;
+            }
+            return count;
         }
 
         public void setValueAt(Object pValue, int pRow, int pColumn)
@@ -176,17 +181,24 @@ public class TableFrame extends JFrame
             }
             else
             {
-                return mMatrixString.getValueAt(pRow, pColumn);
+                if(! mShowSaveButton)
+                {
+                    return mMatrixString.getValueAt(pRow + 1, pColumn);
+                }
+                else
+                {
+                    return mMatrixString.getValueAt(pRow, pColumn);
+                }
             }
         }
     }
 
-    public TableFrame(String pTitle, MatrixString pMatrixString) throws InvalidInputException
+    public DataColumnSelector(String pTitle, MatrixString pMatrixString) throws InvalidInputException
     {
         this(pTitle, pMatrixString, true);
     }
     
-    public TableFrame(String pTitle, MatrixString pMatrixString, boolean pShowSaveButton) throws InvalidInputException
+    public DataColumnSelector(String pTitle, MatrixString pMatrixString, boolean pShowSaveButton) throws InvalidInputException
     {
         super(pTitle);
         mDirectory = null;
@@ -264,13 +276,13 @@ public class TableFrame extends JFrame
         pack();
     }
 
-    public static TableFrame constructDataSelector(File pFile, String pDelimiter) throws IOException, InvalidInputException
+    public static DataColumnSelector constructDataSelector(File pFile, DataFileDelimiter pDelimiter) throws IOException, InvalidInputException
     {
         FileReader fileReader = new FileReader(pFile);
         BufferedReader bufReader = new BufferedReader(fileReader);
         MatrixString matString = new MatrixString();
         matString.buildFromLineBasedStringDelimitedInput(bufReader, pDelimiter);
-        TableFrame dataSelector = new TableFrame("Please select the data columns you wish to retain", matString);
+        DataColumnSelector dataSelector = new DataColumnSelector("Please select the data columns you wish to retain", matString);
         dataSelector.mDirectory = pFile.getParentFile();
         dataSelector.mMatrixString = matString;
         dataSelector.setVisible(true);
@@ -360,7 +372,7 @@ public class TableFrame extends JFrame
         {
             try
             {
-                handleSaveFile(outputFile, mDelimiter);
+                handleSaveFile(outputFile, mDelimiter.getDelimiter());
             }
             catch(Exception e)
             {
@@ -377,15 +389,8 @@ public class TableFrame extends JFrame
             File file = queryInputFile();
             if(null != file)
             {
-                TableFrame dataSelector = constructDataSelector(file, DEFAULT_DELIMITER);
-                dataSelector.addWindowListener(
-                    new WindowAdapter()
-                    {
-                        public void windowClosing(WindowEvent e)
-                        {
-                            System.exit(0);
-                        }
-                    });
+                DataColumnSelector dataSelector = constructDataSelector(file, DEFAULT_DELIMITER);
+                dataSelector.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             }
             else
             {
