@@ -65,8 +65,19 @@ public class Plotter
         JFreeChart mChart;
         JScrollPane mPlotScrollPane;
         BufferedImage mPlotImage;
+        String mLabel;
 
-        public Plot(String pAppName, String pData, String pSimulatorAlias, String pModelName) throws IOException
+        String getModelName()
+        {
+            return(mModelName);
+        }
+
+        String getLabel()
+        {
+            return(mLabel);
+        }
+
+        public Plot(String pAppName, String pData, String pSimulatorAlias, String pModelName, String pLabel) throws IOException
         {
             super(pAppName + ": results");
             mSimulatorAlias = pSimulatorAlias;
@@ -74,6 +85,7 @@ public class Plotter
             mSimulationDate = new Date(System.currentTimeMillis());
             mPlotHeightPixels = DEFAULT_PLOT_HEIGHT_PIXELS;
             mPlotWidthPixels = DEFAULT_PLOT_WIDTH_PIXELS;
+            mLabel = pLabel;
 
             JPanel bigPanel = new JPanel();
 
@@ -322,16 +334,22 @@ public class Plotter
         StandardXYItemRenderer renderer = new StandardXYItemRenderer(StandardXYItemRenderer.SHAPES_AND_LINES, toolTipGen, urlGen);
         plot.setRenderer(renderer);
         boolean legend = true;
-        JFreeChart chart = new JFreeChart("simulation results", JFreeChart.DEFAULT_TITLE_FONT, plot, legend);
+        String modelName = pPlot.getModelName();
+        String chartTitle = "model: " + modelName;
+        JFreeChart chart = new JFreeChart(chartTitle, JFreeChart.DEFAULT_TITLE_FONT, plot, legend);
         StringBuffer subtitleBuffer = new StringBuffer();
-        TextTitle modelNameSubtitle = new TextTitle("model name: " + pPlot.mModelName);
-        chart.addSubtitle(modelNameSubtitle);
         TextTitle simulatorAliasSubtitle = new TextTitle("simulator: " + pPlot.mSimulatorAlias);
         chart.addSubtitle(simulatorAliasSubtitle);
         Date simulationDate = pPlot.mSimulationDate;
         DateFormat df = DateFormat.getDateTimeInstance();
         TextTitle simulationDateTimeSubtitle = new TextTitle(df.format(simulationDate));
         chart.addSubtitle(simulationDateTimeSubtitle);
+        String label = pPlot.getLabel();
+        if(null != label)
+        {
+            TextTitle labelTitle = new TextTitle(label);
+            chart.addSubtitle(labelTitle);
+        }
         return(chart);
     }
 
@@ -360,9 +378,9 @@ public class Plotter
 
     }
 
-    public void plot(String pData, String pSimulatorAlias, String pModelName, String pAppName) throws IOException, NumberFormatException
+    public void plot(String pAppName, String pData, String pSimulatorAlias, String pModelName, String pLabel) throws IOException, NumberFormatException
     {
-        Plot plot = new Plot(pData, pSimulatorAlias, pModelName, pAppName);
+        Plot plot = new Plot(pAppName, pData, pSimulatorAlias, pModelName, pLabel);
         Dimension frameSize = plot.getSize();
         Point location = mFramePlacer.placeInCascadeFormat(frameSize.width, 
                                                            frameSize.height);

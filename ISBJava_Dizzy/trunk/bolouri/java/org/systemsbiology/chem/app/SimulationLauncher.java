@@ -74,6 +74,8 @@ public class SimulationLauncher
     private File mCurrentDirectory;
     private JLabel mOutputFileFormatListLabel;
     private JComboBox mOutputFileFormatList;
+    private JTextField mPlotLabelTextField;
+    private JLabel mPlotLabelTextFieldLabel;
 
     private static final String TOOLTIP_FILE_OUTPUT = "save output to a file in comma-separated-value (CSV) format";
 
@@ -116,6 +118,7 @@ public class SimulationLauncher
         SimulatorParameters mSimulatorParameters;
         int mNumTimePoints;
         OutputType mOutputType;
+        String mOutputPlotLabel;
         String mOutputFileName;
         TimeSeriesSymbolValuesReporter.OutputFormat mOutputFileFormat;
         boolean mOutputFileAppend;
@@ -419,6 +422,7 @@ public class SimulationLauncher
     }
 
     private void handleOutput(OutputType pOutputType,
+                              String pOutputPlotLabel,
                               String pOutputFileName,
                               TimeSeriesSymbolValuesReporter.OutputFormat pOutputFileFormat,
                               boolean pOutputFileAppend,
@@ -465,7 +469,7 @@ public class SimulationLauncher
         {
             String modelName = mModel.getName();
             String simulatorAlias = mSimulationRunParameters.mSimulatorAlias;
-            mPlotter.plot(mAppName, outputBuffer.toString(), simulatorAlias, modelName);
+            mPlotter.plot(mAppName, outputBuffer.toString(), simulatorAlias, modelName, pOutputPlotLabel);
         }
         else
         {
@@ -502,6 +506,7 @@ public class SimulationLauncher
                 if(mHandleOutputInternally)
                 {
                     handleOutput(pSimulationRunParameters.mOutputType,
+                                 pSimulationRunParameters.mOutputPlotLabel,
                                  pSimulationRunParameters.mOutputFileName,
                                  pSimulationRunParameters.mOutputFileFormat,
                                  pSimulationRunParameters.mOutputFileAppend,
@@ -1213,20 +1218,36 @@ public class SimulationLauncher
                 srp.mOutputFileFormat = outputFileFormat;
                 boolean append = mOutputFileAppendCheckBox.isSelected();
                 srp.mOutputFileAppend = append;
+                srp.mOutputPlotLabel = null;
             }
             else
             {
                 srp.mOutputFileName = null;
                 srp.mOutputFileAppend = false;
                 srp.mOutputFileFormat = TimeSeriesSymbolValuesReporter.OutputFormat.CSV_GNUPLOT;
+                if(mOutputType.equals(OutputType.PLOT))
+                {
+                    String plotLabel = null;
+                    String plotLabelFieldText = mPlotLabelTextField.getText().trim();
+                    if(plotLabelFieldText.length() > 0)
+                    {
+                        plotLabel = plotLabelFieldText;
+                    }
+                    srp.mOutputPlotLabel = plotLabel;
+                }
+                else
+                {
+                    srp.mOutputPlotLabel = null;
+                }
             }
         }
         else
         {
             srp.mOutputFileName = null;
             srp.mOutputFileAppend = false;
+            srp.mOutputPlotLabel = null;
             srp.mOutputType = null;
-            srp.mOutputFileFormat = TimeSeriesSymbolValuesReporter.OutputFormat.CSV_GNUPLOT;
+            srp.mOutputFileFormat = null;
         }
 
         retVal = srp;
@@ -1247,6 +1268,12 @@ public class SimulationLauncher
         }
     }
 
+    private void enablePlotFieldSelection(boolean pEnabled)
+    {
+        mPlotLabelTextField.setEnabled(pEnabled);
+        mPlotLabelTextFieldLabel.setEnabled(pEnabled);
+    }
+
     private void handleOutputTypeSelection(ActionEvent e)
     {
         String outputTypeStr = e.getActionCommand();
@@ -1258,14 +1285,17 @@ public class SimulationLauncher
             if(outputType.equals(OutputType.PRINT))
             {
                 enableOutputFieldSection(false);
+                enablePlotFieldSelection(false);
             }
             else if(outputType.equals(OutputType.PLOT))
             {
                 enableOutputFieldSection(false);
+                enablePlotFieldSelection(true);
             }
             else if(outputType.equals(OutputType.FILE))
             {
                 enableOutputFieldSection(true);
+                enablePlotFieldSelection(false);
             }
             else
             {
@@ -1354,10 +1384,16 @@ public class SimulationLauncher
         JRadioButton plotButton = new JRadioButton(OutputType.PLOT.toString(), true);
         plotButton.addActionListener(buttonListener);
         plotButton.setSelected(true);
-        buttonGroup.add(plotButton);
+        JLabel plotLabelTextFieldLabel = new JLabel(" label: ");
+        mPlotLabelTextFieldLabel = plotLabelTextFieldLabel;
+        JTextField plotLabelTextField = new JTextField("", 20);
+        mPlotLabelTextField = plotLabelTextField;
         printPlotPanel.add(plotButton);
+        printPlotPanel.add(plotLabelTextFieldLabel);
+        printPlotPanel.add(plotLabelTextField);
+        buttonGroup.add(plotButton);
         printPlotPanel.setAlignmentX(Container.LEFT_ALIGNMENT);
-        printPlotPanel.setMaximumSize(new Dimension(200, 50));
+        printPlotPanel.setMaximumSize(new Dimension(460, 50));
         outputPanel.add(printPlotPanel);
 
         JRadioButton printButton = new JRadioButton(OutputType.PRINT.toString(), true);
