@@ -18,23 +18,38 @@ public abstract class Simulator
     private static final int MIN_NUM_REACTION_STEPS_FOR_USING_DELAY_FUNCTION = 15;
     protected static final long DEFAULT_MIN_NUM_MILLISECONDS_FOR_UPDATE = 1000;
     protected static final int NULL_REACTION = -1;
+    private static final long MIN_POPULATION_FOR_COMBINATORIC_EFFECTS = 100000;
 
-    protected String []mDynamicSymbolNames;
-    protected double []mDynamicSymbolValues;
-    protected double []mInitialDynamicSymbolValues;  // saves a copy of the initial data
     protected Value []mNonDynamicSymbolValues;
     protected boolean mHasExpressionValues;
     protected SymbolEvaluatorChem mSymbolEvaluator;
-    protected Reaction []mReactions;
-    protected double []mReactionProbabilities;
-    protected HashMap mSymbolMap;
+    protected HashMap mSymbolMap; // mapping between symbol names and the corresponding "Symbol" object
     protected SimulationController mSimulationController;
     protected DelayedReactionSolver []mDelayedReactionSolvers;
-    protected Species []mDynamicSymbols;
-    protected Object []mDynamicSymbolAdjustmentVectors;
     protected boolean mInitialized;
     protected long mMinNumMillisecondsForUpdate;
     protected SimulationProgressReporter mSimulationProgressReporter;
+    protected boolean mIsStochasticSimulator;
+
+    // all arrays defined in the following block, are of length "mDynamicSymbols.length"
+    protected Species []mDynamicSymbols;
+    protected double []mInitialDynamicSymbolValues;  // saves a copy of the initial data
+    protected String []mDynamicSymbolNames;
+    protected double []mDynamicSymbolValues;
+
+    // all arrays defined in the following block, are of length "mReactions.length"
+    protected Reaction []mReactions;
+    protected Object []mDynamicSymbolAdjustmentVectors;
+    protected double []mReactionProbabilities;
+    protected Object []mReactionsReactantsSpecies;
+    protected Object []mReactionsReactantsStoichiometries;
+    protected Object []mReactionsReactantsDynamic;
+    protected Object []mReactionsProductsSpecies;
+    protected Object []mReactionsProductsStoichiometries;
+    protected Object []mReactionsProductsDynamic;
+    protected HashMap []mReactionsLocalParamSymbolsMaps;
+    protected Value []mReactionRates;
+    protected DelayedReactionSolver []mReactionsDelayedReactionAssociations;
 
     static final void indexSymbolArray(SymbolValue []pSymbolArray, 
                                        HashMap pSymbolMap, 
@@ -95,12 +110,16 @@ public abstract class Simulator
         // set initial values for dynamic symbols 
         System.arraycopy(mInitialDynamicSymbolValues, 0, mDynamicSymbolValues, 0, mDynamicSymbolValues.length);
         MathFunctions.vectorZeroElements(mReactionProbabilities);
-        clearDelayedReactionSolvers();
+        if(null != mDelayedReactionSolvers)
+        {
+            clearDelayedReactionSolvers();
+        }
         if(mHasExpressionValues)
         {
             clearExpressionValueCaches(mNonDynamicSymbolValues);
         }
         mSymbolEvaluator.setTime(pStartTime);
+        mSymbolEvaluator.setLocalSymbolsMap(null);
     }
 
     private final static void handleDelayedReaction(Reaction pReaction,
@@ -127,8 +146,8 @@ public abstract class Simulator
 
         int numSteps = pReaction.getNumSteps();
         
-        Species reactant = (Species) ((Reaction.ReactionElement) reactantsMap.values().iterator().next()).getSpecies();
-        Species product = (Species) ((Reaction.ReactionElement) productsMap.values().iterator().next()).getSpecies();
+        Species reactant = (Species) ((ReactionParticipant) reactantsMap.values().iterator().next()).getSpecies();
+        Species product = (Species) ((ReactionParticipant) productsMap.values().iterator().next()).getSpecies();
 
         if(! reactant.getCompartment().equals(product.getCompartment()))
         {
@@ -145,7 +164,7 @@ public abstract class Simulator
         Reaction firstReaction = new Reaction(reactionName);
         firstReaction.setRate(rate);
         firstReaction.addReactant(reactant, 1);
-        String intermedSpeciesName = new String("delayed_species_" + reactionName + "_" + product.getName() + "_0");
+        String intermedSpeciesName = new String(reactionName + "___intermed_species_0");
         Compartment reactantCompartment = reactant.getCompartment();
         Species intermedSpecies = new Species(intermedSpeciesName, reactantCompartment);
         intermedSpecies.setSpeciesPopulation(0.0);
@@ -161,14 +180,14 @@ public abstract class Simulator
 
             for(int ctr = 0; ctr < numSteps; ++ctr)
             {
-                Reaction reaction = new Reaction("delayed_reaction_" + reactionName + "_" + product.getName() + "_" + ctr);
+                Reaction reaction = new Reaction(reactionName + "___multistep_reaction_" + ctr);
                 reaction.setRate(rate);
 
                 reaction.addReactant(lastIntermedSpecies, 1);
 
                 if(ctr < numSteps - 1)
                 {
-                    intermedSpeciesName = new String("__delayed_species__" + Model.NAMESPACE_IDENTIFIER + reactionName + "_" + product.getName() + "_" + (ctr + 1));
+                    intermedSpeciesName = new String(reactionName + "___intermed_species_" + (ctr + 1));
                     intermedSpecies = new Species(intermedSpeciesName, reactantCompartment);                    
                     intermedSpecies.setSpeciesPopulation(0.0);
                     reaction.addProduct(intermedSpecies, 1);
@@ -185,11 +204,11 @@ public abstract class Simulator
         }
         else
         {
-            Reaction delayedReaction = new Reaction("delayed_reaction_" + reactionName + "_" + product.getName());
+            Reaction delayedReaction = new Reaction(reactionName + "___delayed_reaction");
             delayedReaction.addReactant(intermedSpecies, 1);
             delayedReaction.addProduct(product, 1);
             pReactions.add(delayedReaction);
-
+            delayedReaction.setRate(rate);
             double delay = 0.0;
             if(numSteps > 0)
             {
@@ -207,7 +226,6 @@ public abstract class Simulator
                                                                      pReactions.size() - 1,
                                                                      pIsStochasticSimulator);
             pDelayedReactionSolvers.add(solver);
-            delayedReaction.setRate(solver);
         }
     }
 
@@ -231,6 +249,7 @@ public abstract class Simulator
         ArrayList delayedReactionSolvers = new ArrayList();
 
         boolean isStochasticSimulator = isStochasticSimulator();
+        mIsStochasticSimulator = isStochasticSimulator;
 
         // for each multi-step reaction, split the reaction into two separate reactions
         for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
@@ -253,8 +272,14 @@ public abstract class Simulator
                                   isStochasticSimulator);
         }
 
-        mDelayedReactionSolvers = (DelayedReactionSolver []) delayedReactionSolvers.toArray(new DelayedReactionSolver[0]);
-        int numDelayedReactions = mDelayedReactionSolvers.length;
+        DelayedReactionSolver []delayedReactionSolversArray = (DelayedReactionSolver []) delayedReactionSolvers.toArray(new DelayedReactionSolver[0]);
+        int numDelayedReactions = 0;
+        mDelayedReactionSolvers = null;
+        if(delayedReactionSolversArray.length > 0)
+        {
+            mDelayedReactionSolvers = delayedReactionSolversArray;
+            numDelayedReactions = mDelayedReactionSolvers.length;
+        }
 
         Species []dynamicSymbols = (Species []) dynamicSymbolsList.toArray(new Species[0]);;
         mDynamicSymbols = dynamicSymbols;
@@ -322,15 +347,30 @@ public abstract class Simulator
         }
         mHasExpressionValues = hasExpressionValues;
 
-        for(int ctr = 0; ctr < numDelayedReactions; ++ctr)
+        if(null != mDelayedReactionSolvers)
         {
-            DelayedReactionSolver solver = mDelayedReactionSolvers[ctr];
-            solver.initializeSpeciesSymbols(symbolMap,
-                                            dynamicSymbols,
-                                            nonDynamicSymbols);
-                                            
-        }
+            mReactionsDelayedReactionAssociations = new DelayedReactionSolver[numReactions];
+            for(int j = 0; j < numReactions; ++j)
+            {
+                mReactionsDelayedReactionAssociations[j] = null;
+            }
+            for(int ctr = 0; ctr < numDelayedReactions; ++ctr)
+            {
+                DelayedReactionSolver solver = mDelayedReactionSolvers[ctr];
 
+                solver.initializeSpeciesSymbols(symbolMap,
+                                                dynamicSymbols,
+                                                nonDynamicSymbols);
+
+                int reactionIndex = solver.getReactionIndex();
+                mReactionsDelayedReactionAssociations[reactionIndex] = solver;
+            }
+        }
+        else
+        {
+            mReactionsDelayedReactionAssociations = null;
+        }
+        
         ReservedSymbolMapper reservedSymbolMapper = pModel.getReservedSymbolMapper();
         SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = pModel.getSymbolEvaluationPostProcessor();
         boolean useExpressionValueCaching = true;
@@ -343,10 +383,81 @@ public abstract class Simulator
         
         checkSymbolsValues();
         
+        mReactionsReactantsSpecies = new Object[numReactions];
+        mReactionsReactantsStoichiometries = new Object[numReactions];
+        mReactionsReactantsDynamic = new Object[numReactions];
+
+        mReactionsProductsSpecies = new Object[numReactions];
+        mReactionsProductsStoichiometries = new Object[numReactions];
+        mReactionsProductsDynamic = new Object[numReactions];
+
+        mReactionsLocalParamSymbolsMaps = new HashMap[numReactions];
+
+        mReactionRates = new Value[numReactions];
+
         for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
         {
             Reaction reaction = reactions[reactionCtr];
-            reaction.prepareSymbolVectorsForSimulation(dynamicSymbols, nonDynamicSymbols, symbolMap);
+            mReactionRates[reactionCtr] = reaction.getValue();
+
+            int numReactants = reaction.getNumReactants();
+
+            Species []reactantsSpeciesArray = new Species[numReactants];
+            int []reactantsStoichiometryArray = new int[numReactants];
+            boolean []reactantsDynamicArray = new boolean[numReactants];
+
+            reaction.constructSpeciesArrays(reactantsSpeciesArray, 
+                                            reactantsStoichiometryArray, 
+                                            reactantsDynamicArray,
+                                            dynamicSymbols, 
+                                            nonDynamicSymbols,
+                                            symbolMap, 
+                                            ReactionParticipant.Type.REACTANT);
+
+            Symbol []reactantsSymbolsArray = new Symbol[numReactants];
+            for(int j = 0; j < numReactants; ++j)
+            {
+                reactantsSymbolsArray[j] = reactantsSpeciesArray[j].getSymbol();
+            }
+
+            mReactionsReactantsSpecies[reactionCtr] = reactantsSymbolsArray;
+            mReactionsReactantsStoichiometries[reactionCtr] = reactantsStoichiometryArray;
+            mReactionsReactantsDynamic[reactionCtr] = reactantsDynamicArray;
+
+            int numProducts = reaction.getNumProducts();
+            Species []productsSpeciesArray = new Species[numProducts];
+            int []productsStoichiometryArray = new int[numProducts];
+            boolean []productsDynamicArray = new boolean[numProducts];
+        
+            reaction.constructSpeciesArrays(productsSpeciesArray, 
+                                            productsStoichiometryArray, 
+                                            productsDynamicArray,
+                                            dynamicSymbols, 
+                                            nonDynamicSymbols,
+                                            symbolMap, 
+                                            ReactionParticipant.Type.PRODUCT);
+        
+            Symbol []productsSymbolsArray = new Symbol[numProducts];
+            for(int j = 0; j < numProducts; ++j)
+            {
+                productsSymbolsArray[j] = productsSpeciesArray[j].getSymbol();
+            }
+
+            mReactionsProductsSpecies[reactionCtr] = productsSymbolsArray;
+            mReactionsProductsStoichiometries[reactionCtr] = productsStoichiometryArray;
+            mReactionsProductsDynamic[reactionCtr] = productsDynamicArray;
+
+            SymbolValue []localSymbolsValues = reaction.getLocalSymbolValues();
+            int numLocalSymbols = localSymbolsValues.length;
+            Value []localValues = new Value[numLocalSymbols];
+            HashMap localSymbolsMap = new HashMap();
+            
+            indexSymbolArray(localSymbolsValues,
+                             localSymbolsMap,
+                             null,
+                             localValues);            
+
+            mReactionsLocalParamSymbolsMaps[reactionCtr] = localSymbolsMap;
         }
 
         // create an array of doubles to hold the reaction probabilities
@@ -362,9 +473,14 @@ public abstract class Simulator
         int numReactions = mReactions.length;
         for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
         {
-            Reaction reaction = mReactions[reactionCtr];
-            double reactionRate = reaction.computeRate(mSymbolEvaluator, isStochasticSimulator());
-            reaction.checkReactantValues(mSymbolEvaluator);
+            double reactionRate = computeReactionRate(reactionCtr);
+            Symbol []reactants = (Symbol []) mReactionsReactantsSpecies[reactionCtr];
+            int numReactants = reactants.length;
+            for(int reactantCtr = numReactants; --reactantCtr >= 0; )
+            {
+                Symbol symbol = reactants[reactantCtr];
+                mSymbolEvaluator.getValue(symbol);
+            }
         }
     }
 
@@ -394,6 +510,7 @@ public abstract class Simulator
         mDelayedReactionSolvers = null;
         mDynamicSymbols = null;
         mDynamicSymbolAdjustmentVectors = null;
+        mReactionsDelayedReactionAssociations = null;
     }
 
     public Simulator()
@@ -402,7 +519,7 @@ public abstract class Simulator
         setMinNumMillisecondsForUpdate(DEFAULT_MIN_NUM_MILLISECONDS_FOR_UPDATE);
     }
 
-    protected final void initializeDynamicSymbolAdjustmentVectors(Species []pDynamicSymbols)
+    protected final void initializeDynamicSymbolAdjustmentVectors()
     {
         Reaction []reactions = mReactions;
 
@@ -412,7 +529,8 @@ public abstract class Simulator
         for(int ctr = 0; ctr < numReactions; ++ctr)
         {
             Reaction reaction = reactions[ctr];
-            dynamicSymbolAdjustmentVectors[ctr] = reaction.constructDynamicSymbolAdjustmentVector(pDynamicSymbols);
+            
+            dynamicSymbolAdjustmentVectors[ctr] = constructDynamicSymbolAdjustmentVector(ctr);
         }
 
         mDynamicSymbolAdjustmentVectors = dynamicSymbolAdjustmentVectors;
@@ -441,31 +559,28 @@ public abstract class Simulator
 
     }
 
-    protected static final int addRequestedSymbolValues(double pCurTime,
-                                                        int pLastTimeIndex,
-                                                        Symbol []pRequestedSymbols,
-                                                        SymbolEvaluatorChem pSymbolEvaluator,
-                                                        double []pTimeValues,
-                                                        Object []pRetSymbolValues,
-                                                        boolean pHasExpressionValues,
-                                                        Value []pNonDynamicSymbolValues) throws DataNotFoundException
+    protected final int addRequestedSymbolValues(double pCurTime,
+                                                 int pLastTimeIndex,
+                                                 Symbol []pRequestedSymbols,
+                                                 double []pTimeValues,
+                                                 Object []pRetSymbolValues) throws DataNotFoundException
     {
         int numTimePoints = pTimeValues.length;
         int numRequestedSymbolValues = pRequestedSymbols.length;
 
-        if(pHasExpressionValues)
+        if(mHasExpressionValues)
         {
-            clearExpressionValueCaches(pNonDynamicSymbolValues);
+            clearExpressionValueCaches(mNonDynamicSymbolValues);
         }
 
-        double saveTime = pSymbolEvaluator.getTime();
+        double saveTime = mSymbolEvaluator.getTime();
 
         int timeCtr = pLastTimeIndex;
 
         for(; timeCtr < numTimePoints; ++timeCtr)
         {
             double timeValue = pTimeValues[timeCtr];
-            pSymbolEvaluator.setTime(timeValue);
+            mSymbolEvaluator.setTime(timeValue);
             if(timeValue <= pCurTime)
             {
                 double []symbolValues = (double []) pRetSymbolValues[timeCtr];
@@ -481,7 +596,7 @@ public abstract class Simulator
                 for(int symCtr = numRequestedSymbolValues - 1; symCtr >= 0; --symCtr)
                 {
                     Symbol symbol = pRequestedSymbols[symCtr];
-                    symbolValues[symCtr] += pSymbolEvaluator.getValue(symbol);
+                    symbolValues[symCtr] += mSymbolEvaluator.getValue(symbol);
                 }
             }
             else
@@ -490,7 +605,7 @@ public abstract class Simulator
             }
         }
 
-        pSymbolEvaluator.setTime(saveTime);
+        mSymbolEvaluator.setTime(saveTime);
 
         return(timeCtr);
     }
@@ -543,7 +658,7 @@ public abstract class Simulator
     {
        if(! mInitialized)
         {
-            throw new IllegalStateException("simulator has not beeni nitialized yet");
+            throw new IllegalStateException("simulator has not been initialized yet");
         }
 
         if(pNumResultsTimePoints <= 1)
@@ -557,39 +672,25 @@ public abstract class Simulator
         }
     }
 
-
-
-    protected static final void computeReactionProbabilities(SymbolEvaluatorChem pSymbolEvaluator,
-                                                             double []pReactionProbabilities,
-                                                             Reaction []pReactions,
-                                                             boolean pHasExpressionValues,
-                                                             Value []pNonDynamicSymbolValues,
-                                                             boolean pIsStochasticSimulator) throws DataNotFoundException
+    protected final void computeReactionProbabilities() throws DataNotFoundException
     {
         // loop through all reactions, and for each reaction, compute the reaction probability
-        int numReactions = pReactions.length;
+        int numReactions = mReactions.length;
         
-        Reaction reaction = null;
-        double reactionProbability = 0.0;
-
-        if(pHasExpressionValues)
+        if(mHasExpressionValues)
         {
-            clearExpressionValueCaches(pNonDynamicSymbolValues);
+            clearExpressionValueCaches(mNonDynamicSymbolValues);
         }
 
         for(int reactionCtr = numReactions; --reactionCtr >= 0; )
         {
-            reaction = pReactions[reactionCtr];
-
-            reactionProbability = reaction.computeRate(pSymbolEvaluator, pIsStochasticSimulator);
-
             // store reaction probability
-            pReactionProbabilities[reactionCtr] = reactionProbability;
+            mReactionProbabilities[reactionCtr] = computeReactionRate(reactionCtr);
         }
     }
 
     protected static final double getDelayedReactionEstimatedAverageFutureRate(SymbolEvaluatorChem pSymbolEvaluator,
-                                                                                 DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException
+                                                                               DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException
     {
         double compositeRate = 0.0;
         int numDelayedReactions = pDelayedReactionSolvers.length;
@@ -611,35 +712,23 @@ public abstract class Simulator
         }
     }
 
-    protected static final void computeDerivative(SymbolEvaluatorChem pSymbolEvaluator,
-                                                  Reaction []pReactions,
-                                                  Object []pDynamicSymbolAdjustmentVectors,
-                                                  double []pReactionProbabilities,
-                                                  double []pTempDynamicSymbolValues,
-                                                  double []pDynamicSymbolDerivatives,
-                                                  boolean pHasExpressionValues,
-                                                  Value []pNonDynamicSymbolValues,
-                                                  boolean pIsStochasticSimulator) throws DataNotFoundException
+    protected final void computeDerivative(double []pTempDynamicSymbolValues,
+                                           double []pDynamicSymbolDerivatives) throws DataNotFoundException
     {
-        computeReactionProbabilities(pSymbolEvaluator,
-                                     pReactionProbabilities,
-                                     pReactions,
-                                     pHasExpressionValues,
-                                     pNonDynamicSymbolValues,
-                                     pIsStochasticSimulator);
+        computeReactionProbabilities();
 
-        int numReactions = pReactions.length;
+        int numReactions = mReactions.length;
         Reaction reaction = null;
         double reactionRate = 0.0;
 
         MathFunctions.vectorZeroElements(pDynamicSymbolDerivatives);
 
-        Object []dynamicSymbolAdjustmentVectors = pDynamicSymbolAdjustmentVectors;
+        Object []dynamicSymbolAdjustmentVectors = mDynamicSymbolAdjustmentVectors;
 
         for(int reactionCtr = numReactions; --reactionCtr >= 0; )
         {
-            reaction = pReactions[reactionCtr];
-            reactionRate = pReactionProbabilities[reactionCtr];
+            reaction = mReactions[reactionCtr];
+            reactionRate = mReactionProbabilities[reactionCtr];
 
             double []symbolAdjustmentVector = (double []) dynamicSymbolAdjustmentVectors[reactionCtr];
             
@@ -675,25 +764,150 @@ public abstract class Simulator
         mMinNumMillisecondsForUpdate = pMinNumMillisecondsForUpdate;
     }
 
-    protected final Double getMinDelayedReactionDelay()
+    protected final double getMinDelayedReactionDelay()
     {
-        Double retDelay = null;
+        double retDelay = Double.MAX_VALUE;
         DelayedReactionSolver []delayedReactionSolvers = mDelayedReactionSolvers;
         int numDelayedReactions = delayedReactionSolvers.length;
-        double minDelay = Double.MAX_VALUE;
         for(int ctr = 0; ctr < numDelayedReactions; ++ctr)
         {
             DelayedReactionSolver delayedReactionSolver = delayedReactionSolvers[ctr];
             double delay = delayedReactionSolver.getDelay();
-            if(delay < minDelay)
+            if(delay < retDelay)
             {
-                minDelay = delay;
+                retDelay = delay;
             }
         }
-        if(minDelay < Double.MAX_VALUE)
-        {
-            retDelay = new Double(minDelay);
-        }
         return(retDelay);
+    }
+
+    private static double computeRateFactorForSpecies(double pSpeciesValue,
+                                                      int pStoichiometry,
+                                                      boolean pIsDynamic,
+                                                      boolean pIsStochastic)
+    {
+        if(pIsStochastic && pIsDynamic)
+        {
+            if(pSpeciesValue >= pStoichiometry)
+            {
+                if(pSpeciesValue < MIN_POPULATION_FOR_COMBINATORIC_EFFECTS)
+                {
+                    if(1 == pStoichiometry)
+                    {
+                        return(pSpeciesValue);
+                    }
+                    else
+                    {
+                        double retVal = 1.0;
+                        for(int ctr = pStoichiometry; --ctr >= 0; )
+                        {
+                            retVal *= (pSpeciesValue - (double) ctr);
+                        }
+                        return(retVal);
+                    }
+                }
+                else
+                {
+                    return(Math.pow(pSpeciesValue, pStoichiometry));
+                }
+            }
+            else
+            {
+                return(0.0);
+            }
+        }
+        else
+        {
+            if(1 == pStoichiometry)
+            {
+                return(pSpeciesValue);
+            }
+            else
+            {
+                return(Math.pow(pSpeciesValue, pStoichiometry));
+            }
+        }
+    }
+
+    final double computeReactionRate(int pReactionCtr) throws DataNotFoundException
+    {
+        if(null == mReactionsDelayedReactionAssociations || null == mReactionsDelayedReactionAssociations[pReactionCtr])
+        {
+            if(! mReactionRates[pReactionCtr].isExpression())
+            {
+                Symbol []reactantsSpecies = (Symbol []) mReactionsReactantsSpecies[pReactionCtr];
+                int []reactantsStoichiometries = (int []) mReactionsReactantsStoichiometries[pReactionCtr];
+                boolean []reactantsDynamic = (boolean []) mReactionsReactantsDynamic[pReactionCtr];
+                double rate = mReactionRates[pReactionCtr].getValue();
+                int numReactants = reactantsSpecies.length;
+                for(int reactantCtr = numReactants; --reactantCtr >= 0; )
+                {
+                    rate *= computeRateFactorForSpecies(mSymbolEvaluator.getValue(reactantsSpecies[reactantCtr]), 
+                                                        reactantsStoichiometries[reactantCtr],
+                                                        reactantsDynamic[reactantCtr],
+                                                        mIsStochasticSimulator);
+                }
+                return(rate);
+            }
+            else
+            {
+                mSymbolEvaluator.setLocalSymbolsMap(mReactionsLocalParamSymbolsMaps[pReactionCtr]);
+                double rate = mReactionRates[pReactionCtr].getValue(mSymbolEvaluator);
+                mSymbolEvaluator.setLocalSymbolsMap(null);
+                return(rate);
+            }
+        }
+        else
+        {
+            // it is a delayed reaction; call computeRate() on the DelayedReactionSolver
+            double rate = mReactionsDelayedReactionAssociations[pReactionCtr].computeRate(mSymbolEvaluator);
+//            System.out.println("time: " + mSymbolEvaluator.getTime() + "; rate for delayed reaction is: " + rate);
+            return(rate);
+        }
+    }
+
+    private double []constructDynamicSymbolAdjustmentVector(int pReactionCtr)
+    {
+        int numSymbols = mDynamicSymbols.length;
+        double []dynamicSymbolVector = new double[numSymbols];
+
+        Reaction reaction = mReactions[pReactionCtr];
+        HashMap reactantsMap = reaction.getReactantsMap();
+        HashMap productsMap = reaction.getProductsMap();
+
+        for(int symbolCtr = 0; symbolCtr < numSymbols; ++symbolCtr)
+        {
+            SymbolValue symbolValue = mDynamicSymbols[symbolCtr];
+            Symbol symbol = symbolValue.getSymbol();
+            String symbolName = symbol.getName();
+            double vecElement = 0.0;
+            ReactionParticipant reactantParticipant = (ReactionParticipant) reactantsMap.get(symbolName);
+            if(null != reactantParticipant && reactantParticipant.mDynamic)
+            {
+                vecElement -= reactantParticipant.mStoichiometry;
+            }
+            ReactionParticipant productParticipant = (ReactionParticipant) productsMap.get(symbolName);
+            if(null != productParticipant && productParticipant.mDynamic)
+            {
+                vecElement += productParticipant.mStoichiometry;
+            }
+
+            dynamicSymbolVector[symbolCtr] = vecElement;
+        }
+
+        return(dynamicSymbolVector);
+    }
+
+
+    public static Expression []getReactionRateExpressions(Reaction []pReactions) throws DataNotFoundException
+    {
+        int numReactions = pReactions.length;
+        Expression []a = new Expression[numReactions];
+        for(int j = 0; j < numReactions; ++j)
+        {
+            Reaction reaction = pReactions[j];
+            a[j] = reaction.getRateExpression();
+        }
+        return(a);
     }
 }

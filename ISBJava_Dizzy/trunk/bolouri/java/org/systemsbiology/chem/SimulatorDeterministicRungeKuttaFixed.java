@@ -28,66 +28,32 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
     private static final int NUM_ITERATIONS_BEFORE_ERROR_CHECK = 10;
 
     // fixed step-size integrator
-    protected double iterate(SymbolEvaluatorChem pSymbolEvaluator,
-                             Reaction []pReactions,
-                             Object []pDynamicSymbolAdjustmentVectors,
-                             double []pReactionProbabilities,
-                             RKScratchPad pRKScratchPad,
-                             double []pDynamicSymbolValues,
-                             double []pNewDynamicSymbolValues,
-                             boolean pHasExpressionValues,
-                             Value []pNonDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
+    protected double iterate(double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
     {
-        double stepSize = pRKScratchPad.stepSize;
+        double stepSize = mRKScratchPad.stepSize;
 
-
-        int numIterations = pRKScratchPad.numIterations;
+        int numIterations = mRKScratchPad.numIterations;
         if(0 != numIterations % NUM_ITERATIONS_BEFORE_ERROR_CHECK)
         {
-            rk4step(pSymbolEvaluator,
-                    pReactions,
-                    pDynamicSymbolAdjustmentVectors,
-                    pReactionProbabilities,
-                    pRKScratchPad,
-                    stepSize,  
-                    pDynamicSymbolValues,
-                    pNewDynamicSymbolValues,
-                    pHasExpressionValues,
-                    pNonDynamicSymbolValues);
+            rk4step(stepSize,  
+                    pNewDynamicSymbolValues);
         }
         else
         {
-            double []yscale = pRKScratchPad.yscale;
+            double []yscale = mRKScratchPad.yscale;
 
-            computeScale(pSymbolEvaluator,
-                         pReactions,
-                         pDynamicSymbolAdjustmentVectors,
-                         pReactionProbabilities,
-                         pRKScratchPad,
-                         stepSize,
-                         pDynamicSymbolValues,
-                         yscale,
-                         pHasExpressionValues,
-                         pNonDynamicSymbolValues);
+            computeScale(stepSize, yscale);
 
-            MutableDouble relativeErrorObj = pRKScratchPad.relativeError;
-            MutableDouble absoluteErrorObj = pRKScratchPad.absoluteError;
+            MutableDouble relativeErrorObj = mRKScratchPad.relativeError;
+            MutableDouble absoluteErrorObj = mRKScratchPad.absoluteError;
 
-            rkqc(pSymbolEvaluator,
-                 pReactions,
-                 pDynamicSymbolAdjustmentVectors,
-                 pReactionProbabilities,
-                 pRKScratchPad,
-                 stepSize,  
+            rkqc(stepSize,  
                  yscale,
-                 pDynamicSymbolValues,
                  pNewDynamicSymbolValues,
                  relativeErrorObj,
-                 absoluteErrorObj,
-                 pHasExpressionValues,
-                 pNonDynamicSymbolValues);
+                 absoluteErrorObj);
 
-            double maxRelativeError = pRKScratchPad.maxRelativeError;
+            double maxRelativeError = mRKScratchPad.maxRelativeError;
             double relativeError = relativeErrorObj.getValue();
 
             if(maxRelativeError - relativeError < 0.0)
@@ -95,7 +61,7 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
                 throw new SimulationAccuracyException("numeric approximation error exceeded threshold; try a larger value for \"min number of timesteps\"");
             }
 
-            double maxAbsoluteError = pRKScratchPad.maxAbsoluteError;
+            double maxAbsoluteError = mRKScratchPad.maxAbsoluteError;
             double absoluteError = absoluteErrorObj.getValue();
 
             if(maxAbsoluteError - absoluteError < 0.0)
@@ -104,9 +70,9 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
             }
         }
 
-        pSymbolEvaluator.setTime(pSymbolEvaluator.getTime() + stepSize);
+        mSymbolEvaluator.setTime(mSymbolEvaluator.getTime() + stepSize);
 
-        return(pSymbolEvaluator.getTime());
+        return(mSymbolEvaluator.getTime());
     }
 
     protected void setupScratchPad(double pStartTime,

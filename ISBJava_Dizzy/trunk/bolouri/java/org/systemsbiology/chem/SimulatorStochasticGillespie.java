@@ -26,69 +26,43 @@ public final class SimulatorStochasticGillespie extends SimulatorStochasticBase 
     public static final String CLASS_ALIAS = "gillespie-direct"; 
     private static final long NUMBER_FIRINGS = 1;
 
-    protected void prepareForStochasticSimulation(SymbolEvaluatorChem pSymbolEvaluator,
-                                                  double pStartTime,
-                                                  RandomElement pRandomNumberGenerator,
-                                                  Reaction []pReactions,
-                                                  double []pReactionProbabilities,
+    protected void prepareForStochasticSimulation(double pStartTime,
                                                   SimulatorParameters pSimulatorParameters)
     {
         // nothing to do
     }
 
-    protected double iterate(SymbolEvaluatorChem pSymbolEvaluator,
-                             double pEndTime,
-                             Reaction []pReactions,
-                             double []pReactionProbabilities,
-                             RandomElement pRandomNumberGenerator,
-                             double []pDynamicSymbolValues,
-                             MutableInteger pLastReactionIndex,
-                             DelayedReactionSolver []pDelayedReactionSolvers,
-                             boolean pHasExpressionValues,
-                             Value []pNonDynamicSymbolValues) throws DataNotFoundException, IllegalStateException
+    protected double iterate(MutableInteger pLastReactionIndex) throws DataNotFoundException, IllegalStateException
     {
-        double time = pSymbolEvaluator.getTime();
+        double time = mSymbolEvaluator.getTime();
 
         int lastReactionIndex = pLastReactionIndex.getValue();
         if(NULL_REACTION != lastReactionIndex)
         {
-            Reaction lastReaction = pReactions[lastReactionIndex];
-
-            updateSymbolValuesForReaction(pSymbolEvaluator,
-                                          lastReaction,
-                                          pDynamicSymbolValues,
-                                          pDelayedReactionSolvers,
+            updateSymbolValuesForReaction(lastReactionIndex,
+                                          mDynamicSymbolValues,
+                                          mDynamicSymbolDelayedReactionAssociations,
                                           NUMBER_FIRINGS);
         }
 
-        computeReactionProbabilities(pSymbolEvaluator,
-                                     pReactionProbabilities,
-                                     pReactions,
-                                     pHasExpressionValues,
-                                     pNonDynamicSymbolValues,
-                                     true);
+        computeReactionProbabilities();
         
-        double aggregateReactionProbability = MathFunctions.vectorSumElements(pReactionProbabilities);
+        double aggregateReactionProbability = MathFunctions.vectorSumElements(mReactionProbabilities);
         double deltaTimeToNextReaction = Double.POSITIVE_INFINITY;
 
         if(aggregateReactionProbability > 0.0)
         {
-            deltaTimeToNextReaction = chooseDeltaTimeToNextReaction(pRandomNumberGenerator, 
-                                                                    aggregateReactionProbability);
+            deltaTimeToNextReaction = chooseDeltaTimeToNextReaction(aggregateReactionProbability);
         }
         
         int reactionIndex = -1;
 
-        if(pDelayedReactionSolvers.length == 0)
+        if(null != mDelayedReactionSolvers)
         {
-            // do nothing
-        }
-        else
-        {
-            int nextDelayedReactionIndex = getNextDelayedReactionIndex(pDelayedReactionSolvers);
+            int nextDelayedReactionIndex = getNextDelayedReactionIndex(mDelayedReactionSolvers);
             if(nextDelayedReactionIndex >= 0)
             {
-                DelayedReactionSolver solver = pDelayedReactionSolvers[nextDelayedReactionIndex];
+                DelayedReactionSolver solver = mDelayedReactionSolvers[nextDelayedReactionIndex];
                 double nextDelayedReactionTime = solver.peekNextReactionTime();
 //                System.out.println("next delayed reaction will occur at: " + nextDelayedReactionTime);
                 if(nextDelayedReactionTime < time + deltaTimeToNextReaction)
@@ -104,29 +78,21 @@ public final class SimulatorStochasticGillespie extends SimulatorStochasticBase 
 
         if(-1 == reactionIndex && aggregateReactionProbability > 0.0)
         {
-            reactionIndex = chooseIndexOfNextReaction(pRandomNumberGenerator,
-                                                      aggregateReactionProbability,
-                                                      pReactions,
-                                                      pReactionProbabilities);
+            reactionIndex = chooseIndexOfNextReaction(aggregateReactionProbability);
         }
 
         if(-1 != reactionIndex)
         {
-            // choose type of next reaction
-            Reaction reaction = pReactions[reactionIndex];
-
             pLastReactionIndex.setValue(reactionIndex);
 
             time += deltaTimeToNextReaction;
-            
-//            System.out.println("time: " + time + "; reaction occurred: " + reaction);
         }
         else
         {
-            time = pEndTime;
+            time = Double.POSITIVE_INFINITY;
         }
 
-        pSymbolEvaluator.setTime(time);
+        mSymbolEvaluator.setTime(time);
 
         return(time);
     }

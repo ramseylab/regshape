@@ -33,87 +33,40 @@ public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDet
     private static final int MAXSTEPS = 100;
 
 
-    protected double iterate(SymbolEvaluatorChem pSymbolEvaluator,
-                             Reaction []pReactions,
-                             Object []pDynamicSymbolAdjustmentVectors,
-                             double []pReactionProbabilities,
-                             RKScratchPad pRKScratchPad,
-                             double []pDynamicSymbolValues,
-                             double []pNewDynamicSymbolValues,
-                             boolean pHasExpressionValues,
-                             Value []pNonDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
+    protected double iterate(double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
     {
-        double stepSize = pRKScratchPad.stepSize;
+        mRKScratchPad.stepSize = adaptiveStep(pNewDynamicSymbolValues);
 
-        double nextStepSize = adaptiveStep(pSymbolEvaluator,
-                                           pReactions,
-                                           pDynamicSymbolAdjustmentVectors,
-                                           pReactionProbabilities,
-                                           pRKScratchPad,
-                                           stepSize,
-                                           pDynamicSymbolValues,
-                                           pNewDynamicSymbolValues,
-                                           pHasExpressionValues,
-                                           pNonDynamicSymbolValues);
-
-        pRKScratchPad.stepSize = nextStepSize;
-
-        return(pSymbolEvaluator.getTime());
+        return(mSymbolEvaluator.getTime());
     }
 
-    private static double adaptiveStep(SymbolEvaluatorChem pSymbolEvaluator,
-                                       Reaction []pReactions,
-                                       Object []pDynamicSymbolAdjustmentVectors,
-                                       double []pReactionProbabilities,
-                                       RKScratchPad pRKScratchPad,
-                                       double pTimeStepSize,
-                                       double []pDynamicSymbolValues,
-                                       double []pNewDynamicSymbolValues,
-                                       boolean pHasExpressionValues,
-                                       Value []pNonDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
+    private double adaptiveStep(double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
     {
-        double stepSize = pTimeStepSize;
-        double []yscale = pRKScratchPad.yscale;
+        double stepSize = mRKScratchPad.stepSize;
+        double []yscale = mRKScratchPad.yscale;
 
-        computeScale(pSymbolEvaluator,
-                     pReactions,
-                     pDynamicSymbolAdjustmentVectors,
-                     pReactionProbabilities,
-                     pRKScratchPad,
-                     stepSize,
-                     pDynamicSymbolValues,
-                     yscale,
-                     pHasExpressionValues,
-                     pNonDynamicSymbolValues);
+        computeScale(stepSize, yscale);
 
         double aggregateError = 0.0;
         double errRatio = 0.0;
 
-        double time = pSymbolEvaluator.getTime();
+        double time = mSymbolEvaluator.getTime();
 
         int numSteps = 0;
 
-        double maxRelativeError = pRKScratchPad.maxRelativeError;
-        double maxAbsoluteError = pRKScratchPad.maxAbsoluteError;
+        double maxRelativeError = mRKScratchPad.maxRelativeError;
+        double maxAbsoluteError = mRKScratchPad.maxAbsoluteError;
 
-        MutableDouble relativeErrorObj = pRKScratchPad.relativeError;
-        MutableDouble absoluteErrorObj = pRKScratchPad.absoluteError;
+        MutableDouble relativeErrorObj = mRKScratchPad.relativeError;
+        MutableDouble absoluteErrorObj = mRKScratchPad.absoluteError;
 
         do
         {
-            rkqc(pSymbolEvaluator,
-                 pReactions,
-                 pDynamicSymbolAdjustmentVectors,
-                 pReactionProbabilities,
-                 pRKScratchPad,
-                 stepSize,
+            rkqc(stepSize,
                  yscale,
-                 pDynamicSymbolValues,
                  pNewDynamicSymbolValues,
                  relativeErrorObj,
-                 absoluteErrorObj,
-                 pHasExpressionValues,
-                 pNonDynamicSymbolValues);
+                 absoluteErrorObj);
 
             double relativeError = relativeErrorObj.getValue();
             double absoluteError = absoluteErrorObj.getValue();
@@ -140,7 +93,7 @@ public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDet
         }
         while(true);
         
-        pSymbolEvaluator.setTime(time + stepSize);
+        mSymbolEvaluator.setTime(time + stepSize);
 
         double nextStepSize = 0.0;
 
@@ -153,7 +106,7 @@ public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDet
             nextStepSize = 4.0 * stepSize;
         }
 
-        double maxStepSize = pRKScratchPad.maxStepSize;
+        double maxStepSize = mRKScratchPad.maxStepSize;
         if(nextStepSize > maxStepSize)
         {
             nextStepSize = maxStepSize;

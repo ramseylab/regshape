@@ -98,36 +98,20 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
 
 
-    protected abstract double iterate(SymbolEvaluatorChem pSymbolEvaluator,
-                                      Reaction []pReactions,
-                                      Object []pDynamicSymbolAdjustmentVectors,
-                                      double []pReactionProbabilities,
-                                      RKScratchPad pRKScratchPad,
-                                      double []pDynamicSymbolValues,
-                                      double []pNewDynamicSymbolValues,
-                                      boolean pHasExpressionValues,
-                                      Value []pNonDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException;
+    protected abstract double iterate(double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException;
 
 
-    protected static final void rk4step(SymbolEvaluatorChem pSymbolEvaluator,
-                                        Reaction []pReactions,
-                                        Object []pDynamicSymbolAdjustmentVectors,
-                                        double []pReactionProbabilities,
-                                        RKScratchPad pRKScratchPad,
-                                        double pTimeStepSize,
-                                        double []pDynamicSymbolValues,
-                                        double []pNewDynamicSymbolValues,
-                                        boolean pHasExpressionValues,
-                                        Value []pNonDynamicSymbolValues) throws DataNotFoundException
+    protected final void rk4step(double pTimeStepSize,
+                                 double []pNewDynamicSymbolValues) throws DataNotFoundException
     {
-        double time = pSymbolEvaluator.getTime();
+        double time = mSymbolEvaluator.getTime();
 
-        double []k1 = pRKScratchPad.k1;  // note:  our "k1" is equivalent to 0.5 times the "k1" in numerical recipes
+        double []k1 = mRKScratchPad.k1;  // note:  our "k1" is equivalent to 0.5 times the "k1" in numerical recipes
         int numVars = k1.length;
 
-        double []y = pDynamicSymbolValues;
-        double []ysav = pRKScratchPad.ysav;
-        double []yscratch = pRKScratchPad.yscratch;
+        double []y = mDynamicSymbolValues;
+        double []ysav = mRKScratchPad.ysav;
+        double []yscratch = mRKScratchPad.yscratch;
 
         double halfStep = pTimeStepSize / 2.0;
         double timePlusHalfStep = time + halfStep;
@@ -135,15 +119,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         // save a copy of the initial y values
         System.arraycopy(y, 0, ysav, 0, numVars);
 
-        computeDerivative(pSymbolEvaluator,
-                          pReactions,
-                          pDynamicSymbolAdjustmentVectors,
-                          pReactionProbabilities,
-                          yscratch,
-                          k1,
-                          pHasExpressionValues,
-                          pNonDynamicSymbolValues,
-                          false)
+        computeDerivative(yscratch, k1);
 ;
         MathFunctions.vectorScalarMultiply(k1, halfStep, k1);
         // now, k1 contains  h * f'(t, y)/2.0
@@ -152,55 +128,33 @@ public abstract class SimulatorDeterministicBase extends Simulator
         MathFunctions.vectorAdd(ysav, k1, y);
 
         // set the time to "t + h/2"
-        pSymbolEvaluator.setTime(timePlusHalfStep);
+        mSymbolEvaluator.setTime(timePlusHalfStep);
 
-        double []k2 = pRKScratchPad.k2;
-        computeDerivative(pSymbolEvaluator,
-                          pReactions,
-                          pDynamicSymbolAdjustmentVectors,
-                          pReactionProbabilities,
-                          yscratch,
-                          k2,
-                          pHasExpressionValues,
-                          pNonDynamicSymbolValues,
-                          false);
+        double []k2 = mRKScratchPad.k2;
+        computeDerivative(yscratch, k2);
+
         MathFunctions.vectorScalarMultiply(k2, halfStep, k2);
 
         MathFunctions.vectorAdd(ysav, k2, y);
         // y now contains "y + k2"
 
-        double []k3 = pRKScratchPad.k3;
-        computeDerivative(pSymbolEvaluator,
-                          pReactions,
-                          pDynamicSymbolAdjustmentVectors,
-                          pReactionProbabilities,
-                          yscratch,
-                          k3,
-                          pHasExpressionValues,
-                          pNonDynamicSymbolValues,
-                          false);
+        double []k3 = mRKScratchPad.k3;
+        computeDerivative(yscratch, k3);
+
         MathFunctions.vectorScalarMultiply(k3, pTimeStepSize, k3);
         // k3 now contains h * f'(t + h/2, y + k2)
 
         MathFunctions.vectorAdd(ysav, k3, y);
         // y now contains  "y + k3"
 
-        double []k4 = pRKScratchPad.k4;
+        double []k4 = mRKScratchPad.k4;
 
 
         // set time to "t + h"
         double pNextTime = time + pTimeStepSize;
-        pSymbolEvaluator.setTime(pNextTime);
+        mSymbolEvaluator.setTime(pNextTime);
 
-        computeDerivative(pSymbolEvaluator,
-                          pReactions,
-                          pDynamicSymbolAdjustmentVectors,
-                          pReactionProbabilities,
-                          yscratch,
-                          k4,
-                          pHasExpressionValues,
-                          pNonDynamicSymbolValues,
-                          false);
+        computeDerivative(yscratch, k4);
 
         MathFunctions.vectorScalarMultiply(k4, pTimeStepSize, k4);
         // k4 now contains h * f'(t + h, y + k3)
@@ -220,7 +174,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
         // restore to previous values; allow the driver to update
         System.arraycopy(ysav, 0, y, 0, numVars);
-        pSymbolEvaluator.setTime(time);
+        mSymbolEvaluator.setTime(time);
     }
 
     private void resetScratchpad()
@@ -232,43 +186,27 @@ public abstract class SimulatorDeterministicBase extends Simulator
     public void initialize(Model pModel) throws DataNotFoundException
     {
         initializeSimulator(pModel);
-        initializeDynamicSymbolAdjustmentVectors(mDynamicSymbols);
+        initializeDynamicSymbolAdjustmentVectors();
         resetScratchpad();
     }
 
-    protected static final void computeScale(SymbolEvaluatorChem pSymbolEvaluator,
-                                             Reaction []pReactions,
-                                             Object []pDynamicSymbolAdjustmentVectors,
-                                             double []pReactionProbabilities,
-                                             RKScratchPad pRKScratchPad,
-                                             double pTimeStepSize,
-                                             double []pDynamicSymbolValues,
-                                             double []yscale,
-                                             boolean pHasExpressionValues,
-                                             Value []pNonDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
+    protected final void computeScale(double pTimeStepSize,
+                                      double []yscale) throws DataNotFoundException, SimulationAccuracyException
     {
-        double []yscratch = pRKScratchPad.yscratch;
-        double []dydt = pRKScratchPad.dydt;
-        int numDynamicSymbols = pDynamicSymbolValues.length;
+        double []yscratch = mRKScratchPad.yscratch;
+        double []dydt = mRKScratchPad.dydt;
+        int numDynamicSymbols = mDynamicSymbolValues.length;
         double dydtn = 0.0;
         double yn = 0.0;
 
-        computeDerivative(pSymbolEvaluator,
-                          pReactions,
-                          pDynamicSymbolAdjustmentVectors,
-                          pReactionProbabilities,
-                          yscratch,
-                          dydt,
-                          pHasExpressionValues,
-                          pNonDynamicSymbolValues,
-                          false);
+        computeDerivative(yscratch, dydt);
 
         double scale;
         boolean gotNonzero = false;
         for(int symCtr = numDynamicSymbols; --symCtr >= 0; )
         {
             dydtn = dydt[symCtr];
-            yn = pDynamicSymbolValues[symCtr];
+            yn = mDynamicSymbolValues[symCtr];
             scale = Math.abs(yn) + Math.abs(dydtn * pTimeStepSize);
             yscale[symCtr] = scale;
             if(scale > 0.0)
@@ -280,76 +218,41 @@ public abstract class SimulatorDeterministicBase extends Simulator
         if(! gotNonzero)
         {
             // all of the scale factors are zero!
-            throw new SimulationAccuracyException("unable to determine any scale at time: " + pSymbolEvaluator.getTime());
+            throw new SimulationAccuracyException("unable to determine any scale at time: " + mSymbolEvaluator.getTime());
         }
     }
 
 
-    protected static final void rkqc(SymbolEvaluatorChem pSymbolEvaluator,
-                                     Reaction []pReactions,
-                                     Object []pDynamicSymbolAdjustmentVectors,
-                                     double []pReactionProbabilities,
-                                     RKScratchPad pRKScratchPad,
-                                     double pTimeStepSize,
-                                     double []pDynamicSymbolValueScales,
-                                     double []pDynamicSymbolValues,
-                                     double []pNewDynamicSymbolValues,
-                                     MutableDouble pRetAggregateRelativeError,
-                                     MutableDouble pRetAggregateAbsoluteError,
-                                     boolean pHasExpressionValues,
-                                     Value []pNonDynamicSymbolValues) throws DataNotFoundException
+    protected final void rkqc(double pTimeStepSize,
+                              double []pDynamicSymbolValueScales,
+                              double []pNewDynamicSymbolValues,
+                              MutableDouble pRetAggregateRelativeError,
+                              MutableDouble pRetAggregateAbsoluteError) throws DataNotFoundException
     {
-        double time = pSymbolEvaluator.getTime();
-        int numDynamicSymbols = pDynamicSymbolValues.length;
+        double time = mSymbolEvaluator.getTime();
+        int numDynamicSymbols = mDynamicSymbolValues.length;
 
-        rk4step(pSymbolEvaluator,
-                pReactions,
-                pDynamicSymbolAdjustmentVectors,
-                pReactionProbabilities,
-                pRKScratchPad,
-                pTimeStepSize,
-                pDynamicSymbolValues,
-                pNewDynamicSymbolValues,
-                pHasExpressionValues,
-                pNonDynamicSymbolValues);
+        rk4step(pTimeStepSize, pNewDynamicSymbolValues);
 
         double halfStepSize = pTimeStepSize / 2.0;
         double timePlusHalfStep = time + halfStepSize;
 
-        double []y1 = pRKScratchPad.y1;
+        double []y1 = mRKScratchPad.y1;
 
-        rk4step(pSymbolEvaluator,
-                pReactions,
-                pDynamicSymbolAdjustmentVectors,
-                pReactionProbabilities,
-                pRKScratchPad,
-                halfStepSize,
-                pDynamicSymbolValues,
-                y1,
-                pHasExpressionValues,
-                pNonDynamicSymbolValues);
+        rk4step(halfStepSize, y1);
         
-        double []ysav = pRKScratchPad.ysav;
-        System.arraycopy(pDynamicSymbolValues, 0, ysav, 0, numDynamicSymbols);
-        System.arraycopy(y1, 0, pDynamicSymbolValues, 0, numDynamicSymbols);
+        double []ysav = mRKScratchPad.ysav;
+        System.arraycopy(mDynamicSymbolValues, 0, ysav, 0, numDynamicSymbols);
+        System.arraycopy(y1, 0, mDynamicSymbolValues, 0, numDynamicSymbols);
         
-        pSymbolEvaluator.setTime(timePlusHalfStep);
+        mSymbolEvaluator.setTime(timePlusHalfStep);
 
-        double []y2 = pRKScratchPad.y2;
+        double []y2 = mRKScratchPad.y2;
 
-        rk4step(pSymbolEvaluator,
-                pReactions,
-                pDynamicSymbolAdjustmentVectors,
-                pReactionProbabilities,
-                pRKScratchPad,
-                halfStepSize,
-                pDynamicSymbolValues,
-                y2,
-                pHasExpressionValues,
-                pNonDynamicSymbolValues);
+        rk4step(halfStepSize, y2);
 
-        System.arraycopy(ysav, 0, pDynamicSymbolValues, 0, numDynamicSymbols);
-        pSymbolEvaluator.setTime(time);
+        System.arraycopy(ysav, 0, mDynamicSymbolValues, 0, numDynamicSymbols);
+        mSymbolEvaluator.setTime(time);
 
         double aggregateRelativeError = 0.0;
         double aggregateAbsoluteError = 0.0;
@@ -459,11 +362,10 @@ public abstract class SimulatorDeterministicBase extends Simulator
             }
         }
 
-        Double minDelayObj = getMinDelayedReactionDelay();
         double minDelay = Double.MAX_VALUE;
-        if(null != minDelayObj)
+        if(null != mDelayedReactionSolvers)
         {
-            minDelay = 0.1 * minDelayObj.doubleValue();
+            minDelay = 0.1 * getMinDelayedReactionDelay();
         }
 
         double initialStepSize = (pEndTime - pStartTime)/((double) minNumSteps);
@@ -486,22 +388,18 @@ public abstract class SimulatorDeterministicBase extends Simulator
         boolean isCancelled = false;
 
         DelayedReactionSolver []delayedReactionSolvers = mDelayedReactionSolvers;
-        int numDelayedReactions = delayedReactionSolvers.length;
+        int numDelayedReactions = 0;
+        if(null != delayedReactionSolvers)
+        {
+            numDelayedReactions = delayedReactionSolvers.length;
+        }
 
         long currentTimeMilliseconds = 0;
         double fractionComplete = 0.0;
 
         while(pNumResultsTimePoints - timeCtr > 0)
         {
-            time = iterate(symbolEvaluator,
-                           reactions,
-                           dynamicSymbolAdjustmentVectors,
-                           reactionProbabilities,
-                           scratchPad,
-                           dynamicSymbolValues,
-                           newSimulationSymbolValues,
-                           hasExpressionValues,
-                           nonDynamicSymbolValues);
+            time = iterate(newSimulationSymbolValues);
 
             ++(scratchPad.numIterations);
 
@@ -510,20 +408,20 @@ public abstract class SimulatorDeterministicBase extends Simulator
                 timeCtr = addRequestedSymbolValues(time,
                                                    timeCtr,
                                                    requestedSymbols,
-                                                   symbolEvaluator,
                                                    timesArray,
-                                                   retSymbolValues,
-                                                   hasExpressionValues,
-                                                   nonDynamicSymbolValues);
+                                                   retSymbolValues);
             }
 
             System.arraycopy(newSimulationSymbolValues, 0, dynamicSymbolValues, 0, numDynamicSymbolValues);
 
-            // update delayed reaction solvers
-            for(int ctr = numDelayedReactions; --ctr >= 0; )
+            if(null != delayedReactionSolvers)
             {
-                DelayedReactionSolver solver = delayedReactionSolvers[ctr];
-                solver.update(symbolEvaluator, time);
+                // update delayed reaction solvers
+                for(int ctr = numDelayedReactions; --ctr >= 0; )
+                {
+                    DelayedReactionSolver solver = delayedReactionSolvers[ctr];
+                    solver.update(symbolEvaluator, time);
+                }
             }
 
             ++iterationCounter;
@@ -576,12 +474,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
                 {
                     clearExpressionValueCaches(mNonDynamicSymbolValues);
                 }
-                computeReactionProbabilities(mSymbolEvaluator,
-                                             mReactionProbabilities,
-                                             mReactions,
-                                             mHasExpressionValues,
-                                             mNonDynamicSymbolValues,
-                                             false);
+                computeReactionProbabilities();
                 double []allFinalSpeciesFluctuations = SteadyStateAnalyzer.estimateSpeciesFluctuations(reactions,
                                                                                                        mDynamicSymbols,
                                                                                                        mDynamicSymbolAdjustmentVectors,
