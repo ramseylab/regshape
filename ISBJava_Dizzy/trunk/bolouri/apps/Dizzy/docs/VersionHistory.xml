@@ -113,7 +113,7 @@ in conjunction with reaction definitions with complex (deferred-evaluation)
 kinetic rate expressions.
 </li>
 <li>
-Slight change to help browser, so that it will not take up
+Slight change to the help browser, so that it will not take up
 all the screen, when the screen size is very large.  The 
 initial size of the help browser window is now capped at 
 800x600 (but can be modified by the user), and will never
