@@ -143,6 +143,7 @@ public class ModelInstanceExporter
                                 if(null != response &&
                                    response.intValue() == JOptionPane.YES_OPTION)
                                 {
+                                    // do nothing, export of file will happen below
                                 }
                                 else
                                 {

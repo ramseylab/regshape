@@ -20,17 +20,20 @@ public class MainApp
     private ScriptRuntime mScriptRuntime;
     private static MainApp mApp;
     private ScriptBuilder mScriptBuilder;
-    private StringWriter mRuntimeOutputLog;
-    private JTextArea mOutputTextArea;
-    private ModelNamesList mModelNamesListBox;
-    private SpeciesPopulationNamesList mSpeciesPopulationNamesListBox;
     private SimulationController mSimulationController;
     private MainMenu mMainMenu;
     private ModelInstanceSimulator mModelInstanceSimulator;
-    private JButton mClearRuntimeButton;
-    private JButton mClearOutputButton;
     private AppConfig mAppConfig;
     private File mAppDir;
+
+    private EditorPane mEditorPane;
+    private RuntimePane mRuntimePane;
+    private RuntimeOutputPane mRuntimeOutputPane;
+
+    EditorPane getEditorPane()
+    {
+        return(mEditorPane);
+    }
 
     File getAppDir()
     {
@@ -72,26 +75,6 @@ public class MainApp
         return(mSimulationController);
     }
 
-    private void setRuntimeOutputLog(StringWriter pRuntimeOutputLog)
-    {
-        mRuntimeOutputLog = pRuntimeOutputLog;
-    }
-
-    StringWriter getRuntimeOutputLog()
-    {
-        return(mRuntimeOutputLog);
-    }
-
-    private void setOutputTextArea(JTextArea pOutputTextArea)
-    {
-        mOutputTextArea = pOutputTextArea;
-    }
-
-    JTextArea getOutputTextArea()
-    {
-        return(mOutputTextArea);
-    }
-
     private void setScriptBuilder(ScriptBuilder pScriptBuilder)
     {
         mScriptBuilder = pScriptBuilder;
@@ -117,7 +100,7 @@ public class MainApp
         mMainFrame = pMainFrame;
     }
 
-    private JFrame getMainFrame()
+    JFrame getMainFrame()
     {
         return(mMainFrame);
     }
@@ -141,105 +124,73 @@ public class MainApp
 
     void handleExport()
     {
-        String modelName = mModelNamesListBox.getSelectedModelName();
-        String speciesPopulationsName = mSpeciesPopulationNamesListBox.getSelectedSpeciesPopulationName();
+        String modelName = mRuntimePane.getSelectedModelName();
+        String speciesPopulationsName = mRuntimePane.getSelectedSpeciesPopulationName();
         ModelInstanceExporter exporter = new ModelInstanceExporter(getMainFrame());
         exporter.exportModelInstance(modelName, speciesPopulationsName);
     }
 
+    void setEnableClearOutputLog(boolean pEnabled)
+    {
+        mRuntimeOutputPane.setEnableClearOutputLog(pEnabled);
+    }
+
+    void updateRuntimePane()
+    {
+        mRuntimePane.updateMainPanelFromRuntime();
+    }
+
+    void clearOutputText()
+    {
+        mRuntimeOutputPane.clearOutputText();
+    }
+
     void handleSimulate()
     {
-        String modelName = mModelNamesListBox.getSelectedModelName();
-        String speciesPopulationsName = mSpeciesPopulationNamesListBox.getSelectedSpeciesPopulationName();
+        String modelName = mRuntimePane.getSelectedModelName();
+        String speciesPopulationsName = mRuntimePane.getSelectedSpeciesPopulationName();
         ModelInstanceSimulator simulator = new ModelInstanceSimulator(getMainFrame());
         setSimulator(simulator);
-        updateMainPanelFromRuntime();
+        mRuntimePane.updateMainPanelFromRuntime();
 
         boolean success = simulator.simulateModelInstance(modelName, speciesPopulationsName);
         if(! success)
         {
             setSimulator(null);
-            updateMainPanelFromRuntime();
+            mRuntimePane.updateMainPanelFromRuntime();
         }
     }
 
-    void handleOpen()
+    void enableExportMenuItem(boolean pEnabled)
     {
-        FileOpenChooser chooser = new FileOpenChooser(getMainFrame());
-        chooser.show();
-        String fileName = chooser.getFileName();
-        String parserAlias = chooser.getParserAlias();
-        if(null != fileName && null != parserAlias)
-        {
-            FileLoader loader = new FileLoader(getMainFrame());
-            loader.loadFile(fileName, parserAlias);
-        }
+        mMainMenu.getExportMenuItem().setEnabled(pEnabled);
     }
 
-    private static final int OUTPUT_TEXT_AREA_NUM_ROWS = 24;
-    private static final int OUTPUT_TEXT_AREA_NUM_COLS = 80;
-
-    private void initializeOutputTextArea(Container pMainPane)
+    void enableSaveMenuItem(boolean pEnabled)
     {
-        JPanel outputTextPane = new JPanel();
-        outputTextPane.setBorder(BorderFactory.createEtchedBorder());
-        outputTextPane.setLayout(new FlowLayout());
-
-        JPanel labelButtonPane = new JPanel();
-        BoxLayout layout = new BoxLayout(labelButtonPane, BoxLayout.Y_AXIS);
-        labelButtonPane.setLayout(layout);
-
-        JButton clearButton = new JButton("clear runtime output log");
-        mClearOutputButton = clearButton;
-        clearButton.addActionListener( new ActionListener()
-                                      {
-                                          public void actionPerformed(ActionEvent e)
-                                          {
-                                              clearOutputText();
-                                          }
-                                      });
-
-        labelButtonPane.add(clearButton);
-        JPanel labelPanel = new JPanel();
-        JLabel outputTextLabel = new JLabel("runtime output log:");
-        labelPanel.add(outputTextLabel);
-        labelPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        labelButtonPane.add(labelPanel);
-
-        outputTextPane.add(labelButtonPane);
-
-        JTextArea outputTextArea = new JTextArea(OUTPUT_TEXT_AREA_NUM_ROWS,
-                                                 OUTPUT_TEXT_AREA_NUM_COLS);
-        outputTextArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(outputTextArea);
-        outputTextPane.add(scrollPane);
-        setOutputTextArea(outputTextArea);
-
-        pMainPane.add(outputTextPane);
+        mMainMenu.getSaveMenuItem().setEnabled(pEnabled);
     }
 
-    void updateMainPanelFromRuntime()
+    void enableCloseMenuItem(boolean pEnabled)
     {
-        int numModels = mModelNamesListBox.updateModelNames();
-        int numSpeciesPops = mSpeciesPopulationNamesListBox.updateSpeciesPopulationNames();
-        if(numModels > 0 && numSpeciesPops > 0)
-        {
-            mMainMenu.getExportMenuItem().setEnabled(true);
-            if(null == getSimulator())
-            {
-                mMainMenu.getSimulateMenuItem().setEnabled(true);
-            }
-            else
-            {
-                mMainMenu.getSimulateMenuItem().setEnabled(false);
-            }
-        }
-        else
-        {
-            mMainMenu.getExportMenuItem().setEnabled(false);
-            mMainMenu.getSimulateMenuItem().setEnabled(false);
-        }
+        mMainMenu.getCloseMenuItem().setEnabled(pEnabled);
     }
+    
+    void enableProcessMenuItem(boolean pEnabled)
+    {
+        mMainMenu.getProcessMenuItem().setEnabled(pEnabled);
+    }
+
+    void enableSimulateMenuItem(boolean pEnabled)
+    {
+        mMainMenu.getSimulateMenuItem().setEnabled(pEnabled);
+    }
+
+    void setEnableClearRuntime(boolean pEnabled)
+    {
+        mRuntimePane.setEnableClearRuntime(pEnabled);
+    }
+    
 
     private void initializeAppConfig(String pAppDir) throws DataNotFoundException, InvalidInputException, FileNotFoundException
     {
@@ -269,100 +220,41 @@ public class MainApp
     void clearRuntime()
     {
         getScriptRuntime().clear();
-        updateMainPanelFromRuntime();
+        mRuntimePane.updateMainPanelFromRuntime();
     }
-
-    void clearRuntimeOutputLog()
-    {
-        StringWriter runtimeOutputLog = getRuntimeOutputLog();
-        StringBuffer buffer = runtimeOutputLog.getBuffer();
-        buffer.delete(0, buffer.toString().length());
-    }
-
-    void updateOutputText()
-    {
-        StringWriter runtimeOutputLog = getRuntimeOutputLog();
-        String newOutputText = runtimeOutputLog.toString();
-        getOutputTextArea().append(newOutputText);
-        clearRuntimeOutputLog();
-    }
-
-    void clearOutputText()
-    {
-        int textLen = getOutputTextArea().getText().length();
-        getOutputTextArea().replaceRange(null, 0, textLen);
-        clearRuntimeOutputLog();
-    }
-
-    private void initializeSpeciesPopulationNamesList(Container pPane)
-    {
-        SpeciesPopulationNamesList speciesPopulationNamesList = new SpeciesPopulationNamesList(pPane);
-        mSpeciesPopulationNamesListBox = speciesPopulationNamesList;
-    }
-
-    private void initializeModelNamesList(Container pPane)
-    {
-        ModelNamesList modelNamesList = new ModelNamesList(pPane);
-        mModelNamesListBox = modelNamesList;
-    }
-
-    private void initializeRuntimePane(Container pMainPane)
-    {
-        JPanel runtimePanel = new JPanel();
-        runtimePanel.setBorder(BorderFactory.createEtchedBorder());
-        LayoutManager layoutManager = new FlowLayout();
-        runtimePanel.setLayout(layoutManager);
-        initializeClearRuntimeButton(runtimePanel);
-        initializeModelNamesList(runtimePanel);
-        initializeSpeciesPopulationNamesList(runtimePanel);
-        pMainPane.add(runtimePanel);
-    }
-
-    private void initializeClearRuntimeButton(Container pPane)
-    {
-        JButton clearButton = new JButton("clear runtime variables");
-        mClearRuntimeButton = clearButton;
-
-        clearButton.addActionListener( new ActionListener()
-                                      {
-                                          public void actionPerformed(ActionEvent e)
-                                          {
-                                              clearRuntime();
-                                          }
-                                      });
-        pPane.add(clearButton);
-    }
-
-    void setEnableClearRuntime(boolean pEnable)
-    {
-        mClearRuntimeButton.setEnabled(pEnable);
-    }
-
-    void setEnableClearOutputLog(boolean pEnable)
-    {
-        mClearOutputButton.setEnabled(pEnable);
-    }
-
 
     private Container createComponents()
     {
         JPanel mainPane = new JPanel();
         LayoutManager layoutManager = new BoxLayout(mainPane, BoxLayout.Y_AXIS);
         mainPane.setLayout(layoutManager);
-        initializeOutputTextArea(mainPane);
-        initializeRuntimePane(mainPane);
+
+        EditorPane editorPane = new EditorPane(mainPane);
+        mEditorPane = editorPane;
+
+        RuntimePane runtimePane = new RuntimePane(mainPane);
+        mRuntimePane = runtimePane;
+
+        RuntimeOutputPane runtimeOutputPane = new RuntimeOutputPane(mainPane);
+        mRuntimeOutputPane = runtimeOutputPane;
+
         return(mainPane);
+    }
+
+    void appendToOutputLog(String pText)
+    {
+        mRuntimeOutputPane.appendToOutputLog(pText);
     }
 
     private void initializeMainFrame()
     {
         JFrame frame = new JFrame(getAppConfig().getAppName());
         setMainFrame(frame);
-        Container mainPane = createComponents();
-        frame.setContentPane(mainPane);
         MainMenu mainMenu = new MainMenu(this);
         frame.setJMenuBar(mainMenu);
         mMainMenu = mainMenu;
+        Container mainPane = createComponents();
+        frame.setContentPane(mainPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -392,17 +284,28 @@ public class MainApp
 
         ScriptRuntime scriptRuntime = new ScriptRuntime();
         SimulationController simulationController = new SimulationController();
-        StringWriter outputLog = new StringWriter();
-        PrintWriter outputLogWriter = new PrintWriter(outputLog);
         ScriptBuilder scriptBuilder = new ScriptBuilder();
-        scriptRuntime.setOutputWriter(outputLogWriter);
         scriptRuntime.setSimulationController(simulationController);
         setScriptRuntime(scriptRuntime);
-        setRuntimeOutputLog(outputLog);
         setSimulationController(simulationController);
         setScriptBuilder(scriptBuilder);
         setSimulator(null);
+
         initializeMainFrame();
+
+        StringWriter runtimeOutputLog = getRuntimeOutputLog();
+        PrintWriter outputLogWriter = new PrintWriter(runtimeOutputLog);
+        scriptRuntime.setOutputWriter(outputLogWriter);
+    }
+
+    void updateOutputText()
+    {
+        mRuntimeOutputPane.updateOutputText();
+    }
+
+    StringWriter getRuntimeOutputLog()
+    {
+        return(mRuntimeOutputPane.getRuntimeOutputLog());
     }
 
     public static MainApp getApp()

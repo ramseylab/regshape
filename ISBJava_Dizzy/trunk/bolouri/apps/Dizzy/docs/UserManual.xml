@@ -263,15 +263,37 @@ directory in which you installed &appName;.  Then navigate into the
 For starters, try selecting the &quot;<code>GAL&ccmdlExtension;</code>&quot; 
 file, by double-clicking on that file name in the dialog box. 
 The &appName; window should now look like this:
+</p>
 <p>
 <img src="../images/screenshot5.png" alt="&appName; screenshot 5" />
 </p>
+<p>
+Note that the model description has appeared in the editor window.
+In this window, you can edit a model description, after which you
+may save your changes.  You probably will not want to modify the 
+<code>GAL&ccmdlExtension;</code> model definition file just yet.
+Note that the file name appears after the &quot;<b>file:</b>&quot; label.
+There is also a label &quot;<b>parser:</b>&quot; label, whose function
+will be described later.
+Now, from the &quot;Tools&quot; menu, select &quot;Process model&quot;,
+which essentially processes the model definition and loads the relevant
+information into the &appName; runtime.  The application should now
+look like this:
+</p>
+<p>
+<img src="../images/screenshot13.png" alt="&appName; screenshot 13" />
+</p>
+<p>
 Note that the <a href="#models">model name</a> 
 &quot;myModel&quot; has appeared in the 
 &quot;models:&quot; list box, and the 
 <a href="#speciespopulations">species populations collection</a>
 name &quot;sp&quot; has appeared in the &quot;species populations sets:&quot; 
-list box.  
+list box.  Note also that the phrase &quot;<b>condensed-command-language</b>&quot;
+has appeared after the &quot;<b>parser:</b>&quot; label.  This means that
+the <a href="#cmdl">CCMDL</a> parser will be used to interpret the model
+definition.  In other words, this model definition is in the &quot;CCMDL&quot;
+language.
 </p>
 <p>
 Now, select the model &quot;<code>myModel</code>&quot;, and the species
@@ -283,7 +305,7 @@ the model.  The &appName; window should now look like this:
 <p> 
 <img src="../images/screenshot6.png" alt="&appName; screenshot 6" />
 </p>
-<p>
+ <p>
 You can use the scroll bar in the &quot;runtime output log&quot; text
 box to view all of the text describing the &quot;<code>GAL&ccmdlExtension;</code>&quot;
 model.  
@@ -376,10 +398,18 @@ ES    ---&gt; E + P
 </blockquote>
 where the &quot;<code>ES</code>&quot; species is the enzyme-substrate
 complex. We will now investigate the stochastic kinetics of this
-very simple model using the &appName; simulator.
-Please use your text editor (e.g., Notepad on Windows) to create
-a new file, &quot;Model&ccmdlExtension;&quot;.  This will be our
-&quot;model definition file&quot;, in which we will define the species
+very simple model using the &appName; simulator.  You may use the 
+editor window in &appName;, which is marked with the "model definition:"
+label, to enter the model description as described below.  Once you
+have entered the model description into the editor window, you may
+save the model description to a file by selecting &quot;save as&quot;
+from the &quot;File&quot; menu.  Alternatively, you use your own 
+text editor program (e.g., Notepad on Windows) to create the model
+definition file.  In that case, you would use the &quot;open&quot;
+menu item under the &quot;File&quot; menu, to load the model definition
+file into &appName;.   Either way, we will assume that the model definition
+file you are creating will be called &quot;Model&ccmdlExtension;&quot;. 
+This file will define the species
 and chemical reactions that make up the model, as well as the kinetic
 parameters that will be used to simulate the reaction kinetics.  The 
 &quot;&ccmdlExtension;&quot; file extension is important, so please
@@ -4105,8 +4135,28 @@ definition file.  By default, only model definition files whose file extensions
 &quot;All files&quot; from the pull-down menu &quot;Files of Type&quot;, you
 can optionally choose from among any file, regardless of the file extension.
 When the file is selected, if you click on the &quot;open&quot; button, the
-model definition file that you selected will be processed by the scripting
-engine.  
+model definition file will appear in the editor window.  The editor window
+has the label &quot;<b>model definition:</b>&quot; next to it, as shown here:
+</p>
+<p>
+<img src="../images/screenshot14.png" alt="screenshot 14" />
+</p>
+<p>
+The file name is indicated in the label that starts with &quot;<b>file:</b>&quot;.
+At this stage, the model has not yet been processed by the scripting runtime,
+so no parser is listed next to the &quot;<b>parser:</b>&quot; label.
+</p>
+<p>
+To process the model, select the &quot;Process model&quot; option from the
+&quot;Tools&quot; menu.  If the model definition file has a recognized
+file extension, &appName; will automatically select the correct parser and
+will indicate the alias of the parser next to the &quot;<b>parser:</b>&quot;
+label.  Otherwise, you will be prompted to specify a parser for &appName; to use
+in processing your model definition.  &appName; will remember this parser
+choice until you close the file, or exit the application.  After your model
+definition is processed, the model name and species populations collection name
+should appear in the list boxes marked &quot;<b>model names:</b>&quot;
+and &quot;<b>species population names:</b>&quot;, respectively.
 </p>
 <p>
 <b>NOTE:</b> only definition statements appearing in the model definition file
@@ -4118,11 +4168,14 @@ of the action-performing statements; the action-performing statements are intend
 only for use in the command-line scripting environment.
 </p>
 <p>
-The names of the <a href="#models">model(s)</a> and 
-<a href="#speciespopulations">species population collections</a> defined
-by the file, will be displayed in the &quot;models:&quot; and
-the &quot;species population sets:&quot; list boxes in the main &appName;
-window.
+To close the file (i.e., clear the editor window), 
+select &quot;Close&quot; from the &quot;File&quot; menu.  If you have made
+changes to the model in the editor window, you will be prompted to confirm
+your choice to close the file.  If you edit a model definition within
+&appName; and then close the file, your changes will be lost.  You may save
+your changes by selecting the &quot;Save&quot; item under the &quot;File&quot;
+menu.  To save your changes to a specific file, use the &quot;Save as&quot;
+menu item under the &quot;File&quot; menu.
 </p>
 <p> 
 You can view the details of any model or species population collection

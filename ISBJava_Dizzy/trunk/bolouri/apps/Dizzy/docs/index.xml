@@ -20,8 +20,7 @@
 <p>
 <ul>
 <li><a href="&appVersion;/installer/Web_Installers/install.htm">Download &appName;</a></li>
-<li><a href="docs/UserManual.html">&appName; User Manual [HTML]</a></li>
-<li><a href="docs/UserManual.pdf">&appName; User Manual [PDF]</a></li>
+<li><a href="docs/UserManual.html">&appName; User Manual</a> (a <a href="docs/UserManual.pdf">PDF version</a> is available)</li>
 <li><a href="docs/ReleaseNotes.html">&appName; Release Notes</a></li>
 <li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
 <li><a href="../License.html">License Agreement</a></li>

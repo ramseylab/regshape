@@ -9,57 +9,32 @@ import isb.chem.scripting.*;
 import isb.util.*;
 import java.util.*;
 
-public class ModelNamesList extends JList
+public class ModelNamesList extends NamesList
 {
     Component mContainingComponent;
 
-    public ModelNamesList(Container pPanel)
+    public ModelNamesList(Container pPanel, int pVisibleRowCount, int pDefaultCellWidth)
     {
-        super();
-        mContainingComponent = pPanel;
-        JPanel listPane = new JPanel();
-        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        super(pPanel, "model names: ", pVisibleRowCount, pDefaultCellWidth);
+    }
 
-        listPane.setBorder(BorderFactory.createEtchedBorder());
-
-        MouseListener mouseListener = new MouseAdapter()
+    protected void handleDoubleClick(int index)
+    {
+        String modelName = (String) getModel().getElementAt(index);
+        Model model = null;
+        MainApp app = MainApp.getApp();
+        try
         {
-            public void mouseClicked(MouseEvent event)
-            {
-                if(event.getClickCount() == 2)
-                {
-                    int index = locationToIndex(event.getPoint());
-                    if(-1 != index)
-                    {
-                        String modelName = (String) getModel().getElementAt(index);
-                        Model model = null;
-                        MainApp app = MainApp.getApp();
-                        try
-                        {
-                            model = app.getScriptRuntime().getModel(modelName);
-                        }
-                        catch(DataNotFoundException e)
-                        {
-                            UnexpectedErrorDialog dialog = new UnexpectedErrorDialog(mContainingComponent, "unable to find information about model: " + modelName);
-                            dialog.show();
-                            return;
-                        }
-                        String modelPrintout = model.toString();
-                        app.getOutputTextArea().append(modelPrintout);
-                    }
-                }
-            }
-        };
-        addMouseListener(mouseListener);
-        setVisibleRowCount(4);
-
-        JScrollPane listBoxPanel = new JScrollPane(this);
-
-        JLabel label = new JLabel("models:");
-        listPane.add(label);
-        listPane.add(listBoxPanel);
-        pPanel.add(listPane);
-        
+            model = app.getScriptRuntime().getModel(modelName);
+        }
+        catch(DataNotFoundException e)
+        {
+            UnexpectedErrorDialog dialog = new UnexpectedErrorDialog(mContainingComponent, "unable to find information about model: " + modelName);
+            dialog.show();
+            return;
+        }
+        String modelPrintout = model.toString();
+        app.appendToOutputLog(modelPrintout);
     }
 
     String getSelectedModelName()

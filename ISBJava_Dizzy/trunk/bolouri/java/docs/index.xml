@@ -23,8 +23,7 @@
 <li><a href="docs/ReleaseNotes.html">&appName; Release Notes</a></li>
 <li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
 <li><a href="../License.html">License Agreement</a></li>
-<li><a href="javadoc/">Javadoc API documentation [HTML]</a></li>
-<li><a href="docs/APIDocumentation.pdf">Javadoc API documentation [PDF]</a></li>
+<li><a href="javadoc/">Javadoc API documentation</a> (a <a href="docs/APIDocumentation.pdf">PDF version</a> is available)</li>
 </ul>
 
 <img src="images/appLogo.png" border="1" alt="&appName; logo" align="left" />

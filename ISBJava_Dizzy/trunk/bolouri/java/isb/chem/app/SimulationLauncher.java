@@ -158,7 +158,7 @@ public class SimulationLauncher
             app.setEnableClearOutputLog(false);
             scriptRuntime.execute(pSimulationScript);
             app.setEnableClearOutputLog(true);
-            app.updateMainPanelFromRuntime();
+            app.updateRuntimePane();
             if(mOutputType.equals(OutputType.PLOT.toString()))
             {
                 String outputText = app.getRuntimeOutputLog().toString();
@@ -868,7 +868,7 @@ public class SimulationLauncher
         handleCancelButton();
         MainApp app = MainApp.getApp();
         app.setSimulator(null);
-        app.updateMainPanelFromRuntime();
+        app.updateRuntimePane();
         app.setEnableClearRuntime(true);
         app.setEnableClearOutputLog(true);
     }

@@ -9,56 +9,13 @@ import isb.chem.*;
 import isb.chem.scripting.*;
 import isb.util.*;
 
-public class SpeciesPopulationNamesList extends JList
+public class SpeciesPopulationNamesList extends NamesList
 {
     Component mContainingComponent;
 
-    public SpeciesPopulationNamesList(Container pPanel)
+    public SpeciesPopulationNamesList(Container pPanel, int pVisibleRowCount, int pDefaultCellWidth)
     {
-        super();
-        mContainingComponent = pPanel;
-        JPanel listPane = new JPanel();
-        listPane.setBorder(BorderFactory.createEtchedBorder());
-        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        MouseListener mouseListener = new MouseAdapter()
-        {
-            public void mouseClicked(MouseEvent event)
-            {
-                if(event.getClickCount() == 2)
-                {
-                    int index = locationToIndex(event.getPoint());
-                    if(-1 != index)
-                    {
-                        String speciesPopulationName = (String) getModel().getElementAt(index);
-                        SpeciesPopulations speciesPopulations = null;
-                        MainApp app = MainApp.getApp();
-                        try
-                        {
-                            speciesPopulations = app.getScriptRuntime().getSpeciesPopulations(speciesPopulationName);
-                        }
-                        catch(DataNotFoundException e)
-                        {
-                            UnexpectedErrorDialog dialog = new UnexpectedErrorDialog(mContainingComponent, "unable to find information about species populations: " + speciesPopulationName);
-                            dialog.show();
-                            return;
-                        }
-                        String speciesPopulationPrintout = speciesPopulations.toString();
-                        app.getOutputTextArea().append(speciesPopulationPrintout);
-                    }
-                }
-            }
-        };
-        addMouseListener(mouseListener);
-        setVisibleRowCount(4);
-
-        JScrollPane listBoxPanel = new JScrollPane(this);
-
-        JLabel label = new JLabel("species population sets:");
-        listPane.add(label);
-        listPane.add(listBoxPanel);
-        pPanel.add(listPane);
-        
+        super(pPanel, "species populations: ", pVisibleRowCount, pDefaultCellWidth);
     }
 
     int updateSpeciesPopulationNames()
@@ -75,6 +32,24 @@ public class SpeciesPopulationNamesList extends JList
         return(numNames);
     }
 
+    protected void handleDoubleClick(int index)
+    {
+        String speciesPopulationName = (String) getModel().getElementAt(index);
+        SpeciesPopulations speciesPopulations = null;
+        MainApp app = MainApp.getApp();
+        try
+        {
+            speciesPopulations = app.getScriptRuntime().getSpeciesPopulations(speciesPopulationName);
+        }
+        catch(DataNotFoundException e)
+        {
+            UnexpectedErrorDialog dialog = new UnexpectedErrorDialog(mContainingComponent, "unable to find information about species populations: " + speciesPopulationName);
+            dialog.show();
+            return;
+        }
+        String speciesPopulationPrintout = speciesPopulations.toString();
+        app.appendToOutputLog(speciesPopulationPrintout);
+    }
 
     String getSelectedSpeciesPopulationName()
     {

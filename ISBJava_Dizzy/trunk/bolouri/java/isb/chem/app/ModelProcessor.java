@@ -6,25 +6,37 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 
-public class FileLoader
+public class ModelProcessor
 {
     private Component mMainFrame;
     private IStatementFilter mStatementFilter;
 
-    public FileLoader(Component pMainFrame)
+    public ModelProcessor(Component pMainFrame)
     {
         mMainFrame = pMainFrame;
         mStatementFilter = new StatementFilterDefinitionCategory();
     }
 
-    public void loadFile(String pFileName, String pParserAlias)
+    public void processModel(String pFileName, BufferedReader pInputStream, String pParserAlias)
     {
-        File inputFile = new File(pFileName);
-        String shortFileName = inputFile.getName();
+        String shortFileName = null;
+        if(null != pFileName)
+        {
+            File inputFile = new File(pFileName);
+            shortFileName = inputFile.getName();
+        }
+        else
+        {
+            shortFileName = "(unknown)";
+        }
+
         Script script = null;
         MainApp app = MainApp.getApp();
 
@@ -32,7 +44,7 @@ public class FileLoader
         {
             ScriptBuilder scriptBuilder = app.getScriptBuilder();
             script = new Script();
-            script = scriptBuilder.buildFromFile(pParserAlias, pFileName, mStatementFilter);
+            script = scriptBuilder.buildFromInputStream(pParserAlias, pInputStream, mStatementFilter);
         }
 
         catch(InvalidInputException e)
@@ -68,7 +80,7 @@ public class FileLoader
             ScriptRuntime scriptRuntime = app.getScriptRuntime();
             scriptRuntime.execute(script);
             app.updateOutputText();
-            app.updateMainPanelFromRuntime();
+            app.updateRuntimePane();
         }
 
         catch(ScriptRuntimeException e)
