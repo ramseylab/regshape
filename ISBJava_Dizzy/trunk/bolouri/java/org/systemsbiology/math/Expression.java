@@ -539,7 +539,14 @@ public class Expression implements Cloneable
             }
             
             newElement.mNumericValue = mNumericValue;
-            newElement.mSymbol = (Symbol) mSymbol.clone();
+            if(null != mSymbol)
+            {
+                newElement.mSymbol = (Symbol) mSymbol.clone();
+            }
+            else
+            {
+                newElement.mSymbol = null;
+            }
 
             return(newElement);
         }
