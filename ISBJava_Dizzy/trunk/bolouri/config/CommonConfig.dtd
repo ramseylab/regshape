@@ -8,8 +8,9 @@
  -->
 
 <!ENTITY webBaseURL           "http://labs.systemsbiology.net/bolouri/software">
-<!ENTITY mainLogoURL          "&webBaseURL;/images/logo-isb.png">
 <!ENTITY mainPublicURL        "http://www.systemsbiology.org">
+
+<!ENTITY mainLogoRelURL       "images/logo-isb.png">
 
 <!ENTITY mainGroup            "Bolouri Group">
 <!ENTITY mainGroupURL         "&mainPublicURL;/Default.aspx?pagename=bolourilab">
@@ -20,7 +21,8 @@
 <!ENTITY localJavaLibraryName "ISBJava">
 <!ENTITY privateRepositoryURL "&webBaseURL;/privateRepository">
 <!ENTITY publicRepositoryURL  "&webBaseURL;/publicRepository">
-<!ENTITY groupLogoURL "&webBaseURL;/images/logo-bolourilab.png">
+
+<!ENTITY groupLogoRelURL "images/logo-bolourilab.png">
 
 <!ENTITY cytoscapeURL "http://www.cytoscape.org">
 
