@@ -237,4 +237,24 @@ public class MarkupLanguageImporter
     {
         return(getNOMService().getBuiltinFunctions());
     }
+
+    public int getNumRules()
+    {
+        return(getNOMService().getNumRules());
+    }
+
+    public String getNthRuleName(int pIndex)
+    {
+        return(getNOMService().getNthRuleName(pIndex));
+    }
+
+    public String getNthRuleFormula(int pIndex)
+    {
+        return(getNOMService().getNthRuleFormula(pIndex));
+    }
+
+    public String getNthRuleType(int pIndex)
+    {
+        return(getNOMService().getNthRuleType(pIndex));
+    }
 }

@@ -17,6 +17,15 @@ import java.io.IOException;
 import java.util.HashMap;
 
 /**
+ * Builds a {@link org.systemsbiology.chem.Model model} from
+ * SBML input.  The SBML must be valid SBML level 1 (version 1 or
+ * 2), with the following restrictions:  
+ * <ul>
+ * <li>units are not allowed</li>
+ * <li>rule definitions of type &quot;rate&quot; are not allowed</li>
+ * <li>pre-defined kinetic law functions such as &quot;uui&quot; and &quot;massi&quot; 
+ * are not supported</li>
+ * </ul>
  *
  * @author Stephen Ramsey
  */ 
@@ -40,7 +49,6 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
     /*========================================*
      * accessor/mutator methods
      *========================================*/
-
 
     /*========================================*
      * initialization methods
@@ -100,6 +108,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
         Model model = new Model(modelName);
         model.setSpeciesRateFactorEvaluator(new SpeciesRateFactorEvaluatorConcentration());
 
+
         // process compartments and store them in a global map
         int numCompartments = mMarkupLanguageImporter.getNumCompartments();
         if(numCompartments <= 0)
@@ -115,15 +124,11 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
 
             assert (null != compartmentName) : "null compartment name returned";
 
-            Compartment compartment = null;
+            Compartment compartment = new Compartment(compartmentName);
             if(mMarkupLanguageImporter.hasValue(compartmentName))
             {
                 double compVolume = mMarkupLanguageImporter.getValue(compartmentName);
-                compartment = new Compartment(compartmentName, compVolume);
-            }
-            else
-            {
-                compartment = new Compartment(compartmentName);
+                compartment.setVolume(compVolume);
             }
                 
             SymbolValueChemSimulation.addSymbolValueToMap(compartmentsMap, compartmentName, compartment);
@@ -139,14 +144,16 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
             String globalParamName = mMarkupLanguageImporter.getNthGlobalParameterName(globalParamCtr);
             assert (null != globalParamName) : "null global parameter name returned";
 
-            if(! mMarkupLanguageImporter.hasValue(globalParamName))
-            {
-                throw new InvalidInputException("global parameter " + globalParamName + " has no value associated with it");
-            }
-            double globalParamValue = mMarkupLanguageImporter.getValue(globalParamName);
+            Parameter parameter = new Parameter(globalParamName);
 
-            Parameter parameter = new Parameter(globalParamName, globalParamValue);
+            if(mMarkupLanguageImporter.hasValue(globalParamName))
+            {
+                double globalParamValue = mMarkupLanguageImporter.getValue(globalParamName);
+                parameter.setValue(globalParamValue);
+            }
+
             model.addParameter(parameter);
+            SymbolValueChemSimulation.addSymbolValueToMap(globalParamsMap, globalParamName, parameter);
         }
         
         // process floating species and store them in the species map
@@ -157,6 +164,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
         }
 
         HashMap dynamicalSpeciesMap = new HashMap();
+        HashMap speciesMap = new HashMap();
 
         for(int speciesCtr = 0; speciesCtr < numSpecies; ++speciesCtr)
         {
@@ -170,6 +178,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
             }
 
             Species species = new Species(speciesName, compartment);
+            speciesMap.put(speciesName, species);
 
             // get initial population for species
             if(! mMarkupLanguageImporter.hasValue(speciesName))
@@ -180,16 +189,13 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
             double initialSpeciesPopulation = mMarkupLanguageImporter.getValue(speciesName);
             species.setSpeciesPopulation(initialSpeciesPopulation);
 
+            model.addSpecies(species);
             SymbolValueChemSimulation.addSymbolValueToMap(dynamicalSpeciesMap, speciesName, species);
         }
 
         // process boundary species and store them in the species map
         numSpecies = mMarkupLanguageImporter.getNumBoundarySpecies();
-        if(numSpecies < 0)
-        {
-            throw new IllegalArgumentException("invalid number of boundary species: " + numSpecies);
-        }
-
+        assert (numSpecies >= 0) : "invalid number of boundary species";
 
         HashMap boundarySpeciesMap = new HashMap();
 
@@ -206,17 +212,76 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
             Species species = new Species(speciesName, compartment);
 
             // get initial population for species
-            if(! mMarkupLanguageImporter.hasValue(speciesName))
+            if(mMarkupLanguageImporter.hasValue(speciesName))
             {
-                throw new IllegalArgumentException("boundary species " + speciesName + " has no initial population value defined");
+                double initialSpeciesPopulation = mMarkupLanguageImporter.getValue(speciesName);
+                species.setSpeciesPopulation(initialSpeciesPopulation);
             }
 
-            double initialSpeciesPopulation = mMarkupLanguageImporter.getValue(speciesName);
-            species.setSpeciesPopulation(initialSpeciesPopulation);
-
+            model.addSpecies(species);
             SymbolValueChemSimulation.addSymbolValueToMap(boundarySpeciesMap, speciesName, species);
 
         }
+
+        int numRules = mMarkupLanguageImporter.getNumRules();
+        for(int ruleCtr = 0; ruleCtr < numRules; ++ruleCtr)
+        {
+            String ruleType = mMarkupLanguageImporter.getNthRuleType(ruleCtr);
+            assert (null != ruleType) : "null rule type encountered";
+            String ruleName = mMarkupLanguageImporter.getNthRuleName(ruleCtr);
+            assert (null != ruleName) : "null rule name encountered";
+            String ruleFormula = mMarkupLanguageImporter.getNthRuleFormula(ruleCtr);
+            assert (null != ruleFormula) : "null rule formula encountered";
+            Expression ruleExpression = null;
+            try
+            {
+                ruleExpression = new Expression(ruleFormula);
+            }
+            catch(IllegalArgumentException e)
+            {
+                throw new InvalidInputException("a rule contained an invalid formula: " + ruleName, e);
+            }
+            if(ruleType.equals("species"))
+            {
+                Species species = (Species) speciesMap.get(ruleName);
+                if(null == species)
+                {
+                    throw new InvalidInputException("a species concentration rule referenced an unknown species: " + ruleName);
+                }
+                if(null != dynamicalSpeciesMap.get(ruleName))
+                {
+                    throw new InvalidInputException("a species concentration rule referenced a dynamic species: " + ruleName);
+                }
+                if(null != species.getValue())
+                {
+                    throw new InvalidInputException("a species concentration rule referenced a species whose initial concentration was already defined: " + ruleName);
+                }
+                species.setSpeciesPopulation(ruleExpression);
+            }
+            else if(ruleType.equals("compartment"))
+            {
+                Compartment compartment = (Compartment) compartmentsMap.get(ruleName);
+                if(null == compartment)
+                {
+                    throw new InvalidInputException("a compartment volume rule referenced an unknown compartment: " + ruleName);
+                }
+                compartment.setVolume(ruleExpression);
+            }
+            else if(ruleType.equals("parameter"))
+            {
+                Parameter parameter = (Parameter) globalParamsMap.get(ruleName);
+                if(null == parameter)
+                {
+                    throw new InvalidInputException("a parameter rule reference an unknown parameter: " + ruleName);
+                }
+                parameter.setValue(ruleExpression);
+            }
+            else
+            {
+                assert false : "unknown rule type: " + ruleType;
+            }
+        }
+
 
         int numReactions = mMarkupLanguageImporter.getNumReactions();
         assert (numReactions >= 0) : "invalid number of reactions";

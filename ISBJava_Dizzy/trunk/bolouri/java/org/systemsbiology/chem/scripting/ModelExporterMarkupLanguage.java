@@ -23,6 +23,9 @@ import java.util.*;
 import org.systemsbiology.chem.scripting.IModelExporter;
 
 /**
+ * Exports a {@link org.systemsbiology.chem.Model} to
+ * the Systems Biology Markup Language (SBML) format.
+ *
  * @author Stephen Ramsey
  */
 public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableClass
@@ -32,16 +35,20 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
     private static final String ELEMENT_NAME_SBML = "sbml";
     private static final String ELEMENT_NAME_MODEL = "model";
     private static final String ELEMENT_NAME_LIST_OF_COMPARTMENTS = "listOfCompartments";
+    private static final String ELEMENT_NAME_LIST_OF_RULES = "listOfRules";
+    private static final String ELEMENT_NAME_COMPARTMENT_VOLUME_RULE = "compartmentVolumeRule";
+    private static final String ELEMENT_NAME_SPECIES_CONCENTRATION_RULE = "speciesConcentrationRule";
+    private static final String ELEMENT_NAME_PARAMETER_RULE = "parameterRule";
     private static final String ELEMENT_NAME_LIST_OF_SPECIES = "listOfSpecies";
     private static final String ELEMENT_NAME_LIST_OF_PARAMETERS = "listOfParameters";
-    private static final String ELEMENT_NAME_SPECIE = "specie";
+    private static final String ELEMENT_NAME_SPECIES = "species";
     private static final String ELEMENT_NAME_COMPARTMENT = "compartment";
     private static final String ELEMENT_NAME_PARAMETER = "parameter";
     private static final String ELEMENT_NAME_LIST_OF_REACTIONS = "listOfReactions";
     private static final String ELEMENT_NAME_REACTION = "reaction";
     private static final String ELEMENT_NAME_LIST_OF_REACTANTS = "listOfReactants";
     private static final String ELEMENT_NAME_LIST_OF_PRODUCTS = "listOfProducts";
-    private static final String ELEMENT_NAME_SPECIE_REFERENCE = "specieReference";
+    private static final String ELEMENT_NAME_SPECIES_REFERENCE = "speciesReference";
     private static final String ELEMENT_NAME_KINETIC_LAW = "kineticLaw";
     private static final String ELEMENT_NAME_LIST_OF_UNIT_DEFINITIONS = "listOfUnitDefinitions";
     private static final String ELEMENT_NAME_LIST_OF_UNITS = "listOfUnits";
@@ -55,7 +62,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
     private static final String ATTRIBUTE_VALUE = "value";
     private static final String ATTRIBUTE_STOICHIOMETRY = "stoichiometry";
     private static final String ATTRIBUTE_FORMULA = "formula";
-    private static final String ATTRIBUTE_SPECIE = "specie";
+    private static final String ATTRIBUTE_SPECIES = "species";
     private static final String ATTRIBUTE_REVERSIBLE = "reversible";
     private static final String ATTRIBUTE_COMPARTMENT = "compartment";
     private static final String ATTRIBUTE_KIND = "kind";
@@ -70,7 +77,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
     private static final String LEVEL_NAME = "level";
     private static final String LEVEL_VALUE = "1";
     private static final String VERSION_NAME = "version";
-    private static final String VERSION_VALUE = "1";
+    private static final String VERSION_VALUE = "2";
 
     private static final String DEFAULT_REACTION_PARAMETER_SYMBOL_NAME = "__RATE__";
 
@@ -103,8 +110,9 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
             modelElement.setAttribute(ATTRIBUTE_NAME, modelName);
             sbmlElement.appendChild(modelElement);
 
-
             double speciesPopulationConversionMultiplier = 1.0;
+
+            HashMap globalSymbolValues = new HashMap();
 
             // set volume units to dimensionless, and substance units to "item"
             Element listOfUnitDefinitionsElement = document.createElement(ELEMENT_NAME_LIST_OF_UNIT_DEFINITIONS);
@@ -153,6 +161,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
             Element listOfCompartmentsElement = document.createElement(ELEMENT_NAME_LIST_OF_COMPARTMENTS);
             modelElement.appendChild(listOfCompartmentsElement);
             Iterator compartmentsIter = compartmentsList.iterator();
+            ArrayList rules = new ArrayList();
             while(compartmentsIter.hasNext())
             {
                 Compartment compartment = (Compartment) compartmentsIter.next();
@@ -162,11 +171,15 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                 Value volumeValueObj = compartment.getValue();
                 if(volumeValueObj.isExpression())
                 {
-                    throw new UnsupportedOperationException("cannot export to SBML a model that has a compartment with a custom expression for the compartment volume");
+                    rules.add(compartment);
                 }
-                double volumeLiters = volumeValueObj.getValue();
-                Double volumeLitersObj = new Double(volumeLiters);
-                compartmentElement.setAttribute(ATTRIBUTE_VOLUME, volumeLitersObj.toString());
+                else
+                {
+                    double volumeLiters = volumeValueObj.getValue();
+                    Double volumeLitersObj = new Double(volumeLiters);
+                    compartmentElement.setAttribute(ATTRIBUTE_VOLUME, volumeLitersObj.toString());
+                    globalSymbolValues.put(compartmentName, compartment);
+                }
                 listOfCompartmentsElement.appendChild(compartmentElement);
             }
 
@@ -187,7 +200,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
             while(speciesIter.hasNext())
             {
                 Species species = (Species) speciesIter.next();
-                Element speciesElement = document.createElement(ELEMENT_NAME_SPECIE);
+                Element speciesElement = document.createElement(ELEMENT_NAME_SPECIES);
                 String speciesName = species.getName();
                 speciesElement.setAttribute(ATTRIBUTE_NAME, speciesName);
                 Boolean boundaryObj = new Boolean(! dynamicSymbolNames.contains(speciesName));
@@ -199,13 +212,16 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                 Value initialValueObj = species.getValue();
                 if(initialValueObj.isExpression())
                 {
-                    throw new UnsupportedOperationException("Not able to export this model to markup language, because the model contains a boundary (non-floating) species whose population is a mathematical expression.  In SBML level 1, a boundary species must have its population defined as a fixed number.  Species is: " + speciesName);
+                    rules.add(species);
                 }
-                initialSpeciesPopulation = initialValueObj.getValue();
-
-                double initialSpeciesPopulationConverted = ((double) initialSpeciesPopulation) * speciesPopulationConversionMultiplier;
-                Double initialSpeciesPopulationObj = new Double(initialSpeciesPopulationConverted);
-                speciesElement.setAttribute(ATTRIBUTE_INITIAL_AMOUNT, initialSpeciesPopulationObj.toString());
+                else
+                {
+                    initialSpeciesPopulation = initialValueObj.getValue();
+                    double initialSpeciesPopulationConverted = ((double) initialSpeciesPopulation) * speciesPopulationConversionMultiplier;
+                    Double initialSpeciesPopulationObj = new Double(initialSpeciesPopulationConverted);
+                    speciesElement.setAttribute(ATTRIBUTE_INITIAL_AMOUNT, initialSpeciesPopulationObj.toString());
+                    globalSymbolValues.put(speciesName, species);
+                }
                 listOfSpeciesElement.appendChild(speciesElement);
             }
 
@@ -238,12 +254,104 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                 Value paramValueObj = parameter.getValue();
                 if(paramValueObj.isExpression())
                 {
-                    throw new UnsupportedOperationException("Not able to export this model to markup language, because the model contains a parameter whose value is a mathematical expression.  In SBML level 1, a parameter must have its value defined as a fixed number.  Parameter is: " + parameterName);
+                    rules.add(parameter);
                 }
-                double parameterValue = paramValueObj.getValue();
-                Double parameterValueObj = new Double(parameterValue);
-                parameterElement.setAttribute(ATTRIBUTE_VALUE, parameterValueObj.toString());
+                else
+                {
+                    double parameterValue = paramValueObj.getValue();
+                    Double parameterValueObj = new Double(parameterValue);
+                    parameterElement.setAttribute(ATTRIBUTE_VALUE, parameterValueObj.toString());
+                    globalSymbolValues.put(parameterName, parameter);
+                }
                 listOfParametersElement.appendChild(parameterElement);
+            }
+
+            // handle rules
+
+            Element listOfRulesElement = document.createElement(ELEMENT_NAME_LIST_OF_RULES);
+
+            ListIterator rulesListIter = null;
+            SymbolEvaluatorHashMap symbolEvaluator = new SymbolEvaluatorHashMap(globalSymbolValues);
+            HashSet reservedSymbolNames = new HashSet();
+            SymbolEvaluatorChemSimulation.getReservedSymbolNames(reservedSymbolNames);
+            Iterator reservedSymbolNamesIter = reservedSymbolNames.iterator();
+            while(reservedSymbolNamesIter.hasNext())
+            {
+                String reservedSymbolName = (String) reservedSymbolNamesIter.next();
+                globalSymbolValues.put(reservedSymbolName, new SymbolValue(reservedSymbolName, 0.0));
+            }
+
+            Vector orderedRules = new Vector();
+
+            while(rules.size() > 0)
+            {
+                rulesListIter = rules.listIterator();
+                boolean success = false;
+                while(rulesListIter.hasNext())
+                {
+                    SymbolValue ruleObj = (SymbolValue) rulesListIter.next();
+                    Value ruleValue = ruleObj.getValue();
+                    assert (ruleValue.isExpression()) : "encountered a rule object with non-expression value";
+                    try
+                    {
+                        ruleValue.getValue(symbolEvaluator);
+                        orderedRules.add(ruleObj);
+                        rulesListIter.remove();
+                        globalSymbolValues.put(ruleObj.getSymbol().getName(), ruleObj);
+                        success = true;
+                    }
+                    catch(DataNotFoundException e)
+                    {
+                        // dependent on stuff that has not been defined yet
+                    }
+                }
+                if(! success && rules.size() > 0)
+                {
+                    throw new ModelExporterException("cannot export model that contains cyclic rule dependencies");
+                }
+            }
+
+
+            modelElement.appendChild(listOfRulesElement);
+            Iterator rulesIter = orderedRules.iterator();
+            while(rulesIter.hasNext())
+            {
+                SymbolValue rule = (SymbolValue) rulesIter.next();
+                String name = rule.getSymbol().getName();
+                if(rule instanceof Compartment)
+                {
+                    Compartment compartment = (Compartment) rule;
+                    Value compartmentVolumeObj = compartment.getValue();
+                    assert (compartmentVolumeObj.isExpression()) : "compartment value not an expression";
+                    Element compartmentRuleElement = document.createElement(ELEMENT_NAME_COMPARTMENT_VOLUME_RULE);
+                    compartmentRuleElement.setAttribute(ATTRIBUTE_COMPARTMENT, name);
+                    compartmentRuleElement.setAttribute(ATTRIBUTE_FORMULA, compartmentVolumeObj.getExpressionString());
+                    listOfRulesElement.appendChild(compartmentRuleElement);
+                }
+                else if(rule instanceof Species)
+                {
+                    Species species = (Species) rule;
+                    Value speciesConcentrationObj = species.getValue();
+                    assert (speciesConcentrationObj.isExpression()) : "species value not an expression";
+                    Element speciesConcentrationRuleElement = document.createElement(ELEMENT_NAME_SPECIES_CONCENTRATION_RULE);
+                    speciesConcentrationRuleElement.setAttribute(ATTRIBUTE_SPECIES, name);
+                    speciesConcentrationRuleElement.setAttribute(ATTRIBUTE_FORMULA, speciesConcentrationObj.getExpressionString());
+                    listOfRulesElement.appendChild(speciesConcentrationRuleElement);
+                }
+                else if(rule instanceof Parameter)
+                {
+                    Parameter parameter = (Parameter) rule;
+                    Value parameterValueObj = parameter.getValue();
+                    Element parameterRuleElement = document.createElement(ELEMENT_NAME_PARAMETER_RULE);
+                    assert (parameterValueObj.isExpression()) : "parameter value not an expression";
+                    parameterRuleElement.setAttribute(ATTRIBUTE_NAME, name);
+                    parameterRuleElement.setAttribute(ATTRIBUTE_FORMULA, parameterValueObj.getExpressionString());
+                    listOfRulesElement.appendChild(parameterRuleElement);
+                }
+                else
+                {
+                    assert false : "unknown rule object encountered";
+                }
             }
 
             // handle reactions
@@ -282,8 +390,8 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     Species species = (Species) reactantSpecies[ctr];
                     int stoic = reactantStoichiometries[ctr];
                     String speciesName = species.getName();
-                    Element specieReferenceElement = document.createElement(ELEMENT_NAME_SPECIE_REFERENCE);
-                    specieReferenceElement.setAttribute(ATTRIBUTE_SPECIE, speciesName);
+                    Element specieReferenceElement = document.createElement(ELEMENT_NAME_SPECIES_REFERENCE);
+                    specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES, speciesName);
                     specieReferenceElement.setAttribute(ATTRIBUTE_STOICHIOMETRY, Integer.toString(stoic));
                     listOfReactantsElement.appendChild(specieReferenceElement);
                 }
@@ -306,8 +414,8 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     Species species = (Species) productSpecies[ctr];
                     int stoic = productStoichiometries[ctr];
                     String speciesName = species.getName();
-                    Element specieReferenceElement = document.createElement(ELEMENT_NAME_SPECIE_REFERENCE);
-                    specieReferenceElement.setAttribute(ATTRIBUTE_SPECIE, speciesName);
+                    Element specieReferenceElement = document.createElement(ELEMENT_NAME_SPECIES_REFERENCE);
+                    specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES, speciesName);
                     specieReferenceElement.setAttribute(ATTRIBUTE_STOICHIOMETRY, Integer.toString(stoic));
                     listOfProductsElement.appendChild(specieReferenceElement);
                 }
@@ -329,6 +437,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     StringBuffer kineticLawBuf = new StringBuffer();
                     String reactionParameterSymbolName = DEFAULT_REACTION_PARAMETER_SYMBOL_NAME;
                     kineticLawBuf.append(reactionParameterSymbolName);
+                    kineticLawBuf.append("*");
                     Element reactionParameterElement = document.createElement(ELEMENT_NAME_PARAMETER);
                     reactionParameterElement.setAttribute(ATTRIBUTE_NAME, reactionParameterSymbolName);
                     listOfParametersElement.appendChild(reactionParameterElement);
