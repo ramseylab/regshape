@@ -180,6 +180,7 @@ malfunction.
 </isb:docsubsection>
 
 <isb:docsubsection name="JProfiler" label="jprofiler">
+<p>
 JProfiler is installed on the <a href="#sharedlinux">shared Linux computer</a>.  This program
 is a code profiler and optimizer for the Java language.  It is
 installed in the directory:
@@ -199,6 +200,11 @@ you will only need to enter the license key once, the first time you
 run JProfiler.  You can obtain the group's license key for JProfiler 
 by e-mailing a request to <code>&mainGroupEmailSafe;</code>.
 The version of JProfiler that is installed is 2.2.1.
+</p>
+<p>
+The JProfiler user manual is <a href="&privateRepositoryURL;/jprofiler/doc">
+available on-line, in HTML format</a>.
+</p>
 </isb:docsubsection>
 
 </isb:docsection>
