@@ -34,6 +34,17 @@ public class MainApp
     private Long mTimestampModelLastLoaded;
     private static final String DEFAULT_HELP_SET_VIEW = "TOC";  // this string must correspond to
                                                                 // a <view> block in AppHelp.hs
+    private File mCurrentDirectory;
+
+    void setCurrentDirectory(File pCurrentDirectory)
+    {
+        mCurrentDirectory = pCurrentDirectory;
+    }
+
+    File getCurrentDirectory()
+    {
+        return(mCurrentDirectory);
+    }
 
     private void setTimestampModelLastLoaded(Long pTimestampModelLastLoaded)
     {
@@ -140,6 +151,7 @@ public class MainApp
                 boolean handleOutputInternally = true;
                 SimulationLauncher simulationLauncher = new SimulationLauncher(appName, model, handleOutputInternally);
                 setSimulationLauncher(simulationLauncher);
+                simulationLauncher.setCurrentDirectory(getCurrentDirectory());
                 setTimestampModelLastLoaded(new Long(System.currentTimeMillis()));
                 simulationLauncher.addListener(new SimulationLauncher.Listener()
                 {
@@ -445,7 +457,8 @@ public class MainApp
 
         setSimulationLauncher(null);
         setTimestampModelLastLoaded(null);
-        
+        setCurrentDirectory(null);
+
         initializeMainFrame();
     }
 

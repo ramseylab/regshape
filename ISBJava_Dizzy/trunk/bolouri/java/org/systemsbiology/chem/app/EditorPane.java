@@ -45,12 +45,12 @@ public class EditorPane
     private String mFileName;
     private String mParserAlias;
     private boolean mBufferDirty;
-    private File mCurrentDirectory;
     private int mOriginalWidthPixels;
     private int mOriginalHeightPixels;
     private long mTimestampLastChange;
     private MainApp mMainApp;
     private JScrollPane mEditorScrollPane;
+    private File mCurrentDirectory;
 
     interface EditorStateUpdater
     {
@@ -92,16 +92,6 @@ public class EditorPane
         mBufferDirty = pBufferDirty;
     }
 
-    private void setCurrentDirectory(File pCurrentDirectory)
-    {
-        mCurrentDirectory = pCurrentDirectory;
-    }
-
-    private File getCurrentDirectory()
-    {
-        return(mCurrentDirectory);
-    }
-
     private void setTimestampLastChange(long pTimestampLastChange)
     {
         mTimestampLastChange = pTimestampLastChange;
@@ -120,9 +110,20 @@ public class EditorPane
         setFileNameLabel(null);
         setParserAlias(null);
         setBufferDirty(false);
+        setCurrentDirectory(mMainApp.getCurrentDirectory());
         setTimestampLastChange(TIMESTAMP_BUFFER_LAST_CHANGE_NULL);
-        setCurrentDirectory(null);
     }
+
+    private void setCurrentDirectory(File pCurrentDirectory)
+    {
+        mCurrentDirectory = pCurrentDirectory;
+    }
+
+    private File getCurrentDirectory()
+    {
+        return(mCurrentDirectory);
+    }
+
 
     private void handleCancel(String pOperation)
     {
@@ -263,6 +264,7 @@ public class EditorPane
                     if(parentFile.isDirectory())
                     {
                         setCurrentDirectory(parentFile);
+                        mMainApp.setCurrentDirectory(parentFile);
                     }
                     loadFileToEditBuffer(fileName);
                 }
