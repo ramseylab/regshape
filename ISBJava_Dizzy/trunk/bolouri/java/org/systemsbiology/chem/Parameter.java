@@ -62,6 +62,13 @@ public class Parameter extends SymbolValue
         setValue(new Value(pValue));
     }
 
+    public Object clone()
+    {
+        Parameter newParam = new Parameter(mName);
+        newParam.setValue((Value) mValue.clone());
+        return(newParam);
+    }
+
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
