@@ -2,6 +2,10 @@ Behrendt, Dominik
 Siemens
 Dominik.Behrendt@scr.siemens.com
 
+Duguid, Adam
+Edinburgh University
+s9552712@sms.ed.ac.uk
+
 Finney, Andrew
 University of Hertfordshire, UK
 afinney@cds.caltech.edu
