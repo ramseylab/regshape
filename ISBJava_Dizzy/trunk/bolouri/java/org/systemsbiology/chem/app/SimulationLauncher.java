@@ -794,6 +794,7 @@ public class SimulationLauncher
         JScrollPane scrollPane = new JScrollPane(list);
         box.add(scrollPane);
         JButton selectAllButton = new JButton("select all");
+        selectAllButton.setMinimumSize(new Dimension(100, 50)); // this makes sure all the text is displayed
         box.add(selectAllButton);
         selectAllButton.addActionListener(
             new ActionListener()
@@ -1165,7 +1166,8 @@ public class SimulationLauncher
             {
                 if(numSymbol > Plotter.MAX_NUM_SYMBOLS_TO_PLOT)
                 {
-                    handleBadInput("too many symbols to plot", "maximum number of symbol that can be plotted simultaneously is: " + Plotter.MAX_NUM_SYMBOLS_TO_PLOT);
+                    handleBadInput("too many symbols to plot", "maximum number of symbols that can be plotted simultaneously is: " + Plotter.MAX_NUM_SYMBOLS_TO_PLOT);
+                    reteurn(retVal);
                 }
             }
             
