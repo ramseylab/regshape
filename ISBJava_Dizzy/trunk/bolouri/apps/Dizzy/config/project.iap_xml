@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- This script was automatically generated using Zero G's InstallAnywhere 6.0 Standard, Build 2262
+<!-- This script was automatically generated using Zero G's InstallAnywhere 6.1 Enterprise, Build 2325
      STATUS: Fully Functional LICENSED Edition
-     DATE:   Fri Apr 02 10:51:45 PST 2004 -->
-<InstallAnywhere_Deployment_Project increments="2361">
+     DATE:   Fri Feb 04 16:49:35 PST 2005 -->
+<InstallAnywhere_Deployment_Project increments="2309">
 	<!-- ** DO NOT EDIT ** Essential authorization and configuration data ** DO NOT EDIT ** -->
 	<essentialScriptInfo>
-		<versionID major="6" minor="0" revision="-1"/>
-		<editionID>54,46,48,32,83,116,97,110,100,97,114,100,32,66,117,105,108,100,32,50,50,54,50</editionID>
-		<scriptID>12,42,11,90,89,49,48,57,54,69,56,69,83,78,52,72</scriptID>
-		<buildID>3,13,71,76,105,110,117,120,44,32,50,46,52,46,50,48,45,50,52,46,56,44,32,105,51,56,54,59,32,74,97,118,97,32,49,46,52,46,49,95,48,49,44,32,83,117,110,32,77,105,99,114,111,115,121,115,116,101,109,115,32,73,110,99,46,44,32,104,116,116,112,58,47,47,106,97,118,97,46,115,117,110,46,99,111,109,47,59,32,101,110,44,32,85,110,107,110,111,119,110,59,32,85,84,70,45,56</buildID>
+		<versionID major="6" minor="1" revision="-1"/>
+		<editionID>54,46,49,32,69,110,116,101,114,112,114,105,115,101,32,66,117,105,108,100,32,50,51,50,53</editionID>
+		<scriptID>12,42,11,90,81,49,55,50,54,52,82,82,68,90,65,82</scriptID>
+		<buildID>3,13,71,76,105,110,117,120,44,32,50,46,52,46,50,50,45,49,46,50,49,57,57,46,110,112,116,108,44,32,105,51,56,54,59,32,74,97,118,97,32,49,46,51,46,49,95,48,57,44,32,83,117,110,32,77,105,99,114,111,115,121,115,116,101,109,115,32,73,110,99,46,44,32,104,116,116,112,58,47,47,106,97,118,97,46,115,117,110,46,99,111,109,47,59,32,101,110,44,32,85,83,59,32,85,84,70,45,56</buildID>
 		<!-- The authorizationID may change between project saves and builds.  This does not effect the integrity of the project, nor do changes in this value represent changes in the actual InstallAnywhere project. -->
-		<authorizationID>1,0,0,-16,-93,-115,-32,-128,80,112,116,103,88,98,113,97,113,81,67,49,74,65,70,70,85,71,64,69,66,69,48,79,87,5,2,15,14,47,124,11,0,0,0</authorizationID>
+		<authorizationID>1,0,0,0,-45,-5,48,-112,80,112,116,103,88,98,113,97,113,65,65,88,74,65,72,71,70,69,64,69,66,69,48,79,87,5,2,9,11,46,111,1,1,0,0</authorizationID>
 	</essentialScriptInfo>
-	<installationObjects uniqueObjects="149">
+	<installationObjects uniqueObjects="144">
 		<object class="com.zerog.ia.installer.Installer" objectID="4a0be70e9aea">
 			<property name="wizardME">
 				<object class="com.zerog.ia.installer.actions.MakeExecutable" objectID="4aa1a7c49b0f">
@@ -166,7 +166,7 @@ it will search for ones in this list]]></string>
 								</object>
 							</method>
 							<method name="addElement">
-								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="c003e3deaeb8">
+								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="f37ec8cc8445">
 									<property name="propertyValue">
 										<string><![CDATA[org.systemsbiology.chem.sbw.SimulationModule]]></string>
 									</property>
@@ -1121,7 +1121,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 				<object class="java.util.Properties">
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.project.save.last.date]]></string>
-						<string><![CDATA[April 2, 2004 10:51:44 AM PST]]></string>
+						<string><![CDATA[February 4, 2005 4:49:35 PM PST]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.merge]]></string>
@@ -1133,7 +1133,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.vmpack.unix.path]]></string>
-						<string><![CDATA[SunJRE131_04LinuxINTEL.vm]]></string>
+						<string><![CDATA[SunJRE142_03LinuxINTEL.vm]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.linux.vm]]></string>
@@ -1158,6 +1158,10 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.auto-populate.labels]]></string>
 						<string><![CDATA[true]]></string>
+					</method>
+					<method name="put">
+						<string><![CDATA[com.zerog.ia.build.options.webpage.language]]></string>
+						<string><![CDATA[en]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.named_unix.novm]]></string>
@@ -1281,7 +1285,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<string><![CDATA[com/zerog/ia/installer/images/]]></string>
 					</property>
 					<property name="backgroundImageName">
-						<string><![CDATA[backgroundImage.gif]]></string>
+						<string><![CDATA[background_default.png]]></string>
 					</property>
 					<property name="currentLabelIconPath">
 						<string><![CDATA[com/zerog/ia/installer/images/]]></string>
@@ -1315,6 +1319,9 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</property>
 					<property name="uninstallerTitle">
 						<string><![CDATA[Uninstall $PRODUCT_NAME$]]></string>
+					</property>
+					<property name="installPanelBackgroundRGB">
+						<int>-1</int>
 					</property>
 				</object>
 			</property>
@@ -1425,7 +1432,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<string><![CDATA[@MAINGROUPEMAIL@]]></string>
 					</property>
 					<property name="copyright">
-						<string><![CDATA[2004]]></string>
+						<string><![CDATA[2005]]></string>
 					</property>
 				</object>
 			</property>
@@ -1539,7 +1546,7 @@ This will remove features installed by InstallAnywhere.  It will not remove file
 								<boolean>true</boolean>
 							</property>
 							<property name="showsRebootStatusMessage">
-								<boolean>true</boolean>
+								<boolean>false</boolean>
 							</property>
 							<property name="showsInstallStatusMessage">
 								<boolean>true</boolean>
@@ -1547,34 +1554,6 @@ This will remove features installed by InstallAnywhere.  It will not remove file
 							<property name="showsUnhandledFileList">
 								<boolean>true</boolean>
 							</property>
-						</object>
-					</method>
-					<method name="addElement">
-						<object class="com.zerog.ia.installer.actions.RebootAction" objectID="66e816e7a3e2">
-							<rules logicalOperation="AND">
-								<object class="com.zerog.ia.installer.rules.CompareVariable" objectID="66e816e8a3e2">
-									<property name="operation">
-										<string><![CDATA[contains]]></string>
-									</property>
-									<property name="operandOne">
-										<string><![CDATA[$RESTART_NEEDED$]]></string>
-									</property>
-									<property name="operandTwo">
-										<string><![CDATA[YES]]></string>
-									</property>
-								</object>
-								<object class="com.zerog.ia.installer.rules.CompareVariable" objectID="66e816e7a3e3">
-									<property name="operation">
-										<string><![CDATA[does not contain]]></string>
-									</property>
-									<property name="operandOne">
-										<string><![CDATA[$USER_REQUESTED_RESTART$]]></string>
-									</property>
-									<property name="operandTwo">
-										<string><![CDATA[NO]]></string>
-									</property>
-								</object>
-							</rules>
 						</object>
 					</method>
 				</object>
@@ -1854,7 +1833,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="totalSize">
-												<long>0</long>
+												<long>1</long>
 											</property>
 											<property name="macBinary">
 												<boolean>false</boolean>
@@ -2027,7 +2006,7 @@ it will search for ones in this list]]></string>
 														</object>
 													</method>
 													<method name="addElement">
-														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="c003e565aec3">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="f37ec9438458">
 															<property name="propertyValue">
 																<string><![CDATA[org.systemsbiology.chem.app.MainApp]]></string>
 															</property>
@@ -2253,7 +2232,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="totalSize">
-												<long>0</long>
+												<long>1</long>
 											</property>
 											<property name="macBinary">
 												<boolean>false</boolean>
@@ -2352,7 +2331,7 @@ and any path to a file to read from that file]]></string>
 											<property name="targetCheckKind">
 												<int>0</int>
 											</property>
-										</object>										
+										</object>
 										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="6e33c6fc9afe">
 											<property name="unixPermissions">
 												<string><![CDATA[775]]></string>
@@ -2370,7 +2349,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="totalSize">
-												<long>0</long>
+												<long>1</long>
 											</property>
 											<property name="macBinary">
 												<boolean>false</boolean>
@@ -2454,7 +2433,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="totalSize">
-												<long>0</long>
+												<long>1</long>
 											</property>
 											<property name="macBinary">
 												<boolean>false</boolean>
@@ -2512,7 +2491,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="totalSize">
-												<long>0</long>
+												<long>1</long>
 											</property>
 											<property name="macBinary">
 												<boolean>false</boolean>
@@ -2687,7 +2666,7 @@ it will search for ones in this list]]></string>
 														</object>
 													</method>
 													<method name="addElement">
-														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="c003e5cfaecc">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="f37ec96e845e">
 															<property name="propertyValue">
 																<string><![CDATA[org.systemsbiology.chem.app.SimulationLauncherCommandLine]]></string>
 															</property>
@@ -2788,7 +2767,7 @@ and any path to a file to save to the file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="totalSize">
-												<long>0</long>
+												<long>1</long>
 											</property>
 											<property name="macBinary">
 												<boolean>false</boolean>
@@ -2958,7 +2937,7 @@ it will search for ones in this list]]></string>
 														</object>
 													</method>
 													<method name="addElement">
-														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="c00a4371aecd">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="f37ec97b8464">
 															<property name="propertyValue">
 																<string><![CDATA[org.systemsbiology.chem.sbw.SimulationModule]]></string>
 															</property>
@@ -3029,7 +3008,7 @@ and any path to a file to save to the file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="totalSize">
-												<long>0</long>
+												<long>1</long>
 											</property>
 											<property name="macBinary">
 												<boolean>false</boolean>
