@@ -10,11 +10,10 @@
               xmlns="http://www.w3.org/TR/xhtml1">
 
 <isb:doctitle>&appName; User Manual</isb:doctitle>
-<isb:docowner>&mainGroup;, &mainAffiliation;</isb:docowner>
-<isb:docownerurl>&mainGroupURL;</isb:docownerurl>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
 <isb:docdate>$Date$</isb:docdate>
-<isb:docowneremail>&mainGroupEmailSafe;</isb:docowneremail>
-<isb:docauthor>&appOriginalAuthorFullName; (<code>&appMaintainerEmailSafe;</code>)</isb:docauthor>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 
 <isb:doccontents />
 
