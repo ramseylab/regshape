@@ -98,6 +98,7 @@
            includes="AppHelp.xml" 
            style="${globalConfig}/${docsStyleSheet}">
         <param name="altWebBaseURL" expression=".." />
+    	<param name="hideExternalLinks" expression="true" />
     </style>
   	 
   	<style in="${app.configDir}/AppConfig.xml"
@@ -115,7 +116,6 @@
            style="${globalConfig}/${helpTOCStyleSheet}">
         <param name="${helpContentFileParamName}" expression="AppHelp.html" />
     </style >
-
  </target>
 
 
