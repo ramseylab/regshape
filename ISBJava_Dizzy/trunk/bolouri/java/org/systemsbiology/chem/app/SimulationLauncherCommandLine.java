@@ -10,9 +10,9 @@ package org.systemsbiology.chem.app;
 
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
-import org.systemsbiology.chem.scripting.*;
 import java.util.*;
 import java.io.*;
+import java.text.*;
 
 /**
  * Command-line interface for running a simulation. 
@@ -28,7 +28,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     private static final String PARSER_ARG = "-parser";
     private static final String SIMULATOR_ARG = "-simulator";
     private static final int NUM_REQUIRED_ARGS = 1;
-    private static final String DEFAULT_PARSER_ALIAS = org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage.CLASS_ALIAS;
+    private static final String DEFAULT_PARSER_ALIAS = org.systemsbiology.chem.ModelBuilderCommandLanguage.CLASS_ALIAS;
     private static final String START_TIME_ARG = "-startTime";
     private static final double DEFAULT_START_TIME = 0.0;
 
@@ -43,13 +43,18 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     private static final String MODEL_FILE_ARG = "-modelFile";
     private static final String OUTPUT_FILE_ARG = "-outputFile";
     private static final String OUTPUT_FILE_FORMAT_ARG = "-outputFormat";
-    private static final TimeSeriesSymbolValuesReporter.OutputFormat DEFAULT_OUTPUT_FORMAT = TimeSeriesSymbolValuesReporter.OutputFormat.CSV_EXCEL;
+    private static final TimeSeriesOutputFormat DEFAULT_OUTPUT_FORMAT = TimeSeriesOutputFormat.CSV_EXCEL;
+    private static final String PRINT_STATUS_ARG = "-printStatus";
+    private static final String STATUS_SECONDS_ARG = "-statusSeconds";
 
     private boolean mDebug;
     private String mParserAlias;
     private File mModelFile;
     private ClassRegistry mModelBuilderRegistry;
     private ClassRegistry mSimulatorRegistry;
+
+    private boolean mPrintStatus;
+    private Double mPrintStatusSeconds;
 
     private ISimulator mSimulator;
     private SimulatorParameters mSimulatorParameters;
@@ -61,7 +66,8 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     private Double mAbsoluteTolerance;
     private Long mMinTimeSteps;
     private PrintWriter mOutputFilePrintWriter;
-    private TimeSeriesSymbolValuesReporter.OutputFormat mOutputFileFormat;
+    private TimeSeriesOutputFormat mOutputFileFormat;
+    private SimulationProgressReporter mSimulationProgressReporter;
 
     private long mMinNumPoints;
 
@@ -90,7 +96,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     {
         setDebug(false);
         setParserAlias(null);
-        ClassRegistry modelBuilderRegistry = new ClassRegistry(org.systemsbiology.chem.scripting.IModelBuilder.class);
+        ClassRegistry modelBuilderRegistry = new ClassRegistry(org.systemsbiology.chem.IModelBuilder.class);
         modelBuilderRegistry.buildRegistry();
         setModelBuilderRegistry(modelBuilderRegistry);
         ClassRegistry simulatorRegistry = new ClassRegistry(org.systemsbiology.chem.ISimulator.class);
@@ -134,10 +140,10 @@ public class SimulationLauncherCommandLine extends CommandLineApp
         return(sb.toString());
     }
 
-    protected String getOutputFormatAliasesList()
+    protected String getTimeSeriesOutputFormatAliasesList()
     {
         StringBuffer sb = new StringBuffer();
-        String []formatAliasesArray = TimeSeriesSymbolValuesReporter.OutputFormat.getSortedFileFormatNames();
+        String []formatAliasesArray = TimeSeriesOutputFormat.getSortedFileFormatNames();
         int numAliases = formatAliasesArray.length;
         for(int i = 0; i < numAliases; ++i)
         {
@@ -166,9 +172,9 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     protected void printUsage(OutputStream pOutputStream)
     {
         PrintWriter pw = new PrintWriter(pOutputStream);
-        pw.println("usage:    java " + getClass().getName() + " [-debug] [-parser <parserAlias>] [-startTime <startTime_float>] -stopTime <stopTime_float> [-numSamples <numSamples_int>] [-ensembleSize <ensembleSize_long>] [-relativeTolerance <tolerance_float>] [-absoluteTolerance <tolerance_float>] [-minTimeSteps <steps_long>] -simulator <simulatorAlias> -modelFile <modelFile> [-outputFile <outputFile>] [-outputFormat <formatAlias>]");
+        pw.println("usage:    java " + getClass().getName() + " [-debug] [-parser <parserAlias>] [-startTime <startTime_float>] -stopTime <stopTime_float> [-numSamples <numSamples_int>] [-ensembleSize <ensembleSize_long>] [-relativeTolerance <tolerance_float>] [-absoluteTolerance <tolerance_float>] [-minTimeSteps <steps_long>] -simulator <simulatorAlias> -modelFile <modelFile> [-outputFile <outputFile>] [-outputFormat <formatAlias>] [-printStatus [-statusSeconds <intervalSeconds>]]");
         pw.println("  <parserAlias>:   the alias of the class implementing the interface ");
-        pw.println("                   org.systemsbiology.chem.scripting.IModelBuilder (default is determined");
+        pw.println("                   org.systemsbiology.chem.IModelBuilder (default is determined");
         pw.println("                   by file extension");
         pw.println("  <modelFile>:     the full filename of the model definition file to be loaded");
         pw.println("\nThe list of allowed values for the \"-parser\" argument is:    ");
@@ -177,7 +183,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
         pw.println("The list of allowed values for the \"-simulator\" argument is:");
         pw.print(getSimulatorAliasesList());
         pw.println("\nThe list of allowed values for the \"-outputFormat\" argument is: ");
-        pw.print(getOutputFormatAliasesList());
+        pw.print(getTimeSeriesOutputFormatAliasesList());
         pw.println("(the default is: " + DEFAULT_OUTPUT_FORMAT.toString() + ")");
         pw.println("\nArguments can be in any order.");
         pw.println("If the argument \"-outputFile\" is not specified, the");
@@ -225,7 +231,9 @@ public class SimulationLauncherCommandLine extends CommandLineApp
         mNumSamples = new Integer(DEFAULT_NUM_SAMPLES);
         mModelFile = null;
         mOutputFilePrintWriter = null;
+        mPrintStatus = false;
         mOutputFileFormat = DEFAULT_OUTPUT_FORMAT;
+        mPrintStatusSeconds = null;
 
         for(int argCtr = 0; argCtr < numArgs; ++argCtr)
         {
@@ -299,6 +307,14 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                     handleCommandLineError("model definition file does not exist: " + mModelFile.getAbsolutePath());
                 }
             }
+            else if(arg.equals(PRINT_STATUS_ARG))
+            {
+                mPrintStatus = true;
+            }
+            else if(arg.equals(STATUS_SECONDS_ARG))
+            {
+                mPrintStatusSeconds = getRequiredDoubleArgumentModifier(STATUS_SECONDS_ARG, pArgs, ++argCtr);
+            }
             else if(arg.equals(OUTPUT_FILE_ARG))
             {
                 String outputFileName = getRequiredArgumentModifier(OUTPUT_FILE_ARG, pArgs, ++argCtr);
@@ -316,7 +332,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             else if(arg.equals(OUTPUT_FILE_FORMAT_ARG))
             {
                 String outputFormatAlias = getRequiredArgumentModifier(OUTPUT_FILE_FORMAT_ARG, pArgs, ++argCtr);
-                TimeSeriesSymbolValuesReporter.OutputFormat outputFormat = TimeSeriesSymbolValuesReporter.OutputFormat.get(outputFormatAlias);
+                TimeSeriesOutputFormat outputFormat = TimeSeriesOutputFormat.get(outputFormatAlias);
                 if(null == outputFormat)
                 {
                     handleCommandLineError("invalid output format alias: " + outputFormatAlias);
@@ -364,6 +380,11 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             mOutputFilePrintWriter = new PrintWriter(System.out);
         }
 
+        if(null != mPrintStatusSeconds && ! mPrintStatus)
+        {
+            handleCommandLineError("the option \"statusSeconds\" requires the option \"printStatus\"");
+        }
+
         if(null == getParserAlias())
         {
             try
@@ -379,7 +400,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
 
         if(getDebug())
         {
-            System.out.println("using parser alias: " + getParserAlias());
+            System.err.println("using parser alias: " + getParserAlias());
         }
 
     }
@@ -396,7 +417,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
 
             if(getDebug())
             {
-                System.out.println("building script...\n");
+                System.err.println("building script...\n");
             }
             IModelBuilder modelBuilder = (IModelBuilder) modelBuilderRegistry.getInstance(parserAlias);
             FileReader fileReader = new FileReader(mModelFile);
@@ -407,9 +428,9 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             Model model = modelBuilder.buildModel(bufferedReader, includeHandler);
             if(getDebug())
             {
-                System.out.println("script build process complete; model is: \n");
-                System.out.print(model.toString());
-                System.out.println("\n\nrunning simulation...\n");
+                System.err.println("script build process complete; model is: \n");
+                System.err.print(model.toString());
+                System.err.println("\n\nrunning simulation...\n");
             }
 
             String []symbolArray = model.getOrderedNonConstantSymbolNamesArray();
@@ -429,18 +450,45 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             double []resultsTimeValues = new double[numSamples];
             Object []resultsSymbolValues = new Object[numSamples];
 
-            SimulationController simControl = null;
-            mSimulator.initialize(model, simControl);
+            ISimulator simulator = mSimulator;
+
+            if(mPrintStatus)
+            {
+                SimulationProgressReporter reporter = new SimulationProgressReporter();
+                if(null != mPrintStatusSeconds)
+                {
+                    simulator.setStatusUpdateIntervalSeconds(mPrintStatusSeconds.doubleValue());
+                }
+                simulator.setProgressReporter(reporter);
+                mSimulationProgressReporter = reporter;
+                SimulationProgressReportHandler progressReportHandler = new SimulationProgressReportHandler(new PrintWriter(System.err));
+                Thread progressReporterThread = new Thread(progressReportHandler);
+                progressReporterThread.setDaemon(true);
+                progressReporterThread.start();
+            
+            }
+            else
+            {
+                mSimulationProgressReporter = null;
+            }
+                
+
+            simulator.initialize(model);
 
             long currentTimeStart = System.currentTimeMillis();
 
-            mSimulator.simulate(mStartTime.doubleValue(),
+            simulator.simulate(mStartTime.doubleValue(),
                                 mStopTime.doubleValue(),
                                 mSimulatorParameters,
                                 numSamples,
                                 globalSymbolsArray,
                                 resultsTimeValues,
                                 resultsSymbolValues);
+
+            if(mPrintStatus)
+            {
+                mSimulationProgressReporter.setSimulationFinished(true);
+            }
 
             long currentTimeEnd = System.currentTimeMillis();
 
@@ -454,8 +502,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
 
             if(getDebug())
             {
-                System.out.println("elapsed time to carry out the simulation: " + elapsedTimeSeconds + " seconds");
-                System.out.println("total number of iterations: " + mSimulator.getIterationCounter() + "\n");
+                System.err.println("elapsed time to carry out the simulation: " + elapsedTimeSeconds + " seconds");
             }
 
             mOutputFilePrintWriter.flush();
@@ -487,6 +534,38 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                 System.err.println("\nto see a stack backtrace of the exception, simply re-run this program with the \"" + DEBUG_ARG + "\" argument before the required arguments");
             }
             System.exit(1);
+        }
+    }
+
+    class SimulationProgressReportHandler implements Runnable
+    {
+        private PrintWriter mOutputWriter;
+        private final DateFormat mDateFormat = DateFormat.getDateTimeInstance();
+
+        public SimulationProgressReportHandler(PrintWriter pOutputWriter)
+        {
+            mOutputWriter = pOutputWriter;
+        }
+
+        public void run()
+        {
+            SimulationProgressReporter reporter = mSimulationProgressReporter;
+            while(! reporter.getSimulationFinished())
+            {
+                synchronized(reporter)
+                {
+                    reporter.waitForUpdate();
+                    if(! reporter.getSimulationFinished())
+                    {
+                        PrintWriter outputWriter = mOutputWriter;
+                        Date dateTimeOfUpdate = new Date(reporter.getTimeOfLastUpdateMillis());
+                        outputWriter.println("at: " + mDateFormat.format(dateTimeOfUpdate));
+                        outputWriter.println("fraction complete: " + reporter.getFractionComplete());
+                        outputWriter.println("iterations completed: " + reporter.getIterationCounter());
+                        outputWriter.flush();
+                    }
+                }
+            }
         }
     }
 
