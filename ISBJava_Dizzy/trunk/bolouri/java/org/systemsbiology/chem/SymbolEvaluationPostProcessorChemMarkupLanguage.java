@@ -15,8 +15,10 @@ import java.util.*;
 public final class SymbolEvaluationPostProcessorChemMarkupLanguage extends SymbolEvaluationPostProcessor
 {
     private static final int NULL_ARRAY_INDEX = Symbol.NULL_ARRAY_INDEX;
-
+    
     private final HashMap mSpeciesCompartmentMap;        // maps species names to compartment names; provided by user
+    private final HashSet mReactionSet;
+    private double mConvertSubstanceToMolecules;
     private Symbol []mDynamicalSpeciesCompartmentSymbolsMap;
     private Symbol []mNonDynamicalSpeciesCompartmentSymbolsMap;
     private boolean []mDynamicalSpeciesCompartmentSymbolsInitialized;
@@ -24,9 +26,11 @@ public final class SymbolEvaluationPostProcessorChemMarkupLanguage extends Symbo
     private double []mGlobalSymbolsDoubleArray;
     private Value []mGlobalSymbolsValuesArray;
 
-    public SymbolEvaluationPostProcessorChemMarkupLanguage(HashMap pSpeciesCompartmentMap)
+    public SymbolEvaluationPostProcessorChemMarkupLanguage(HashMap pSpeciesCompartmentMap, HashSet pReactionSet, double pConvertSubstanceToMolecules)
     {
+        mConvertSubstanceToMolecules = pConvertSubstanceToMolecules;
         mSpeciesCompartmentMap = pSpeciesCompartmentMap;
+        mReactionSet = pReactionSet;
         mDynamicalSpeciesCompartmentSymbolsMap = null;
         mNonDynamicalSpeciesCompartmentSymbolsMap = null;
         mDynamicalSpeciesCompartmentSymbolsInitialized = null;
@@ -34,6 +38,13 @@ public final class SymbolEvaluationPostProcessorChemMarkupLanguage extends Symbo
         mGlobalSymbolsDoubleArray = null;
         mGlobalSymbolsValuesArray = null;
     }
+
+    public Object clone()
+    {
+        SymbolEvaluationPostProcessorChemMarkupLanguage processor = new SymbolEvaluationPostProcessorChemMarkupLanguage(mSpeciesCompartmentMap, mReactionSet, mConvertSubstanceToMolecules);
+        return(processor);
+    }
+    
 
     private void initializeDynamicSymbolsArrays(int pNumDynamicSymbols)
     {
@@ -58,11 +69,15 @@ public final class SymbolEvaluationPostProcessorChemMarkupLanguage extends Symbo
         }        
     }
 
-    private Symbol getCompartmentSymbolForSpeciesSymbol(Symbol pSymbol, SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
+    public double getConvertSubstanceToMolecules()
     {
-        String symbolName = pSymbol.getName();
+        return(mConvertSubstanceToMolecules);
+    }
+
+    private Symbol getCompartmentSymbolForSpeciesSymbol(String pSymbolName, SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
+    {
         // get compartment name, if any
-        String compartmentName = (String) mSpeciesCompartmentMap.get(symbolName);
+        String compartmentName = (String) mSpeciesCompartmentMap.get(pSymbolName);
         Symbol compartmentSymbol = null;
         if(null != compartmentName)
         {
@@ -81,14 +96,22 @@ public final class SymbolEvaluationPostProcessorChemMarkupLanguage extends Symbo
     {
         int arrayIndex = pSymbol.getArrayIndex();
         Symbol compartmentSymbol = null;
+        String symbolName = pSymbol.getName();
         if(NULL_ARRAY_INDEX != arrayIndex)
         {
+            if(mReactionSet.contains(symbolName))
+            {
+                // if the symbol is a reaction symbol, its value is in "substance/time", which we need to
+                // convert to "molecules/time".
+                double rate = pSymbolValue * mConvertSubstanceToMolecules;
+                return(rate);
+            }
             double []doubleArray = pSymbol.getDoubleArray();
             if(null != doubleArray)
             {
                 if(null == mDynamicalSpeciesCompartmentSymbolsInitialized)
                 {
-                    if(null != ((SymbolEvaluatorChem) pSymbolEvaluator).getSymbolsMap().get(pSymbol.getName()))
+                    if(null != ((SymbolEvaluatorChem) pSymbolEvaluator).getSymbolsMap().get(symbolName))
                     {
                         // it is a global symbol
                         initializeDynamicSymbolsArrays(doubleArray.length);
@@ -110,7 +133,7 @@ public final class SymbolEvaluationPostProcessorChemMarkupLanguage extends Symbo
                 }
                 else
                 {
-                    compartmentSymbol = getCompartmentSymbolForSpeciesSymbol(pSymbol, (SymbolEvaluatorChem) pSymbolEvaluator);
+                    compartmentSymbol = getCompartmentSymbolForSpeciesSymbol(symbolName, (SymbolEvaluatorChem) pSymbolEvaluator);
                     mDynamicalSpeciesCompartmentSymbolsMap[arrayIndex] = compartmentSymbol;
                     mDynamicalSpeciesCompartmentSymbolsInitialized[arrayIndex] = true;
                 }
@@ -123,7 +146,7 @@ public final class SymbolEvaluationPostProcessorChemMarkupLanguage extends Symbo
                     
                     if(null == mNonDynamicalSpeciesCompartmentSymbolsInitialized)
                     {
-                        if(null != ((SymbolEvaluatorChem) pSymbolEvaluator).getSymbolsMap().get(pSymbol.getName()))
+                        if(null != ((SymbolEvaluatorChem) pSymbolEvaluator).getSymbolsMap().get(symbolName))
                         {
                             // it is a global symbol
                             initializeNonDynamicSymbolsArrays(valueArray.length);
@@ -145,21 +168,29 @@ public final class SymbolEvaluationPostProcessorChemMarkupLanguage extends Symbo
                     }
                     else
                     {
-                        compartmentSymbol = getCompartmentSymbolForSpeciesSymbol(pSymbol, (SymbolEvaluatorChem) pSymbolEvaluator);
+                        compartmentSymbol = getCompartmentSymbolForSpeciesSymbol(symbolName, (SymbolEvaluatorChem) pSymbolEvaluator);
                         mNonDynamicalSpeciesCompartmentSymbolsMap[arrayIndex] = compartmentSymbol;
                         mNonDynamicalSpeciesCompartmentSymbolsInitialized[arrayIndex] = true;
                     }
                 }
                 else
                 {
-                    throw new IllegalStateException("both the double array and value array are null, for the indexed symbol \"" + pSymbol.getName() + "\"");
+                    throw new IllegalStateException("both the double array and value array are null, for the indexed symbol \"" + symbolName + "\"");
                 }
             }
         }
+        else
+        {
+            throw new IllegalStateException("unindexed symbol: " + pSymbol.getName());
+        }
         if(null != compartmentSymbol)
         {
-            pSymbolValue /= pSymbolEvaluator.getValue(compartmentSymbol);
+            // the species value is in "molecules", which we need to convert to "substance"
+            pSymbolValue /= (mConvertSubstanceToMolecules * pSymbolEvaluator.getValue(compartmentSymbol));
         }
         return(pSymbolValue);
     }
+
+
+
 }
