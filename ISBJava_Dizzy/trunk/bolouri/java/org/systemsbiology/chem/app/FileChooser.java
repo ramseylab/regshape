@@ -25,6 +25,11 @@ public class FileChooser
         return(mMainFrame);
     }
 
+    void setCurrentDirectory(File pCurrentDirectory)
+    {
+        mFileChooser.setCurrentDirectory(pCurrentDirectory);
+    }
+
     protected JFileChooser getFileChooser()
     {
 

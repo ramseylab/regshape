@@ -39,6 +39,7 @@ public class EditorPane
     private String mFileName;
     private String mParserAlias;
     private boolean mBufferDirty;
+    private File mCurrentDirectory;
 
     private String getParserAlias()
     {
@@ -75,6 +76,16 @@ public class EditorPane
         mBufferDirty = pBufferDirty;
     }
 
+    private void setCurrentDirectory(File pCurrentDirectory)
+    {
+        mCurrentDirectory = pCurrentDirectory;
+    }
+
+    private File getCurrentDirectory()
+    {
+        return(mCurrentDirectory);
+    }
+
     public EditorPane(Container pPane)
     {
         initialize(pPane);
@@ -82,6 +93,7 @@ public class EditorPane
         setFileNameLabel(null);
         setParserAlias(null);
         setBufferDirty(false);
+        setCurrentDirectory(null);
     }
 
     private void handleCancel(String pOperation)
@@ -157,6 +169,11 @@ public class EditorPane
         FileChooser fileChooser = new FileChooser(mMainFrame);
         FileFilter fileFilter = new ChemFileFilter();
         JFileChooser intFileChooser = fileChooser.getFileChooser();
+        File currentDirectory = getCurrentDirectory();
+        if(null != currentDirectory)
+        {
+            fileChooser.setCurrentDirectory(currentDirectory);
+        }
         intFileChooser.setFileFilter(fileFilter);
         fileChooser.setDialogTitle("Please select a file to open");
         fileChooser.show();
@@ -176,6 +193,11 @@ public class EditorPane
                 }
                 else
                 {
+                    File parentFile = file.getParentFile();
+                    if(parentFile.isDirectory())
+                    {
+                        setCurrentDirectory(parentFile);
+                    }
                     loadFileToEditBuffer(fileName);
                 }
             }
