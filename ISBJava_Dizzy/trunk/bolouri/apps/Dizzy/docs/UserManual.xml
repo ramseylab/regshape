@@ -583,11 +583,11 @@ subdirectory of the directory in which you install the &appName; software.
 <b>Note to Windows users:</b> please do not use Notepad to open the
 sample model definition files in the &quot;samples&quot; subdirectory.
 Please use a different editor, such as WordPad or Emacs, in order to 
-ensure that the files appear properly formatted, in the editor.  You
+ensure that the files appear properly formatted, in the editor.  <b>You
 may wish to associate &quot;<code>&ccmdlExtension;</code>&quot; files 
 with the WordPad program, so that you can double-click on a
 &quot;<code>&ccmdlExtension;</code>&quot; file and have it open
-(properly formatted) in WordPad.
+(properly formatted) in WordPad.</b>
 </blockquote>
 In addition, there is a <a href="&webBaseURL;/models">repository of
 biomolecular models</a> maintained by the &mainGroup;, that
@@ -2405,8 +2405,6 @@ over the range of integer values from 1 to 12, inclusive.
 <p>
 The following example illustrates a complete CCMDL model definition file:
 <blockquote>
-<table border="1">
-<tr><td>
 <pre>
 minBases                 = 45;
 codingRegionLengthBases  = 1000.0;
@@ -2478,8 +2476,6 @@ loop "i": start 1, stop [minBases]
         PCOM_plus_DNA_at_base_$[i]    = 0;
 }
 </pre>
-</td></tr>
-</table>
 </blockquote>
 This model definition file defines a very simple model of transcription.
 The model contains two transcription factors, <code>TFA</code> and 
@@ -3219,8 +3215,6 @@ which adds parameter <code>r1</code> to model <code>m1</code>.
 <isb:docsubsection name="Example CMDL model definition file" label="cmdl-samplefile">
 The following is a sample model definition file in the CMDL language.
 <blockquote>
-<table border="1">
-<tr><td>
 <pre>
 compartment "univ": volume 1.0;
 species "DNA3": compartment "univ", speciesType floating;
@@ -3287,8 +3281,6 @@ speciesPopulations "sp": populations (1.0 1.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.
                                       "G4_RNA" "G4_protein" "G80D_G4D_DNA3" "G80D_G4D_DNA4" 
                                       "G80D_G4D_DNA80" "G80D_free" "G80_RNA" "G80_protein" "galactose");
 </pre>
-</td></tr>
-</table>
 </blockquote>
 </isb:docsubsection>
 
