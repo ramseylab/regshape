@@ -21,42 +21,73 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import javax.swing.*;
+import java.text.*;
 
 public class Plotter 
 {
     private Component mMainFrame;
+    private static final int DEFAULT_WIDTH_PIXELS = 500;
+    private static final int DEFAULT_HEIGHT_PIXELS = 400;
+    public static final int MAX_NUM_SPECIES_TO_PLOT = 20;
 
-    public Plotter(Component pMainFrame)
+    class Plot extends JFrame
     {
-        mMainFrame = pMainFrame;
-    }
+        String mSimulatorAlias;
+        String mModelName;
+        Date mSimulationDate;
+        int mHeightPixels;
+        int mWidthPixels;
+        JLabel mPlotLabel;
+        JFreeChart mChart;
 
-    private void readDataLine(Vector pSeriesVec, String pLine) throws NumberFormatException
-    {
-        StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
-        boolean firstToken = true;
-        int ctr = 0;
-        Double timeValue = null;
-        while(tokenizer.hasMoreTokens())
+        public Plot(String pData, String pSimulatorAlias, String pModelName) throws IOException
         {
-            String token = tokenizer.nextToken();
-            Double value = new Double(token);
-            if(firstToken)
+            super("simulation results");
+            mSimulatorAlias = pSimulatorAlias;
+            mModelName = pModelName;
+            mSimulationDate = new Date(System.currentTimeMillis());
+            mHeightPixels = DEFAULT_HEIGHT_PIXELS;
+            mWidthPixels = DEFAULT_WIDTH_PIXELS;
+
+            JPanel plotPanel = new JPanel();
+            JLabel plotLabel = new JLabel();
+            plotPanel.add(plotLabel);
+            mPlotLabel = plotLabel;
+
+            addComponentListener(new ComponentAdapter()
             {
-                timeValue = value;
-                firstToken = false;
-            }
-            else
-            {
-                XYSeries series = (XYSeries) pSeriesVec.elementAt(ctr);
-                series.add(timeValue, value);
-                ctr++;
-            }
+                public void componentResized(ComponentEvent e) 
+                {
+                    mHeightPixels = getHeight();
+                    mWidthPixels = getWidth();
+                    try
+                    {
+                        updatePlotImage();
+                    }
+                    catch(IOException e2)
+                    {
+                        e2.printStackTrace(System.err); // :BUGBUG: what to do here?
+                    }
+                }
+
+            });
+
+            mChart = generateChart(pData, this);
+            updatePlotImage();
+            
+            getContentPane().add(plotPanel);
+            pack();
+        }
+        
+        void updatePlotImage() throws IOException
+        {
+            BufferedImage plotImage = mChart.createBufferedImage(mWidthPixels, mHeightPixels);
+            mPlotLabel.setIcon(new ImageIcon(plotImage));
         }
 
     }
 
-    public void plot(String pData) throws IOException, NumberFormatException
+    protected static JFreeChart generateChart(String pData, Plot pPlot) throws IOException
     {
         StringReader stringReader = new StringReader(pData);
         BufferedReader bufferedReader = new BufferedReader(stringReader);
@@ -113,15 +144,51 @@ public class Plotter
         plot.setRenderer(renderer);
         boolean legend = true;
         JFreeChart chart = new JFreeChart("simulation results", JFreeChart.DEFAULT_TITLE_FONT, plot, legend);
-        BufferedImage chartImage = chart.createBufferedImage(500,300);
-        JLabel chartLabel = new JLabel();
-        chartLabel.setIcon(new ImageIcon(chartImage));
-        JFrame chartFrame = new JFrame("simulation plot");
-        JPanel chartPanel = new JPanel();
-        chartPanel.add(chartLabel);
-        chartFrame.getContentPane().add(chartPanel);
-        chartFrame.pack();
-        chartFrame.setVisible(true);
-        
+        StringBuffer subtitleBuffer = new StringBuffer();
+        TextTitle modelNameSubtitle = new TextTitle("model name: " + pPlot.mModelName);
+        chart.addSubtitle(modelNameSubtitle);
+        TextTitle simulatorAliasSubtitle = new TextTitle("simulator alias: " + pPlot.mSimulatorAlias);
+        chart.addSubtitle(simulatorAliasSubtitle);
+        Date simulationDate = pPlot.mSimulationDate;
+        DateFormat df = DateFormat.getDateTimeInstance();
+        TextTitle simulationDateTimeSubtitle = new TextTitle(df.format(simulationDate));
+        chart.addSubtitle(simulationDateTimeSubtitle);
+        return(chart);
+    }
+
+    public Plotter(Component pMainFrame)
+    {
+        mMainFrame = pMainFrame;
+    }
+
+    private static void readDataLine(Vector pSeriesVec, String pLine) throws NumberFormatException
+    {
+        StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
+        boolean firstToken = true;
+        int ctr = 0;
+        Double timeValue = null;
+        while(tokenizer.hasMoreTokens())
+        {
+            String token = tokenizer.nextToken();
+            Double value = new Double(token);
+            if(firstToken)
+            {
+                timeValue = value;
+                firstToken = false;
+            }
+            else
+            {
+                XYSeries series = (XYSeries) pSeriesVec.elementAt(ctr);
+                series.add(timeValue, value);
+                ctr++;
+            }
+        }
+
+    }
+
+    public void plot(String pData, String pSimulatorAlias, String pModelName) throws IOException, NumberFormatException
+    {
+        Plot plot = new Plot(pData, pSimulatorAlias, pModelName);
+        plot.setVisible(true);
     }
 }

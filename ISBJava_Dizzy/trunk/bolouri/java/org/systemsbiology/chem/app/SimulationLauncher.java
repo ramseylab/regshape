@@ -78,16 +78,18 @@ public class SimulationLauncher
         createLauncher(frame, pAppName, pModel, pExitOnClose);
     }
 
-    public SimulationLauncher(String pAppName,
-                              Model pModel,
-                              JDesktopPane pContainingPane,
-                              MainApp pApp) throws ClassNotFoundException, IOException
-    {
-        setMainApp(pApp);
-        JInternalFrame internalFrame = new JInternalFrame();
-        pContainingPane.add(internalFrame);
-        createLauncher(internalFrame, pAppName, pModel, false);
-    }
+// ---------------------- reserved for future applications ------------------------
+//     public SimulationLauncher(String pAppName,
+//                               Model pModel,
+//                               JDesktopPane pContainingPane,
+//                               MainApp pApp) throws ClassNotFoundException, IOException
+//     {
+//         setMainApp(pApp);
+//         JInternalFrame internalFrame = new JInternalFrame();
+//         pContainingPane.add(internalFrame);
+//         createLauncher(internalFrame, pAppName, pModel, false);
+//     }
+// ---------------------- reserved for future applications ------------------------
 
     void setMainApp(MainApp pMainApp)
     {
@@ -270,7 +272,10 @@ public class SimulationLauncher
         else if(pOutputType.equals(OutputType.PLOT))
         {
             Plotter plotter = new Plotter(mMainFrame);
-            plotter.plot(outputBuffer.toString());
+
+            String modelName = mModel.getName();
+            String simulatorAlias = mSimulationRunParameters.mSimulatorAlias;
+            plotter.plot(outputBuffer.toString(), simulatorAlias, modelName);
         }
         else
         {
@@ -324,6 +329,7 @@ public class SimulationLauncher
     class SimulationRunParameters
     {
         ISimulator mSimulator;
+        String mSimulatorAlias;
         double mStartTime;
         double mEndTime;
         SimulatorParameters mSimulatorParameters;
@@ -852,6 +858,7 @@ public class SimulationLauncher
         }
 
         srp.mSimulator = simulator;
+        srp.mSimulatorAlias = simulatorAlias;
 
         String ensembleStr = mEnsembleField.getText();
         
@@ -945,6 +952,7 @@ public class SimulationLauncher
             return(retVal);
         }
         int numSpecies = speciesSelected.length;
+
         String []speciesSelectedNames = new String[numSpecies];
         for(int ctr = 0; ctr < numSpecies; ctr++)
         {
@@ -962,9 +970,17 @@ public class SimulationLauncher
         String outputTypeStr = mOutputType;
         OutputType outputType = OutputType.get(outputTypeStr);
         assert (null != outputType) : "null output type";
-            
+
+        if(outputType.equals(OutputType.PLOT))
+        {
+            if(numSpecies > Plotter.MAX_NUM_SPECIES_TO_PLOT)
+            {
+                handleBadInput("too many species to plot", "maximum number of species that can be plotted simultaneously is: " + Plotter.MAX_NUM_SPECIES_TO_PLOT);
+            }
+        }
+
         srp.mOutputType = outputType;
-        if(srp.mOutputType.equals(OutputType.FILE))
+        if(mOutputType.equals(OutputType.FILE))
         {
             String fileName = mFileNameField.getText();
             if(null == fileName || fileName.trim().length() == 0)
