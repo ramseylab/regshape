@@ -17,6 +17,21 @@ import java.io.File;
  */
 public class FileUtils
 {
+    public static String addSuffixToFilename(String pFileName, String pSuffix)
+    {
+        int lastIndex = pFileName.lastIndexOf('.');
+        String retVal = null;
+        if(-1 != lastIndex)
+        {
+            retVal = pFileName.substring(0, lastIndex) + pSuffix;
+        }
+        else
+        {
+            retVal = pFileName + pSuffix;
+        }
+        return retVal;
+    }
+    
     public static String getExtension(String pFileName)
     {
         int lastIndex = pFileName.lastIndexOf('.');
