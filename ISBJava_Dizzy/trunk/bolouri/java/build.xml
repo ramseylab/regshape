@@ -114,7 +114,7 @@
   <target name="buildInstallers">
     <mkdir dir="${app.buildDir}/&appName;" />
     <mkdir dir="${app.buildDir}/&appName;/src" />
-    <copy todir="${app.buildDir}/src/&appName;">
+    <copy todir="${app.buildDir}/&appName;/src">
       <fileset dir="${basedir}">
         <include name="org/**/*.java" />
       </fileset>
