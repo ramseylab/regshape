@@ -1084,13 +1084,13 @@ Press "Done" to quit the installer.]]></string>
 			<property name="installerInfoData">
 				<object class="com.zerog.ia.installer.util.InstallerInfoData" objectID="ee39ca178442">
 					<property name="installerTitle">
-						<string><![CDATA[@APP_NAME@ v@VERSION@]]></string>
+						<string><![CDATA[@APP_NAME@ v@APP_VERSION@]]></string>
 					</property>
 					<property name="installerName">
 						<string><![CDATA[insPoint]]></string>
 					</property>
 					<property name="productName">
-						<string><![CDATA[@APP_NAME@]]></string>
+						<string><![CDATA[@APP_NAME@ v@APP_VERSION@]]></string>
 					</property>
 					<property name="productID">
 						<object class="com.zerog.registry.UUID">

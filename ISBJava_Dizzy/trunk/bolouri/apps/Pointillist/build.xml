@@ -36,7 +36,7 @@
   <property name="app.resourcesFile"            location="${app.buildDir}/AppResources.jar" />
 
   <target name="setFilters">
-    <filter token="VERSION" value="&appVersion;" />
+    <filter token="APP_VERSION" value="&appVersion;" />
     <filter token="APP_VERSION_MAJOR" value="&appVersionMajor;" />
     <filter token="APP_VERSION_MINOR" value="&appVersionMinor;" />
     <filter token="APP_VERSION_PATCH" value="&appVersionPatch;" />

@@ -37,16 +37,17 @@
   <property name="app.resourcesFile"            location="${app.buildDir}/AppResources.jar" />
 
   <target name="setFilters">
-    <filter token="VERSION" value="&appVersion;" />
-    <filter token="APPVERSIONMAJOR" value="&appVersionMajor;" />
-    <filter token="APPVERSIONMINOR" value="&appVersionMinor;" />
-    <filter token="APPVERSIONPATCH" value="&appVersionPatch;" />
-    <filter token="PROJROOT" value="${globalRoot}" />
-    <filter token="APPNAME" value="${ant.project.name}" />
-    <filter token="APPJAVAMAXHEAPSIZEBYTES" value="&appJavaMaxHeapSizeBytes;" />
-  	<filter token="WEBBASEURL" value="&webBaseURL;" />
-  	<filter token="MAINPUBLICURL" value="&mainPublicURL;" />
-  	<filter token="MAINGROUPEMAIL" value="&mainGroupEmail;" />
+    <filter token="APP_VERSION" value="&appVersion;" />
+    <filter token="APP_VERSION_MAJOR" value="&appVersionMajor;" />
+    <filter token="APP_VERSION_MINOR" value="&appVersionMinor;" />
+    <filter token="APP_VERSION_PATCH" value="&appVersionPatch;" />
+    <filter token="GLOBAL_ROOT" value="${globalRoot}" />
+    <filter token="APP_NAME" value="${ant.project.name}" />
+    <filter token="APP_JAVA_MAX_HEAP_SIZE_BYTES" value="&appJavaMaxHeapSizeBytes;" />
+  	<filter token="WEB_BASE_URL" value="&webBaseURL;" />
+  	<filter token="MAIN_PUBLIC_URL" value="&mainPublicURL;" />
+  	<filter token="MAIN_GROUP_EMAIL" value="&mainGroupEmail;" />
+  	<filter token="MAIN_AFFILIATION" value="&mainAffiliation;" />
   </target>
 
   <target name="compile">

@@ -209,10 +209,10 @@ and any path to a file to save to the file]]></string>
 								<string><![CDATA[appLogoIcon.gif]]></string>
 							</property>
 							<property name="smallIconPath">
-								<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/images/]]></string>
 							</property>
 							<property name="largeIconPath">
-								<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/images/]]></string>
 							</property>
 						</object>
 					</property>
@@ -235,7 +235,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -266,7 +266,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@PROJROOT@/java/build]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/java/build]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -297,7 +297,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -328,7 +328,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -359,7 +359,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -390,7 +390,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -421,7 +421,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@PROJROOT@/build/web/@APPNAME@/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/build/web/@APP_NAME@/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -452,7 +452,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -483,7 +483,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -514,7 +514,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -545,7 +545,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -570,7 +570,7 @@ and any path to a file to save to the file]]></string>
 				<string><![CDATA[The installer cannot run on your configuration. It will now quit.]]></string>
 			</property>
 			<property name="userSplashPath">
-				<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
+				<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/images/]]></string>
 			</property>
 			<property name="userSplashName">
 				<string><![CDATA[appLogo.png]]></string>
@@ -728,7 +728,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<string><![CDATA[Installation and Use of $PRODUCT_NAME$ Requires Acceptance of the Following Open Source License Agreement:]]></string>
 							</property>
 							<property name="resourcePath">
-								<string><![CDATA[@PROJROOT@/build/web/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/build/web/]]></string>
 							</property>
 							<property name="resourceName">
 								<string><![CDATA[License.html]]></string>
@@ -886,7 +886,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<string><![CDATA[$JAVA_MAX_HEAP_SIZE_BYTES$]]></string>
 							</property>
 							<property name="value">
-								<string><![CDATA[@APPJAVAMAXHEAPSIZEBYTES@]]></string>
+								<string><![CDATA[@APP_JAVA_MAX_HEAP_SIZE_BYTES@]]></string>
 							</property>
 						</object>
 					</method>
@@ -912,7 +912,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<string><![CDATA[Please read the following release notes]]></string>
 							</property>
 							<property name="resourcePath">
-								<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/html/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/build/html/]]></string>
 							</property>
 							<property name="resourceName">
 								<string><![CDATA[ReadMe.html]]></string>
@@ -1064,16 +1064,16 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<object refID="4a0b0db39aea"/>
 					</property>
 					<property name="solarisMagicFolderPath">
-						<string><![CDATA[@APPNAME@]]></string>
+						<string><![CDATA[@APP_NAME@]]></string>
 					</property>
 					<property name="macMagicFolderPath">
-						<string><![CDATA[@APPNAME@]]></string>
+						<string><![CDATA[@APP_NAME@]]></string>
 					</property>
 					<property name="macXMagicFolderPath">
-						<string><![CDATA[@APPNAME@]]></string>
+						<string><![CDATA[@APP_NAME@]]></string>
 					</property>
 					<property name="win32MagicFolderPath">
-						<string><![CDATA[@APPNAME@]]></string>
+						<string><![CDATA[@APP_NAME@]]></string>
 					</property>
 				</object>
 			</property>
@@ -1101,7 +1101,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<string><![CDATA[]]></string>
 					</property>
 					<property name="win32MagicFolderPath">
-						<string><![CDATA[@APPNAME@]]></string>
+						<string><![CDATA[@APP_NAME@]]></string>
 					</property>
 				</object>
 			</property>
@@ -1173,7 +1173,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.stderr.redirect]]></string>
-						<string><![CDATA[ins@APPNAME@.log]]></string>
+						<string><![CDATA[ins@APP_NAME@.log]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.heap.size.initial]]></string>
@@ -1257,7 +1257,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.stdout.redirect]]></string>
-						<string><![CDATA[ins@APPNAME@.log]]></string>
+						<string><![CDATA[ins@APP_NAME@.log]]></string>
 					</method>
 				</object>
 			</property>
@@ -1358,7 +1358,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					<method name="addElement">
 						<object class="com.zerog.ia.installer.Project" objectID="4a0be7a49af5">
 							<property name="name">
-								<string><![CDATA[@APPNAME@]]></string>
+								<string><![CDATA[@APP_NAME@]]></string>
 							</property>
 							<property name="projectLocation">
 								<string><![CDATA[Same as current product]]></string>
@@ -1379,13 +1379,13 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 			<property name="installerInfoData">
 				<object class="com.zerog.ia.installer.util.InstallerInfoData" objectID="4a0be7189aea">
 					<property name="installerTitle">
-						<string><![CDATA[@APPNAME@ v@VERSION@]]></string>
+						<string><![CDATA[@APP_NAME@ v@APP_VERSION@]]></string>
 					</property>
 					<property name="installerName">
-						<string><![CDATA[ins@APPNAME@]]></string>
+						<string><![CDATA[ins@APP_NAME@]]></string>
 					</property>
 					<property name="productName">
-						<string><![CDATA[@APPNAME@ v@VERSION@]]></string>
+						<string><![CDATA[@APP_NAME@ v@APP_VERSION@]]></string>
 					</property>
 					<property name="productID">
 						<object class="com.zerog.registry.UUID">
@@ -1395,28 +1395,28 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						</object>
 					</property>
 					<property name="productURL">
-						<string><![CDATA[@WEBBASEURL@/@APPNAME@]]></string>
+						<string><![CDATA[@WEB_BASE_URL@/@APP_NAME@]]></string>
 					</property>
 					<property name="productDescription">
-						<string><![CDATA[@APPNAME@:  a chemical kinetics stochastic simulation system]]></string>
+						<string><![CDATA[@APP_NAME@:  a chemical kinetics stochastic simulation system]]></string>
 					</property>
 					<property name="productVersionMajor">
-						<int>@APPVERSIONMAJOR@</int>
+						<int>@APP_VERSION_MAJOR@</int>
 					</property>
 					<property name="productVersionMinor">
-						<int>@APPVERSIONMINOR@</int>
+						<int>@APP_VERSION_MINOR@</int>
 					</property>
 					<property name="productVersionRevision">
-						<int>@APPVERSIONPATCH@</int>
+						<int>@APP_VERSION_PATCH@</int>
 					</property>
 					<property name="productVersionSubRevision">
 						<int>0</int>
 					</property>
 					<property name="supportURL">
-						<string><![CDATA[@WEBBASEURL@/@APPNAME@]]></string>
+						<string><![CDATA[@WEB_BASE_URL@/@APP_NAME@]]></string>
 					</property>
 					<property name="vendorName">
-						<string><![CDATA[Institute for Systems Biology]]></string>
+						<string><![CDATA[@MAIN_AFFILIATION@]]></string>
 					</property>
 					<property name="vendorID">
 						<object class="com.zerog.registry.UUID">
@@ -1426,10 +1426,10 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						</object>
 					</property>
 					<property name="vendorURL">
-						<string><![CDATA[@MAINPUBLICURL@]]></string>
+						<string><![CDATA[@MAIN_PUBLIC_URL@]]></string>
 					</property>
 					<property name="email">
-						<string><![CDATA[@MAINGROUPEMAIL@]]></string>
+						<string><![CDATA[@MAIN_GROUP_EMAIL@]]></string>
 					</property>
 					<property name="copyright">
 						<string><![CDATA[2005]]></string>
@@ -1804,7 +1804,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[Uninstall @APPNAME@]]></string>
+												<string><![CDATA[Uninstall @APP_NAME@]]></string>
 											</property>
 											<property name="neverRestarts">
 												<boolean>false</boolean>
@@ -2038,7 +2038,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[@APPNAME@]]></string>
+												<string><![CDATA[@APP_NAME@]]></string>
 											</property>
 											<property name="executableIcon">
 												<object class="com.zerog.ia.installer.util.BindingWin32" objectID="d56935849381">
@@ -2049,10 +2049,10 @@ and any path to a file to read from that file]]></string>
 														<string><![CDATA[appLogoIcon.gif]]></string>
 													</property>
 													<property name="smallIconPath">
-														<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
+														<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/images/]]></string>
 													</property>
 													<property name="largeIconPath">
-														<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
+														<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/images/]]></string>
 													</property>
 												</object>
 											</property>
@@ -2108,7 +2108,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/samples/]]></string>
+												<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/build/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2139,7 +2139,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/samples/]]></string>
+												<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/build/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2168,7 +2168,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/samples/]]></string>
+												<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/build/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2197,7 +2197,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/samples/]]></string>
+												<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/build/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2256,7 +2256,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/html/]]></string>
+												<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/build/html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2285,7 +2285,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/java/build/]]></string>
+												<string><![CDATA[@GLOBAL_ROOT@/java/build/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2314,7 +2314,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/config/]]></string>
+												<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/build/config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2369,7 +2369,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/../../build/web/]]></string>
+												<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/../../build/web/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2398,7 +2398,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/html/]]></string>
+												<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/build/html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2453,7 +2453,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/build/web/@APPNAME@/docs/]]></string>
+												<string><![CDATA[@GLOBAL_ROOT@/build/web/@APP_NAME@/docs/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2709,10 +2709,10 @@ and any path to a file to save to the file]]></string>
 														<string><![CDATA[appLogoIcon.gif]]></string>
 													</property>
 													<property name="smallIconPath">
-														<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
+														<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/images/]]></string>
 													</property>
 													<property name="largeIconPath">
-														<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
+														<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/images/]]></string>
 													</property>
 												</object>
 											</property>
@@ -2731,7 +2731,7 @@ and any path to a file to save to the file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/bin/]]></string>
+												<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/build/bin/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2980,10 +2980,10 @@ and any path to a file to save to the file]]></string>
 														<string><![CDATA[appLogoIcon.gif]]></string>
 													</property>
 													<property name="smallIconPath">
-														<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
+														<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/images/]]></string>
 													</property>
 													<property name="largeIconPath">
-														<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
+														<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/images/]]></string>
 													</property>
 												</object>
 											</property>
