@@ -196,8 +196,7 @@ public class MainApp
         else
         {
             File appDirFile = new File(pAppDir);
-            if(! appDirFile.exists() ||
-               ! appDirFile.isDirectory())
+            if(! appDirFile.exists())
             {
                 throw new DataNotFoundException("could not find application directory: " + pAppDir);
             }
@@ -239,6 +238,22 @@ public class MainApp
         frame.setVisible(true);
     }
 
+    private static String handleWindowsArgumentMangling(String pAppDir)
+    {
+        String retString = pAppDir;
+        if(retString.endsWith("\""))
+        {
+            retString = retString.substring(0, retString.length() - 1);
+            if(! retString.endsWith(File.separator) &&
+               ! retString.endsWith("\\") &&
+               ! retString.endsWith("/"))
+            {
+                retString += File.separator;
+            }
+        }
+        return(retString);
+    }
+
     public MainApp(String []pArgs) throws IllegalStateException, ClassNotFoundException, IOException, DataNotFoundException, InvalidInputException
     {
         if(null != mApp)
@@ -250,8 +265,8 @@ public class MainApp
         String appDir = null;
         if(pArgs.length > 0)
         {
-            // argument is the main application directory
             appDir = pArgs[0];
+            appDir = handleWindowsArgumentMangling(appDir);
         }
 
         initializeAppConfig(appDir);
