@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This document is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>&appName; Version History</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
+<isb:docdate>$Date$</isb:docdate>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+
+<p>
+This document contains the version history for the
+<a href="../">&appName;</a> software product.
+</p>
+
+<p>
+<table border="1">
+<tr valign="top">
+<td>Version</td>
+<td>Date</td>
+<td>Comments</td>
+<td>Built with 
+<a href="&webBaseURL;/&localJavaLibraryName;">&localJavaLibraryName;</a> version number:</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.5</td>
+<td>2003/10/20</td>
+<td>Fixed a bug in the Gibson-Bruck simulator, for the case of a boundary
+reactant species.  Fixed a bug in the command-language parser, it can
+now accept tabs as valid whitespace in the model definition file.  The
+SBML import feature can now process model definition files that conform to the
+SBML Level 1, Version 2 specification.  Fixed a bug in which &appName; would
+fail to start, in the case where &appName; was installed in the top-level
+directory of a Windows (or DOS) drive.</td>
+<td>0.0.5</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.4</td>
+<td>2003/08/28</td>
+<td>Modified the Cytoscape bridge to use JNLP, so Cytoscape does not have to be bundled with Dizzy</td>
+<td>0.0.4</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.3</td>
+<td>2003/08/26</td>
+<td>Added the ability to simulate a multistep chemical reaction as a single composite reaction</td>
+<td>0.0.3</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.2</td>
+<td>2003/08/06</td>
+<td>Added the ability to display a model in a <a href="&cytoscapeURL;">Cytoscape</a> window.</td>
+<td>0.0.2</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.1</td>
+<td>2003/08/04</td>
+<td>First version of the program.  It is an alpha version,
+intended only for internal use at &mainAffiliation;.</td>
+<td>0.0.1</td>
+</tr>
+
+</table>
+</p>
+
+</isb:document>
