@@ -7,7 +7,8 @@ directory:
   apps:   Contains all of the applications in this
           source tree.  Generally does not contain
           any Java source code, just application build
-          and config files, and other resources.  
+          and config files, and other resources.   Broken out
+          by project (e.g., apps/Dizzy, apps/Mogul, etc.)
 
           For more information, read the "apps/README.txt" file.
 
@@ -31,8 +32,8 @@ directory:
   build:  Temporary directory created by build system, to hold 
           things like built Jar files, Web content, etc.
 
-  test:   Compile all test code (eventually, compile and run
-          unit tests)
+  tools:  For software tools that aren't really an integrated
+          "application".  Broken out by project (tools/Mogul, etc).
 
 The build system used underneath this directory tree is "Ant"
 (http://ant.apache.org).  Invoking "Ant" is just like invoking
@@ -87,6 +88,9 @@ Supported targets are:
                     installed on your computer.
 
   uploadWeb:      upload the entire web content tree to the web server
+
+  test:           Compile all test code (eventually, compile and run
+                  unit tests)
 
 
 
