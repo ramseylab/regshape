@@ -47,6 +47,19 @@ This document contains the version history for the
     <code>loadFromFile()</code> methods, thus allowing defining a data object based on
     an alternative type of data stream, other than a file.
   </li>
+  <li>Added a new quantile normalization class, <code>org.systemsbiology.inference.QuantileNormalizer</code>.
+    A graphical user interface driver is included, <code>org.systemsbiology.inference.QuantileNormalizerDriver</code>.</li>
+  <li>Added a new data management class, <code>org.systemsbiology.inference.DataManagerDriver</code>,
+      which is essentially a spreadsheet program adapted for
+    manipulating multi-evidence biological systems data.  Data merging, sorting, and (evidence-specific) subselection
+    are supported.</li>
+  <li>Added an enumeration class defining the three allowed states of  
+      graphical user inferface table column sorting status, 
+      <code>org.systemsbiology.gui.SortingStatus</code>.</li>
+  <li>Added a <code>scrubIdentifier()</code> method to the <code>org.systemsbiology.data.DataFileDelimmiter</code>
+    class, which takes a string identifier and converts any instances of the <code>DataFileDelimiter</code> 
+    object's delimiter character (or string) into the "_" (underscore) character.</li>
+  <li>Added a <code>writeToFile()</code> method to the <code>ObservationsData</code> class.</li>
 </ul>
 </td>
 </tr>
