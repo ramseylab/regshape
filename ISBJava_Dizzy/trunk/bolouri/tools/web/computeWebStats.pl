@@ -29,23 +29,25 @@
 sub SCRATCH_DIR() {'/local/var/webalizer'}
 sub DOCUMENT_ROOT() {'/local/apache/htdocs'}
 sub BIN_DIR() {'/local/bin'}
-sub FILE_PREFIX() {'BolouriWebStats'}
+sub LOG_FILE_PREFIX() {'BolouriWebStats'}
 sub USERNAME() {'bolouri_group'}
 sub PASSWORD() {'b2G4cIc'}
 sub FTP_SERVER() {'labs.systemsbiology.net'}
-sub FTP_DIR() {'privateRepository'}
+sub REMOTE_FTP_DIR() {'privateRepository'}
+sub DNS_CACHE_FILE() {'dns_cache.db'}
+sub WEB_STATS_WEB_SUBDIR() {'webstats'}
 
 my $curTime = localtime();
 my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime(time);
 my $week = ($yday + 1)/ 7;
 $year += 1900;
 my $suffix = sprintf("%4d-%2d", $year, $week);
-my $logFilePrefix = SCRATCH_DIR . '/' . FILE_PREFIX;
+my $logFilePrefix = SCRATCH_DIR . '/' . LOG_FILE_PREFIX;
 my $logFile = $logFilePrefix . '-' . $suffix . '.log';
-system(BIN_DIR . "/ncftpget -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " " . SCRATCH_DIR . " " . FTP_DIR . "/" . FILE_PREFIX . ".log") and die("unable to obtain web statistics file");
-my $temp = SCRATCH_DIR . '/' . FILE_PREFIX . '.log ' . $logFile;
+system(BIN_DIR . "/ncftpget -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " " . SCRATCH_DIR . " " . REMOTE_FTP_DIR . "/" . LOG_FILE_PREFIX . ".log") and die("unable to obtain web statistics file");
+my $temp = SCRATCH_DIR . '/' . LOG_FILE_PREFIX . '.log ' . $logFile;
 system("/bin/mv " . $temp); 
-system(BIN_DIR . "/webalizer  -D " . SCRATCH_DIR . "/dns_cache.db -N 10 -o " . DOCUMENT_ROOT . "/webstats " . $logFilePrefix . '*.log') and die("unable to analyze log files");
+system(BIN_DIR . "/webalizer  -D " . SCRATCH_DIR . "/" . DNS_CACHE_FILE . " -N 10 -o " . DOCUMENT_ROOT . "/" . WEB_STATS_WEB_SUBDIR . " " . $logFilePrefix . '*.log') and die("unable to analyze log files");
  
 
 
