@@ -133,10 +133,10 @@ public class MainApp
         aboutDialog.show();
     }
 
-    void handleHelpUserManual()
+    void handleHelpBrowser()
     {
-        HelpUserManual helpUserManual = new HelpUserManual(getMainFrame());
-        helpUserManual.displayUserManual();
+        HelpBrowser helpBrowser = new HelpBrowser(getMainFrame());
+        helpBrowser.displayHelpBrowser();
     }
 
     void handleExport()

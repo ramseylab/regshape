@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE xsl:stylesheet [
+  <!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
+  %CommonConfig;
+   ]>
+
+
+<xsl:stylesheet version="1.0" 
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+                xmlns:isb="http://www.systemsbiology.org/xmlns"
+                xmlns:html="http://www.w3.org/TR/xhtml1"
+                xmlns:map="http://java.sun.com/products/javahelp/map_1_0.dtd"
+                xmlns="http://www.w3.org/TR/xhtml1"
+                >              
+
+  <xsl:output method="xml" indent="yes" encoding="ISO-8859-1"
+              doctype-system="http://java.sun.com/products/javahelp/map_1_0.dtd"
+              doctype-public="-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN" />
+   
+  <xsl:param name="contentFile" />
+
+  <xsl:template match="html:*|html:*/@*"></xsl:template>
+
+  <xsl:template match="/isb:document">
+    <map version="1.0">
+      <xsl:element name="mapID">
+        <xsl:attribute name="target">top</xsl:attribute>
+        <xsl:attribute name="url"><xsl:value-of select="$contentFile" /></xsl:attribute>
+      </xsl:element>
+
+      <xsl:for-each select="/isb:document/isb:docsection">
+        <xsl:if test="@label != ''">
+          <xsl:element name="mapID">
+            <xsl:attribute name="target"><xsl:value-of select="@label" /></xsl:attribute>
+            <xsl:attribute name="url"><xsl:value-of select="$contentFile" />#<xsl:value-of select="@label" /></xsl:attribute>
+          </xsl:element>
+        </xsl:if>
+
+        <xsl:if test="isb:docsubsection != ''">
+          <xsl:for-each select="isb:docsubsection">
+              <xsl:if test="@label != ''">
+                <xsl:element name="mapID">
+                  <xsl:attribute name="target"><xsl:value-of select="@label" /></xsl:attribute>
+                  <xsl:attribute name="url"><xsl:value-of select="$contentFile" />#<xsl:value-of select="@label" /></xsl:attribute>
+                </xsl:element>
+              </xsl:if>
+          </xsl:for-each>
+        </xsl:if>
+      </xsl:for-each>
+
+      <xsl:apply-templates/>
+
+    </map>
+  </xsl:template>
+ 
+  <xsl:template match="isb:doctitle"></xsl:template>
+  <xsl:template match="isb:docowner"></xsl:template>
+  <xsl:template match="isb:docownerurl"></xsl:template>
+  <xsl:template match="isb:docowneremail"></xsl:template>
+  <xsl:template match="isb:docversion"></xsl:template>
+  <xsl:template match="isb:docdate"></xsl:template>
+  <xsl:template match="isb:docpreamble"></xsl:template>
+  <xsl:template match="isb:docauthor"></xsl:template>
+  <xsl:template match="isb:docauthorurl"></xsl:template>
+  <xsl:template match="isb:doccontents"></xsl:template>
+  <xsl:template match="isb:docsubsection"></xsl:template>
+  <xsl:template match="isb:docsection"></xsl:template>
+
+</xsl:stylesheet>

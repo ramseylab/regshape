@@ -7,7 +7,7 @@
 <!ENTITY appVersion "0.0.1">
 <!ENTITY appDate "2003/05/06">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
-<!ENTITY appIconFile "../images/appLogoIcon.png">
+<!ENTITY appIconURL "images/appLogoIcon.png">
 
 <!-- these definitions are used only in documentation, not by the app itself: -->
 <!ENTITY appMaintainerFullName "&mainGroup;">
@@ -17,3 +17,4 @@
 
 <!ENTITY appOriginalAuthorFullName "Stephen Ramsey">
 <!ENTITY appOriginalAuthorEmailSafe "sramsey at systemsbiology.org"> 
+<!ENTITY appHelpSetName "html/AppHelp.hs">

@@ -9,6 +9,6 @@
   <appVersion>&appVersion;</appVersion>
   <appDate>&appDate;</appDate>
   <appHomePage>&appHomePage;</appHomePage>
-  <appIconFile>&appIconFile;</appIconFile>
+  <appIconURL>&appIconURL;</appIconURL>
 </app>
 

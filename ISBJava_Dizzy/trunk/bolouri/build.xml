@@ -25,6 +25,9 @@
 
   <!-- THESE PROPERTIES ARE USED THROUGHOUT THE BUILD SYSTEM: -->
   <property name="docsStyleSheet" value="${projConfigDir}/documentation-stylesheet.xml" />
+  <property name="helpMapStyleSheet" value="${projConfigDir}/javahelp-map-stylesheet.xml" />
+  <property name="helpTOCStyleSheet" value="${projConfigDir}/javahelp-toc-stylesheet.xml" />
+  <property name="helpContentFileParamName" value="contentFile" />
 
   <target name="compile">
     <ant dir="${projJavaDir}" target="compile" />

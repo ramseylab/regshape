@@ -21,7 +21,7 @@
   <property name="app.javadocDir"              location="${app.webDir}/javadoc" />
   <property name="app.version"                 value="&appVersion;" />
   <property name="app.downloadDir"             location="${app.webDir}/&appVersion;" />
-  <property name="app.installerDir"             location="${app.downloadDir}/installer" />
+  <property name="app.installerDir"            location="${app.downloadDir}/installer" />
 
   <property name="app.sourceCompileFlag"       value="1.4" />
 

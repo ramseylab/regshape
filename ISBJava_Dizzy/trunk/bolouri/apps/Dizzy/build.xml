@@ -39,11 +39,24 @@
            includes="*.xml" 
            style="${docsStyleSheet}"
            excludes="AppConfig.xml" />
-  </target>
+
+    <style in="${app.docsDir}/UserManual.xml"
+           out="${app.styleDir}/AppHelp.jhm"
+           style="${helpMapStyleSheet}">
+      <param name="${helpContentFileParamName}" expression="UserManual.html" />
+    </style>
+
+    <style in="${app.docsDir}/UserManual.xml"
+           out="${app.styleDir}/AppHelpTOC.xml"
+           style="${helpTOCStyleSheet}">
+      <param name="${helpContentFileParamName}" expression="UserManual.html" />
+    </style >
+
+ </target>
 
   <target name="tidyHTML"> 
     <apply executable="${binHtmlTidy}" failonerror="true">
-      <fileset dir="${app.webDir}/docs">
+      <fileset dir="${app.styleDir}">
         <include name="UserManual.html" />
       </fileset>
       <arg value="-modify" />
@@ -54,7 +67,7 @@
     </apply>
   </target>
 
-  <target name="convertHtmlToPDF" depends="tidyHTML">
+  <target name="convertHtmlToPDF">
     <apply executable="${binHtml2PS}" failonerror="true" dest="${app.webDir}/docs">
       <mapper type="regexp" from="^(.*)\.html$$" to="\1\.ps" />
       <fileset dir="${app.webDir}/docs">
@@ -92,6 +105,22 @@
     </copy>
   </target>
 
+  <target name="buildHelp">
+    <mkdir dir="${app.webDir}" />
+    <copy todir="${app.styleDir}" file="${app.configDir}/AppHelp.hs" />
+    <jar destfile="${app.webDir}/AppHelp.jar">
+      <fileset dir="${basedir}">
+        <include name="html/AppHelp.jhm" />
+        <include name="html/AppHelpTOC.xml" />
+        <include name="html/UserManual.html" />
+        <include name="html/AppHelp.hs" />
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="images/*.png" />
+      </fileset>
+    </jar>
+  </target>
+
   <target name="copyImages">
     <mkdir dir="${app.webDir}/images" />
     <copy todir="${app.webDir}/images">
@@ -126,7 +155,7 @@
 
   <target name="buildPDF" depends="convertHtmlToPDF" />
 
-  <target name="buildHTML" depends="style, copyImages, copyHtml" />
+  <target name="buildHTML" depends="style, copyImages, tidyHTML, copyHtml, buildHelp" />
 
   <target name="build">
     <!-- do nothing -->
