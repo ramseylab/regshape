@@ -129,11 +129,11 @@ to the &appName; project is gratefully acknowledged.
 Hamid Bolouri:  principal investigator 
 </p>
 <p>
-Daehee Hwang:  for developing the Pointillist algorithm
+Daehee Hwang:  for developing the &appName; algorithms
 </p>
 <p>
 Larissa Kamenkovich:  for implementing an early version of the 
-Pointillist program
+&appName; program
 </p>
 <p>
 William Longabaugh:  for providing frequent advice on Java
@@ -242,6 +242,77 @@ application window appear that looks like the following picture
 
 </isb:docsection>
   
+<isb:docsection name="Data File Format" label="fileformat">
+
+<p>
+  The &appName; system is standardized on a simple text file format.
+  A data file must be encoded in US ASCII characters, with either Unix
+  or MS-DOS style linefeeds (either is acceptable).  The file format
+  is a matrix style, with one of three allowed delimiters:  tab, space,
+  or comma.  The "space" delimiter is special in that multiple delimiter
+  characters occurring in a row are interpreted as a single inter-cell
+  spacing in the matrix.  This allows for spaces to be used to visually
+  align columns in the file.  The fist cell of the matrix (i.e., column 1 and
+  row 1) must contain an alphanumeric label; by convention it contains the
+  string "element", but it can contain any simple alphanumeric string that
+  does not contain the delimiter character for the file.  The rest of the
+  columns of the first row contain alphanumeric identifiers for the different
+  evidence types, e.g., "evidence1", "evidence2", etc. (without quotes).
+  Evidence names <em>must</em> be unique, i.e., you may not have two columns whose
+  names are "evidence4".
+  The rest of the rows of the first column contain the network element names.
+  The <a href="#datamanager">Data Manager</a> program requires
+  the element names to be unique in some cases, but the other three
+  programs do not require uniqueness of the network element names.  However,
+  it is a good idea to use unique network element names.  If your data file
+  has redundant network element names, perhaps you should average over the
+  multiple observations for a given network element, to produce a file of
+  consensus observations, before using the &appName; program.  
+ Note that element names
+and evidence names must not contain the character that is used as the delimiter
+for the data file.  If your data file is comma-delimited, your element names and
+evidence names must not contain the comma character. 
+</p>
+<p>  
+  The rest of the cells in the data file are either numeric or empty.  For files using 
+  the tab and comma delimiters, empty cells may be denoted by either two delimiter characters appearing adjacent
+  to one another (implying a "skipped" cell), or a cell containing the string
+  "null", without the double quotes.  Note that the "null" string is case
+  sensitive, which means that you may not use the "Null" or "NULL" string
+  to denote an empty cell.  A non-empty cell
+must contain a floating-point number in either valid scientific notation
+(e.g., <code>1.23745E+3</code> or <code>1.23745e+3</code>) or in decimal
+notation.  The number must parse successfully as a <code>Double</code> type 
+as defined by the <code>java.lang.Double</code> class of the Java programming
+language. 
+</p>  
+<p>
+  Here is an example data file, with a comma delimiter:
+  <blockquote>
+  <pre>
+element,evidence0,evidence1,evidence2,evidence3,evidence4,evidence5
+A,1.000000,2.000000,1.000000,2.000000,,
+B,2.000000,3.000000,2.000000,3.000000,2.700000,3.000000
+C,3.000000,4.000000,3.000000,,2.000000,2.000000
+E,4.000000,2.000000,,,2.000000,2.000000
+D,,,4.000000,5.000000,,
+  </pre>
+  </blockquote>
+  which would display like this in the 
+  <a href="#datamanager">Data Manager</a>:
+</p>
+<p>
+  <img src="../images/SampleDataTable.png" alt="Sample Data Table image" />
+</p>
+<p>
+For files of significance values as used by the
+<a href="#evidenceweightedinferer">Evidence-Weighted Inferer</a>,
+empty cells are denoted by two adjacent delimiters (except in the
+case of the "space" delimiter), or a significance value of "-1" or 
+the "null" string.  
+</p>
+</isb:docsection>
+
 <isb:docsection name="Data Manager" label="datamanager">
 
 <p>
@@ -255,32 +326,12 @@ data files in a data table, with each row corresponding to a single element
 and each column corresponding to a single evidence type.  The table
 may be sorted by evidence or element name.   Either the entire table,
 or specific selected columns, may be saved to a data file.
-</p>  
-<p>
 The data file of observations that is loaded into the Data Manager must
-conform to a specific format.  The file must be in ASCII text, arranged
-in columns and rows.  The three allowed delimiters are spaces, tabs, and
-commas.  With commas and tabs, an empty cell is allowed, and it is denoted by
-two adjacent delimiter characters.  With spaces, empty cells are not allowed,
-because multiple adjacent spaces are used to align columns.  A non-empty cell
-must contain a floating-point number in either valid scientific notation
-(e.g., <code>1.23745E+3</code> or <code>1.23745e+3</code>) or in decimal
-notation.  The number must parse successfully as a <code>Double</code> type 
-as defined by the <code>java.lang.Double</code> class of the Java programming
-language.  The exception to the above rule is the first column and the first row,
-which contain alphanumeric identifiers.  The first column contains identifiers
-of the network elements (e.g., genes or proteins).  The first row contains
-identifiers of evidence types.  Evidence type names must be unique within a file, 
-i.e., no duplicate evidence type names are allowed.  The cell at the first row
-and first column must contain a valid identifier, but it is not used.  Typically
-this cell contains the word "element" or the like.  Note that element names
-and evidence names must not contain the character that is used as the delimiter
-for the data file.  If your data file is comma-delimited, your element names and
-evidence names must not contain the comma character.  To denote missing data,
-you can either have an empty cell (which means two delimiter characters appear
-back-to-back), or the cell can have the string "null" (without the double-quotes).
-Note that the "null" string is case-sensitive, so the string "NULL" will not work.
-</p>
+conform to a <a href="#fileformat">specific format</a>.  In addition to the
+format requirements listed above, the Data Manager may require that 
+element names be unique within the input data file, depending on the
+state of the "allow duplicates" check-box (see below).
+</p>  
 <p>
 Before you load your data file, please make sure you select the proper
 delimiter type, using the "delimiter" drop-down list.  If you attempt to
@@ -304,6 +355,75 @@ not load the file, if the file contains multiple measurements for a single
 evidence type and network element.  
 </p>
 <p>
+  The following list describes the various components and controls of the Quantile Normalizer
+  program window:
+  <dl>
+    <dt><b>Load data</b></dt>
+    <dd>This button loads a file containing observations into the
+      Input Data Table.  The data file must conform to a <a href="#fileformat">specific format</a>.
+      More than one data file may be loaded into the Input Data Table, in which case
+      the data from the multiple files will be merged.  It should be noted that if
+      two files each contain an observation for element X and evidence type Y (or if
+      a single file contains an element X that is represented on more than one row), the
+      "Allow duplicates" check-box should be selected, or else an error message will
+      appear when the data file(s) are loaded.  This is because the Data Manager needs to
+      average redundant data before it can merge data files that have overlapping observations.
+      The "Allow duplicates" check-box gives the Data Manager permission to carry out this averaging.</dd>
+  <dt><b>Delimiter</b></dt>
+  <dd>This drop-down list is used to specify how your input data file (and output data file)
+    are delimited.  The three choices are "tab", "space", and "comma".  Comma-delimited files
+    are recommended for reasons of unambiguity and compatibility with spreadsheet programs.
+    If you choose "space", be advised that there is a restriction on how you can specify
+    an empty cell (missing data).  With a "space" delimiter, an empty cell must be denoted
+    by the string "null" (without double quotes).  Note that the string is case-sensitive,
+    so you cannot use the string "Null" or "NULL".  Once you have loaded your input data file,
+    you may change the delimiter that you use to save the output file, if you wish.  
+  </dd>
+  <dt><b>Allow duplicates</b></dt>
+  <dd>
+    This check-box is used to indicate how the Data Manager should handle overlapping
+    ovservations in the input data.  Overlapping observations are two observations for
+    the same element name and evidence type.  If this check-box is selected, the Data
+    Manager will average over any overlapping observations to assign a "consensus" observation
+    to the evidence type and element.  If this check-box is not selected, the Data Manager
+    will show an error message if the input data contains overlapping data.  Note that two
+    data files may also contain <em>complementary</em> data, i.e., data for the same evidence types
+    but different elements; this is not overlapping data, and is not impacted by the "allow
+    duplicates" check-box.  The default is for this check-box to be selected.
+  </dd>
+  <dt><b>Input data table</b></dt>
+  <dd>This table displays the observations that have been loaded into the program, in the
+    large table in the middle of the program window.  The first row contains the evidence types, 
+    and the first column contains the network element names.  All other cells are either numeric values
+    (denoting the results of observations), or are empty.  All cells may be edited, subject to
+    the constraint that the <a href="#fileformat">file format specification</a> is not violated
+    (i.e., you cannot enter text into the numeric data cells, change an element name to become 
+    empty, etc.).  A column of data may be selected by clicking the mouse on one of the columns
+    of the table.  By holding down the control key while clicking on multiple columns in succession, 
+    more than one column may be jointly selected.  Column selection is used to designate those columns
+    that will be saved to a file, if the "save selected columns" button is pressed.
+  </dd>    
+  <dt><b>Element sort status / Evidence sort status</b></dt>
+  <dd>These two drop-down lists are used to sort the rows and columns of the input data table,
+    respectively.  </dd>
+  <dt><b>Save entire table</b></dt>
+  <dd>This button saves the entire contents of the Input Data Table to a file.  The delimiter
+    used for the file is as specified in the "Delimiter" drop-down list at the top of the 
+    program window. When the input data table is saved to a file, the ordering of the rows
+    and columns will be as it appears in the input data table.  An empty cell will be denoted
+    by two adjacent delimiter characters, except in the case of the "space" delimiter, where
+    the "null" string will instead be used to denote an empty cell.</dd>
+  <dt><b>Save selected columns</b></dt>
+  <dd>This button saves the selected columns of the Input Data Table to a file.  The delimiter
+    used for the file is as specified in the "Delimiter" drop-down list at the top of the 
+    program window. When the input data table is saved to a file, the ordering of the rows
+    and columns will be as it appears in the input data table.  An empty cell will be denoted
+    by two adjacent delimiter characters, except in the case of the "space" delimiter, where
+    the "null" string will instead be used to denote an empty cell.  This button is only
+    enabled if at least one column of the input data table is selected.</dd>
+  </dl>
+</p>
+<p>
 Here is a screen shot of the Data Manager program:
 </p>
 <p>
@@ -317,7 +437,8 @@ Here is a screen shot of the Data Manager program:
 <p>
   The <b>Quantile Normalizer</b> is a program that can be used to perform a quantile
   normalization of microarray expression data that is arranged in a matrix format 
-  in a single ASCII data file.  The quantile normalization algorithm
+  in a single data file.  The data file must conform to the
+  a <a href="#fileformat">specific format</a>.  The quantile normalization algorithm
   implemented here is based on a prototype written by Daehee Hwang at 
   Institute for Systems Biology, and it is similar to the quantile normalization 
   algorithm proposed by Bolstat <em>et al.</em> in their paper
@@ -357,6 +478,11 @@ Here is a screen shot of the Data Manager program:
     so you cannot use the string "Null" or "NULL".  Once you have loaded your input data file,
     you may change the delimiter that you use to save the output file, if you wish.  
   </dd>
+  <dt><b>Input data table</b></dt>
+  <dd>This table displays the observations that have been loaded into the program, in the
+    top third of the program window.  The column header names are evidence types, and the first
+    column contains the network element names.  All other cells are either numeric values
+    (denoting the results of observations), or are empty.</dd>
   <dt><b>Normalize using the scale</b></dt>
   <dd>This drop-down list is used to specify how the data is to be scaled.
     The options are "norm_only" and "logarithm".  If you specify "norm_only",
@@ -405,9 +531,9 @@ Here is a screen shot of the Data Manager program:
     an extremely large data set, you may wish to select a small number of iterations, perhaps
     in the range 3-5.  Alternatively, you could specify a more permissive error tolerance.
     Note that if you specify an extremely small error tolerance and an extremely large maximum
-    number of iterations, the normalization algorithm could run for a very long time; if this
-    happens, closing the program's window (using the window manager for your computer) and 
-    restarting the program is the best option.
+    number of iterations, the normalization algorithm could run for a very long time. If the
+    algorithm fails to complete in a timely fashion, you can stop it by 
+    closing the program's window using the window manager for your computer.
     </dd>
   <dt><b>Normalize raw observations</b></dt>
   <dd>This button starts the normalization.  The normalized observations are displayed
@@ -426,7 +552,22 @@ Here is a screen shot of the Data Manager program:
     one iteration to the next.  The value displayed in this box may or may not be 
     less than the error threshold specified above, depending on the value chosen for
     the "max iterations" field.</dd>
-  </dl>
+  <dt><b>Results Table</b></dt>
+  <dd>This table displays the results of the quantile normalization.  The columns should
+    have approximately the same quantiles, although they will not be exactly equal if there
+    is missing data.</dd>
+  <dt><b>Save results</b></dt>
+  <dd>This button opens a file dialog to specify the file to which the results
+    should be saved.  The delimiter specified in the "Delimiter:" drop-down list is used. 
+    Results are saved in a matrix style, in a text file, with columns representing
+    evidence types and rows representing elements.  If the delimiter type is "comma" or
+    "tab", a missing observation is denoted by an empty cell; if the delimiter type is
+    "space", a missing observation is denoted by "null".  If you change the delimiter
+    type between when you load the data file and when you save it, and if some element
+    or evidence names contain the new delimiter character, the delimiter characters
+    appearing in the evidence/element names will be converted to underscore ("_") 
+    characters.</dd>
+      </dl>
 </p>
 <p>
 Here is a screen shot of the Quantile Normalizer program:
@@ -446,8 +587,8 @@ Here is a screen shot of the Quantile Normalizer program:
   set of "negative control" observations.  The "significance" of an observation is here defined as
   the probability
   that the observation would occur by chance, given either the global or the "negative control" 
-  distribution for observations.  The input to the program is a matrix of observations, as described
-  in the <a href="#datamanager">Data Manager</a> section.  Missing observations are allowed, 
+  distribution for observations.  The input to the program is a matrix of observations, which
+  must conform to a <a href="#fileformat">specific format</a>.  Missing observations are allowed, 
   and are denoted by an empty cell or the string "null" (quotes not included, case sensitive).
 </p>
 <p>
@@ -455,8 +596,8 @@ Here is a screen shot of the Quantile Normalizer program:
   program window:
   <dl>
   <dt><b>Load observations</b></dt>
-  <dd>This button loads a file of observations.  The observations are displayed in the input data
-    table, in the upper third of the program window..  Only one file may be 
+  <dd>This button loads a file of observations.  The observations are displayed in the Input Data
+    Table, in the upper third of the program window..  Only one file may be 
     loaded into the input data table at a time.</dd>
   <dt><b>Delimiter</b></dt>
   <dd>This drop-down list is used to specify how your input data file (and output data file)
@@ -468,6 +609,11 @@ Here is a screen shot of the Quantile Normalizer program:
     so you cannot use the string "Null" or "NULL".  Once you have loaded your input data file,
     you may change the delimiter that you use to save the output file, if you wish.  
   </dd>
+  <dt><b>Input data table</b></dt>
+  <dd>This table displays the observations that have been loaded into the program, in the
+    top third of the program window.  The column header names are evidence types, and the first
+    column contains the network element names.  All other cells are either numeric values
+    (denoting the results of observations), or are empty.</dd>
   <dt><b>Evidence choices table</b></dt>
   <dd>This table displays the list of evidence types, and is activated when the input data
     file is loaded.  The five rightmost columns of the table are used to specify how
@@ -528,6 +674,25 @@ Here is a screen shot of the Quantile Normalizer program:
     method to use, it is recommended to use the default, "CDF", because the
     default settings in the <a href="#evidenceweightedinferer">Evidence-Weighted Inferer</a>
     are appropriate to a "CDF" choice in the Significance Calculator.</dd>
+  <dt><b>Calculate significances</b></dt>
+  <dd>This button causes the program to calculate significances for all evidence types
+    in the input data table for which the "compute significance" checkbox in the
+    Evidence Choices Table is checked.  The results are displayed in the Results Table.</dd>
+  <dt><b>Results Table</b></dt>
+  <dd>This table displays the results of the significance calculation.  Smaller significance
+    values indicate a smaller probability that a given observation could have occurred
+    by chance, given the negative control distribution.</dd>
+  <dt><b>Save results</b></dt>
+  <dd>This button opens a file dialog to specify the file to which the results
+    should be saved.  The delimiter specified in the "Delimiter:" drop-down list is used. 
+    Results are saved in a matrix style, in a text file, with columns representing
+    evidence types and rows representing elements.  If the delimiter type is "comma" or
+    "tab", a missing observation is denoted by an empty cell; if the delimiter type is
+    "space", a missing observation is denoted by "-1".  If you change the delimiter
+    type between when you load the data file and when you save it, and if some element
+    or evidence names contain the new delimiter character, the delimiter characters
+    appearing in the evidence/element names will be converted to underscore ("_") 
+    characters.</dd>
   </dl>
 </p>
 <p>
@@ -542,10 +707,11 @@ Here is a screen shot of the Significance Calculator program:
   <p>The <b>Evidence-Weighted Inferer</b> is a classification program that attempts to
     divide a set of elements into two sets, affected and unaffected.  It comparse multiple evidences
     to determine which elements of a network are most likely affected by a perturbation
-   of a system.  The input to this program is a matrix of significances for observations
-   for evidence types (columns) and network elements (rows).  Missing data is allowed; a
-   missing significance value is denoted by the value "-1", or an empty cell in the input
-   file.  The smaller a significance
+   of a system.  The input to this program is a file containing a matrix of significances 
+   for observations for evidence types (columns) and network elements (rows), in a 
+   <a href="#fileformat">specific format</a>.  Missing data is allowed; a
+   missing significance value is denoted by the value "-1", a "null" string, 
+   or (in certain cases) an empty cell in the input file.  The smaller a significance
    value for an observation, the <b>more</b> likely it is that the associated element is
    affected by the perturbation of the system; in this sense, the significance is analogous
    to a probability that a given observation would occur, given that the associated element
@@ -558,9 +724,182 @@ Here is a screen shot of the Significance Calculator program:
    for each significance value in the matrix.  
   </p>
 <p>
+  The following list describes the various components and controls of the Evidence-Weighted Observer
+  program window:
+  <dl>
+  <dt><b>Load sigs</b></dt>
+  <dd>Loads the file of significances into the Input Data Table.</dd>
+ <dt><b>Delimiter</b></dt>
+  <dd>This drop-down list is used to specify how your input data file (and output data file)
+    are delimited.  The three choices are "tab", "space", and "comma".  Comma-delimited files
+    are recommended for reasons of unambiguity and compatibility with spreadsheet programs.
+    If you choose "space", be advised that there is a restriction on how you can specify
+    an empty cell (missing data).  With a "space" delimiter, an empty cell must be denoted
+    by the string "null" (without double quotes).  Note that the string is case-sensitive,
+    so you cannot use the string "Null" or "NULL".  Once you have loaded your input data file,
+    you may change the delimiter that you use to save the output file, if you wish.  
+  </dd>
+  <dt><b>Input data table</b></dt>
+  <dd>This table displays the significances that have been loaded into the program, in the
+    top half of the program window.  Cells for which there is no significance (denoted by a
+    "-1", "null", or an empty cell in the input data file) are shown as
+    empty in the table.  The column names are evidence types, and the first
+    row contains the network element names.  All other cells are either numeric values
+    denoting the significance of the evidence and element pair.</dd>
+  <dt><b>Number of bins for significance distributions</b></dt>
+  <dd>This type-in box is used to specify how many bins are to be used for the calculating
+    the nonparametric distribution of combined significance values of the elements.  The
+    program suggests a default value; you may change it to any integer greater than 1.0.</dd>
+  <dt><b>Suggested cut-off value for combined significances</b></dt>
+  <dd>This type-in box is used to specify a "sanity check" threshold for combined significances.
+    Any element whose combined significance is less than this threshold, is guaranteed to
+    be put in the set of affected elements.  This parameter should be kept very small.  It is OK
+    to set this parameter to 0.0, but it may not be set to a negative value.  If you are not sure
+    what value to use, first try using the default; if you suspect the predicted set of affected
+    elements has too high a rate of false positives, you might try setting this parameter to 0.0.</dd>
+  <dt><b>Suggested separation threshold (from unity)</b></dt>
+  <dd>This type-in box is used to specify the criterion for exiting the iterative algorithm.
+    When the separation parameter (objective function) changes by an absolute amount smaller than this
+    threshold from one iteration to the next, the algorithm will exit.  This value should be kept small,
+    and is required to be positive-definite.  If you are not sure what value to use, just use the default.</dd>
+  <dt><b>Effective evidence weighting scheme</b></dt>
+  <dd>This drop-down list is used to specify how the effective significance is to be calculated
+    from the raw (unweighted) significance.  The two choices are "linear" and "power".  The "linear" choice
+    means that the effective significance <code>Seff</code> is calculated as:
+    <blockquote>
+      <pre>
+        Seff = b + W*S,
+      </pre>
+    </blockquote>
+    where <code>b</code> is the bias term, <code>W</code> is the weight, and <code>S</code> is the
+    unweighted significance for the element and evidence.  The weights are normalized, i.e., the sum
+    of the weights over all evidences is equal to 1.0.  The bias of an evidence is 1.0 minus the weight,
+    divided by the sum of the same quantity over all evidence types.  
+    The "power" choice means that the effective significance <code>Seff</code> is calculated as:
+    <blockquote>
+      <pre>
+        Seff = S^W
+      </pre>
+    </blockquote>
+    where the "<code>^</code>" character denotes exponentiation.  The default is "power".  
+  </dd>
+  <dt><b>Initial p-value cutoff for a single evidence type</b></dt>
+  <dd>This type-in box is used to specify the significance cutoff used to build the initial
+    set of "putatively affected" elements.  An element is placed in the initial set of
+    putatively affected elements if there is at least one evidence for which the element's significance
+    is less than this "initial p-value cutoff for a single evidence type"; thus, the
+    initial set is built greedily, and will likely be much larger than the true set of
+    affected elements.  This value is initially set to a small default value; you may change
+    it to any positive-definite value.  If you are unsure what value to use, just use the default.</dd>
+  <dt><b>Fraction of elements to move in each iteration</b></dt>
+  <dd>This type-in box is used to specify the initial fraction of elements
+    that can be changed from "affected" to "unaffected" within a given iteration.  It
+    controls how aggressively the algorithm will prune the putative set of affected
+    elements, within a given iteration.  As the algorithm proceeds, the fraction of elements
+    that will be pruned from the affected set within a given iteration decreases; this
+    parameter controls the starting fraction to remove.  The default is a small fraction, but you may
+    change it to any value between 0.0 and 1.0 (exclusive).  If you are unsure what
+    value to use, just use the default.</dd>
+  <dt><b>Smoothing length for significance distribution</b></dt>
+  <dd>This type-in box is used to specify the smoothing length for obtaining the
+    smoothed, normalized nonparametric distribution of combined significances of
+    elements.  Specifically, this parameter is used as the standard deviation of
+    the Gaussian kernel density function for smoothing the nonparametric distribution of
+    combined significances.  The default is a small fraction, but you may set to any
+    value greater than 0.0.  If you are not sure what value to use, just use the default.</dd>
+  <dt><b>Infer affected elements</b></dt>
+  <dd>This button starts the inference algorithm.  Depending on the size of the input
+    data table, and the parameters you chose for "fraction of elements to remove in
+    each iteration" and "initial p-value cutoff for a single evidence type", the
+    algorithm may take a long time to complete.  If the algorithm fails to complete
+    in a timely fashion, the best way to stop it is to close the program's window
+    in your computer's window manager.  When the algorithm completes, the results
+    are displayed in the Results Data Tables and the Results Statistics frames.</dd>
+  <dt><b>Results tables</b></dt>
+  <dd>The results of the inference algorithm are displayed in two tables in the right
+    side of the bottom half of the program window.  The first table has the columns 
+    "evidence name" and "weight".  It indicates the weight used for the final iteration
+    of the inference algorithm, for each evidence type.  A low weight indicates less
+    reliable data, as determined by consistency with the other evidence types.   The
+    second table has the column names "element name", "affected", and "overall
+    significance".  The "affected" column is a boolean value indicating 
+    whether the element is in the final putative affected set.  The "overall
+    significance" column gives the final overall significance value for the element;
+    a smaller significance value indicates greater likelihood that the element is 
+    in the true affected set.  You may sort the results in the rightmost table, by
+    clicking on the table header.  A control-click in the table header allows for
+    sorting based on multiple columns.  Repeatedly clicking (or control-clicking) 
+    will cycle through the three different sorting states:  none, ascending, and descending.</dd>
+  <dt><b>Results statistics</b></dt>
+  <dd>This set of fields shows some statistics pertaining to the inference algorithm.
+    The "iterations" field indicates how many iterations of the inference algorithim
+    occurred before it exited.  The "final separation" field indicates the fraction
+    of the area of the (smoothed, nonparametric) overall significance distribution for
+    the putative affected elements that is nonoverlapping with the distribution for
+    the unaffected elements.  This value should be very close to 1.0.  The "alpha
+    parameter" field gives an indication of data independence between the different
+    evidence types, based on a ratio of the average of the product (over the evidences)
+    of significances (over the putatively unaffected elements) to the product (over evidences)
+    of the average (over unaffected elements) of the significances.  It should be very close to 1.0.</dd>
+  <dt><b>Save results</b></dt>
+  <dd>This button saves the results table (the table containing the list of elements,
+    their boolean membership in the putative affected set, and their overall significances)
+    to a file.  The currently selected file delimiter (see above) is used to delimit
+    the columns of the data file that is produced.  The first row of the data file contains
+    the column header names.  The data is saved in the same sorting order as it is displayed 
+    in the results table.  If you change the delimiter
+    type between when you load the data file and when you save it, and if some element
+    names contain the new delimiter character, the delimiter characters
+    appearing in the element names will be converted to underscore ("_") 
+    characters.</dd>
+  </dl>
+</p>
+<p>
 Here is a screen shot of the Evidence-Weighted Inferer program:
 </p>
 <p>
   <a href="../images/EvidenceWeightedInferer-big.png"><img src="../images/EvidenceWeightedInferer.png" alt="Evidence-Weighted Inferer screenshot" /></a>
 </p>  
+</isb:docsection>
+
+<isb:docsection name="Getting Help" label="gettinghelp">
+<p>
+If you find that the &appName; program does not function in accordance
+with the descriptions in this manual, or if there are sections of
+this manual that are incorrect or unclear, the author would like to 
+hear about it, so that we can make improvements and fix bugs in the
+software.  Furthermore, the author would appreciate feedback
+regarding new features or improvements that would be useful to
+users of this software.  Before e-mailing the author, it is a good
+idea to check the <a href="&appHomePage;">&appName; application home page</a>
+to see if a new version has been released, in which your specific
+problem may have been corrected.  All releases are documented in
+the &quot;version history&quot; page accessible from the home page.
+The best way to contact the author is to send e-mail to:
+<blockquote>
+<code>&appMaintainerEmailSafe;</code>.
+</blockquote>
+The author will attempt to respond to your e-mail as quickly as
+possible.
+</p>
+<p>
+If you are reporting a bug, or something that you suspect is a bug,
+please provide as much information as you can about your specific
+installation of the &appName; program.  In particular, please provide
+us with the version number of the &appName; program that you are using,
+the type and version number of the Java Runtime Environment that you
+are using (e.g., Sun JRE version 1.4.1), and your operating system
+type and verion (e.g., Red Hat Linux 8.0).  Furthermore, if the
+problem is with a specific model definition file, please send us the
+model definition file, and any model definition files that it 
+<a href="#fileinclusion">includes</a>.  If the problem that you 
+encountered generated a &quot;stack backtrace&quot; on the console,
+please include the full stack backtrace text in your bug report.
+Please also send us the text of any error message that you may 
+have been reported by the application, in a dialog box or the like.
+Providing this information will dramatically increase the likelihood
+that the author will be able to quickly and successfully resolve
+the problem that you are encountering.
+</p>
+
 </isb:docsection>
