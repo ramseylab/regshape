@@ -1424,7 +1424,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             bufferedReader = pIncludeHandler.openReaderForIncludeFile(fileName);
             if(null != bufferedReader)
             {
-                parseModelDefinition(bufferedReader, pModel, pIncludeHandler, pSymbolMap, pNumReactions);
+                boolean insideInclude = true;
+                parseModelDefinition(bufferedReader, pModel, pIncludeHandler, pSymbolMap, pNumReactions, insideInclude);
             }
         }
         catch(IOException e)
@@ -1969,7 +1970,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                                       Model pModel, 
                                       IncludeHandler pIncludeHandler,
                                       HashMap pSymbolMap, 
-                                      MutableInteger pNumReactions) throws IOException, InvalidInputException
+                                      MutableInteger pNumReactions,
+                                      boolean pInsideInclude) throws IOException, InvalidInputException
     {
         StreamTokenizer streamTokenizer = new StreamTokenizer(pInputReader);
 
@@ -1995,7 +1997,12 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         // disable interpretation of a single slash character as a comment
         streamTokenizer.ordinaryChars('/', '/');
 
-        initializeModelElements(pSymbolMap);
+        // if we are inside an include file, the model elements have already been initialized
+        if(! pInsideInclude)
+        {
+            initializeModelElements(pSymbolMap);
+        }
+
         int lineCtr = 1;
         StringBuffer statementBuffer = new StringBuffer();
         List tokenList = new LinkedList();
@@ -2094,7 +2101,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         HashMap symbolMap = new HashMap();
         MutableInteger numReactions = new MutableInteger(0);
         mNamespace = null;
-        parseModelDefinition(pInputReader, model, pIncludeHandler, symbolMap, numReactions);
+        boolean insideInclude = false;
+        parseModelDefinition(pInputReader, model, pIncludeHandler, symbolMap, numReactions, insideInclude);
         return(model);
     }
 
