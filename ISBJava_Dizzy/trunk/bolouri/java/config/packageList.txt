@@ -2,4 +2,3 @@ isb.chem
 isb.util
 isb.chem.sbw
 isb.chem.scripting
-isb.chem.app

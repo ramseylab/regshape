@@ -116,7 +116,7 @@
     <javadoc source="${app.sourceCompileFlag}"
              Overview="${app.styleDir}/JavadocTitlePage.html"
              sourcepath="${basedir}"
-             packageList="${basedir}/packageList.txt"
+             packageList="${app.configDir}/packageList.txt"
              doclet="com.tarsec.javadoc.pdfdoclet.PDFDoclet"
              additionalparam="-pdf ${app.webDir}/docs/APIDocumentation.pdf -config ${app.configDir}/PDFDoclet.properties">
       <classpath refid="app.classpath" />
@@ -129,7 +129,7 @@
              Overview="${app.styleDir}/JavadocTitlePage.html" 
              sourcepath="${basedir}" 
              destdir="${app.javadocDir}"
-             packageList="${basedir}/packageList.txt"
+             packageList="${app.configDir}/packageList.txt"
              additionalparam="-breakiterator"> 
       <classpath refid="app.classpath" />
     </javadoc>
