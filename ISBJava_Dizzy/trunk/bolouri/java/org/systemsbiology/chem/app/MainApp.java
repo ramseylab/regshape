@@ -157,7 +157,7 @@ public class MainApp
     {
         try
         {
-            String appName = mAppConfig.getAppName();
+            String appName = getName();
             Model model = mEditorPane.processModel();
             SimulationLauncher simulator = new SimulationLauncher(appName, model, this);
         }
@@ -229,6 +229,11 @@ public class MainApp
         setAppConfig(appConfig);
     }
 
+    String getName()
+    {
+        return(getAppConfig().getAppName());
+    }
+
     private Container createComponents()
     {
         JPanel mainPane = new JPanel();
@@ -243,7 +248,7 @@ public class MainApp
 
     private void initializeMainFrame()
     {
-        JFrame frame = new JFrame(getAppConfig().getAppName());
+        JFrame frame = new JFrame(getName());
         setMainFrame(frame);
         MainMenu mainMenu = new MainMenu(this);
         frame.setJMenuBar(mainMenu);
