@@ -154,7 +154,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                 Value volumeValueObj = compartment.getValue();
                 if(volumeValueObj.isExpression())
                 {
-                    throw new UnsupportedOperationException("cannot export to SBML a model that has a compartment with a custom expression for the compartment volumd");
+                    throw new UnsupportedOperationException("cannot export to SBML a model that has a compartment with a custom expression for the compartment volume");
                 }
                 double volumeLiters = volumeValueObj.getValue();
                 Double volumeLitersObj = new Double(volumeLiters);
@@ -249,10 +249,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
             while(reactionsIter.hasNext())
             {
                 Reaction reaction = (Reaction) reactionsIter.next();
-                if(reaction.getNumSteps() > 1)
-                {
-                    throw new UnsupportedOperationException("Cannot export a model that contains a multistep reaction, to SBML");
-                }
+                int numReactionSteps = reaction.getNumSteps();
                 String reactionName = reaction.getName();
                 Element reactionElement = document.createElement(ELEMENT_NAME_REACTION);
                 listOfReactionsElement.appendChild(reactionElement);
@@ -339,7 +336,19 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                         
                         rescaledReactionParameter /= speciesPopulationConversionMultiplier;
                         rescaledReactionParameter /= ((double) MathFunctions.factorial(stoic));
-                        kineticLawBuf.append(reactantName);
+                        if(1 == numReactionSteps)
+                        {
+                            kineticLawBuf.append(reactantName);
+                        }
+                        else
+                        {
+                            if(rescaledReactionParameter == 0.0)
+                            {
+                                throw new IllegalArgumentException("multistep reaction with zero reaction parameter");
+                            }
+                            double delayTime = ((double) numReactionSteps) / rescaledReactionParameter;
+                            kineticLawBuf.append("(delay(" + reactantName + ", " + delayTime + "))");
+                        }
                         if(1 != stoic)
                         {
                             kineticLawBuf.append("^" + stoic);
