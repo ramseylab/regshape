@@ -47,9 +47,6 @@ NOTE: All Ant invocations should be made in the top-level directory
 for this project; attempting to invoke Ant from a lower-level
 subdirectory will likely result in an error and a failed build.
 
-IMPORTANT:  Using the build system requires special software
-to be installed on your computer.
-
 Supported targets are:
 
   clean:          remove (most) build files (java class files are
@@ -81,7 +78,7 @@ Supported targets are:
                   run the "buildHTML" task), into "build/web" 
                   subdirectory.  (NOTE: This requires special software 
                   to be installed on your computer; please read the
-                  WebPagesManagementManual.html document,
+                  WebPagesManagementManual.xml document,
                   which is contained in the "docs/private" subdirectory.)
 
   buildInstallers:  Build the InstallAnywhere installers and store
@@ -92,11 +89,20 @@ Supported targets are:
   uploadWeb:      upload the entire web content tree to the web server
 
 
-In order to use the "uploadWeb" target, you will need to have 
+
+IMPORTANT:  Using the build system requires special software
+to be installed on your computer, as described here:
+
+* In order to use the "uploadWeb" target, you will need to have 
 a version of "Ant" installed that understands the "<ftp>" target.
 This means that your version of "Ant" should have been built
 with the external "NetComponents.jar" library in the CLASSPATH
 (see the WebPagesManagementManual.html document for more info).
+
+* In order to use the "buildPDF" target, you will need additional
+software installed (please read the 
+  docs/private/WebPagesManagementManual.xml document).
+
 
 -Stephen Ramsey
 
