@@ -39,12 +39,12 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
 
         // for each species, obtain the set of all reactions that contain the given species
         // as a reactant
-        String []species = mDynamicSymbolNames;
-        int numSpecies = species.length;
+        String []speciesArray = mDynamicSymbolNames;
+        int numSpecies = speciesArray.length;
         HashMap speciesReactions = new HashMap();
         for(int ctr = 0; ctr < numSpecies; ++ctr)
         {
-            String speciesName = species[ctr];
+            String speciesName = speciesArray[ctr];
             speciesReactions.put(speciesName, new HashSet());
             // find all reactions that contain this species
             for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
@@ -53,6 +53,43 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
                 if(reaction.containsReactant(speciesName))
                 {
                     ((HashSet) speciesReactions.get(speciesName)).add(new Integer(reactionCtr));
+                }
+            }
+        }
+
+        HashSet customSpecies = new HashSet();
+        for(int ctr = 0; ctr < numSpecies; ++ctr)
+        {
+            String speciesName = speciesArray[ctr];
+            Symbol speciesSymbol = (Symbol) mSymbolMap.get(speciesName);
+            if(null != speciesSymbol)
+            {
+                if(null != speciesSymbol.getValueArray())
+                {
+                    // this is a boundary species with a custom population expression
+                    customSpecies.add(speciesName);
+                }
+            }
+        }
+
+        HashSet customReactions = new HashSet();
+        for(int ctr = 0; ctr < numReactions; ++ctr)
+        {
+            Reaction reaction = reactions[ctr];
+            if(reaction.getRate().isExpression())
+            {
+                customReactions.add(reaction);
+            }
+
+            HashMap reactantsMap = reaction.getReactantsMap();
+            Collection reactantSpecies = reactantsMap.keySet();
+            Iterator reactantIter = reactantSpecies.iterator();
+            while(reactantIter.hasNext())
+            {
+                String reactantSpeciesName = (String) reactantIter.next();
+                if(customSpecies.contains(reactantSpeciesName))
+                {
+                    customReactions.add(reaction);
                 }
             }
         }
@@ -82,6 +119,7 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
                 reactionDependencies[ctr].addAll(dependentReactions);
             }
 
+            reactionDependencies[ctr].addAll(customReactions);
         }
 
         mReactionDependencies = new Object[numReactions];
