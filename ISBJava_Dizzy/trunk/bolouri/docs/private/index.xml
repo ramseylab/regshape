@@ -19,7 +19,7 @@
 
 <isb:docsection name="Tools" label="tools">
 <ul>
-<li><a href="../Dizzy">Dizzy, a chemical kinetics stochastic simulation system using the Gillespie algorithm</a></li>
+<li><a href="../Dizzy">Dizzy (Gillespie stochastic simulator)</a></li>
 <li><a href="../&localJavaLibraryName;">&localJavaLibraryName;</a> (java class library)</li>
 </ul>
 </isb:docsection>
