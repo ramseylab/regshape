@@ -10,29 +10,18 @@ package org.systemsbiology.gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
+import java.io.*;
 
 public class FileChooser extends JFileChooser
 {
-    private Component mMainFrame;
-    private File mSelectedFile;
-
-    protected Component getMainFrame()
+    public FileChooser()
     {
-        return(mMainFrame);
-    }
-
-    private void initialize()
-    {
-        mSelectedFile = null;
         ComponentUtils.disableDoubleMouseClick(this);
     }
-        
-    public FileChooser(Component pMainFrame)
+    
+    public FileChooser(File pCurrentDirectory)
     {
-        mMainFrame = pMainFrame;
-
-        initialize();
+        super(pCurrentDirectory);
     }
 
     public static boolean handleOutputFileAlreadyExists(Component pFrame, String pOutputFileName)
@@ -59,13 +48,5 @@ public class FileChooser extends JFileChooser
         return(proceed);
     }
 
-    public void show()
-    {
-        int returnVal = showOpenDialog(mMainFrame);
-        if(returnVal == JFileChooser.APPROVE_OPTION)
-        {
-            mSelectedFile = getSelectedFile();
-        }
-    }
 
 }
