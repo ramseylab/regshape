@@ -507,12 +507,11 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                 System.err.println("building script...\n");
             }
             IModelBuilder modelBuilder = (IModelBuilder) modelBuilderRegistry.getInstance(parserAlias);
-            FileReader fileReader = new FileReader(mModelFile);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            InputStream inputStream = new FileInputStream(mModelFile);
             IncludeHandler includeHandler = new IncludeHandler();
             File fileDir = mModelFile.getParentFile();
             includeHandler.setDirectory(fileDir);
-            Model model = modelBuilder.buildModel(bufferedReader, includeHandler);
+            Model model = modelBuilder.buildModel(inputStream, includeHandler);
             if(getDebug())
             {
                 System.err.println("script build process complete; model is: \n");
