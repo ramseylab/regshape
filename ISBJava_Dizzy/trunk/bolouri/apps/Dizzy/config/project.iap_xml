@@ -2324,35 +2324,6 @@ and any path to a file to read from that file]]></string>
 												<int>0</int>
 											</property>
 										</object>
-										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="6dc7ec6e9afe">
-											<property name="unixPermissions">
-												<string><![CDATA[664]]></string>
-											</property>
-											<property name="sourceName">
-												<string><![CDATA[AppConfig.dtd]]></string>
-											</property>
-											<property name="overrideUnixPermissions">
-												<boolean>true</boolean>
-											</property>
-											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/config/]]></string>
-											</property>
-											<property name="shouldUninstall">
-												<boolean>true</boolean>
-											</property>
-											<property name="destinationName">
-												<string><![CDATA[AppConfig.dtd]]></string>
-											</property>
-											<property name="fileSize">
-												<long>1186</long>
-											</property>
-											<property name="macBinary">
-												<boolean>false</boolean>
-											</property>
-											<property name="targetCheckKind">
-												<int>0</int>
-											</property>
-										</object>
 										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="6dc7ec6f9afe">
 											<property name="unixPermissions">
 												<string><![CDATA[664]]></string>
@@ -2364,7 +2335,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/config/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/build/config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2381,36 +2352,7 @@ and any path to a file to read from that file]]></string>
 											<property name="targetCheckKind">
 												<int>0</int>
 											</property>
-										</object>
-										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="86dab2c09b00">
-											<property name="unixPermissions">
-												<string><![CDATA[664]]></string>
-											</property>
-											<property name="sourceName">
-												<string><![CDATA[CommonConfig.dtd]]></string>
-											</property>
-											<property name="overrideUnixPermissions">
-												<boolean>true</boolean>
-											</property>
-											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/../../config/]]></string>
-											</property>
-											<property name="shouldUninstall">
-												<boolean>true</boolean>
-											</property>
-											<property name="destinationName">
-												<string><![CDATA[CommonConfig.dtd]]></string>
-											</property>
-											<property name="fileSize">
-												<long>1400</long>
-											</property>
-											<property name="macBinary">
-												<boolean>false</boolean>
-											</property>
-											<property name="targetCheckKind">
-												<int>0</int>
-											</property>
-										</object>
+										</object>										
 										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="6e33c6fc9afe">
 											<property name="unixPermissions">
 												<string><![CDATA[775]]></string>
@@ -2435,8 +2377,6 @@ and any path to a file to read from that file]]></string>
 											</property>
 											<visualChildren>
 												<object refID="6dc7ec6f9afe"/>
-												<object refID="6dc7ec6e9afe"/>
-												<object refID="86dab2c09b00"/>
 											</visualChildren>
 										</object>
 										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="9227b8499aff">
