@@ -65,7 +65,7 @@ This document contains the version history for the
     it will interpret a cell containing the string "null" (and not in the first row or first
     column of the data file) as an empty cell.</li>
   <li>Modified <code>org.systemsbiology.gui.HelpBrowser</code> to cache the <code>HelpBroker</code>, 
-    which will help speed up the initialization process for the help browser.</li>
+    which may help speed up the initialization process for the help browser.</li>
 </ul>
 </td>
 </tr>
