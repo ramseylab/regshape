@@ -467,12 +467,12 @@ public class Reaction implements Comparable, Cloneable
 
     private ReactionElement findReactionElement(Vector pVector, Species pSpecies)
     {
-        Iterator speciesIter = pVector.iterator();
+        int numSpecies = pVector.size();
         ReactionElement retReactionElement = null;
 
-        while(speciesIter.hasNext())
+        for(int speciesCtr = 0; speciesCtr < numSpecies; ++speciesCtr)
         {
-            ReactionElement reactionElement = (ReactionElement) speciesIter.next();
+            ReactionElement reactionElement = (ReactionElement) pVector.elementAt(speciesCtr);
             if(reactionElement.mSpecies.equals((Object) pSpecies))
             {
                 retReactionElement = reactionElement;
@@ -488,14 +488,13 @@ public class Reaction implements Comparable, Cloneable
                                                                     double pTime) throws DataNotFoundException
     {
         Vector reactantsVec = getReactantsVec();
-        Iterator reactantIter = reactantsVec.iterator();
+        int numReactants = reactantsVec.size();
         double reactantCombinations = 1.0;  // if there are no reactants, just assume 1
                                             // (this is to allow spontaneous particle creation,
                                             // if the user wants to define such a process)
-
-        while(reactantIter.hasNext())
+        for(int reactantCtr = 0; reactantCtr < numReactants; ++reactantCtr)
         {
-            ReactionElement reactionElement = (ReactionElement) reactantIter.next();
+            ReactionElement reactionElement = (ReactionElement) reactantsVec.elementAt(reactantCtr);
             Species reactantSpecies = reactionElement.mSpecies;
             Integer reactantMultiplicityObj = reactionElement.mMultiplicity;
             int reactantMultiplicity = reactantMultiplicityObj.intValue();
@@ -605,10 +604,10 @@ public class Reaction implements Comparable, Cloneable
         // not throw an exception.  If we were to handle the reactants first, we would
         // decrement the I population below zero, and throw an exception.
         Vector productsVec = getProductsVec();
-        Iterator productsIter = productsVec.iterator();;
-        while(productsIter.hasNext())
+        int numProducts = productsVec.size();
+        for(int productCtr = 0; productCtr < numProducts; ++productCtr)
         {
-            ReactionElement reactionElement = (ReactionElement) productsIter.next();
+            ReactionElement reactionElement = (ReactionElement) productsVec.elementAt(productCtr);
             Species product = reactionElement.mSpecies;
             if(! product.getFloating())
             {
@@ -626,10 +625,10 @@ public class Reaction implements Comparable, Cloneable
 
         // get list of reactants
         Vector reactantsVec = getReactantsVec();
-        Iterator reactantsIter = reactantsVec.iterator();;
-        while(reactantsIter.hasNext())
+        int numReactants = reactantsVec.size();
+        for(int reactantCtr = 0; reactantCtr < numReactants; ++reactantCtr)
         {
-            ReactionElement reactionElement = (ReactionElement) reactantsIter.next();
+            ReactionElement reactionElement = (ReactionElement) reactantsVec.elementAt(reactantCtr);
             Species reactant = reactionElement.mSpecies;
             if(! reactant.getFloating())
             {
@@ -652,9 +651,6 @@ public class Reaction implements Comparable, Cloneable
             }
             pSpeciesPopulations.setSpeciesPopulation(reactant, newSpeciesPopulation);
         }
-        
-
-
     }
 
     double computeReactionProbabilityDensityPerUnitTime(Model pModel,
