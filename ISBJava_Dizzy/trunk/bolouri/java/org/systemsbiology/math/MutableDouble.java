@@ -38,6 +38,11 @@ public class MutableDouble
         setValue(pDouble);
     }
 
+    public static int compare(MutableDouble p1, MutableDouble p2)
+    {
+        return(Double.compare(p1.mDouble, p2.mDouble));
+    }
+
     public Object clone()
     {
         MutableDouble md = new MutableDouble(mDouble);
