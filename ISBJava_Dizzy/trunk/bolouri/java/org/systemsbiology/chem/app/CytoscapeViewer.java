@@ -24,6 +24,12 @@ public class CytoscapeViewer
     private static final String JNLP_TEMPLATE_FILE_NAME = "CytoscapeViewer.xml";
     private static final String TAG_NAME_APPLICATION_DESC = "application-desc";
 
+    static
+    {
+        JNLPRuntime.setSecurityEnabled(false);
+        JNLPRuntime.initialize();
+    }
+
     public void viewModelInCytoscape(Model pModel) throws IllegalArgumentException, DataNotFoundException, IllegalStateException, UnsupportedOperationException, ModelExporterException, IOException
     {
         ModelExporterMarkupLanguage exporterMarkupLanguage = new ModelExporterMarkupLanguage();
@@ -84,8 +90,6 @@ public class CytoscapeViewer
 
 //=========================================================================
 // This code is used in conjunction with the NetX JNLP API:
-            JNLPRuntime.setSecurityEnabled(false);
-            JNLPRuntime.initialize();
             Launcher launcher = new Launcher();
             launcher.launch(tempJNLPFileURL);
 //=========================================================================
