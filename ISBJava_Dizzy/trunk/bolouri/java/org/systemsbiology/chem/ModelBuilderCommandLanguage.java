@@ -351,7 +351,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
     private void checkSymbolValidity(String pSymbolName) throws InvalidInputException
     {
-        if(SymbolEvaluatorChemCommandLanguage.isReservedSymbol(pSymbolName))
+        if(ReservedSymbolMapperChemCommandLanguage.isReservedSymbol(pSymbolName))
         {
             throw new InvalidInputException("attempt to define a reserved symbol: " + pSymbolName);
         }
@@ -382,8 +382,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
         public SymbolEvaluatorNamespaced(HashMap pSymbolMap, String pNamespace)
         {
-            super();
-            setSymbolsMap(pSymbolMap);
+            super(pSymbolMap);
             mNamespace = pNamespace;
         }
 
@@ -431,7 +430,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         Object retObj = pSymbol;
         if(null != pNamespace)
         {
-            if(! SymbolEvaluatorChemCommandLanguage.isReservedSymbol(pSymbol))
+            if(! ReservedSymbolMapperChemCommandLanguage.isReservedSymbol(pSymbol))
             {
                 pSymbol = addNamespaceToSymbol(pSymbol, pNamespace);
                 retObj = pSymbol;
@@ -1625,7 +1624,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
         String loopIndexSymbolName = token.mSymbol;
 
-        if(SymbolEvaluatorChemCommandLanguage.isReservedSymbol(loopIndexSymbolName))
+        if(ReservedSymbolMapperChemCommandLanguage.isReservedSymbol(loopIndexSymbolName))
         {
             throw new InvalidInputException("cannot use a reserved symbol as a loop index: " + loopIndexSymbolName);
         }
@@ -2116,6 +2115,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         assert (null != pIncludeHandler) : "null include handler";
         Model model = new Model();
         model.setName(DEFAULT_MODEL_NAME);
+        model.setReservedSymbolMapper(new ReservedSymbolMapperChemCommandLanguage());
         HashMap symbolMap = new HashMap();
         MutableInteger numReactions = new MutableInteger(0);
         mNamespace = null;
