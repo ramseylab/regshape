@@ -204,7 +204,8 @@
     <javac srcdir="${app.srcDir}" 
            destdir="${app.classesDir}" 
            source="${app.sourceCompileFlag}" 
-           debug="on" 
+           debug="off" 
+           optimize="on"
            excludes="**/tp/*.java">
       <classpath refid="app.classpath" />
     </javac>
