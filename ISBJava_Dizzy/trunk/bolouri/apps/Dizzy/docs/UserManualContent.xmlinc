@@ -2970,7 +2970,16 @@ difference method, specifically the 5th-order Runge-Kutta
 algorithm with a fixed stepsize.  The step size must be specified
 by the user, as a fraction of the total time interval for the
 simulation.  The accuracy of this simulator's solution will 
-depend on the size of the time-step fraction that is specified.
+depend on the size of the time-step fraction that is specified.  
+</p>
+<p>
+<a name="fixed-noerrorcheck" />
+<b>Note about disabling error checking:</b>You may
+delete the maximumum absolute and/or relative error tolerances in the
+simulation launcher screen, in order to 
+run the simulator with no absolute and/or relative error checking.  This
+feature is currently only available for the fixed-stepsize Runge-Kutta 
+integrator.
 </p>
 </isb:docsubsection>
 
@@ -3223,14 +3232,20 @@ It is a floating-point parameter.  The minimum value is 0.0 (must be strictly gr
 than 0.0).  This parameter is only used with ODE simulators and the Tau-Leap
 simulators.  The maximum allowed error in the value of a given species S 
 is equal to the product of the value of S, and the value of the error tolerance,
-at any given time.  The default value depends on the simulator.</dd>
+at any given time.  The default value depends on the simulator.  For the fixed-stepsize
+Runge-Kutta simulator (<code>ODE-RK5-fixed</code>), the absolute error checking may be disabled by
+passing the string "null" a the modifier to the <code>absoluteTolerance</code>
+command-line argument.</dd>
 
 <dt><b><code>absoluteTolerance</code></b></dt><dd>The absolute error tolerance.
 It is a floating-point parameter.  The minimum value is 0.0 (must be strictly greater
 than 0.0).  This parameter is only used with ODE simulators.  No species may have
 an error greater than the value of this parameter.  This parameter should not
 be made too small, in cases where a given species will take on a very large
-value.  The default value depends on the simulator.</dd>
+value.  The default value depends on the simulator.  For the fixed-stepsize
+Runge-Kutta simulator (<code>ODE-RK5-fixed</code>), the absolute error checking may be disabled by
+passing the string "null" a the modifier to the <code>absoluteTolerance</code>
+command-line argument.</dd>
 
 <dt><b><code>stepSizeFraction</code></b></dt> <dd>The step size, as a
 fraction of the time interval for the simulation
@@ -3497,7 +3512,7 @@ public class TestSimulator
             System.out.println(model.toString());
             SimulatorStochasticGillespie simulator = new SimulatorStochasticGillespie();
             SimulatorParameters simParams = simulator.getDefaultSimulatorParameters();
-            simParams.setEnsembleSize(40);
+            simParams.setEnsembleSize(new Integer(40));
             simulator.initialize(model);
             String []requestedSymbolNames = { "A", "B" };
             
@@ -4064,6 +4079,16 @@ one of the &quot;<code>odeToJava</code>&quot; simulators is being used.
 The &quot;copy to clipboard&quot; feature is not supported on
 Unix/Linux.  It is currently only available on Windows.  This 
 is due to limitations in the XFree86 clipboard feature.
+</li>
+<li>
+The adaptive-stepsize Runge-Kutta simulator (<code>ODE-RK5-adaptive</code>) does not
+work properly in some models in which the "theta" function <code>theta()</code> is
+used in a rate expression.  The problem seems to be in the error estimation code,
+in which some assumptions about smoothness of the rate expression are made.  
+This bug report was submitted by Adam Duguid.  For the time being, a work-around
+is to use the "odeToJava" adaptive integrator <code>ODE-dopr54-adaptive</code>
+or the fixed-stepsize Runge-Kutta integrator with 
+<a href="#fixed-noerrorcheck">error checking disabled</a>.
 </li>
 </ol>
 </p>
