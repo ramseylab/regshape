@@ -1167,7 +1167,7 @@ public class SimulationLauncher
                 if(numSymbol > Plotter.MAX_NUM_SYMBOLS_TO_PLOT)
                 {
                     handleBadInput("too many symbols to plot", "maximum number of symbols that can be plotted simultaneously is: " + Plotter.MAX_NUM_SYMBOLS_TO_PLOT);
-                    reteurn(retVal);
+                    return(retVal);
                 }
             }
             
