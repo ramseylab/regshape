@@ -34,6 +34,7 @@
   <property name="app.downloadDir"              location="${app.webDir}/&appVersion;" />
   <property name="app.installerDir"             location="${app.downloadDir}/installer" />
   <property name="app.version"                  value="&appVersion;" />
+  <property name="app.resourcesFile"            location="${app.webDir}/AppResources.jar" />
 
   <target name="setFilters">
     <filter token="VERSION" value="${app.version}" />
@@ -105,6 +106,7 @@
 
  </target>
 
+
   <target name="tidyHTML"> 
     <apply executable="${binHtmlTidy}" failonerror="true">
       <fileset dir="${app.webDir}/docs">
@@ -157,15 +159,28 @@
     </copy>
   </target>
 
-  <target name="buildHelp">
+  <target name="checkBuildResourcesFile">
+    <uptodate property="app.doNotNeedToBuildResourcesFile" targetfile="${app.resourcesfile}">
+      <srcfiles dir="${app.styleDir}" includes="AppHelp*" />
+      <srcfiles dir="${app.configDir}" includes="AppHelp.hs" />
+      <srcfiles dir="${app.imagesDir}" includes="images/*.png" />
+      <srcfiles dir="${projImagesDir}" includes="images/*.png" />
+      <srcfiles dir="${app.styleDir}/JavaHelpSearch" includes="*" />
+    </uptodate>
+  </target>
+
+  <target name="buildResourcesFile" depends="checkBuildResourcesFile" unless="app.doNotNeedToBuildResourcesFile">
+    
     <mkdir dir="${app.webDir}" />
     <copy todir="${app.styleDir}" file="${app.configDir}/AppHelp.hs" />
-    <jar destfile="${app.webDir}/AppResources.jar">
+    <exec executable="${binJavaHelpIndexer}" dir="${app.styleDir}" failonerror="true">
+      <arg value="AppHelp.html" />
+    </exec>
+
+    <jar destfile="${app.resourcesFile}">
       <fileset dir="${basedir}">
-        <include name="html/AppHelp.jhm" />
-        <include name="html/AppHelpTOC.xml" />
-        <include name="html/AppHelp.html" />
-        <include name="html/AppHelp.hs" />
+        <include name="html/AppHelp*" />
+        <include name="html/JavaHelpSearch/*" />
       </fileset>
       <fileset dir="${basedir}">
         <include name="images/*.png" />
@@ -208,7 +223,7 @@
 
   <target name="buildPDF" depends="tidyHTML, convertHtmlToPDF" />
 
-  <target name="buildHTML" depends="style, copyImages, copyHtml, buildHelp" />
+  <target name="buildHTML" depends="style, copyImages, copyHtml, buildResourcesFile" />
 
   <target name="build">
     <!-- do nothing -->

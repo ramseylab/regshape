@@ -22,4 +22,10 @@
     <data>AppHelpTOC.xml</data>
   </view>
 
+  <view>
+    <name>Search</name>
+    <label>Search</label>
+    <type>org.systemsbiology.chem.app.ExHelpSearchNavigator</type> 
+    <data engine="com.sun.java.help.search.DefaultSearchEngine">JavaHelpSearch</data>
+  </view>
 </helpset>

@@ -17,4 +17,5 @@
   <property name="binHtml2PS"         value="html2ps" />
   <property name="binHtmlTidy"        value="tidy" />
   <property name="binPS2PDF"          value="ps2pdf" />
+  <property name="binJavaHelpIndexer" value="jhindexer" />
 
