@@ -62,6 +62,9 @@ public class EvidenceWeightedInfererDriver
     private static final String RESOURCE_HELP_ICON = "Help24.gif";
     private static final String RESOURCE_HELP_SET = "html/AppHelp.hs";
     private static final String HELP_SET_MAP_ID = "evidenceweightedinferer";
+    private static final String TOOL_TIP_SAVE_WEIGHTS = "Save the evidence weights to a file.";
+    private static final String COLUMN_NAME_EVIDENCE = "evidence name";
+    private static final String COLUMN_NAME_WEIGHT = "weight";
     
     private Container mContentPane;
     
@@ -120,6 +123,7 @@ public class EvidenceWeightedInfererDriver
     private JLabel mSmoothingLengthLabel;
     private JTextField mSmoothingLengthField;
     private JLabel mResultsStatisticsLabel;
+    private JButton mSaveWeightsButton;
     
     class WeightsTableModel extends AbstractTableModel
     {
@@ -159,10 +163,10 @@ public class EvidenceWeightedInfererDriver
             switch(pColumn)
             {
             case 0:
-                return "evidence name";
+                return COLUMN_NAME_EVIDENCE;
                 
             case 1:
-                return "weight";
+                return COLUMN_NAME_WEIGHT;
                 
             default:
                 throw new IllegalStateException("unknown column requested from weights table model: " + pColumn);
@@ -797,6 +801,7 @@ public class EvidenceWeightedInfererDriver
             mFinalSeparationLabelData.setToolTipText(TOOL_TIP_SEPARATION);
             mIterationsLabel.setToolTipText(TOOL_TIP_ITERATIONS);
             mIterationsLabelData.setToolTipText(TOOL_TIP_ITERATIONS);
+            mSaveWeightsButton.setToolTipText(TOOL_TIP_SAVE_WEIGHTS);
         }
         else
         {
@@ -808,6 +813,7 @@ public class EvidenceWeightedInfererDriver
             mFinalSeparationLabelData.setToolTipText(null);
             mIterationsLabel.setToolTipText(null);
             mIterationsLabelData.setToolTipText(null);
+            mSaveWeightsButton.setToolTipText(null);
         }
        
         mIterationsLabel.setEnabled(pResultsObtained);
@@ -819,6 +825,7 @@ public class EvidenceWeightedInfererDriver
         mSaveResultsButton.setEnabled(pResultsObtained);
         mClearResultsButton.setEnabled(pResultsObtained);
         mResultsStatisticsLabel.setEnabled(pResultsObtained);
+        mSaveWeightsButton.setEnabled(pResultsObtained);
     }
     
     private void initializeContentPane()
@@ -1172,6 +1179,17 @@ public class EvidenceWeightedInfererDriver
                 });
         buttonPanel.add(resetButton);
         
+        mSaveWeightsButton = new JButton("save weights");
+        mSaveWeightsButton.addActionListener(
+                new ActionListener()
+                {
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        handleSaveWeights();
+                    }
+                });
+        buttonPanel.add(mSaveWeightsButton);
+        
         JButton saveResultsButton = new JButton("save results");
         mSaveResultsButton = saveResultsButton;
         saveResultsButton.addActionListener(new ActionListener()
@@ -1372,6 +1390,36 @@ public class EvidenceWeightedInfererDriver
         setEnableStateForFields(null != mSignificancesData, false);
     }
     
+    private void writeWeights(File pFile, DataFileDelimiter pDelimiter)
+    {
+        StringBuffer buf = new StringBuffer();
+        String delimiter = pDelimiter.getDelimiter();
+        buf.append(COLUMN_NAME_EVIDENCE + delimiter + COLUMN_NAME_WEIGHT + "\n");
+        int j = 0; 
+        double []weights = mEvidenceWeightedInfererResults.mWeights;
+        int numEvidences = weights.length;
+        String []evidenceNames = mSignificancesData.getEvidenceNames();
+        for(j = 0; j < numEvidences; ++j)
+        {
+            buf.append(evidenceNames[j] + delimiter + mNumberFormat.format(weights[j]) + "\n");
+        }
+        try
+        {
+            FileWriter fileWriter = new FileWriter(pFile);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            printWriter.print(buf.toString());
+            printWriter.flush();
+            JOptionPane.showMessageDialog(mParent, 
+                                          new SimpleTextArea("weights were written to the file \"" + pFile.getAbsolutePath() + "\" successfully."), 
+                                          "weights written successfully", JOptionPane.INFORMATION_MESSAGE);
+        }
+        catch(IOException e)
+        {
+            SimpleTextArea simpleTextArea = new SimpleTextArea("unable to write the weights to the file you requested, \"" + pFile.getAbsolutePath() + "\"; specific error message is: " + e.getMessage());
+            JOptionPane.showMessageDialog(mParent, simpleTextArea, "unable to write weights to file", JOptionPane.ERROR_MESSAGE);
+        }        
+    }
+    
     private void writeResults(File pFile, DataFileDelimiter pDelimiter)
     {
         boolean []affectedElements = mEvidenceWeightedInfererResults.mAffectedElements;
@@ -1413,12 +1461,13 @@ public class EvidenceWeightedInfererDriver
         }
     }
     
-    private void handleSaveResults()
+    private File selectOutputFile()
     {
         DataFileDelimiter delimiter = getDelimiter();
         FileChooser fileChooser = new FileChooser(mWorkingDirectory);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int result = fileChooser.showSaveDialog(mParent);
+        File outputFile = null;
         if(result == JFileChooser.APPROVE_OPTION)
         {
             File selectedFile = fileChooser.getSelectedFile();
@@ -1435,8 +1484,27 @@ public class EvidenceWeightedInfererDriver
             }
             if(confirmProceed)
             {
-                writeResults(selectedFile, delimiter);
+                outputFile = selectedFile;
             }
+        }        
+        return outputFile;
+    }
+    
+    private void handleSaveWeights()
+    {
+        File outputFile = selectOutputFile();
+        if(null != outputFile)
+        {
+            writeWeights(outputFile, getDelimiter());
+        }
+    }
+    
+    private void handleSaveResults()
+    {
+        File outputFile = selectOutputFile();
+        if(null != outputFile)
+        {
+            writeResults(outputFile, getDelimiter());
         }
     }
     
