@@ -906,7 +906,7 @@ Press "Done" to quit the installer.]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.stderr.redirect]]></string>
-						<string><![CDATA[insPoint.log]]></string>
+						<string><![CDATA[@APP_INSTALLER_NAME@.log]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.output.merge.read.only]]></string>
@@ -926,7 +926,7 @@ Press "Done" to quit the installer.]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.stdout.redirect]]></string>
-						<string><![CDATA[insPoint.log]]></string>
+						<string><![CDATA[@APP_INSTALLER_NAME@.log]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.project.save.last.date]]></string>
@@ -1087,7 +1087,7 @@ Press "Done" to quit the installer.]]></string>
 						<string><![CDATA[@APP_NAME@ v@APP_VERSION@]]></string>
 					</property>
 					<property name="installerName">
-						<string><![CDATA[insPoint]]></string>
+						<string><![CDATA[@APP_INSTALLER_NAME@]]></string>
 					</property>
 					<property name="productName">
 						<string><![CDATA[@APP_NAME@ v@APP_VERSION@]]></string>

@@ -32,3 +32,4 @@
 <!ENTITY appHelpSetName "html/AppHelp.hs">
 
 <!ENTITY appJavaMaxHeapSizeBytes "500000000">
+<!ENTITY appInstallerName "insPoint">
