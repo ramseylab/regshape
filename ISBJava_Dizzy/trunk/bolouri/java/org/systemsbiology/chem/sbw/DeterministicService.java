@@ -47,7 +47,7 @@ public class DeterministicService extends SimulationService
      *========================================*/
     public ISimulator createSimulator()
     {
-        return(new DeterministicSimulatorAdaptive());
+        return(new SimulatorDeterministicRungeKuttaAdaptive());
     }
 
     /*========================================*

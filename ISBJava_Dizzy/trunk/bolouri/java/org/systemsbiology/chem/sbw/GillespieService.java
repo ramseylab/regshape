@@ -47,7 +47,7 @@ public class GillespieService extends SimulationService
      *========================================*/
     public ISimulator createSimulator()
     {
-        return(new GillespieSimulator());
+        return(new SimulatorStochasticGillespie());
     }
 
     /*========================================*

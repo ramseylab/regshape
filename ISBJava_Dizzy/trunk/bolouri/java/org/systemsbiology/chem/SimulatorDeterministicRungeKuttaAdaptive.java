@@ -8,13 +8,8 @@ package org.systemsbiology.chem;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import org.systemsbiology.math.Value;
-import org.systemsbiology.math.Symbol;
-import org.systemsbiology.math.SymbolEvaluator;
-import org.systemsbiology.math.MathFunctions;
-import org.systemsbiology.util.DataNotFoundException;
-import org.systemsbiology.util.IAliasableClass;
-import org.systemsbiology.util.DebugUtils;
+import org.systemsbiology.math.*;
+import org.systemsbiology.util.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,7 +22,7 @@ import java.util.Random;
  *
  * @author Stephen Ramsey
  */
-public class DeterministicSimulatorAdaptive extends DeterministicSimulator implements IAliasableClass, ISimulator
+public class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDeterministicBase implements IAliasableClass, ISimulator
 {
     public static final String CLASS_ALIAS = "ODE-RK5-adaptive";
 
@@ -48,7 +43,6 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
                                    double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
     {
         double stepSize = pRKScratchPad.stepSize;
-        double maxFractionalError = pRKScratchPad.maxFractionalError;
 
         double nextStepSize = adaptiveStep(pSpeciesRateFactorEvaluator,
                                            pSymbolEvaluator,
@@ -56,7 +50,6 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
                                            pDynamicSymbolAdjustmentVectors,
                                            pReactionProbabilities,
                                            pRKScratchPad,
-                                           maxFractionalError,
                                            stepSize,
                                            pDynamicSymbolValues,
                                            pNewDynamicSymbolValues);
@@ -72,7 +65,6 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
                                              Object []pDynamicSymbolAdjustmentVectors,
                                              double []pReactionProbabilities,
                                              RKScratchPad pRKScratchPad,
-                                             double pMaxFractionalError,
                                              double pTimeStepSize,
                                              double []pDynamicSymbolValues,
                                              double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
@@ -97,20 +89,31 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
 
         int numSteps = 0;
 
+        double maxRelativeError = pRKScratchPad.maxRelativeError;
+        double maxAbsoluteError = pRKScratchPad.maxAbsoluteError;
+
+        MutableDouble relativeErrorObj = pRKScratchPad.relativeError;
+        MutableDouble absoluteErrorObj = pRKScratchPad.absoluteError;
+
         do
         {
-            aggregateError = rkqc(pSpeciesRateFactorEvaluator,
-                                  pSymbolEvaluator,
-                                  pReactions,
-                                  pDynamicSymbolAdjustmentVectors,
-                                  pReactionProbabilities,
-                                  pRKScratchPad,
-                                  stepSize,
-                                  yscale,
-                                  pDynamicSymbolValues,
-                                  pNewDynamicSymbolValues);
+            rkqc(pSpeciesRateFactorEvaluator,
+                 pSymbolEvaluator,
+                 pReactions,
+                 pDynamicSymbolAdjustmentVectors,
+                 pReactionProbabilities,
+                 pRKScratchPad,
+                 stepSize,
+                 yscale,
+                 pDynamicSymbolValues,
+                 pNewDynamicSymbolValues,
+                 relativeErrorObj,
+                 absoluteErrorObj);
 
-            errRatio = aggregateError / pMaxFractionalError ;
+            double relativeError = relativeErrorObj.getValue();
+            double absoluteError = absoluteErrorObj.getValue();
+
+            errRatio = Math.max(relativeError / maxRelativeError, absoluteError / maxAbsoluteError) ;
 // FOR DEBUGGING ONLY:
 //            System.out.println("time: " + time + "; stepsize: " + stepSize + "; aggregateError: " + aggregateError + "; errRatio: " + errRatio);
             
@@ -159,11 +162,22 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
                                          SimulatorParameters pSimulatorParams, 
                                          RKScratchPad pRKScratchPad)
     {
-        Double maxFractionalErrorObj = pSimulatorParams.getMaxAllowedError();
-        if(null != maxFractionalErrorObj)
+        Double maxRelativeErrorObj = pSimulatorParams.getMaxAllowedRelativeError();
+        if(null != maxRelativeErrorObj)
         {
-            double maxFractionalError = maxFractionalErrorObj.doubleValue();
-            pRKScratchPad.maxFractionalError = maxFractionalError;
+            double maxRelativeError = maxRelativeErrorObj.doubleValue();
+            pRKScratchPad.maxRelativeError = maxRelativeError;
+        }
+        else
+        {
+            throw new IllegalArgumentException("max fractional error must be specified");
+        }
+
+        Double maxAbsoluteErrorObj = pSimulatorParams.getMaxAllowedAbsoluteError();
+        if(null != maxAbsoluteErrorObj)
+        {
+            double maxAbsoluteError = maxAbsoluteErrorObj.doubleValue();
+            pRKScratchPad.maxAbsoluteError = maxAbsoluteError;
         }
         else
         {

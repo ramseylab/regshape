@@ -16,6 +16,7 @@ import java.util.*;
 public abstract class Simulator 
 {
     private static final int NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION = 15;
+    public static final int MIN_NUM_TIME_POINTS = 2;
 
     protected String []mDynamicSymbolNames;
     protected double []mDynamicSymbolValues;
@@ -29,6 +30,7 @@ public abstract class Simulator
     protected SimulationController mSimulationController;
     protected boolean mInitialized;
     protected Species []mDynamicSymbols;
+    protected Object []mDynamicSymbolAdjustmentVectors;
 
     protected MultistepReactionSolver []mMultistepReactionSolvers;
 
@@ -93,12 +95,12 @@ public abstract class Simulator
 
 
 
-    public static void handleMultistepReaction(Reaction pReaction,
-                                               ArrayList pReactions,
-                                               int pReactionIndex,
-                                               ArrayList pDynamicSpecies,
-                                               ArrayList pMultistepReactionSolvers,
-                                               MutableInteger pRecursionDepth)
+    private static void handleMultistepReaction(Reaction pReaction,
+                                                ArrayList pReactions,
+                                                int pReactionIndex,
+                                                ArrayList pDynamicSpecies,
+                                                ArrayList pMultistepReactionSolvers,
+                                                MutableInteger pRecursionDepth)
     {
         String reactionName = pReaction.getName();
 
@@ -196,7 +198,18 @@ public abstract class Simulator
         }
     }
 
-    protected abstract void initializeMultistepReactionSolvers();
+    public abstract boolean isStochasticSimulator();
+
+    protected void initializeMultistepReactionSolvers()
+    {
+        MultistepReactionSolver []multistepSolvers = mMultistepReactionSolvers;
+        int numMultistepSolvers = multistepSolvers.length;
+        for(int ctr = 0; ctr < numMultistepSolvers; ++ctr)
+        {
+            MultistepReactionSolver solver = multistepSolvers[ctr];
+            solver.initialize((ISimulator) this);
+        }
+    }
 
     protected void initializeSimulator(Model pModel, SimulationController pSimulationController) throws DataNotFoundException
     {
@@ -319,6 +332,9 @@ public abstract class Simulator
         checkReactionRates();
 
         mSimulationController = pSimulationController;
+
+        initializeDynamicSymbolAdjustmentVectors(mDynamicSymbols);
+
         mInitialized = true;
     }
 
@@ -365,6 +381,22 @@ public abstract class Simulator
         clearSimulatorState();
     }
 
+    protected void initializeDynamicSymbolAdjustmentVectors(Species []pDynamicSymbols)
+    {
+        Reaction []reactions = mReactions;
+
+        int numReactions = reactions.length;
+        Object []dynamicSymbolAdjustmentVectors = new Object[numReactions];
+
+        for(int ctr = 0; ctr < numReactions; ++ctr)
+        {
+            Reaction reaction = reactions[ctr];
+            dynamicSymbolAdjustmentVectors[ctr ] = reaction.constructDynamicSymbolAdjustmentVector(pDynamicSymbols);
+        }
+
+        mDynamicSymbolAdjustmentVectors = dynamicSymbolAdjustmentVectors;
+    }
+
     protected boolean checkSimulationControllerStatus()
     {
         boolean isCancelled = false;
@@ -396,7 +428,7 @@ public abstract class Simulator
         {
             double timeValue = pTimeValues[timeCtr];
             pSymbolEvaluator.setTime(timeValue);
-            if(timeValue < pCurTime)
+            if(timeValue <= pCurTime)
             {
                 double []symbolValues = (double []) pRetSymbolValues[timeCtr];
                 if(null == symbolValues)
@@ -425,26 +457,32 @@ public abstract class Simulator
         return(timeCtr);
     }
 
-    protected static void prepareTimesArray(double pStartTime,
-                                            double pEndTime,
-                                            int pNumTimePoints,
-                                            double []pRetTimesArray)
+    protected static double []createTimesArray(double pStartTime,
+                                               double pEndTime,
+                                               int pNumTimePoints)
     {
-        assert (pNumTimePoints > 0) : " invalid number of time points";
+        assert (pNumTimePoints > 1) : " invalid number of time points";
 
-        double deltaTime = (pEndTime - pStartTime) / ((double) pNumTimePoints);
+        double []retTimesArray = new double[pNumTimePoints];
+
+        double deltaTime = (pEndTime - pStartTime) / ((double) (pNumTimePoints - 1));
         double halfDeltaTime = deltaTime / 2.0;
-
-        double time = halfDeltaTime;
 
         for(int timeCtr = 0; timeCtr < pNumTimePoints; ++timeCtr)
         {
-            pRetTimesArray[timeCtr] = (((double) timeCtr) * deltaTime) + halfDeltaTime;
+            double time = ((double) timeCtr) * deltaTime;
+            if(time > pEndTime)
+            {
+                time = pEndTime;
+            }
+            retTimesArray[timeCtr] = time;
         }
+
+        return(retTimesArray);
     }
 
-    protected Symbol []prepareRequestedSymbolArray(HashMap pSymbolMap,
-                                                   String []pRequestedSymbols) throws DataNotFoundException
+    protected Symbol []createRequestedSymbolArray(HashMap pSymbolMap,
+                                                  String []pRequestedSymbols) throws DataNotFoundException
     {
         int numSymbols = pRequestedSymbols.length;
         Symbol []symbols = new Symbol[numSymbols];
@@ -461,13 +499,47 @@ public abstract class Simulator
         return(symbols);
     }
 
-    public abstract void simulate(double pStartTime, 
-                                  double pEndTime,
-                                  SimulatorParameters pSimulatorParameters,
-                                  int pNumTimePoints,
-                                  String []pRequestedSymbolNames,
-                                  double []pRetTimeValues,
-                                  Object []pRetSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException;
+    protected void conductPreSimulationCheck(double pStartTime,
+                                             double pEndTime,
+                                             SimulatorParameters pSimulatorParameters,
+                                             int pNumResultsTimePoints,
+                                             String []pRequestedSymbolNames,
+                                             double []pRetTimeValues,
+                                             Object []pRetSymbolValues) throws IllegalArgumentException, IllegalStateException
+    {
+       if(! mInitialized)
+        {
+            throw new IllegalStateException("simulator has not been initialized yet");
+        }
+
+        if(pNumResultsTimePoints <= 1)
+        {
+            throw new IllegalArgumentException("number of time points must be greater than or equal to 1");
+        }
+
+        if(pStartTime > pEndTime)
+        {
+            throw new IllegalArgumentException("end time must come after start time");
+        }
+        
+        if(pRetTimeValues.length != pNumResultsTimePoints)
+        {
+            throw new IllegalArgumentException("illegal length of pRetTimeValues array");
+        }
+
+        if(pRetSymbolValues.length != pNumResultsTimePoints)
+        {
+            throw new IllegalArgumentException("illegal length of pRetSymbolValues array");
+        }
+    }
+
+    protected abstract void simulate(double pStartTime, 
+                                          double pEndTime,
+                                          SimulatorParameters pSimulatorParameters,
+                                          int pNumTimePoints,
+                                          String []pRequestedSymbolNames,
+                                          double []pRetTimeValues,
+                                          Object []pRetSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException, SimulationFailedException;
 
 
 
@@ -507,5 +579,40 @@ public abstract class Simulator
             compositeRate += estimatedFutureRate;
         }
         return(compositeRate);
+    }
+
+    protected static final void computeDerivative(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
+                                                  SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                                  Reaction []pReactions,
+                                                  Object []pDynamicSymbolAdjustmentVectors,
+                                                  double []pReactionProbabilities,
+                                                  double []pTempDynamicSymbolValues,
+                                                  double []pDynamicSymbolDerivatives) throws DataNotFoundException
+    {
+        computeReactionProbabilities(pSpeciesRateFactorEvaluator,
+                                     pSymbolEvaluator,
+                                     pReactionProbabilities,
+                                     pReactions);
+
+        int numReactions = pReactions.length;
+        Reaction reaction = null;
+        double reactionRate = 0.0;
+
+        MathFunctions.vectorZeroElements(pDynamicSymbolDerivatives);
+
+        Object []dynamicSymbolAdjustmentVectors = pDynamicSymbolAdjustmentVectors;
+
+        for(int reactionCtr = numReactions; --reactionCtr >= 0; )
+        {
+            reaction = pReactions[reactionCtr];
+            reactionRate = pReactionProbabilities[reactionCtr];
+
+            double []symbolAdjustmentVector = (double []) dynamicSymbolAdjustmentVectors[reactionCtr];
+            
+            // we want to multiply this vector by the reaction rate and add it to the derivative
+            MathFunctions.vectorScalarMultiply(symbolAdjustmentVector, reactionRate, pTempDynamicSymbolValues);
+            
+            MathFunctions.vectorAdd(pTempDynamicSymbolValues, pDynamicSymbolDerivatives, pDynamicSymbolDerivatives);
+        }
     }
 }

@@ -8,13 +8,8 @@ package org.systemsbiology.chem;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import org.systemsbiology.math.Value;
-import org.systemsbiology.math.Symbol;
-import org.systemsbiology.math.SymbolEvaluator;
-import org.systemsbiology.math.MathFunctions;
-import org.systemsbiology.util.DataNotFoundException;
-import org.systemsbiology.util.IAliasableClass;
-import org.systemsbiology.util.DebugUtils;
+import org.systemsbiology.math.*;
+import org.systemsbiology.util.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,7 +22,7 @@ import java.util.Random;
  *
  * @author Stephen Ramsey
  */
-public class DeterministicSimulatorFixed extends DeterministicSimulator implements IAliasableClass, ISimulator
+public class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterministicBase implements IAliasableClass, ISimulator
 {
     public static final String CLASS_ALIAS = "ODE-RK5-fixed";
     private static final int NUM_ITERATIONS_BEFORE_ERROR_CHECK = 10;
@@ -72,22 +67,36 @@ public class DeterministicSimulatorFixed extends DeterministicSimulator implemen
                          pDynamicSymbolValues,
                          yscale);
 
-            double aggregateError = rkqc(pSpeciesRateFactorEvaluator,
-                                         pSymbolEvaluator,
-                                         pReactions,
-                                         pDynamicSymbolAdjustmentVectors,
-                                         pReactionProbabilities,
-                                         pRKScratchPad,
-                                         stepSize,  
-                                         yscale,
-                                         pDynamicSymbolValues,
-                                         pNewDynamicSymbolValues);
+            MutableDouble relativeErrorObj = pRKScratchPad.relativeError;
+            MutableDouble absoluteErrorObj = pRKScratchPad.absoluteError;
 
-            double maxFractionalError = pRKScratchPad.maxFractionalError;
+            rkqc(pSpeciesRateFactorEvaluator,
+                 pSymbolEvaluator,
+                 pReactions,
+                 pDynamicSymbolAdjustmentVectors,
+                 pReactionProbabilities,
+                 pRKScratchPad,
+                 stepSize,  
+                 yscale,
+                 pDynamicSymbolValues,
+                 pNewDynamicSymbolValues,
+                 relativeErrorObj,
+                 absoluteErrorObj);
 
-            if(maxFractionalError - aggregateError < 0.0)
+            double maxRelativeError = pRKScratchPad.maxRelativeError;
+            double relativeError = relativeErrorObj.getValue();
+
+            if(maxRelativeError - relativeError < 0.0)
             {
-                throw new SimulationAccuracyException("numeric approximation error exceeded threshold; try a smaller step-size");
+                throw new SimulationAccuracyException("numeric approximation error exceeded threshold; try a larger value for \"min number of timesteps\"");
+            }
+
+            double maxAbsoluteError = pRKScratchPad.maxAbsoluteError;
+            double absoluteError = absoluteErrorObj.getValue();
+
+            if(maxAbsoluteError - absoluteError < 0.0)
+            {
+                throw new SimulationAccuracyException("numeric approximation error exceeded threshold; try a larger value for \"min number of timesteps\"");
             }
         }
 
@@ -101,15 +110,26 @@ public class DeterministicSimulatorFixed extends DeterministicSimulator implemen
                                          SimulatorParameters pSimulatorParams, 
                                          RKScratchPad pRKScratchPad)
     {
-        Double maxFractionalErrorObj = pSimulatorParams.getMaxAllowedError();
-        if(null != maxFractionalErrorObj)
+        Double maxAbsoluteErrorObj = pSimulatorParams.getMaxAllowedAbsoluteError();
+        if(null != maxAbsoluteErrorObj)
         {
-            double maxFractionalError = maxFractionalErrorObj.doubleValue();
-            pRKScratchPad.maxFractionalError = maxFractionalError;
+            double maxAbsoluteError = maxAbsoluteErrorObj.doubleValue();
+            pRKScratchPad.maxAbsoluteError = maxAbsoluteError;
         }
         else
         {
-            throw new IllegalArgumentException("max fractional error must be specified");
+            throw new IllegalArgumentException("max absolute error must be specified");
+        }
+
+        Double maxRelativeErrorObj = pSimulatorParams.getMaxAllowedRelativeError();
+        if(null != maxRelativeErrorObj)
+        {
+            double maxRelativeError = maxRelativeErrorObj.doubleValue();
+            pRKScratchPad.maxRelativeError = maxRelativeError;
+        }
+        else
+        {
+            throw new IllegalArgumentException("max relative error must be specified");
         }
 
         int minNumSteps;

@@ -29,10 +29,9 @@ import java.util.Random;
  *
  * @author Stephen Ramsey
  */
-public class GillespieSimulator extends StochasticSimulator implements IAliasableClass, ISimulator
+public class SimulatorStochasticGillespie extends SimulatorStochasticBase implements IAliasableClass, ISimulator
 {
     public static final String CLASS_ALIAS = "gillespie-direct"; 
-
 
     private static final int chooseIndexOfNextReaction(Random pRandomNumberGenerator,
                                                        double pAggregateReactionProbabilityDensity, 
@@ -68,15 +67,25 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
         return(reactionIndex);
     }
 
-    private static final double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                        SymbolEvaluatorChemSimulation pSymbolEvaluator,
-                                        double pEndTime,
-                                        Reaction []pReactions,
-                                        double []pReactionProbabilities,
-                                        Random pRandomNumberGenerator,
-                                        double []pDynamicSymbolValues,
-                                        MutableInteger pLastReactionIndex,
-                                        MultistepReactionSolver []pMultistepReactionSolvers) throws DataNotFoundException, IllegalStateException
+    protected final void prepareForStochasticSimulation(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
+                                                        SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                                        double pStartTime,
+                                                        Random pRandomNumberGenerator,
+                                                        Reaction []pReactions,
+                                                        double []pReactionProbabilities)
+    {
+        // nothing to do
+    }
+
+    protected final double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
+                                   SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                   double pEndTime,
+                                   Reaction []pReactions,
+                                   double []pReactionProbabilities,
+                                   Random pRandomNumberGenerator,
+                                   double []pDynamicSymbolValues,
+                                   MutableInteger pLastReactionIndex,
+                                   MultistepReactionSolver []pMultistepReactionSolvers) throws DataNotFoundException, IllegalStateException
     {
         double time = pSymbolEvaluator.getTime();
 
@@ -171,142 +180,4 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
         initializeRandomNumberGenerator();
     }
 
-    public final void simulate(double pStartTime, 
-                               double pEndTime,
-                               SimulatorParameters pSimulatorParameters,
-                               int pNumResultsTimePoints,
-                               String []pRequestedSymbolNames,
-                               double []pRetTimeValues,
-                               Object []pRetSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException
-    {
-        if(! mInitialized)
-        {
-            throw new IllegalStateException("simulator not initialized yet");
-        }
-
-        Integer ensembleSizeObj = pSimulatorParameters.getEnsembleSize();
-        if(null == ensembleSizeObj)
-        {
-            throw new IllegalArgumentException("ensemble size was not defined");
-        }
-            
-        int ensembleSize = ensembleSizeObj.intValue();
-        if(ensembleSize <= 0)
-        {
-            throw new IllegalArgumentException("illegal value for ensemble size");
-        }
-
-        if(pNumResultsTimePoints <= 0)
-        {
-            throw new IllegalArgumentException("number of time points must be nonnegative");
-        }
-
-        if(pStartTime > pEndTime)
-        {
-            throw new IllegalArgumentException("end time must come after start time");
-        }
-        
-        if(pRetTimeValues.length != pNumResultsTimePoints)
-        {
-            throw new IllegalArgumentException("illegal length of pRetTimeValues array");
-        }
-
-        if(pRetSymbolValues.length != pNumResultsTimePoints)
-        {
-            throw new IllegalArgumentException("illegal length of pRetSymbolValues array");
-        }
-
-        SpeciesRateFactorEvaluator speciesRateFactorEvaluator = mSpeciesRateFactorEvaluator;
-        SymbolEvaluatorChemSimulation symbolEvaluator = mSymbolEvaluator;
-        double []reactionProbabilities = mReactionProbabilities;
-        Random randomNumberGenerator = mRandomNumberGenerator;
-        Reaction []reactions = mReactions;
-        double []dynamicSymbolValues = mDynamicSymbolValues;        
-        int numDynamicSymbolValues = dynamicSymbolValues.length;
-        HashMap symbolMap = mSymbolMap;
-        MultistepReactionSolver []multistepReactionSolvers = mMultistepReactionSolvers;
-
-        double []timesArray = new double[pNumResultsTimePoints];
-
-        prepareTimesArray(pStartTime, 
-                          pEndTime,
-                          pNumResultsTimePoints,
-                          timesArray);        
-
-        Symbol []requestedSymbols = prepareRequestedSymbolArray(symbolMap,
-                                                                pRequestedSymbolNames);
-
-        int numRequestedSymbols = requestedSymbols.length;
-
-        boolean isCancelled = false;
-
-        int timeCtr = 0;
-
-        MutableInteger lastReactionIndex = new MutableInteger(NULL_REACTION);
-
-        for(int simCtr = ensembleSize; --simCtr >= 0; )
-        {
-            timeCtr = 0;
-
-            double time = pStartTime;
-            prepareForSimulation(time);
-            lastReactionIndex.setValue(NULL_REACTION);
-
-//            int numIterations = 0;
-
-            while(pNumResultsTimePoints - timeCtr > 0)
-            {
-                time = iterate(speciesRateFactorEvaluator,
-                               symbolEvaluator,
-                               pEndTime,
-                               reactions,
-                               reactionProbabilities,
-                               randomNumberGenerator,
-                               dynamicSymbolValues,
-                               lastReactionIndex,
-                               multistepReactionSolvers);
-
-//                ++numIterations;
-
-                if(time > timesArray[timeCtr])
-                {
-                    timeCtr = addRequestedSymbolValues(time,
-                                                       timeCtr,
-                                                       requestedSymbols,
-                                                       symbolEvaluator,
-                                                       timesArray,
-                                                       pRetSymbolValues);
-
-                    isCancelled = checkSimulationControllerStatus();
-                    if(isCancelled)
-                    {
-                        break;
-                    }
-                }
-            }
-            
-            if(isCancelled)
-            {
-                break;
-            }
-
-//            System.out.println("number of iterations: " + numIterations);
-
-        }
-
-        double ensembleMult = 1.0 / ((double) ensembleSize);
-
-        for(int timePointCtr = timeCtr; --timePointCtr >= 0; )
-        {
-            for(int symbolCtr = numRequestedSymbols; --symbolCtr >= 0; )
-            {
-                double []symbolValues = (double []) pRetSymbolValues[timePointCtr];
-                symbolValues[symbolCtr] *= ensembleMult;
-            }
-        }
-
-        // copy array of time points 
-        System.arraycopy(timesArray, 0, pRetTimeValues, 0, timeCtr);
-        
-    }
 }

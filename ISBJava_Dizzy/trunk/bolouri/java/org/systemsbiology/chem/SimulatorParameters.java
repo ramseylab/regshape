@@ -12,13 +12,14 @@ public class SimulatorParameters
 {
     private Integer mEnsembleSize;
     private Integer mMinNumSteps;
-    private Double mMaxAllowedError;
+    private Double mMaxAllowedRelativeError;
+    private Double mMaxAllowedAbsoluteError;
 
     public SimulatorParameters()
     {
         mEnsembleSize = null;
         mMinNumSteps = null;
-        mMaxAllowedError = null;
+        mMaxAllowedRelativeError = null;
     }
 
     public void setEnsembleSize(int pEnsembleSize)
@@ -31,14 +32,25 @@ public class SimulatorParameters
         mMinNumSteps = new Integer(pMinNumSteps);
     }
 
-    public void setMaxAllowedError(double pMaxAllowedError)
+
+    public void setMaxAllowedRelativeError(double pMaxAllowedRelativeError)
     {
-        mMaxAllowedError = new Double(pMaxAllowedError);
+        mMaxAllowedRelativeError = new Double(pMaxAllowedRelativeError);
     }
 
-    public Double getMaxAllowedError()
+    public Double getMaxAllowedRelativeError()
     {
-        return(mMaxAllowedError);
+        return(mMaxAllowedRelativeError);
+    }
+
+    public void setMaxAllowedAbsoluteError(double pMaxAllowedAbsoluteError)
+    {
+        mMaxAllowedAbsoluteError = new Double(pMaxAllowedAbsoluteError);
+    }
+
+    public Double getMaxAllowedAbsoluteError()
+    {
+        return(mMaxAllowedAbsoluteError);
     }
 
     public Integer getMinNumSteps()

@@ -22,7 +22,7 @@ import org.systemsbiology.math.*;
  *
  * @author Stephen Ramsey
  */
-public class GibsonSimulator extends StochasticSimulator implements IAliasableClass, ISimulator
+public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase implements IAliasableClass, ISimulator
 {
     public static final String CLASS_ALIAS = "gibson-bruck"; 
 
@@ -268,22 +268,41 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
     }
                                                  
 
-    private static final double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                        SymbolEvaluatorChemSimulation pSymbolEvaluator,
-                                        double pEndTime,
-                                        Reaction []pReactions,
-                                        double []pReactionProbabilities,
-                                        Random pRandomNumberGenerator,
-                                        double []pDynamicSymbolValues,
-                                        MutableInteger pLastReactionIndex,
-                                        IndexedPriorityQueue pPutativeTimeToNextReactions,
-                                        Object []pReactionDependencies,
-                                        MultistepReactionSolver []pMultistepReactionSolvers) throws DataNotFoundException, IllegalStateException
+    protected final void prepareForStochasticSimulation(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
+                                                        SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                                        double pStartTime,
+                                                        Random pRandomNumberGenerator,
+                                                        Reaction []pReactions,
+                                                        double []pReactionProbabilities) throws DataNotFoundException
     {
+        computeReactionProbabilities(pSpeciesRateFactorEvaluator,
+                                     pSymbolEvaluator,
+                                     pReactionProbabilities,
+                                     pReactions);
+
+        computePutativeTimeToNextReactions(pRandomNumberGenerator,
+                                           pStartTime,
+                                           pReactionProbabilities,
+                                           pReactions);
+    }
+
+    protected final double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
+                                   SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                   double pEndTime,
+                                   Reaction []pReactions,
+                                   double []pReactionProbabilities,
+                                   Random pRandomNumberGenerator,
+                                   double []pDynamicSymbolValues,
+                                   MutableInteger pLastReactionIndex,
+                                   MultistepReactionSolver []pMultistepReactionSolvers) throws DataNotFoundException, IllegalStateException
+    {
+
+        IndexedPriorityQueue putativeTimeToNextReactions = mPutativeTimeToNextReactions;
+        Object []reactionDependencies = mReactionDependencies;
 
         double time = pSymbolEvaluator.getTime();
 
-        assert (pSymbolEvaluator.getTime() <= ((MutableDouble) pPutativeTimeToNextReactions.get(pPutativeTimeToNextReactions.peekIndex())).getValue()) : "invalid time";
+        assert (pSymbolEvaluator.getTime() <= ((MutableDouble) putativeTimeToNextReactions.get(putativeTimeToNextReactions.peekIndex())).getValue()) : "invalid time";
 
         int lastReactionIndex = pLastReactionIndex.getValue();
         if(lastReactionIndex >= 0)
@@ -297,7 +316,7 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
                                           pMultistepReactionSolvers);
                                           
 
-            Integer []dependentReactions = (Integer []) pReactionDependencies[lastReactionIndex];
+            Integer []dependentReactions = (Integer []) reactionDependencies[lastReactionIndex];
             int numDependentReactions = dependentReactions.length;
             for(int ctr = numDependentReactions; --ctr >= 0; )
             {
@@ -306,7 +325,7 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
 
                 updateReactionRateAndTime(pSpeciesRateFactorEvaluator,
                                           pSymbolEvaluator,
-                                          pPutativeTimeToNextReactions,
+                                          putativeTimeToNextReactions,
                                           dependentReactionCtr,
                                           pReactions,
                                           pReactionProbabilities,
@@ -317,9 +336,9 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
             }
         }
 
-        int reactionIndex = pPutativeTimeToNextReactions.peekIndex();
+        int reactionIndex = putativeTimeToNextReactions.peekIndex();
         assert (-1 != reactionIndex) : "invalid reaction index";
-        MutableDouble timeOfNextReactionObj = (MutableDouble) pPutativeTimeToNextReactions.get(reactionIndex);
+        MutableDouble timeOfNextReactionObj = (MutableDouble) putativeTimeToNextReactions.get(reactionIndex);
         assert (null != timeOfNextReactionObj) : "invalid time of next reaction object";
         double timeOfNextReaction = timeOfNextReactionObj.getValue();
 
@@ -370,162 +389,6 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
         return(time);
     }
 
-
-                                                                                                             
-    public final void simulate(double pStartTime, 
-                               double pEndTime,
-                               SimulatorParameters pSimulatorParameters,
-                               int pNumResultsTimePoints,
-                               String []pRequestedSymbolNames,
-                               double []pRetTimeValues,
-                               Object []pRetSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException
-    {
-        if(! mInitialized)
-        {
-            throw new IllegalStateException("simulator not initialized yet");
-        }
-
-        Integer ensembleSizeObj = pSimulatorParameters.getEnsembleSize();
-        if(null == ensembleSizeObj)
-        {
-            throw new IllegalArgumentException("ensemble size was not defined");
-        }
-            
-        int ensembleSize = ensembleSizeObj.intValue();
-        if(ensembleSize <= 0)
-        {
-            throw new IllegalArgumentException("illegal value for ensemble size");
-        }
-
-        if(pNumResultsTimePoints <= 0)
-        {
-            throw new IllegalArgumentException("number of time points must be nonnegative");
-        }
-
-        if(pStartTime > pEndTime)
-        {
-            throw new IllegalArgumentException("end time must come after start time");
-        }
-        
-        if(pRetTimeValues.length != pNumResultsTimePoints)
-        {
-            throw new IllegalArgumentException("illegal length of pRetTimeValues array");
-        }
-
-        if(pRetSymbolValues.length != pNumResultsTimePoints)
-        {
-            throw new IllegalArgumentException("illegal length of pRetSymbolValues array");
-        }
-
-        SpeciesRateFactorEvaluator speciesRateFactorEvaluator = mSpeciesRateFactorEvaluator;
-        SymbolEvaluatorChemSimulation symbolEvaluator = mSymbolEvaluator;
-        double []reactionProbabilities = mReactionProbabilities;
-        Random randomNumberGenerator = mRandomNumberGenerator;
-        Reaction []reactions = mReactions;
-        double []dynamicSymbolValues = mDynamicSymbolValues;        
-        int numDynamicSymbolValues = dynamicSymbolValues.length;
-        HashMap symbolMap = mSymbolMap;
-        Object []reactionDependencies = mReactionDependencies;
-
-        double []timesArray = new double[pNumResultsTimePoints];
-
-        prepareTimesArray(pStartTime, 
-                          pEndTime,
-                          pNumResultsTimePoints,
-                          timesArray);        
-
-        Symbol []requestedSymbols = prepareRequestedSymbolArray(symbolMap,
-                                                                pRequestedSymbolNames);
-
-        int numRequestedSymbols = requestedSymbols.length;
-
-        boolean isCancelled = false;
-
-        int timeCtr = 0;
-
-        IndexedPriorityQueue putativeTimeToNextReactions = mPutativeTimeToNextReactions;
-
-        MutableInteger lastReactionIndex = new MutableInteger(NULL_REACTION);
-
-        MultistepReactionSolver []multistepReactionSolvers = mMultistepReactionSolvers;
-
-        for(int simCtr = ensembleSize; --simCtr >= 0; )
-        {
-            timeCtr = 0;
-
-            double time = pStartTime;
-            prepareForSimulation(time);
-            lastReactionIndex.setValue(NULL_REACTION);
-
-            computeReactionProbabilities(speciesRateFactorEvaluator,
-                                         symbolEvaluator,
-                                         reactionProbabilities,
-                                         reactions);
-
-            computePutativeTimeToNextReactions(randomNumberGenerator,
-                                               pStartTime,
-                                               reactionProbabilities,
-                                               reactions);
-
-//            int numIterations = 0;
-
-            while(pNumResultsTimePoints - timeCtr > 0)
-            {
-                time = iterate(speciesRateFactorEvaluator,
-                               symbolEvaluator,
-                               pEndTime,
-                               reactions,
-                               reactionProbabilities,
-                               randomNumberGenerator,
-                               dynamicSymbolValues,
-                               lastReactionIndex,
-                               putativeTimeToNextReactions,
-                               reactionDependencies,
-                               multistepReactionSolvers);
-                
-//                ++numIterations;
-
-                if(time > timesArray[timeCtr])
-                {
-                    timeCtr = addRequestedSymbolValues(time,
-                                                       timeCtr,
-                                                       requestedSymbols,
-                                                       symbolEvaluator,
-                                                       timesArray,
-                                                       pRetSymbolValues);
-
-                    isCancelled = checkSimulationControllerStatus();
-                    if(isCancelled)
-                    {
-                        break;
-                    }
-                }
-            }
-            
-            if(isCancelled)
-            {
-                break;
-            }
-
-//            System.out.println("number of iterations: " + numIterations);
-
-        }
-
-        double ensembleMult = 1.0 / ((double) ensembleSize);
-
-        for(int timePointCtr = timeCtr; --timePointCtr >= 0; )
-        {
-            for(int symbolCtr = numRequestedSymbols; --symbolCtr >= 0; )
-            {
-                double []symbolValues = (double []) pRetSymbolValues[timePointCtr];
-                symbolValues[symbolCtr] *= ensembleMult;
-            }
-        }
-
-        // copy array of time points 
-        System.arraycopy(timesArray, 0, pRetTimeValues, 0, timeCtr);
-        
-    }
 
 }
     
