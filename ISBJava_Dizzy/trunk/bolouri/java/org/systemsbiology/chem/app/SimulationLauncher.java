@@ -72,6 +72,88 @@ public class SimulationLauncher
     private JLabel mOutputFileAppendLabel;
     private Plotter mPlotter;
     private File mCurrentDirectory;
+    private JLabel mOutputFileFormatListLabel;
+    private JComboBox mOutputFileFormatList;
+
+    private static final String TOOLTIP_FILE_OUTPUT = "save output to a file in comma-separated-value (CSV) format";
+
+
+    static class OutputType
+    {
+        private final String mName;
+        private static HashMap mMap;
+
+        static
+        {
+            mMap = new HashMap();
+        }
+
+        public String toString()
+        {
+            return(mName);
+        }
+        private OutputType(String pName)
+        {
+            mName = pName;
+            mMap.put(mName, this);
+        }
+        public static OutputType get(String pName)
+        {
+            return((OutputType) mMap.get(pName));
+        }
+
+        public static final OutputType PRINT = new OutputType("print");
+        public static final OutputType PLOT = new OutputType("plot");
+        public static final OutputType FILE = new OutputType("file");
+    }
+
+    class SimulationRunParameters
+    {
+        ISimulator mSimulator;
+        String mSimulatorAlias;
+        double mStartTime;
+        double mEndTime;
+        SimulatorParameters mSimulatorParameters;
+        int mNumTimePoints;
+        OutputType mOutputType;
+        String mOutputFileName;
+        TimeSeriesSymbolValuesReporter.OutputFormat mOutputFileFormat;
+        boolean mOutputFileAppend;
+        String []mRequestedSymbolNames;
+        double []mRetTimeValues;
+        Object []mRetSymbolValues;
+    }
+
+    class SimulationRunner implements Runnable
+    {
+        public void run()
+        {
+            while(true)
+            {
+                SimulationRunParameters simulationRunParameters = getSimulationRunParameters();
+                if(null != simulationRunParameters)
+                {
+                    runSimulation(simulationRunParameters);
+                }
+                else
+                {
+                    try
+                    {
+                        synchronized(this)
+                        {
+                            this.wait();
+                        }
+                    }
+                    catch(InterruptedException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+    }
+
+
 
     /**
      * Enumerates the possible results of calling {@link #setModel(org.systemsbiology.chem.Model)}.
@@ -147,6 +229,11 @@ public class SimulationLauncher
         activateLauncherFrame();
     }
 
+    private TimeSeriesSymbolValuesReporter.OutputFormat getSelectedOutputFileFormat() 
+    {
+        String outputFileFormatName = (String) mOutputFileFormatList.getSelectedItem();
+        return(TimeSeriesSymbolValuesReporter.OutputFormat.get(outputFileFormatName));
+    }
 
     private void createSimulatorRegistry() throws ClassNotFoundException, IOException
     {
@@ -333,6 +420,7 @@ public class SimulationLauncher
 
     private void handleOutput(OutputType pOutputType,
                               String pOutputFileName,
+                              TimeSeriesSymbolValuesReporter.OutputFormat pOutputFileFormat,
                               boolean pOutputFileAppend,
                               String []pRequestedSymbolNames,
                               double []pTimeValues,
@@ -356,7 +444,8 @@ public class SimulationLauncher
         TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(printWriter,
                                                                     pRequestedSymbolNames,
                                                                     pTimeValues,
-                                                                    pSymbolValues);
+                                                                    pSymbolValues,
+                                                                    pOutputFileFormat);
 
         if(pOutputType.equals(OutputType.PRINT))
         {
@@ -414,6 +503,7 @@ public class SimulationLauncher
                 {
                     handleOutput(pSimulationRunParameters.mOutputType,
                                  pSimulationRunParameters.mOutputFileName,
+                                 pSimulationRunParameters.mOutputFileFormat,
                                  pSimulationRunParameters.mOutputFileAppend,
                                  pSimulationRunParameters.mRequestedSymbolNames, 
                                  pSimulationRunParameters.mRetTimeValues, 
@@ -468,51 +558,6 @@ public class SimulationLauncher
         }
 
         updateSimulationControlButtons(pSimulator.allowsInterrupt());
-    }
-
-    class SimulationRunParameters
-    {
-        ISimulator mSimulator;
-        String mSimulatorAlias;
-        double mStartTime;
-        double mEndTime;
-        SimulatorParameters mSimulatorParameters;
-        int mNumTimePoints;
-        OutputType mOutputType;
-        String mOutputFileName;
-        boolean mOutputFileAppend;
-        String []mRequestedSymbolNames;
-        double []mRetTimeValues;
-        Object []mRetSymbolValues;
-    }
-
-    class SimulationRunner implements Runnable
-    {
-        public void run()
-        {
-            while(true)
-            {
-                SimulationRunParameters simulationRunParameters = getSimulationRunParameters();
-                if(null != simulationRunParameters)
-                {
-                    runSimulation(simulationRunParameters);
-                }
-                else
-                {
-                    try
-                    {
-                        synchronized(this)
-                        {
-                            this.wait();
-                        }
-                    }
-                    catch(InterruptedException e)
-                    {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        }
     }
 
     private void handleStartButton() 
@@ -906,34 +951,6 @@ public class SimulationLauncher
 
     private static final int NUM_COLUMNS_FILE_NAME = 12;
 
-    static class OutputType
-    {
-        private final String mName;
-        private static HashMap mMap;
-
-        static
-        {
-            mMap = new HashMap();
-        }
-
-        private OutputType(String pName)
-        {
-            mName = pName;
-            mMap.put(mName, this);
-        }
-        public static OutputType get(String pName)
-        {
-            return((OutputType) mMap.get(pName));
-        }
-        public String toString()
-        {
-            return(mName);
-        }
-        public static final OutputType PRINT = new OutputType("print");
-        public static final OutputType PLOT = new OutputType("plot");
-        public static final OutputType FILE = new OutputType("file");
-    }
-
     private void handleBadInput(String pTitle, String pMessage)
     {
         SimpleDialog dialog = new SimpleDialog(getLauncherFrame(),
@@ -1187,8 +1204,21 @@ public class SimulationLauncher
                 String fileName = outputFile.getAbsolutePath();
                 assert (null != fileName && fileName.trim().length() > 0) : "invalid output file name";
                 srp.mOutputFileName = fileName;
+                
+                TimeSeriesSymbolValuesReporter.OutputFormat outputFileFormat = getSelectedOutputFileFormat();
+                if(null == outputFileFormat)
+                {
+                    throw new IllegalStateException("null output file format");
+                }
+                srp.mOutputFileFormat = outputFileFormat;
                 boolean append = mOutputFileAppendCheckBox.isSelected();
                 srp.mOutputFileAppend = append;
+            }
+            else
+            {
+                srp.mOutputFileName = null;
+                srp.mOutputFileAppend = false;
+                srp.mOutputFileFormat = TimeSeriesSymbolValuesReporter.OutputFormat.CSV_GNUPLOT;
             }
         }
         else
@@ -1196,6 +1226,7 @@ public class SimulationLauncher
             srp.mOutputFileName = null;
             srp.mOutputFileAppend = false;
             srp.mOutputType = null;
+            srp.mOutputFileFormat = TimeSeriesSymbolValuesReporter.OutputFormat.CSV_GNUPLOT;
         }
 
         retVal = srp;
@@ -1207,14 +1238,16 @@ public class SimulationLauncher
         mOutputFileField.setEnabled(pEnabled);
         mOutputFileAppendCheckBox.setEnabled(pEnabled);
         mOutputFileAppendLabel.setEnabled(pEnabled);
-        
+        mOutputFileFormatListLabel.setEnabled(pEnabled);
+        mOutputFileFormatList.setEnabled(pEnabled);
+
         if(pEnabled && mOutputFileField.getText().length() == 0)
         {
             mOutputFileField.setText("[output file; click to edit]");
         }
     }
 
-    private void handleButtonEvent(ActionEvent e)
+    private void handleOutputTypeSelection(ActionEvent e)
     {
         String outputTypeStr = e.getActionCommand();
         OutputType outputType = OutputType.get(outputTypeStr);
@@ -1302,27 +1335,32 @@ public class SimulationLauncher
         JPanel outputPanel = new JPanel();
         outputPanel.setBorder(BorderFactory.createEtchedBorder());
 
-        Box outputBox = new Box(BoxLayout.Y_AXIS);
+        BoxLayout outputBox = new BoxLayout(outputPanel, BoxLayout.PAGE_AXIS);
+        outputPanel.setLayout(outputBox);
+//        Box outputBox = new Box(BoxLayout.Y_AXIS);
         
         JLabel outputLabel = new JLabel("Output Type -- specify what do do with the simulation results:");
-        outputBox.add(outputLabel);
+        outputLabel.setAlignmentX(Container.LEFT_ALIGNMENT);
+//        outputLabel.setMaximumSize(new Dimension(200, 50));
+        outputPanel.add(outputLabel);
 
         ActionListener buttonListener = new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                handleButtonEvent(e);
+                handleOutputTypeSelection(e);
             }
         };
 
         JPanel printPlotPanel = new JPanel();
-
         JRadioButton plotButton = new JRadioButton(OutputType.PLOT.toString(), true);
         plotButton.addActionListener(buttonListener);
         plotButton.setSelected(true);
         buttonGroup.add(plotButton);
         printPlotPanel.add(plotButton);
-        outputBox.add(printPlotPanel);
+        printPlotPanel.setAlignmentX(Container.LEFT_ALIGNMENT);
+        printPlotPanel.setMaximumSize(new Dimension(200, 50));
+        outputPanel.add(printPlotPanel);
 
         JRadioButton printButton = new JRadioButton(OutputType.PRINT.toString(), true);
         printButton.addActionListener(buttonListener);
@@ -1333,11 +1371,13 @@ public class SimulationLauncher
 
         JPanel filePanel = new JPanel();
         JRadioButton fileButton = new JRadioButton(OutputType.FILE.toString(), false);
+        fileButton.setToolTipText(TOOLTIP_FILE_OUTPUT);
         fileButton.addActionListener(buttonListener);
         buttonGroup.add(fileButton);
         filePanel.add(fileButton);
         JPanel fileNamePanel = new JPanel();
         Box fileBox = new Box(BoxLayout.Y_AXIS);
+        fileBox.setToolTipText(TOOLTIP_FILE_OUTPUT);
         JTextField fileNameTextField = new JTextField();
         fileNameTextField.setColumns(OUTPUT_FILE_TEXT_FIELD_SIZE_CHARS);
         mOutputFileField = fileNameTextField;
@@ -1374,12 +1414,26 @@ public class SimulationLauncher
                 }
             }
         });
+
+        JLabel outputFileFormatListLabel = new JLabel("format:");
+        filePanel.add(outputFileFormatListLabel);
+        mOutputFileFormatListLabel = outputFileFormatListLabel;
+        // create combo box of file formats
+        JComboBox outputFileFormatComboBox = new JComboBox(TimeSeriesSymbolValuesReporter.OutputFormat.getSortedFileFormatNames());
+        mOutputFileFormatList = outputFileFormatComboBox;
+        outputFileFormatComboBox.setMaximumSize(new Dimension(100, 50));
+        filePanel.add(outputFileFormatComboBox);
+        
+        // set the default output type
         mOutputType = OutputType.PLOT;
+
+
         enableOutputFieldSection(false);
+        filePanel.setAlignmentX(Container.LEFT_ALIGNMENT);
+        filePanel.setMaximumSize(new Dimension(600, 50));
+        outputPanel.add(filePanel);
 
-        outputBox.add(filePanel);
-
-        outputPanel.add(outputBox);
+//        outputPanel.add(outputBox);
         return(outputPanel);
     }
 
@@ -1452,6 +1506,7 @@ public class SimulationLauncher
         if(mHandleOutputInternally)
         {
             JPanel outputPanel = createOutputPanel();
+            outputPanel.setAlignmentX(Container.CENTER_ALIGNMENT);
             box.add(outputPanel);
         }
         else
