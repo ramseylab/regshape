@@ -44,6 +44,9 @@ NOTE: All Ant invocations should be made in the top-level directory
 for this project; attempting to invoke Ant from a lower-level
 subdirectory will likely result in an error and a failed build.
 
+IMPORTANT:  Using the build system requires special software
+to be installed on your computer.
+
 Supported targets are:
 
   clean:          remove (most) build files (java class files are
@@ -57,17 +60,40 @@ Supported targets are:
                   in the "build" subdirectory, along with a source
                   tarball
 
-  buildWeb:       generate HTML documentation in a build directory
+  buildWeb:       Build all web content, including HTML documentation,
+                  PDF manuals, and InstallAnywhere web installers,
+                  into the "build/web" subdirectory.
+                  (NOTE:  this requires quite a bit of software to
+                  be carefully installed on the build machine; make sure
+                  you read the WebPagesManagementManual.html document,
+                  which is contained in the "docs/private" subdirectory.)
+
+  buildHTML:      Build all HTMl web content, including Javadoc API
+                  documentation, into the "build/web" subdirectory
+                  PDF documentation and InstallAnywhere installers are
+                  not generated.  You must have first run the "build"
+                  task.
+
+  buildPDF:       Build the PDF documentation (you must have first
+                  run the "buildHTML" task), into "build/web" 
+                  subdirectory.  (NOTE: This requires special software 
+                  to be installed on your computer; please read the
+                  WebPagesManagementManual.html document,
+                  which is contained in the "docs/private" subdirectory.)
+
+  buildInstallers:  Build the InstallAnywhere installers and store
+                    them under the "build/web" subdirectory.  This
+                    requires that the InstallAnywhere program be
+                    installed on your computer.
 
   uploadWeb:      upload the entire web content tree to the web server
 
 
 In order to use the "uploadWeb" target, you will need to have 
-the "ncftp" program (http://www.ncftpd.com) installed on your 
-computer.  The program must also be found within your PATH
-environment variable, so that the "Ant" program can find it.
-
-
+a version of "Ant" installed that understands the "<ftp>" target.
+This means that your version of "Ant" should have been built
+with the external "NetComponents.jar" library in the CLASSPATH
+(see the WebPagesManagementManual.html document for more info).
 
 -Stephen Ramsey
 
