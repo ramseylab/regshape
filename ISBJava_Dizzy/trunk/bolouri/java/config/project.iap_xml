@@ -1739,35 +1739,6 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[]]></string>
 											</property>
 										</object>
-										<object class="com.zerog.ia.installer.actions.InstallZipfile" objectID="c4459fc08eec">
-											<property name="unixPermissions">
-												<string><![CDATA[664]]></string>
-											</property>
-											<property name="sourceName">
-												<string><![CDATA[cytoscape.jar]]></string>
-											</property>
-											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
-											</property>
-											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
-											</property>
-											<property name="shouldUninstall">
-												<boolean>true</boolean>
-											</property>
-											<property name="destinationName">
-												<string><![CDATA[cytoscape.jar]]></string>
-											</property>
-											<property name="fileSize">
-												<long>-1</long>
-											</property>
-											<property name="macBinary">
-												<boolean>false</boolean>
-											</property>
-											<property name="targetCheckKind">
-												<int>0</int>
-											</property>
-										</object>
 										<object class="com.zerog.ia.installer.actions.InstallZipfile" objectID="c4459fc58eec">
 											<property name="unixPermissions">
 												<string><![CDATA[664]]></string>
@@ -2024,7 +1995,6 @@ and any path to a file to read from that file]]></string>
 											</property>
 											<visualChildren>
 												<object refID="aa8f7593bd6d"/>
-												<object refID="c4459fc08eec"/>
 												<object refID="c4459fc58eec"/>
 												<object refID="c4459fc68eec"/>
 												<object refID="c4459fc78eec"/>
