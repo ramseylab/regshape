@@ -1177,7 +1177,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.vmpack.linux.path]]></string>
-						<string><![CDATA[SunJRE141_05LinuxINTEL.vm]]></string>
+						<string><![CDATA[SunJRE142_05LinuxINTEL.vm]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.platform.macosx.authentication]]></string>
@@ -1221,7 +1221,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.vmpack.windows.path]]></string>
-						<string><![CDATA[SunJRE141_05Win32.vm]]></string>
+						<string><![CDATA[SunJRE142_05Win32.vm]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.macos9.novm]]></string>
