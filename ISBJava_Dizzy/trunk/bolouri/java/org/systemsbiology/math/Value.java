@@ -21,7 +21,9 @@ import org.systemsbiology.util.DataNotFoundException;
 public class Value
 {
     private Expression mExpressionValue;
+    private boolean mExpressionValueCached;
     private MutableDouble mNumericValue;
+    private MutableDouble mExpressionCacheValue;
 
     /**
      * Constructs a {@link Value} composed of the 
@@ -30,7 +32,6 @@ public class Value
     public Value(Expression pExpressionValue) throws IllegalArgumentException
     {
         setValue(pExpressionValue);
-        mNumericValue = null;
     }
 
     /**
@@ -39,25 +40,24 @@ public class Value
      */
     public Value(double pNumericValue)
     {
-        mExpressionValue = null;
-        mNumericValue = new MutableDouble(pNumericValue);
+        setValue(pNumericValue);
     }
 
     /**
      * Stores the specified floating-point value.
-     * If this object was constructed using an
-     * {@link Expression}, an IllegalStateException is thrown.
      */
     public void setValue(double pValue) throws IllegalStateException
     {
-        if(null != mExpressionValue)
+        if(null == mNumericValue)
         {
-            throw new IllegalStateException("this symbol value is an expression; value cannot be set from a double type");
+            mNumericValue = new MutableDouble(pValue);
         }
         else
         {
             mNumericValue.setValue(pValue);
         }
+        mExpressionValue = null;
+        mExpressionValueCached = false;
     }
 
     /**
@@ -72,6 +72,8 @@ public class Value
             throw new IllegalArgumentException("null expression object");
         }
         mExpressionValue = pExpressionValue;
+        mExpressionValueCached = false;
+        mNumericValue = new MutableDouble(0.0);
     }
 
     /**
@@ -81,16 +83,14 @@ public class Value
      */
     public final double getValue() throws IllegalStateException
     {
-        double value = 0.0;
-        if(null != mExpressionValue)
+        if(null == mExpressionValue)
         {
-            throw new IllegalStateException("this symbol value is an expression; must provide a SymbolValueMap");
+            return(mNumericValue.doubleValue());
         }
         else
         {
-            value = mNumericValue.doubleValue();
+            throw new IllegalStateException("this symbol value is an expression; must provide a SymbolValueMap");
         }
-        return(value);        
     }
 
     /**
@@ -109,18 +109,41 @@ public class Value
      * floating-point value stored in the internal 
      * MutableDouble object within this object.
      */
-    public double getValue(SymbolEvaluator pSymbolValueMap) throws DataNotFoundException
+    public final double getValueWithCaching(SymbolEvaluator pSymbolValueMap) throws DataNotFoundException
     {
-        double value = 0.0;
-        if(null != mExpressionValue)
+        Expression expression = mExpressionValue;
+        if(null != expression)
         {
-            value = mExpressionValue.computeValue(pSymbolValueMap);
+            if(mExpressionValueCached)
+            {
+                return(mNumericValue.doubleValue());
+            }
+            else
+            {
+                double value = expression.computeValue(pSymbolValueMap);
+                mExpressionValueCached = true;
+                mNumericValue.setValue(value);
+                return(value);
+            }
         }
         else
         {
-            value = mNumericValue.doubleValue();
+            return(mNumericValue.doubleValue());
         }
-        return(value);
+    }
+
+    public final double getValue(SymbolEvaluator pSymbolValueMap) throws DataNotFoundException
+    {
+        Expression expression = mExpressionValue;
+        if(null != expression)
+        {
+            double value = expression.computeValue(pSymbolValueMap);
+            return(value);
+        }
+        else
+        {
+            return(mNumericValue.doubleValue());
+        }
     }
 
     /**
@@ -152,6 +175,11 @@ public class Value
             sb.append(mNumericValue);
         }
         return(sb.toString());
+    }
+
+    public void clearExpressionValueCache()
+    {
+        mExpressionValueCached = false;
     }
 
     public Object clone()
