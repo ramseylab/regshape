@@ -143,7 +143,7 @@ public class App extends JFrame
     {
         String preferredDataFileDelimiterName = mPreferences.get(App.PREFERENCES_KEY_DATA_FILE_DELIMITER, "");
         int stringLength = preferredDataFileDelimiterName.length();
-        if(preferredDataFileDelimiterName.length() == 0 || null == DataFileDelimiter.forName(preferredDataFileDelimiterName))
+        if(preferredDataFileDelimiterName.length() == 0 || null == DataFileDelimiter.get(preferredDataFileDelimiterName))
         {
             boolean warnUser = false;
             if(preferredDataFileDelimiterName.length() > 0)
