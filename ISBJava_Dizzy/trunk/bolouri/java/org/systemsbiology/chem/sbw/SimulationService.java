@@ -164,10 +164,12 @@ public abstract class SimulationService implements ISimulationService
             double []timeValues = new double[pNumPoints];
             Object []symbolValues = new Object[pNumPoints];
 
+            SimulatorParameters simulatorParameters = simulator.getDefaultSimulatorParameters();
+            
             simulator.simulate(pStartTime,
                                pEndTime,
+                               simulatorParameters,
                                pNumPoints,
-                               1,
                                pFilter,
                                timeValues,
                                symbolValues);
