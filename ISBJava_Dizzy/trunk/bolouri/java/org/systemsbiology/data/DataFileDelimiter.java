@@ -42,7 +42,6 @@ public class DataFileDelimiter implements Comparable
      * Returns false if multiple characters of this delimiter can be used to span
      * between two adjacent columns (as with the "space" delimiter).
      * 
-     * @return
      */
     public boolean getSingle()
     {
