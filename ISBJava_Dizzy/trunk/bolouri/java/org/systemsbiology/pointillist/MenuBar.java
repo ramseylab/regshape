@@ -113,8 +113,8 @@ public class MenuBar extends JMenuBar
         initializeMenuBar();
     }
     
-    public void setMenuItemEnabled(String pAction,
-                                   boolean pEnabled)
+    public synchronized void setMenuItemEnabled(String pAction,
+                                                boolean pEnabled)
     {
         JMenuItem menuItem = (JMenuItem) mMenuItems.get(pAction);
         if(null == menuItem)
