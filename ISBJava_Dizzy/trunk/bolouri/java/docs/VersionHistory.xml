@@ -152,6 +152,11 @@ This document contains the version history for the
     where the command-line simulation launcher was not obtaining the defualt 
 relative and absolute error tolerances for the simulator, so the user would get an error
 if both tolerances were not explicitly specified on the command-line.</li>
+  <li>Modified <code>org.systemsbiology.chem.app.ModelViewerCytoscape</code> so that
+     the <code>NetX</code> start-up dialog box does not appear at application start-up.
+     The dialog box asks you where to store your JNLP cache.  After this modification,
+     the dialog box should only appear the first time you actually use the 
+     "Tools -&gt; View... -&gt; cytoscape" feature.</li>
 </ul>
 </td>
 </tr>

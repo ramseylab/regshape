@@ -120,6 +120,11 @@ X = 1.0e+15;
     where the command-line simulation launcher was not obtaining the defualt 
 relative and absolute error tolerances for the simulator, so the user would get an error
 if both tolerances were not explicitly specified on the command-line.</li>      
+  <li>Modified the "Tools -&gt; View... &gt; cytoscape" feature so that
+     the <code>NetX</code> start-up dialog box does not appear at application start-up.
+     The dialog box asks you where you want to store your NetX cache.  After this 
+     modification, the dialog box should only appear the first time you actually use 
+     this feature.</li>
 </ul>
 </td>
 <td><a href="&javaURL;/2.2.0/download.html">2.2.0</a></td>
