@@ -245,6 +245,21 @@ For other operating systems, you may download the &quot;Other Java-Enabled
 Platforms&quot; version of the installer.  A Mac OSX version of the
 installer is under development and will be released soon.
 </p>
+<p>
+The &appName; installer will install an executable for the
+&appName; launcher program specifically designed for the operating
+system of the computer on which you are running the installer.
+This means that if you run the installer on a Windows computer,
+the &appName; launcher that is installed will be a Windows executable.
+If there is a need to run &appName; on multiple operating systems
+(e.g., in a dual-boot or heterogeneous network-file-system environment),
+&appName; should be installed in a separate directory for each
+operating system.  One exception applies: it is possible to install 
+&appName; on one operating system (e.g., Windows) and run it on a 
+different operating system (e.g., Unix), if you run the 
+<a href="#commandline">command-line program</a> and not the GUI.
+</p>
+
 </isb:docsubsection>
 
 <isb:docsubsection name="Tutorial" label="tutorial">
@@ -2777,17 +2792,31 @@ successful import of most of the SBML models available.
 <isb:docsection name="&appName; Command-line Interface" label="commandline">
 <p>
 A command-line interface to the &appName; scripting engine is available.
-On Windows and Linux/Unix operating systems, the <code>runmodel.bat</code> (Windows)
-and <code>runmodel.sh</code> (Linux/Unix) shell scripts can be used to run the 
-command-line interface to the scripting engine.  These shell scripts should
-be located in the &quot;<code>bin</code>&quot; subdirectory of the directory in 
-you installed &appName;.  For the purposes of illustration, we will assume
-that the <code>runmodel.sh</code> is being used.  If you are using a Windows machine,
-<code>runmodel.bat</code> should be substituted wherever <code>runmodel.sh</code> appears
-in the following.
+On most platforms, the <code>runmodel</code> program can be used.  It is
+in the &quot;<code>bin</code>&quot; subdirectory of the directory in which
+you installed &appName;.  Because it is not a GUI application and requires
+command-line arguments that you must type, the &quot;<code>runmodel</code>&quot;
+program does not have a link (icon) on your desktop or &quot;Start Menu&quot;.
+Like the <code>&appName;</code> program, the <code>runmodel</code> program will 
+only function correctly on the platform on which you originally installed &appName;.
 </p>
 <p>
-The usage synopsis for the <code>runmodel.sh</code> is as follows:
+In addition, there is a &quot;<code>runmodel.sh</code>&quot; shell script in the
+same directory, that should work on any operating system that has the 
+&quot;Bash&quot; shell installed.  You will need to customize the two 
+environment variables <code>JAVA_BIN</code> and 
+<code>INSTALL_DIR</code> at the top of the script, using your text editor.
+This script should allow you to install &appName; into a network file system
+on a non-Unix computer (e.g., Windows), and to then run the
+<code>runmodel.sh</code> program from a Unix-type computer mounting the
+same file system.
+</p>
+<p>
+ For the purposes of illustration, we will assume
+that the <code>runmodel</code> program is being used.  
+</p>
+<p>
+The usage synopsis for the <code>runmodel</code> is as follows:
 <blockquote>
 <pre>
 runmodel [-debug] [-parser &lt;parserAlias&gt;] 
