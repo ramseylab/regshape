@@ -53,16 +53,17 @@ public class SlidingWindowTimeSeriesQueue
 
     public void clear()
     {
-        mHasNonzeroValue = false;
-        mTimeLastNonzeroValue = 0.0;
         mQueueIndex = 0;
-        mMinIndex = 0;
-        mLastTime = 0.0;
-        mNumStoredPoints = 0;
-        mAverageValue = 0.0;
-        mCounterForRecomputeAverage = 0;
         MathFunctions.vectorZeroElements(mTimePoints);
         MathFunctions.vectorZeroElements(mValues);
+        mNumStoredPoints = 0;
+        mMinIndex = 0;
+        mLastTime = 0.0;
+        mAverageValue = 0.0;
+
+        mTimeLastNonzeroValue = 0.0;
+        mHasNonzeroValue = false;
+        mCounterForRecomputeAverage = 0;
     }
 
     public boolean hasNonzeroValue()
