@@ -22,13 +22,18 @@ public final class ReservedSymbolMapperChemCommandLanguage extends ReservedSymbo
     static
     {
         sReservedSymbolNames = new HashSet();
-        getReservedSymbolNames(sReservedSymbolNames);
+        getReservedSymbolNamesStatic(sReservedSymbolNames);
     }
 
-    public static void getReservedSymbolNames(HashSet pReservedSymbolNames)
+    private static void getReservedSymbolNamesStatic(HashSet pReservedSymbolNames)
     {
         pReservedSymbolNames.add(SYMBOL_TIME);
         pReservedSymbolNames.add(SYMBOL_AVOGADRO);
+    }
+    
+    public Collection getReservedSymbolNames()
+    {
+        return(new HashSet(sReservedSymbolNames));
     }
 
     public static boolean isReservedSymbol(String pSymbolName)
