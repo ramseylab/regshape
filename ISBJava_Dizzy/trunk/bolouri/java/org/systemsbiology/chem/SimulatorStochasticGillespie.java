@@ -43,7 +43,9 @@ public final class SimulatorStochasticGillespie extends SimulatorStochasticBase 
                              RandomElement pRandomNumberGenerator,
                              double []pDynamicSymbolValues,
                              MutableInteger pLastReactionIndex,
-                             DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException, IllegalStateException
+                             DelayedReactionSolver []pDelayedReactionSolvers,
+                             boolean pHasExpressionValues,
+                             Value []pNonDynamicSymbolValues) throws DataNotFoundException, IllegalStateException
     {
         double time = pSymbolEvaluator.getTime();
 
@@ -57,14 +59,14 @@ public final class SimulatorStochasticGillespie extends SimulatorStochasticBase 
                                           pDynamicSymbolValues,
                                           pDelayedReactionSolvers,
                                           NUMBER_FIRINGS);
-
-            // we have changed the species populations; must clear the expression value caches
-            clearExpressionValueCaches();
         }
 
         computeReactionProbabilities(pSymbolEvaluator,
                                      pReactionProbabilities,
-                                     pReactions);
+                                     pReactions,
+                                     pHasExpressionValues,
+                                     pNonDynamicSymbolValues,
+                                     true);
         
         double aggregateReactionProbability = MathFunctions.vectorSumElements(pReactionProbabilities);
         double deltaTimeToNextReaction = Double.POSITIVE_INFINITY;
