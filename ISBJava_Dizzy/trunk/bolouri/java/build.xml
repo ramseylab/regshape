@@ -38,6 +38,10 @@
   <property name="app.rootPackage"             value="org" />
   <property name="javadocLink"                 value="http://java.sun.com/j2se/1.4.2/docs/api" />
 
+  <property name="compile.debug"               value="true" />
+  <property name="compile.deprecation"         value="false" />
+  <property name="compile.optimize"            value="true" />
+
   <property name="app.sourceCompileFlag"       value="1.4" />
 
   <property name="app.jarFile"                 location="${app.buildDir}/&appName;.jar" />
@@ -204,8 +208,9 @@
     <javac srcdir="${app.srcDir}" 
            destdir="${app.classesDir}" 
            source="${app.sourceCompileFlag}" 
-           debug="off" 
-           optimize="on"
+           debug="${compile.debug}" 
+           deprecation="${compile.deprecation}"
+           optimize="${compile.optimize}"
            excludes="**/tp/*.java">
       <classpath refid="app.classpath" />
     </javac>
