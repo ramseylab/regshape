@@ -3054,6 +3054,27 @@ Cytoscape program will be stored in a local cache on your computer.
 </p>
 </isb:docsubsection>
 
+<isb:docsubsection name="Browse Help" label="gui-browsehelp">
+<p>
+You may browse the online help by selecting the &quot;Browse help...&quot;
+menu item from the &quot;Help&quot; menu.  This will display a window in
+which the
+<a href="&appHomePage;/docs/UserManual.html">&appName; User Manual</a>
+is displayed.  The left-hand side of this window contains a &quot;navigation&quot;
+frame.  By default, the table of contents is displayed in the navigation frame.
+If you click on an item in the table of contents, the relevant section is 
+displayed in the manual on right right-hand-side of the help window.  
+You may also select the &quot;search&quot; navigator by clicking on the
+tab with the magnifying glass icon.  A text-box will be displayed into
+which you may type a natural language query, such as &quot;reaction rate&quot;.
+The search engine will display a &quot;hit summary&quot;
+indicating the document and the number of hits, just below the text-box.
+You may double-click on the &quot;hit summary&quot; to advance to the next
+hit within the document.  At presently, only one document (the user manual)
+is indexed for full-text search capability.
+</p>
+</isb:docsubsection>
+
 </isb:docsection>
 
 <isb:docsection name="Frequently asked Questions" label="faq">
