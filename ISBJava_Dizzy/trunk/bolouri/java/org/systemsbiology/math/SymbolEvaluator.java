@@ -109,14 +109,7 @@ public abstract class SymbolEvaluator implements Cloneable
     {
         if(NULL_ARRAY_INDEX == pSymbol.mArrayIndex)
         {
-            if(null == mSymbolEvaluationPostProcessor)
-            {
-                return(getUnindexedValue(pSymbol));
-            }
-            else
-            {
-                return(mSymbolEvaluationPostProcessor.modifyResult(pSymbol, this, getUnindexedValue(pSymbol)));
-            }
+            return getUnindexedValue(pSymbol);
         }
         else
         {
