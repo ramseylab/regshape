@@ -27,7 +27,6 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
     private long mIterationCounter;
     private double []mDerivative;
     private double []mScratch;
-    private boolean mHasDelayedReactionSolvers;
     private boolean mSimulationCancelled;
     private double mTimeRangeMult;
     private long mTimeOfLastUpdateMilliseconds;
@@ -84,17 +83,18 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
 
         double initialStepSize = (pEndTime - pStartTime)/((double) DEFAULT_MIN_NUM_STEPS);
 
-        Double minDelayObj = getMinDelayedReactionDelay();
+        
         double minDelay = Double.MAX_VALUE;
-        if(null != minDelayObj)
+        if(null != mDelayedReactionSolvers)
         {
-            minDelay = 0.1 * minDelayObj.doubleValue();
+            minDelay = 0.1 * getMinDelayedReactionDelay();
         }
 
         if(initialStepSize > minDelay)
         {
             initialStepSize = minDelay;
         }
+        System.out.println("initial step size: " + initialStepSize);
 
         Double maxAllowedRelativeErrorObj = pSimulatorParameters.getMaxAllowedRelativeError();
         if(null == maxAllowedRelativeErrorObj)
@@ -207,12 +207,8 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
                 {
                     clearExpressionValueCaches(mNonDynamicSymbolValues);
                 }
-                computeReactionProbabilities(mSymbolEvaluator,
-                                             mReactionProbabilities,
-                                             mReactions,
-                                             mHasExpressionValues,
-                                             mNonDynamicSymbolValues,
-                                             false);
+                computeReactionProbabilities();
+
                 double []allFinalSpeciesFluctuations = SteadyStateAnalyzer.estimateSpeciesFluctuations(mReactions,
                                                                                                        mDynamicSymbols,
                                                                                                        mDynamicSymbolAdjustmentVectors,
@@ -315,11 +311,8 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
             timeIndex = addRequestedSymbolValues(curTime, 
                                                  timeIndex, 
                                                  pRequestedSymbols,
-                                                 symbolEvaluator,
                                                  pRetResultsTimeValues,
-                                                 pRetResultsSymbolValues,
-                                                 mHasExpressionValues,
-                                                 mNonDynamicSymbolValues);
+                                                 pRetResultsSymbolValues);
         }
 
         if(timeIndex != pNumResultsTimePoints)
@@ -343,15 +336,8 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
             {
                 clearExpressionValueCaches(mNonDynamicSymbolValues);
             }
-            computeDerivative(mSymbolEvaluator,
-                              mReactions,
-                              mDynamicSymbolAdjustmentVectors,
-                              mReactionProbabilities,
-                              mScratch,
-                              mDerivative,
-                              mHasExpressionValues,
-                              mNonDynamicSymbolValues,
-                              false);
+            computeDerivative(mScratch,
+                              mDerivative);
         }
         catch(DataNotFoundException e)
         {
@@ -412,7 +398,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
             }
         }
 
-        if(mHasDelayedReactionSolvers)
+        if(null != mDelayedReactionSolvers)
         {
             // copy the values in x to the array that is read by the "symbol evaluator"
             System.arraycopy(x, 0, mDynamicSymbolValues, 0, mDynamicSymbolValues.length);
@@ -441,11 +427,10 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
     public void initialize(Model pModel) throws DataNotFoundException
     {
         initializeSimulator(pModel);
-        initializeDynamicSymbolAdjustmentVectors(mDynamicSymbols);
+        initializeDynamicSymbolAdjustmentVectors();
         int numSpecies = mDynamicSymbolValues.length;
         mDerivative = new double[numSpecies];
         mScratch = new double[numSpecies];
-        mHasDelayedReactionSolvers = (mDelayedReactionSolvers.length > 0);
         mSimulationCancelled = false;
         mSimulationCancelledEventNegReturnFlag = false;
     }
