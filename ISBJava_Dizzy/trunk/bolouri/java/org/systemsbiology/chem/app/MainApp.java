@@ -30,6 +30,7 @@ public class MainApp
     private int mOriginalWidthPixels;
     private int mOriginalHeightPixels;
     private Long mTimestampModelLastLoaded;
+    private static final String DEFAULT_HELP_SET_MAP_ID = "top";
     private static final String DEFAULT_HELP_SET_VIEW = "TOC";  // this string must correspond to
                                                                 // a <view> block in AppHelp.hs
     static final String UNEXPECTED_ERROR_MESSAGE = "an unexpected error has occurred";
@@ -134,8 +135,11 @@ public class MainApp
 
     void handleHelpBrowser()
     {
-        HelpBrowser helpBrowser = new HelpBrowser(getMainFrame());
-        helpBrowser.displayHelpBrowser(DEFAULT_HELP_SET_VIEW);
+        String helpSetName = mAppConfig.getAppHelpSetName();        
+        String appName = mAppConfig.getAppName();
+        HelpBrowser helpBrowser = new HelpBrowser(getMainFrame(), helpSetName, appName);
+        helpBrowser.displayHelpBrowser(DEFAULT_HELP_SET_MAP_ID,
+                                       DEFAULT_HELP_SET_VIEW);
     }
 
     void handleSimulate()
