@@ -97,10 +97,10 @@
         </td>
       </tr>
       </table>
-      <hr></hr>
+      <hr />
       <xsl:apply-templates/>
 
-      <hr></hr>
+      <hr />
 
       <xsl:if test="/isb:document/isb:docdate != ''">
         <h4>Last updated:
@@ -173,7 +173,7 @@
         </li>
       </xsl:for-each>
       </ol>
-      <hr></hr>
+      <hr />
   </xsl:template>
 
   <xsl:template match="//isb:docsubsection">
