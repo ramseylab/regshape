@@ -3,6 +3,11 @@
 <!DOCTYPE UserGuide [
   <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
   %AppConfig;
+
+<!ENTITY ccmdlExtension ".dizzy">
+<!ENTITY cmdlExtension ".isbchem">
+<!ENTITY sbmlURL "http://www.sbw-sbml.org">
+
    ]>
 
 <!-- ========== PREAMBLE ========== -->
@@ -49,14 +54,14 @@ model definition languages, each of which has an associated filename
 suffix ("extension").  The GUI program (referred to above) uses the
 filename extension to guess what model definition language the file contains.
 <ol>
-<li><a href="http://www.sbw-sbml.org">Systems Biology Markup Language</a> ("SBML")
+<li><a href="&sbmlURL;">Systems Biology Markup Language</a> ("SBML")
 <p />
 The SBML standard is documented outside the scope of this document, at the
-aforementioned (<code>www.sbw-sbml.org</code>) web site.  The &appName; system
+aforementioned (<code>&sbmlURL;</code>) web site.  The &appName; system
 is able to read and write a subset of the SBML Level 1 specification.
 You can generate a model in SBML format by using the JDesigner software tool.
 <p />
-The file extension of hte SBML language is: &quot;<code>.xml</code>&quot;
+The file extension of the SBML language is: &quot;<code>.xml</code>&quot;
 <p />
 </li>
 <li><a href="#cmdl">Chemical Model Definition Language (CMDL)</a>
@@ -66,7 +71,7 @@ is the language understood "natively" by the
 &appName; scripting engine; the engine translates models from other languages 
 into its native language, before processing them.  
 <p />
-The file extension of the CMDL command language is: &quot;<code>.isbchem</code>&quot;
+The file extension of the CMDL command language is: &quot;<code>&cmdlExtension;</code>&quot;
 <p />
 </li>
 <li><a href="#ccmdl">Condensed Chemical Model Definition Language (CCMDL)</a>
@@ -78,7 +83,7 @@ and flexible, but also a bit more tedious to type in manually.
 Note that the &appName; system can export into file types (1) and (2) 
 mentioned above, but not into the CCMDL scripting language.
 <p />
-The file extension of the CCMDL scripting language is &quot;<code>.dizzy</code>&quot;
+The file extension of the CCMDL scripting language is &quot;<code>&ccmdlExtension;</code>&quot;
 <p />
 </li>
 </ol>
@@ -897,7 +902,7 @@ in any of three languages:
 <ul>
 <li>Chemical Model Definition Language (CMDL)</li>
 <li>Condensed Chemical Model Definition Language (CCMDL)</li>
-<li><a href="http://www.sbw-sbml.org">Systems Biology Markup Language</a> (SBML)</li>
+<li><a href="&sbmlURL;">Systems Biology Markup Language</a> (SBML)</li>
 </ul>
 Each language has different strengths and limitations.  The
 model definition file specifies one or more <a href="#models">models</a>
@@ -1144,9 +1149,33 @@ might potentially be useful for extending a model.
 </p>
 <p>
 The specific syntax for including a model definition file
-within another model definition file, is described in the
-<a href="#cmdl">CMDL</a> and <a href="#ccmdl">CCMDL</a>
-sections below.
+within another model definition file, is shown here:
+<blockquote>
+<pre>
+include "myFile&ccmdlExtension;";
+</pre>
+</blockquote>
+where &quot;<code>myFile&ccmdlExtension;</code>&quot; is the name of the file 
+that is to be &quot;included&quot;.  The contents of 
+&quot;<code>myFile&ccmdlExtension;</code>&quot; are parsed at exactly the
+point where the include statement is encountered in the file,
+after all statements in the <em>including</em> file preceding
+the <code>include</code> statement have been parsed.  
+Note that the double-quotes and the semicolon are required.
+It is <em>not allowed</em> to embed a file inclusion statement
+inside a <a href="#loops">loop</a> construct.  Normally,
+file includes are placed at the top of a model definition file,
+in order to load a separate file containing &quot;boilerplate&quot;
+macro definitions and reaction definitions that are shared
+between different models.
+</p>
+<p>
+Please take note of the following rules (which are admittedly
+a bit jabberwockeyan):  A CCMDL file may include other CCMDL or 
+<a href="#cmdl">CMDL</a> files.  However, a CMDL file may not include
+a <a href="#ccmdl">CCMDL</a> file, because the parser will not 
+have the proper CCMDL translator initialized to translate the included
+CCMDL file into the CMDL language.
 </p>
 
 </isb:docsubsection>
@@ -1231,14 +1260,16 @@ The simulator alias for the Gillespie algorithm is &quot;<code>gillespie</code>&
 
 <!-- ========== CCMDL ========== -->
 
-<isb:docsection name="Condensed Chemical Model Definition Language" label="ccmdl">
+<isb:docsection name="Condensed Chemical Model Definition Language (CCMDL)" label="ccmdl">
 
 <p>
 The Condensed Chemical Model Definition Language (CCMDL) is a simplified
 model definition language designed to minimize the amount of repetitive
 typing required to define a model.  It lacks some of the power and flexibility 
 of the <a href="#cmdl">Chemical Model Definition Language</a> (CMDL), but it is
-significantly easier to read and write.  
+significantly easier to read and write.  The default file extension of model
+definition files in the CCMDL language is the &quot;<code>&ccmdlExtension;</code>&quot;
+suffix.
 </p>
 <p>
 The CCMDL is implemented as 
@@ -1279,6 +1310,16 @@ of &quot;molecules&quot;.  In order to use a reaction rate
 species mode of &quot;concentration&quot;, it is necessary to
 use the <a href="#cmdl">CMDL language</a> instead of the CCMDL 
 language.
+</p>
+<p>
+A special note is in order about <a href="#fileinclusion">file
+inclusion</a> in the CCMDL.  When a file is included within another
+model definition file, all reaction definitions in the included file are
+made for the context of the default model for the including file.
+The included file does <em>not</em> get is &quot;own&quot; default
+model context.  Similarly, the included file does not get its own
+default species populations context; it simply inherits the context
+from the including file. 
 </p>
 
 </isb:docsubsection>
@@ -1626,7 +1667,7 @@ my_reaction, A2 -&gt; B, 1.0;
 The above-described feature of embedding mathematical
 expressions in the definition of string elements such 
 as species names or the reaction name, is primarily
-useful in conjunction with the <a href="#loop">loop</a>
+useful in conjunction with the <a href="#loops">loop</a>
 construct, to be described below.
 </p>
 
@@ -1823,7 +1864,6 @@ B1, B2, B3, B4
 and the reactions might be of the form
 <blockquote>
 <code>A</code><em>n</em> -&gt; <code>B</code><em>n</em>
-</pre>
 </blockquote>
 This can be accomplished with the &quot;<code>loop</code>&quot;
 keyword, as shown here:
@@ -2055,7 +2095,7 @@ be exported.  Optionally, one may add an element to specify
 an <a href="#exporterplugins">exporter alias</a>, as shown here:
 <blockquote>
 <pre>
-export: modelInstance, outputFile "myFile.isbchem", exporter "command-language";
+export: modelInstance, outputFile "myFile&cmdlExtension;", exporter "command-language";
 </pre>
 </blockquote>
 The above example instructs the &appName; system to export
@@ -2226,6 +2266,24 @@ simulate:  startTime 0, stopTime 500.0, numTimePoints 100, debug 1,
 The above example runs a simulation for <code>500</code> seconds, and
 stores the output under variable name &quot;<code>final</code>&quot;.
     </p>
+    <p>
+In order to run a simulation with a species populations collection
+other than the default species populations collection, you must use
+the form of the simulate statement from the CMDL, in which the
+model name and species populations collection name are explicitly
+specified.  An example is shown here:
+<blockquote>
+<pre>
+simulate "myModel": speciesPopulations "final", stopTime 500,
+                    viewSpecies ("G3D_G80D" "G4_RNA");
+</pre>
+</blockquote>
+Note that &quot;<code>myModel</code>&quot; is the special name 
+of the default model in the CCMDL.  In the CMDL, all models
+are explicitly named, and the model name of the model to be
+simulated is always specified after the &quot;<code>simulate</code>&quot;
+statement.
+    </p>
 </dd>       
 </dl>
 </p>
@@ -2237,7 +2295,7 @@ stores the output under variable name &quot;<code>final</code>&quot;.
 
 <!-- ========== CMDL ========== -->
 
-<isb:docsection name="Chemical Model Definition Language" label="cmdl">
+<isb:docsection name="Chemical Model Definition Language (CMDL)" label="cmdl">
 <p>
 This section describes the Chemical Model Definition Language.
 </p>
@@ -2264,14 +2322,14 @@ molecules.
 
 <!-- ========== SBML ========== -->
 
-<isb:docsection name="Systems Biology Markup Language" label="sbml">
+<isb:docsection name="Systems Biology Markup Language (SBML)" label="sbml">
 <p>
 This section describes the Systems Biology Markup Language.  The
 systems biology markup language is an XML-based document specification
 for defining a <a href="#modelinstances">model instance</a> for a
 system of interacting chemical species.  The specification for SBML
 can be found at the home page of the 
-<a href="http://www.sbw-sbml.org">Systems Biology Workbench Development 
+<a href="&sbmlURL;">Systems Biology Workbench Development 
 Group</a>.  
 </p>
 <p>
