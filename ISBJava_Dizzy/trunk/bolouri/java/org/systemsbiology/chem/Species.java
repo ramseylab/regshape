@@ -22,7 +22,11 @@ import org.systemsbiology.math.Symbol;
  * have the same name, if they reside in a different 
  * compartment.  The "symbol name" is constructed using
  * the species name and the compartment name, and it
- * will be different between the two species.
+ * will be different between the two species.  A species
+ * object has a value associated with it, by virtue of
+ * the superclass {@link org.systemsbiology.math.SymbolValue}.
+ * This value represents the amount of the species present,
+ * in molecules.
  *
  * @author Stephen Ramsey
  */
