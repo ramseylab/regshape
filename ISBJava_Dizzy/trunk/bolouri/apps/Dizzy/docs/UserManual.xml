@@ -144,11 +144,11 @@ freely available at the web sites identified by the hyperlinks shown below:
 <td>Package name</td><td>JAR name</td><td>Source</td><td>License</td>
 </tr>
 <tr>
-<td>jfreechart</td><td><code>jfreechart-&lt;VERS&gt;.jar</code></td>
+<td>jfreechart</td><td><code>jfreechart.jar</code></td>
 <td><a href="http://www.jfree.org/jfreechart"><code>www.jfree.org/jfreechart/</code></a></td><td>LGPL</td>
 </tr>
 <tr>
-<td>jcommon</td><td><code>jcommon-&lt;VERS&gt;.jar</code></td>
+<td>jcommon</td><td><code>jcommon.jar</code></td>
 <td><a href="http://www.jfree.org/jcommon"><code>www.jfree.org/jcommon/</code></a></td><td>LGPL</td>
 </tr>
 <tr>
