@@ -31,7 +31,7 @@ public class Maxwell implements IContinuousDistribution
         {
             throw new IllegalArgumentException("x value out of range");
         }            
-        return 2.0 * cern.jet.stat.Gamma.incompleteGamma(1.5, 0.5*mA*x*x)/Math.sqrt(Math.PI);
+        return cern.jet.stat.Gamma.incompleteGamma(1.5, 0.5*mA*x*x);
     }
     public double pdf(double x)
     {
