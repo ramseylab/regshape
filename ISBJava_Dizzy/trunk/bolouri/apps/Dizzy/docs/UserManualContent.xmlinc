@@ -1139,7 +1139,8 @@ given by the individual reaction rates.
 </p>
 <p>
 The &appName; system provides a Java implementation of the Gillespie
-algorithm, for which <a href="&webBaseURL;/javadocisb/chem/GillespieSimulator.html">more
+algorithm, for which 
+<a href="&webBaseURL;/&localJavaLibraryName;/javadoc/org/systemsbiology/chem/SimulatorStochasticGillespie.html">more
 information is available in the Javadoc documentation</a>.  This implementation
 uses the &quot;direct method&quot; variant of Gillespie's algorithm.
 </p>
@@ -1162,7 +1163,9 @@ Parallel and Distributed Systems Group technical report number 026, (1999).
 </table>
 </blockquote>
 This implementation uses the "next reaction" variant of the 
-Gibson and Bruck algorithm.  The Gibson-Bruck algorithm is O(log(M)) 
+Gibson and Bruck algorithm, for which  
+<a href="&webBaseURL;/&localJavaLibraryName;/javadoc/org/systemsbiology/chem/SimulatorStochasticGibsonBruck.html">more information</a> is available. 
+The Gibson-Bruck algorithm is O(log(M)) 
 in the number of reactions, so it is preferred over the Gillespie
 algorithm for models with a large number of reactions and/or species.
 For models with a small number of reactions and species, the Gillepie
@@ -2741,7 +2744,9 @@ public class TestSimulator
             model.addReaction(reactionX);
             model.addReaction(reactionY);
             System.out.println(model.toString());
-            GillespieSimulator simulator = new GillespieSimulator(model);
+            SimulatorParameters simParams = new SimulatorParameters();
+            simParams.setEnsembleSize(40);
+            SimulatorStochasticGillespie simulator = new SimulatorStochasticGillespie(model);
             String []requestedSymbolNames = { "A", "B" };
             double []timeValues = new double[NUM_TIME_POINTS];
             Object []symbolValues = new Object[NUM_TIME_POINTS];
@@ -2750,11 +2755,11 @@ public class TestSimulator
 
             simulator.simulate(0.0, 
                                1000.0, 
+                               simParams,
                                NUM_TIME_POINTS,
                                requestedSymbolNames,
                                timeValues,
-                               symbolValues,
-                               40);
+                               symbolValues);
 
             long finalTime = System.currentTimeMillis();
             double elapsedTimeSec = (double) (finalTime - curTime) / 1000.0;
@@ -2887,7 +2892,7 @@ which <a href="#simplugins">simulator plug-in</a> to use), and the
 list of species to be included in the &quot;output&quot;.  The start 
 time defaults to 0.0, and it is rarely necessary to use a different value.
 The simulator defaults to the 
-<a href="&webBaseURL;/&localJavaLibraryName;/javadoc/isb/chem/GillespieSimulator.html">
+<a href="&webBaseURL;/&localJavaLibraryName;/javadoc/org/systemsbiology/chem/SimulatorStochasticGillespie.html">
 Gillespie Simulator</a>.
 You must select at least one species to be included in the &quot;output&quot;.
 The other species not selected, may still participate in the simulation,
