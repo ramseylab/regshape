@@ -47,6 +47,16 @@
     <pathelement location="${app.classesDir}" />
     <fileset dir="${app.extLibDir}"> 
       <include name="*.jar" />
+      <include name="*.zip" />
+    </fileset>
+  </path>
+
+  <path id="app.docletclasspath">
+    <pathelement location="${app.classesDir}" />
+    <fileset dir="${app.extLibDir}"> 
+      <include name="pdfdoclet.jar" />
+      <include name="jakarta-regexp.jar" />
+      <include name="itext.jar" />
     </fileset>
   </path>
 
@@ -132,6 +142,7 @@
              Overview="${app.styleDir}/JavadocTitlePage.html"
              sourcepath="${basedir}"
              packageList="${app.configDir}/packageList.txt"
+             docletpathref="app.docletclasspath"
              doclet="com.tarsec.javadoc.pdfdoclet.PDFDoclet"
              additionalparam="-pdf ${app.webDir}/docs/APIDocumentation.pdf -config ${app.configDir}/PDFDoclet.properties">
       <classpath refid="app.classpath" />
