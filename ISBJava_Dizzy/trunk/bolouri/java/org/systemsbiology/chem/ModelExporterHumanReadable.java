@@ -21,8 +21,6 @@ public class ModelExporterHumanReadable implements IModelExporter, IAliasableCla
 {
     public static final String CLASS_ALIAS = "human-readable";
 
-
-
    /**
     * Given a {@link org.systemsbiology.chem.Model} object
     * defining a system of chemical reactions and the initial species populations,

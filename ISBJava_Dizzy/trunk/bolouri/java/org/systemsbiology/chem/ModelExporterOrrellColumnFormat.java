@@ -21,8 +21,6 @@ public class ModelExporterOrrellColumnFormat implements IModelExporter, IAliasab
 {
     public static final String CLASS_ALIAS = "orrell-column-format";
 
-
-
    /**
     * Given a {@link org.systemsbiology.chem.Model} object
     * defining a system of chemical reactions and the initial species populations,
