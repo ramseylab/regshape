@@ -9,7 +9,7 @@ package org.systemsbiology.chem;
  */
 
 import java.io.PrintWriter;
-import java.text.NumberFormat;
+import java.text.*;
 import java.util.*;
 
 /**
@@ -23,8 +23,7 @@ public class TimeSeriesSymbolValuesReporter
                                                           Object []pSymbolValues,
                                                           TimeSeriesOutputFormat pTimeSeriesOutputFormat) throws IllegalArgumentException
     {
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMaximumFractionDigits(6);
+        NumberFormat nf = new DecimalFormat("0.######E0");
         nf.setGroupingUsed(false);
         reportTimeSeriesSymbolValues(pPrintWriter,
                                      pRequestedSymbolNames,
