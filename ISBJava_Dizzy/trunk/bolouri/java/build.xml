@@ -53,7 +53,7 @@
 
   <path id="app.docletclasspath">
     <pathelement location="${app.classesDir}" />
-    <fileset dir="${app.extLibDir}"> 
+    <fileset dir="${app.extLibDir}/doclet"> 
       <include name="pdfdoclet.jar" />
       <include name="jakarta-regexp.jar" />
       <include name="itext.jar" />
@@ -113,6 +113,7 @@
     <!-- make the build directory -->
     <mkdir dir="${app.buildDir}" />
 
+    <filter token="APPNAME" value="&appName;" />
     <filter token="VERSION" value="${app.version}" />
     <filter token="PROJROOT" value="${projRoot}" />
 
