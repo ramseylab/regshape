@@ -62,10 +62,15 @@ xterm &amp;
 This should cause a terminal window to pop open on your desktop computer. 
 In this window, you can run any software program that is installed on the
 shared Linux computer, and the application will appear on your X-windows
-desktop.
+desktop.  
 </li>
 </ol>
 
+<b>Note to Windows users:</b> For more
+information on obtaining and installing an X-windows emulator on
+your Windows computer, please consult the 
+<a href="http://intranet.systemsbiology.net/it/faqs/scientific_computing/X11-SSH.html">
+X11 over SSH using PuTTY configuration guide 1.0</a> document on the intranet.
 </isb:docsubsection>
 
 <isb:docsubsection name="Shared Windows Computer" label="sharedwindows">
