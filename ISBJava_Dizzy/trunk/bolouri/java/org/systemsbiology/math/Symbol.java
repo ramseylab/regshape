@@ -8,8 +8,6 @@ package org.systemsbiology.math;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import java.util.regex.Pattern;
-
 /**
  * Contains a string identifier and an (optional)
  * array index.  Used by the {@link ISymbolDoubleMap} class.
@@ -25,22 +23,10 @@ public class Symbol
     private double []mDoubleArray;
     private Value []mValueArray;
 
-    private static final String VALID_SYMBOL_REGEX = "^[_a-zA-Z]([_a-zA-Z0-9])*$";
-    private static final Pattern VALID_SYMBOL_PATTERN = Pattern.compile(VALID_SYMBOL_REGEX);
-
     public static final int NULL_ARRAY_INDEX = -1;
     
-    public static boolean isValidSymbol(String pSymbolName)
-    {
-        return(VALID_SYMBOL_PATTERN.matcher(pSymbolName).matches());
-    }
-
     public Symbol(String pSymbolName) throws IllegalArgumentException
     {
-        if(! isValidSymbol(pSymbolName))
-        {
-            throw new IllegalArgumentException("invalid symbol name: " + pSymbolName);
-        }
         mSymbolName = pSymbolName;
         clearIndexInfo();
     }
