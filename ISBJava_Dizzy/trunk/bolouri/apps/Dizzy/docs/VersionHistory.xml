@@ -44,6 +44,30 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.5.0/&installerDownloadRelURL;">1.5.0</a></td>
+<td>2004/02/13</td>
+<td>
+<ul>
+<li>Made several changes to the simulation engine and expression-evaluation
+code, to improve the speed of simulations.</li>
+<li>Removed redundant step in the implementations of the 
+stochastic simulators (Gillespie and Gibson-Bruck), where
+the expression value caches were being cleared twice.</li>
+<li>Added a graphical progress bar and a text field indicating
+the estimated number of seconds for the simulation to complete,
+to the simulation launcher window.</li>
+<li>Added the ability to the <code>runmodel</code> command-line
+program, to print periodic status reports on the progress of
+the simulation, to standard error (<code>stderr</code>).</li>
+<li>Fixed a problem in the <code>jfreechart.jar</code> library, which
+was causing &quot;class definition not found&quot; error messages
+to be written to the console, upon start-up of the &appName; application.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.5.0/&installerDownloadRelURL;">1.5.0</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.4.4/&installerDownloadRelURL;">1.4.4</a></td>
 <td>2004/02/10</td>
 <td>

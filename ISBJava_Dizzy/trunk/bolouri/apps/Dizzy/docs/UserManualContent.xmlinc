@@ -127,11 +127,7 @@ hyperlinks shown below:
 </tr>
 <tr>
 <td>SBW (core)</td><td><code>SBWCore.jar</code></td>
-<td><a href="http://www.sbw-sbml.org/sbw/software"><code>www.sbw-sbml.org/sbw/software/</code></a></td><td>LGPL</td>
-</tr>
-<tr>
-<td>SBML Validator</td><td><code>SBMLValidate.jar</code></td>
-<td><a href="http://www.sbw-sbml.org/sbw/software"><code>www.sbw-sbml.org/sbw/software/</code></a></td><td>LGPL</td>
+<td><a href="&sbwURL;/sbw/software"><code>www.sbw-sbml.org/sbw/software/</code></a></td><td>LGPL</td>
 </tr>
 <tr>
 <td>JavaHelp</td><td><code>jh.jar</code></td>
@@ -142,17 +138,58 @@ hyperlinks shown below:
 <td><a href="http://jnlp.sourceforge.net/netx"><code>jnlp.sourceforge.net/netx</code></a></td><td>LGPL</td>
 </tr>
 <tr>
-<td>odeToJava</td><td><code>odeToJava.jar</code></td>
-<td><a href="http://www.netlib.org/ode"><code>www.netlib.org/ode</code></a> (Murray Patterson and Raymond Spiteri)</td><td>included with permission from Raymond Spiteri</td>
-</tr>
-<tr>
 <td>JAMA</td><td><code>Jama.jar</code></td>
 <td><a href="http://math.nist.gov/javanumerics/jama"><code>math.nist.gov/javanumerics/jama</code></a></td><td>public domain</td>
+</tr>
+<tr>
+<td>odeToJava</td><td><code>odeToJava.jar</code></td>
+<td><a href="&localJavaLibraryURL;/libs/odeToJava.jar"><code>&localJavaLibraryURL;/libs/odeToJava.jar</code></a>  (slightly modified version of the <code>odeToJava</code> library written by 
+Murray Patterson and Raymond Spiteri and obtained from Netlib)</td><td>included with permission from Raymond Spiteri</td>
+</tr>
+<tr>
+<td>SBMLReader</td><td><code>SBMLReader.jar</code></td>
+<td><a href="&localJavaLibraryURL;"><code>&localJavaLibraryURL;</code></a> (based on 
+the <code>SBMLValidate</code> library by Herbert Sauro and the SBW Project team)</td><td>LGPL</td>
 </tr>
 </table>
 </blockquote>
 </p>
+<p>
+Please note that the <code>SBMLValidate.jar</code> library is
+not distributed in its original form with &appName;.  Instead,
+it has been modified and is bundled with &appName; 
+under a different library name
+(<code>SBMLReader.jar</code>) and a different package name.
+This was done in order to minimize the potentnial for conflict in cases 
+where the target installation computer already has an installation of 
+<code>SBMLValidate.jar</code> from the 
+<a href="&sbwURL;">Systems Biology Workbench (SBW)</a>.
+</p>
+<p>
+In addition, please note that the <code>odeToJava</code> library
+is not distributed in its original form with &appName;. It has
+been modified from the version that is available from 
+<a href="http://www.netlib.org">Netlib</a>.
+Please use the <code>odeToJava.jar</code> library that is bundled 
+with &appName;, as it contains some features that are necessary in 
+order to function correctly with &appName;.  The Netlib version of
+<code>odeToJava</code> is no longer compatible with &appName;, without
+some slight modifications to the source code.
+</p>
+<p>
+The <code>jfreechart</code> and <code>jcommon</code> libraries
+are used by &appName; in order to generate graphical plots of
+simulation results.  Please note that the public API for these libraries
+has changed in recent versions, in a non-backwards-compatible manner.
+It is necessary to use the (older) versions of these libraries, that
+are provided with the <code>&appName;</code> installation.  If you
+download the latest version of the <code>jfreechart</code> and
+<code>jcommon</code> libraries from the 
+<a href="http://www.jfree.org">JFree.org</a> web site, they
+will not be compatible with &appName;.
+</p>
 </isb:docsubsection>
+
 <isb:docsubsection name="Acknowledgements" label="acknowledgements">
 <p>
 The assistance, advice, and contributions of several individuals 
@@ -1147,7 +1184,7 @@ given by the individual reaction rates.
 <p>
 The &appName; system provides a Java implementation of the Gillespie
 algorithm, for which 
-<a href="&webBaseURL;/&localJavaLibraryName;/javadoc/org/systemsbiology/chem/SimulatorStochasticGillespie.html">more
+<a href="&localJavaLibraryURL;/javadoc/org/systemsbiology/chem/SimulatorStochasticGillespie.html">more
 information is available in the Javadoc documentation</a>.  This implementation
 uses the &quot;direct method&quot; variant of Gillespie's algorithm.
 </p>
@@ -1171,7 +1208,7 @@ Parallel and Distributed Systems Group technical report number 026, (1999).
 </blockquote>
 This implementation uses the "next reaction" variant of the 
 Gibson and Bruck algorithm, for which  
-<a href="&webBaseURL;/&localJavaLibraryName;/javadoc/org/systemsbiology/chem/SimulatorStochasticGibsonBruck.html">more information</a> is available. 
+<a href="&localJavaLibraryURL;/javadoc/org/systemsbiology/chem/SimulatorStochasticGibsonBruck.html">more information</a> is available. 
 The Gibson-Bruck algorithm is O(log(M)) 
 in the number of reactions, so it is preferred over the Gillespie
 algorithm for models with a large number of reactions and/or species.
@@ -2951,10 +2988,10 @@ The packages within this library were designed to be reusable and extensible.
 This library represents the programmatic interface to the &appName; system.
 </p>
 <p>
-<a href="&webBaseURL;/&localJavaLibraryName;/javadoc">Javadoc application 
+<a href="&localJavaLibraryURL;/javadoc">Javadoc application 
 programming interface (API) documentation</a> to the &localJavaLibraryName; library
 (including &appName;) can be
-found on the <a href="&webBaseURL;/&localJavaLibraryName;">&localJavaLibraryName;
+found on the <a href="&localJavaLibraryURL;">&localJavaLibraryName;
 home page</a>.  The source code and compiled Java archive (JAR) file for this
 library can be downloaded from the same home page.  In addition, a downloadable
 PDF version of the user manual for the library is available.
@@ -2996,9 +3033,10 @@ public class TestSimulator
             model.addReaction(reactionX);
             model.addReaction(reactionY);
             System.out.println(model.toString());
-            SimulatorParameters simParams = new SimulatorParameters();
+            SimulatorStochasticGillespie simulator = new SimulatorStochasticGillespie();
+            SimulatorParameters simParams = simulator.getDefaultSimulatorParameters);
             simParams.setEnsembleSize(40);
-            SimulatorStochasticGillespie simulator = new SimulatorStochasticGillespie(model);
+            simulator.initialize(model);
             String []requestedSymbolNames = { "A", "B" };
             double []timeValues = new double[NUM_TIME_POINTS];
             Object []symbolValues = new Object[NUM_TIME_POINTS];
@@ -3022,7 +3060,8 @@ public class TestSimulator
             TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(new PrintWriter(System.out),
                                                                         requestedSymbolNames,
                                                                         timeValues,
-                                                                        symbolValues);
+                                                                        symbolValues
+                                                                        TimeSeriesOutputFormat.CSV_EXCEL);
         }
 
         catch(Exception e)
@@ -3037,7 +3076,7 @@ public class TestSimulator
 <p>
 For more information on how to use the &localJavaLibraryName; library,
 please refer to the 
-<a href="&webBaseURL;/&localJavaLibraryName;/docs/UserManual.html">&localJavaLibraryName;
+<a href="&localJavaLibraryURL;/docs/UserManual.html">&localJavaLibraryName;
 User Manual</a>.
 </p>
 
@@ -3143,7 +3182,7 @@ which <a href="#simplugins">simulator plug-in</a> to use), and the
 list of species to be included in the &quot;output&quot;.  The start 
 time defaults to 0.0, and it is rarely necessary to use a different value.
 The simulator defaults to the 
-<a href="&webBaseURL;/&localJavaLibraryName;/javadoc/org/systemsbiology/chem/SimulatorStochasticGillespie.html">
+<a href="&localJavaLibraryURL;/javadoc/org/systemsbiology/chem/SimulatorStochasticGillespie.html">
 Gillespie Simulator</a>.
 You must select at least one species to be included in the &quot;output&quot;.
 The other species not selected, may still participate in the simulation,
@@ -3213,6 +3252,16 @@ output type will generate a file for writing.  If the file selected already
 exists, you will be asked to confirm your choice.  To instead append to
 the selected file (rather than overwrite), click on the &quot;append&quot;
 check-box.
+</p>
+<p>
+While a simulation is running, you will see a progress bar at the bottom
+of the &quot;&appName;: simulator&quot; frame.  This progress bar gives
+an indication of the fraction of the time range for the simulation that
+has been completed.  However, it does not give an accurate indication
+of the estimated time to completion.  This is because simulations
+may frequently slow down or speed up, depending on the concentration
+levels of the species in the model.  At best, it is a rough guideline 
+indicating the progress of the simulator.  
 </p>
 </isb:docsubsection>
 

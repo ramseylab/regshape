@@ -6,7 +6,9 @@
 
 <!ENTITY cmdlFileExtension ".cmdl">
 <!ENTITY sbmlFileExtension ".xml">
+<!ENTITY localJavaLibraryURL "&webBaseURL;/&localJavaLibraryName;">
 <!ENTITY userManualContent SYSTEM "UserManualContent.xmlinc">
+
    ]>
 
 <!--

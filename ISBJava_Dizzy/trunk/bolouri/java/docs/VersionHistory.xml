@@ -38,6 +38,82 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.5.0/&installerDownloadRelURL;">1.5.0</a></td>
+<td>2004/02/13</td>
+<td>
+<ul>
+<li>Major reorganization of the source code tree.  This will make it easier
+to compile the tree without optional external libraries, such as 
+<code>odeToJava</code> and <code>SBMLReader</code>.  It will also make it
+easier to reuse certain classes that have been refactored to the
+<code>org.systemsbiology.util</code> and <code>org.sytemsbiology.chem</code>
+packages.</li>
+<li>Changed the <code>org.systemsbiology.math.SymbolEvaluator</code> abstract 
+class and its derived classes, in order to increase the speed of the
+<code>SymbolEvaluator.getValue(Symbol)</code> method.</li>
+<li>Changes to the <code>org.systemsbiolgoy.math.MutableDouble</code> class,
+for performance improvement.</li>
+<li>Refactored the <code>getIndexedValue()</code> and
+<code>getIndexedValueWithCaching()</code> methods of the
+<code>org.systemsbiology.math.Symbol</code> class to the
+<code>org.systemsbiology.math.SymbolEvaluator</code> class,
+which is the more appropriate place for this functionality.  Also
+made all data field members of the <code>Symbol</code> class
+package-visible.  This will also improve speed by preventing 
+unnecessary function calls in the dominant-case of processing a 
+<code>SymbolEvaluator.getValue(Symbol)</code> invocation.</li>
+<li>Removed the unneeded <code>initialize()</code> method on the
+<code>org.systemsbiology.chem.DelayedReactionSolver</code> class.</li>
+<li>Renamed the <code>checkIfCancelled()</code> method of the
+<code>org.systemsbiology.chem.SimulationController</code> class
+to <code>handlePauseOrCancel</code> method.  Made all methods 
+of this class final, which may improve speed.</li>
+<li>Created a <code>org.systemsbiology.chem.SimulationProgressReporter</code>
+class that gives periodic updates (with a customizable interval) on the
+progress of the simulation (fraction complete, number of iterations,
+and timestamp of the update.</li>
+<li>Updated the <code>org.systemsbiology.chem.Simulator</code> to
+use a customizable update interval for both the check of the
+<code>SimulationController</code> status (for pause or cancel) as
+well as status updates through the <code>SimulationProgressReporter</code>.
+Added an abstract method <code>isStochasticSimulator()</code> to the
+<code>Simulator</code> class, and removed the method from the 
+<code>ISimulator</code> interface, so that independent 
+<code>ISimulator</code> class implementations do not need to 
+implement this method.</li>
+<li>Created a new class <code>org.systemsbiology.chem.TimeSeriesOutputFormat</code>
+to replace the inner class
+<code>org.systemsbiology.chem.TimeSeriesSymbolValuesReporter.OutputFormat</code>.
+This makes it somewhat easier to use the <code>TimeSeriesSymbolValuesReporter</code>
+class.</li>
+<li>Removed needless call to <code>clearExpressionValueCaches</code> in 
+<code>org.systemsbiology.chem.SimulatorStochasticGillespie</code> and in
+<code>org.systemsbiology.chem.SimulatorStochasticGibsonBruck</code>.   This
+gives a small increase in the speed of these two simulators.</li>
+<li>Made the <code>ISimulator.initialize()</code> method no longer take
+<code>SimulationController</code> as an argument.  Instead, the simulation
+controller (if desired) is set using the <code>setController()</code> method
+on the <code>ISimulator</code> interface.</li>
+<li>Added a new progress bar control to the 
+<code>org.systemsbiology.chem.app.SimulationLauncher</code>.</li>
+<li>Changed the <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>
+to allow for optionally printing out progress information to <code>stderr</code>,
+including the expected &quot;time to completion&quot; of the simulation, in seconds.</li>
+<li>Modifided the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+to show the expected &quot;time to completion&quot; of the simulation, in seconds.</li>
+<li>Fixed a problem in the <code>jfreechart.jar</code> archive that
+was causing error messages on start-up of the
+<code>org.systemsbiology.chem.app.MainApp</code> class.</li>
+<li>All external libraries needed in order to compile the
+&appName; library, are now included in the downloadable installer
+for &appName;.  The external libraries are installed as JAR files
+into the &quot;<code>extlib</code>&quot; subdirectory of the
+user-selected installation directory.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.4.4/&installerDownloadRelURL;">1.4.4</a></td>
 <td>2004/02/10</td>
 <td>

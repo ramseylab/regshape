@@ -291,7 +291,7 @@ and any path to a file to save to the file]]></string>
 								<string><![CDATA[664]]></string>
 							</property>
 							<property name="sourceName">
-								<string><![CDATA[SBMLValidate.jar]]></string>
+								<string><![CDATA[SBMLReader.jar]]></string>
 							</property>
 							<property name="overrideUnixPermissions">
 								<boolean>false</boolean>
@@ -303,7 +303,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>true</boolean>
 							</property>
 							<property name="destinationName">
-								<string><![CDATA[SBMLValidate.jar]]></string>
+								<string><![CDATA[SBMLReader.jar]]></string>
 							</property>
 							<property name="fileSize">
 								<long>26399</long>
@@ -1366,10 +1366,10 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<int>1</int>
 					</property>
 					<property name="productVersionMinor">
-						<int>4</int>
+						<int>5</int>
 					</property>
 					<property name="productVersionRevision">
-						<int>4</int>
+						<int>0</int>
 					</property>
 					<property name="productVersionSubRevision">
 						<int>0</int>
@@ -1394,7 +1394,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<string><![CDATA[bolourilab@systemsbiology.org]]></string>
 					</property>
 					<property name="copyright">
-						<string><![CDATA[2003]]></string>
+						<string><![CDATA[2004]]></string>
 					</property>
 				</object>
 			</property>
