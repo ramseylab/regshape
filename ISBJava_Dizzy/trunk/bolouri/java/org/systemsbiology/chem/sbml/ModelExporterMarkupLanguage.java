@@ -72,6 +72,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
     private static final String UNIT_NAME_SUBSTANCE = "substance";
     private static final String UNIT_KIND_DIMENSIONLESS = "dimensionless";
     private static final String UNIT_KIND_ITEM = "item";
+    private static final String UNIT_KIND_MOLE = "mole";
 
     private static final String XMLNS_NAME = "xmlns";
     private static final String XMLNS_VALUE = "http://www.sbml.org/sbml/level";
@@ -182,7 +183,15 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
             unitDefinitionElement.setAttribute(ATTRIBUTE_NAME, UNIT_NAME_SUBSTANCE);
             unit = document.createElement(ELEMENT_NAME_UNIT);
             listOfUnitsElement.appendChild(unit);
-            unit.setAttribute(ATTRIBUTE_KIND, UNIT_KIND_ITEM);                    
+            
+            SubstanceUnit substanceUnit = SubstanceUnit.ITEM;
+            if(null != symbolEvaluationPostProcessor)
+            {
+                substanceUnit = SubstanceUnit.MOLE;
+            }
+            double convertMoleculesToSubstance = 1.0 / substanceUnit.getConversionToMolecules();
+
+            unit.setAttribute(ATTRIBUTE_KIND, substanceUnit.toString());                    
 
             // get collection of all symbols
             Collection symbols = pModel.getSymbols();
@@ -272,7 +281,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                 else
                 {
                     initialSpeciesPopulation = initialValueObj.getValue();
-                    double initialSpeciesPopulationConverted = ((double) initialSpeciesPopulation);
+                    double initialSpeciesPopulationConverted = initialSpeciesPopulation * convertMoleculesToSubstance;
                     Double initialSpeciesPopulationObj = new Double(initialSpeciesPopulationConverted);
                     speciesElement.setAttribute(ATTRIBUTE_INITIAL_AMOUNT, initialSpeciesPopulationObj.toString());
                     globalSymbolValues.put(speciesName, species);
