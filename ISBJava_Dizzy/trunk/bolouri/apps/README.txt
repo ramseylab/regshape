@@ -20,6 +20,11 @@ following Java-based applications:
 Dizzy  (in the subdirectory Dizzy)
 Mogul  (in the subdirectory Mogul)
 
+In addition, the BioTapestry directory contains all of the
+Java source code for the BioTapestry program, and the 
+Pointillist directory contains all of the Java source code
+for the Pointillist program.
+
 For application-specific notes, look for a README.txt file
 in the application's subdirectory.
 
