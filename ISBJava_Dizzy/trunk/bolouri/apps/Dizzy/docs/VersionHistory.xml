@@ -19,7 +19,7 @@
 
 <p>
 <dl>
-<dt><b>0.0.3 (2003/08/19)</b></dt>
+<dt><b>0.0.3 (2003/08/26)</b></dt>
 <dd>Added the ability to simulate a multistep chemical reaction as a single composite reaction</dd>
 <dt><b>0.0.2 (2003/08/06)</b></dt>
 <dd>Added the ability to display a model in a <a href="&cytoscapeURL;">Cytoscape</a> window.</dd>
