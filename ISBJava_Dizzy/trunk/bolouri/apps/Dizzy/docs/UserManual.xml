@@ -2777,7 +2777,10 @@ parameter may <em>not</em> be specified with the
 &quot;<code>output store</code>&quot; parameter, because
 floating-point values may not be stored in a 
 <a href="#speciespopulations">species populations collection</a>
-object, for floating species.
+object, for floating species.  It is
+not necessary to specify an ensemble size, when using the
+deterministic (ODE) simulator; doing so will simply slow
+down the computation without improving the accuracy.
     </dd>
     <dt><code>outputFile &quot;myFile.csv&quot;</code></dt>
     <dd>Species the file name to which the simulation output
@@ -3665,7 +3668,9 @@ integer greater than zero.  This feature is useful when using
 a stochastic simulator, in order to average the results of
 multiple realizations of the stochastic process.  It is
 not necessary to specify an ensemble size, when using the
-deterministic (ODE) simulator. The &quot;<code>ensembleSize</code>&quot;
+deterministic (ODE) simulator; doing so will simply slow down
+the calculation without improving accuracy. 
+The &quot;<code>ensembleSize</code>&quot;
 parameter may <em>not</em> be specified with the
 &quot;<code>output store</code>&quot; parameter, because
 floating-point values may not be stored in a 
@@ -4157,7 +4162,10 @@ averaging).  It is usually best to run a simulation with no ensemble averaging
 first, before running with an ensemble average.  This allows for you to
 compute the expected &quot;run time&quot; of the ensemble averaged
 simulation, in advance.  Note that when doing an ensemble-averaged simulation,
-you may not select the &quot;store&quot; output type.
+you may not select the &quot;store&quot; output type.  Please do not specify
+an ensemble when using the <a href="#odesim">ODE simulator</a>, because doing
+so will only prolong the computation without improving accuracy; when using
+the ODE simulator, just leave the &quot;ensemble size&quot; text box empty.
 </p>
 <p>
 The &quot;output type&quot; can 
