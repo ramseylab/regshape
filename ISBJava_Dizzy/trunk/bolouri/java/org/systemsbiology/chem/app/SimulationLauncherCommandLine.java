@@ -455,7 +455,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             if(getDebug())
             {
                 System.out.println("elapsed time to carry out the simulation: " + elapsedTimeSeconds + " seconds");
-                System.out.println("number of iterations: " + mSimulator.getIterationCounter() + "\n");
+                System.out.println("total number of iterations: " + mSimulator.getIterationCounter() + "\n");
             }
 
             mOutputFilePrintWriter.flush();
