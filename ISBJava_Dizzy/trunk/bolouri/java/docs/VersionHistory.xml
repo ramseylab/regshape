@@ -39,7 +39,7 @@ This document contains the version history for the
 
 
 <tr valign="top">
-<td><a href="../1.8.1/download.html">1.8.1</a></td>
+<td><a href="../1.9.0/download.html">1.9.0</a></td>
 <td>2004/10/??</td>
 <td>
 <ul>
@@ -140,12 +140,12 @@ for loading a data file into a matrix of String objects.</li>
 When processing model definition files, the default locale encoding is now
 ignored, to ensure that model processing is consistent in all locales.
 Fixed bug in <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>
-that was using UTF-8 encoding on Red Hat Linux.  This class now uses ISO-8859 
+that was using different encodings on different platforms.  This class now uses UTF-8 
 encoding on all platforms, for interpreting the CMDL model description from 
 the byte stream.  Files loaded with an "include" directive in any model builder,
 will now be processed in the same character encoding as the parent file.  Thus,
 in a CMDL file, when processing a "#include", the included file is required to be
-in ISO-8859 encoding.
+in UTF-8 encoding.
 </li>
 <li>
 Moved the <code>org.systemsbiology.util.Queue</code> class and all subclasses,
