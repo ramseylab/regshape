@@ -42,9 +42,7 @@ public class Symbol
             throw new IllegalArgumentException("invalid symbol name: " + pSymbolName);
         }
         mSymbolName = pSymbolName;
-        mArrayIndex = NULL_ARRAY_INDEX;
-        mDoubleArray = null;
-        mValueArray = null;
+        clearIndexInfo();
     }
 
     public boolean hasArrayIndex()
@@ -98,7 +96,6 @@ public class Symbol
     public Object clone()
     {
         Symbol newSymbol = new Symbol(mSymbolName);
-        newSymbol.setArrayIndex(mArrayIndex);
         return(newSymbol);
     }
 
@@ -108,6 +105,13 @@ public class Symbol
         mArrayIndex = pSymbol.mArrayIndex;
         mDoubleArray = pSymbol.mDoubleArray;
         mValueArray = pSymbol.mValueArray;
+    }
+
+    public void clearIndexInfo()
+    {
+        mArrayIndex = NULL_ARRAY_INDEX;
+        mDoubleArray = null;
+        mValueArray = null;        
     }
 
     public String toString()
