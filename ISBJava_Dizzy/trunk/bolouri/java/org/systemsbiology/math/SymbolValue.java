@@ -119,7 +119,7 @@ public class SymbolValue implements Comparable
 
     public Object clone()
     {
-        SymbolValue retObj = new SymbolValue(mSymbol.getName(), mValue);
+        SymbolValue retObj = new SymbolValue(mSymbol.getName(), (Value) mValue.clone());
         return(retObj);
     }
 }
