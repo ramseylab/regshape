@@ -989,7 +989,7 @@ Here is a screen shot of the Evidence-Weighted Inferer program:
 <isb:docsection name="Matlab Codes" label="matlabcodes">
 <p>
 The &appName; algorithms are also available as a set of Matlab
-M-files.  These files can be found in the <code>matlab</code>
+M-files.  These files can be found in the <code>matlab</code> 
 subdirectory of the directory where you installed &appName;.
 Note that one of these Matlab codes, <code>pcomp.m</code>,
 requires the Matlab Statistics Toolbox.  
