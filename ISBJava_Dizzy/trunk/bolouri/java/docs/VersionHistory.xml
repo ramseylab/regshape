@@ -37,6 +37,20 @@ This document contains the version history for the
 <td>Comments</td>
 </tr>
 
+  <tr valign="top">
+<td><a href="../2.1.1/download.html">2.1.1</a></td>
+<td>???</td>
+<td>
+<ul>
+  <li>Updated <code>SignificancesData</code> and <code>ObservationsData</code> to require
+    a <code>BufferedReader</code> object instead of a <code>File</code> object in their
+    <code>loadFromFile()</code> methods, thus allowing defining a data object based on
+    an alternative type of data stream, other than a file.
+  </li>
+</ul>
+</td>
+</tr>
+
 <tr valign="top">
 <td><a href="../2.1.0/download.html">2.1.0</a></td>
 <td>2005/02/04</td>
