@@ -29,6 +29,7 @@ public class Model
     private HashMap mSymbolsMap;
     private HashMap mParametersMap;
     private SpeciesRateFactorEvaluator mSpeciesRateFactorEvaluator;
+    public static final String NAMESPACE_IDENTIFIER = "::";
 
     public Model()
     {

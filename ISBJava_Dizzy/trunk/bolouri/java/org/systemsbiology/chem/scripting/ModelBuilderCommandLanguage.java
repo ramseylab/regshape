@@ -32,7 +32,6 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     private static final String STATEMENT_KEYWORD_MODEL = "model";
     private static final String STATEMENT_KEYWORD_REF = "ref";
     private static final String STATEMENT_KEYWORD_DEFINE = "define";
-    private static final String NAMESPACE_IDENTIFIER = "::";
     private static final String KEYWORD_LOOP = "loop";
 
     private static final String VALID_SYMBOL_REGEX = "^[_a-zA-Z]([_a-zA-Z0-9])*$";
@@ -416,7 +415,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         String retName = pSymbolName;
         if(null != pNamespace)
         {
-            retName = pNamespace + NAMESPACE_IDENTIFIER + pSymbolName;
+            retName = pNamespace + Model.NAMESPACE_IDENTIFIER + pSymbolName;
         }
         return(retName);
     }
@@ -1302,9 +1301,9 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             throw new InvalidInputException("symbol " + macroName + " was defined more than once in the same model");
         }
 
-        if(-1 != macroName.indexOf(NAMESPACE_IDENTIFIER))
+        if(-1 != macroName.indexOf(Model.NAMESPACE_IDENTIFIER))
         {
-            throw new InvalidInputException("macro name may not contain the namespace identifier \"" + NAMESPACE_IDENTIFIER + "\"; macro name is: " + macroName);
+            throw new InvalidInputException("macro name may not contain the namespace identifier \"" + Model.NAMESPACE_IDENTIFIER + "\"; macro name is: " + macroName);
         }
         
         ArrayList externalSymbolsList = new ArrayList();
