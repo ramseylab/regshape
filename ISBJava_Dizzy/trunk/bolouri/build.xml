@@ -1,10 +1,5 @@
 <?xml version="1.0"?>
 
-<!DOCTYPE AntBuildFile [
-  <!ENTITY % CommonConfig SYSTEM "config/CommonConfig.dtd">  
-  %CommonConfig;
-  ]>
-
 <project name="bolouri" default="compile" basedir=".">
   
   <property name="projJavaDir"        location="${basedir}/java" />
