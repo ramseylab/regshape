@@ -13,9 +13,6 @@ import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 import org.w3c.dom.*;
 
-//import org.nanode.jnlp.*;
-//import org.nanode.launcher.cache.*;
-
 import netx.jnlp.*;
 import netx.jnlp.runtime.*;
 
