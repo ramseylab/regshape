@@ -17,7 +17,7 @@
 
 <p>
 <ul>
-<li><a href="&appVersion;/installer/Web_Installers/install.htm">Download &appName; v&appVersion;</a></li>
+<li><a href="&appVersion;/installer/Web_Installers/install.htm">Download &appName;</a></li>
 <li><a href="UserManual.html">&appName; User Manual</a></li>
 <li><a href="ReleaseNotes.html">&appName; Release Notes</a></li>
 <li><a href="VersionHistory.html">&appName; Version History</a></li>

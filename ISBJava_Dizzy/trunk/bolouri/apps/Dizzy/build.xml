@@ -13,6 +13,7 @@
   <property name="app.configDir"                location="${basedir}/config" />
   <property name="app.webDir"                   location="${projWebDir}/${ant.project.name}" />
   <property name="app.installerDir"             location="${app.webDir}/&appVersion;/installer" />
+  <property name="app.version"                  value="&appVersion;" />
 
   <target name="compile">
     <!-- nothing to do -->
@@ -60,8 +61,10 @@
     <!-- make the build directory -->
     <mkdir dir="${app.buildDir}" />
 
+    <filter token="VERSION" value="${app.version}" />
+
     <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
-    <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" />
+    <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />
 
     <!-- create symbolic link for InstallAnywhere build output: -->
     <exec executable="ln">

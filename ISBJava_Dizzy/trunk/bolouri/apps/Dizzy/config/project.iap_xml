@@ -353,7 +353,7 @@ and any path to a file to read from that file]]></string>
 				<string><![CDATA[insDizzy]]></string>
 			</property>
 			<property name="productName">
-				<string><![CDATA[Dizzy]]></string>
+				<string><![CDATA[Dizzy v@VERSION@]]></string>
 			</property>
 			<property name="rulesFailedMessage">
 				<string><![CDATA[The installer cannot run on your configuration. It will now quit.]]></string>
