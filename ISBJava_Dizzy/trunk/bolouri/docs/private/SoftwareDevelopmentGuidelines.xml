@@ -10,8 +10,8 @@
               xmlns="http://www.w3.org/TR/xhtml1">
 
 <isb:doctitle>Software Development Guidelines</isb:doctitle>
-<isb:docdate>$Date: 2003/04/17 17:59:52 $</isb:docdate>
-<isb:docversion>$Revision: 1.4 $, $Date: 2003/04/17 17:59:52 $</isb:docversion>
+<isb:docdate>2003/04/21</isb:docdate>
+<isb:docversion>0.2</isb:docversion>
 
 <isb:doccontents />
 
@@ -401,20 +401,8 @@ is the most important principle to observe.
 RCS keywords (see the CVS manual for an explanation of their purpose)
 can be useful for embedding version information of a source file,
 into the source file.  However, the use of the specific RCS keyword 
-&quot;$Log: SoftwareDevelopmentGuidelines.xml,v $
-&quot;Revision 1.4  2003/04/17 17:59:52  sramsey
-&quot;Expanded and clarified
-&quot;
-&quot;Revision 1.3  2003/04/17 16:41:19  sramsey
-&quot;Changed directories for public/private
-&quot;unmanaged (unarchived) web content
-&quot;
-&quot;Revision 1.2  2003/04/16 21:38:04  sramsey
-&quot;added links to user manuals for CVS and InstallAnywhere
-&quot;
-&quot;Revision 1.1  2003/04/16 17:24:43  sramsey
-&quot;initial import
-&quot;&quot; is strongly discouraged.  It tends (over time) to
+&quot;$Log$&quot;
+is strongly discouraged.  It tends (over time) to
 horribly clutter up the source file, and is merely a repetition of
 information that is available in the CVS commit logs.  Please note
 that RCS keywords should be used with care, as they can cause merge
