@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
+
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>MyApplication Home Page</isb:doctitle>
+<isb:docowner>Bolouri Group, Institute for Systems Biology</isb:docowner>
+<isb:docownerurl>http://projects.systemsbiology.net/bolouri_group/Resources.html</isb:docownerurl>
+<isb:docowneremail>bolourigroup at systemsbiology.org</isb:docowneremail>
+<isb:docdate>$Date$</isb:docdate>
+
+<isb:doccontents />
+
+<isb:docsection name="Section 1" label="sec1">
+<p>
+Put some HTML content here (no &lt;html&gt; or &lt;body&gt; or
+&lt;meta&gt; or &lt;head&gt; or &lt;title&gt; tags, however; these
+are provided by the XSL style sheet framework).
+</p>
+</isb:docsection>
+
+<isb:docsection name="Section 2" label="sec2">
+<p>
+Put some HTML content here (no &lt;html&gt; or &lt;body&gt; or
+&lt;meta&gt; or &lt;head&gt; or &lt;title&gt; tags, however; these
+are provided by the XSL style sheet framework).
+</p>
+
+<isb:docsubsection name="subsection 1A" label="subsec1a">
+<p>
+This is an example of a subsection.
+Some more content goes here.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="subsection 1b" label="subsec1b">
+<p>
+This is an example of a subsection.
+Some more content goes here.
+</p>
+</isb:docsubsection>
+
+</isb:docsection>
+
+</isb:document>

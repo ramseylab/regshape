@@ -83,6 +83,10 @@
     </copy>
   </target>
 
+  <target name="copyMiscContent">
+    <copy tofile="${projWebDir}/private/SampleDocument.xml.txt" file="${projDocsDir}/private/SampleDocument.xml" />
+  </target>
+
   <target name="copyImages">
     <mkdir dir="${projWebDir}/images" />
     <copy todir="${projWebDir}/images">
@@ -99,7 +103,7 @@
     <ant dir="${projAppsDir}" target="buildPDF" />
   </target>
 
-  <target name="buildLocalHTML" depends="style, copyHtml, copyImages, copyModels" />
+  <target name="buildLocalHTML" depends="style, copyHtml, copyImages, copyModels, copyMiscContent" />
 
   <target name="buildHTML" depends="buildLocalHTML">
     <ant dir="${projJavaDir}" target="buildHTML" />

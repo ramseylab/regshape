@@ -42,6 +42,17 @@ principle) modify the look and feel of all of our web pages in a
 consistent manner.   The stylesheet used is not CSS (cascading style sheets),
 but instead the <a href="http://www.w3c.org/TR/xsl">XSL</a> framework.
 </p>
+<p>
+There is a <a href="SampleDocument.xml.txt">Sample web document</a>
+that illustrates how to write a web document using the XSL framework
+and the local style sheet conventions.  The version of the 
+<a href="SampleDocument.html">sample document
+translated (automatically) into HTML</a> is also available.
+Note that the only knowledge required in order to write a
+web document using this template is a rudimentary understanding of
+<a href="http://www.w3.org/MarkUp">XHTML</a>.
+</p>
+
 </isb:docsection>
 <isb:docsection name="Required Software" label="requiredsoftware">
 <p>
