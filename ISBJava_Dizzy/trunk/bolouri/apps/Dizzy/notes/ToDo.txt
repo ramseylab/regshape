@@ -8,3 +8,5 @@ some reactions are performed at all."  (Axel Kowald, 2004/10/26)
 
 (4) Remove CommonConfig.dtd from the Dizzy installation fileset, and use filter tokens for AppConfig.dtd
 so that it doesn't depend on CommonConfig.dtd.
+
+(5) Try compiling ISBJava using a Java-to-Native compiler (Axel Kowald, 2004/03/03)
