@@ -128,14 +128,7 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
      * constructors
      *========================================*/
     /**
-     * Creates an instance of the Gillespie simulator.
-     *
-     * This method creates and initializes a <code>java.util.Random</code>
-     * random number generator with a seed given by the 
-     * <code>System.currentTimeMillis</code> (current epoch time in 
-     * milliseconds since midnight on January 1st 1970).  
-     * The seed for the random number generator can be changed by
-     * calling {@link #setRandomNumberGeneratorSeed(long)}.
+     * Creates an instance of the Deterministic (ODE) simulator.
      *
      * The initial value of the debug output <code>PrintWriter</code>
      * is set to <code>null</code>, meaning that debugging output
@@ -788,7 +781,7 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
      * inverse of the reaction parameters specified for each of the reactions 
      * with the {@link Reaction#setRate(double)} method. 
      *  
-     * @see GillespieSimulator#evolve(Model,SpeciesPopulations,double[],double,double,SpeciesPopulations[])
+     * @see DeterministicSimulator#evolve(Model,SpeciesPopulations,double[],double,double,SpeciesPopulations[])
      */
     public void evolve(Model pModel, 
                        SpeciesPopulations pInitialSpeciesPopulations,
