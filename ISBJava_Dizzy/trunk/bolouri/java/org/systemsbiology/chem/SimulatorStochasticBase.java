@@ -13,7 +13,7 @@ import org.systemsbiology.math.*;
 import java.util.*;
 
 /**
- * Class for running a simulation from the command-line.
+ * Base class for all stochastic simulators.
  *
  * @author Stephen Ramsey
  */
@@ -202,9 +202,8 @@ public abstract class SimulatorStochasticBase extends Simulator
 
         if(null != simulationProgressReporter)
         {
-            simulationProgressReporter.updateProgressStatistics(0.0, iterationCounter);
+            simulationProgressReporter.updateProgressStatistics(false, 0.0, iterationCounter);
         }
-
 
         double []timesArray = createTimesArray(pStartTime, 
                                                pEndTime,
@@ -248,7 +247,8 @@ public abstract class SimulatorStochasticBase extends Simulator
         double time = 0.0;
         long currentTimeMilliseconds = 0;
 
-        for(long simCtr = ensembleSize; --simCtr >= 0; )
+        long simCtr = ensembleSize;
+        while( --simCtr >= 0 )
         {
             // time point index must be re-set to zero
             timePointIndex = 0;
@@ -294,12 +294,13 @@ public abstract class SimulatorStochasticBase extends Simulator
                             }
                         }
 
-                        timeOfLastUpdateMilliseconds = currentTimeMilliseconds;
                         if(null != simulationProgressReporter)
                         {
                             fractionComplete = (((double) (ensembleSize - simCtr - 1)) + time*timeRangeMult)*ensembleMult;
-                            simulationProgressReporter.updateProgressStatistics(fractionComplete, iterationCounter);
+                            simulationProgressReporter.updateProgressStatistics(false, fractionComplete, iterationCounter);
                         }
+
+                        timeOfLastUpdateMilliseconds = System.currentTimeMillis();
                     }
                 }
 
@@ -323,6 +324,11 @@ public abstract class SimulatorStochasticBase extends Simulator
             }
         }
 
+        if(null != simulationProgressReporter)
+        {
+            fractionComplete = (((double) (ensembleSize - simCtr - 1)) + time*timeRangeMult)*ensembleMult;
+            simulationProgressReporter.updateProgressStatistics(true, fractionComplete, iterationCounter);
+        }
 
         for(int timePointCtr = timePointIndex; --timePointCtr >= 0; )
         {
@@ -336,10 +342,6 @@ public abstract class SimulatorStochasticBase extends Simulator
         // copy array of time points 
         System.arraycopy(timesArray, 0, pRetTimeValues, 0, timePointIndex);
 
-        if(null != simulationProgressReporter)
-        {
-            simulationProgressReporter.updateProgressStatistics(1.0, iterationCounter);
-        }
     }
 
     public boolean allowsInterrupt()

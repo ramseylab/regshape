@@ -641,29 +641,6 @@ public abstract class Simulator
         mSimulationController = pSimulationController;
     }
 
-    protected final boolean handleSimulationController()
-    {
-        boolean isCancelled = false;
-        SimulationController simulationController = mSimulationController;
-        if(null != simulationController)
-        {
-            if(simulationController.handlePauseOrCancel())
-            {
-                isCancelled = true;
-            }
-        }
-        return(isCancelled);
-    }
-
-    protected final void updateSimulationProgressReporter(double pFractionComplete, long pIterationCounter)
-    {
-        SimulationProgressReporter progressReporter = mSimulationProgressReporter;
-        if(null != progressReporter)
-        {
-            progressReporter.updateProgressStatistics(pFractionComplete, pIterationCounter);
-        }
-    }
-
     public void setStatusUpdateIntervalSeconds(double pUpdateIntervalSeconds) throws IllegalArgumentException
     {
         if(pUpdateIntervalSeconds <= 0.0)

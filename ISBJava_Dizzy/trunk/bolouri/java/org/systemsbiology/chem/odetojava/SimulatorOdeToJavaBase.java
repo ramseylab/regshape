@@ -32,6 +32,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
     private long mTimeOfLastUpdateMilliseconds;
     boolean mSimulationCancelledEventNegReturnFlag;
     private boolean mDoUpdates;
+    private double mFractionComplete;
 
     protected abstract void runExternalSimulation(Span pSimulationTimeSpan,
                                                   double []pInitialDynamicSymbolValues,
@@ -59,6 +60,8 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
         SimulationProgressReporter simulationProgressReporter = mSimulationProgressReporter;
         mDoUpdates = (null != mSimulationController || null != simulationProgressReporter);
 
+        mFractionComplete = 0.0;
+
         mTimeOfLastUpdateMilliseconds = 0;
         if(mDoUpdates)
         {
@@ -69,7 +72,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
 
         if(null != simulationProgressReporter)
         {
-            simulationProgressReporter.updateProgressStatistics(0.0, mIterationCounter);
+            simulationProgressReporter.updateProgressStatistics(false, mFractionComplete, mIterationCounter);
         }
 
         double []timesArray = createTimesArray(pStartTime, 
@@ -140,6 +143,16 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
                               maxAllowedAbsoluteError,
                               tempOutputFileName);
 
+        if(! mSimulationCancelled)
+        {
+            mFractionComplete = 1.0;
+        }
+
+        if(null != simulationProgressReporter)
+        {
+            simulationProgressReporter.updateProgressStatistics(true, mFractionComplete, mIterationCounter);
+        }
+
         if(mSimulationCancelled)
         {
             return;
@@ -172,10 +185,6 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
 
         tempOutputFile.delete();
 
-        if(null != simulationProgressReporter)
-        {
-            simulationProgressReporter.updateProgressStatistics(1.0, mIterationCounter);
-        }
     }
 
     protected void readSimulationOutput(File pSimulationResultsFile, 
@@ -318,7 +327,6 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
             long currentTimeMillis = System.currentTimeMillis();
             if(currentTimeMillis - mTimeOfLastUpdateMilliseconds > mMinNumMillisecondsForUpdate)
             {
-                mTimeOfLastUpdateMilliseconds = currentTimeMillis;
                 if(null != mSimulationController)
                 {
                     mSimulationCancelled = mSimulationController.handlePauseOrCancel();
@@ -326,8 +334,11 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
 
                 if(null != mSimulationProgressReporter)
                 {
-                    mSimulationProgressReporter.updateProgressStatistics(t * mTimeRangeMult, mIterationCounter);
+                    mFractionComplete = t * mTimeRangeMult;
+                    mSimulationProgressReporter.updateProgressStatistics(false, mFractionComplete, mIterationCounter);
                 }
+
+                mTimeOfLastUpdateMilliseconds = System.currentTimeMillis();
             }
         }
 

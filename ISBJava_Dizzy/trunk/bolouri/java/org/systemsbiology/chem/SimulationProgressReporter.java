@@ -10,7 +10,6 @@ public class SimulationProgressReporter
     public final synchronized void setSimulationFinished(boolean pSimulationFinished)
     {
         mSimulationFinished = pSimulationFinished;
-        notifyAll();
     }
 
     public final synchronized boolean getSimulationFinished()
@@ -35,8 +34,11 @@ public class SimulationProgressReporter
         return(mIterationCounter);
     }
 
-    public final synchronized void updateProgressStatistics(double pFractionComplete, long pIterationCounter)
+    public final synchronized void updateProgressStatistics(boolean pSimulationFinished, 
+                                                            double pFractionComplete, 
+                                                            long pIterationCounter)
     {
+        mSimulationFinished = pSimulationFinished;
         mFractionComplete = pFractionComplete;
         mIterationCounter = pIterationCounter;
         mTimeOfLastUpdateMillis = System.currentTimeMillis();

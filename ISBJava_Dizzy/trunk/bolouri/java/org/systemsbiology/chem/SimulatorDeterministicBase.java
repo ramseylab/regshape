@@ -396,7 +396,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
         if(null != simulationProgressReporter)
         {
-            simulationProgressReporter.updateProgressStatistics(0.0, iterationCounter);
+            simulationProgressReporter.updateProgressStatistics(false, 0.0, iterationCounter);
         }
 
         double []timesArray = createTimesArray(pStartTime, 
@@ -524,12 +524,13 @@ public abstract class SimulatorDeterministicBase extends Simulator
                         }
                     }
 
-                   timeOfLastUpdateMilliseconds = currentTimeMilliseconds;
                     if(null != simulationProgressReporter)
                     {
                         fractionComplete = time*timeRangeMult;
-                        simulationProgressReporter.updateProgressStatistics(fractionComplete, iterationCounter);
+                        simulationProgressReporter.updateProgressStatistics(false, fractionComplete, iterationCounter);
                     }
+
+                    timeOfLastUpdateMilliseconds = System.currentTimeMillis();
                 }
             }
         }
@@ -539,7 +540,8 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
         if(null != simulationProgressReporter)
         {
-            simulationProgressReporter.updateProgressStatistics(1.0, iterationCounter);
+            fractionComplete = time*timeRangeMult;
+            simulationProgressReporter.updateProgressStatistics(true, fractionComplete, iterationCounter);
         }
     }
 

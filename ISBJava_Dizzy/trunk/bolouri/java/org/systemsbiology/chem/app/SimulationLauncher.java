@@ -30,7 +30,7 @@ public class SimulationLauncher
     private static final int OUTPUT_FILE_TEXT_FIELD_SIZE_CHARS = 20;
     private static final int DEFAULT_PROGRESS_BAR_VALUE = 0;
     private static final double MILLISECONDS_PER_SECOND = 1000.0;
-    private static final String DEFAULT_SECONDS_REMAINING_NUMBER_TEXT = "UNKNOWN";
+    private static final String DEFAULT_SECONDS_REMAINING_NUMBER_TEXT = "";
 
     private ClassRegistry mSimulatorRegistry;
     private Model mModel;
@@ -148,17 +148,29 @@ public class SimulationLauncher
         private boolean mTerminate;
         private NumberFormat mNumberFormat;
 
-        public synchronized void clearLastUpdateTime()
+        private synchronized void setLastUpdateTimeMillis(long pLastUpdateTimeMillis)
         {
-            mLastUpdateTimeMillis = NULL_TIME_UPDATE_MILLIS;
+            System.out.println("setting last update time millis to: " + pLastUpdateTimeMillis);
+            mLastUpdateTimeMillis = pLastUpdateTimeMillis;
+        }
+
+        private synchronized long getLastUpdateTimeMillis()
+        {
+            return(mLastUpdateTimeMillis);
+        }
+
+        public void clearLastUpdateTime()
+        {
+            setLastUpdateTimeMillis(NULL_TIME_UPDATE_MILLIS);
         }
 
         public SimulationProgressReportHandler()
         {
-            mLastUpdateTimeMillis = NULL_TIME_UPDATE_MILLIS;
+            clearLastUpdateTime();
             mTerminate = false;
             NumberFormat nf = NumberFormat.getInstance();
             nf.setMaximumFractionDigits(2);
+            nf.setMinimumFractionDigits(2);
             nf.setGroupingUsed(false);
             mNumberFormat = nf;
         }
@@ -187,31 +199,36 @@ public class SimulationLauncher
             {
                 synchronized(reporter)
                 {
+                    System.out.println("about to wait for update");
                     reporter.waitForUpdate();
                     if(getTerminate())
                     {
                         return;
                     }
+                    boolean simulationFinished = reporter.getSimulationFinished();
+                    boolean simulationCancelled = mSimulationController.getCancelled();
+                    System.out.println("just returned from update; finished: " + simulationFinished + "; cancelled: " + simulationCancelled);
                     if(! reporter.getSimulationFinished() && ! mSimulationController.getCancelled())
                     {
                         long updateTimeMillis = reporter.getTimeOfLastUpdateMillis();
                         double fractionComplete = reporter.getFractionComplete();
 
                         String estimatedTimeToCompletionStr = null;
-                        if(NULL_TIME_UPDATE_MILLIS != mLastUpdateTimeMillis)
-                        {
-                            int percentComplete = (int) (100.0 * fractionComplete);
-                            int lastPercentComplete = (int) (100.0 * mLastUpdateFractionComplete);
-                            if(lastPercentComplete != percentComplete)
-                            {
-                                mSimulationProgressBar.setValue(percentComplete);
-                            }
+                        long lastUpdateTimeMillis = getLastUpdateTimeMillis();
+                        int percentComplete = (int) (100.0 * fractionComplete);
+                        int lastPercentComplete = (int) (100.0 * mLastUpdateFractionComplete);
 
+                        System.out.println("last update time millis: " + lastUpdateTimeMillis);
+
+                        if(NULL_TIME_UPDATE_MILLIS != lastUpdateTimeMillis)
+                        {
                             double changeFraction = fractionComplete - mLastUpdateFractionComplete;
+
+                            System.out.println("change in completeness fraction: " + changeFraction);
 
                             if(changeFraction > 0.0)
                             {
-                                long changeTimeMillis = updateTimeMillis - mLastUpdateTimeMillis;
+                                long changeTimeMillis = updateTimeMillis - lastUpdateTimeMillis;
                                 double changeTimeSeconds = ((double) changeTimeMillis) / MILLISECONDS_PER_SECOND;
                                 double timeToCompletion = (1.0 - fractionComplete) * changeTimeSeconds / changeFraction;
                                 estimatedTimeToCompletionStr = mNumberFormat.format(timeToCompletion);
@@ -223,12 +240,30 @@ public class SimulationLauncher
                         }
                         else
                         {
-                            estimatedTimeToCompletionStr = DEFAULT_SECONDS_REMAINING_NUMBER_TEXT;
+                            // cannot estimate time to completion, yet
+                            estimatedTimeToCompletionStr = "UNKNOWN";
+
+                            mSimulationProgressBar.setValue(DEFAULT_PROGRESS_BAR_VALUE);
                         }
+
+                        // if there has been any change in the percent complete, reset the progress bar
+                        if(lastPercentComplete != percentComplete)
+                        {
+                            mSimulationProgressBar.setValue(percentComplete);
+                        }
+
+                        // record the "last update time"
+                        setLastUpdateTimeMillis(updateTimeMillis);
+                        System.out.println("setting time completion string to: " + estimatedTimeToCompletionStr);
                         mSecondsRemainingNumber.setText(estimatedTimeToCompletionStr);
-                        
                         mLastUpdateFractionComplete = fractionComplete;
-                        mLastUpdateTimeMillis = updateTimeMillis;
+                    }
+                    else
+                    {
+                        clearLastUpdateTime();
+                        mLastUpdateFractionComplete = 0.0;
+                        mSecondsRemainingNumber.setText(DEFAULT_SECONDS_REMAINING_NUMBER_TEXT);
+                        mSimulationProgressBar.setValue(DEFAULT_PROGRESS_BAR_VALUE);
                     }
                 }
             }
@@ -400,21 +435,10 @@ public class SimulationLauncher
         frame.setLocation(location);
     }
 
-    private void setProgressControlsVisibility(boolean pVisible)
-    {
-        mSimulationProgressBar.setVisible(pVisible);
-        mSecondsRemainingLabel.setVisible(pVisible);
-        mSecondsRemainingNumber.setVisible(pVisible);
-    }
-
     private void activateLauncherFrame()
     {
         Component frame = getLauncherFrame();
 
-        // set the progress controls to be visible, so the "JFrame.pack()" call
-        // correctly sets the frame size
-        setProgressControlsVisibility(true);
-        
         if(frame instanceof JFrame)
         {
             JFrame myFrame = (JFrame) frame;
@@ -431,8 +455,6 @@ public class SimulationLauncher
         }
         
         setLauncherLocation();
-
-        setProgressControlsVisibility(false);
 
         frame.setVisible(true);
     }
@@ -522,12 +544,10 @@ public class SimulationLauncher
             mCancelButton.setEnabled(false);
             mResumeButton.setEnabled(false);
             mSimulatorsList.setEnabled(true);
-            setProgressControlsVisibility(false);
         }
         else
         {
             mSimulatorsList.setEnabled(false);
-            setProgressControlsVisibility(true);
             if(simulationController.getStopped())
             {
                 mStartButton.setEnabled(false);
@@ -553,7 +573,6 @@ public class SimulationLauncher
             SimulationController simulationController = getSimulationController();
             if(simulationController.getStopped())
             {
-                mSimulationProgressReportHandler.clearLastUpdateTime();
                 simulationController.setStopped(false);
                 updateSimulationControlButtons(true);
             }
@@ -740,6 +759,9 @@ public class SimulationLauncher
         }
 
         updateSimulationControlButtons(pSimulator.allowsInterrupt());
+
+        mSimulationProgressReporter.setSimulationFinished(true);
+        mSimulationProgressReportHandler.clearLastUpdateTime();
     }
 
     private void handleStartButton() 
@@ -752,8 +774,6 @@ public class SimulationLauncher
 
             SimulationProgressReporter simulationProgressReporter = getSimulationProgressReporter();
             simulationProgressReporter.setSimulationFinished(false);
-            mSimulationProgressBar.setValue(DEFAULT_PROGRESS_BAR_VALUE);
-            mSecondsRemainingNumber.setText(DEFAULT_SECONDS_REMAINING_NUMBER_TEXT);
             SimulationRunParameters simulationRunParameters = createSimulationRunParameters();
             if(null != simulationRunParameters)
             {
@@ -1723,7 +1743,7 @@ public class SimulationLauncher
         simulationProgressBar.setMinimumSize(new Dimension(300, 30));
         JLabel secondsRemainingLabel = new JLabel("secs remaining: ");
         mSecondsRemainingLabel = secondsRemainingLabel;
-        JTextField secondsRemainingNumber = new JTextField("", 15);
+        JTextField secondsRemainingNumber = new JTextField(DEFAULT_SECONDS_REMAINING_NUMBER_TEXT, 15);
         secondsRemainingNumber.setMaximumSize(new Dimension(100, 30));
         secondsRemainingNumber.setEditable(false);
         mSecondsRemainingNumber = secondsRemainingNumber;
