@@ -74,9 +74,15 @@
     <style basedir="${app.docsDir}" 
            destdir="${app.styleDir}" 
            includes="*.xml" 
-    	   excludes="JavadocTitlePageSimple.xml"
+    	   excludes="JavadocTitlePageSimple.xml,download.xml"
            style="${globalConfig}/${docsStyleSheet}" />
-  	<style basedir="${app.docsDir}"
+    <style basedir="${app.docsDir}" 
+           destdir="${app.styleDir}" 
+           includes="download.xml"
+           style="${globalConfig}/${docsStyleSheet}">
+      <param name="hideGroupURL" expression="true" />
+  	</style>
+    <style basedir="${app.docsDir}"
   	       destdir="${app.styleDir}"
   	       includes="JavadocTitlePageSimple.xml"
   	       style="${globalConfig}/${simpleHTMLStyleSheet}" />
