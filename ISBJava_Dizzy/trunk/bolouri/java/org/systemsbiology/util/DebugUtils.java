@@ -72,6 +72,7 @@ public class DebugUtils
         ListIterator iter = objectList.listIterator();
         StringBuffer sb = pStringBuffer;
         sb.append("{\n");
+        boolean first = true;
         while(iter.hasNext())
         {
             Object object = iter.next();
@@ -82,18 +83,15 @@ public class DebugUtils
                     continue;
                 }
             }
-            sb.append(object.toString());
-            if(iter.hasNext())
+            if(! first)
             {
-                if(null == pClassTypeFilter || iter.next().getClass().isAssignableFrom(pClassTypeFilter))
-                {
-                    sb.append(pSeparatorString);
-                }
-                if(null != pClassTypeFilter)
-                {
-                    iter.previous();
-                }
+                sb.append(pSeparatorString);
             }
+            else
+            {
+                first = false;
+            }
+            sb.append(object.toString());
         }
         sb.append("\n}");
     }
