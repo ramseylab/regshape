@@ -12,7 +12,6 @@ package org.systemsbiology.chem.app;
  * Provides a GUI interface for initiating simulations.
  */
 import org.systemsbiology.chem.*;
-import org.systemsbiology.chem.scripting.*;
 import org.systemsbiology.util.*;
 import java.util.*;
 import java.awt.*;
@@ -28,6 +27,7 @@ public class SimulationLauncher
     private static final int SYMBOL_LIST_BOX_ROW_COUNT = 10;
     private static final int SIMULATORS_LIST_BOX_ROW_COUNT = 10;
     private static final int OUTPUT_FILE_TEXT_FIELD_SIZE_CHARS = 20;
+    private static final int DEFAULT_PROGRESS_BAR_VALUE = 0;
 
     private ClassRegistry mSimulatorRegistry;
     private Model mModel;
@@ -35,10 +35,11 @@ public class SimulationLauncher
     private boolean mHandleOutputInternally;
 
     // simulation runner stuff
-    private Thread mSimulationRunnerThread;
     private SimulationRunner mSimulationRunner;
     private SimulationRunParameters mSimulationRunParameters;
     private SimulationController mSimulationController;
+    private SimulationProgressReporter mSimulationProgressReporter;
+    private SimulationProgressReportHandler mSimulationProgressReportHandler;
     private Queue mResultsQueue;
 
     // swing controls for the basic launcher
@@ -62,6 +63,7 @@ public class SimulationLauncher
     private JButton mCancelButton;
     private String mAppName;
     private JLabel mModelNameLabel;
+    private JProgressBar mSimulationProgressBar;
 
     // variables used for the "output panel", which controls what should be
     // done with the simulation results:
@@ -120,15 +122,95 @@ public class SimulationLauncher
         OutputType mOutputType;
         String mOutputPlotLabel;
         String mOutputFileName;
-        TimeSeriesSymbolValuesReporter.OutputFormat mOutputFileFormat;
+        TimeSeriesOutputFormat mOutputFileFormat;
         boolean mOutputFileAppend;
         String []mRequestedSymbolNames;
         double []mRetTimeValues;
         Object []mRetSymbolValues;
     }
 
+    // This thread handles updates to the progress bar.  It
+    // waits on the SimulationProgressReporter instance monitor,
+    // and when it gets notified, it obtains the "fraction complete"
+    // information from the reporter, and updates the progess bar
+    // UI widget, if necessary.  
+    class SimulationProgressReportHandler implements Runnable
+    {
+        private int mLastValuePercentComplete;
+        private boolean mTerminate;
+
+        public SimulationProgressReportHandler()
+        {
+            mLastValuePercentComplete = DEFAULT_PROGRESS_BAR_VALUE;
+            mTerminate = false;
+        }
+
+        public void setTerminate(boolean pTerminate)
+        {
+            synchronized(this)
+            {
+                mTerminate = pTerminate;
+            }
+            synchronized(mSimulationProgressReporter)
+            {
+                mSimulationProgressReporter.notifyAll();
+            }
+        }
+
+        private synchronized boolean getTerminate()
+        {
+            return(mTerminate);
+        }
+
+        public void run()
+        {
+            SimulationProgressReporter reporter = mSimulationProgressReporter;
+            while(true)
+            {
+                synchronized(reporter)
+                {
+                    reporter.waitForUpdate();
+                    if(getTerminate())
+                    {
+                        return;
+                    }
+                    if(! reporter.getSimulationFinished())
+                    {
+                        double fractionComplete = reporter.getFractionComplete();
+                        int percentComplete = (int) (100.0 * fractionComplete);
+                        if(mLastValuePercentComplete != percentComplete && ! mSimulationController.getCancelled())
+                        {
+                            mLastValuePercentComplete = percentComplete;
+                            mSimulationProgressBar.setValue(percentComplete);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // This thread runs the simulation; it waits around for the signal to
+    // start doing a simulation.  When the simulation is complete, it waits
+    // on the SimulationRunner instance monitor.
     class SimulationRunner implements Runnable
     {
+        private boolean mTerminate;
+        public SimulationRunner()
+        {
+            mTerminate = false;
+        }
+
+        public synchronized void setTerminate(boolean pTerminate)
+        {
+            mTerminate = pTerminate;
+            this.notifyAll();
+        }
+
+        private synchronized boolean getTerminate()
+        {
+            return(mTerminate);
+        }
+
         public void run()
         {
             while(true)
@@ -150,6 +232,10 @@ public class SimulationLauncher
                     catch(InterruptedException e)
                     {
                         throw new RuntimeException(e);
+                    }
+                    if(getTerminate())
+                    {
+                        return;
                     }
                 }
             }
@@ -219,8 +305,10 @@ public class SimulationLauncher
         setSimulationRunParameters(null);
 
         createSimulationController();
+        createSimulationProgressReporter();
         createSimulatorRegistry();
         createSimulationRunnerThread();
+        createSimulationProgressReporterThread();
 
         // create the launcher frame with all its controls
         createLauncherFrame(JFrame.class);
@@ -232,10 +320,10 @@ public class SimulationLauncher
         activateLauncherFrame();
     }
 
-    private TimeSeriesSymbolValuesReporter.OutputFormat getSelectedOutputFileFormat() 
+    private TimeSeriesOutputFormat getSelectedOutputFileFormat() 
     {
         String outputFileFormatName = (String) mOutputFileFormatList.getSelectedItem();
-        return(TimeSeriesSymbolValuesReporter.OutputFormat.get(outputFileFormatName));
+        return(TimeSeriesOutputFormat.get(outputFileFormatName));
     }
 
     private void createSimulatorRegistry() throws ClassNotFoundException, IOException
@@ -251,6 +339,12 @@ public class SimulationLauncher
         SimulationController controller = new SimulationController();
         mSimulationController = controller;
     }
+    
+    private void createSimulationProgressReporter()
+    {
+        SimulationProgressReporter reporter = new SimulationProgressReporter();
+        mSimulationProgressReporter = reporter;
+    }
 
     private void setLauncherLocation()
     {
@@ -263,6 +357,7 @@ public class SimulationLauncher
     private void activateLauncherFrame()
     {
         Component frame = getLauncherFrame();
+        mSimulationProgressBar.setVisible(true);
 
         if(frame instanceof JFrame)
         {
@@ -280,6 +375,7 @@ public class SimulationLauncher
         }
         
         setLauncherLocation();
+        mSimulationProgressBar.setVisible(false);
         frame.setVisible(true);
     }
 
@@ -347,6 +443,11 @@ public class SimulationLauncher
         return(null != getSimulationRunParameters());
     }
 
+    private SimulationProgressReporter getSimulationProgressReporter()
+    {
+        return(mSimulationProgressReporter);
+    }
+
     private SimulationController getSimulationController()
     {
         return(mSimulationController);
@@ -354,18 +455,22 @@ public class SimulationLauncher
 
     private synchronized void updateSimulationControlButtons(boolean pAllowsInterrupt)
     {
-        if(! getSimulationInProgress())
+        SimulationController simulationController = getSimulationController();
+
+        if(! getSimulationInProgress() || simulationController.getCancelled())
         {
             mStartButton.setEnabled(true);
             mPauseButton.setEnabled(false);
             mCancelButton.setEnabled(false);
             mResumeButton.setEnabled(false);
             mSimulatorsList.setEnabled(true);
+            mSimulationProgressBar.setVisible(false);
         }
         else
         {
             mSimulatorsList.setEnabled(false);
-            if(getSimulationController().getStopped())
+            mSimulationProgressBar.setVisible(true);
+            if(simulationController.getStopped())
             {
                 mStartButton.setEnabled(false);
                 mPauseButton.setEnabled(false);
@@ -414,11 +519,13 @@ public class SimulationLauncher
         if(getSimulationInProgress())
         {
             SimulationController simulationController = getSimulationController();
-            if(! simulationController.getCancelled())
-            {
-                simulationController.setCancelled(true);
-            }
-            updateSimulationControlButtons(true);
+            // first thing, set the cancelled flag on the simulation controller, to
+            // notify the simulator that the simulation is cancelled
+            simulationController.setCancelled(true);
+
+            updateSimulationControlButtons(false);
+
+            // finally, display the confirmation dialog box
             showCancelledSimulationDialog();
         }
     }
@@ -426,7 +533,7 @@ public class SimulationLauncher
     private void handleOutput(OutputType pOutputType,
                               String pOutputPlotLabel,
                               String pOutputFileName,
-                              TimeSeriesSymbolValuesReporter.OutputFormat pOutputFileFormat,
+                              TimeSeriesOutputFormat pOutputFileFormat,
                               boolean pOutputFileAppend,
                               String []pRequestedSymbolNames,
                               double []pTimeValues,
@@ -492,8 +599,9 @@ public class SimulationLauncher
             updateSimulationControlButtons(false);
             if(! simulator.isInitialized())
             {
-                simulator.initialize(mModel,
-                                     mSimulationController);
+                simulator.initialize(mModel);
+                simulator.setController(mSimulationController);
+                simulator.setProgressReporter(mSimulationProgressReporter);
             }
             updateSimulationControlButtons(simulator.allowsInterrupt());
 
@@ -507,14 +615,13 @@ public class SimulationLauncher
                                pSimulationRunParameters.mRetTimeValues,
                                pSimulationRunParameters.mRetSymbolValues);
 
-            long deltaTime = System.currentTimeMillis() - startTime;
-            System.out.println("simulation time: " + ((double) deltaTime)/1000.0 + " seconds");
-            System.out.println("total number of iterations: " + simulator.getIterationCounter());
-
             if(! mSimulationController.getCancelled())
             {
                 if(mHandleOutputInternally)
                 {
+                    long deltaTime = System.currentTimeMillis() - startTime;
+                    System.out.println("simulation time: " + ((double) deltaTime)/1000.0 + " seconds");
+
                     handleOutput(pSimulationRunParameters.mOutputType,
                                  pSimulationRunParameters.mOutputPlotLabel,
                                  pSimulationRunParameters.mOutputFileName,
@@ -580,10 +687,13 @@ public class SimulationLauncher
         if(! getSimulationInProgress())
         {
             SimulationController simulationController = getSimulationController();
-
             simulationController.setCancelled(false);
             simulationController.setStopped(false);
-            
+
+            SimulationProgressReporter simulationProgressReporter = getSimulationProgressReporter();
+            simulationProgressReporter.setSimulationFinished(false);
+            mSimulationProgressBar.setValue(DEFAULT_PROGRESS_BAR_VALUE);
+
             SimulationRunParameters simulationRunParameters = createSimulationRunParameters();
             if(null != simulationRunParameters)
             {
@@ -1014,9 +1124,14 @@ public class SimulationLauncher
                 // do nothing
             }
         }
-        if(null == stopTime || stopTime.doubleValue() <= startTimeVal)
+        if(null == stopTime)
         {
             handleBadInput("invalid stop time", "The stop time that you specified is invalid.\nPlease enter a numeric stop time.");
+            return(retVal);
+        }
+        else if(stopTime.doubleValue() <= startTimeVal)
+        {
+            handleBadInput("invalid stop time", "The stop time that you specified is invalid.\nIt must be greater than the start time.");
             return(retVal);
         }
         double stopTimeVal = stopTime.doubleValue();
@@ -1042,9 +1157,10 @@ public class SimulationLauncher
             return(retVal);
         }
         int numTimePoints = numPoints.intValue();
-        if(numTimePoints < Simulator.MIN_NUM_TIME_POINTS)
+        int minNumTimePoints = ISimulator.MIN_NUM_RESULTS_TIME_POINTS;
+        if(numTimePoints < minNumTimePoints)
         {
-            handleBadInput("invalid number of samples", "The number of samples specified must be greater than or equal to " + Integer.toString(Simulator.MIN_NUM_TIME_POINTS));
+            handleBadInput("invalid number of samples", "The number of samples specified must be greater than or equal to " + Integer.toString(minNumTimePoints));
             return(retVal);
         }
 
@@ -1218,7 +1334,7 @@ public class SimulationLauncher
                 assert (null != fileName && fileName.trim().length() > 0) : "invalid output file name";
                 srp.mOutputFileName = fileName;
                 
-                TimeSeriesSymbolValuesReporter.OutputFormat outputFileFormat = getSelectedOutputFileFormat();
+                TimeSeriesOutputFormat outputFileFormat = getSelectedOutputFileFormat();
                 if(null == outputFileFormat)
                 {
                     throw new IllegalStateException("null output file format");
@@ -1232,7 +1348,7 @@ public class SimulationLauncher
             {
                 srp.mOutputFileName = null;
                 srp.mOutputFileAppend = false;
-                srp.mOutputFileFormat = TimeSeriesSymbolValuesReporter.OutputFormat.CSV_GNUPLOT;
+                srp.mOutputFileFormat = TimeSeriesOutputFormat.CSV_GNUPLOT;
                 if(mOutputType.equals(OutputType.PLOT))
                 {
                     String plotLabel = null;
@@ -1461,7 +1577,7 @@ public class SimulationLauncher
         filePanel.add(outputFileFormatListLabel);
         mOutputFileFormatListLabel = outputFileFormatListLabel;
         // create combo box of file formats
-        JComboBox outputFileFormatComboBox = new JComboBox(TimeSeriesSymbolValuesReporter.OutputFormat.getSortedFileFormatNames());
+        JComboBox outputFileFormatComboBox = new JComboBox(TimeSeriesOutputFormat.getSortedFileFormatNames());
         mOutputFileFormatList = outputFileFormatComboBox;
         outputFileFormatComboBox.setMaximumSize(new Dimension(100, 50));
         filePanel.add(outputFileFormatComboBox);
@@ -1500,13 +1616,23 @@ public class SimulationLauncher
         Thread simulationRunnerThread = new Thread(simulationRunner);
         simulationRunnerThread.setDaemon(true);
         simulationRunnerThread.start();
-        mSimulationRunnerThread = simulationRunnerThread;
         mSimulationRunner = simulationRunner;
+    }
+
+    private void createSimulationProgressReporterThread()
+    {
+        SimulationProgressReportHandler handler = new SimulationProgressReportHandler();
+        mSimulationProgressReportHandler = handler;
+        Thread simulationProgressReportHandlerThread = new Thread(handler);
+        simulationProgressReportHandlerThread.setDaemon(true);
+        simulationProgressReportHandlerThread.start();
     }
 
     private void handleCloseSimulationLauncher()
     {
         handleCancelButton();
+        mSimulationRunner.setTerminate(true);
+        mSimulationProgressReportHandler.setTerminate(true);
         setLauncherFrame(null);
     }
 
@@ -1531,6 +1657,9 @@ public class SimulationLauncher
 
         JPanel labelPanel = createModelSymbolLabelPanel();
         box.add(labelPanel);
+
+        JProgressBar simulationProgressBar = new JProgressBar(0, 100);
+        mSimulationProgressBar = simulationProgressBar;
 
         JPanel midPanel = new JPanel();
         JPanel buttonPanel = createButtonPanel();
@@ -1557,6 +1686,9 @@ public class SimulationLauncher
             mOutputFileAppendCheckBox = null;
             mOutputFileAppendLabel = null;
         }
+
+
+        box.add(simulationProgressBar);
 
         controllerPanel.add(box);
 
