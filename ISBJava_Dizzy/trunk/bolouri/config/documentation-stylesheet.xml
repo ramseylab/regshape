@@ -44,8 +44,17 @@
       <xsl:value-of select="/isb:document/isb:docpreamble" />
 
     </xsl:if>
-    <table cellpadding="30">
+    <table cellpadding="20">
       <tr>
+        <td>
+          <a href="&mainPublicURL;">
+            <xsl:element name="img">
+              <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/&mainLogoRelURL;</xsl:attribute>
+              <xsl:attribute name="border">0</xsl:attribute>
+              <xsl:attribute name="alt">ISB Logo</xsl:attribute>
+            </xsl:element>
+          </a>
+        </td>
         <td>
       <xsl:if test="/isb:document/isb:doctitle != ''">
         <h1><xsl:value-of select="isb:doctitle"/></h1>
@@ -99,15 +108,6 @@
         </h4>
       </xsl:if>
 
-        </td>
-        <td>
-          <a href="&mainPublicURL;">
-            <xsl:element name="img">
-              <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/&mainLogoRelURL;</xsl:attribute>
-              <xsl:attribute name="border">0</xsl:attribute>
-              <xsl:attribute name="alt">ISB Logo</xsl:attribute>
-            </xsl:element>
-          </a>
         </td>
         <td>
           <a href="&mainGroupURL;">
