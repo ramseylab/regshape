@@ -17,6 +17,12 @@
 <isb:docdate>$Date$</isb:docdate>
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 
+<p>
+This document contains the version history for the
+<a href="../">&appName;</a> software product.
+</p>
+
+<p>
 <table>
 <tr valign="top">
 <td>Version</td>
@@ -67,6 +73,6 @@ intended only for internal use at &mainAffiliation;.</td>
 </tr>
 
 </table>
-
+</p>
 
 </isb:document>

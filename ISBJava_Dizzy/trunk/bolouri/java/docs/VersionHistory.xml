@@ -22,23 +22,48 @@ This document contains the version history for the
 </p>
 
 <p>
-<dl>
-<dt><b>0.0.5 (2003/10/20)</b></dt>
-<dd>Fixed a bug in the <code>GibsonSimulator</code> initialization code, for the case of a boundary
+<table>
+<tr valign="top">
+<td>Version</td>
+<td>Date</td>
+<td>Comments</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.5</td>
+<td>2003/10/20</td>
+<td>Fixed a bug in the <code>GibsonSimulator</code> initialization code, for the case of a boundary
 reactant species.  Fixed a bug in the <code>ModelBuilderCommandLanguage</code> tokenizer, so that
 it can now accept a tab character as valid whitespace in a model definition file.  Modified the
-<code>SBMLValidate</code> package so that it can process SBML Level 1, Version 2 model definition files.</dd>
-<dt><b>0.0.4 (2003/08/28)</b></dt>
-<dd>Modified the Cytoscape bridge to use JNLP, so Cytoscape does not have to be bundled with Dizzy</dd>
-<dt><b>0.0.3 (2003/08/26)</b></dt>
-<dd>Added the ability to simulate a multistep chemical reaction as a single composite reaction</dd>
-<dt><b>0.0.2 (2003/08/06)</b></dt>
-<dd>Added the ability to display a model in a <a href="&cytoscapeURL;">Cytoscape</a> window.</dd>
-<dt><b>0.0.1 (2003/08/04)</b></dt>
-<dd>First version of the library.  
-It is an alpha version, intended only for internal use at
-&mainAffiliation;.</dd>
-</dl>
+<code>SBMLValidate</code> package so that it can process SBML Level 1, Version 2 model definition files.</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.4</td>
+<td>2003/08/28</td>
+<td>Modified the Cytoscape bridge to use JNLP, so Cytoscape does not have to be bundled with Dizzy.</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.3</td>
+<td>2003/08/26</td>
+<td>Added the ability to simulate a multistep chemical reaction as a single composite reaction.</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.2</td>
+<td>2003/08/06</td>
+<td>Added the ability to display a model in a <a href="&cytoscapeURL;">Cytoscape</a> window.</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.1</td>
+<td>2003/08/04</td>
+<td>First version of the library.  It is an alpha version,
+intended only for internal use at &mainAffiliation;.</td>
+</tr>
+
+</table>
 </p>
 
 </isb:document>
