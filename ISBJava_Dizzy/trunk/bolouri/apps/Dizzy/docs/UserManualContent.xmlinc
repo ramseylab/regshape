@@ -3217,6 +3217,61 @@ Cytoscape program will be stored in a local cache on your computer.
 </p>
 </isb:docsubsection>
 
+<isb:docsubsection name="View in human-readable format" label="viewhuman">
+<p>
+This menu item, under the &quot;Tools&quot; menu, is used to display
+a human-readable representation of a model, in a dialog box.  When this
+menu item is selected, the model definition in the editor buffer 
+is processed by the appropriate parser, and the resulting model is 
+printed in a dialog box, in human-readable format.  For example, the
+&appName; CMDL model definition shown here:
+<blockquote>
+<pre>
+A = 100.0;
+B = 0.0;
+C = 1000.0;
+D = 0.0;
+
+k1 = 0.1;
+
+r1, A -&gt; B, k1;
+
+k2 = 0.001;
+
+r2, C -&gt; D, [k2 * C];
+
+</pre>
+</blockquote>
+would have the human-readable representation:
+<blockquote>
+<pre>
+Model: model
+
+Parameters: 
+{
+Parameter: k1 [Value: 0.1],
+Parameter: k2 [Value: 0.0010]
+}
+
+Compartments: 
+{
+Compartment: univ [Value: 1.0]
+}
+
+Reactions: 
+{
+Reaction: r1, A -&gt; B,  [Rate: 0.1],
+Reaction: r2, C -&gt; D,  [Rate: "k2*C"]
+}
+</pre>
+</blockquote>
+To save the human-readable version of a model to a file, use the
+&quot;Export&quot; item under the &quot;Tools&quot; menu.  Then
+select the &quot;human-readable&quot; exporter from the list of
+exporters available.
+</p>
+</isb:docsubsection>
+
 <isb:docsubsection name="Browse Help" label="gui-browsehelp">
 <p>
 You may browse the online help by selecting the &quot;Browse help...&quot;
