@@ -202,10 +202,10 @@ public class SimulationResultsPlot extends JFrame
              
     private void handleSaveButton()
     {
-        FileChooser fileChooser = new FileChooser(this);
+        FileChooser fileChooser = new FileChooser();
         fileChooser.setDialogTitle("please choose the file for saving the image:");
         fileChooser.setApproveButtonText("save");
-        fileChooser.show();
+        fileChooser.showSaveDialog(this);
         if(null != sSaveDirectory)
         {
             fileChooser.setCurrentDirectory(sSaveDirectory);
