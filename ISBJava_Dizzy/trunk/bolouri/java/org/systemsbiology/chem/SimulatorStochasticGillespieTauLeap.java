@@ -313,7 +313,7 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
             {
                 if(pDynamicSymbolValues[i] < 0.0)
                 {
-                    System.err.println("species has a negative value: " + mDynamicSymbols[i].getName() + "; value: " + pDynamicSymbolValues[i] + "; at time: " + time);
+                    System.err.println("species has a negative value: " + mDynamicSymbols[i].getName() + "; value: " + pDynamicSymbolValues[i] + "; at time: " + time + "; plese re-run the simulation with a smaller value for the error control parameter");
                     pDynamicSymbolValues[i] = 0.0;
                 }
             }
@@ -344,10 +344,10 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         return(pAllowedError * pAggregateReactionProbability / Math.abs(muj));
     }
 
-    protected static final void getMaxNumberFiringsForReactions(SymbolEvaluatorChem pSymbolEvaluator,
-                                                                Reaction []pReactions,
-                                                                double []pSymbolValues,
-                                                                double []pMaxNumReactionFiringsSpeciesLimited) throws DataNotFoundException
+    private static void getMaxNumberFiringsForReactions(SymbolEvaluatorChem pSymbolEvaluator,
+                                                        Reaction []pReactions,
+                                                        double []pSymbolValues,
+                                                        double []pMaxNumReactionFiringsSpeciesLimited) throws DataNotFoundException
     {
         int numReactions = pReactions.length;
         for(int j = numReactions; --j >= 0; )
@@ -359,9 +359,9 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
     }
 
 
-    protected static final double getMaxNumberFiringsForReaction(SymbolEvaluatorChem pSymbolEvaluator,
-                                                                 Reaction pReaction,
-                                                                 double []pSymbolValues) throws DataNotFoundException
+    private static double getMaxNumberFiringsForReaction(SymbolEvaluatorChem pSymbolEvaluator,
+                                                         Reaction pReaction,
+                                                         double []pSymbolValues) throws DataNotFoundException
     {
         double retVal = Double.MAX_VALUE;
         
@@ -392,7 +392,6 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
 
         return(retVal);
     }
-
 
 
     private static double getLargestJumpConsistentWithAllowedError(SymbolEvaluatorChem pSymbolEvaluator,
