@@ -36,9 +36,8 @@ public class Plotter
     private static final String OUTPUT_IMAGE_TYPE_EXTENSION = "png";
 
     public static final int MAX_NUM_SYMBOLS_TO_PLOT = 20;
-    private static final int PLOT_POSITION_STAGGER_AMOUNT_PIXELS = 20;
 
-    private int mPlotCtr;
+    private FramePlacer mFramePlacer;
     private File mSaveDirectory;
     private static boolean sSystemClipboardSupportsImageTransfer;
 
@@ -49,7 +48,7 @@ public class Plotter
 
     public Plotter()
     {
-        mPlotCtr = 0;
+        mFramePlacer = new FramePlacer();
         mSaveDirectory = null;
     }
 
@@ -362,19 +361,10 @@ public class Plotter
     public void plot(String pData, String pSimulatorAlias, String pModelName, String pAppName) throws IOException, NumberFormatException
     {
         Plot plot = new Plot(pData, pSimulatorAlias, pModelName, pAppName);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = plot.getSize();
-        int numPixelsStagger = mPlotCtr * PLOT_POSITION_STAGGER_AMOUNT_PIXELS;
-        plot.setLocation((screenSize.width - frameSize.width) / 4 + numPixelsStagger,
-                         (screenSize.height - frameSize.height) / 4 + numPixelsStagger);
-        if(numPixelsStagger < (screenSize.height - frameSize.height)/4)
-        {
-            ++mPlotCtr;
-        }
-        else
-        {
-            mPlotCtr = 0;
-        }
+        Point location = mFramePlacer.placeInCascadeFormat(frameSize.width, 
+                                                           frameSize.height);
+        plot.setLocation(location);
         plot.setVisible(true);
     }
 }

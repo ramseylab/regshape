@@ -164,10 +164,9 @@ public class SimulationLauncher
     private void setLauncherLocation()
     {
         Component frame = getLauncherFrame();
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = frame.getSize();
-        frame.setLocation((screenSize.width - frameSize.width) / 2,
-                          (screenSize.height - frameSize.height) / 2);
+        Point location = FramePlacer.placeInCenterOfScreen(frameSize.width, frameSize.height);
+        frame.setLocation(location);
     }
 
     private void activateLauncherFrame()
@@ -1498,7 +1497,7 @@ public class SimulationLauncher
     /**
      * Sets the underlying {@link org.systemsbiology.chem.Model} data structure
      * to be <code>pModel</code>.  The possible results are the enumerated class
-     * {@link SimulationLauncher.SetModelResults}.
+     * {@link SimulationLauncher.SetModelResult}.
      */
     public SetModelResult setModel(Model pModel)
     {
