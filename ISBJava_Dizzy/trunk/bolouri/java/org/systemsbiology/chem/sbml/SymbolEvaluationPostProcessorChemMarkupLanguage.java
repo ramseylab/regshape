@@ -186,7 +186,7 @@ public final class SymbolEvaluationPostProcessorChemMarkupLanguage extends Symbo
         }
         if(null != compartmentSymbol)
         {
-            // the species value is in "molecules", which we need to convert to "substance"
+            // the species value is in "molecules", which we need to convert to "substance/volume"
             pSymbolValue /= (mConvertSubstanceToMolecules * pSymbolEvaluator.getValue(compartmentSymbol));
         }
         return(pSymbolValue);
