@@ -22,7 +22,7 @@
 This section lists selected software tools that were (or are being) developed in collaboration
 with Hamid Bolouri:
 <ul>
-<li><a href="Dizzy/">Dizzy, a chemical kinetics simulation system</a> [ISB-only link]</li>
+<li><a href="Dizzy/">Dizzy, a chemical kinetics stochastic simulation system using the Gillespie algorithm</a> [ISB-only link]</li>
 <li><a href="http://strc.herts.ac.uk/bio/maria/NetBuilder">NetBuilder</a> (Hertfordshire, UK)</li>
 <li><a href="&localJavaLibraryName;/">&localJavaLibraryName;, a Java library for computational biology</a> [ISB-only link]</li>
 <li><a href="models/">&mainGroup; model repository</a></li>
