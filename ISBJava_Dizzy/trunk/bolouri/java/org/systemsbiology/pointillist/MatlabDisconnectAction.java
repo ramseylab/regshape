@@ -18,7 +18,7 @@ import org.systemsbiology.gui.*;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class MatlabDisconnectAction
+public class MatlabDisconnectAction implements IAction
 {
     private App mApp;
     
@@ -30,20 +30,20 @@ public class MatlabDisconnectAction
     public void doAction()
     {
         MatlabConnectionManager mgr = mApp.getMatlabConnectionManager();
-        try
+        if(mgr.isConnected())
         {
-            if(mgr.isConnected())
+            try
             {
                 mgr.disconnect();
-                MenuBar menuBar = mApp.getMenu();
-                menuBar.setMenuItemEnabled(MenuBar.ACTION_MATLAB_CONNECT, true);
-                menuBar.setMenuItemEnabled(MenuBar.ACTION_MATLAB_DISCONNECT, false);
+            }
+            catch(Exception e)
+            {
+                ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+                optionPane.createDialog(mApp, "unable to disconnect from matlab session").show();
+                return;                
             }
         }
-        catch(Exception e)
-        {
-            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
-            optionPane.createDialog(mApp, "unable to disconnect from matlab session").show();
-        }
+
+        mApp.handleMatlabConnectionState(false);
     }
 }
