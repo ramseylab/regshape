@@ -14,12 +14,13 @@ import cern.jet.math.*;
 import cern.colt.function.*;
 import cern.colt.matrix.*;
 import cern.colt.matrix.doublealgo.*;
-import org.systemsbiology.math.DoubleVector;
+import org.systemsbiology.math.AccuracyException;
+import org.systemsbiology.math.probability.IContinuousDistribution;
 
 /**
  * An implementation of the Pointillist algorithm for
  * inferring the set of probable affected elements.  Uses a Bayesian
- * method to compute the joint probability that an element would
+ * method to compute the combined probability that an element would
  * have a given set of significance values, by chance, if it were
  * not in the set of true affected elements.  This algorithm was
  * designed by Daehee Hwang.
@@ -34,16 +35,20 @@ public final class EvidenceWeightedInferer
     private DoubleMatrix2D mDistributionSignificancesAffected;
     private DoubleMatrix2D mDistributionSignificancesUnaffected;
     private DoubleMatrix2D mDistributionSignificancesDifference;
-
-    private DoubleMatrix1D mDistributionJointSignificances;
-    private DoubleMatrix1D mDistributionJointSignificancesAffected;
-    private DoubleMatrix1D mDistributionJointSignificancesUnaffected;
-    private DoubleMatrix1D mDistributionJointSignificancesDifference;
+    private DoubleMatrix1D mNegLogCombinedEffectiveSignificances;
+    
+    private DoubleMatrix1D mMinimumNonzeroEvidenceSpecificSignificances;
+    private DoubleMatrix1D mDistributionCombinedSignificances;
+    private DoubleMatrix1D mDistributionCombinedSignificancesAffected;
+    private DoubleMatrix1D mDistributionCombinedSignificancesUnaffected;
+    private DoubleMatrix1D mDistributionCombinedSignificancesDifference;
     private DoubleMatrix1D mEffectiveSignificanceNormalizations;
     private DoubleMatrix1D mAffectedSignificances;
     private DoubleMatrix1D mUnaffectedSignificances;
     
     private DoubleMatrix2D mEffectiveSignificances;
+    private DoubleMatrix2D mNonzeroSignificances;
+
     private DoubleMatrix1D mDistNormAffected;
     private DoubleMatrix1D mDistNormUnaffected;
     
@@ -55,6 +60,9 @@ public final class EvidenceWeightedInferer
     private int mNumElements;
     private DoubleMatrix1D mWeights;
     private DoubleMatrix1D mBiases;
+    
+    private SignificanceCalculator mSignificanceCalculator;
+    private SignificanceCalculationResults mSignificanceCalculationResults;
     
     static class ColumnwiseDivider implements IntIntDoubleFunction
     {
@@ -80,8 +88,8 @@ public final class EvidenceWeightedInferer
     {
         public double mSignificanceDistributionSeparation;
         public double mCriticalSignificance;
-        public double mHighQuantileSignificanceAffected;
-        public double mLowQuantileSignificanceUnaffected;
+        public double mLowQuantileSignificanceAffected;
+        public double mHighQuantileSignificanceUnaffected;
         public double mAlphaParameter;
     }
     
@@ -90,6 +98,7 @@ public final class EvidenceWeightedInferer
         mNumEvidences = 0;
         mNumBins = 0;
         mNumElements = 0;
+        mSignificanceCalculator = new SignificanceCalculator();
     }
     
     private void initialize(int pNumEvidences, int pNumBins, int pNumElements)
@@ -98,11 +107,14 @@ public final class EvidenceWeightedInferer
         mNumBins = pNumBins;
         mNumElements = pNumElements;
         
+        mSignificanceCalculationResults = new SignificanceCalculationResults(mNumElements);
+        
         DoubleFactory2D fac2d = DoubleFactory2D.dense;
         
         mDistributionSignificancesAffected = fac2d.make(mNumBins, mNumEvidences);
         mDistributionSignificancesUnaffected = fac2d.make(mNumBins, mNumEvidences);
         mDistributionSignificancesDifference = fac2d.make(mNumBins, mNumEvidences);
+        mNonzeroSignificances = fac2d.make(mNumElements, mNumEvidences);
         
         mEffectiveSignificances = fac2d.make(mNumElements, mNumEvidences);
         
@@ -111,19 +123,21 @@ public final class EvidenceWeightedInferer
         mWeights = fac1d.make(mNumEvidences);
         mBiases = fac1d.make(mNumEvidences);
 
-        mDistributionJointSignificances = fac1d.make(mNumBins);
-        mDistributionJointSignificancesAffected = fac1d.make(mNumBins);
-        mDistributionJointSignificancesUnaffected = fac1d.make(mNumBins);
-        mDistributionJointSignificancesDifference = fac1d.make(mNumBins);
+        mDistributionCombinedSignificances = fac1d.make(mNumBins);
+        mDistributionCombinedSignificancesAffected = fac1d.make(mNumBins);
+        mDistributionCombinedSignificancesUnaffected = fac1d.make(mNumBins);
+        mDistributionCombinedSignificancesDifference = fac1d.make(mNumBins);
         mAffectedSignificances = fac1d.make(mNumElements);
         mUnaffectedSignificances = fac1d.make(mNumElements);
         
         mDistNormAffected = fac1d.make(mNumEvidences);
         mDistNormUnaffected = fac1d.make(mNumEvidences);
         mEffectiveSignificanceNormalizations = fac1d.make(mNumEvidences);
+        mMinimumNonzeroEvidenceSpecificSignificances = fac1d.make(mNumEvidences);
+        mNegLogCombinedEffectiveSignificances = fac1d.make(mNumElements);
         mColumnwiseDividerAffected = new ColumnwiseDivider(mDistNormAffected);
         mColumnwiseDividerUnaffected = new ColumnwiseDivider(mDistNormUnaffected);
-}
+    }
     
 
     
@@ -133,7 +147,6 @@ public final class EvidenceWeightedInferer
                                        boolean []pAffectedElements,
                                        double pQuantileFraction,
                                        EvidenceWeightType pWeightType,
-                                       double []pJointEffectiveSignificances,
                                        IterationResults pIterationResults)
     {
         int i = 0;  // index for elements
@@ -162,7 +175,6 @@ public final class EvidenceWeightedInferer
         mDistributionSignificancesUnaffected.assign(0.0);
         mDistNormAffected.assign(0.0);
         mDistNormUnaffected.assign(0.0);
-        DoubleVector.zeroElements(pJointEffectiveSignificances);
         mEffectiveSignificanceNormalizations.assign(0.0);
         
         double sigVal = 0.0;
@@ -175,6 +187,10 @@ public final class EvidenceWeightedInferer
         
         DoubleMatrix1D distNorm = null;
         
+        // count the number of putative affected elements, and calculate the
+        // normalization factors for the distributions of affected and unaffected
+        // element significances for each type of evidence; calculate the histograms
+        // of affected and unaffected element significances for each evidence type
         for(i = numElements; --i >= 0; )
         {
             affected = pAffectedElements[i];
@@ -314,7 +330,7 @@ public final class EvidenceWeightedInferer
                 affected = pAffectedElements[i];
                 
                 sigVal = pSignificances.get(i, j);
-                if(sigVal >= 0.0)
+                if(sigVal > 0.0)
                 {
                     if(pWeightType.equals(EvidenceWeightType.LINEAR))
                     {
@@ -336,9 +352,13 @@ public final class EvidenceWeightedInferer
                         ++numUnaffectedForEvidence;
                     }
                 }
-                else
+                else if(sigVal < 0.0)
                 {
                     mEffectiveSignificances.set(i, j, sigVal);
+                }
+                else
+                {
+                    throw new IllegalStateException("zero value of significance for element " + i + " and evidence " + j);
                 }
             }
 
@@ -410,26 +430,23 @@ public final class EvidenceWeightedInferer
         double alphaParam = avgProd/prodAvg;
 
         boolean atLeastOneSignificanceIsDefined = false;
-        double maxJointSigAffected = 0.0;
-        double minJointSigAffected = Double.MAX_VALUE;
-        double jointSig = 0.0;
-        mAffectedSignificances.assign(-1.0);
-        mUnaffectedSignificances.assign(-1.0);
-        int affectedIndex = numUnaffected;
-        int unaffectedIndex = numAffected;
+        double combinedEffectiveSignificance = 0.0;
+        double negLogCombinedEffectiveSignificance = 0.0;
         
-        // compute the joint effective significance for each element, and the
-        // max joint significance of affected elements
+        // compute the combined effective significance for each element, and the
+        // max combined significance of affected elements
         for(i = numElements; --i >= 0; )
         {
             atLeastOneSignificanceIsDefined = false;
-            jointSig = 1.0;
+            combinedEffectiveSignificance = 1.0;
+            
+            // combine the significance values of all evidences, for this element
             for(j = numEvidences; --j >= 0; )
             {
                 effSig = mEffectiveSignificances.get(i, j);
                 if(effSig >= 0.0)
                 {
-                    jointSig *= effSig;
+                    combinedEffectiveSignificance *= effSig;
                     atLeastOneSignificanceIsDefined = true;
                 }
                 else
@@ -437,149 +454,179 @@ public final class EvidenceWeightedInferer
                     // Just assume the un-normalized effective significance is equal to the
                     // average un-normalized effective significance for unaffected elements of
                     // this evidence type, which would mean a value of 1.0 for the normalized effective
-                    // significance.  So, we have no need to mutiply the jointSig by anything here. 
+                    // significance.  So, we have no need to mutiply the combinedSig by anything here. 
                 }
             }
             if(! atLeastOneSignificanceIsDefined)
             {
                 throw new IllegalArgumentException("no evidences were available for element number: " + i);
             }
-            
-            if(jointSig < 0.0)
-            {
-                throw new IllegalStateException("negative joint significance");
-            }
 
-            // save the joint effective significance
-            pJointEffectiveSignificances[i] = jointSig;
-            
-            // calculate the maximum joint effective significance of affected elements
-            if(pAffectedElements[i] && jointSig > maxJointSigAffected)
+            if(combinedEffectiveSignificance <= 0.0)
             {
-                maxJointSigAffected = jointSig;
+                throw new IllegalStateException("non-positive combined significance");
             }
             
-            // calculate the minimum joint effective significance of affected elements
-            if(pAffectedElements[i] && jointSig < minJointSigAffected)
+            negLogCombinedEffectiveSignificance = -2.0 * Math.log(combinedEffectiveSignificance);
+            
+            // save the combined effective significance
+            mNegLogCombinedEffectiveSignificances.set(i, negLogCombinedEffectiveSignificance);
+        }
+        
+        // :TODO: add code to compute CDF here?
+        
+        double maxCombinedSigAffected = 0.0;
+        double minCombinedSigAffected = Double.MAX_VALUE;
+        mAffectedSignificances.assign(Double.MIN_VALUE);
+        mUnaffectedSignificances.assign(Double.MIN_VALUE);
+        int affectedIndex = numUnaffected;
+        int unaffectedIndex = numAffected;
+
+        for(i = numElements; --i >= 0; )
+        {
+            combinedEffectiveSignificance = mNegLogCombinedEffectiveSignificances.get(i);
+            
+            // calculate the maximum combined effective significance of affected elements 
+            if(pAffectedElements[i] && combinedEffectiveSignificance > maxCombinedSigAffected)
             {
-                minJointSigAffected = jointSig;
+                maxCombinedSigAffected = combinedEffectiveSignificance;
+            }
+            
+            // calculate the minimum combined effective significance of affected elements
+            if(pAffectedElements[i] && combinedEffectiveSignificance < minCombinedSigAffected)
+            {
+                minCombinedSigAffected = combinedEffectiveSignificance;
             }
             
             affected = pAffectedElements[i];
             if(affected)
             {
-                mAffectedSignificances.set(affectedIndex, jointSig);
+                mAffectedSignificances.set(affectedIndex, combinedEffectiveSignificance);
                 ++affectedIndex;
             }
             else
             {
-                mUnaffectedSignificances.set(unaffectedIndex, jointSig);
+                mUnaffectedSignificances.set(unaffectedIndex, combinedEffectiveSignificance);
                 ++unaffectedIndex;
             }
         }
         
         Sorting sorting = Sorting.quickSort;
         
-        // obtain a sorted view of the joint significances (ascending order)
+        // obtain a sorted view of the combined significances (ascending order)
         DoubleMatrix1D sortedAffectedSignificances = sorting.sort(mAffectedSignificances); 
         DoubleMatrix1D sortedUnaffectedSignificances = sorting.sort(mUnaffectedSignificances);
         
-        int affectedQuantile = numUnaffected + ((int) ((1.0 - pQuantileFraction) * ((double) numAffected)));
-        int unaffectedQuantile = numAffected + ((int) (pQuantileFraction * ((double) numUnaffected)));
+        int affectedQuantile = numUnaffected + ((int) (pQuantileFraction * ((double) numAffected)));
+        int unaffectedQuantile = numAffected + ((int) ((1.0 - pQuantileFraction) * ((double) numUnaffected)));
         
         double affectedQuantileValue = sortedAffectedSignificances.get(affectedQuantile);
         double unaffectedQuantileValue = sortedUnaffectedSignificances.get(unaffectedQuantile);
 
-        mDistributionJointSignificancesAffected.assign(0.0);
-        mDistributionJointSignificancesUnaffected.assign(0.0);
+        mDistributionCombinedSignificancesAffected.assign(0.0);
+        mDistributionCombinedSignificancesUnaffected.assign(0.0);
         
-        maxJointSigAffected *= 2.0;
+        DoubleMatrix1D distCombined = null;
+
+        if(maxCombinedSigAffected <= minCombinedSigAffected)
+        {
+            throw new IllegalStateException("max combined sig affected must exceed min combined sig affected");
+        }
         
-        DoubleMatrix1D distJoint = null;
+        double binSize = (maxCombinedSigAffected - minCombinedSigAffected)/((double) mNumBins);
         
-        double binSize = maxJointSigAffected / ((double) mNumBins);
-        
-        // construct the distributions of joint significances of affected & unaffected elements
+        // construct the distributions of combined significances of affected & unaffected elements
         for(i = 0; i < numElements; ++i)
         {
             affected = pAffectedElements[i];
             
-            jointSig = pJointEffectiveSignificances[i];
+            combinedEffectiveSignificance = mNegLogCombinedEffectiveSignificances.get(i);
             
-            // Each element has a non-negative joint significance defined, so we
-            // don't have to worry about missing data, at this point.  If an element
-            // had no observations, an exception would have been thrown earlier in the code
-            k = (int) (jointSig / binSize);
-            if(k < mNumBins)
+            if(combinedEffectiveSignificance >= minCombinedSigAffected && 
+               combinedEffectiveSignificance <= maxCombinedSigAffected)
             {
+                k = (int) ((combinedEffectiveSignificance - minCombinedSigAffected)/binSize);
+                
+                if(k == mNumBins)
+                {
+                    k--;
+                }
+                
                 if(affected)
                 {
-                    distJoint = mDistributionJointSignificancesAffected;
+                    distCombined = mDistributionCombinedSignificancesAffected;
 
                 }
                 else
                 {
-                    distJoint = mDistributionJointSignificancesUnaffected;
+                    distCombined = mDistributionCombinedSignificancesUnaffected;
 
                 }
 
-                distJoint.set(k, distJoint.get(k) + 1.0);
+                distCombined.set(k, distCombined.get(k) + 1.0);                
             }
         }
-        
-//        System.out.println("joint effective significances: " + pJointEffectiveSignificances.toString());
+
+//        for(i = 0; i < numElements; ++i)
+//        {
+//            System.out.println("combinedSig[" + i + "] = " + pCombinedEffectiveSignificances[i] + "; aff: " + pAffectedElements[i]);
+//        }
         
         double normAffected = 1.0 / ((double) numAffected);
-        mDistributionJointSignificancesAffected.assign(Functions.mult(normAffected));
-//        System.out.println("dist of affected significances: " + mDistributionJointSignificancesAffected);
+        mDistributionCombinedSignificancesAffected.assign(Functions.mult(normAffected));
+//        System.out.println("dist of affected significances: " + mDistributionCombinedSignificancesAffected);
 
         double normUnaffected = 1.0 / ((double) numUnaffected);
-        mDistributionJointSignificancesUnaffected.assign(Functions.mult(normUnaffected));      
-        //System.out.println("dist of unaffected significances: " + mDistributionJointSignificancesUnaffected);
+        mDistributionCombinedSignificancesUnaffected.assign(Functions.mult(normUnaffected));      
+        //System.out.println("dist of unaffected significances: " + mDistributionCombinedSignificancesUnaffected);
         
-        mDistributionJointSignificancesDifference.assign(mDistributionJointSignificancesAffected);
-        mDistributionJointSignificancesDifference.assign(mDistributionJointSignificancesUnaffected,
+        mDistributionCombinedSignificancesDifference.assign(mDistributionCombinedSignificancesAffected);
+        mDistributionCombinedSignificancesDifference.assign(mDistributionCombinedSignificancesUnaffected,
                                                          Functions.minus);       
         
-        //System.out.println("difference of distributions of joint significances: " + mDistributionJointSignificancesDifference);
+        //System.out.println("difference of distributions of combined significances: " + mDistributionCombinedSignificancesDifference);
         
         cumulativeSum = 0.0;
         double maxCumulativeSum = 0.0;
         double countDouble = 0.0;
         double criticalSignificance = 0.0;
 
-        for(k = 0; k < numBins; ++k )
+        // determine the "critical significance" and separation between the distributions
+        for(k = numBins; --k >= 0; )
         {
-            countDouble = mDistributionJointSignificancesDifference.get(k);
+            countDouble = mDistributionCombinedSignificancesDifference.get(k);
             cumulativeSum += countDouble;
             
             if(cumulativeSum > maxCumulativeSum)
             {
                 maxCumulativeSum = cumulativeSum;
-                criticalSignificance = (((double) k) + 0.5) * binSize;
+                criticalSignificance = minCombinedSigAffected + (((double) k) + 0.5) * binSize;
             }
         }
         
+        // guard against roundoff error (objective function can never exceed 1.0)
         double objFunction = Math.min(1.0, maxCumulativeSum);
         
         pIterationResults.mSignificanceDistributionSeparation = objFunction;
         pIterationResults.mAlphaParameter = alphaParam;
         pIterationResults.mCriticalSignificance = criticalSignificance;
-//        System.out.println("critical significance: " + criticalSignificance);
-        pIterationResults.mHighQuantileSignificanceAffected = affectedQuantileValue;
-//        System.out.println("upper quantile of affected significances: " + affectedQuantileValue);
-        pIterationResults.mLowQuantileSignificanceUnaffected = unaffectedQuantileValue;
-//        System.out.println("lower quantile of unaffected significances: " + unaffectedQuantileValue);
+        //System.out.println("critical significance: " + criticalSignificance);
+        pIterationResults.mLowQuantileSignificanceAffected = affectedQuantileValue;
+        //System.out.println("lower quantile of affected significances: " + affectedQuantileValue);
+        pIterationResults.mHighQuantileSignificanceUnaffected = unaffectedQuantileValue;
+        //System.out.println("upper quantile of unaffected significances: " + unaffectedQuantileValue);
+        //System.out.println("cost function: " + objFunction);
     }
     
     public void findAffectedElements(DoubleMatrix2D pSignificances,
                                      int pNumBins,
                                      double pInitialCutoff,
-                                     double pJointSignificanceCutoff,
+                                     double pCombinedSignificanceCutoff,
                                      double pFractionToRemove,
                                      double pMinFractionalCostChange,
+                                     double pMaxChiSquare,
                                      EvidenceWeightType pWeightType,
-                                     EvidenceWeightedInfererResults pRetResults)
+                                     EvidenceWeightedInfererResults pRetResults) throws AccuracyException
     {
         int numElements = pSignificances.rows();
         if(numElements == 0)
@@ -612,22 +659,30 @@ public final class EvidenceWeightedInferer
         {
             throw new IllegalArgumentException("illegal array size for affected elements flags");
         }
-        double []jointEffectiveSignificances = pRetResults.mJointEffectiveSignificances;
-        if(null == jointEffectiveSignificances)
+        double []combinedEffectiveSignificances = pRetResults.mCombinedEffectiveSignificances;
+        if(null == combinedEffectiveSignificances)
         {
-            throw new IllegalArgumentException("missing return array for joint effective significances");
+            throw new IllegalArgumentException("missing return array for combined effective significances");
         }
-        if(jointEffectiveSignificances.length != numElements)
+        if(combinedEffectiveSignificances.length != numElements)
         {
-            throw new IllegalArgumentException("illegal array size for joint effective significances");
+            throw new IllegalArgumentException("illegal array size for combined effective significances");
         }
         if(pRetResults.mWeights.length != numEvidences)
         {
             throw new IllegalArgumentException("illegal array size for weights array");
         }
-                
+        if(pMaxChiSquare <= 0.0)
+        {
+            throw new IllegalArgumentException("illegal maximum reduced chi square: " + pMaxChiSquare);
+        }
+        if(pCombinedSignificanceCutoff < 0.0 || pCombinedSignificanceCutoff > 1.0)
+        {
+            throw new IllegalArgumentException("the combined significance cutoff must be between 0.0 and 1.0");
+        }
+        
         boolean affected = false;
-        double jointSig = 0.0;
+        double combinedSig = 0.0;
         int i = 0;
         
         boolean iterationsComplete = false;
@@ -643,11 +698,7 @@ public final class EvidenceWeightedInferer
         {
             throw new IllegalArgumentException("illegal cutoff value: " + pInitialCutoff);
         }
-        
-        if(pJointSignificanceCutoff <= 0.0 || pJointSignificanceCutoff >= 1.0)
-        {
-            throw new IllegalArgumentException("illegal affected cutoff value: " + pJointSignificanceCutoff);
-        }
+
         if(numElements != pSignificances.rows())
         {
             throw new IllegalArgumentException("number of rows of significances matrix not consistent with return array for affected elements");
@@ -657,13 +708,49 @@ public final class EvidenceWeightedInferer
         int j = 0;
         int numAffected = 0;
         
+        // calculate the minimum nonzero evidence-specific significances
+        double minSig = 0.0;
+        for(j = numEvidences; --j >= 0; )
+        {
+            minSig = Double.MAX_VALUE;
+            for(i = numElements; --i >= 0; )
+            {
+                sigValue = pSignificances.get(i, j);
+                if(sigValue > 0.0 && sigValue < minSig)
+                {
+                    minSig = sigValue;
+                }
+            }
+            if(minSig == Double.MAX_VALUE)
+            {
+                throw new IllegalArgumentException("evidence type " + j + " has no non-zero significances; cannot proceed");
+            }
+            mMinimumNonzeroEvidenceSpecificSignificances.set(j, minSig);
+        }
+        
+        // handle the special case of significances that are identically zero, by
+        // setting them to the minimum nonzero evidence-specific significance value
+        mNonzeroSignificances.assign(pSignificances);
+        for(j = numEvidences; --j >= 0; )
+        {
+            minSig = mMinimumNonzeroEvidenceSpecificSignificances.get(j);
+            for(i = numElements; --i >= 0; )
+            {
+                sigValue = mNonzeroSignificances.get(i, j);
+                if(0.0 == sigValue)
+                {
+                    mNonzeroSignificances.set(i, j, minSig);
+                }
+            }
+        }
+        
         // determine the initial putative set of affected elements, using the "greedy" method
         for(i = numElements; --i >= 0; )
         {
             affected = false;
             for(j = numEvidences; (--j >= 0) && (! affected); )
             {
-                sigValue = pSignificances.get(i, j);
+                sigValue = mNonzeroSignificances.get(i, j);
                 if(sigValue >= 0.0 && sigValue < pInitialCutoff)
                 {
                     affected = true;
@@ -682,7 +769,6 @@ public final class EvidenceWeightedInferer
         IterationResults iterationResults = new IterationResults();
         
         double affectedCutoff = 0.0;
-        double unaffectedCutoff = 0.0;
         double affectedQuantile = 0.0;
         double unaffectedQuantile = 0.0;
         double criticalSignificance = 0.0;
@@ -691,25 +777,28 @@ public final class EvidenceWeightedInferer
         double lastFractionRemoved = 0.0;
         double deriv = 0.0;
         
+        double negLogCombinedEffectiveSignificanceCutoff = -2.0 * Math.log(pCombinedSignificanceCutoff);
+        
         while(! iterationsComplete)
         {
             ++iterationCtr;
 
 //            System.out.println("calling cost function with frac to remove: " + fractionToRemove);
-             // calculate the joint effective significances for all elements
-             calculateCostFunction(pSignificances, 
+             // calculate the combined effective significances for all elements
+             calculateCostFunction(mNonzeroSignificances, 
                                    affectedElements, 
                                    fractionToRemove, 
                                    pWeightType,
-                                   jointEffectiveSignificances, 
                                    iterationResults);
 
              criticalSignificance = iterationResults.mCriticalSignificance;
-             affectedQuantile = iterationResults.mHighQuantileSignificanceAffected;
-             unaffectedQuantile = iterationResults.mLowQuantileSignificanceUnaffected;
-             affectedCutoff = Math.max(pJointSignificanceCutoff, affectedQuantile);
-             unaffectedCutoff = Math.min(affectedCutoff, criticalSignificance);
+             affectedQuantile = iterationResults.mLowQuantileSignificanceAffected;
+             unaffectedQuantile = iterationResults.mHighQuantileSignificanceUnaffected;
              
+             // make sure we don't "scalp" too much of the data away, by ensuring that the
+             // affected cutoff is never greater than pCombinedSignificanceCutoff
+             affectedCutoff = Math.min(negLogCombinedEffectiveSignificanceCutoff, affectedQuantile);
+                          
              funcValue = iterationResults.mSignificanceDistributionSeparation;
              if(funcValue <= 0.0 || funcValue > 1.0)
              {
@@ -721,7 +810,7 @@ public final class EvidenceWeightedInferer
                  if(Math.abs(funcValue - lastFuncValue)/funcValue < pMinFractionalCostChange  || 
                          1.0 - funcValue < pMinFractionalCostChange)
                  {
-//                     System.out.println("quitting because L(H) changed by a really small amount, number of iterations: " + iterationCtr);
+                     //System.out.println("quitting because L(H) changed by a really small amount, number of iterations: " + iterationCtr);
                      iterationsComplete = true;
                  }
                  else
@@ -757,8 +846,11 @@ public final class EvidenceWeightedInferer
                  for(i = numElements; --i >= 0; )
                  {
                      affected = affectedElements[i];
-                     jointSig = jointEffectiveSignificances[i];
-                     if(affected && jointSig >= affectedCutoff)
+                     combinedSig = mNegLogCombinedEffectiveSignificances.get(i);
+                     
+                     // if the significance value is less than the cutoff, move it to the 
+                     // "unaffected" set of elements
+                     if(affected && combinedSig <= affectedCutoff)
                      {
                          affectedElements[i] = false;
                          ++numChanged;
@@ -767,21 +859,17 @@ public final class EvidenceWeightedInferer
                  numAffected -= numChanged;
                  if(numChanged == 0 || numAffected <= 0)
                  {
-//                     System.out.println("quitting because number changed is zero, number of iterations: " + iterationCtr);
+                     //System.out.println("quitting because number changed is zero, number of iterations: " + iterationCtr);
                      iterationsComplete = true;
                  }                 
-//                 System.out.println("iteration: " + iterationCtr + "; L(H): " + funcValue + "; numChanged: " + numChanged + "; num aff: " + numAffected);
+                 //System.out.println("iteration: " + iterationCtr + "; L(H): " + funcValue + "; numChanged: " + numChanged + "; num aff: " + numAffected);
 
                  lastFractionRemoved = ((double) numChanged)/((double) (numAffected + numChanged));
                  lastFuncValue = funcValue;
              }
         }
         
-        criticalSignificance = iterationResults.mCriticalSignificance;
-        affectedQuantile = iterationResults.mHighQuantileSignificanceAffected;
-        unaffectedQuantile = iterationResults.mLowQuantileSignificanceUnaffected;
-        affectedCutoff = Math.max(pJointSignificanceCutoff, affectedQuantile);
-        unaffectedCutoff = Math.min(affectedCutoff, criticalSignificance);
+        double unaffectedCutoff = Math.min(affectedCutoff, criticalSignificance);
         
         int numProbableFalseNegatives = 0;
         
@@ -790,15 +878,20 @@ public final class EvidenceWeightedInferer
             affected = affectedElements[i];
             if(! affected)
             {
-                jointSig = jointEffectiveSignificances[i];
-                if(jointSig < unaffectedCutoff)
+                combinedSig = mNegLogCombinedEffectiveSignificances.get(i);
+                
+                // if the significance value is greater than the cutoff, move the element
+                // to the set of "affected" elements
+                if(combinedSig > unaffectedCutoff)
                 {
                     affectedElements[i] = true;
                     ++numProbableFalseNegatives;
+                    ++numAffected;
                 }
             }
         }
 //        System.out.println("num false negatives re-added to affected set: " + numProbableFalseNegatives);
+        
         
         if(numProbableFalseNegatives > 0)
         {
@@ -807,29 +900,77 @@ public final class EvidenceWeightedInferer
                                   affectedElements, 
                                   pFractionToRemove,
                                   pWeightType,
-                                  jointEffectiveSignificances, 
-                                  iterationResults);  
+                                  iterationResults);
+            
+            numAffected += numProbableFalseNegatives;
+        }
+
+        Double []allSignificances = new Double[numElements];
+        Double []unaffectedSignificances = new Double[numElements - numAffected];
+        int unaffCtr = 0;
+        double negLogCombinedEffectiveSignificance = 0.0;
+        for(i = 0; i < numElements; ++i)
+        {
+            negLogCombinedEffectiveSignificance = mNegLogCombinedEffectiveSignificances.get(i);
+            allSignificances[i] = new Double(negLogCombinedEffectiveSignificance);
+            affected = affectedElements[i];
+            if(! affected)
+            {
+                unaffectedSignificances[unaffCtr] = new Double(negLogCombinedEffectiveSignificance);
+                ++unaffCtr;
+            }
         }
         
+        boolean singleTailed = false;
+        boolean allowEmpirical = false;
+        mSignificanceCalculator.calculateSignificances(allSignificances, 
+                                                       unaffectedSignificances,
+                                                       mNumBins,
+                                                       pMaxChiSquare,
+                                                       singleTailed,
+                                                       allowEmpirical,
+                                                       SignificanceCalculationFormula.CDF,
+                                                       mSignificanceCalculationResults);
+        
+        IContinuousDistribution probDist = mSignificanceCalculationResults.mBestFitDistribution;
+        double meanNegLogCombinedEffectiveSignificance = probDist.mean();
+        //System.out.println("prob dist used: " + probDist.name() + "; chi square: " + mSignificanceCalculationResults.mReducedChiSquare);
+        double []cumulativeSignificances = mSignificanceCalculationResults.mSignificances;
+        double finalSignificance = 0.0;
+        for(i = numElements; --i >= 0; )
+        {
+            negLogCombinedEffectiveSignificance = mNegLogCombinedEffectiveSignificances.get(i);
+            if(negLogCombinedEffectiveSignificance > meanNegLogCombinedEffectiveSignificance)
+            {
+                finalSignificance = 0.5 * cumulativeSignificances[i];
+            }
+            else
+            {
+                finalSignificance = 1.0 - (0.5*cumulativeSignificances[i]);
+            }
+            pRetResults.mCombinedEffectiveSignificances[i] = finalSignificance;
+        }
         pRetResults.mSignificanceDistributionSeparation = iterationResults.mSignificanceDistributionSeparation;
         pRetResults.mAlphaParameter = iterationResults.mAlphaParameter;
         pRetResults.mNumIterations = iterationCtr;
+        pRetResults.mReducedChiSquare = mSignificanceCalculationResults.mReducedChiSquare;
         mWeights.toArray(pRetResults.mWeights);
     }
     
     public EvidenceWeightedInfererResults findAffectedElements(DoubleMatrix2D pSignificances,
                                                                int pNumBins,
                                                                double pInitialCutoff,
-                                                               double pJointSignificanceCutoff,
+                                                               double pCombinedSignificanceCutoff,
                                                                double pFractionToRemove,
                                                                double pMinFractionalCostChange,
-                                                               EvidenceWeightType pWeightType)
+                                                               double pMaxChiSquare,
+                                                               EvidenceWeightType pWeightType) throws AccuracyException
     {
         EvidenceWeightedInfererResults results = new EvidenceWeightedInfererResults();
         int numElements = pSignificances.rows();
         boolean []affectedElements = new boolean[numElements];
-        double []jointEffectiveSignificances = new double[numElements];
-        results.mJointEffectiveSignificances = jointEffectiveSignificances;
+        double []combinedEffectiveSignificances = new double[numElements];
+        results.mCombinedEffectiveSignificances = combinedEffectiveSignificances;
         results.mAffectedElements = affectedElements;
         int numEvidences = pSignificances.columns();
         results.mWeights = new double[numEvidences];
@@ -837,9 +978,10 @@ public final class EvidenceWeightedInferer
         findAffectedElements(pSignificances,
                              pNumBins,
                              pInitialCutoff,
-                             pJointSignificanceCutoff,
+                             pCombinedSignificanceCutoff,
                              pFractionToRemove,
                              pMinFractionalCostChange,
+                             pMaxChiSquare,
                              pWeightType,
                              results);
         
