@@ -4,6 +4,7 @@
 
   <target name="compile">
     <ant dir="${basedir}/Dizzy" target="compile" />
+    <ant dir="${basedir}/BioTapestry" target="compile" />
   </target>
 
   <target name="clean">
@@ -12,11 +13,11 @@
   </target>
 
   <target name="distClean" depends="clean">
+    <ant dir="${basedir}/BioTapestry" target="distClean" />
   </target>
 
   <target name="buildHTML">
     <ant dir="${basedir}/Dizzy" target="buildHTML" />
-    <ant dir="${basedir}/BioTapestry" target="buildHTML" />
   </target>
 
   <target name="buildPDF">
@@ -29,6 +30,7 @@
 
   <target name="build">
     <ant dir="${basedir}/Dizzy" target="build" />
+    <ant dir="${basedir}/BioTapestry" target="build" />
   </target>
 
 </project>
