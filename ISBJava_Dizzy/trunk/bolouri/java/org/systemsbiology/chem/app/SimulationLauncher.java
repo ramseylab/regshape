@@ -509,6 +509,7 @@ public class SimulationLauncher
 
             long deltaTime = System.currentTimeMillis() - startTime;
             System.out.println("simulation time: " + ((double) deltaTime)/1000.0 + " seconds");
+            System.out.println("total number of iterations: " + simulator.getIterationCounter());
 
             if(! mSimulationController.getCancelled())
             {
