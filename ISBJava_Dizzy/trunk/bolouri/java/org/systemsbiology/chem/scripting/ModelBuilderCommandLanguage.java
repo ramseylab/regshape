@@ -18,6 +18,8 @@ import org.systemsbiology.math.*;
 
 public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableClass
 {
+    private HashMap mDefaultModelSymbols;
+
     public static final String CLASS_ALIAS = "command-language";
     private static final String DEFAULT_MODEL_NAME = "model";
     private static final String TOKEN_MULTILINE_COMMENT_END = "*/";
@@ -139,9 +141,19 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         setSearchPatternMath(searchPattern);
     }
 
+    private static final String COMPARTMENT_NAME_DEFAULT = "univ";
+
+    private void initializeDefaultModelSymbols()
+    {
+        mDefaultModelSymbols = new HashMap();
+        Compartment compartment = new Compartment(COMPARTMENT_NAME_DEFAULT);
+        mDefaultModelSymbols.put(compartment.getName(), compartment);
+    }
+
     public ModelBuilderCommandLanguage()
     {
         initializeSearchPatternMath();
+        initializeDefaultModelSymbols();
         mNamespace = null;
     }
 
@@ -345,6 +357,10 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         {
             throw new InvalidInputException("attempt to define a reserved symbol: " + pSymbolName);
         }
+        if(null != mDefaultModelSymbols.get(pSymbolName))
+        {
+            throw new InvalidInputException("symbol name is reserved as a default model element: " + pSymbolName);
+        }
 
         if(! isValidSymbol(pSymbolName))
         {
@@ -352,11 +368,14 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         }
     }
 
-    private static final String COMPARTMENT_NAME_DEFAULT = "univ";
-    private void initializeModelElements(HashMap pSymbolMap) 
+    private void processDefaultModelElements(HashMap pSymbolMap) 
     {
-        Compartment compartment = new Compartment(COMPARTMENT_NAME_DEFAULT);
-        pSymbolMap.put(COMPARTMENT_NAME_DEFAULT, compartment);
+        Iterator defaultModelSymbolsIter = mDefaultModelSymbols.values().iterator();
+        while(defaultModelSymbolsIter.hasNext())
+        {
+            SymbolValue defaultModelSymbolValue = (SymbolValue) defaultModelSymbolsIter.next();
+            pSymbolMap.put(defaultModelSymbolValue.getSymbol().getName(), defaultModelSymbolValue);
+        }
     }
 
     static class SymbolEvaluatorNamespaced extends SymbolEvaluatorHashMap
@@ -2000,7 +2019,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         // if we are inside an include file, the model elements have already been initialized
         if(! pInsideInclude)
         {
-            initializeModelElements(pSymbolMap);
+            processDefaultModelElements(pSymbolMap);
         }
 
         int lineCtr = 1;
