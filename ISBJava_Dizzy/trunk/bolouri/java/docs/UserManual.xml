@@ -15,6 +15,7 @@
 <isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
 <isb:docdate>$Date$</isb:docdate>
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+<isb:docauthor>&appOriginalAuthorFullName; (<code>&appOriginalAuthorEmailSafe;</code>)</isb:docauthor>
 
 <isb:doccontents />
 
@@ -86,9 +87,10 @@ You can download and install Ant from
 
 <isb:docsection name="Acknowledgements" label="acknowledgements">
 <p>
+The initial version of &appName; was implemented by Stephen Ramsey.
 The assistance, advice, and contributions of several individuals 
 to the &appName; project is gratefully acknowledged:  Hamid Bolouri
-(principal investigator), William Longabaugh, and Alistair Rust.
+(Principal Investigator), William Longabaugh, and Alistair Rust.
 </p>
 
 </isb:docsection>
