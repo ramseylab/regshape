@@ -10,6 +10,8 @@ package org.systemsbiology.chem.app;
 
 import org.systemsbiology.chem.*;
 import org.systemsbiology.gui.*;
+import org.systemsbiology.util.*;
+
 import java.awt.*;
 import javax.swing.event.*;
 import javax.swing.*;
@@ -42,7 +44,8 @@ public class EditorPane
     private MainApp mMainApp;
     private JScrollPane mEditorScrollPane;
     private File mCurrentDirectory;
-
+    private IModelBuilder mModelBuilder;
+    
     interface EditorStateUpdater
     {
         public void updateEditorState();
@@ -115,7 +118,16 @@ public class EditorPane
         return(mCurrentDirectory);
     }
 
-
+    private void setModelBuilder(IModelBuilder pModelBuilder)
+    {
+        mModelBuilder = pModelBuilder;
+    }
+    
+    private IModelBuilder getModelBuilder()
+    {
+        return(mModelBuilder);
+    }
+    
     private void handleCancel(String pOperation)
     {
         JOptionPane.showMessageDialog(mMainFrame,
@@ -214,11 +226,11 @@ public class EditorPane
         if(doClose)
         {
             setFileNameLabel(null);
-            setBufferDirty(false);
             setTimestampLastChange(TIMESTAMP_BUFFER_LAST_CHANGE_NULL);
             clearEditorText();
             mMainApp.updateMenus();
             setParserAliasLabel(null);
+            setBufferDirty(false);
         }
         return(doClose);
     }
@@ -430,50 +442,42 @@ public class EditorPane
 
     public Model processModel()
     {
-        String parserAlias = getParserAlias();
-        boolean doProcess = false;
-        
-        assert (! editorBufferIsEmpty()) : "editor buffer was empty";
-
-        if(null == parserAlias)
-        {
-            String fileName = getFileName();
-            if(null == fileName)
-            {
-                // user has not set file name yet; ask for parser alias
-                fileName = "";
-            }
-            ParserPicker parserPicker = new ParserPicker(mMainFrame);
-            parserAlias = parserPicker.selectParserAliasFromFileName(fileName);
-            if(null != parserAlias)
-            {
-                setParserAliasLabel(parserAlias);
-                doProcess = true;
-            }
-            else
-            {
-                // do nothing, as this case means that the user has cancelled the open operation
-            }
-        }
-        else
-        {
-            doProcess = true;
-        }
-
-        String fileName = getFileName();
-        
         Model model = null;
-
-        if(doProcess)
+        try
         {
-            ModelProcessor processor = new ModelProcessor(mMainFrame);
+            IModelBuilder modelBuilder = getModelBuilder();
+            assert (null != modelBuilder) : "null model builder";
+            
             String modelText = getEditorPaneTextArea().getText();
-            StringReader stringReader = new StringReader(modelText);
-            BufferedReader bufferedReader = new BufferedReader(stringReader);
-            model = processor.processModel(fileName, bufferedReader, parserAlias);
+            byte []bytes = modelText.getBytes();
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+            
+            String fileName = getFileName();
+            File file = new File(fileName);
+            File dir = file.getParentFile();
+            IncludeHandler includeHandler = new IncludeHandler();
+            includeHandler.setDirectory(mCurrentDirectory);
+
+            model = modelBuilder.buildModel(inputStream, includeHandler);
+        }
+        
+        catch(InvalidInputException e)
+        {
+            System.out.println("invalid input exception");
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(mMainFrame, "error in model definition").show();
+            return(model);
         }
 
-        return(model);
+        catch(IOException e)
+        {
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            optionPane.createDialog(mMainFrame,
+                                    "I/O error in processing model definition").show();
+            return(model);
+        }
+
+        return model;
     }
 
     boolean editorBufferIsEmpty()
@@ -520,34 +524,45 @@ public class EditorPane
             
         try
         {
-            StringBuffer fileContents = new StringBuffer();
+            ParserPicker parserPicker = new ParserPicker(mMainFrame);
+            String parserAlias = parserPicker.selectParserAliasFromFileName(pFileName);
 
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String line = null;
-            while((line = bufferedReader.readLine()) != null)
+            if(null != parserAlias)
             {
-                fileContents.append(line);
-                fileContents.append("\n");
+                ClassRegistry modelBuilderRegistry = mMainApp.getModelBuilderRegistry();
+                IModelBuilder modelBuilder = (IModelBuilder) modelBuilderRegistry.getInstance(parserAlias);
+                setModelBuilder(modelBuilder);
+                InputStream inputStream = new FileInputStream(file);
+                BufferedReader bufferedReader = modelBuilder.getBufferedReader(inputStream);
+                
+                StringBuffer fileContents = new StringBuffer();
+
+                String line = null;
+                while((line = bufferedReader.readLine()) != null)
+                {
+                    fileContents.append(line);
+                    fileContents.append("\n");
+                }
+
+                MainApp theApp = MainApp.getApp();
+                JTextArea fileEditorTextArea = getEditorPaneTextArea();
+                StringReader stringReader = new StringReader(fileContents.toString());
+                
+                clearEditorText();
+
+                bufferedReader = new BufferedReader(stringReader);
+                while((line = bufferedReader.readLine()) != null)
+                {
+                    fileEditorTextArea.append(line);
+                    fileEditorTextArea.append("\n");
+                }
+
+                setFileNameLabel(pFileName);
+                setParserAliasLabel(parserAlias);
+                setBufferDirty(false);
+                setTimestampLastChange(System.currentTimeMillis());
+                mMainApp.updateMenus();
             }
-
-            MainApp theApp = MainApp.getApp();
-            JTextArea fileEditorTextArea = getEditorPaneTextArea();
-            StringReader stringReader = new StringReader(fileContents.toString());
-            
-            clearEditorText();
-
-            bufferedReader = new BufferedReader(stringReader);
-            while((line = bufferedReader.readLine()) != null)
-            {
-                fileEditorTextArea.append(line);
-                fileEditorTextArea.append("\n");
-            }
-
-            setFileNameLabel(pFileName);
-            setBufferDirty(false);
-            setTimestampLastChange(System.currentTimeMillis());
-            mMainApp.updateMenus();
         }
 
         catch(Exception e)
