@@ -12,6 +12,7 @@ import org.systemsbiology.util.*;
 import org.systemsbiology.math.*;
 import java.util.*;
 import edu.cornell.lassp.houle.RngPack.*;
+import cern.jet.random.*;
 
 /**
  * Base class for all stochastic simulators.
@@ -24,6 +25,7 @@ public abstract class SimulatorStochasticBase extends Simulator
     public static final boolean DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS = false;
 
     protected RandomElement mRandomNumberGenerator;
+    protected Poisson mPoissonEventGenerator;
 
     protected abstract void modifyDefaultSimulatorParameters(SimulatorParameters pSimulatorParameters);
 
@@ -54,6 +56,11 @@ public abstract class SimulatorStochasticBase extends Simulator
     protected void initializeRandomNumberGenerator()
     {
         setRandomNumberGenerator(new Ranmar(System.currentTimeMillis()));
+    }
+
+    protected void initializePoissonEventGenerator()
+    {
+        mPoissonEventGenerator = new Poisson(1.0, mRandomNumberGenerator);
     }
 
     protected void checkDynamicalSymbolsInitialValues() throws InvalidInputException
@@ -171,7 +178,9 @@ public abstract class SimulatorStochasticBase extends Simulator
                                       RandomElement pRandomNumberGenerator,
                                       double []pDynamicSymbolValues,
                                       MutableInteger pLastReactionIndex,
-                                      DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException, IllegalStateException, SimulationAccuracyException;
+                                      DelayedReactionSolver []pDelayedReactionSolvers,
+                                      boolean pHasExpressionValues,
+                                      Value []pNonDynamicSymbolValues) throws DataNotFoundException, IllegalStateException, SimulationAccuracyException;
 
     protected abstract void prepareForStochasticSimulation(SymbolEvaluatorChem pSymbolEvaluator,
                                                            double pStartTime,
@@ -179,11 +188,61 @@ public abstract class SimulatorStochasticBase extends Simulator
                                                            Reaction []pReactions,
                                                            double []pReactionProbabilities,
                                                            SimulatorParameters pSimulatorParameters) throws DataNotFoundException, IllegalArgumentException;
+    
 
-    protected void initializeSimulatorStochastic(Model pModel) throws InvalidInputException
+    protected static final int getPoissonEvent(Poisson pPoissonEventGenerator,
+                                               double pMean)
+    {
+        boolean gotSuccessfulEvent = false;
+        int retVal = 0;
+        do
+        {
+            try
+            {
+                retVal = pPoissonEventGenerator.nextInt(pMean);
+                gotSuccessfulEvent = true;
+            }
+            catch(ArrayIndexOutOfBoundsException e)
+            {
+                System.err.println("internal bug in cern.jet.random.Poisson tripped; this is being handled");
+            }
+        }
+        while(! gotSuccessfulEvent);
+        return(retVal);
+    }
+
+    private static final void integerizeInitialData(double []pDynamicSymbolValues,
+                                                    Species []pDynamicSymbols,
+                                                    RandomElement pRandomNumberGenerator)
+    {
+        int numSpecies = pDynamicSymbolValues.length;
+        double speciesValue = 0.0;
+        for(int i = 0; i < numSpecies; ++i)
+        {
+            speciesValue = pDynamicSymbolValues[i];
+            double floorSpeciesValue = Math.floor(speciesValue);
+            if(speciesValue > floorSpeciesValue)
+            {
+                double frac = speciesValue - floorSpeciesValue;
+                double randVal = pRandomNumberGenerator.raw();
+                double initialVal = floorSpeciesValue;
+                if(randVal > frac)
+                {
+                    initialVal += 1.0;
+                }
+                pDynamicSymbolValues[i] = initialVal;
+//                pDynamicSymbolValues[i] = getPoissonEvent(pPoissonEventGenerator, speciesValue);
+//                System.out.println("setting initial value for species \"" + pDynamicSymbols[i].getName() + "\" to " + pDynamicSymbolValues[i]);
+            }
+        }
+    }
+
+
+    protected final void initializeSimulatorStochastic(Model pModel) throws InvalidInputException
     {
         checkDynamicalSymbolsInitialValues();
         initializeRandomNumberGenerator();
+        initializePoissonEventGenerator();
     }
 
     protected static final int chooseIndexOfNextReaction(RandomElement pRandomNumberGenerator,
@@ -268,11 +327,16 @@ public abstract class SimulatorStochasticBase extends Simulator
         double []reactionProbabilities = mReactionProbabilities;
         Reaction []reactions = mReactions;
         double []dynamicSymbolValues = mDynamicSymbolValues;        
+        Species []dynamicSymbols = mDynamicSymbols;
         int numDynamicSymbolValues = dynamicSymbolValues.length;
         DelayedReactionSolver []delayedReactionSolvers = mDelayedReactionSolvers;
 
-        RandomElement randomNumberGenerator = mRandomNumberGenerator;
+        boolean hasExpressionValues = mHasExpressionValues;
+        Value []nonDynamicSymbolValues = mNonDynamicSymbolValues;
 
+        RandomElement randomNumberGenerator = mRandomNumberGenerator;
+        Poisson poissonEventGenerator = mPoissonEventGenerator;
+        
         Long ensembleSizeObj = pSimulatorParameters.getEnsembleSize();
         if(null == ensembleSizeObj)
         {
@@ -328,6 +392,10 @@ public abstract class SimulatorStochasticBase extends Simulator
 
             lastReactionIndex.setValue(NULL_REACTION);
 
+            integerizeInitialData(dynamicSymbolValues,
+                                  dynamicSymbols,
+                                  randomNumberGenerator);
+
             prepareForStochasticSimulation(symbolEvaluator,
                                            pStartTime,
                                            randomNumberGenerator,
@@ -345,7 +413,9 @@ public abstract class SimulatorStochasticBase extends Simulator
                                randomNumberGenerator,
                                dynamicSymbolValues,
                                lastReactionIndex,
-                               delayedReactionSolvers);
+                               delayedReactionSolvers,
+                               hasExpressionValues,
+                               nonDynamicSymbolValues);
 //                System.out.println("returne from iterate, time is: " + time);
 
                 ++iterationCounter;
@@ -376,15 +446,14 @@ public abstract class SimulatorStochasticBase extends Simulator
 
                 if(time >= timesArray[timePointIndex])
                 {
-                    // at this point, the expression value caches may be stale; clear them
-                    clearExpressionValueCaches();
-
                     timePointIndex = addRequestedSymbolValues(time,
                                                               timePointIndex,
                                                               requestedSymbols,
                                                               symbolEvaluator,
                                                               timesArray,
-                                                              retSymbolValues);
+                                                              retSymbolValues,
+                                                              hasExpressionValues,
+                                                              nonDynamicSymbolValues);
 //                    System.out.println("time point index after iteration is: " + timePointIndex + "; time is: " + time);
                 }
 
@@ -468,11 +537,4 @@ public abstract class SimulatorStochasticBase extends Simulator
     {
         return(true);
     }
-
-    public boolean usesExpressionValueCaching()
-    {
-        return(true);
-    }
-
-
 }
