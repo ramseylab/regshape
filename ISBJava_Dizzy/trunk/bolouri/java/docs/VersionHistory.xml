@@ -38,11 +38,120 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../2.0.2/download.html">2.0.2</a></td>
+<td>2004/12/??</td>
+<td>
+<ul>
+  <li>Renamed <code>org.systemsbiology.gui.DataColumnSelector</code> to
+    <code>org.systemsbiology.gui.TableFrame</code>.</li>
+  <li>Moved the <code>org.systemsbiology.chem.SymbolEvaluationPostProcessorChemMarkupLanguage</code>
+    class to the <code>org.systemsbiology.chem.sbml</code> package.</li>
+  <li>Made <code>org.systemsbiology.chem.LoopIndex</code> an inner class of 
+    <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>.</li>
+  <li>Fixed a bug in <code>org.systemsbiology.util.ClassRegistry</code>, where 
+    certain JRE problems were causing a <code>NoClassDefFoundError</code> which
+    was not being properly handled.  This was causing the application to abort,
+    when a warning message to <code>STDERR</code> would suffice.  Now, when this
+    error occurs, a warning message is printed, and the JRE does not abort.</li>
+  <li>Fixed an XML syntax error in the boilerplate application configuration 
+    resource file <code>org.systemsbiology.chem.app.AppConfig.xml</code>.</li>
+  <li>Removed the <code>org.systemsbiology.pointillist</code> package from
+    the JavaDoc documentation, because it is still under development.</li>
+  <li>Fixed a problem with the build script <code>build.xml</code>, where the
+    resource JAR files for external libraries were not included in the compilation
+    classpath for compiling the test programs.</li>
+  <li>
+    Moved the <code>org.systemsbiology.math.MathFunctions</code> static functions
+    that implement vector arithmetic, to the new class 
+    <code>org.systemsbiology.math.DoubleVector</code>.  Updated all classes that
+    depend on these functions, to reference the new class name.
+  </li>
+  <li>
+    Added code to set the <code>org.systemsbiology.chem.ReservedSymbolMapper</code>
+    in the test programs in the <code>org.systemsbiology.chem.tp</code> package.
+    This code change is not necessary for the programs to work properly, but it
+    is useful from a pedagogical standpoint, since most uses of the API will 
+    want to be able to access the reserved symbols defined in the CMDL.
+  </li>
+  <li>
+    Defined a package of probability distribution functions, <code>org.systemsbiology.math.probability</code>.
+  </li>
+  <li>
+    Changed <code>org.systemsbiology.chem.SimulationAccuracyException</code>  to
+    <code>org.systemsbiology.math.AccuracyException</code>.
+  </li>
+  <li>
+    Improved some parser error messages in <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>.
+  </li>
+  <li>
+    Fixed a <code>NullPointerException</code> that was occurring in 
+    <code>org.systemsbiology.chem.app.EditorPane</code>,
+    when a parser error occurred in a parsing model text when there is no filename associated with the
+    editor buffer.
+  </li>
+  <li>
+    Refactored <code>org.systemsbiology.chem.app.ParserPicker</code> so that it
+    now has two methods, <code>selectParserAliasFromFileName()</code> and
+    <code>selectParserAliasManually()</code>.  The latter method no longer displays
+    a confirmation dialog, when the user cancels the parser selection dialog (it is
+    left up to the calling method to detect the null return value and issue the
+    confirmation dialog).
+  </li>
+  <li>
+    Fixed a bug in <code>org.systemsbiology.chem.app.EditorPane</code> where the
+    current directory was not being set, when &quot;save as&quot; operation is performed.
+  </li>
+  <li>
+    Fixed a bug in <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code> 
+    that was disallowing parenthetic mathematical expressions within a loop definition
+    statement.  Refactored some code in same class, to ensure more consistent mathematical
+    expression parsing in various contexts.  Modified same class to allow for a comma
+    character to appear within a mathematical expression, in preparation for allowing
+    the <code>min(a,b)</code> and <code>max(a,b)</code> functions within the 
+    <code>org.systemsbiology.math.Expression</code> class.
+  </li>
+  <li>
+    Modified <code>org.systemsbiology.math.Expression</code> to permit two-argument
+    functions in general, and the <code>min()</code> and <code>max()</code> functions
+    in particular.  Thanks to Adam Duguid for submitting the source code patch.
+  </li>
+  <li>
+    Fixed a bug in the <code>cdf()</code> method of the
+    <code>org.systemsbiology.math.probability.Maxwell</code> class, in which the
+    asymptotic limit of large argument was returning an incorrect value (greater than
+    1.0).
+  </li>
+  <li>
+    Added code to the <code>org.systemsbiology.math.probability.DistributionPrinter.print()</code>
+    method to print the cumulative distribution function (CDF), in addition to the
+    probability distribution function (PDF).
+  </li>
+  <li>
+    Added a file filter regular expression and a default file extension, to
+    each instance of the <code>org.systemsbiology.data.DataFileDelimiter</code>
+    class.
+  </li>
+  <li>
+    Updated the <code>org.systemsbiology.data.MatrixString</code> class to
+    accept a <code>org.systemsbiology.data.DataFileDelimiter</code> as a 
+    delimiter, instead of a <code>String</code> delimiter.  Fixed a potential
+    bug for the case of a space delimiter and a column-aligned data file.
+  </li>
+  <li>
+    Fixed a bug in <code>org.systemsbiology.math.ScientificNumberFormat.format()</code>
+    that was resulting in a negative argument always being formatted in scientific
+    notation.
+  </li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../2.0.1/download.html">2.0.1</a></td>
 <td>2004/11/18</td>
 <td>
 <ul>
-<li>
+  <li>
   Fixed a bug in <code>org.systemsbiology.gui.DataColumnSelector</code>, which
   was causing a <code>NullPointerException</code> when the "save" button is
   clicked, when the selector object was constructed using the parameterized 

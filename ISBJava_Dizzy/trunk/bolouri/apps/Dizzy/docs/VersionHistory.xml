@@ -44,6 +44,49 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.8.3/download.html">1.8.3</a></td>
+<td>2004/12/??</td>
+<td>
+<ul>
+<li>
+  Added a new section &quot;<a href="UserManual.html#simulators">Simulators</a>&quot; to the
+  User Manual, describing the different simulators that are available in &appName;
+</li>
+<li>
+  Fixed a potential problem with the sample programs for creating &appName; models using
+  the &localJavaLibraryName; API, where the reserved symbol mapper was not being set for the
+  model.  This was leading to confusion when people attempted to reference reserved symbols
+  in expressions, which was causing an exception to be thrown.  This is just a documentation
+  change.
+</li>
+<li>
+  Fixed a <code>NullPointerException</code> that occurs when the model editor buffer
+  has no filename defined for it (i.e., when the buffer has not yet been saved to a file), and
+  when there is a parser error in processing the model definition text.  Improved some
+  parser error messages to make them more human-comprehensible.
+</li>
+<li>
+  Fixed a bug in the editor code where the "save as" operation was failing to update the
+  "current directory" that is used for preprocessor file inclusion.
+</li>
+<li>
+  Fixed a bug in the CMDL parser which was causing an exception to be thrown, when a 
+  model contained a loop definition in which either the start or stop value was a 
+  mathematical expression containing parentheses.
+</li>
+<li>
+  Added support for a <code>min()</code> and <code>max()</code> function, to the
+  mathematical expression-processing engine.  Mathematical expressions in the CMDL
+  can now use these two functions, as functions of two arguments, such as
+  <blockquote>
+    <code>min(A,B)</code>
+  </blockquote>
+</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.8.2/download.html">1.8.2</a></td>
 <td>2004/11/18</td>
 <td>
