@@ -6,7 +6,7 @@ libraries that are needed to compile the ISBJava source
 tree.
 
 For more information, please consult the file
-  overview.html
-file in this directory.
+  overview.xml
+file in the "docs" subdirectory.
 
 -Stephen Ramsey
