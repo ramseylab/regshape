@@ -29,8 +29,16 @@ public class Plotter
     private static final int DEFAULT_WIDTH_PIXELS = 500;
     private static final int DEFAULT_HEIGHT_PIXELS = 400;
     public static final int MAX_NUM_SPECIES_TO_PLOT = 20;
+    private static final int PLOT_POSITION_STAGGER_AMOUNT_PIXELS = 20;
 
-    class Plot extends JFrame
+    private static int sPlotCtr;
+
+    static
+    {
+        sPlotCtr = 0;
+    }
+
+    static class Plot extends JFrame
     {
         String mSimulatorAlias;
         String mModelName;
@@ -39,10 +47,10 @@ public class Plotter
         int mWidthPixels;
         JLabel mPlotLabel;
         JFreeChart mChart;
-
-        public Plot(String pData, String pSimulatorAlias, String pModelName) throws IOException
+        
+        public Plot(String pAppName, String pData, String pSimulatorAlias, String pModelName) throws IOException
         {
-            super("simulation results");
+            super(pAppName + ": results");
             mSimulatorAlias = pSimulatorAlias;
             mModelName = pModelName;
             mSimulationDate = new Date(System.currentTimeMillis());
@@ -186,9 +194,22 @@ public class Plotter
 
     }
 
-    public void plot(String pData, String pSimulatorAlias, String pModelName) throws IOException, NumberFormatException
+    public static void plot(String pData, String pSimulatorAlias, String pModelName, String pAppName) throws IOException, NumberFormatException
     {
-        Plot plot = new Plot(pData, pSimulatorAlias, pModelName);
+        Plot plot = new Plot(pData, pSimulatorAlias, pModelName, pAppName);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = plot.getSize();
+        int numPixelsStagger = sPlotCtr * PLOT_POSITION_STAGGER_AMOUNT_PIXELS;
+        plot.setLocation((screenSize.width - frameSize.width) / 4 + numPixelsStagger,
+                         (screenSize.height - frameSize.height) / 4 + numPixelsStagger);
+        if(numPixelsStagger < (screenSize.height - frameSize.height)/4)
+        {
+            ++sPlotCtr;
+        }
+        else
+        {
+            sPlotCtr = 0;
+        }
         plot.setVisible(true);
     }
 }
