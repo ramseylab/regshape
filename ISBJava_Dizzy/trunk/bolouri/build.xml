@@ -92,9 +92,21 @@
     </copy>
   </target>
 
-  <target name="buildWeb" depends="copyImages, style, copyHtml, copyModels">
-    <ant dir="${projJavaDir}" target="buildWeb" />
-    <ant dir="${projAppsDir}" target="buildWeb" />
+  <target name="buildWeb" depends="buildHTML, buildPDF, buildInstallers" />
+
+  <target name="buildPDF">
+    <ant dir="${projJavaDir}" target="buildPDF" />
+    <ant dir="${projAppsDir}" target="buildPDF" />
+  </target>
+
+  <target name="buildHTML">
+    <ant dir="${projJavaDir}" target="buildHTML" />
+    <ant dir="${projAppsDir}" target="buildHTML" />
+  </target>
+
+  <target name="buildInstallers">
+    <ant dir="${projJavaDir}" target="buildInstallers" />
+    <ant dir="${projAppsDir}" target="buildInstallers" />
   </target>
 
   <target name="build">

@@ -13,8 +13,16 @@
   <target name="distClean" depends="clean">
   </target>
 
-  <target name="buildWeb">
-    <ant dir="${basedir}/Dizzy" target="buildWeb" />
+  <target name="buildHTML">
+    <ant dir="${basedir}/Dizzy" target="buildHTML" />
+  </target>
+
+  <target name="buildPDF">
+    <ant dir="${basedir}/Dizzy" target="buildPDF" />
+  </target>
+
+  <target name="buildInstallers">
+    <ant dir="${basedir}/Dizzy" target="buildInstallers" />
   </target>
 
   <target name="build">

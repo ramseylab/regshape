@@ -82,7 +82,7 @@
     </copy>
   </target>
 
-  <target name="buildInstaller">
+  <target name="buildInstallers">
     <!-- make the build directory -->
     <mkdir dir="${app.buildDir}" />
 
@@ -116,7 +116,7 @@
              packageList="${basedir}/packageList.txt"
              doclet="com.tarsec.javadoc.pdfdoclet.PDFDoclet"
              docletpath="/local/lib/pdfdoclet.jar:/local/lib/itext.jar:/local/lib/jakarta-regexp.jar"
-             additionalparam="-pdf ${app.webDir}/docs/UserManual.pdf -config ${app.configDir}/PDFDoclet.properties">
+             additionalparam="-pdf ${app.webDir}/docs/APIDocumentation.pdf -config ${app.configDir}/PDFDoclet.properties">
       <classpath refid="app.classpath" />
     </javadoc>                 
   </target>
@@ -133,8 +133,10 @@
     </javadoc>
   </target>
  
-  <target name="buildWeb" depends="style, srcTar, copyHtml, copyImages, javadoc,buildInstaller" />
-  
+  <target name="buildHTML" depends="style, srcTar, copyHtml, copyImages, javadoc" />
+
+  <target name="buildPDF" depends="javadocPDF" />
+
   <target name="compile">
     <mkdir dir="${app.classesDir}" />
     <javac srcdir="${app.srcDir}" 

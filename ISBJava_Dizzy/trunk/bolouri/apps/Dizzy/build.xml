@@ -88,7 +88,7 @@
     </copy>
   </target>
 
-  <target name="buildInstaller">
+  <target name="buildInstallers">
     <!-- make the build directory -->
     <mkdir dir="${app.buildDir}" />
 
@@ -110,7 +110,9 @@
     </copy>
   </target>
 
-  <target name="buildWeb" depends="style, copyImages, copyHtml, convertHtmlToPDF, buildInstaller" />
+  <target name="buildPDF" depends="convertHtmlToPDF" />
+
+  <target name="buildHTML" depends="style, copyImages, copyHtml" />
 
   <target name="build">
     <!-- do nothing -->
