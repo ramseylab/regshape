@@ -24,10 +24,10 @@ import javax.swing.*;
 import java.text.*;
 import javax.imageio.*;
 import java.awt.datatransfer.*;
+import org.systemsbiology.util.*;
 
 public class Plotter 
 {
-    private Component mMainFrame;
     private static final int DEFAULT_PLOT_WIDTH_PIXELS = 500;
     private static final int DEFAULT_PLOT_HEIGHT_PIXELS = 500;
     private static final int MIN_PLOT_WIDTH_PIXELS = 400;
@@ -35,17 +35,25 @@ public class Plotter
     private static final int SCROLL_PANE_OFFSET_PIXELS = 20;
     private static final String OUTPUT_IMAGE_TYPE_EXTENSION = "png";
 
-    public static final int MAX_NUM_SPECIES_TO_PLOT = 20;
+    public static final int MAX_NUM_SYMBOLS_TO_PLOT = 20;
     private static final int PLOT_POSITION_STAGGER_AMOUNT_PIXELS = 20;
 
-    private static int sPlotCtr;
+    private int mPlotCtr;
+    private File mSaveDirectory;
+    private static boolean sSystemClipboardSupportsImageTransfer;
 
     static
     {
-        sPlotCtr = 0;
+        sSystemClipboardSupportsImageTransfer = ImageTransferHandler.checkDoesSystemClipboardSupportImageTransfer();
     }
 
-    static class Plot extends JFrame
+    public Plotter()
+    {
+        mPlotCtr = 0;
+        mSaveDirectory = null;
+    }
+
+    class Plot extends JFrame
     {
         String mSimulatorAlias;
         String mModelName;
@@ -72,9 +80,7 @@ public class Plotter
 
             Box plotBox = new Box(BoxLayout.Y_AXIS);
             JLabel plotLabel = new JLabel();
-// ------------- save for when clipboard issues are worked out, on Linux ------------
-//            plotLabel.setTransferHandler(new ImageSelection());
-// ------------- save for when clipboard issues are worked out, on Linux ------------
+            plotLabel.setTransferHandler(new ImageTransferHandler());
             JPanel labelPanel = new JPanel();
 
             mPlotLabel = plotLabel;
@@ -101,17 +107,29 @@ public class Plotter
             Box buttonBox = new Box(BoxLayout.X_AXIS);
             buttonBox.add(saveButton);
 
-// ------------- save for when clipboard issues are worked out, on Linux ------------
-//             JButton copyButton = new JButton("copy to clipboard");
-//             copyButton.addActionListener(new ActionListener()
-//             {
-//                 public void actionPerformed(ActionEvent e)
-//                 {
-//                     handleCopyButton();
-//                 }
-//             });
-//             buttonBox.add(copyButton);
-// ------------- save for when clipboard issues are worked out, on Linux ------------
+            if(sSystemClipboardSupportsImageTransfer)
+            {
+                JButton copyButton = new JButton("copy to clipboard");
+                copyButton.addActionListener(new ActionListener()
+                {
+                    public void actionPerformed(ActionEvent event)
+                    {
+                        try
+                        {
+                            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                            TransferHandler handler = mPlotLabel.getTransferHandler();
+                            handler.exportToClipboard(mPlotLabel, clipboard, TransferHandler.COPY);
+                        }
+                        catch(Exception e)
+                        {
+                            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(Plot.this, "failed to copy plot image", e);
+                            dialog.show();
+                            
+                        }
+                    }
+                });
+                buttonBox.add(copyButton);
+            }
 
             buttonPanel.add(buttonBox);
 
@@ -131,27 +149,9 @@ public class Plotter
                 {
                     handleResize();
                 }
-
             });
         }
 
-// ------------- save for when clipboard issues are worked out, on Linux ------------
-//         public void handleCopyButton()
-//         {
-//             try
-//             {
-//                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-//                 TransferHandler handler = mPlotLabel.getTransferHandler();
-//                 handler.exportToClipboard(mPlotLabel, clipboard, TransferHandler.COPY);
-//             }
-//             catch(Exception e)
-//             {
-//                 ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(this, "failed to copy plot image", e);
-//                 dialog.show();
-
-//             }
-//         }
-// ------------- save for when clipboard issues are worked out, on Linux ------------
 
         public void handleResize()
         {
@@ -196,10 +196,13 @@ public class Plotter
         private void handleSaveButton()
         {
             FileChooser fileChooser = new FileChooser(this);
-            RegexFileFilter fileFilter = new RegexFileFilter(".*\\.png$", "image (.png) file");
             fileChooser.setDialogTitle("please choose the file for saving the imsage:");
-            fileChooser.setFileFilter(fileFilter);
+            fileChooser.setApproveButtonText("save");
             fileChooser.show();
+            if(null != mSaveDirectory)
+            {
+                fileChooser.setCurrentDirectory(mSaveDirectory);
+            }
             File selectedFile = fileChooser.getSelectedFile();
             if(null != selectedFile)
             {
@@ -211,6 +214,35 @@ public class Plotter
                 }
                 if(doSave)
                 {
+                    File parentDirectory = selectedFile.getParentFile();
+                    mSaveDirectory = parentDirectory;
+                    if(! selectedFileName.matches(".*\\." + OUTPUT_IMAGE_TYPE_EXTENSION + "$"))
+                    {
+                        if(-1 != selectedFileName.indexOf('.'))
+                        {
+                            SimpleTextArea textArea = new SimpleTextArea("The output file you selected has a non-standard name for this image type:\n" + selectedFileName + "\nAre you sure that you wish to save the image using this name?");
+                            SimpleDialog messageDialog = new SimpleDialog(this, 
+                                                                          "Use non-standard file name?",
+                                                                          textArea);
+                            messageDialog.setMessageType(JOptionPane.QUESTION_MESSAGE);
+                            messageDialog.setOptionType(JOptionPane.YES_NO_OPTION);
+                            messageDialog.show();
+                            Integer response = (Integer) messageDialog.getValue();
+                            if(null != response &&
+                               response.intValue() == JOptionPane.YES_OPTION)
+                            {
+                                // do nothing
+                            }
+                            else
+                            {
+                                doSave = false;
+                            }
+                        }
+                        else
+                        {
+                            selectedFileName = selectedFileName + "." + OUTPUT_IMAGE_TYPE_EXTENSION;
+                        }
+                    }
                     try
                     {
                         ImageIO.write(mPlotImage, OUTPUT_IMAGE_TYPE_EXTENSION, selectedFile);
@@ -302,11 +334,6 @@ public class Plotter
         return(chart);
     }
 
-    public Plotter(Component pMainFrame)
-    {
-        mMainFrame = pMainFrame;
-    }
-
     private static void readDataLine(Vector pSeriesVec, String pLine) throws NumberFormatException
     {
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
@@ -332,21 +359,21 @@ public class Plotter
 
     }
 
-    public static void plot(String pData, String pSimulatorAlias, String pModelName, String pAppName) throws IOException, NumberFormatException
+    public void plot(String pData, String pSimulatorAlias, String pModelName, String pAppName) throws IOException, NumberFormatException
     {
         Plot plot = new Plot(pData, pSimulatorAlias, pModelName, pAppName);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = plot.getSize();
-        int numPixelsStagger = sPlotCtr * PLOT_POSITION_STAGGER_AMOUNT_PIXELS;
+        int numPixelsStagger = mPlotCtr * PLOT_POSITION_STAGGER_AMOUNT_PIXELS;
         plot.setLocation((screenSize.width - frameSize.width) / 4 + numPixelsStagger,
                          (screenSize.height - frameSize.height) / 4 + numPixelsStagger);
         if(numPixelsStagger < (screenSize.height - frameSize.height)/4)
         {
-            ++sPlotCtr;
+            ++mPlotCtr;
         }
         else
         {
-            sPlotCtr = 0;
+            mPlotCtr = 0;
         }
         plot.setVisible(true);
     }
