@@ -4,13 +4,14 @@
   %CommonConfig;
    ]>
 
+
 <xsl:stylesheet version="1.0" 
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
                 xmlns:isb="http://www.systemsbiology.org/xmlns"
                 xmlns:html="http://www.w3.org/TR/xhtml1"
                 xmlns="http://www.w3.org/TR/xhtml1"
                 >              
-
+  <xsl:output method="html" indent="yes" encoding="ISO-8859-1" />
 
   <xsl:template match="html:*|html:*/@*">
     <xsl:copy>
@@ -96,10 +97,10 @@
         </td>
       </tr>
       </table>
-      <hr />
+      <hr></hr>
       <xsl:apply-templates/>
 
-      <hr />
+      <hr></hr>
 
       <xsl:if test="/isb:document/isb:docdate != ''">
         <h4>Last updated:
@@ -172,7 +173,7 @@
         </li>
       </xsl:for-each>
       </ol>
-      <hr />
+      <hr></hr>
   </xsl:template>
 
   <xsl:template match="//isb:docsubsection">
