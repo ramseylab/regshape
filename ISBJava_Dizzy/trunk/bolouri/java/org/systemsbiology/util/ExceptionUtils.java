@@ -21,7 +21,7 @@ public class ExceptionUtils
      * Returns the stack backtrace of an exception, as
      * a string.
      *
-     * @param pException the exception whose stack backtrace is to
+     * @param pThrowable the exception whose stack backtrace is to
      * be returned
      *
      * @return the stack backtrace of an exception, as
