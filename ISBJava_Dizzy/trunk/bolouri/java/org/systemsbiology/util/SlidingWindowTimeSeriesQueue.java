@@ -212,7 +212,7 @@ public class SlidingWindowTimeSeriesQueue
         {
             if(pExternalIndex >= mNumStoredPoints)
             {
-                throw new IllegalStateException("no data point has yet been stored for that index");
+                throw new IllegalStateException("no data point has yet been stored for that index; num stored points is " + mNumStoredPoints + " and requested index is " + pExternalIndex);
             }
             tempIndex = pExternalIndex;
         }
