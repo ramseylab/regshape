@@ -48,7 +48,7 @@ This document contains the version history for the
 <td>2005/04/05</td>
 <td>
 <ul>
-<li>Second release of the software.  Written entirely in Java.
+<li>First major public release of the software.  Written entirely in Java.
   See the <a href="UserManual.html">User Manual</a> for more information.</li>
 </ul>
 </td>
@@ -60,7 +60,7 @@ This document contains the version history for the
 <td>2004/05/04</td>
 <td>
 <ul>
-<li>First release of the software.  Linux only version.  Requires Matlab and
+<li>First experimental version of the software.  Linux only.  Requires Matlab and
   the Matlab Statistics Toolbox.</li>
 </ul>
 </td>
