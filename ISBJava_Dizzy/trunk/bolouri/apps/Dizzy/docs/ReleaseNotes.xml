@@ -47,17 +47,18 @@ installation directory for this program.
 <isb:docsection name="Source Code" label="sourcecode">
 <p>
 The source code for this application and the 
-associated ISB Java library &quot;isb.jar&quot;
-can be found in the file &quot;isb-src.tar.gz&quot;
-that was installed in the installation directory
-you selected for this program.
+associated &localJavaLibraryName; library 
+&quot;<code>isb.jar</code>&quot; can be found in the file 
+&quot;<code>&localJavaLibraryName;-src.tar.gz</code>&quot;
+that was installed in the &quot;<code>src</code>&quot;
+subdirectory of the installation directory for this program.
 </p>
 </isb:docsection>
 <isb:docsection name="Documentation" label="documentation">
 <p>
 For documentation on how to use the &appName; program,
 please consult the 
-<a href="UserManual.html">&appName; User Manual</a>.
+<a href="&appHomePage;/docs/UserManual.html">&appName; User Manual</a>.
 For detailed documentation of the application programming
 interface (API) to the &appName; system, please consult the
 <a href="&webBaseURL;/&localJavaLibraryName;">ISBJava</a> home page.

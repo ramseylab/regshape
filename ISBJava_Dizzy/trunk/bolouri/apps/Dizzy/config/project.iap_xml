@@ -1589,7 +1589,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[GAL.dizzy]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
 												<string><![CDATA[$IA_PROJECT_DIR$/../samples/]]></string>
@@ -1617,7 +1617,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[repressilator.isbchem]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
 												<string><![CDATA[$IA_PROJECT_DIR$/../samples/]]></string>
@@ -1643,7 +1643,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[sample-model-sbml.xml]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
 												<string><![CDATA[$IA_PROJECT_DIR$/../samples/]]></string>
@@ -1669,7 +1669,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[singlegene.dizzy]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
 												<string><![CDATA[$IA_PROJECT_DIR$/../samples/]]></string>
@@ -1722,7 +1722,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[ReleaseNotes.html]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
 												<string><![CDATA[$IA_PROJECT_DIR$/../html/]]></string>
@@ -1745,10 +1745,10 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[664]]></string>
 											</property>
 											<property name="sourceName">
-												<string><![CDATA[isb-src.tar.gz]]></string>
+												<string><![CDATA[ISBJava-src.tar.gz]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
 												<string><![CDATA[$IA_PROJECT_DIR$/../../../build/]]></string>
@@ -1757,7 +1757,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[isb-src.tar.gz]]></string>
+												<string><![CDATA[ISBJava-src.tar.gz]]></string>
 											</property>
 											<property name="fileSize">
 												<long>119709</long>
@@ -1774,7 +1774,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[AppConfig.dtd]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
 												<string><![CDATA[$IA_PROJECT_DIR$/../config/]]></string>
@@ -1800,7 +1800,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[AppConfig.xml]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
 												<string><![CDATA[$IA_PROJECT_DIR$/../config/]]></string>
@@ -1985,7 +1985,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[UserManual.html]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
 												<string><![CDATA[$IA_PROJECT_DIR$/../html/]]></string>
@@ -2011,7 +2011,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[CommonConfig.dtd]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
 												<string><![CDATA[$IA_PROJECT_DIR$/../../../config/]]></string>
@@ -2062,7 +2062,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[License.html]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
 												<string><![CDATA[$IA_PROJECT_DIR$/../../../build/web/]]></string>
@@ -2088,7 +2088,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[VersionHistory.html]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
 												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/html/]]></string>
@@ -2128,7 +2128,6 @@ and any path to a file to read from that file]]></string>
 											<visualChildren>
 												<object refID="59cb76579afa"/>
 												<object refID="9227b8499aff"/>
-												<object refID="59d91c699afd"/>
 												<object refID="6eb1c31a9b00"/>
 												<object refID="a61db5e9bd12"/>
 											</visualChildren>
@@ -2142,7 +2141,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[appLogoIcon.png]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
+												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
 												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/images/]]></string>
@@ -2183,6 +2182,31 @@ and any path to a file to read from that file]]></string>
 												<object refID="a5f39732bd0e"/>
 											</visualChildren>
 										</object>
+										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="a73a9e8dbd11">
+											<property name="unixPermissions">
+												<string><![CDATA[775]]></string>
+											</property>
+											<property name="overrideUnixPermissions">
+												<boolean>false</boolean>
+											</property>
+											<property name="shouldUninstall">
+												<boolean>true</boolean>
+											</property>
+											<property name="destinationName">
+												<string><![CDATA[src]]></string>
+											</property>
+											<property name="removeRecursively">
+												<boolean>false</boolean>
+											</property>
+											<property name="macBinary">
+												<boolean>false</boolean>
+											</property>
+                                                                                        <visualChildren>
+												<object refID="59d91c699afd"/>
+                                                                                        </visualChildren>
+										</object>
+
+
 									</installChildren>
 								</object>
 							</installChildren>
@@ -2209,6 +2233,7 @@ and any path to a file to read from that file]]></string>
 						<object refID="6e2e77029afc"/>
 						<object refID="6e33c6fc9afe"/>
                                                 <object refID="a5f2fce2bd0e"/>
+						<object refID="a73a9e8dbd11"/>
 					</visualChildren>
 				</object>
 				<object class="com.zerog.ia.installer.GhostDirectory" objectID="4a0bf6139afa">

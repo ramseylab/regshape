@@ -24,7 +24,7 @@
   <property name="app.sourceCompileFlag"       value="1.4" />
 
   <property name="app.jarFile"                 location="${app.buildDir}/isb.jar" />
-  <property name="app.srcFile"                 location="${app.buildDir}/isb-src.tar.gz" />
+  <property name="app.srcFile"                 location="${app.buildDir}/&appName;-src.tar.gz" />
 
   <path id="app.classpath">
     <pathelement location="${app.classesDir}" />

@@ -33,5 +33,17 @@ research in computational biology.  The body of source code
 for these java classes is available for download, subject
 to the terms of the <a href="../License.html">license agreement</a>.
 </p>
+<p>
+<font color="red"><b>NOTE:</b></font>
+This is alpha (experimental) software.  Please be patient while we fix 
+bugs, add new features, and add (much needed) documentation.  Your 
+patience is appreciated.
+</p>
+<p>
+This software is distributed under the GNU Lesser General Public License (LGPL), 
+which is a standard &quot;free software&quot;
+and &quot;open source&quot; license.  A copy of the 
+The text of the license agreement is available <a href="../License.html">here</a>.
+</p>
 
 </isb:document>
