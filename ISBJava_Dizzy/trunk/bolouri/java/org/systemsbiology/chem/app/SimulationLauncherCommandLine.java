@@ -465,6 +465,11 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             System.err.println(mSimulatorParameters.toString());
         }
 
+        if(mComputeFluctuations && ! mSimulator.canComputeFluctuations())
+        {
+            handleCommandLineError("simulator cannot compute fluctuations: " + mSimulator.getAlias());
+        }
+        
         if(testOnly)
         {
             try
@@ -594,27 +599,20 @@ public class SimulationLauncherCommandLine extends CommandLineApp
 
             if(mComputeFluctuations)
             {
-                if(! (simulator instanceof Simulator))
+                double []finalSymbolFluctuations = simulationResults.getResultsFinalSymbolFluctuations();
+                if(null != finalSymbolFluctuations)
                 {
-                    System.err.println("this simulator is not capable of computing the species fluctuations");
+                    int numRequestedSymbols = globalSymbolsArray.length;
+                    for(int i = 0; i < numRequestedSymbols; ++i)
+                    {
+                        String speciesName = globalSymbolsArray[i];
+                        double speciesFluctuations = finalSymbolFluctuations[i];
+                        mOutputFilePrintWriter.println(speciesName + ", " + mScientificNumberFormat.format(speciesFluctuations));
+                    }
                 }
                 else
                 {
-                    double []finalSymbolFluctuations = simulationResults.getResultsFinalSymbolFluctuations();
-                    if(null != finalSymbolFluctuations)
-                    {
-                        int numRequestedSymbols = globalSymbolsArray.length;
-                        for(int i = 0; i < numRequestedSymbols; ++i)
-                        {
-                            String speciesName = globalSymbolsArray[i];
-                            double speciesFluctuations = finalSymbolFluctuations[i];
-                            mOutputFilePrintWriter.println(speciesName + ", " + mScientificNumberFormat.format(speciesFluctuations));
-                        }
-                    }
-                    else
-                    {
-                        mOutputFilePrintWriter.println("unable to compute steady-state fluctuations, because all of the the eigenvalues of the Jacobian have positive-definite real parts; this means the system is not in steady-state");
-                    }
+                    mOutputFilePrintWriter.println("unable to compute steady-state fluctuations; perhaps the system did not reach steady-state?");
                 }
             }
 
