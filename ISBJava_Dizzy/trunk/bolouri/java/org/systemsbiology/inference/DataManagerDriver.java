@@ -104,7 +104,7 @@ public class DataManagerDriver
     private JButton mSaveSelectedColumnsButton;
     private JLabel mElementSortStatusLabel;
     private JLabel mEvidenceSortStatusLabel;
-    private JCheckBox mAllowDuplicatesBox;
+    private JCheckBox mAverageDuplicatesBox;
     private AppConfig mAppConfig;
     
     private static final boolean DEFAULT_ALLOW_DUPLICATES = true;
@@ -142,7 +142,6 @@ public class DataManagerDriver
         JPanel fileButtonPanel = new JPanel();
         JButton fileLoadButton = new JButton("load data");
         mFileLoadButton = fileLoadButton;
-        mFileLoadButton.setToolTipText(TOOL_TIP_FILE_LOAD_BUTTON);
         fileButtonPanel.add(fileLoadButton);
         fileLoadButton.addActionListener(new ActionListener()
                 {
@@ -203,14 +202,23 @@ public class DataManagerDriver
         
         firstRowPanel.add(delimitersPanel);
         
-        JPanel allowDuplicatesPanel = new JPanel();
-        JLabel allowDuplicatesLabel = new JLabel("allow duplicates: ");
-        allowDuplicatesPanel.add(allowDuplicatesLabel);
-        mAllowDuplicatesBox = new JCheckBox();
-        mAllowDuplicatesBox.setSelected(DEFAULT_ALLOW_DUPLICATES);
-        allowDuplicatesPanel.add(mAllowDuplicatesBox);
+        JPanel averageDuplicatesPanel = new JPanel();
+        JLabel averageDuplicatesLabel = new JLabel("average duplicates: ");
+        averageDuplicatesPanel.add(averageDuplicatesLabel);
+        mAverageDuplicatesBox = new JCheckBox();
+        mAverageDuplicatesBox.setSelected(DEFAULT_ALLOW_DUPLICATES);
+        mAverageDuplicatesBox.addItemListener(
+                new ItemListener()
+                {
+                    public void itemStateChanged(ItemEvent e)
+                    {
+                        setEnableStateForFields(null != mData);
+                        setToolTipsForFields(null != mData);
+                    }
+                });
+        averageDuplicatesPanel.add(mAverageDuplicatesBox);
         
-        firstRowPanel.add(allowDuplicatesPanel);
+        firstRowPanel.add(averageDuplicatesPanel);
         
         JButton appHelpButton = new JButton();
         ImageIcon helpIcon = IconFactory.getIconByName(RESOURCE_HELP_ICON);
@@ -661,16 +669,31 @@ public class DataManagerDriver
             return;
         }
         boolean newObservationsTableModel = (null == mData);
-        mData = new ObservationsData();
-        mData.mergeDataArray(dataArray, mAllowDuplicatesBox.isSelected());
+        boolean averageDuplicates = mAverageDuplicatesBox.isSelected();
+        if(! averageDuplicates)
+        {
+            if(dataArray.length > 1)
+            {
+                throw new IllegalStateException("average duplicates box is selected, and the number of data files is: " + dataArray.length);
+            }
+            mData = dataArray[0];
+        }
+        else
+        {
+            mData = new ObservationsData();
+            mData.mergeDataArray(dataArray, mAverageDuplicatesBox.isSelected());
+        }
+
         ObservationsTableModel tableModel = null;
         if(! newObservationsTableModel)
         {
+            // work with the existing table model
             tableModel = (ObservationsTableModel) mDataTable.getModel();
             tableModel.setObservationsData(mData);
         }
         else
         {
+            // create a new table model
             tableModel = new ObservationsTableModel(mData);
             tableModel.setCellValuesEditable(true);
             tableModel.setElementNamesEditable(true);
@@ -700,12 +723,14 @@ public class DataManagerDriver
         mSaveEntireTableButton.setEnabled(pFileLoaded);
         if(pFileLoaded)
         {
+            mFileLoadButton.setEnabled(mAverageDuplicatesBox.isSelected());
             int index = mFileNameListBox.getSelectedIndex();
             mClearSelectedFileButton.setEnabled(index != -1);
             mMoveFileUpButton.setEnabled(index > 0);
         }
         else
         {
+            mFileLoadButton.setEnabled(true);
             mClearSelectedFileButton.setEnabled(false);
             mMoveFileUpButton.setEnabled(false);
         }
@@ -756,6 +781,14 @@ public class DataManagerDriver
             mFileNameListBox.setToolTipText(TOOL_TIP_FILE_LIST);
             mSortStatusElement.setToolTipText(TOOL_TIP_SORT_STATUS_ELEMENT);
             mSortStatusEvidence.setToolTipText(TOOL_TIP_SORT_STATUS_EVIDENCE);
+            if(mAverageDuplicatesBox.isSelected())
+            {
+                mFileLoadButton.setToolTipText(TOOL_TIP_FILE_LOAD_BUTTON);
+            }
+            else
+            {
+                mFileLoadButton.setToolTipText(TOOL_TIP_FILE_LOAD_BUTTON);
+            }
         }
         else
         {
@@ -768,6 +801,7 @@ public class DataManagerDriver
             mFileNameListBox.setToolTipText(null);
             mSortStatusElement.setToolTipText(null);
             mSortStatusEvidence.setToolTipText(null);
+            mFileLoadButton.setToolTipText(TOOL_TIP_FILE_LOAD_BUTTON);
         }
     }    
     
@@ -779,7 +813,7 @@ public class DataManagerDriver
         setDefaultSortStatusOnControls();
         handleEvidenceSortStatusChange();
         handleElementSortStatusChange();
-        mAllowDuplicatesBox.setSelected(DEFAULT_ALLOW_DUPLICATES);
+        mAverageDuplicatesBox.setSelected(DEFAULT_ALLOW_DUPLICATES);
     }
     
     private void handleMessage(String pMessage, String pTitle, int pMessageType)
