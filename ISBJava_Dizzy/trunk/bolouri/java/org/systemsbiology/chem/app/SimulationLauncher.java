@@ -812,13 +812,13 @@ public class SimulationLauncher
         JPanel printPlotPanel = new JPanel();
         JRadioButton printButton = new JRadioButton(OutputType.PRINT.toString(), true);
         printButton.addActionListener(buttonListener);
-        mOutputType = OutputType.PRINT.toString();
         buttonGroup.add(printButton);
         printPlotPanel.add(printButton);
 
         JRadioButton plotButton = new JRadioButton(OutputType.PLOT.toString(), true);
         plotButton.addActionListener(buttonListener);
         plotButton.setSelected(true);
+        mOutputType = OutputType.PLOT.toString();
         buttonGroup.add(plotButton);
         printPlotPanel.add(plotButton);
         outputBox.add(printPlotPanel);
