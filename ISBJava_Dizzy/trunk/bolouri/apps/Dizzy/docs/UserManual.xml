@@ -1822,8 +1822,7 @@ B1, B2, B3, B4
 </blockquote>
 and the reactions might be of the form
 <blockquote>
-<pre>
-A# -&gt; B#
+<code>A</code><em>n</em> -&gt; <code>B</code><em>n</em>
 </pre>
 </blockquote>
 This can be accomplished with the &quot;<code>loop</code>&quot;
@@ -2211,6 +2210,21 @@ which is (by far) the most efficient in terms of performance.
 The default is &quot;<code>gillespie</code>&quot;, the Gillespie
 simulator plug-in.</dd>
     </dl>
+    </p>
+    <p>
+The &quot;<code>simulate</code>&quot; statement is usually
+placed at the end of a model definition file, after all of the
+reaction definitions.  The following is an example of a simulate 
+statement:  
+<blockquote>
+<pre>
+simulate:  startTime 0, stopTime 500.0, numTimePoints 100, debug 1,
+           viewSpecies ("G3D_G80D" "G4_RNA" "G80_RNA" "G3_RNA" "G4D_free" "G80D_free" "G3D_free"),
+           output store, storeName "final", simulator "gillespie";
+</pre>
+</blockquote>
+The above example runs a simulation for <code>500</code> seconds, and
+stores the output under variable name &quot;<code>final</code>&quot;.
     </p>
 </dd>       
 </dl>
