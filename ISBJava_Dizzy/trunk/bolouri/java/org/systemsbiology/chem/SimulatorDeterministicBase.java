@@ -28,7 +28,6 @@ public abstract class SimulatorDeterministicBase extends Simulator
     public static final int DEFAULT_MIN_NUM_STEPS = 10000;
     public static final double DEFAULT_MAX_ALLOWED_RELATIVE_ERROR = 0.0001;
     public static final double DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR = 0.01;
-    private static final int NUM_ITERATIONS_CHECK_CANCELLED = 1000;
 
     class RKScratchPad
     {
@@ -446,11 +445,6 @@ public abstract class SimulatorDeterministicBase extends Simulator
                         pSimulatorParameters,
                         scratchPad);
 
-        boolean isCancelled = false;
-
-        int iterationCtr = 0;
-        boolean checkCancelled = false;
-
         while(pNumResultsTimePoints - timeCtr > 0)
         {
             time = iterate(speciesRateFactorEvaluator,
@@ -476,21 +470,23 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
             System.arraycopy(newSimulationSymbolValues, 0, dynamicSymbolValues, 0, numDynamicSymbolValues);
 
-            ++iterationCtr;
-            if(0 == (iterationCtr % NUM_ITERATIONS_CHECK_CANCELLED))
+            // update delayed reaction solvers
+            DelayedReactionSolver []solvers = mDelayedReactionSolvers;
+            int numDelayedReactionSolvers = solvers.length;
+            for(int ctr = numDelayedReactionSolvers; --ctr >= 0; )
             {
-                isCancelled = checkSimulationControllerStatus();
-                if(isCancelled)
-                {
-                    break;
-                }
+                DelayedReactionSolver solver = solvers[ctr];
+                solver.update(symbolEvaluator, time);
+            }
+
+            if(incrementIterationCounterAndCheckForCancellation())
+            {
+                break;
             }
         }
 
         // copy array of time points 
         System.arraycopy(timesArray, 0, pRetTimeValues, 0, timeCtr);     
-
-//        System.out.println("number of iterations: " + iterationCtr);
     }
 
 
