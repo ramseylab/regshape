@@ -43,7 +43,7 @@ This document contains the version history for the
 
 <tr valign="top">
 <td>0.0.8</td>
-<td>2003/11/20</td>
+<td>2003/11/21</td>
 <td>
 <ul>
 <li>Modified the fixed-stepsize deterministic simulator so that it can detect when the
@@ -59,7 +59,7 @@ a &quot;NaN&quot; (not-a-number) appears in the simulation output.  It now gives
 human-comprehensible error message.</li>
 </ul>
 </td>
-<td>0.0.7</td>
+<td>0.0.8</td>
 </tr>
 
 <tr valign="top">

@@ -39,7 +39,7 @@ This document contains the version history for the
 
 <tr valign="top">
 <td>0.0.8</td>
-<td>2003/11/20</td>
+<td>2003/11/21</td>
 <td>
 <ul>
 <li>Created a new <code>org.systemsbiology.chem.SimulatorParameters</code> mechanism to pass
