@@ -832,7 +832,7 @@ desktop computer, simply do the following:
 <blockquote>
 <pre>
 ssh -X -C hamid-lx.systemsbiology.net
-/local/InstallAnywhere_5_Standard/InstallAnywhere
+/local/InstallAnywhere_6_Standard/InstallAnywhere
 </pre>
 </blockquote>
 This should run the InstallAnywhere program remotely, in a window
