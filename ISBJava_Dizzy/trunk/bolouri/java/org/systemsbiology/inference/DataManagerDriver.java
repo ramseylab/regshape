@@ -58,6 +58,7 @@ import org.systemsbiology.gui.HelpBrowser;
 import org.systemsbiology.math.ScientificNumberFormat;
 import org.systemsbiology.math.SignificantDigitsCalculator;
 import org.systemsbiology.util.AppConfig;
+import org.systemsbiology.util.FileUtils;
 import org.systemsbiology.util.InvalidInputException;
 import java.util.LinkedList;
 import java.text.NumberFormat;
@@ -972,7 +973,7 @@ public class DataManagerDriver
         String appDir = null;
         if(pArgs.length > 0)
         {
-            appDir = pArgs[0];
+            appDir = FileUtils.fixWindowsCommandLineDirectoryNameMangling(pArgs[0]);
         }        
         try
         {

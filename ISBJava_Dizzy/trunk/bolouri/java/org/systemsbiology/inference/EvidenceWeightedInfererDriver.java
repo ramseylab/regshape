@@ -1580,7 +1580,7 @@ public class EvidenceWeightedInfererDriver
         String appDir = null;
         if(pArgs.length > 0)
         {
-            appDir = pArgs[0];
+            appDir = FileUtils.fixWindowsCommandLineDirectoryNameMangling(pArgs[0]);
         }        
         try
         {

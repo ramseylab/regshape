@@ -163,7 +163,6 @@ public class AppConfig
         }
         else
         {
-            pAppDir = FileUtils.fixWindowsCommandLineDirectoryNameMangling(pAppDir);
             File appDirFile = new File(pAppDir);
             if(! appDirFile.exists())
             {

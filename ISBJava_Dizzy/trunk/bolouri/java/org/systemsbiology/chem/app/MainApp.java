@@ -408,7 +408,7 @@ public class MainApp
         String appDir = null;
         if(pArgs.length > 0)
         {
-            appDir = pArgs[0];
+            appDir = FileUtils.fixWindowsCommandLineDirectoryNameMangling(pArgs[0]);
         }
 
         setAppConfig(AppConfig.get(MainApp.class, appDir));

@@ -20,7 +20,7 @@ import org.systemsbiology.data.DataFileDelimiter;
 import org.systemsbiology.gui.*;
 import org.systemsbiology.math.*;
 import java.text.NumberFormat;
-
+import org.systemsbiology.util.FileUtils;
 import org.systemsbiology.util.AppConfig;
 import org.systemsbiology.util.InvalidInputException;
 
@@ -893,7 +893,7 @@ public class DataNormalizerDriver
         String appDir = null;
         if(pArgs.length > 0)
         {
-            appDir = pArgs[0];
+            appDir = FileUtils.fixWindowsCommandLineDirectoryNameMangling(pArgs[0]);
         }        
         try
         {

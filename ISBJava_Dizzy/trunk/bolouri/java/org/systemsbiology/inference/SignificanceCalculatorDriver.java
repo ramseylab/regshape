@@ -32,6 +32,7 @@ import javax.swing.table.AbstractTableModel;
 import org.systemsbiology.data.DataFileDelimiter;
 import org.systemsbiology.gui.*;
 import org.systemsbiology.util.AppConfig;
+import org.systemsbiology.util.FileUtils;
 import org.systemsbiology.util.InvalidInputException;
 import org.systemsbiology.math.ScientificNumberFormat;
 import org.systemsbiology.math.SignificantDigitsCalculator;
@@ -1543,7 +1544,7 @@ public class SignificanceCalculatorDriver
         String appDir = null;
         if(pArgs.length > 0)
         {
-            appDir = pArgs[0];
+            appDir = FileUtils.fixWindowsCommandLineDirectoryNameMangling(pArgs[0]);
         }        
         try
         {
