@@ -44,8 +44,12 @@ public class TimeSeriesSymbolValuesReporter
         int numTimePoints = pTimeValues.length;
         for(int ctr = 0; ctr < numTimePoints; ++ctr)
         {
-            sb.append(pNumberFormat.format(pTimeValues[ctr]) + ", ");
             double []symbolValue = (double []) pSymbolValues[ctr];
+            if(null == symbolValue)
+            {
+                break;
+            }
+            sb.append(pNumberFormat.format(pTimeValues[ctr]) + ", ");
             for(int symCtr = 0; symCtr < numSymbols; ++symCtr)
             {
                 sb.append(pNumberFormat.format(symbolValue[symCtr]));

@@ -137,7 +137,7 @@ public abstract class Simulator
         for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
         {
             Reaction reaction = reactions[reactionCtr];
-            reaction.prepareSymbolVectorsForSimulation(dynamicSymbols, symbolMap);
+            reaction.prepareSymbolVectorsForSimulation(dynamicSymbols, nonDynamicSymbols, symbolMap);
         }
 
         mSpeciesRateFactorEvaluator = pModel.getSpeciesRateFactorEvaluator();

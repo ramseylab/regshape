@@ -259,7 +259,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                 int numReactants = reaction.getNumParticipants(Reaction.ParticipantType.REACTANT);
                 Species []reactantSpecies = new Species[numReactants];
                 int []reactantStoichiometries = new int[numReactants];
-                reaction.constructSpeciesArrays(reactantSpecies, reactantStoichiometries, null, null, Reaction.ParticipantType.REACTANT);
+                reaction.constructSpeciesArrays(reactantSpecies, reactantStoichiometries, null, null, null, Reaction.ParticipantType.REACTANT);
                 Element listOfReactantsElement = document.createElement(ELEMENT_NAME_LIST_OF_REACTANTS);
                 reactionElement.appendChild(listOfReactantsElement);
                 for(int ctr = 0; ctr < numReactants; ++ctr)
@@ -277,7 +277,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                 int numProducts = reaction.getNumParticipants(Reaction.ParticipantType.PRODUCT);
                 Species []productSpecies = new Species[numProducts];
                 int []productStoichiometries = new int[numProducts];
-                reaction.constructSpeciesArrays(productSpecies, productStoichiometries, null, null, Reaction.ParticipantType.PRODUCT);
+                reaction.constructSpeciesArrays(productSpecies, productStoichiometries, null, null, null, Reaction.ParticipantType.PRODUCT);
                 Element listOfProductsElement = document.createElement(ELEMENT_NAME_LIST_OF_PRODUCTS);
                 reactionElement.appendChild(listOfProductsElement);
                 for(int ctr = 0; ctr < numProducts; ++ctr)

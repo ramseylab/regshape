@@ -21,12 +21,8 @@ import java.util.Random;
  */
 public abstract class DeterministicSimulator extends Simulator
 {
-    protected static final double TINY = 1.0e-30;
-    protected static final double SAFETY = 0.9;
-    protected static final double PGROW = -0.20;
-    protected static final double PSHRINK = -0.25;
-    protected static final double ERRCON = 6.0e-4;
     protected static final double MAX_FRACTIONAL_ERROR = 0.001;
+    private static final int NUM_ITERATIONS_CHECK_CANCELLED = 10;
 
     class RKScratchPad
     {
@@ -321,6 +317,9 @@ public abstract class DeterministicSimulator extends Simulator
 
         boolean isCancelled = false;
 
+        int iterationCtr = 0;
+        boolean checkCancelled = false;
+
         while(pNumTimePoints - timeCtr > 0)
         {
             time = iterate(speciesRateFactorEvaluator,
@@ -342,16 +341,27 @@ public abstract class DeterministicSimulator extends Simulator
                                                    timesArray,
                                                    pRetSymbolValues);
 
+                checkCancelled = true;
+            }
+
+            System.arraycopy(newSimulationSymbolValues, 0, dynamicSymbolValues, 0, numDynamicSymbolValues);
+
+            ++iterationCtr;
+            if(iterationCtr > NUM_ITERATIONS_CHECK_CANCELLED)
+            {
+                iterationCtr = 0;
+                checkCancelled = true;
+            }
+
+            if(checkCancelled)
+            {
                 isCancelled = checkSimulationControllerStatus();
                 if(isCancelled)
                 {
                     break;
                 }
+                checkCancelled = false;
             }
-
-            System.arraycopy(newSimulationSymbolValues, 0, dynamicSymbolValues, 0, numDynamicSymbolValues);
-
-
         }
 
 //        System.out.println("number of iterations: " + numIterations);

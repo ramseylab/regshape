@@ -23,6 +23,13 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
 {
     public static final String CLASS_ALIAS = "ODE-RK5-adaptive";
 
+    private static final double TINY = 1.0e-30;
+    private static final double SAFETY = 0.9;
+    private static final double PGROW = -0.20;
+    private static final double PSHRINK = -0.25;
+    private static final double ERRCON = 6.0e-4;
+    private static final int MAXSTEPS = 100;
+
     protected final double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
                                           SymbolEvaluatorChemSimulation pSymbolEvaluator,
                                           Reaction []pReactions,
@@ -157,6 +164,8 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
 
         double time = pSymbolEvaluator.getTime();
 
+        int numSteps = 0;
+
         do
         {
             aggregateError = rkqc(pSpeciesRateFactorEvaluator,
@@ -183,7 +192,11 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
                 break;
             }
 
-            // decrease step size
+            numSteps++;
+            if(numSteps > MAXSTEPS)
+            {
+                throw new IllegalStateException("maximum number of time step subdivisions exceeded; this model probably is too stuff for this simple Runge-Kutta adaptive integrator");
+            }
         }
         while(true);
         

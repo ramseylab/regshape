@@ -182,6 +182,7 @@ public class Reaction extends SymbolValue
     public void constructSpeciesArrays(Species []pSpeciesArray,    // this is the array of species that we are constructing
                                        int []pStoichiometryArray,  // this is the array of stoichiometries that we are constructing
                                        Species []pDynamicSymbolValues, // a vector of all species in the model
+                                       SymbolValue []pNonDynamicSymbolValues,
                                        HashMap pSymbolMap,         // a map between species names and the index in previous vector
                                        ParticipantType pParticipantType)
     {
@@ -219,7 +220,14 @@ public class Reaction extends SymbolValue
                 {
                     throw new IllegalStateException("invalid array index for species: " + speciesName);
                 }
-                species = pDynamicSymbolValues[extSpeciesIndex];
+                if(null != extSymbol.getDoubleArray())
+                {
+                    species = pDynamicSymbolValues[extSpeciesIndex];
+                }
+                else
+                {
+                    species = (Species) pNonDynamicSymbolValues[extSpeciesIndex];
+                }
             }
             else
             {
@@ -234,17 +242,20 @@ public class Reaction extends SymbolValue
         }
     }
 
-    void prepareSymbolVectorsForSimulation(Species []pDynamicSymbolValues, HashMap pSymbolMap)
+    void prepareSymbolVectorsForSimulation(Species []pDynamicSymbolValues, 
+                                           SymbolValue []pNonDynamicSymbolValues,
+                                           HashMap pSymbolMap)
     {
         constructDynamicSymbolAdjustmentVector(pDynamicSymbolValues);
 
         int numReactants = mReactantsMap.values().size();
         mReactantsSpeciesArray = new Species[numReactants];
         mReactantsStoichiometryArray = new int[numReactants];
-
+            
         constructSpeciesArrays(mReactantsSpeciesArray, 
                                mReactantsStoichiometryArray, 
                                pDynamicSymbolValues, 
+                               pNonDynamicSymbolValues,
                                pSymbolMap, 
                                ParticipantType.REACTANT);
 
