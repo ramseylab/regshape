@@ -178,6 +178,7 @@ public class DataColumnSelector extends JFrame
     {
         super(pTitle);
         mDirectory = null;
+        mMatrixString = pMatrixString;
         if(pMatrixString.getRowCount() == 0)
         {
             throw new InvalidInputException("a minimum of one row in the data matrix is required");
