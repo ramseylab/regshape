@@ -127,7 +127,6 @@
       </fileset>
       <arg value="-modify" />
       <arg value="-quiet" />
-      <arg value="-xml" />
       <arg value="-asxhtml" />
       <srcfile />
     </apply>
