@@ -116,7 +116,8 @@ version of the &appName; system.
 
 <isb:docsubsection name="Publications" label="pubs">
 <p>
-A <a href="&appPublicationURL;/JBCB_2005.pdf">preprint of an article [PDF]</a> describing &appName;
+A <a href="&appPublicationURL;/JBCB_2005.pdf">preprint of an article [PDF]</a> 
+describing &appName;
 is available (to be published in the Journal of Bioinformatics and Computational
 Biology, May 2005).  The 
 <a href="&appPublicationURL;/JBCB_2005_Supp.pdf">Supplementary Material [PDF]</a> 
@@ -146,7 +147,7 @@ Orrell provided helpful advice and was an early adopter of the
 programming.  Mike Hucka and Andrew Finney provided much assistance with
 SBML and SBW.  Paul Shannon and the Cytoscape team helped to make the
 &appName;-&gt;Cytoscape bridge possible.  Raymond Spiteri kindly permitted
-the inclusion of the "odeToJava" library with &appName;, which was
+the inclusion of the "odeToJava" library, which was
 implemented by Murray Patterson and Raymond Spiteri.
 </p>
 <p>
