@@ -447,7 +447,34 @@ and any path to a file to read from that file]]></string>
 							</property>
 						</object>
 					</method>
-
+					<method name="addElement">
+						<object class="com.zerog.ia.installer.actions.InstallZipfile" objectID="520850a99abe">
+							<property name="unixPermissions">
+								<string><![CDATA[664]]></string>
+							</property>
+							<property name="sourceName">
+								<string><![CDATA[odeToJava.jar]]></string>
+							</property>
+							<property name="overrideUnixPermissions">
+								<boolean>false</boolean>
+							</property>
+							<property name="sourcePath">
+								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
+							</property>
+							<property name="shouldUninstall">
+								<boolean>true</boolean>
+							</property>
+							<property name="destinationName">
+								<string><![CDATA[odeToJava.jar]]></string>
+							</property>
+							<property name="fileSize">
+								<long>-1</long>
+							</property>
+							<property name="macBinary">
+								<boolean>false</boolean>
+							</property>
+						</object>
+					</method>
 				</object>
 			</property>
 			<property name="installerName">
@@ -2182,32 +2209,7 @@ and any path to a file to read from that file]]></string>
 												<object refID="eed304219377"/>
 											</visualChildren>
 										</object>
-										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="8ac2e6fe9ac3">
-											<property name="unixPermissions">
-												<string><![CDATA[664]]></string>
-											</property>
-											<property name="sourceName">
-												<string><![CDATA[sbml.xsd]]></string>
-											</property>
-											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
-											</property>
-											<property name="sourcePath">
-												<string><![CDATA[@PROJROOT@/apps/@APPNAME@/config/]]></string>
-											</property>
-											<property name="shouldUninstall">
-												<boolean>true</boolean>
-											</property>
-											<property name="destinationName">
-												<string><![CDATA[sbml.xsd]]></string>
-											</property>
-											<property name="fileSize">
-												<long>-1</long>
-											</property>
-											<property name="macBinary">
-												<boolean>false</boolean>
-											</property>
-										</object>
+										<object refID="520850a99abe"/>
 										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="6e2e77029afc">
 											<property name="unixPermissions">
 												<string><![CDATA[775]]></string>
@@ -2235,8 +2237,8 @@ and any path to a file to read from that file]]></string>
 												<object refID="58f9b51d9afd"/>
 												<object refID="36988ac79371"/>
 												<object refID="36fc7eb193a2"/>
-												<object refID="8ac2e6fe9ac3"/>
 												<object refID="ecac2ae19abd"/>
+												<object refID="520850a99abe"/>
 											</visualChildren>
 										</object>
 									</installChildren>
