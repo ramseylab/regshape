@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../config/documentation-stylesheet.xml"?>
+<!DOCTYPE Overview [
+  <!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
+  %CommonConfig;
+  <!ENTITY LicenseText SYSTEM "LICENSE.txt">
+   ]>
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+
+<isb:doctitle>Software License Agreement</isb:doctitle>
+<isb:docowner>&mainGroup;, &mainAffiliation;</isb:docowner>
+<isb:docowneremail>&mainGroupEmailSafe;</isb:docowneremail>
+<isb:docdate>Date: 2003/04/11 19:02:48 $</isb:docdate>
+
+<blockquote>
+<pre>
+&LicenseText;
+</pre>
+</blockquote>
+
+</isb:document>
