@@ -3706,7 +3706,7 @@ Both of those formats may be subsequently loaded into the &appName; system.
 The export feature
 is used by selecting the &quot;Export...&quot; menu
 item from the &quot;Tools&quot; menu.  A sub-menu listing the available
-<a href="#exporterplugins"></a>export formats</a> appears.  By selecting one of these items, you are
+<a href="#exporterplugins">export formats</a> appears.  By selecting one of these items, you are
 specifying the file format for exporting the model description.
 You will then be prompted to specify the file name and location for the file
 to which the model instance should be exported.  This feature is useful for
