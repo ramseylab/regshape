@@ -66,7 +66,7 @@
   </path>
 
   <target name="copyCommonConfig">
-    <copy file="${globalConfig/CommonConfig.dtd" todir="${app.configDir}" />
+    <copy file="${globalConfig}/CommonConfig.dtd" todir="${app.configDir}" />
   </target>
 
   <target name="style" depends="copyCommonConfig">
