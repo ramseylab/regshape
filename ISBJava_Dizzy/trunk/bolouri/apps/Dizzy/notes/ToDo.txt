@@ -1,0 +1,6 @@
+(1) "Maybe more information could be printed if the "debug" option is used. STOCKS prints in debug mode all 
+reactions performed together with the waiting time until this reaction occured. This is useful to see if 
+some reactions are performed at all."  (Axel Kowald, 2004/10/26)
+
+
+
