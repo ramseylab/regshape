@@ -927,7 +927,7 @@ public final class EvidenceWeightedInferer
         if(numProbableFalseNegatives > 0)
         {
             // recompute the objective function and quantile values
-            calculateCostFunction(pSignificances, 
+            calculateCostFunction(mNonzeroSignificances, 
                                   affectedElements, 
                                   pFractionToRemove,
                                   pWeightType,
