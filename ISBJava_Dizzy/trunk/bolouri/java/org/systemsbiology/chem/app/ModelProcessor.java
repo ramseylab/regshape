@@ -66,8 +66,9 @@ public class ModelProcessor
 
         catch(DataNotFoundException e)
         {
-            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to find parser with parser alias: " + pParserAlias + "; the application is now exiting");
-            errorDialog.show();
+            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame, "error in input file: " + shortFileName, e);
+            dialog.show();
+            return(model);
         }
 
         catch(IOException e)
@@ -76,16 +77,6 @@ public class ModelProcessor
             dialog.show();
             return(model);
         }
-
-        catch(Exception e)
-        {
-            e.printStackTrace(System.err);
-            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unexpected error; the application is now exiting");
-            errorDialog.show();
-            app.exit(1);
-        }
-
-
 
         return(model);
     }
