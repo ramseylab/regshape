@@ -196,6 +196,7 @@ This document contains the version history for the
     Changed the <code>org.systemsbiology.data.DataFileDelimiter.forName()</code> method to
     <code>get()</code>.
   </li>
+  <li>
     Fixed some incorrect error messages in <code>org.systemsbiology.chem.SimulatorDeterministicRungeKuttaFixed</code>,
     for the case of an <code>org.systemsbiology.math.AccuracyException</code>.
   </li>
