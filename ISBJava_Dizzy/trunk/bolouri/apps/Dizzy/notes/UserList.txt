@@ -38,6 +38,10 @@ Puchalka, Jacek
 Institute of Biochemistry and Biophysics PAS, Poland
 puchalka@et.put.poznan.pl
 
+Rouilly, Vincent
+Imperial College, United Kingdom
+vincent.rouilly@imperial.ac.uk
+
 Sauro, Herbert
 Keck Graduate Institute, California
 Herbert_Sauro@kgi.edu
