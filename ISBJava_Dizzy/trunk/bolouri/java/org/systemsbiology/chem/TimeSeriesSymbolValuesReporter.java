@@ -37,15 +37,15 @@ public class TimeSeriesSymbolValuesReporter
         {
             return((OutputFormat) mMap.get(pName));
         }
-        public static final OutputFormat CSV_GNUPLOT = new OutputFormat("CSV-excel", '#');
+        public static final OutputFormat CSV_EXCEL = new OutputFormat("CSV-excel", '#');
         public static final OutputFormat CSV_MATLAB = new OutputFormat("CSV-matlab", '%');
-        public static final OutputFormat CSV_EXCEL = new OutputFormat("CSV-gnuplot", '#');
-        public static Object []getSortedFileFormatNames()
+        public static final OutputFormat CSV_GNUPLOT = new OutputFormat("CSV-gnuplot", '#');
+        public static String []getSortedFileFormatNames()
         {
             Set fileFormatNamesSet = mMap.keySet();
             LinkedList fileFormatNamesList = new LinkedList(fileFormatNamesSet);
             Collections.sort(fileFormatNamesList);
-            return(fileFormatNamesList.toArray());
+            return((String []) fileFormatNamesList.toArray(new String[0]));
         }
 
         public char getCommentChar()
