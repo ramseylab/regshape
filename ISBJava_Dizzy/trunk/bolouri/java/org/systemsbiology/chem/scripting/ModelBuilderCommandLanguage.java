@@ -25,6 +25,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     private static final String TOKEN_MULTILINE_COMMENT_END = "*/";
     private static final String TOKEN_MULTILINE_COMMENT_BEGIN = "/*";
     private static final String TOKEN_SIMPLE_COMMENT = "//";
+    private static final String REACTION_MODIFIER_STEPS = "steps:";
+    private static final String REACTION_MODIFIER_DELAY = "delay:";
 
     static class Token
     {
@@ -764,23 +766,30 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         Token nextToken = getNextToken(pTokenIter);
         if(nextToken.mCode.equals(Token.Code.COMMA))
         {
-            Value stepsValue = obtainValue(pTokenIter, pSymbolMap);
-            if(stepsValue.isExpression())
+            // check if next token is a symbol
+            nextToken = getNextToken(pTokenIter);
+            if(nextToken.mCode.equals(Token.Code.SYMBOL))
             {
-                throw new InvalidInputException("number of reaction steps must be specified as a number, not a deferred-evaluation expression");
-            }
-            int numSteps = (int) stepsValue.getValue();
-            if(numSteps <= 0)
-            {
-                throw new InvalidInputException("invalid number of steps specified");
-            }
-            else if(numSteps > 1)
-            {
-                reaction.setNumSteps(numSteps);
+                if(nextToken.mSymbol.equals(REACTION_MODIFIER_STEPS))
+                {
+                    handleMultistepReaction(reaction, pSymbolMap, pTokenIter);
+                }
+                else if(nextToken.mSymbol.equals(REACTION_MODIFIER_DELAY))
+                {
+                    handleDelayedReaction(reaction, pSymbolMap, pTokenIter);
+                }
+                else
+                {
+                    throw new InvalidInputException("unknown reaction modifier symbol: " + nextToken.mSymbol + "; did you forget to include the reaction modifier \"" + REACTION_MODIFIER_STEPS + "\" or \"" + REACTION_MODIFIER_DELAY + "\"?");
+                }
             }
             else
             {
-                // number of steps is exactly one; so there is nothing to do
+                // For compatibility with early versions of Dizzy, allow for a number
+                // to be specified without a modifier; this is taken to represent
+                // the number of steps in the reaction
+                pTokenIter.previous();
+                handleMultistepReaction(reaction, pSymbolMap, pTokenIter);
             }
         }
         else
@@ -789,6 +798,43 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         }
         
         getEndOfStatement(pTokenIter);
+    }
+
+    private void handleDelayedReaction(Reaction pReaction, HashMap pSymbolMap, ListIterator pTokenIter) throws InvalidInputException
+    {
+        Value delayValue = obtainValue(pTokenIter, pSymbolMap);
+        if(delayValue.isExpression())
+        {
+            throw new InvalidInputException("reaction delay must be specified as a number, not a deferred-evaluation expression");
+        }
+        double delay = delayValue.getValue();
+        if(delay < 0.0)
+        {
+            throw new InvalidInputException("reaction delay must be a nonnegative number");
+        }
+        pReaction.setDelay(delay);
+    }
+
+    private void handleMultistepReaction(Reaction pReaction, HashMap pSymbolMap, ListIterator pTokenIter) throws InvalidInputException
+    {
+        Value stepsValue = obtainValue(pTokenIter, pSymbolMap);
+        if(stepsValue.isExpression())
+        {
+            throw new InvalidInputException("number of reaction steps must be specified as a number, not a deferred-evaluation expression");
+        }
+        int numSteps = (int) stepsValue.getValue();
+        if(numSteps <= 0)
+        {
+            throw new InvalidInputException("invalid number of steps specified");
+        }
+        else if(numSteps > 1)
+        {
+            pReaction.setNumSteps(numSteps);
+        }
+        else
+        {
+            // number of steps is exactly one; so there is nothing to do
+        }        
     }
 
     private Token getNextToken(ListIterator pTokenIter) throws InvalidInputException
