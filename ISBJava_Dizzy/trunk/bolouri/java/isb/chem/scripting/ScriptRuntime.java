@@ -580,7 +580,7 @@ public class ScriptRuntime
         return(outputWriter);
     }
 
-    private void executeStatementSimulate(Statement pStatement) throws DataNotFoundException, IllegalArgumentException, IllegalStateException, IOException
+    private void executeStatementSimulate(Statement pStatement) throws DataNotFoundException, IllegalArgumentException, IllegalStateException, IOException, SimulationFailedException
     {
         Statement.Type statementType = pStatement.getType();
         assert (Statement.Type.SIMULATE == statementType) : "invalid statement type";
@@ -812,8 +812,8 @@ public class ScriptRuntime
                     double floatingPointSpeciesPopulation = 0.0;
                     if(! speciesPopulationSnapshot.speciesPopulationIsExpression(speciesName))
                     {
-                        long speciesPopulation = speciesPopulationSnapshot.getSpeciesPopulation(species);
-                        floatingPointSpeciesPopulation = ((double) speciesPopulation) * ensembleMultiplier;
+                        double speciesPopulation = speciesPopulationSnapshot.getSpeciesPopulation(species);
+                        floatingPointSpeciesPopulation = speciesPopulation * ensembleMultiplier;
                     }
                     else
                     {
@@ -1027,7 +1027,7 @@ public class ScriptRuntime
 
         if(null != pValue)
         {
-            pSpeciesPopulations.setSpeciesPopulation(pSpecies, pValue.longValue());
+            pSpeciesPopulations.setSpeciesPopulation(pSpecies, pValue.doubleValue());
         }
         else
         {
@@ -1118,7 +1118,7 @@ public class ScriptRuntime
     }
 
 
-    private void executeStatement(Statement pStatement) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, ModelInstanceExporterException, IOException
+    private void executeStatement(Statement pStatement) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, ModelInstanceExporterException, IOException, SimulationFailedException
     {
         Statement.Type statementType = pStatement.getType();
         String statementName = pStatement.getName();

@@ -253,14 +253,13 @@ public abstract class SimulationService implements ISimulationService
 
             // extract data requested by caller
             double []dataPoints = new double[numSpecies];
-            long []dataPointsLong = new long[numSpecies];
 
             for(int timeIndex = 0; timeIndex < pNumPoints; ++timeIndex)
             {
                 SpeciesPopulations speciesPopulations = speciesPopulationsArray[timeIndex];
 
                 // extract the species populations for this time point
-                speciesPopulations.copyPopulationDataToArray(pFilter, dataPointsLong);
+                speciesPopulations.copyPopulationDataToArray(pFilter, dataPoints);
 
                 // convert data to moles, in order to conform to the SBW SimulationService specification
                 for(int speciesCtr = 0; speciesCtr < numSpecies; ++speciesCtr)

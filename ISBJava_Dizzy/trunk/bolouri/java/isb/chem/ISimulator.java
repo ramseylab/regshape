@@ -115,7 +115,7 @@ public interface ISimulator
                        double pStartTime,
                        double pStopTime,
                        SpeciesPopulations []pPopulationSamples,
-                       SimulationController pSimulationController) throws IllegalArgumentException, IllegalStateException, DataNotFoundException;
+                       SimulationController pSimulationController) throws IllegalArgumentException, IllegalStateException, DataNotFoundException, SimulationFailedException;
 
    /**
      * This method calls {@link #evolve(Model,SpeciesPopulations,double[],double,double,SpeciesPopulations[],SimulationController)}
@@ -155,6 +155,6 @@ public interface ISimulator
                        double pStartTime,
                        double pStopTime,
                        SpeciesPopulations []pPopulationSamples,
-                       SimulationController pSimulationController) throws IllegalArgumentException, IllegalStateException, DataNotFoundException;
+                       SimulationController pSimulationController) throws IllegalArgumentException, IllegalStateException, DataNotFoundException, SimulationFailedException;
 }
 

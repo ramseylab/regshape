@@ -64,23 +64,23 @@ public class IonChannel
 
             double startTime = 0.0;
 
-            for(int simCtr = 0; simCtr < 500; ++simCtr)
+            for(int simCtr = 0; simCtr < 10; ++simCtr)
             {
   
                 double timeConstant = gillespie.computeInitialAggregateTimeConstant(model, initialData, 0.0);
                 gillespie.evolve(model, 
                                  initialData, 
                                  startTime,
-                                 5000,
+                                 500000,
                                  speciesPops);
 
-                long s1pop = speciesPops.getSpeciesPopulation(s1);
-                long s2pop = speciesPops.getSpeciesPopulation(s2);
+                double s1pop = speciesPops.getSpeciesPopulation(s1);
+                double s2pop = speciesPops.getSpeciesPopulation(s2);
 //                System.out.println(s1pop + "," + s2pop);
             }
 
             System.out.println("date: " + new Date(System.currentTimeMillis()));
-            System.out.println("model: " + model.toString());
+//            System.out.println("model: " + model.toString());
         }
         catch(Exception e)
         {

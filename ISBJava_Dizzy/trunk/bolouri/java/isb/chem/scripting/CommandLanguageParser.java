@@ -488,6 +488,7 @@ public class CommandLanguageParser implements IScriptBuildingParser, IAliasableC
         dataTypes.clear();
 
         dataTypes.add(Element.DataType.INTEGER);
+        dataTypes.add(Element.DataType.DOUBLE);
         dataTypes.add(Element.DataType.SYMBOL);
         allowedDataTypes.put(Element.Type.POPULATION, dataTypes.clone());
         dataTypes.clear();

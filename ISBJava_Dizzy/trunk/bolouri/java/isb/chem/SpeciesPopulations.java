@@ -4,10 +4,10 @@ import java.util.*;
 import isb.util.*;
 
 /**
- * A class that contains numeric (integer) population data for a number of
+ * A class that contains numeric (floating-point) population data for a number of
  * chemical {@link Species}.  This class contains a <code>HashMap</code>
  * that relates a species to its integer population value.  The population
- * value is stored as a {@link MutableLong} object, for each species object.
+ * value is stored as a {@link MutableDouble} object, for each species object.
  * Objects of this class are used to store initial conditions for a model
  * (population values at the start of the simulation), as well as intermediate
  * population values at various <em>sample times</em> during the simulation.
@@ -39,7 +39,7 @@ public class SpeciesPopulations implements Cloneable
      * member data
      *========================================*/
     private HashMap mSpeciesPopulationsMap;  // keys are species names (as strings); 
-                                             //  values are long ints (species populations)
+                                             //  values are double ints (species populations)
     private String mName;
 
     /*========================================*
@@ -149,7 +149,7 @@ public class SpeciesPopulations implements Cloneable
 
     /**
      * For the array of requested species name <code>pRequestedSpecies</code>,
-     * stores the population value (as a long integer) into the array 
+     * stores the population value (as a double) into the array 
      * <code>pSpeciesPopulations</code>.
      *
      * @param pRequestedSpecies the array of species names for which population
@@ -159,14 +159,14 @@ public class SpeciesPopulations implements Cloneable
      * values are stored, in the same order they are requested
      */
     public void copyPopulationDataToArray(String []pRequestedSpecies,
-                                          long []pSpeciesPopulations) throws DataNotFoundException
+                                          double []pSpeciesPopulations) throws DataNotFoundException
     {
         int numSpecies = pRequestedSpecies.length;
 
         for(int speciesIndex = 0; speciesIndex < numSpecies; ++speciesIndex)
         {
             String speciesName = pRequestedSpecies[speciesIndex];
-            long speciesPopulation = getSpeciesPopulation(speciesName);
+            double speciesPopulation = getSpeciesPopulation(speciesName);
                     
             pSpeciesPopulations[speciesIndex] = speciesPopulation;
         }
@@ -174,6 +174,28 @@ public class SpeciesPopulations implements Cloneable
 
     /**
      * Store the long integer population value <code>pPopulation</code> with
+     * the species <code>pSpecies</code>/  The species population is in
+     * <b>molecules</b>.  The species population is converted to a double
+     * value before it is stored.
+     *
+     * @param pSpecies the species whose population is being specified.  This
+     * can be any species object.  If it is the first time that 
+     * the <code>setSpeciesPopulation</code> method is being called for this
+     * species object, a new container is created to store the population 
+     * value.  Otherwise, the population value is stored in the container
+     * that already exists (from the previouc call to 
+     * <code>setSpeciesPopulation</code>).
+     *
+     * @param pPopulation The long integer population value for this species.
+     */
+    public void setSpeciesPopulation(Species pSpecies, long pPopulation) throws IllegalArgumentException
+    {
+        setSpeciesPopulation(pSpecies, (double) pPopulation);
+    }
+
+
+    /**
+     * Store the double population value <code>pPopulation</code> with
      * the species <code>pSpecies</code>/  The species population is in
      * <b>molecules</b>.
      *
@@ -185,22 +207,12 @@ public class SpeciesPopulations implements Cloneable
      * that already exists (from the previouc call to 
      * <code>setSpeciesPopulation</code>).
      *
-     * @param pPopulation The long integer population value for this species.
-     * Must be a nonnegative integer, or else an exception is thrown.
+     * @param pPopulation The double population value for this species.
      */
-    public void setSpeciesPopulation(Species pSpecies, long pPopulation) throws IllegalArgumentException
+    public void setSpeciesPopulation(Species pSpecies, double pPopulation) throws IllegalArgumentException
     {
         String speciesName = pSpecies.getName();
-        SpeciesPopulation speciesPopulationObj = getSpeciesPopulationObj(speciesName);
-        if(null != speciesPopulationObj)
-        {
-            speciesPopulationObj.setValue(pPopulation);
-        }
-        else
-        {
-            speciesPopulationObj = new SpeciesPopulation(pPopulation);
-            setSpeciesPopulationObj(speciesName, speciesPopulationObj);
-        }
+        setSpeciesPopulation(speciesName, pPopulation);
     }
 
 
@@ -243,10 +255,10 @@ public class SpeciesPopulations implements Cloneable
      * or throws a <code>DataNotFoundException</code> if the species has no population 
      * data stored
      */
-    public long getSpeciesPopulation(String pSpeciesName) throws DataNotFoundException, IllegalStateException
+    public double getSpeciesPopulation(String pSpeciesName) throws DataNotFoundException, IllegalStateException
     {
         SpeciesPopulation speciesPopulationObj = getSpeciesPopulationObj(pSpeciesName);
-        long retVal = 0;
+        double retVal = 0.0;
         if(null != speciesPopulationObj)
         {
             retVal = speciesPopulationObj.getValue();
@@ -278,6 +290,20 @@ public class SpeciesPopulations implements Cloneable
     public double getSpeciesPopulation(Species pSpecies, Model pModel, double pTime) throws DataNotFoundException
     {
         return(getSpeciesPopulation(pSpecies.getName(), pModel, pTime));
+    }
+
+    public void setSpeciesPopulation(String pSpeciesName, double pPopulation)
+    {
+        SpeciesPopulation speciesPopulationObj = getSpeciesPopulationObj(pSpeciesName);
+        if(null != speciesPopulationObj)
+        {
+            speciesPopulationObj.setValue(pPopulation);
+        }
+        else
+        {
+            speciesPopulationObj = new SpeciesPopulation(pPopulation);
+            setSpeciesPopulationObj(pSpeciesName, speciesPopulationObj);
+        }
     }
 
     /**
@@ -322,7 +348,7 @@ public class SpeciesPopulations implements Cloneable
      * Returns a boolean value indicating whether the species specified by
      * <code>pSpeciesName</code> has a population value that is an expression.
      * If the species value is an exprssion, <code>true</code> is returned.
-     * If the species value is an integer value, <code>false</code> is returned.
+     * If the species value is a double value, <code>false</code> is returned.
      * If no species population object is defined for this species name,
      * an exception is thrown.
      *
@@ -396,7 +422,7 @@ public class SpeciesPopulations implements Cloneable
      * or throws a <code>DataNotFoundException</code> if the species has no population 
      * data stored
      */
-    public long getSpeciesPopulation(Species pSpecies) throws DataNotFoundException, IllegalStateException
+    public double getSpeciesPopulation(Species pSpecies) throws DataNotFoundException, IllegalStateException
     {
         String speciesName = pSpecies.getName();
         return(getSpeciesPopulation(speciesName));
@@ -428,6 +454,28 @@ public class SpeciesPopulations implements Cloneable
         }
     }
 
+    public void scalarMult(double pMult)
+    {
+        HashMap speciesPopulationsMap = getSpeciesPopulationsMap();
+        Iterator speciesIter = speciesPopulationsMap.keySet().iterator();
+        while(speciesIter.hasNext())
+        {
+            String speciesName = (String) speciesIter.next();
+            SpeciesPopulation speciesPopulation = (SpeciesPopulation) speciesPopulationsMap.get(speciesName);
+            assert (null != speciesPopulation) : "null species population encountered";
+
+            MutableDouble popValue = speciesPopulation.getPopulationValue();
+            if(null != popValue)
+            {
+                popValue.setValue(popValue.getValue() * pMult);
+            }
+            else
+            {
+                // do nothing, must be an expression
+            }
+        }        
+    }
+
     /**
      * Goes through the list of species contained in <code>pSpeciesPopulations</code>
      * and adds the population of each species to the species populations object whose
@@ -454,12 +502,12 @@ public class SpeciesPopulations implements Cloneable
             }
             else
             {
-                MutableLong operandPopulationValueObj = operandSpeciesPopulation.getPopulationValue();
+                MutableDouble operandPopulationValueObj = operandSpeciesPopulation.getPopulationValue();
                 if(null != operandPopulationValueObj)
                 {
-                    long operandPopulationValue = operandPopulationValueObj.getValue();
-                    MutableLong myPopulationValueObj = mySpeciesPopulation.getPopulationValue();
-                    long myPopulationValue = 0;
+                    double operandPopulationValue = operandPopulationValueObj.getValue();
+                    MutableDouble myPopulationValueObj = mySpeciesPopulation.getPopulationValue();
+                    double myPopulationValue = 0.0;
                     if(null != myPopulationValueObj)
                     {
                         myPopulationValue = myPopulationValueObj.getValue() + operandPopulationValue;
@@ -495,7 +543,7 @@ public class SpeciesPopulations implements Cloneable
         {
             String speciesName = (String) speciesIter.next();
             SpeciesPopulation speciesPopulationObj = getSpeciesPopulationObj(speciesName);
-            MutableLong speciesPopulationValue = speciesPopulationObj.getPopulationValue();
+            MutableDouble speciesPopulationValue = speciesPopulationObj.getPopulationValue();
             String speciesDesc = null;
             if(null != speciesPopulationValue)
             {

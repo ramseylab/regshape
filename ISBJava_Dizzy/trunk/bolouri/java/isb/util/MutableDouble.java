@@ -48,4 +48,9 @@ public class MutableDouble
         MutableDouble md = new MutableDouble(getValue());
         return(md);
     }
+
+    public String toString()
+    {
+        return(String.valueOf(mDouble));
+    }
 }

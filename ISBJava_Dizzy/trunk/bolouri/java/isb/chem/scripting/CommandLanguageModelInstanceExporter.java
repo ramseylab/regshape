@@ -245,7 +245,7 @@ public class CommandLanguageModelInstanceExporter implements IModelInstanceExpor
             speciesListElement.addDataToList(speciesName);
             if(! pInitialSpeciesPopulations.speciesPopulationIsExpression(speciesName))
             {
-                long speciesPopulation = pInitialSpeciesPopulations.getSpeciesPopulation(speciesName);
+                double speciesPopulation = pInitialSpeciesPopulations.getSpeciesPopulation(speciesName);
                 populationsElement.addDataToList(new Double(speciesPopulation));
             }
             else

@@ -13,7 +13,6 @@ class SpeciesPopulation implements Cloneable
     /*========================================*
      * constants
      *========================================*/
-    public static final long MIN_POPULATION = 0;
 
     /*========================================*
      * inner class
@@ -22,18 +21,18 @@ class SpeciesPopulation implements Cloneable
     /*========================================*
      * member data
      *========================================*/
-    private MutableLong mPopulationValue;
+    private MutableDouble mPopulationValue;
     private MathExpression mPopulationExpression;
 
     /*========================================*
      * accessor/mutator methods
      *========================================*/
-    private void setPopulationValue(MutableLong pPopulationValue)
+    private void setPopulationValue(MutableDouble pPopulationValue)
     {
         mPopulationValue = pPopulationValue;
     }
 
-    MutableLong getPopulationValue()
+    MutableDouble getPopulationValue()
     {
         return(mPopulationValue);
     }
@@ -64,10 +63,10 @@ class SpeciesPopulation implements Cloneable
     public SpeciesPopulation(SpeciesPopulation pSpeciesPopulation) 
     {
         initialize();
-        MutableLong populationValue = pSpeciesPopulation.getPopulationValue();
+        MutableDouble populationValue = pSpeciesPopulation.getPopulationValue();
         if(null != populationValue)
         {
-            populationValue = new MutableLong(populationValue.getValue());
+            populationValue = new MutableDouble(populationValue.getValue());
         }
         setPopulationValue(populationValue);
         MathExpression speciesPopulationExpression = pSpeciesPopulation.getPopulationExpression();
@@ -81,7 +80,7 @@ class SpeciesPopulation implements Cloneable
         }
     }
     
-    public SpeciesPopulation(long pPopulationValue)
+    public SpeciesPopulation(double pPopulationValue)
     {
         initialize();
         setValue(pPopulationValue);
@@ -104,7 +103,7 @@ class SpeciesPopulation implements Cloneable
     /**
      * Define the population to be an expression specified by
      * <code>pPopulationExpression</code>.  If the population
-     * was previously set to be an integer, the integer population
+     * was previously set to be a double, the double population value
      * is erased.  If the population was previously set to be an
      * expression, the new expression supersedes the old one.
      *
@@ -121,29 +120,26 @@ class SpeciesPopulation implements Cloneable
     }
 
     /**
-     * Define the population to be an integer value, specified by
+     * Define the population to be a double value, specified by
      * <code>pPopulationValue</code>.  If the population was previously
      * set to be an expression, the expression is erased.  If the
-     * population was previously set to be a different integer value,
-     * the new value supersedes the old value.  The value must be
-     * greater than or equal to zero.
+     * population was previously set to be a different double value,
+     * the new value supersedes the old value.  The value may be less
+     * than zero, which is convenient for modeling a "delta" (change in)
+     * a species population between two points in time.
      *
-     * @param pPopulationValue the integer population value
+     * @param pPopulationValue the double population value
      */
-    void setValue(long pPopulationValue) throws IllegalArgumentException
+    void setValue(double pPopulationValue) throws IllegalArgumentException
     {
-        if(pPopulationValue < MIN_POPULATION)
-        {
-            throw new IllegalArgumentException("invalid population value passed as argument: " + pPopulationValue);
-        }
-        MutableLong populationValueObj = getPopulationValue();
+        MutableDouble populationValueObj = getPopulationValue();
         if(null != populationValueObj)
         {
             populationValueObj.setValue(pPopulationValue);
         }
         else
         {
-            populationValueObj = new MutableLong(pPopulationValue);
+            populationValueObj = new MutableDouble(pPopulationValue);
             setPopulationValue(populationValueObj);
         }
         setPopulationExpression(null);
@@ -151,17 +147,17 @@ class SpeciesPopulation implements Cloneable
 
     /**
      * Returns the population value, if this object
-     * contains an integer species population.  If this
+     * contains an double species population.  If this
      * object contains an expression, an exception is thrown.
      *
      * @return the population value, if this object
-     * contains an integer species population.  If this
+     * contains a double species population.  If this
      * object contains an expression, an exception is thrown.
      */
-    long getValue() throws IllegalStateException
+    double getValue() throws IllegalStateException
     {
-        MutableLong populationValueObj = getPopulationValue();
-        long retVal = 0;
+        MutableDouble populationValueObj = getPopulationValue();
+        double retVal = 0.0;
         if(null != populationValueObj)
         {
             retVal = populationValueObj.getValue();

@@ -185,7 +185,7 @@ public class MarkupLanguageModelInstanceExporter implements IModelInstanceExport
                 Compartment compartment = species.getCompartmentCopy();
                 String compartmentName = compartment.getName();
                 speciesElement.setAttribute(ATTRIBUTE_COMPARTMENT, compartmentName);
-                long initialSpeciesPopulation = 0;
+                double initialSpeciesPopulation = 0.0;
                 try
                 {
                     initialSpeciesPopulation = pInitialSpeciesPopulations.getSpeciesPopulation(speciesName);

@@ -194,6 +194,7 @@ public class Reaction implements Comparable, Cloneable
      *========================================*/
     private static final int MAX_NUM_REACTANTS_OF_GIVEN_SPECIES = 10;
     private static final int MAX_NUM_PRODUCTS_OF_GIVEN_SPECIES = 10;
+    static final double MIN_SPECIES_POPULATION = 0.0;
 
     /*========================================*
      * inner class
@@ -543,13 +544,18 @@ public class Reaction implements Comparable, Cloneable
             Species species = (Species) reactantIter.next();
             try
             {
+                double speciesPop = 0.0;
                 if(null != pStartTime)
                 {
-                    pInitialData.getSpeciesPopulation(species, pModel, pStartTime.doubleValue());
+                    speciesPop = pInitialData.getSpeciesPopulation(species, pModel, pStartTime.doubleValue());
                 }
                 else
                 {
-                    pInitialData.getSpeciesPopulation(species);
+                    speciesPop = pInitialData.getSpeciesPopulation(species);
+                }
+                if(speciesPop < MIN_SPECIES_POPULATION)
+                {
+                    throw new IllegalArgumentException("invalid initial species population for species: " + species.getName());
                 }
             }
             catch(DataNotFoundException e)
@@ -574,13 +580,18 @@ public class Reaction implements Comparable, Cloneable
             {
                 try
                 {
+                    double speciesPop = 0.0;
                     if(null != pStartTime)
                     {
-                        pInitialData.getSpeciesPopulation(species, pModel, pStartTime.doubleValue());
+                        speciesPop = pInitialData.getSpeciesPopulation(species, pModel, pStartTime.doubleValue());
                     }
                     else
                     {
-                        pInitialData.getSpeciesPopulation(species);
+                        speciesPop = pInitialData.getSpeciesPopulation(species);
+                    }
+                    if(speciesPop < MIN_SPECIES_POPULATION)
+                    {
+                        throw new IllegalArgumentException("invalid initial species population for species: " + species.getName());
                     }
                 }
                 catch(DataNotFoundException e)
@@ -591,6 +602,7 @@ public class Reaction implements Comparable, Cloneable
         }
     }
 
+
     /*
      * Change the species populations to reflect the fact that a reaction
      * has taken place.  If a given species is a &quot;boundary&quot;
@@ -598,11 +610,17 @@ public class Reaction implements Comparable, Cloneable
      */
     void recomputeSpeciesPopulationsForReaction(SpeciesPopulations pSpeciesPopulations) throws DataNotFoundException, IllegalStateException
     {
-        // Handle products first, for case of reaction like "I + A -> I + B" with
-        // a custom (external) rate expression, and an I population of zero. Although
-        // it is a strange situation, it should technically be legal, and thus should
-        // not throw an exception.  If we were to handle the reactants first, we would
-        // decrement the I population below zero, and throw an exception.
+        adjustSpeciesPopulationForReaction(pSpeciesPopulations, 1.0);
+    }
+
+    /*
+     * Change the species populations to reflect the fact that a reaction
+     * has taken place.  If a given species is a &quot;boundary&quot;
+     * (i.e., non-floating) species, do not change its population.
+     */
+    void adjustSpeciesPopulationForReaction(SpeciesPopulations pSpeciesPopulations,
+                                            double pReactionRate) throws DataNotFoundException, IllegalStateException
+    {
         Vector productsVec = getProductsVec();
         int numProducts = productsVec.size();
         for(int productCtr = 0; productCtr < numProducts; ++productCtr)
@@ -618,9 +636,9 @@ public class Reaction implements Comparable, Cloneable
             assert (numProductsOfThisSpeciesObj != null);
             int numProductsOfThisSpecies = numProductsOfThisSpeciesObj.intValue();
             // decrement this species population accordingly
-            long previousSpeciesPopulation = pSpeciesPopulations.getSpeciesPopulation(product);
-            long newSpeciesPopulation = previousSpeciesPopulation + numProductsOfThisSpecies;
-            pSpeciesPopulations.setSpeciesPopulation(product, newSpeciesPopulation);
+            double speciesPopulationDelta = pSpeciesPopulations.getSpeciesPopulation(product);
+            speciesPopulationDelta += ((double) numProductsOfThisSpecies) * pReactionRate;
+            pSpeciesPopulations.setSpeciesPopulation(product, speciesPopulationDelta);
         }
 
         // get list of reactants
@@ -639,19 +657,12 @@ public class Reaction implements Comparable, Cloneable
             assert (numReactantsOfThisSpeciesObj != null);
             int numReactantsOfThisSpecies = numReactantsOfThisSpeciesObj.intValue();
             // decrement this species population accordingly
-            long previousSpeciesPopulation = pSpeciesPopulations.getSpeciesPopulation(reactant);
-            long newSpeciesPopulation = 0L;
-            if(previousSpeciesPopulation >= numReactantsOfThisSpecies)
-            {
-                newSpeciesPopulation = previousSpeciesPopulation - numReactantsOfThisSpecies;
-            }
-            else
-            {
-                throw new IllegalStateException("species \"" + reactant.getName() + "\" has a population of zero, but appeared as a reactant in reaction: " + toString());
-            }
-            pSpeciesPopulations.setSpeciesPopulation(reactant, newSpeciesPopulation);
+            double speciesPopulationDelta = pSpeciesPopulations.getSpeciesPopulation(reactant);
+            speciesPopulationDelta -= ((double) numReactantsOfThisSpecies) * pReactionRate;
+            pSpeciesPopulations.setSpeciesPopulation(reactant, speciesPopulationDelta);
         }
     }
+
 
     double computeReactionProbabilityDensityPerUnitTime(Model pModel,
                                                         SpeciesPopulations pSpeciesPopulations,

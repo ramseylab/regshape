@@ -1018,6 +1018,20 @@ information is available in the Javadoc documentation</a>.
 </p>
 </isb:docsubsection>
 
+<isb:docsubsection name="ODE Simulator" label="odesim">
+<p>
+The &appName; system provides a deterministic simulator
+for reaction kinetics, in which the system is modeled as
+a set of coupled ordinary differential equations (ODEs).
+The differential equations are solved using a finite
+difference method, specifically the 5th-order Runge-Kutta
+algorithm with an adaptive stepsize controller.  The 
+error tolerance per iteration of the algorithm is set to 10^-2,
+but can be changed if the simulator is used programmatically
+(it is not currently changeable through the GUI).  
+</p>
+</isb:docsubsection>
+
 </isb:docsection>
 
 <isb:docsection name="Model Elements" label="modelelement">
@@ -1081,7 +1095,7 @@ A species is an abstraction representing a type of molecule or
 molecular state.  A species has a name, which must be unique;
 in addition, a species must be assigned to one (and only one)
 compartment.  A species can also be assigned a population value, 
-which must be an integer (subject to an exception described below).
+which is a double-precision floating point number.
 There are two types of species in the &appName; system, <b>floating</b>
 species and <b>boundary</b> species.  
 </p>
@@ -1340,11 +1354,12 @@ addition, the time series results of a simulation consist of
 &quot;snapshots&quot; of the species population values at different times.
 Species populations are stored in &quot;species populations collection&quot;
 data structures.  Such a structure maps a species name to a
-&quot;population value&quot;.  Floating species must have an integer 
-population value.  Bounday species may have a fixed population
-defined (which must be an integer), or they may have their population
-defined as a mathematical expression involving the symbol &quot;time&quot;,
-which represents the amount of time elapsed in the simulation.
+&quot;population value&quot;.  Floating species must have a floating-point 
+(double-precision) population value.  Bounday species may have a fixed 
+population defined (which must be a floating-point value), or they may 
+have their population defined as a mathematical expression involving the 
+symbol &quot;time&quot;, which represents the amount of time elapsed in the 
+simulation.
 </p>
 <p>
 At this time, the stochastic simulator in the &appName; system
@@ -1796,12 +1811,17 @@ The available simulator plug-ins are:
   <dt><code>gillespie</code></dt>
   <dd>An implementation of the 
 <a href="#gillespie">Gillespie stochastic algorithm</a>
-for modeling the reaction kinetics.  Ths algorithm is described in the article
+for modeling the reaction kinetics.  This algorithm is described in the article
 </dd>
+  <dt><code>ODE</code></dt>
+  <dd>An implementation of an ODE-based deterministic simulator
+of the reaction kinetics.  The implementation is based on a 5th-order
+Runge-Kutta integrator with an adaptive stepsize controller.
+  </dd>
   </dl>
 </blockquote>
-Each simulator above is identified by its &quot;simulator alias&quot;.
-The simulator alias for the Gillespie algorithm is &quot;<code>gillespie</code>&quot;.
+Each simulator above is identified by its &quot;simulator alias&quot;.  For example,
+the simulator alias for the Gillespie algorithm is &quot;<code>gillespie</code>&quot;.
 </p>
 </isb:docsubsection>
 
@@ -2261,8 +2281,7 @@ defined as a numeric macro with value 10.0.
 The initial populations of <code>A</code>
 and <code>B</code> are defined as the value
 of the expressions contained in the square
-brackets, rounded to the nearest integer.
-In the above example, the initial populations
+brackets. In the above example, the initial populations
 of species <code>A</code> and <code>B</code>
 are set to 100.
 </p>
@@ -2341,20 +2360,18 @@ is stored by the parser, rather than the value of the expression
 evaluated initially.  This is accomplished
 by using a string element rather than a numeric element,
 on the right-hand side of the definition of the 
-boundary species population.  This is useful for two 
-special cases.  Firstly, it can be used in cases where it 
-is desired to have a boundary species with a non-integer
-population value, as shown here:
+boundary species population. One can define a boundary
+species with a non-integer population value, as shown here:
 <blockquote>
 <pre>
 my_reaction, $A -&gt; B, 2.0;
-A = "0.5";
+A = 0.5;
 B = 100;
 </pre>
 </blockquote>
-This is rarely useful, because it is always possible to just
-rescale the reaction parameter and eliminate the boundary
-species (that formally has the non-integer population) as a 
+This use of a boundary species is not necessary in this case, 
+because it possible to just rescale the reaction parameter 
+and eliminate the boundary species &quot;<code>A</code>&quot; as a 
 participatnt in the reaction.  A more useful case is when
 one wishes to define a boundary species whose value actually
 <em>varies over time</em>, according to a function defined
@@ -3171,8 +3188,8 @@ have been previously defined.  It is permissible for this list to have zero elem
     <dd>A list element that defines the population values (or expressions) for
 all species in the collection.  The number of items in this list must be
 identical to the number of elements in the <code>speciesList</code> list element.
-Each item in the list is either a numeric element specifying an integer population
-value, or a string specifying an expression that will be used to compute the population
+Each item in the list is either a numeric element specifying a floating-point (or integer) 
+population value, or a string specifying an expression that will be used to compute the population
 value by the simulation engine.  The <em>i</em>th item in this list specifies the
 population value for the <em>i</em>th species in the <code>speciesList</code> list. 
 [required]<p /></dd>
@@ -3223,8 +3240,8 @@ species population collection.  The species must have been previously defined. [
 
     <dt><code>population</code></dt>
     <dd>A string or numeric element that specifies the population of the species to be
-added to the species population collection.  If the element is a number, it must be
-an integer; it specifies the population value directly.  If the element is a string,
+added to the species population collection.  If the element is a number, it can be a floating-point
+value or an integer; it specifies the population value directly.  If the element is a string,
 the string is interpreted as a mathematical expression that will be used by the simulation
 engine to compute the species population, each time the species population value is needed.
 [required].
@@ -3645,12 +3662,10 @@ realizations of the simulation.  This essentially implements
 an ensemble average of time-series species populations.
 The numeric element value is required to be an
 integer greater than zero.  This feature is useful when using
-a stochastic simulator, in order to 
-The species population
-values that are printed will be floating-point numbers,
-even for floating species (which can only have integer
-population values within a given realization of the ensemble),
-due to the averaging process.  The &quot;<code>ensembleSize</code>&quot;
+a stochastic simulator, in order to average the results of
+multiple realizations of the stochastic process.  It is
+not necessary to specify an ensemble size, when using the
+deterministic (ODE) simulator. The &quot;<code>ensembleSize</code>&quot;
 parameter may <em>not</em> be specified with the
 &quot;<code>output store</code>&quot; parameter, because
 floating-point values may not be stored in a 

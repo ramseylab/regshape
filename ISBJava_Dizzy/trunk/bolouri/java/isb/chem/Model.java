@@ -372,7 +372,7 @@ public class Model
         SpeciesExpressionSymbolMap symbolMap = getSpeciesExpressionSymbolMap();
         symbolMap.setTime(pTime);
         double speciesPopulationValueDouble = pSpeciesPopulationExpression.computeValue(symbolMap);
-        if(speciesPopulationValueDouble < ((double) (SpeciesPopulation.MIN_POPULATION)))
+        if(speciesPopulationValueDouble < Reaction.MIN_SPECIES_POPULATION)
         {
             throw new IllegalArgumentException("expression for species population resulted in an invalid population value: " + pSpeciesPopulationExpression + "; time value: " + pTime);
         }
@@ -640,6 +640,7 @@ public class Model
         }
         return(newCompartmentsSet);
     }
+
 
     /**
      * Returns an iterator for an ordered collection of 

@@ -38,9 +38,9 @@ public class TestDriver
             r2.setRate(0.1);
 
             SpeciesPopulations initialData = new SpeciesPopulations();
-            initialData.setSpeciesPopulation(s1, 100);
-            initialData.setSpeciesPopulation(s2, 101);
-            initialData.setSpeciesPopulation(s3, 5);
+            initialData.setSpeciesPopulation(s1, 1000.0);
+            initialData.setSpeciesPopulation(s2, 1000.0);
+            initialData.setSpeciesPopulation(s3, 5.0);
 
             Model model = new Model("TestDriver");
             model.addReaction(r1);
@@ -48,7 +48,7 @@ public class TestDriver
 
             SpeciesPopulations []populationSamples = new SpeciesPopulations[NUMBER_TIME_POINTS];
             GillespieSimulator gillespie = new GillespieSimulator();
-            gillespie.setDebugOutput(new PrintWriter(System.out, true));
+//            gillespie.setDebugOutput(new PrintWriter(System.out, true));
             double startTime = 0.0;
             double timeConstant = gillespie.computeInitialAggregateTimeConstant(model, initialData, startTime);
             double[] timeSamples = new double[NUMBER_TIME_POINTS];
@@ -58,16 +58,23 @@ public class TestDriver
             {
                 timeSamples[ctr] = stopTime * ((double) ctr)/((double) NUMBER_TIME_POINTS);
             }
-            gillespie.evolve(model, 
-                             initialData, 
-                             timeSamples, 
-                             startTime,
-                             stopTime,
-                             populationSamples);
-            for(int ctr = 0; ctr < NUMBER_TIME_POINTS; ++ctr)
+            long curTime = System.currentTimeMillis();
+            for(int ctr = 0; ctr < 5000; ++ctr)
             {
-                System.out.println("time: " + timeSamples[ctr] + "; s1: " + populationSamples[ctr].getSpeciesPopulation(s1) + "; s2: " + populationSamples[ctr].getSpeciesPopulation(s2));
+                gillespie.evolve(model, 
+                                 initialData, 
+                                 timeSamples, 
+                                 startTime,
+                                 stopTime,
+                                 populationSamples);
             }
+            long finalTime = System.currentTimeMillis();
+            double elapsedTimeSec = (double) (finalTime - curTime) / 1000.0;
+            System.out.println("elapsed time: " + elapsedTimeSec);
+//            for(int ctr = 0; ctr < NUMBER_TIME_POINTS; ++ctr)
+//            {
+//                System.out.println("time: " + timeSamples[ctr] + "; s1: " + populationSamples[ctr].getSpeciesPopulation(s1) + "; s2: " + populationSamples[ctr].getSpeciesPopulation(s2));
+//            }
             
         }
         catch(Exception e)
