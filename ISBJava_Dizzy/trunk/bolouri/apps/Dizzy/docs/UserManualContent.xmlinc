@@ -3476,9 +3476,9 @@ able to take large time-steps.  The data point at the start of every constant re
 is the correct value at that time.
 </li>
 <li>
-The &quot;<code>odeToJava</code>&quot; simulators cannot be
-interrupted by using the &quot;stop&quot; and &quot;cancel&quot; buttons.
-Quitting the application is the only way to cancel a simulation if
+The &quot;<code>odeToJava-imex443-stiff</code>&quot; simulator cannot be
+interrupted by using the &quot;pause&quot; and &quot;cancel&quot; buttons.
+Quitting the &appName; application is the only way to cancel a simulation if
 one of the &quot;<code>odeToJava</code>&quot; simulators is being used.
 </li>
 <li>
