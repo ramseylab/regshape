@@ -131,6 +131,7 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
      * constants
      *========================================*/
     public static final String CLASS_ALIAS = "gillespie";
+    private static final int SIMULATION_CANCELLED = -1;
 
     /*========================================*
      * member data
@@ -280,10 +281,10 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
                                                      Vector pReactionProbabilityDensities,
                                                      double pTime) throws IllegalArgumentException
     {
-        Iterator reactionIter = pReactionProbabilityDensities.iterator();
-        while(reactionIter.hasNext())
+        int numReactions = pReactionProbabilityDensities.size();
+        for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
         {
-            ReactionProbabilityDensity reactionProbabilityDensity = (ReactionProbabilityDensity) reactionIter.next();
+            ReactionProbabilityDensity reactionProbabilityDensity = (ReactionProbabilityDensity) pReactionProbabilityDensities.elementAt(reactionCtr);
             Reaction reaction = reactionProbabilityDensity.getReaction();
             double probabilityDensity;
             try
@@ -352,10 +353,10 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
     private double computeAggregateReactionProbabilityDensity(Vector pReactionProbabilityDensities)
     {
         double aggregateReactionProbabilityDensity = 0.0;
-        Iterator reactionIter = pReactionProbabilityDensities.iterator();
-        while(reactionIter.hasNext())
+        int numReactions = pReactionProbabilityDensities.size();
+        for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
         {
-            ReactionProbabilityDensity reactionProbabilityDensity = (ReactionProbabilityDensity) reactionIter.next();
+            ReactionProbabilityDensity reactionProbabilityDensity = (ReactionProbabilityDensity) pReactionProbabilityDensities.elementAt(reactionCtr);
             Reaction reaction = reactionProbabilityDensity.getReaction();
             double probabilityDensity = reactionProbabilityDensity.getProbabilityDensity();
             aggregateReactionProbabilityDensity += probabilityDensity;
@@ -476,11 +477,11 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
             throw new IllegalArgumentException("invalid aggregate reaction probability density: " + pAggregateReactionProbabilityDensity);
         }
 
-        Iterator reactionIter = pReactionProbabilityDensities.iterator();
+        int numReactions = pReactionProbabilityDensities.size();
         Reaction reaction = null;
-        while(reactionIter.hasNext())
+        for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
         {
-            ReactionProbabilityDensity reactionProbabilityDensity = (ReactionProbabilityDensity) reactionIter.next();
+            ReactionProbabilityDensity reactionProbabilityDensity = (ReactionProbabilityDensity) pReactionProbabilityDensities.elementAt(reactionCtr);
             reaction = reactionProbabilityDensity.getReaction();
             cumulativeReactionProbabilityDensity += reactionProbabilityDensity.getProbabilityDensity();
             if(cumulativeReactionProbabilityDensity >= fractionOfAggregateReactionProbabilityDensity)
@@ -570,7 +571,6 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
         double aggregateReactionProbabilityDensity;
 
         aggregateReactionProbabilityDensity = computeAggregateReactionProbabilityDensity(reactionProbabilityDensities);
-
         assert (aggregateReactionProbabilityDensity > 0.0);
 
         return(1.0 / aggregateReactionProbabilityDensity);
@@ -899,12 +899,12 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
      * to allow an external thread to halt or stop the simulation in progress
      */
     public void evolve(Model pModel, 
-                       SpeciesPopulations pInitialSpeciesPopulations,
-                       double []pSampleTimes, 
-                       double pStartTime,
-                       double pStopTime,
-                       SpeciesPopulations []pPopulationSamples,
-                       SimulationController pSimulationController) throws IllegalArgumentException, IllegalStateException, DataNotFoundException
+                        SpeciesPopulations pInitialSpeciesPopulations,
+                        double []pSampleTimes, 
+                        double pStartTime,
+                        double pStopTime,
+                        SpeciesPopulations []pPopulationSamples,
+                        SimulationController pSimulationController) throws IllegalArgumentException, IllegalStateException, DataNotFoundException
     {
         validateSimulationParameters(pModel, 
                                      pInitialSpeciesPopulations, 
@@ -935,54 +935,69 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
 
         int iterationCtr = 0;
 
-        SpeciesPopulations lastSpeciesPopulations = new SpeciesPopulations();
+        boolean canHaveAnotherIteration = true;
+        boolean firstIteration = true;
+        double curTime = 0.0;
 
-        while(time.getValue() < pStopTime)
+        while(true)
         {
-            if(debuggingIsEnabled())
+            if(! firstIteration)
             {
-                debugPrintln("iteration number: " + iterationCtr++, DebugOutputVerbosityLevel.MEDIUM);
-            }
+                if(! canHaveAnotherIteration)
+                {
+                    time.setValue(pStopTime);
+                    curTime = pStopTime;
+                }
 
-            lastSpeciesPopulations.copy(speciesPopulations);
+                if(nextSampleTime < curTime)
+                {
+                    nextSampleCtr = savePopulationData(nextSampleCtr,
+                                                       maxSampleCtr,
+                                                       curTime,
+                                                       pPopulationSamples,
+                                                       speciesPopulations, 
+                                                       pSampleTimes,
+                                                       pSimulationController);
+                    if(SIMULATION_CANCELLED == nextSampleCtr)
+                    {
+                        // simulation has been cancelled; just return immediately
+                        return;
+                    }            
+                }
 
+                if(! canHaveAnotherIteration)
+                {
+                    break;
+                }
 
-
-            boolean canHaveAnotherIteration = iterate(pModel,
-                                                      speciesPopulations,
-                                                      reactionProbabilityDensities,
-                                                      time);
-
-            double curTime = time.getValue();
-
-            if(! canHaveAnotherIteration)
-            {
-                curTime = pStopTime;
-            }
-
-            while(nextSampleCtr < maxSampleCtr &&
-                  curTime > nextSampleTime)
-            {
-                pPopulationSamples[nextSampleCtr] = (SpeciesPopulations) lastSpeciesPopulations.clone();
-                ++nextSampleCtr;
                 if(nextSampleCtr < maxSampleCtr)
                 {
-                    if(null != pSimulationController)
-                    {
-                        if(pSimulationController.checkIfDone())
-                        {
-                            return;
-                        }
-                    }
-
                     nextSampleTime = pSampleTimes[nextSampleCtr];
                 }
             }
+            else
+            {
+                firstIteration = false;
+            }
 
-            if(! canHaveAnotherIteration)
+            if(curTime >= pStopTime)
             {
                 break;
             }
+
+            iterationCtr++;
+
+            if(debuggingIsEnabled())
+            {
+                debugPrintln("iteration number: " + iterationCtr, DebugOutputVerbosityLevel.MEDIUM);
+            }
+
+            canHaveAnotherIteration = iterate(pModel,
+                                              speciesPopulations,
+                                              reactionProbabilityDensities,
+                                              time);
+
+            curTime = time.getValue();
         }
 
         if(debuggingIsEnabled())
@@ -992,5 +1007,32 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
             Date curDateTime = new Date(System.currentTimeMillis());
             debugPrintln("simulation ending at time:        " + curDateTime + "\n", DebugOutputVerbosityLevel.LOW);
         }
+    }
+
+    private int savePopulationData(int pNextSampleCtr, 
+                                    int pMaxSampleCtr, 
+                                    double pCurTime, 
+                                    SpeciesPopulations []pPopulationSamples,
+                                    SpeciesPopulations pCurrentSpeciesPopulations,
+                                    double []pSampleTimes,
+                                    SimulationController pSimulationController)
+    {
+        double nextSampleTime = 0.0;
+
+        while(pNextSampleCtr < pMaxSampleCtr &&
+              (nextSampleTime = pSampleTimes[pNextSampleCtr]) < pCurTime)
+        {
+            pPopulationSamples[pNextSampleCtr] = (SpeciesPopulations) pCurrentSpeciesPopulations.clone();
+            ++pNextSampleCtr;
+            if(null != pSimulationController)
+            {
+                if(pSimulationController.checkIfDone())
+                {
+                    return(SIMULATION_CANCELLED);
+                }
+            }
+        }
+
+        return(pNextSampleCtr);
     }
 }
