@@ -12,6 +12,9 @@ package org.systemsbiology.inference;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import cern.colt.list.*;
 import cern.colt.matrix.*;
 
@@ -30,14 +33,181 @@ import org.systemsbiology.util.InvalidInputException;
  * @author sramsey
  *
  */
-public class ObservationsData
+public class ObservationsData implements Cloneable
 {
     private ObjectMatrix2D mObservations;
     private String []mElementNames;
     private String []mEvidenceNames;
-    private MatrixString mMatrixString;
     private double mMissingDataRate;
     private int []mNumObservations;
+    
+    public ObservationsData()
+    {
+        mElementNames = null;
+        mEvidenceNames = null;
+        mMissingDataRate = 0.0;
+        mNumObservations = null;
+        mObservations = null;
+    }
+    
+    public ObservationsData(ObjectMatrix2D pObservations,
+                            String []pElementNames,
+                            String []pEvidenceNames)
+    {
+        mObservations = pObservations;
+        mElementNames = pElementNames;
+        mEvidenceNames = pEvidenceNames;
+        calculateStatistics();
+    }
+    
+    public void setElementName(int pElementNumber, String pElementName)
+    {
+        mElementNames[pElementNumber] = pElementName;
+    }
+
+    public void setEvidenceName(int pEvidenceNumber, String pEvidenceName)
+    {
+        mEvidenceNames[pEvidenceNumber] = pEvidenceName;
+    }
+    
+    public void loadFromDataArray(ObservationsData []pObservationsDataArray)
+    {
+        int numFiles = pObservationsDataArray.length;
+        ObservationsData obsData = null;
+        HashMap elementsMap = new HashMap();
+        HashMap evidencesMap = new HashMap();
+        String evidenceName = null;
+        String elementName = null;
+        int numEvidences = 0;
+        int numElements = 0;
+        String []evidences = null;
+        String []elements = null;
+        ArrayList elementsList = new ArrayList();
+        ArrayList evidencesList = new ArrayList();
+        ArrayList tempElements = new ArrayList();
+        ArrayList tempEvidences = new ArrayList();
+        Integer index = null;
+        int i = 0; 
+        int j = 0;
+        int totalEvidences = 0;
+        int totalElements = 0;
+        Double obsObj = null;
+        ArrayList tempElementsList = new ArrayList();
+        ArrayList tempEvidencesList = new ArrayList();
+        
+        int k = 0;
+        
+        for(k = 0; k < numFiles; ++k)
+        {
+            obsData = pObservationsDataArray[k];
+            elements = obsData.getElementNames();
+            numElements = elements.length;
+            tempElements = new ArrayList();
+            for(i = 0; i < numElements; ++i)
+            {
+                elementName = elements[i];
+                index = (Integer) elementsMap.get(elementName);
+                if(null == index)
+                {
+                    elementsList.add(elementName);
+                    index = new Integer(elementsList.size() - 1);
+                    elementsMap.put(elementName, index);
+                }
+                tempElements.add(index);
+            }
+            totalElements = elementsList.size();
+            
+            evidences = obsData.getEvidenceNames();
+            numEvidences = evidences.length;
+            tempEvidences = new ArrayList();
+            for(j = 0; j < numEvidences; ++j)
+            {
+                evidenceName = evidences[j];
+                index = (Integer) evidencesMap.get(evidenceName);
+                if(null == index)
+                {
+                    evidencesList.add(evidenceName);
+                    index = new Integer(evidencesList.size() - 1);
+                    evidencesMap.put(evidenceName, index);
+                }
+                tempEvidences.add(index);
+            }
+            
+            totalEvidences = evidencesList.size();
+            
+            tempElementsList.add(tempElements);
+            tempEvidencesList.add(tempEvidences);
+        }
+        
+        String []elementNames = (String []) elementsList.toArray(new String[0]);
+        String []evidenceNames = (String []) evidencesList.toArray(new String[0]);
+        
+        int totalNumElements = elementsList.size();
+        int totalNumEvidences = evidencesList.size();
+        ObjectMatrix2D masterMat = ObjectFactory2D.dense.make(totalNumElements, totalNumEvidences);
+        masterMat.assign((Object) null);
+        
+        int ip = 0;
+        int jp = 0;
+        
+        for(k = 0; k < numFiles; ++k)
+        {
+            obsData = pObservationsDataArray[k];
+            tempElements = (ArrayList) tempElementsList.get(k);
+            tempEvidences = (ArrayList) tempEvidencesList.get(k);
+            numElements = tempElements.size();
+            numEvidences = tempEvidences.size();
+            ObjectMatrix2D obsMat = obsData.getObservations();
+            for(j = 0; j < numEvidences; ++j)
+            {
+                jp = ((Integer) tempEvidences.get(j)).intValue();
+                for(i = 0; i < numElements; ++i)
+                {
+                    obsObj = (Double) obsMat.get(i, j);
+                    if(null != obsObj)
+                    {
+                        ip = ((Integer) tempElements.get(i)).intValue();
+                        if(null != masterMat.get(ip, jp))
+                        {
+                            throw new IllegalArgumentException("conflicting data for element \"" + elementNames[ip] + 
+                                      "\" and evidence \"" +
+                                      evidenceNames[jp] + "\"");
+                        }
+                        masterMat.set(ip, jp, obsObj);
+                    }
+                }
+            }
+        }
+        
+        mObservations = masterMat;
+        mElementNames = elementNames;
+        mEvidenceNames = evidenceNames;
+        calculateStatistics();
+    }
+    
+    public Object clone()
+    {
+        ObservationsData newObj = new ObservationsData();
+        
+        int numElements = mElementNames.length;
+        String []elements = new String[numElements];
+        System.arraycopy(mElementNames, 0, elements, 0, numElements);
+        newObj.mElementNames = elements;
+        
+        int numEvidences = mEvidenceNames.length;
+        String []evidences = new String[numEvidences];
+        System.arraycopy(mEvidenceNames, 0, evidences, 0, numEvidences);
+        newObj.mEvidenceNames = evidences;
+        
+        newObj.mObservations = mObservations.copy();
+        newObj.mMissingDataRate = mMissingDataRate;
+        
+        int []numObservations = new int[numEvidences];
+        System.arraycopy(mNumObservations, 0, numObservations, 0, numEvidences);
+        newObj.mNumObservations = numObservations;
+        
+        return newObj;
+    }
     
     ObjectMatrix2D getObservations()
     {
@@ -47,6 +217,36 @@ public class ObservationsData
     void setObservations(ObjectMatrix2D pObservations)
     {
         mObservations = pObservations;
+        calculateStatistics();
+    }
+    
+    private void calculateStatistics()
+    {
+        int numElements = mObservations.rows();
+        int numEvidences = mObservations.columns();
+
+        int missingCtr = 0;
+        
+        mNumObservations = new int[numEvidences];
+       
+        for(int j = 0; j < numEvidences; ++j)
+        {
+            int obsCtr = 0;
+            for(int i = 0; i < numElements; ++i)
+            {
+                if(null == mObservations.get(i, j))
+                {
+                    ++missingCtr;
+                }
+                else
+                {
+                    ++obsCtr;
+                }
+            }
+            mNumObservations[j] = obsCtr;
+        }
+        
+        mMissingDataRate = ((double) missingCtr)/((double) (numElements * numEvidences));
     }
     
     public int getNumElements()
@@ -80,6 +280,11 @@ public class ObservationsData
         return elementNames;
     }
     
+    public double getMissingDataRate()
+    {
+        return mMissingDataRate;
+    }
+        
     public String []getEvidenceNames()
     {
         int numEvidences = mEvidenceNames.length;
@@ -89,6 +294,11 @@ public class ObservationsData
             evidenceNames[j] = mEvidenceNames[j];
         }
         return evidenceNames;
+    }
+    
+    public void setValueAt(int pRow, int pColumn, Double pValue)
+    {
+        mObservations.set(pRow, pColumn, pValue);
     }
     
     public Double getValueAt(int pRow, int pColumn)
@@ -164,7 +374,6 @@ public class ObservationsData
         }
         Double elemValObj = null;
         mObservations = ObjectFactory2D.dense.make(numElements, numEvidences);
-        int missingCtr = 0;
         for(int i = 0; i < numElements; ++i)
         {
             for(int j = 0; j < numEvidences; ++j)
@@ -184,25 +393,12 @@ public class ObservationsData
                 else
                 {
                     elemValObj = null;
-                    ++missingCtr;
                 }
                 mObservations.set(i, j, elemValObj);
             }
         }
-        mMissingDataRate = ((double) missingCtr)/((double) numEvidences*numElements);
-        mNumObservations = new int[numEvidences];
-        for(int j = 0; j < numEvidences; ++j)
-        {
-        	int obsCtr = 0;
-        	for(int i = 0; i < numElements; ++i)
-        	{
-        		if(null != mObservations.get(i, j))
-        		{
-        			++obsCtr;
-        		}
-        	}
-        	mNumObservations[j] = obsCtr;
-        }
+
+        calculateStatistics();
     }    
 
     public int getNumObservations(int pEvidenceNum)

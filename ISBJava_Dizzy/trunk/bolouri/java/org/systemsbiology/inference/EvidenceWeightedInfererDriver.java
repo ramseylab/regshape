@@ -65,7 +65,6 @@ public class EvidenceWeightedInfererDriver
     
     private static final int MIN_NUM_BINS = 10;
     private static final double MAX_COMBINED_SIGNIFICANCE_CUTOFF = 1.0e-8;
-    private static final int NUM_COLUMNS_TEXT_FIELD_FILE_NAME = 30;
     private static final int NUM_COLUMNS_NUMERIC_FIELD = 10;
     public static final int DEFAULT_NUM_BINS = 100;
     public static final double DEFAULT_INITIAL_SIGNIFICANCE_CUTOFF = 0.05;
@@ -80,6 +79,7 @@ public class EvidenceWeightedInfererDriver
     private EvidenceWeightedInfererResults mEvidenceWeightedInfererResults;
     private EmptyTableModel mEmptyTableModel;
     
+    private JButton mClearFileButton;
     private JTable mSignificancesTable;
     private JLabel mFileNameLabel;
     private JLabel mBinsLabel;
@@ -742,6 +742,8 @@ public class EvidenceWeightedInfererDriver
 
         if(pFileLoaded)
         {
+            mLoadFileButton.setToolTipText(null);
+            mLoadFileButton.setToolTipText(TOOL_TIP_CLEAR_FILE);
             mInferButton.setToolTipText(TOOL_TIP_INFER_BUTTON);
             mWeightBox.setToolTipText(TOOL_TIP_WEIGHT_BOX);
             mBinsField.setToolTipText(TOOL_TIP_BINS_FIELD);
@@ -751,9 +753,12 @@ public class EvidenceWeightedInfererDriver
             mSeparationField.setToolTipText(TOOL_TIP_SEPARATION_FIELD);
             mSignificancesTable.setToolTipText(TOOL_TIP_SIGNIFICANCES);
             mSmoothingLengthField.setToolTipText(TOOL_TIP_SMOOTHING_LENGTH_FIELD);
+            mResetFormButton.setToolTipText(TOOL_TIP_RESET_FORM);
         }
         else
         {
+            mLoadFileButton.setToolTipText(TOOL_TIP_LOAD_FILE);
+            mClearFileButton.setToolTipText(null);
             mInferButton.setToolTipText(null);
             mWeightBox.setToolTipText(null);
             mBinsField.setToolTipText(null);
@@ -763,6 +768,7 @@ public class EvidenceWeightedInfererDriver
             mSeparationField.setToolTipText(null);
             mSignificancesTable.setToolTipText(null);
             mSmoothingLengthField.setToolTipText(null);
+            mResetFormButton.setToolTipText(null);
         }
         
         if(pResultsObtained)
@@ -818,7 +824,7 @@ public class EvidenceWeightedInfererDriver
         JButton loadFileButton = new JButton("load sigs");
         mLoadFileButton = loadFileButton;
         JButton fileClear = new JButton("clear sigs");
-        fileClear.setToolTipText(TOOL_TIP_CLEAR_FILE);
+        mClearFileButton = fileClear;
         fileClear.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -826,7 +832,6 @@ public class EvidenceWeightedInfererDriver
                 clearFile();
             }
         });
-        loadFileButton.setToolTipText(TOOL_TIP_LOAD_FILE);
         loadFileButton.addActionListener(new ActionListener()
                 {
             public void actionPerformed(ActionEvent e)
@@ -855,7 +860,6 @@ public class EvidenceWeightedInfererDriver
         gridLayout.setConstraints(fileButtonPanel, constraints);
         
         JLabel fileNameLabel = new JLabel("");
-        fileNameLabel.setToolTipText(TOOL_TIP_LOAD_FILE);
         JPanel fileNameLabelPanel = new JPanel();
         fileNameLabel.setPreferredSize(new Dimension(400, 10));
         fileNameLabel.setMinimumSize(new Dimension(400, 10));
@@ -1141,7 +1145,6 @@ public class EvidenceWeightedInfererDriver
         
         JButton resetButton = new JButton("reset form");
         mResetFormButton = resetButton;
-        resetButton.setToolTipText(TOOL_TIP_RESET_FORM);
         resetButton.addActionListener(new ActionListener()
                 {
             public void actionPerformed(ActionEvent e)

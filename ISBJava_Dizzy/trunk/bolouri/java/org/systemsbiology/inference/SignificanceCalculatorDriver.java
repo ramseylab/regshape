@@ -69,10 +69,8 @@ public class SignificanceCalculatorDriver
     private static final double DEFAULT_MAX_CHI_SQUARE = 1.0;
     private static final int MIN_NUM_BINS = 10;
     private static final int NUM_COLUMNS_TEXT_FIELD_NUMERIC = 15;
-    private static final int NUM_COLUMNS_TEXT_FIELD_FILE_NAME = 30;
     private static final SignificanceCalculationFormula DEFAULT_SIGNIFICANCE_CALCULATION_FORMULA = SignificanceCalculationFormula.CDF;    
     private static final DataFileDelimiter DEFAULT_DATA_FILE_DELIMITER = DataFileDelimiter.COMMA;
-    private static final String COLUMN_NAME_ELEMENT = "element";
     private static final double DEFAULT_SMOOTHING_LENGTH = 1.0;
     
     private Component mParent;
@@ -478,62 +476,6 @@ public class SignificanceCalculatorDriver
         }        
     }
     
-    class ObservationsTableModel extends AbstractTableModel
-    {
-        private ObservationsData mObservationsData;
-        
-        public ObservationsTableModel(ObservationsData pObservationsData)
-        {
-            mObservationsData = pObservationsData;
-        }
-        
-        public int getRowCount()
-        {
-            return mObservationsData.getNumElements();
-        }
-        
-        public int getColumnCount()
-        {
-            return mObservationsData.getNumEvidences() + 1;
-        }
-        
-        public String getColumnName(int pColumn)
-        {
-            if(pColumn == 0)
-            {
-                return COLUMN_NAME_ELEMENT;
-            }
-            else
-            {
-                return mObservationsData.getEvidenceName(pColumn - 1);
-            }
-        }
-        
-        public Object getValueAt(int pRow, int pColumn)
-        {
-            Object retObj = null;
-            
-            if(pColumn == 0)
-            {
-                retObj = mObservationsData.getElementName(pRow);
-            }
-            else
-            {
-                Double val = mObservationsData.getValueAt(pRow, pColumn - 1);
-                if(null != val)
-                {
-                    retObj = mNumberFormat.format(val.doubleValue());
-                }
-                else
-                {
-                    retObj = null;
-                }
-            }
-            return retObj;
-        }
-
-    }
-    
     public SignificanceCalculatorDriver()
     {
         mSignificanceCalculator = new SignificanceCalculator();
@@ -556,6 +498,8 @@ public class SignificanceCalculatorDriver
     {
         if(pFileLoaded)
         {
+            mFileLoadButton.setToolTipText(null);
+            mFileClearButton.setToolTipText(TOOL_TIP_FILE_CLEAR_BUTTON);
             mObservationsTable.setToolTipText(TOOL_TIP_OBSERVATIONS_TABLE);
             mFormulaLabel.setToolTipText(TOOL_TIP_FORMULAS_BOX);
             mFormulasBox.setToolTipText(TOOL_TIP_FORMULAS_BOX);
@@ -564,6 +508,8 @@ public class SignificanceCalculatorDriver
         }
         else
         {
+            mFileLoadButton.setToolTipText(TOOL_TIP_FILE_LOAD_BUTTON);
+            mFileClearButton.setToolTipText(null);
             mObservationsTable.setToolTipText(null);
             mFormulaLabel.setToolTipText(null);
             mFormulasBox.setToolTipText(null);
@@ -614,7 +560,6 @@ public class SignificanceCalculatorDriver
                 cellEditor.cancelCellEditing();
             }
         }
-        mDelimiterBox.setSelectedItem(DEFAULT_DATA_FILE_DELIMITER.getName());
     }
     
     private void initializeEvidenceChoicesTable()
@@ -768,7 +713,6 @@ public class SignificanceCalculatorDriver
         
         JPanel fileButtonPanel = new JPanel();
         JButton fileLoadButton = new JButton("load observations");
-        fileLoadButton.setToolTipText(TOOL_TIP_FILE_LOAD_BUTTON);
         mFileLoadButton = fileLoadButton;
         fileButtonPanel.add(fileLoadButton);
         fileLoadButton.addActionListener(new ActionListener()
@@ -779,7 +723,6 @@ public class SignificanceCalculatorDriver
             }
                 });
         JButton fileClearButton = new JButton("clear observations");
-        fileClearButton.setToolTipText(TOOL_TIP_FILE_CLEAR_BUTTON);
         mFileClearButton = fileClearButton;
         fileButtonPanel.add(fileClearButton);
         topPanel.add(fileButtonPanel);
@@ -1291,7 +1234,7 @@ public class SignificanceCalculatorDriver
         {
             if(0 == pColumn)
             {
-                return COLUMN_NAME_ELEMENT;
+                return ObservationsTableModel.COLUMN_NAME_ELEMENT;
             }
             else
             {
@@ -1433,6 +1376,8 @@ public class SignificanceCalculatorDriver
         clearResults();
         setEnableStateForFields(false, false);
         setToolTipsForFields(false, false);
+        mDelimiterBox.setSelectedItem(DEFAULT_DATA_FILE_DELIMITER.getName());
+        setDefaults();
     }
     
     private void saveResults()
@@ -1474,7 +1419,7 @@ public class SignificanceCalculatorDriver
         String delimiter = pDelimiter.getDelimiter();
         int numEvidences = evidences.length;
         int numElements = elements.length;
-        sb.append(COLUMN_NAME_ELEMENT + delimiter);
+        sb.append(ObservationsTableModel.COLUMN_NAME_ELEMENT + delimiter);
         for(int j = 0; j < numEvidences; ++j)
         {
             sb.append(evidences[j]);
