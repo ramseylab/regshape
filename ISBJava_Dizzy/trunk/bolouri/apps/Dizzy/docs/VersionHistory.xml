@@ -44,6 +44,24 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.6.3/&installerDownloadRelURL;">1.6.3</a></td>
+<td>2004/03/26</td>
+<td>
+<ul>
+<li>Fixed a bug in the SBML model reader, that was reported by Adam Margolin.  
+This bug would cause an error in some cases, where
+there are more boundary species than dynamical species in a model.</li>
+<li>Improved the speed of the Gillesipe Tau-Leap
+simulator, for large models with complex reaction rate expressions.</li>
+<li>Made some speed improvements to the mathematical expression evaluation
+engine, which will improve the performance for simulating models
+with complex rate expressions, as well as the Gillespie Tau-Leap simulator.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.6.3/&installerDownloadRelURL;">1.6.3</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.6.2/&installerDownloadRelURL;">1.6.2</a></td>
 <td>2004/03/22</td>
 <td>
