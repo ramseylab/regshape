@@ -60,7 +60,8 @@ This document contains the version history for the
 <td>2004/05/04</td>
 <td>
 <ul>
-<li>First release of the software.  Linux only version.  Requires Matlab.</li>
+<li>First release of the software.  Linux only version.  Requires Matlab and
+  the Matlab Statistics Toolbox.</li>
 </ul>
 </td>
 <td>n/a</td>
