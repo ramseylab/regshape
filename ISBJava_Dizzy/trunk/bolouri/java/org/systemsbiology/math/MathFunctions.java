@@ -41,6 +41,24 @@ public final class MathFunctions
         }
     }
 
+    public static double vectorMaxElements(double []vec)
+    {
+        assert (vec.length > 0) : "computing the maximum of a vector requires non-zero length";
+        double retVal = -1.0 * Double.MAX_VALUE;
+
+        int size = vec.length;
+
+        for(int ctr = size; --ctr >= 0; )
+        {
+            if(vec[ctr] > retVal)
+            {
+                retVal = vec[ctr];
+            }
+        }
+
+        return(retVal);
+    }
+
     public static double vectorSumElements(double []vec)
     {
         double retVal = 0.0;
