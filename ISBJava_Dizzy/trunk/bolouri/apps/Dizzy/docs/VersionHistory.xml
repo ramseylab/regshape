@@ -17,8 +17,7 @@
 <dt><b>0.0.1 (2003/04/01)</b></dt>
 <dd>First version of the program.  It is an alpha version,
 intended only for internal use at ISB.  Uses version
-<code>REL-0_0_1</code> of the &quot;<code>isb.jar</code>&quot;
-Java library.</dd>
+<code>ISBJava-0_0_1</code> of the <a href="&webBaseURL;/javadoc">ISBJava</a> library</dd>
 </dl>
 </p>
 </isb:document>
