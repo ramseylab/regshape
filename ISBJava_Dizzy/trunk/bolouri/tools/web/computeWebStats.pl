@@ -101,6 +101,35 @@ sub main()
     close(ISBJAVA_DOWNLOADS);
     text_to_jpg($numISBJavaDownloads, SCRATCH_DIR . "/ISBJavaDownloads.jpg");
     system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/ISBJava/images " . SCRATCH_DIR . "/ISBJavaDownloads.jpg") and die("unable to FTP ISBJavaDownloads.jpg file to FTP server");
+
+    open(DIZZY_VISITORS, "<" . SCRATCH_DIR . "/DizzyVisitors.txt") or die("unable to open Dizzy visitors file, for reading");
+    my $numDizzyVisitors = <DIZZY_VISITORS>;
+    close(DIZZY_VISITORS);
+    if(! defined($numDizzyVisitors))
+    {
+        $numDizzyVisitors = 0;
+    }
+    $numDizzyVisitors += `/bin/grep '/Dizzy/ HTTP' $logFile | /usr/bin/wc --lines`;
+    open(DIZZY_VISITORS, ">" . SCRATCH_DIR . "/DizzyVisitors.txt") or die("unable do open Dizzy visitors file, for writing");
+    print DIZZY_VISITORS $numDizzyVisitors . "\n";
+    close(DIZZY_VISITORS);
+    text_to_jpg($numDizzyVisitors, SCRATCH_DIR . "/DizzyVisitors.jpg");
+    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/Dizzy/images " . SCRATCH_DIR . "/DizzyVisitors.jpg") and die("unable to FTP DizzyVisitors.jpg file to FTP server");
+
+    open(ISBJAVA_VISITORS, "<" . SCRATCH_DIR . "/ISBJavaVisitors.txt") or die("unable to open ISBJava visitors file, for reading");
+    my $numISBJavaVisitors = <ISBJAVA_VISITORS>;
+    close(ISBJAVA_VISITORS);
+    if(! defined($numISBJavaVisitors))
+    {
+        $numISBJavaVisitors = 0;
+    }
+    $numISBJavaVisitors += `/bin/grep '/ISBJava/ HTTP' $logFile | /usr/bin/wc --lines`;
+    open(ISBJAVA_VISITORS, ">" . SCRATCH_DIR . "/ISBJavaVisitors.txt") or die("unable do open ISBJava visitors file, for writing");
+    print ISBJAVA_VISITORS $numISBJavaVisitors . "\n";
+    close(ISBJAVA_VISITORS);
+    text_to_jpg($numISBJavaVisitors, SCRATCH_DIR . "/ISBJavaVisitors.jpg");
+    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/ISBJava/images " . SCRATCH_DIR . "/ISBJavaVisitors.jpg") and die("unable to FTP ISBJavaVisitors.jpg file to FTP server");
+
 }
 
 main();
