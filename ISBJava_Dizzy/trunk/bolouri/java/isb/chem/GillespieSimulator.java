@@ -385,7 +385,7 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
                                             pSpeciesPopulations,
                                             pReactionProbabilityDensities,
                                             time);
-
+        
         // compute the aggregate reaction probability density
         double aggregateProbabilityDensity = computeAggregateReactionProbabilityDensity(pReactionProbabilityDensities);
 
@@ -460,7 +460,8 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
             debugPrintln("timeConstant: " + timeConstant, DebugOutputVerbosityLevel.HIGH);
             debugPrintln("logInverseRandomNumberUniformInterval: " + logInverseRandomNumberUniformInterval, DebugOutputVerbosityLevel.HIGH);
         }
-        return(timeConstant * logInverseRandomNumberUniformInterval);
+        double deltaTime = timeConstant * logInverseRandomNumberUniformInterval;
+        return(deltaTime);
     }
 
     private Reaction chooseTypeOfNextReaction(double pAggregateReactionProbabilityDensity, 
@@ -939,6 +940,8 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
         boolean firstIteration = true;
         double curTime = 0.0;
 
+        SpeciesPopulations lastSpeciesPopulations = (SpeciesPopulations) speciesPopulations.clone();
+
         while(true)
         {
             if(! firstIteration)
@@ -955,7 +958,7 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
                                                        maxSampleCtr,
                                                        curTime,
                                                        pPopulationSamples,
-                                                       speciesPopulations, 
+                                                       lastSpeciesPopulations, 
                                                        pSampleTimes,
                                                        pSimulationController);
                     if(SIMULATION_CANCELLED == nextSampleCtr)
@@ -991,6 +994,8 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
             {
                 debugPrintln("iteration number: " + iterationCtr, DebugOutputVerbosityLevel.MEDIUM);
             }
+
+            lastSpeciesPopulations.copy(speciesPopulations);
 
             canHaveAnotherIteration = iterate(pModel,
                                               speciesPopulations,
