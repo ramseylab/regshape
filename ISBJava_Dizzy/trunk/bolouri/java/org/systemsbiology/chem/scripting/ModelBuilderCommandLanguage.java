@@ -384,7 +384,15 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         }
 
         String expressionString = expressionBuffer.toString();
-        Expression expression = new Expression(expressionString);
+        Expression expression = null;
+        try
+        {
+            expression = new Expression(expressionString);
+        }
+        catch(IllegalArgumentException e)
+        {
+            throw new InvalidInputException("invalid mathematical formula; cause is: " + e.getMessage() + ";", e);
+        }
         Value value = null;
         if(deferredExpression)
         {
@@ -1406,14 +1414,14 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
             catch(InvalidInputException e)
             {
-                StringBuffer message = new StringBuffer(e.toString());
+                StringBuffer message = new StringBuffer(e.getMessage());
                 message.append(" at line " + lineCtr + " of model definition file");
                 throw new InvalidInputException(message.toString(), e);
             }
 
             catch(DataNotFoundException e)
             {
-                StringBuffer message = new StringBuffer(e.toString());
+                StringBuffer message = new StringBuffer(e.getMessage());
                 message.append(" at line " + lineCtr + " of model definition file");
                 throw new InvalidInputException(message.toString(), e);
             }
