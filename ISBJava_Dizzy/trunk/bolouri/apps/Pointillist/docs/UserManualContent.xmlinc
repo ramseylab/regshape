@@ -918,7 +918,8 @@ requires the Matlab Statistics Toolbox.
     indicates "dynamic" (time-course) data.  A data type of "3"
     indicates data from "deletion" (knock-out) experiments.
     <b>Note:</b> this program requires the <code>statgetargs.m</code>
-    program from the Matlab Statistics Toolbox.</dd>
+    program and the <code>ksdensity.m</code> program 
+    from the Matlab Statistics Toolbox.</dd>
   <dt><b>qnorm.m</b></dt>
   <dd>This program is the quantile normalizer.  The
     function <code>qnorm(filename, missing)</code> is called
