@@ -37,9 +37,10 @@ This document contains the version history for the
 <td>Comments</td>
 </tr>
 
+<!--
   <tr valign="top">
-<td><a href="../2.1.1/download.html">2.1.1</a></td>
-<td>2005/02/18</td>
+<td><a href="../2.2.0/download.html">2.2.0</a></td>
+<td>2005/02/??</td>
 <td>
 <ul>
   <li>Updated <code>org.systemsbiology.inference.SignificancesData</code> and 
@@ -54,20 +55,36 @@ This document contains the version history for the
       which is essentially a spreadsheet program adapted for
     manipulating multi-evidence biological systems data.  Data merging, sorting, and (evidence-specific) subselection
     are supported.</li>
+  <li>Added a <code>writeToFile()</code> method to the <code>org.systemsbiology.inference.ObservationsData</code> class.</li>
+  <li>Modified <code>org.systemsbiology.inference.SignificancesData.loadFromFile()</code> so that 
+    it will interpret a cell containing the string "null" (and not in the first row or first
+    column of the data file) as an empty cell.</li>
+</ul>
+</td>
+</tr>
+-->
+
+  <tr valign="top">
+<td><a href="../2.1.1/download.html">2.1.1</a></td>
+<td>2005/02/18</td>
+<td>
+<ul>
   <li>Added an enumeration class defining the three allowed states of  
       graphical user inferface table column sorting status, 
       <code>org.systemsbiology.gui.SortingStatus</code>.</li>
   <li>Added a <code>scrubIdentifier()</code> method to the <code>org.systemsbiology.data.DataFileDelimmiter</code>
     class, which takes a string identifier and converts any instances of the <code>DataFileDelimiter</code> 
     object's delimiter character (or string) into the "_" (underscore) character.</li>
-  <li>Added a <code>writeToFile()</code> method to the <code>org.systemsbiology.inference.ObservationsData</code> class.</li>
-  <li>Modified <code>org.systemsbiology.inference.SignificancesData.loadFromFile()</code> so that 
-    it will interpret a cell containing the string "null" (and not in the first row or first
-    column of the data file) as an empty cell.</li>
   <li>Modified <code>org.systemsbiology.gui.HelpBrowser</code> to cache the <code>HelpBroker</code>, 
     which may help speed up the initialization process for the help browser.</li>
   <li>Removed <code>cytoscape.jar</code> that was mistakenly being included in the
     <code>ISBJava.tar.gz</code> distribution.</li>
+  <li>
+    Added the <code>org.systemsbiology.inference</code> package, which has code for
+    inferring a set of affected network elements from multiple evidence types.
+  </li>
+  <li>
+    
 </ul>
 </td>
 </tr>
@@ -181,11 +198,6 @@ This document contains the version history for the
     Changed the <code>org.systemsbiology.data.DataFileDelimiter.forName()</code> method to
     <code>get()</code>.
   </li>
-  <li>
-    Added the <code>org.systemsbiology.inference</code> package, which has code for
-    inferring a set of affected network elements from multiple evidence types.
-  </li>
-  <li>
     Fixed some incorrect error messages in <code>org.systemsbiology.chem.SimulatorDeterministicRungeKuttaFixed</code>,
     for the case of an <code>org.systemsbiology.math.AccuracyException</code>.
   </li>

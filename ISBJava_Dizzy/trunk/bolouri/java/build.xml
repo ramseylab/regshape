@@ -278,6 +278,7 @@
       	<include name="${app.rootPackage}/**/*.png" />
 	   	<include name="${app.rootPackage}/**/*.jpg" />
         <exclude name="${app.rootPackage}/**/tp/*.class" />
+        <exclude name="org/systemsbiology/inference/**" />
       </fileset>
     </jar>
   </target>
