@@ -69,7 +69,7 @@ public class DataFileDelimiter implements Comparable
         return mName;
     }
         
-    public static DataFileDelimiter forName(String pName)
+    public static DataFileDelimiter get(String pName)
     {
         return (DataFileDelimiter) sMap.get(pName);
     }
