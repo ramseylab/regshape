@@ -36,6 +36,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     private static final String VALID_SYMBOL_REGEX = "^[_a-zA-Z]([_a-zA-Z0-9])*$";
     private static final Pattern VALID_SYMBOL_PATTERN = Pattern.compile(VALID_SYMBOL_REGEX);
 
+    private static final String COMPARTMENT_NAME_DEFAULT = "univ";
+
     private String mNamespace;
 
     static class Macro extends SymbolValue
@@ -138,8 +140,6 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         Pattern searchPattern = Pattern.compile(searchRegex);
         setSearchPatternMath(searchPattern);
     }
-
-    private static final String COMPARTMENT_NAME_DEFAULT = "univ";
 
     private void initializeDefaultModelSymbols()
     {
@@ -382,7 +382,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
         public SymbolEvaluatorNamespaced(HashMap pSymbolMap, String pNamespace)
         {
-            super(pSymbolMap);
+            super();
+            setSymbolsMap(pSymbolMap);
             mNamespace = pNamespace;
         }
 
