@@ -29,7 +29,7 @@ public class HelpBrowser
             File appDir = theApp.getAppDir();
             String helpSetName = theApp.getAppConfig().getAppHelpSetName();
 
-            if(helpSetName != null && helpSetName.length() > 0)
+            if(helpSetName != null && helpSetName.trim().length() > 0)
             {
 
                 URL helpPackageURL = HelpSet.findHelpSet(null, helpSetName);
