@@ -38,6 +38,77 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.7.0/download.html">1.7.0</a></td>
+<td>2004/06/08</td>
+<td>
+<ul>
+<li>
+Added the capability to detect the &quot;substance&quot; units in an SBML model,
+to the SBML-parsing library, <code>SBMLReader</code>.  Modified the
+<code>ModelBuilderMarkupLanguage</code> to use this capability to configure
+the <code>SymbolEvaluationPostProcessorChemMarkupLanguage</code> to auto-convert
+species symbols appearing in formulas, from molecules to molar concentration.
+</li>
+<li>
+Fixed a bug in the <code>org.systemsbiology.util.ClassRegistry</code> such that
+the registry was not working properly, when an application using <code>ISBJava</code>
+is deployed using Java Web Start.  The <code>ClassRegistry</code> class was not
+using the correct method to obtain the current user-space class loader.
+</li>
+<li>
+Overhauled the <code>org.systemsbiology.util.Queue</code> class so that it is now an abstract base
+superclass for <code>IndexedPriorityQueue</code>, <code>PriorityQueue</code>,
+and <code>ListQueue</code>.  This enables the alternate use of <code>PriorityQueue</code>
+and <code>ListQueue</code> within <code>org.systemsbiology.chem.DelayedReactionSolver</code>,
+for storing the expected times for a delayed reaction to produce product molecules.
+</li>
+<li>
+Made <code>org.systemsbiology.math.SymbolEvaluationPostProcessor</code> 
+cloneable, which is necessary because some of the post processor class
+implementations are stateful and therefore need to be cloned by the
+<code>org.systemsbiology.chem.Simulator</code> before they can be used.
+Each <code>Simulator</code> needs to have its own <em>separate</em> copy 
+of the applicable <code>SymbolEvaluationPostProcessor</code> object.  Otherwise,
+models loaded from SBML with substance units of &quot;mole&quot; will not
+function properly in any but the first simulator selected in the simulation
+controller window.
+</li>
+<li>
+Modified the <code>org.systemsbiology.chem.sbml.ModelExporterMarkupLanguage</code> 
+so that it preserves the substance units that the model originally had when
+it was imported, when exporting a model to SBML.
+</li>
+<li>
+Modified the <code>org.systemsbiology.chem.odetojava.SimulatorOdeToJavaBase</code>
+so that it takes a smaller initial step size, when there are delayed reactions in 
+the model.
+</li>
+<li>Modified the <code>org.systemsbiology.chem.sbw.SimulationModule</code> so that
+it prints out a message indicating that the simulators have been registered
+or initiated.</li>
+<li>Fixed potential <code>ArrayIndexOutOfBoundsException</code> in
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> if there is
+a class loading problem, and the <code>ClassRegistry</code> does not 
+discover any <code>org.systemsbiology.chem.ISimulator</code> classes 
+in the classpath.</li>
+<li>Modified the <code>org.systemsbiology.chem.TimeSeriesSymbolValuesReporter</code>
+class so that it prints symbol values in scientific notation.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.SymbolEvaluatorChem.getExpressionValue()</code> 
+where it was not finding symbols in the local symbols map.  This was causing a
+<code>NullPointerException</code> when an SBML model with local reaction parameters, 
+is simulated using the <code>org.systemsbiology.chem.SimulatorStochasticTauLeapComplex</code> 
+simulator.</li>
+<li>Moved the <code>org.systemsbiology.chem.Reaction.computeRatePartialDerivative()</code>
+method to the <code>org.systemsbiology.chem.Simulator</code> class, in order to fix
+a bug where SBML models with local parameters were not being simulated correctly.</li>
+<li>Modified the <code>org.systemsbiology.chem.DelayedReactionSolver</code> so that
+multistep and delayed reactions are handled completely separately.  Fixed some problems
+with how delayed reactions were being numerically solved in the ODE simulators.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.6.4/download.html">1.6.4</a></td>
 <td>2004/04/05</td>
 <td>
@@ -71,9 +142,6 @@ so that it is no longer a subclass of <code>org.systemsbiology.math.Expression</
 Fixed a problem with the <code>org.systemsbiology.chem.DelayedReactionSolver.computeValue()</code>
 where the delay was artificially long in some cases, and renamed the method 
 <code>computeRate()</code>.</li>
-<li>Modified the <code>org.systemsbiology.chem.sbw.SimulationModule</code> so that
-it prints out a message indicating that the simulators have been registered
-or initiated.</li>
 </ul>
 </td>
 </tr>
@@ -669,7 +737,7 @@ clipboard.</li>
 <ul>
 <li>Added new deterministic (ODE) simulators to the <code>org.systemsbiology.chem</code> package,
 based on the &quot;odeToJava&quot; library for numerical solution of ODEs.  This library
-includes a Dortmand-Prince 4/5 Runge-Kutta solver with adaptive step-size control, and
+includes a Dormand-Prince 4/5 Runge-Kutta solver with adaptive step-size control, and
 an implicit/explicit Runge-Kutta solver with adaptive step-size control (for models
 with a high degree of stiffness).</li>
 <li>Modified the <code>org.systemsbiology.chem.scripting.ModelBuilderMarkupLanguage</code>
