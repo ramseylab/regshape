@@ -230,8 +230,6 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
         double newTimeOfNextReactionEvent = 0.0;
         if(pLastReactionIndex != pReactionIndex)
         {
-            assert (oldTimeOfNextReactionEvent > time) : "invalid time";
-
             if(newRate > 0.0 && oldRate > 0.0)
             {
                 newTimeOfNextReactionEvent = (oldTimeOfNextReactionEvent - time)*oldRate/newRate + time;
@@ -253,8 +251,6 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
             newTimeOfNextReactionEvent = time + chooseDeltaTimeToNextReaction(pRandomNumberGenerator, newRate);
         }
 
-        assert (newTimeOfNextReactionEvent > time) : "invalid time to next reaction";
-                
         timeOfNextReactionEventObj.setValue(newTimeOfNextReactionEvent);
         pPutativeTimeToNextReactions.update(pReactionIndex, timeOfNextReactionEventObj);
         pReactionProbabilities[pReactionIndex] = newRate;
@@ -294,8 +290,6 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
 
         double time = pSymbolEvaluator.getTime();
 
-        assert (pSymbolEvaluator.getTime() <= ((MutableDouble) putativeTimeToNextReactions.get(putativeTimeToNextReactions.peekIndex())).getValue()) : "invalid time";
-
         int lastReactionIndex = pLastReactionIndex.getValue();
         if(NULL_REACTION != lastReactionIndex)
         {
@@ -330,9 +324,7 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
         }
 
         int reactionIndex = putativeTimeToNextReactions.peekIndex();
-        assert (-1 != reactionIndex) : "invalid reaction index";
         MutableDouble timeOfNextReactionObj = (MutableDouble) putativeTimeToNextReactions.get(reactionIndex);
-        assert (null != timeOfNextReactionObj) : "invalid time of next reaction object";
         double timeOfNextReaction = timeOfNextReactionObj.getValue();
 
         if(0 == pDelayedReactionSolvers.length)
@@ -346,7 +338,6 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
             {
                 DelayedReactionSolver solver = pDelayedReactionSolvers[nextDelayedReactionIndex];
                 double nextDelayedReactionTime = solver.peekNextReactionTime();
-                assert (nextDelayedReactionTime > time) : "invalid time for next delayed reaction";
 //                System.out.println("next delayed reaction will occur at: " + nextDelayedReactionTime);
                 if(nextDelayedReactionTime < timeOfNextReaction)
                 {
