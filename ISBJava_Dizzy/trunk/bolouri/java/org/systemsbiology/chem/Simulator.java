@@ -52,10 +52,16 @@ public abstract class Simulator
             String symbolName = symbol.getName();
             Value value = (Value) symbolValue.getValue();
 
+            assert (null == symbol.getDoubleArray()) : "array not null for new symbol " + symbolName;
+            assert (null == symbol.getValueArray()) : "array not null for new symbol " + symbolName;
+            assert (Symbol.NULL_ARRAY_INDEX == symbol.getArrayIndex()) : "array index not null for new symbol " + symbolName;
+            assert (null != value) : "null value object for symbol: " + symbolName;
+
             pSymbolMap.put(symbolName, symbol);
 
             if(null != pDoubleArray)
             {
+
                 symbol.setArray(pDoubleArray);
                 pDoubleArray[symbolCtr] = value.getValue();
             }
@@ -92,7 +98,6 @@ public abstract class Simulator
         clearMultistepReactionSolvers();
         mSymbolEvaluator.setTime(pStartTime);
     }
-
 
 
     private static void handleMultistepReaction(Reaction pReaction,
@@ -271,10 +276,16 @@ public abstract class Simulator
         for(int symbolCtr = 0; symbolCtr < numDynamicSymbols; ++symbolCtr)
         {
             SymbolValue symbolValue = dynamicSymbols[symbolCtr];
-            assert (null != symbolValue.getValue()) : "null value for symbol: " + symbolValue.getSymbol().getName();
+
+            Symbol symbol = symbolValue.getSymbol();
+            String symbolName = symbol.getName();
+
+            Value value = symbolValue.getValue();
+            assert (null != value) : "null value for symbol: " + symbolName;
+
             double symbolValueDouble = symbolValue.getValue().getValue();
             dynamicSymbolValues[symbolCtr] = symbolValueDouble;
-            dynamicSymbolNames[symbolCtr] = symbolValue.getSymbol().getName();
+            dynamicSymbolNames[symbolCtr] = symbolName;
         }
 
         mDynamicSymbolNames = dynamicSymbolNames;
@@ -292,7 +303,6 @@ public abstract class Simulator
                          symbolMap,
                          dynamicSymbolValues,
                          null);
-
 
         // build a map between symbol names and array indices
 
@@ -391,7 +401,7 @@ public abstract class Simulator
         for(int ctr = 0; ctr < numReactions; ++ctr)
         {
             Reaction reaction = reactions[ctr];
-            dynamicSymbolAdjustmentVectors[ctr ] = reaction.constructDynamicSymbolAdjustmentVector(pDynamicSymbols);
+            dynamicSymbolAdjustmentVectors[ctr] = reaction.constructDynamicSymbolAdjustmentVector(pDynamicSymbols);
         }
 
         mDynamicSymbolAdjustmentVectors = dynamicSymbolAdjustmentVectors;
@@ -561,7 +571,6 @@ public abstract class Simulator
 
             reactionProbability = reaction.computeRate(pSpeciesRateFactorEvaluator, pSymbolEvaluator);
 
-//            System.out.println("reaction: " + reaction + "; rate: " + reactionProbability);
             // store reaction probability
             pReactionProbabilities[reactionCtr] = reactionProbability;
         }
