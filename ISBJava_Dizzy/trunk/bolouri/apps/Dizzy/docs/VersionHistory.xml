@@ -50,7 +50,9 @@ This document contains the version history for the
 <ul>
 <li>Created a new program &quot;<code>SimulationLauncherCommandLine</code>&quot;
 that runs a simulation in batch mode, saving the results to a file that the user 
-specifies.</li>
+specifies.  The &quot;<code>runmodel.sh</code>&quot; and &quot;<code>runmodel.bat</code>&quot;
+scripts now run this batch mode simulation program, instead of the old program 
+that would open a simulation launcher window.</li>
 <li>Fixed a bug in the command-line parsing for the &appName; command-line
 applications &quot;<code>ModelLoaderApp</code>&quot; and
 &quot;<code>SimulationLauncherCommandLine</code>&quot;, causing an error

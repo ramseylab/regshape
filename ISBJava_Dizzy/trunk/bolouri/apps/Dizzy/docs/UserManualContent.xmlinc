@@ -2790,7 +2790,47 @@ in the following.
 The usage synopsis for the <code>runmodel.sh</code> is as follows:
 <blockquote>
 <pre>
-runmodel.sh [-debug] [-parser &lt;parserAlias&gt;] &lt;scriptFile&gt;
+runmodel [-debug] [-parser &lt;parserAlias&gt;] 
+                  [-startTime &lt;startTime_float&gt;] 
+                  -stopTime &lt;stopTime_float&gt; 
+                  [-numSamples &lt;numSamples_int&gt;] 
+                  [-ensembleSize &lt;ensembleSize_long&gt;] 
+                  [-relativeTolerance &lt;tolerance_float&gt;] 
+                  [-absoluteTolerance &lt;tolerance_float&gt;] 
+                  [-minTimeSteps &lt;steps_long&gt;] 
+                  -simulator &lt;simulatorAlias&gt; 
+                  -modelFile &lt;modelFile&gt; 
+                  [-outputFile &lt;outputFile&gt;] 
+                  [-outputFormat &lt;formatAlias&gt;]
+
+  &lt;parserAlias&gt;:   the alias of the class implementing the interface
+                   org.systemsbiology.chem.scripting.IModelBuilder (default is determined
+                   by file extension
+
+  &lt;modelFile&gt;:     the full filename of the model definition file to be loaded
+
+The list of allowed values for the "-parser" argument is:
+  command-language
+  markup-language
+(If you do not specify a parser, the file suffix is used to select one)
+
+The list of allowed values for the "-simulator" argument is:
+  ODE-RK5-adaptive
+  ODE-RK5-fixed
+  ODEtoJava-dopr54-adaptive
+  ODEtoJava-imex443-stiff
+  gibson-bruck
+  gillespie-direct
+
+The list of allowed values for the "-outputFormat" argument is:
+  CSV-excel
+  CSV-gnuplot
+  CSV-matlab
+(the default is: CSV-excel)
+
+Arguments can be in any order.
+If the argument "-outputFile" is not specified, the
+simulation results are printed to standard output.
 </pre>
 </blockquote>
 The symbols above are defined as follows:
@@ -2819,9 +2859,12 @@ use of the following parser aliases:
 engine</dd>
 </dl>
 When you invoke the command-line interface to &appName;, the model definition
-file that you specify will be automatically loaded into the Simulator.  At
-that point, a simulation driver window will appear, and you can start a
-simulation.
+file that you specify will be automatically loaded into the Simulator. A simulation
+will be run based on the parameters you specified on the command-line.  The
+output will be saved to the output file you specified with the
+&quot;<code>outputFile</code>&quot; command-line option, or to 
+standard output (the console) if you did not specify the
+&quot;<code>outputFile</code>&quot; command-line option.
 </p>
 <p>
 In order to be able to use the command-line interface to the &appName;

@@ -1356,10 +1356,10 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<int>1</int>
 					</property>
 					<property name="productVersionMinor">
-						<int>3</int>
+						<int>4</int>
 					</property>
 					<property name="productVersionRevision">
-						<int>0</int>
+						<int>3</int>
 					</property>
 					<property name="productVersionSubRevision">
 						<int>0</int>
