@@ -14,14 +14,14 @@
     http://www.gnu.org/copyleft/lesser.html
  -->
 
-<!--
-This page references an image file DizzyDownloads.jpg that
-is created by an external script, computeWebStats.pl.  This
-image file is a counter of the number of times the Dizzy
-software has been downloaded.   The image file is not created
+<!-- 
+This page references an image file XXXXDownloads.jpg (where XXXX
+is the application name) that is created by an external script,
+computeWebStats.pl.  This image file is a counter of the number of
+times the software has been downloaded.  The image file is not created
 and uploaded by the build system.  It is created and uploaded
-independently, so that the web counter gets updated without
-having to run the build system.
+independently, so that the web counter gets updated without having to
+run the build system.  
 -->
 
 <!-- ========== PREAMBLE ========== -->
