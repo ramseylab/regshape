@@ -97,6 +97,7 @@ public class SignificanceCalculatorDriver
     private JTable mResultsTable;
     private TableColumn mColumnSmoothingLength;
     private TableColumn mColumnMaxChiSquare;
+    private TableColumn mColumnNegControls;
     
     class NegativeControlData
     {
@@ -195,6 +196,8 @@ public class SignificanceCalculatorDriver
             }
             setDefaultTableValues();
         }
+        
+
         
         public void setSignificanceCalculationFormula(SignificanceCalculationFormula pFormula)
         {
@@ -569,6 +572,7 @@ public class SignificanceCalculatorDriver
         TableColumnModel columnModel = mEvidenceChoicesTable.getColumnModel();
         mColumnMaxChiSquare = columnModel.getColumn(EvidenceChoicesTableModel.COLUMN_MAX_CHI_SQUARE);
         mColumnSmoothingLength = columnModel.getColumn(EvidenceChoicesTableModel.COLUMN_SMOOTHING_LENGTH);
+        mColumnNegControls = columnModel.getColumn(EvidenceChoicesTableModel.COLUMN_NEGATIVE_CONTROLS);
         columnModel.removeColumn(mColumnMaxChiSquare);
         columnModel.removeColumn(mColumnSmoothingLength);
         setSignificanceCalculationFormula(DEFAULT_SIGNIFICANCE_CALCULATION_FORMULA);
@@ -907,8 +911,18 @@ public class SignificanceCalculatorDriver
 	            {
 	                public void mouseClicked(MouseEvent e)
 	                {
+	                    if(e.getClickCount() == 2)
+                        {
+                            if(checkIfColumnModelIndexIsSelected(EvidenceChoicesTableModel.COLUMN_NEGATIVE_CONTROLS))
+                            {
+                                setNegativeControlFile();
+                            }
+                        }
+                        
+                        int columnNegControls = mColumnNegControls.getModelIndex();
+                                
 	                	if(e.getClickCount() == 2 &&
-	                	   mEvidenceChoicesTable.getSelectedColumn() == EvidenceChoicesTableModel.COLUMN_NEGATIVE_CONTROLS)
+	                	   mEvidenceChoicesTable.getSelectedColumn() == columnNegControls)
 	                	{
 	                		setNegativeControlFile();
 	                	}
@@ -922,7 +936,7 @@ public class SignificanceCalculatorDriver
         				if(e.getKeyCode() == KeyEvent.VK_DELETE ||
         				   e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
         				{
-        					if(mEvidenceChoicesTable.getSelectedColumn() == EvidenceChoicesTableModel.COLUMN_NEGATIVE_CONTROLS)
+        					if(checkIfColumnModelIndexIsSelected(EvidenceChoicesTableModel.COLUMN_NEGATIVE_CONTROLS))
         					{
         						clearNegativeControlFile();
         					}
@@ -1479,6 +1493,23 @@ public class SignificanceCalculatorDriver
         }        
     }
         
+    private boolean checkIfColumnModelIndexIsSelected(int pColumnModelIndex)
+    {
+        boolean isSelected = false;
+        
+        int selectedColumnIndex = mEvidenceChoicesTable.getSelectedColumn();
+        if(-1 != selectedColumnIndex)
+        {
+            TableColumnModel columnModel = mEvidenceChoicesTable.getColumnModel();
+            TableColumn column = columnModel.getColumn(selectedColumnIndex);
+            if(column.getModelIndex() == pColumnModelIndex)
+            {
+                isSelected = true;
+            }
+        }
+        return isSelected;
+    }    
+    
     private void run(String []pArgs)
     {
         String programName = "Significance Calculator";
