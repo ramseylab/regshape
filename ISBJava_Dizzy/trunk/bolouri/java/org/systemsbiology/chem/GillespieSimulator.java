@@ -101,8 +101,6 @@ public class GillespieSimulator extends Simulator implements IAliasableClass, IS
     }
 
 
-                                                    
-
     private static final double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
                                         SymbolEvaluatorChemSimulation pSymbolEvaluator,
                                         double pEndTime,
