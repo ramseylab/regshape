@@ -11,7 +11,7 @@ package org.systemsbiology.math;
 
 /**
  * Contains a string identifier and an (optional)
- * array index.  Used by the {@link ISymbolDoubleMap} class.
+ * array index.  Used by the {@link SymbolValue} class.
  * The array index can be used instead of the string identifier,
  * in order to find the symbol's value.
  *
