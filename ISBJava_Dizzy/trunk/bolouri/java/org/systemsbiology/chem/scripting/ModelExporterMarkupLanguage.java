@@ -41,14 +41,16 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
     private static final String ELEMENT_NAME_PARAMETER_RULE = "parameterRule";
     private static final String ELEMENT_NAME_LIST_OF_SPECIES = "listOfSpecies";
     private static final String ELEMENT_NAME_LIST_OF_PARAMETERS = "listOfParameters";
-    private static final String ELEMENT_NAME_SPECIES = "species";
+    private static final String ELEMENT_NAME_SPECIES_V1 = "specie";
+    private static final String ELEMENT_NAME_SPECIES_V2 = "species";
     private static final String ELEMENT_NAME_COMPARTMENT = "compartment";
     private static final String ELEMENT_NAME_PARAMETER = "parameter";
     private static final String ELEMENT_NAME_LIST_OF_REACTIONS = "listOfReactions";
     private static final String ELEMENT_NAME_REACTION = "reaction";
     private static final String ELEMENT_NAME_LIST_OF_REACTANTS = "listOfReactants";
     private static final String ELEMENT_NAME_LIST_OF_PRODUCTS = "listOfProducts";
-    private static final String ELEMENT_NAME_SPECIES_REFERENCE = "speciesReference";
+    private static final String ELEMENT_NAME_SPECIES_REFERENCE_V1 = "specieReference";
+    private static final String ELEMENT_NAME_SPECIES_REFERENCE_V2 = "speciesReference";
     private static final String ELEMENT_NAME_KINETIC_LAW = "kineticLaw";
     private static final String ELEMENT_NAME_LIST_OF_UNIT_DEFINITIONS = "listOfUnitDefinitions";
     private static final String ELEMENT_NAME_LIST_OF_UNITS = "listOfUnits";
@@ -62,7 +64,8 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
     private static final String ATTRIBUTE_VALUE = "value";
     private static final String ATTRIBUTE_STOICHIOMETRY = "stoichiometry";
     private static final String ATTRIBUTE_FORMULA = "formula";
-    private static final String ATTRIBUTE_SPECIES = "species";
+    private static final String ATTRIBUTE_SPECIES_V1 = "specie";
+    private static final String ATTRIBUTE_SPECIES_V2 = "species";
     private static final String ATTRIBUTE_REVERSIBLE = "reversible";
     private static final String ATTRIBUTE_COMPARTMENT = "compartment";
     private static final String ATTRIBUTE_KIND = "kind";
@@ -73,14 +76,50 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
     private static final String UNIT_KIND_ITEM = "item";
 
     private static final String XMLNS_NAME = "xmlns";
-    private static final String XMLNS_VALUE = "http://www.sbml.org/sbml/level1";
+    private static final String XMLNS_VALUE = "http://www.sbml.org/sbml/level";
     private static final String LEVEL_NAME = "level";
-    private static final String LEVEL_VALUE = "1";
     private static final String VERSION_NAME = "version";
-    private static final String VERSION_VALUE = "2";
+
+    public static class Specification
+    {
+        private final String mName;
+        private final String mLevel;
+        private final String mVersion;
+        private Specification(String pLevel, String pVersion)
+        {
+            mLevel = pLevel;
+            mVersion = pVersion;
+            mName = "level " + mLevel + ", version " + pVersion;
+        }
+        public String getLevel()
+        {
+            return(mLevel);
+        }
+        public String getVersion()
+        {
+            return(mVersion);
+        }
+        public String toString()
+        {
+            return(mName);
+        }
+        public static final Specification LEVEL1_VERSION1 = new Specification("1", "1");
+        public static final Specification LEVEL1_VERSION2 = new Specification("1", "2");
+    }
+
+    public static final Specification DEFAULT_SPECIFICATION = Specification.LEVEL1_VERSION2;
+
+    public ModelExporterMarkupLanguage()
+    {
+        // do nothing
+    }
 
     private static final String DEFAULT_REACTION_PARAMETER_SYMBOL_NAME = "__RATE__";
 
+    public void export(Model pModel, PrintWriter pOutputWriter) throws IllegalArgumentException, DataNotFoundException, IllegalStateException, UnsupportedOperationException, ModelExporterException
+    {
+        export(pModel, pOutputWriter, DEFAULT_SPECIFICATION);
+    }
 
    /**
     * Given a {@link org.systemsbiology.chem.Model} object
@@ -88,7 +127,7 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
     * writes out the SBML description of the model and initial species
     * populations, to the output stream contained in <code>pOutputWriter</code>.
     */
-    public void export(Model pModel, PrintWriter pOutputWriter) throws IllegalArgumentException, DataNotFoundException, IllegalStateException, UnsupportedOperationException, ModelExporterException
+    public void export(Model pModel, PrintWriter pOutputWriter, Specification pSpecification) throws IllegalArgumentException, DataNotFoundException, IllegalStateException, UnsupportedOperationException, ModelExporterException
     {
         try
         {
@@ -96,9 +135,10 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.newDocument();
             Element sbmlElement = document.createElement(ELEMENT_NAME_SBML);
-            sbmlElement.setAttribute(XMLNS_NAME, XMLNS_VALUE);
-            sbmlElement.setAttribute(LEVEL_NAME, LEVEL_VALUE);
-            sbmlElement.setAttribute(VERSION_NAME, VERSION_VALUE);
+            String level = pSpecification.getLevel();
+            sbmlElement.setAttribute(XMLNS_NAME, XMLNS_VALUE + level);
+            sbmlElement.setAttribute(LEVEL_NAME, level);
+            sbmlElement.setAttribute(VERSION_NAME, pSpecification.getVersion());
             document.appendChild(sbmlElement);
 
             Element modelElement = document.createElement(ELEMENT_NAME_MODEL);
@@ -200,7 +240,15 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
             while(speciesIter.hasNext())
             {
                 Species species = (Species) speciesIter.next();
-                Element speciesElement = document.createElement(ELEMENT_NAME_SPECIES);
+                Element speciesElement = null;
+                if(pSpecification.equals(Specification.LEVEL1_VERSION1))
+                {
+                    speciesElement = document.createElement(ELEMENT_NAME_SPECIES_V1);
+                }
+                else
+                {
+                    speciesElement = document.createElement(ELEMENT_NAME_SPECIES_V2);
+                }
                 String speciesName = species.getName();
                 speciesElement.setAttribute(ATTRIBUTE_NAME, speciesName);
                 Boolean boundaryObj = new Boolean(! dynamicSymbolNames.contains(speciesName));
@@ -334,7 +382,14 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     Value speciesConcentrationObj = species.getValue();
                     assert (speciesConcentrationObj.isExpression()) : "species value not an expression";
                     Element speciesConcentrationRuleElement = document.createElement(ELEMENT_NAME_SPECIES_CONCENTRATION_RULE);
-                    speciesConcentrationRuleElement.setAttribute(ATTRIBUTE_SPECIES, name);
+                    if(pSpecification.equals(Specification.LEVEL1_VERSION1))
+                    {
+                        speciesConcentrationRuleElement.setAttribute(ATTRIBUTE_SPECIES_V1, name);
+                    }
+                    else
+                    {
+                        speciesConcentrationRuleElement.setAttribute(ATTRIBUTE_SPECIES_V2, name);
+                    }
                     speciesConcentrationRuleElement.setAttribute(ATTRIBUTE_FORMULA, speciesConcentrationObj.getExpressionString());
                     listOfRulesElement.appendChild(speciesConcentrationRuleElement);
                 }
@@ -390,8 +445,23 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     Species species = (Species) reactantSpecies[ctr];
                     int stoic = reactantStoichiometries[ctr];
                     String speciesName = species.getName();
-                    Element specieReferenceElement = document.createElement(ELEMENT_NAME_SPECIES_REFERENCE);
-                    specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES, speciesName);
+                    Element specieReferenceElement = null;
+                    if(pSpecification.equals(Specification.LEVEL1_VERSION1))
+                    {
+                        specieReferenceElement = document.createElement(ELEMENT_NAME_SPECIES_REFERENCE_V1);
+                    }
+                    else
+                    {
+                        specieReferenceElement = document.createElement(ELEMENT_NAME_SPECIES_REFERENCE_V2); 
+                    }
+                    if(pSpecification.equals(Specification.LEVEL1_VERSION1))
+                    {
+                        specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES_V1, speciesName);
+                    }
+                    else
+                    {
+                        specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES_V2, speciesName);
+                    }
                     specieReferenceElement.setAttribute(ATTRIBUTE_STOICHIOMETRY, Integer.toString(stoic));
                     listOfReactantsElement.appendChild(specieReferenceElement);
                 }
@@ -414,8 +484,23 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
                     Species species = (Species) productSpecies[ctr];
                     int stoic = productStoichiometries[ctr];
                     String speciesName = species.getName();
-                    Element specieReferenceElement = document.createElement(ELEMENT_NAME_SPECIES_REFERENCE);
-                    specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES, speciesName);
+                    Element specieReferenceElement = null;
+                    if(pSpecification.equals(Specification.LEVEL1_VERSION1))
+                    {
+                        specieReferenceElement = document.createElement(ELEMENT_NAME_SPECIES_REFERENCE_V1);
+                    }
+                    else
+                    {
+                        specieReferenceElement = document.createElement(ELEMENT_NAME_SPECIES_REFERENCE_V2); 
+                    }
+                    if(pSpecification.equals(Specification.LEVEL1_VERSION1))
+                    {
+                        specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES_V1, speciesName);
+                    }
+                    else
+                    {
+                        specieReferenceElement.setAttribute(ATTRIBUTE_SPECIES_V2, speciesName);
+                    }
                     specieReferenceElement.setAttribute(ATTRIBUTE_STOICHIOMETRY, Integer.toString(stoic));
                     listOfProductsElement.appendChild(specieReferenceElement);
                 }
