@@ -36,6 +36,8 @@ having to run the build system.
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 <isb:docdate>$Date$</isb:docdate>
 
+<p>
+
 <ul>
 <li><a href="&appVersion;/download.html">Download &appName;</a></li>
 <li><a href="docs/UserManual.html">&appName; User Manual</a></li>
@@ -64,7 +66,14 @@ For more information about the &appName; library, please consult the
 
 <br clear="left" />
 
-<p />
+</p>
 
+<p>
 <b>Download counter:</b> &appName; has been downloaded over <img border="1" align="absmiddle" src="images/&appName;Downloads.jpg" alt="[COUNTER]" /> times since June 6, 2004.
+</p>
+
+<p>
+<b>Visitor counter:</b> this page has been visited over <img border="1" align="absmiddle" src="images/&appName;Visitors.jpg" alt="[COUNTER]" /> times since June 6, 2004.
+</p>
+
 </isb:document>
