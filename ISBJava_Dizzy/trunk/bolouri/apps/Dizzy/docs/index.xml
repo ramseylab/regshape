@@ -22,7 +22,6 @@
 <li><a href="docs/ReleaseNotes.html">&appName; Release Notes</a></li>
 <li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
 <li><a href="../License.html">License Agreement</a></li>
-<li><a href="../&localJavaLibraryName;">&localJavaLibraryName; library</a></li>
 </ul>
 </p>
 
@@ -35,29 +34,9 @@
 This software can be used to define a system of interacting chemical species,
 and the reactions through which they interact.  The software can then be
 used to simulate the reaction kinetics of the system of interacting species.
-The software consists of the following elements:
-<ol>
-<li>A set of Java packages or that (among other things) provides a Java 
-application programming interface (or "API") for this software system.
-This set of Java packages is collectively known as the
-<a href="../&localJavaLibraryName;">&localJavaLibraryName;</a> library.
-There is Javadoc documentation available at the &localJavaLibraryName; page.</li>
-<li>a scripting engine that can be invoked from the command-line, to define
-a model and run simulations on the model, and to export a model to a different
-model definition language</li>
-<li>an implementation of the 
-<a href="&webBaseURL;/&localJavaLibraryName;/javadoc/isb/chem/GillespieSimulator.html">
-Gillespie stochastic algorithm</a> for simulating chemical reaction kinetics</li>
-<li>a graphical user interface ("GUI") application that can be used to run 
-simulations and export a model to a different model definition language</li>
-<li>a Systems Biology Workbench bridge that allows the simulator to be
-invoked through the Systems Biology Workbench, using a model defined in
-the Systems Biology Markup Language</li>
-</ol>
-Models are defined in text files that you must edit, or generate using
-an external tool (e.g., JDesigner).  This system can understand three types of 
-model definition languages:  two languages specific to &appName;, and the
-Systems Biology Markup Language (SBML).
+The software is based on the <a href="../&localJavaLibraryName;">&localJavaLibraryName;</a>
+library. For more information about the &appName; system, please consult the 
+<a href="docs/UserManual.html">User Manual</a>.
 </p>
 <p>
 <font color="red"><b>NOTE:</b></font>
@@ -66,7 +45,7 @@ bugs, add new features, and add (much needed) documentation.  Your
 patience is appreciated.
 </p>
 <p>
-This software is distributed under the GNU Lesser General Public License (LGPL), 
+This software is made available under the GNU Lesser General Public License (LGPL), 
 which is a standard &quot;free software&quot;
 and &quot;open source&quot; license.  A copy of the 
 The text of the license agreement is available <a href="../License.html">here</a>.

@@ -16,11 +16,12 @@
 <isb:docdate>$Date$</isb:docdate>
 
 <ul>
-<li><a href="&appVersion;/isb-src.tar.gz">Download &appName; (source code)</a></li>
-<li><a href="javadoc/">Javadoc API documentation</a></li>
-<li><a href="../License.html">License Agreement</a></li>
-<li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
+<li><a href="&appVersion;/installer/Web_Installers/install.htm">Download &appName;</a></li>
+<li><a href="docs/UserManual.html">&appName; User Manual</a></li>
 <li><a href="docs/ReleaseNotes.html">&appName; Release Notes</a></li>
+<li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
+<li><a href="../License.html">License Agreement</a></li>
+<li><a href="javadoc/">Javadoc API documentation</a></li>
 </ul>
 
 <img src="images/appLogo.png" border="1" />
@@ -34,13 +35,7 @@ for these java classes is available for download, subject
 to the terms of the <a href="../License.html">license agreement</a>.
 </p>
 <p>
-<font color="red"><b>NOTE:</b></font>
-This is alpha (experimental) software.  Please be patient while we fix 
-bugs, add new features, and add (much needed) documentation.  Your 
-patience is appreciated.
-</p>
-<p>
-This software is distributed under the GNU Lesser General Public License (LGPL), 
+This software is made available under the GNU Lesser General Public License (LGPL), 
 which is a standard &quot;free software&quot;
 and &quot;open source&quot; license.  A copy of the 
 The text of the license agreement is available <a href="../License.html">here</a>.

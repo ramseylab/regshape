@@ -28,22 +28,30 @@ and the reactions through which they interact.  The
 software can then be used to simulate the reaction 
 kinetics of the system of interacting species.
 </p>
-<p>
-For more information on the &appName; system, please
-refer to the 
-<a href="&appHomePage;">home page</a>.
-</p>
 </isb:docsection>
+
 <isb:docsection name="License Agreement" label="licenseagreement">
 <p>
 This software is licensed under the GNU Lesser General Public 
 License (LGPL), which is a standard &quot;free software&quot;
-and &quot;open source&quot; license.  A copy of the 
-license agreement is available in the file &quot;LICENSE.txt&quot;
-in the &quot;docs&quot; subdirectory of the
-installation directory for this program.
+and &quot;open source&quot; license.  A 
+<a href="&webBaseURL;/License.html">copy of the 
+license agreement is available online</a>, as well as in the
+&quot;<code>docs/License.html</code>&quot; file in the 
+installation directory for this software.
 </p>
 </isb:docsection>
+
+<isb:docsection name="Disclaimer" label="disclaimer">
+<p>
+This version is alpha (experimental) software.  Please be patient while we fix 
+bugs, add new features, and add (much needed) documentation.  Your 
+patience is appreciated.  Please be advised that the
+&mainAffiliation; and the authors disclaim any liability 
+stemming from the use of this software, as stated in the license agreement.
+</p>
+</isb:docsection>
+
 <isb:docsection name="Source Code" label="sourcecode">
 <p>
 The source code for this application and the 

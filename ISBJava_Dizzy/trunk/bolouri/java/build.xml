@@ -11,6 +11,7 @@
   <property name="app.styleDir"                location="${basedir}/html" />
   <property name="app.srcDir"                  location="${basedir}/isb" />
   <property name="app.configDir"               location="${basedir}/config" />
+  <property name="app.buildDir"                location="${basedir}/buildDir" />
   <property name="app.docsDir"                 location="${basedir}/docs" />
   <property name="app.extLibDir"               location="${basedir}/extlib" />
   <property name="app.buildDir"                location="${projBuildDir}" />
@@ -20,6 +21,7 @@
   <property name="app.javadocDir"              location="${app.webDir}/javadoc" />
   <property name="app.version"                 value="&appVersion;" />
   <property name="app.downloadDir"             location="${app.webDir}/&appVersion;" />
+  <property name="app.installerDir"             location="${app.downloadDir}/installer" />
 
   <property name="app.sourceCompileFlag"       value="1.4" />
 
@@ -85,8 +87,28 @@
     </copy>
   </target>
 
-  <target name="buildWeb" depends="style, srctar, copyHtml, copyImages, copySourceTarball, javadoc" />
-  
+  <target name="buildInstaller">
+    <!-- make the build directory -->
+    <mkdir dir="${app.buildDir}" />
+
+    <filter token="VERSION" value="${app.version}" />
+
+    <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
+    <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />
+
+    <exec executable="${binInstallAnywhere}">
+      <arg value="${app.buildDir}/project.iap_xml" />
+    </exec>
+
+    <!-- make the installer directory -->
+    <mkdir dir="${app.installerDir}" />
+
+    <!-- copy the InstallAnywhere web installer stuff to the web directory -->
+    <copy todir="${app.installerDir}">
+      <fileset dir="${app.buildDir}/project_Build_Output" />
+    </copy>
+  </target>
+
   <target name="javadoc">
     <mkdir dir="${app.javadocDir}" />
     <javadoc source="${app.sourceCompileFlag}" 
@@ -98,7 +120,9 @@
       <classpath refid="app.classpath" />
     </javadoc>
   </target>
-
+ 
+  <target name="buildWeb" depends="style, srctar, copyHtml, copyImages, copySourceTarball, javadoc, buildInstaller" />
+  
   <target name="compile">
     <mkdir dir="${app.classesDir}" />
     <javac srcdir="${app.srcDir}" 

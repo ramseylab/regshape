@@ -42,6 +42,9 @@ for the API for this software package.</li>
 <li>a scripting engine that can be invoked from the command-line, to define
 a model and run simulations on the model, and to export a model to a different
 model definition language</li>
+<li>an implementation of the 
+<a href="&webBaseURL;/&localJavaLibraryName;/javadoc/isb/chem/GillespieSimulator.html">
+Gillespie stochastic algorithm</a> for simulating chemical reaction kinetics</li>
 <li>a graphical user interface ("GUI") application that can be used to run 
 simulations and export a model to a different model definition language</li>
 <li>a Systems Biology Workbench bridge that allows the simulator to be

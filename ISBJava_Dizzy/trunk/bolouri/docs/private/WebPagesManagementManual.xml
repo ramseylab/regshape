@@ -318,11 +318,11 @@ web server, when you are uploading your HTML file!
 </isb:docsection>
 
 
-<isb:docsection name="Biomolecular Model Repository" label="repository">
+<isb:docsection name="Model Repository" label="repository">
 <p>
-The biomolecular model repository directory is 
-used to archive biomolecular models that have been 
-found to be useful to the &mainGroup;, and that 
+The &mainGroup; model repository directory is used to archive 
+biomolecular or mathematical models that have been 
+found to be useful in our research, and that 
 are believed to be of sufficient utility and validity 
 to warrant making them available to the general public.
 Any model definition file placed in this directory will
