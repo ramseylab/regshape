@@ -33,8 +33,10 @@
 The &appName; project is a library (collection) of classes
 written in the <a href="http://java.sun.com">Java</a>
 programming language, that are intended to be used for
-research in computational biology.  The body of source code
-for these java classes is available for download, subject
+research in computational biology.  The compiled library and the body 
+of source code for these Java classes are available for download 
+within a self-extracting installer 
+(see the &quot;Download &appName;&quot; link above), subject
 to the terms of the <a href="../License.html">license agreement</a>.
 </p> 
 <p>
