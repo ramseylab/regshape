@@ -26,7 +26,6 @@ described in the
 <a href="../Dizzy/UserManual.html#introduction">Dizzy User Manual</a>.
 The possible formats are:
 <ul>
-<li><a href="&userManualURL;#ccmdl">Condensed Chemical Model Definition Language (CCMDL)</a></li>
 <li><a href="&userManualURL;#cmdl">Chemical Model Definition Language (CMDL)</a></li>
 <li><a href="&userManualURL;#sbml">Systems Biology Markup Language (SBML)</a></li>
 </ul>
