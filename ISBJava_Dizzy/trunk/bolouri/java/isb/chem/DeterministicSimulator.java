@@ -33,6 +33,8 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
     private static final double MINSCALE = 1.0;
     private static final double DEFAULT_ERROR_TOLERANCE = 1.0e-2;
     private static final double DEFAULT_GROW_STEPSIZE_MULTIPLIER = 1.1;
+    private static final double NEG_PENALTY_FACTOR = 10.0;
+    private static final double MIN_STEPSIZE_TO_RANGE_RATIO = 1.0e+8;
 
     /*========================================*
      * member data
@@ -386,10 +388,10 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
 
     }
 
-    private double computeError(SpeciesPopulations y1, 
+    private double computeError(Vector pFloatingSpecies,
+                                SpeciesPopulations y1, 
                                 SpeciesPopulations y2, 
-                                SpeciesPopulations yscal, 
-                                Vector pFloatingSpecies) throws DataNotFoundException
+                                SpeciesPopulations yscal) throws DataNotFoundException
     {
         int numSpecies = pFloatingSpecies.size();
         double maxErr = 0.0;
@@ -397,13 +399,23 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
         {
             String speciesName = (String) pFloatingSpecies.elementAt(speciesCtr);
             double y1val = y1.getSpeciesPopulation(speciesName);
+            double y1neg = 0.0;
+            if(y1val < 0.0)
+            {
+                y1neg = NEG_PENALTY_FACTOR * (Math.abs(y1val) - y1val)/2.0;
+            }
             double y2val = y2.getSpeciesPopulation(speciesName);
+            double y2neg = 0.0;
+            if(y2val < 0.0)
+            {
+                y2neg = NEG_PENALTY_FACTOR * (Math.abs(y2val) - y2val)/2.0;
+            }
             double yscalval = yscal.getSpeciesPopulation(speciesName);
             if(yscalval <= 0.0)
             {
                 throw new IllegalArgumentException("invalid yscal value for species " + speciesName + ": " + yscalval);
             }
-            double err = Math.abs(y2val - y1val)/yscalval;
+            double err = (Math.abs(y2val - y1val) + y2neg + y1neg)/yscalval;
             if(err > maxErr)
             {
                 maxErr = err;
@@ -456,6 +468,7 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
                           pTime,
                           pReactionRates,
                           k1);
+
         scalarMultFloatingSpecies(pFloatingSpecies, k1, pStepSize);
 
         copyFloatingSpeciesValues(pFloatingSpecies, q1, k1);
@@ -511,13 +524,14 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
 
 
     private int adaptiveStep(SpeciesPopulations pSpeciesPopulations, 
-                                 MutableDouble pTime,
-                                 Vector pFloatingSpecies,
-                                 Vector pReactionProbabilityDensities,
-                                 MutableDouble pStepSize,
-                                 Model pModel,
-                                 double pErrorTolerance,
-                                 SpeciesPopulations pNextSpeciesPopulations,
+                             MutableDouble pTime,
+                             Vector pFloatingSpecies,
+                             Vector pReactionProbabilityDensities,
+                             MutableDouble pStepSize,
+                             double pTimeRange,
+                             Model pModel,
+                             double pErrorTolerance,
+                             SpeciesPopulations pNextSpeciesPopulations,
                              SpeciesPopulations pSpeciesPopulationScales) throws IllegalArgumentException, DataNotFoundException, SimulationFailedException
     {
         double stepSize = pStepSize.getValue();
@@ -528,6 +542,11 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
 
         do
         {
+            if(stepSize < pTimeRange / MIN_STEPSIZE_TO_RANGE_RATIO)
+            {
+                throw new SimulationFailedException("minimum step size reached; these ODEs are probably too stiff for this integrator");
+            }
+
             double halfStepSize = 0.5 * stepSize;
             double time = pTime.getValue();
             ++numTries;
@@ -559,11 +578,11 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
                     stepSize,
                     yfull);
 
-            maxErr = computeError(ymid2, yfull, pSpeciesPopulationScales, pFloatingSpecies);
+            maxErr = computeError(pFloatingSpecies, ymid2, yfull, pSpeciesPopulationScales);
             
 // -------------------------------------------------------------------------------
 // UNCOMMENT THIS FOR DEBUGGING PURPOSES:
-//            System.out.println("at time: " + time + "; using stepsize: " + stepSize + "; maxerr: " + maxErr);
+//          System.out.println("at time: " + time + "; using stepsize: " + stepSize + "; maxerr: " + maxErr);
 // -------------------------------------------------------------------------------
 
             double errRatio = maxErr / pErrorTolerance;
@@ -627,18 +646,17 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
                           pReactionProbabilityDensities,
                           pSpeciesPopulationScales);
 
-        copyFloatingSpeciesValues(pFloatingSpecies, ytemp, pSpeciesPopulations);
-        absFloatingSpecies(pFloatingSpecies, ytemp);
-        scalarMultFloatingSpecies(pFloatingSpecies, pSpeciesPopulationScales, pStepSize);
         absFloatingSpecies(pFloatingSpecies, pSpeciesPopulationScales);
+        scalarMultFloatingSpecies(pFloatingSpecies, pSpeciesPopulationScales, pStepSize);
         scalarAddFloatingSpecies(pFloatingSpecies, pSpeciesPopulationScales, MINSCALE);
-        vectorAddFloatingSpecies(pFloatingSpecies, pSpeciesPopulationScales, ytemp);
+        vectorAddFloatingSpecies(pFloatingSpecies, pSpeciesPopulationScales, pSpeciesPopulations);
     }
 
     private int iterate(Model pModel,
                          Vector pFloatingSpecies,
                          SpeciesPopulations pSpeciesPopulations,
                          MutableDouble pStepSize,
+                         double pStartTime,
                          double pStopTime,
                          double pErrorTolerance,
                          Vector pReactionProbabilityDensities,
@@ -647,6 +665,7 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
         // compute derivatives
         double time = pTime.getValue();
         double stepSize = pStepSize.getValue();
+        double timeRange = pStopTime - pStartTime;
 
         computeScale(pFloatingSpecies,
                      pModel,
@@ -668,6 +687,7 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
                                        pFloatingSpecies,
                                        pReactionProbabilityDensities,
                                        pStepSize,
+                                       timeRange,
                                        pModel,
                                        pErrorTolerance,
                                        ytemp,
@@ -683,11 +703,6 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
 
         return(numTries);
     }
-
-
-
-
-
 
                                                                                
     /*========================================*
@@ -1033,6 +1048,7 @@ public class DeterministicSimulator implements ISimulator, IAliasableClass
                                    mFloatingSpeciesVec,
                                    speciesPopulations,
                                    stepSize,
+                                   pStartTime,
                                    pStopTime,
                                    getErrorTolerance(),
                                    reactionProbabilityDensities,
