@@ -3,6 +3,7 @@
 <!DOCTYPE isbdocument [
   <!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
   %CommonConfig;
+  <!ENTITY docLastUpdated "2003/04/23">
    ]>
 
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
@@ -10,8 +11,8 @@
               xmlns="http://www.w3.org/TR/xhtml1">
 
 <isb:doctitle>Software Development Guidelines</isb:doctitle>
-<isb:docdate>2003/04/21</isb:docdate>
-<isb:docversion>0.2</isb:docversion>
+<isb:docdate>&docLastUpdated;</isb:docdate>
+<isb:docversion>Version: 0.3, Date: &docLastUpdated;</isb:docversion>
 
 <isb:doccontents />
 
@@ -529,10 +530,21 @@ problems.
 
 This section describes some suggestions for minimum standards for
 documentation, for a software project to be considered of sufficient 
-quality to be &quot;released&quot;.  
+quality to be &quot;released&quot;.   Note that the file names mentioned below
+are not to be followed literally; it is the content that is important.
 <p />
 
 <dl>
+<dt><a name="packagedocs" /><b>package documentation</b>:</dt>
+<dd>
+Each package or library subdirectory within your project source tree
+should contain a summary file (e.g., <code>README</code> or 
+<code>package.html</code> file) that describes the purpose and
+function of the package or library contained in that subdirectory.
+An example is the <a href="../ISBJava/javadoc/isb/chem/package-summary.html">
+package summary for the <code>isb.chem</code> Java package</a>.
+<p />
+</dd>
 
 <dt><a name="headercomments" /><b>source file header comments</b>:</dt>
 <dd>
@@ -554,28 +566,35 @@ should be in the CVS repository for the project) should be included.
 It is helpful if these header comments are in some structured
 format that can be extracted by a documentation-generating system,
 in order to provide developers (or users of your library/package)
-with documentation of your classes and/or modules.  Examples
-include Javadoc (for java classes), doc++ (for C++ classes),
+with API-level documentation of your classes and/or modules.  
+Examples include Javadoc (for java classes), doc++ (for C++ classes),
 POD (for Perl modules), etc.
+An example of API documentation extracted from source file header
+comments is the <a href="../ISBJava/javadoc">ISBJava API documentation</a>.
 <p /></dd>
 
-<dt><b>README.txt file</b>:</dt>
+<dt><b>ReleaseNotes or README file</b>:</dt>
 <dd>
-The project should include an overall <code>README</code>-type
+The project&apos;s deliverable should be distributed 
+with an overall <code>README</code>-type
 file that explains what the project is, provides a roadmap of the
 documentation, gives the version number and date of the release,
-and gives contact information for contacting the authors.
-This README should include, or provide links to a document
-containing, a summary of all external package/library dependencies.
-Each package or library subdirectory within your project should
-contain a summary file (e.g., <code>README</code> or 
-<code>package.html</code> file) that describes the purpose and
-function of the package or library contained in that subdirectory.
+and gives contact information for contacting the authors.  This
+document can include a set of release notes, or reference
+the project home page where this information can be accessed.
+This document should be distributed with your application.
+An example of a release notes document is the
+<a href="../Dizzy/docs/ReleaseNotes.html">Dizzy Release Notes</a>
+document.  
 <p /></dd>
 
 <dt><b>INSTALL.txt file</b>:</dt>
 <dd>
-The project should include an overall <code>INSTALL</code>-type
+For projects that do not have a point-and-click installation
+mechanism like <a href="#buildinginstallers">InstallAnywhere</a>
+or Java Web Start, installation will usually be a non-trivial
+step for users to overcome.  For such projects, it is appropriate
+to provide users with some kind of <code>INSTALL.txt</code>-type
 file that explains how to (if applicable, build and) install
 the software and set it up so that a given user can run it.  This
 should include a disclaimer about the specific operating system
@@ -590,7 +609,32 @@ might be appropriate to include.  The level of detail should be sufficient
 that a determined and reasonably sophisticated user can successfully
 replicate the process that the author used to install and configure
 the software on his/her development machine.
+The document should include, or provide links to a home page
+containing, a summary of all external package/library dependencies.
 <p /></dd>
+
+<dt><b>Project Home Page</b>:</dt>
+<dd>
+For many projects, it is appropriate to create a Home Page
+that is the springboard for accessing documentation, installation
+kits, and source code for the project&apos;s source code.
+An example of such a document is the
+<a href="../Dizzy/">Dizzy Home Page</a>.
+<p />
+</dd>
+
+<dt><b>Version History</b>:</dt>
+<dd>
+After a project reaches a certain point in its life cycle,
+it may be appropriate to dedicate a separate document or
+web page to chronicling the version history of the project.
+This page should list each release of the project&apos;s 
+deliverable, with a date, version number, and a short description
+of the features of each release.  An example of such a
+document is the 
+<a href="../Dizzy/docs/VersionHistory.html">Dizzy Version History</a>.
+<p />
+</dd>
 
 <dt><b>user guide or tutorial</b>:</dt>
 <dd>
@@ -603,7 +647,9 @@ installed.  Ideally this would include sample use scenarios
 sample code (in the case of a library or package).  In general, 
 the level of detail that is appropriate for this document depends 
 on the size (complexity) and level of maturity (stage in its 
-life-cycle) of the software project.
+life-cycle) of the software project.  An example of a user manual
+written for locally developed software is the
+<a href="../Dizzy/docs/UserManual.html">Dizzy User Manual</a>.
 <p /></dd>
 
 <dt><b>coding standards</b>:</dt>
@@ -617,6 +663,16 @@ section below, for more information.
 </isb:docsection>
 
 <isb:docsection name="Coding Standards" label="codingstandards">
+
+<p>
+For starters, it is recommended that you read the books in the
+<a href="#otherresources">software development resources</a> section
+above.  In particular, the <em>Pragmatic Programmer</em> book has
+many important tips on good coding style and practices.  In this
+document, we will only attempt to highlight a few basic points
+regarding coding style and practices.
+</p>
+<p>
 
 <dl>
 <dt><b>variable names:</b></dt>
@@ -720,6 +776,7 @@ code base.
 </dd>
 
 </dl>
+</p>
 
 </isb:docsection>
 
