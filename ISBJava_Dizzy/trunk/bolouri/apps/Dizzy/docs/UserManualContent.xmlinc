@@ -744,6 +744,17 @@ Java, means that reaction rates differing by more than 15 orders
 of magnitude will cause incorrect results from the stochastic simulator.
 In practice, this limitation rarely presents a problem.
 </p>
+<p>
+Another consequence of numeric precision is that a model containing
+a dynamical species whose initial population is greater than 
+or equal to <code>9.0071993e+15</code> molecules will not be allowed
+to be simulated using a stochastic simulator.  This is because
+the number of molecules is stored using a double-precision floating-point
+number, and for numbers greater than the aforementioned value, 
+there are not enough significant digits in the floating-point
+representation to account for an increment or decrement of the
+species population by one molecule.  
+</p>
 </isb:docsubsection>
 
 <!-- ========== CASE SENSITIVITY ========== -->
