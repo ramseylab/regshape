@@ -5,13 +5,11 @@
   <target name="compile">
     <ant dir="${basedir}/Dizzy" target="compile" />
     <ant dir="${basedir}/BioTapestry" target="compile" />
-    <ant dir="${basedir}/Pointillist" target="compile" />
   </target>
 
   <target name="clean">
     <ant dir="${basedir}/Dizzy" target="clean" />
     <ant dir="${basedir}/BioTapestry" target="clean" />
-    <ant dir="${basedir}/Pointillist" target="clean" />
   </target>
 
   <target name="buildHTML">
@@ -36,8 +34,6 @@
   <target name="build">
     <ant dir="${basedir}/Dizzy" target="build" />
     <ant dir="${basedir}/BioTapestry" target="build" />
-<!--    <ant dir="${basedir}/Pointillist" target="build" /> -->  
-    <!-- Pointillist needs Matlab in order to build correctly -->
   </target>
 
 </project>
