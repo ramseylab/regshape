@@ -18,7 +18,7 @@ import org.systemsbiology.util.*;
  *
  * @author Stephen Ramsey
  */
-public class Symbol
+public final class Symbol
 {
     final String mSymbolName;
     // for performance reasons, this field is set to public:
@@ -34,7 +34,7 @@ public class Symbol
         clearIndexInfo();
     }
 
-    public final boolean hasArrayIndex()
+    public boolean hasArrayIndex()
     {
         return(NULL_ARRAY_INDEX != mArrayIndex);
     }
@@ -49,7 +49,7 @@ public class Symbol
         mArrayIndex = pArrayIndex;
     }
 
-    public final int getArrayIndex()
+    public int getArrayIndex()
     {
         return(mArrayIndex);
     }
@@ -66,12 +66,12 @@ public class Symbol
         mValueArray = pArray;
     }
 
-    public final double []getDoubleArray()
+    public double []getDoubleArray()
     {
         return(mDoubleArray);
     }
 
-    public final Value []getValueArray()
+    public Value []getValueArray()
     {
         return(mValueArray);
     }

@@ -18,7 +18,7 @@ import org.systemsbiology.util.DataNotFoundException;
  * 
  * @author Stephen Ramsey
  */
-public class Value
+public final class Value
 {
     private Expression mExpressionValue;
     private boolean mExpressionValueCached;
@@ -86,7 +86,7 @@ public class Value
      * If the object instead has an {@link Expression} stored
      * within it, an IllegalStateException is thrown.
      */
-    public final double getValue() throws IllegalStateException
+    public double getValue() throws IllegalStateException
     {
         if(null == mExpressionValue)
         {
@@ -114,7 +114,7 @@ public class Value
      * floating-point value stored in the internal 
      * MutableDouble object within this object.
      */
-    public final double getValueWithCaching(SymbolEvaluator pSymbolValueMap) throws DataNotFoundException
+    public double getValueWithCaching(SymbolEvaluator pSymbolValueMap) throws DataNotFoundException
     {
         Expression expression = mExpressionValue;
         if(null != expression)
@@ -137,7 +137,7 @@ public class Value
         }
     }
 
-    public final double getValue(SymbolEvaluator pSymbolValueMap) throws DataNotFoundException
+    public double getValue(SymbolEvaluator pSymbolValueMap) throws DataNotFoundException
     {
         Expression expression = mExpressionValue;
         if(null != expression)

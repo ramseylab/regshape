@@ -13,12 +13,12 @@ package org.systemsbiology.math;
 /**
  * This class is a collection of useful mathematical functions.
  */
-public class MathFunctions
+public final class MathFunctions
 {
     private static final double SQTPI  =  2.50662827463100050242E0;
     private static final double LOGPI  =  1.14472988584940017414;
 
-    public static final void vectorZeroNegativeElements(double []vec)
+    public static void vectorZeroNegativeElements(double []vec)
     {
         int size = vec.length;
 
@@ -31,7 +31,7 @@ public class MathFunctions
         }
     }
 
-    public static final void vectorZeroElements(double []vec)
+    public static void vectorZeroElements(double []vec)
     {
         int size = vec.length;
 
@@ -41,7 +41,7 @@ public class MathFunctions
         }
     }
 
-    public static final double vectorSumElements(double []vec)
+    public static double vectorSumElements(double []vec)
     {
         double retVal = 0.0;
 
@@ -55,7 +55,7 @@ public class MathFunctions
         return(retVal);
     }
 
-    public static final void vectorAdd(double []addendX, double []addendY, double []sum)
+    public static void vectorAdd(double []addendX, double []addendY, double []sum)
     {
         int size1 = addendX.length;
         int size2 = addendY.length;
@@ -69,7 +69,7 @@ public class MathFunctions
         }
     }
 
-    public static final void vectorSubtract(double []addendX, double []addendY, double []sum)
+    public static void vectorSubtract(double []addendX, double []addendY, double []sum)
     {
         int size1 = addendX.length;
         int size2 = addendY.length;
@@ -83,7 +83,7 @@ public class MathFunctions
         }
     }
 
-    public static final void vectorScalarMultiply(double []vector, double scalar, double []product)
+    public static void vectorScalarMultiply(double []vector, double scalar, double []product)
     {
         int size1 = vector.length;
         int size2 = product.length;
@@ -100,7 +100,7 @@ public class MathFunctions
      *
      * @return the factorial of an integer argument.
      */
-    public static final long factorial(int pArg)
+    public static long factorial(int pArg)
     {
         assert (pArg > 0);
 
@@ -120,7 +120,7 @@ public class MathFunctions
      * @return 0 if the argument is negative, and 1 if the
      * argument is nonnegative.
      */
-    public static final double thetaFunction(double pArg)
+    public static double thetaFunction(double pArg)
     {
         double retVal = 0.0;
         if(pArg > 0.0)
@@ -138,7 +138,7 @@ public class MathFunctions
      * or underflow for large values of M, but it will work for small values
      * of M.
      */
-    public static final double chooseFunction(long N, int M) throws IllegalArgumentException
+    public static double chooseFunction(long N, int M) throws IllegalArgumentException
     {
         if(N < 0)
         {
@@ -161,7 +161,7 @@ public class MathFunctions
         return(retVal);
     }
 
-    public static final void main(String []pArgs)
+    public static void main(String []pArgs)
     {
 
     }
