@@ -1731,7 +1731,16 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         for(int loopIndex = startValue; loopIndex <= endValue; ++loopIndex)
         {
             loopIndexObj.setValue(loopIndex);
-            executeStatementBlock(subTokenList, pModel, pIncludeHandler, pSymbolMap, pNumReactions);
+            try
+            {
+                executeStatementBlock(subTokenList, pModel, pIncludeHandler, pSymbolMap, pNumReactions);
+            }
+            catch(InvalidInputException e)
+            {
+                StringBuffer messageBuf = new StringBuffer(e.getMessage());
+                messageBuf.append(" in loop block beginning");
+                throw new InvalidInputException(messageBuf.toString(), e);
+            }
         }
 
         // nuke the loop index object
