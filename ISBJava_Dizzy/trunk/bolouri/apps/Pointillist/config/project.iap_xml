@@ -149,7 +149,7 @@
 				<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
 			</property>
 			<property name="userSplashName">
-				<string><![CDATA[appLogo.png]]></string>
+				<string><![CDATA[appLogo.gif]]></string>
 			</property>
 			<property name="localesToBuild">
 				<object class="java.util.Vector">
