@@ -62,8 +62,10 @@ Supported targets are:
   uploadWeb:      upload the entire web content tree to the web server
 
 
-  
-
+In order to use the "uploadWeb" target, you will need to have 
+the "ncftp" program (http://www.ncftpd.com) installed on your 
+computer.  The program must also be found within your PATH
+environment variable, so that the "Ant" program can find it.
 
 
 
