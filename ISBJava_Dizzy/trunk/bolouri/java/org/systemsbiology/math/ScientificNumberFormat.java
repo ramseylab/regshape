@@ -52,6 +52,11 @@ public class ScientificNumberFormat extends DecimalFormat
     public StringBuffer format(double pValue, StringBuffer pResults, FieldPosition pFieldPosition)
     {
         int numSignificantDigits = mSignificantDigitsCalculator.calculate(pValue);
+        if(Double.isNaN(pValue))
+        {
+            pResults.append("NaN");
+            return(pResults);
+        }
         if(numSignificantDigits == SignificantDigitsCalculator.SIGNIFICANT_DIGITS_UNKNOWN)
         {
             return(super.format(pValue, pResults, pFieldPosition));
