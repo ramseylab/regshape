@@ -28,10 +28,10 @@
 # Date:    2003/04/09
 #
 
-minBases = 45;
-codingRegionLengthBases = 1000.0;
-transcriptionRate = 1.0;
-abortProbPerBase = 0.005;
+minBases                 = 45;
+codingRegionLengthBases  = 1000.0;
+transcriptionRate        = 1.0;
+abortProbPerBase         = 0.005;
 
 # polymerization complex moving one base along the template
 loop "i": start 1, stop [minBases-1]
@@ -75,20 +75,20 @@ TFB_binding_DNA_plus_TFA,   DNA_plus_TFA + TFB -> DNA_plus_TFC,         1.0;
 TFB_debinding_DNA_plus_TFA, DNA_plus_TFC -> DNA_plus_TFA + TFB,         0.1;
 
 # setting the initial populations for the chemical species in the model:
-TFA = 5;
-TFB = 5;
-DNA_plus_TFA = 0;
-DNA_plus_TFB = 0;
-DNA_plus_TFC = 0;
-DNA = 1;
-PCOM_plus_DNA_past_base_$[minBases] = 0;
-mRNA_product_complete = 0;
-mRNA_product_fragment = 0;
-PolII = 5;
+TFA                                   = 5;
+TFB                                   = 5;
+DNA_plus_TFA                          = 0;
+DNA_plus_TFB                          = 0;
+DNA_plus_TFC                          = 0;
+DNA                                   = 1;
+PCOM_plus_DNA_past_base_$[minBases]   = 0;
+mRNA_product_complete                 = 0;
+mRNA_product_fragment                 = 0;
+PolII                                 = 5;
 
 loop "i": start 1, stop [minBases]
 {
-        PCOM_plus_DNA_at_base_$[i] = 0;
+        PCOM_plus_DNA_at_base_$[i]    = 0;
 }
 
 # print out the model

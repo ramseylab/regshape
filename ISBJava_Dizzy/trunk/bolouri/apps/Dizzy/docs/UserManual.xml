@@ -308,7 +308,7 @@ Now, let&apos;s define a simple model of a chemical system.
 This system will consist of the enzyme-substrate reaction:
 <blockquote>
 <pre>
-   E
+&nbsp;&nbsp;&nbsp;E
 S ---&gt; P
 </pre>
 </blockquote>
@@ -319,8 +319,8 @@ shorthand for the following three elementary chemical reactions:
 <blockquote>
 <pre>
 E + S ---&gt; ES
-ES ---&gt; E + S
-ES ---&gt; E + P
+ES    ---&gt; E + S
+ES    ---&gt; E + P
 </pre>
 </blockquote>
 where the &quot;<code>ES</code>&quot; species is the enzyme-substrate
@@ -496,6 +496,27 @@ specify the initial population of each and every species appearing in the
 model.  They are not implicitly initialized to zero.
 </p>
 <p>
+The final model definition file should look like this:
+<blockquote>
+<table border="1">
+<tr><td>
+<pre>
+enzyme_substrate_combine,    E + S -&gt; ES,      1.0;
+enzyme_substrate_separate,   ES    -&gt; E + S,   0.1;
+make_product,                ES    -&gt; E + P,   0.01;
+
+E = 100;
+S = 100;
+P = 0;
+ES = 0;
+</pre>
+</td></tr>
+</table>
+</blockquote>
+</p>
+<p>
+Remember, whitespace is ignored by the &appName; interpreter, so your spacing
+does not need to look exactly like the example shown above.
 Now, let&apos;s save this model definition file in your text editor.  Next,
 let&apos;s clear the &appName; of any model definitions by clicking on the
 &quot;clear runtime variables&quot; button on the main window.  This will
@@ -2364,11 +2385,13 @@ over the range of integer values from 1 to 12, inclusive.
 <p>
 The following example illustrates a complete CCMDL model definition file:
 <blockquote>
+<table border="1">
+<tr><td>
 <pre>
-minBases = 45;
-codingRegionLengthBases = 1000.0;
-transcriptionRate = 1.0;
-abortProbPerBase = 0.005;
+minBases                 = 45;
+codingRegionLengthBases  = 1000.0;
+transcriptionRate        = 1.0;
+abortProbPerBase         = 0.005;
 
 # polymerization complex moving one base along the template
 loop "i": start 1, stop [minBases-1]
@@ -2419,22 +2442,24 @@ TFB_binding_DNA_plus_TFA,   DNA_plus_TFA + TFB -&gt; DNA_plus_TFC,         1.0;
 TFB_debinding_DNA_plus_TFA, DNA_plus_TFC -&gt; DNA_plus_TFA + TFB,         0.1;
 
 # setting the initial populations for the chemical species in the model:
-TFA = 5;
-TFB = 5;
-DNA_plus_TFA = 0;
-DNA_plus_TFB = 0;
-DNA_plus_TFC = 0;
-DNA = 1;
-PCOM_plus_DNA_past_base_$[minBases] = 0;
-mRNA_product_complete = 0;
-mRNA_product_fragment = 0;
-PolII = 5;
+TFA                                   = 5;
+TFB                                   = 5;
+DNA_plus_TFA                          = 0;
+DNA_plus_TFB                          = 0;
+DNA_plus_TFC                          = 0;
+DNA                                   = 1;
+PCOM_plus_DNA_past_base_$[minBases]   = 0;
+mRNA_product_complete                 = 0;
+mRNA_product_fragment                 = 0;
+PolII                                 = 5;
 
 loop "i": start 1, stop [minBases]
 {
-        PCOM_plus_DNA_at_base_$[i] = 0;
+        PCOM_plus_DNA_at_base_$[i]    = 0;
 }
 </pre>
+</td></tr>
+</table>
 </blockquote>
 This model definition file defines a very simple model of transcription.
 The model contains two transcription factors, <code>TFA</code> and 
