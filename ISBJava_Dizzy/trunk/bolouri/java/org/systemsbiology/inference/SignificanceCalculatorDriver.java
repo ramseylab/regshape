@@ -14,6 +14,9 @@ import javax.swing.*;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +27,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.io.*;
-
+import cern.jet.stat.Descriptive;
+import cern.colt.list.DoubleArrayList;
 import javax.swing.table.AbstractTableModel;
 import org.systemsbiology.data.DataFileDelimiter;
 import org.systemsbiology.gui.*;
@@ -63,14 +67,13 @@ public class SignificanceCalculatorDriver
     private static final SignificanceCalculationFormula DEFAULT_SIGNIFICANCE_CALCULATION_FORMULA = SignificanceCalculationFormula.CDF;    
     private static final DataFileDelimiter DEFAULT_DATA_FILE_DELIMITER = DataFileDelimiter.COMMA;
     private static final String COLUMN_NAME_ELEMENT = "element";
+    private static final double DEFAULT_SMOOTHING_LENGTH = 1.0;
     
     private Component mParent;
     private Container mContentPane;
     private ScientificNumberFormat mNumberFormat;
     private JLabel mFormulaLabel;
     private JComboBox mFormulasBox;
-    private JLabel mMaxChiSquareLabel;
-    private JTextField mMaxChiSquareField;
     private JButton mCalcSigsButton;
     private JButton mResetFormButton;
     private JButton mSaveResultsButton;
@@ -88,6 +91,8 @@ public class SignificanceCalculatorDriver
     private JTable mEvidenceChoicesTable;
     private SignificanceCalculator mSignificanceCalculator;
     private JTable mResultsTable;
+    private TableColumn mColumnSmoothingLength;
+    private TableColumn mColumnMaxChiSquare;
     
     class NegativeControlData
     {
@@ -105,93 +110,91 @@ public class SignificanceCalculatorDriver
     
     static class EvidenceChoices
     {
-        public boolean mSingleTailed;
-        public boolean mAllowEmpirical;
         public Double []mObservationsData;
         public Double []mControlData;
-        public int mNumBins;
+        public SignificanceCalculatorParams mParams;
     }
-    
+
     static class EvidenceChoicesTableModel extends AbstractTableModel
     {
     	public static final int COLUMN_EVIDENCE_NAME = 0;
         public static final int COLUMN_NUM_OBSERVATIONS = 1;
     	public static final int COLUMN_SINGLE_TAILED = 2;
-    	public static final int COLUMN_ALLOW_EMPIRICAL = 3;
-    	public static final int COLUMN_NUM_BINS = 4;
-    	public static final int COLUMN_COMPUTE_SIGNIFICANCES = 5;
-    	public static final int COLUMN_NEGATIVE_CONTROLS = 6;
+    	public static final int COLUMN_NUM_BINS = 3;
+        public static final int COLUMN_SMOOTHING_LENGTH = 4;
+        public static final int COLUMN_MAX_CHI_SQUARE = 5;
+    	public static final int COLUMN_COMPUTE_SIGNIFICANCES = 6;
+    	public static final int COLUMN_NEGATIVE_CONTROLS = 7;
         
-        private static final boolean []IS_CELL_EDITABLE = {false, false, true, true, true, true, false};
+        public static final int COLUMN_SWITCHABLE = 4;
+        
+        private static final boolean []IS_CELL_EDITABLE = {false, false, true, true, true, true, true, false};
         private static final String []COLUMN_NAMES = {"evidence name",
-                "num observations",
-                "single-tailed",
-                "allow empirical",
-                "number of bins",
-                "compute significances",
-                "negative control observations" };
+                                                      "num observations",
+                                                      "single-tailed",
+                                                      "number of bins",
+                                                      "smoothing length",
+                                                      "max chi square",
+                                                      "compute significances",
+                                                      "negative control observations" };
 
         public static final String []TOOL_TIPS_EVIDENCE_CHOICES_TABLE = {"The evidence name",
                 "The number of observations recorded for this evidence type.",
                 "Specify whether the observations for this evidence are single-tailed (nonnegative) or two-tailed (positive and negative).",
-                "Specify whether the empirical probability distribution is to be allowed, for fitting a distribution to the observations.",
                 "Specify the number of bins to be used in generating the histogram of observations for this evidence type.",
+                "Specify the smoothing length to be used for generating the nonparametric distribution of observations for this evidence type.",
+                "Specify the maximum allowed reduced chi square for fitting a probability distribution to the observations for this evidence type.",
                 "Compute significances for this evidence type; at least one evidence type must have this field enabled, in order to proceed.",
                 "Specify (optionally) the negative control observations for this evidence.  Use the delete key to clear this field.  Double-click to set."};
 
-        public static final String TOOL_TIP_NO_EDITING_EMPIRICAL_FIELD = "The empirical distribution is not allowed when you are using control data, as well as when you are using the PDF significance calculation formula.";
+        public static final String TOOL_TIP_NO_EDITING_SINGLE_TAILED_FIELD = "The single-tailed field cannot be edited for this evidence type, because this evidence has at least one negative observation and you have specified the PDF formula.";
         
         private ObservationsData mObservations;
         private NegativeControlData []mNegativeControlData;
         private Boolean []mSingleTailed;
-        private Boolean []mAllowEmpirical;
         private Boolean []mComputeSignificances;
         private Integer []mNumBins;
         private Integer []mNumObservations;
         private Component mParent;
-        private boolean mAllowEditingEmpiricalColumn;
+        private Double []mMaxChiSquare;
+        private Double []mSmoothingLength;
+        private SignificanceCalculationFormula mFormula;
+        private double []mObsMins;
+        private double []mObsMaxs;
         
         public EvidenceChoicesTableModel(ObservationsData pObservations, Component pParent)
         {
             mParent = pParent;
+            mFormula = DEFAULT_SIGNIFICANCE_CALCULATION_FORMULA;
             mObservations = pObservations;
             int numEvidences = pObservations.getNumEvidences();
             mNegativeControlData = new NegativeControlData[numEvidences];
             mSingleTailed = new Boolean[numEvidences];
-            mAllowEmpirical = new Boolean[numEvidences];
             mComputeSignificances = new Boolean[numEvidences];
             mNumBins = new Integer[numEvidences];
             mNumObservations = new Integer[numEvidences];
-            mAllowEditingEmpiricalColumn = true;
+            mSmoothingLength = new Double[numEvidences];
+            mMaxChiSquare = new Double[numEvidences];
+            mObsMins = new double[numEvidences];
+            mObsMaxs = new double[numEvidences];
             
+            DoubleArrayList columnList = null;
+            double min = 0.0;
+            double max = 0.0;
+            for(int j = 0; j < numEvidences; ++j)
+            {
+                columnList = mObservations.getNonMissingColumnVals(j);
+                min = Descriptive.min(columnList);
+                max = Descriptive.max(columnList);
+                mObsMins[j] = min;
+                mObsMaxs[j] = max;
+            }
             setDefaultTableValues();
         }
-
-        public void setAllowEditingEmpiricalColumn(boolean pAllowEditingEmpiricalColumn)
+        
+        public void setSignificanceCalculationFormula(SignificanceCalculationFormula pFormula)
         {
-            if(! pAllowEditingEmpiricalColumn)
-            {
-                int numEvidences = mAllowEmpirical.length;
-                boolean showedMessage = false;
-                for(int j = 0; j < numEvidences; ++j)
-                {
-                    if(mAllowEmpirical[j].booleanValue() && !showedMessage)
-                    {
-                        JOptionPane.showMessageDialog(mParent,
-                                      "The significance calculation formula you specified does not permit using the empirical distribution; so, the \"allow empirical\" column is being cleared and disabled.",
-                                      "Clearing the empirical distribution column",
-                                      JOptionPane.INFORMATION_MESSAGE);
-                        showedMessage = true;
-                        mAllowEmpirical[j] = new Boolean(false);
-                    }
-                    
-                }
-                if(showedMessage)
-                {
-                    fireTableDataChanged();
-                }
-            }
-            mAllowEditingEmpiricalColumn = pAllowEditingEmpiricalColumn;
+            mFormula = pFormula;
         }
         
         public EvidenceChoices []getEvidenceChoices()
@@ -206,9 +209,13 @@ public class SignificanceCalculatorDriver
                 if(mComputeSignificances[j].booleanValue())
                 {
                     evidenceChoices = new EvidenceChoices();
-                    evidenceChoices.mAllowEmpirical = mAllowEmpirical[j].booleanValue();
-                    evidenceChoices.mSingleTailed = mSingleTailed[j].booleanValue();
-                    evidenceChoices.mNumBins = mNumBins[j].intValue();
+                    SignificanceCalculatorParams params = new SignificanceCalculatorParams();
+                    params.setMaxReducedChiSquare(mMaxChiSquare[j]);
+                    params.setNumBins(mNumBins[j]);
+                    params.setSingleTailed(mSingleTailed[j]);
+                    params.setSmoothingLength(mSmoothingLength[j]);
+                    params.setSignificanceCalculationFormula(mFormula);
+                    evidenceChoices.mParams = params;
                     evidenceChoices.mObservationsData = mObservations.getColumn(j);
                     negativeControlData = mNegativeControlData[j];
                     if(null != negativeControlData)
@@ -250,29 +257,22 @@ public class SignificanceCalculatorDriver
             int numEvidences = mObservations.getNumEvidences();
             boolean hasNegatives = false;
             double columnMin = 0.0;
+            double smoothingLength = 0.0;
             for(int j = 0; j < numEvidences; ++j)
             {
-                columnMin = mObservations.columnMinimum(j);
-                hasNegatives = (columnMin < 0.0);
-                mSingleTailed[j] = new Boolean(! hasNegatives);
-                mAllowEmpirical[j] = new Boolean(false);
+                mSingleTailed[j] = new Boolean(mObsMins[j] >= 0.0);
                 mComputeSignificances[j] = new Boolean(true);
                 int numObs = mObservations.getNumObservations(j);
                 mNumObservations[j] = new Integer(numObs);
                 int numBins = (int) Math.max(((double) numObs)/10.0, MIN_NUM_BINS); 
                 mNumBins[j] = new Integer(numBins);
+                mMaxChiSquare[j] = new Double(DEFAULT_MAX_CHI_SQUARE);
+                smoothingLength = 10.0 * (mObsMaxs[j]-mObsMins[j])/((double) numBins);
+                mSmoothingLength[j] = new Double(smoothingLength);
             }            
             fireTableDataChanged();
         }
         
-        public void setAllowEmpirical(int pEvidenceNumber, boolean pAllowEmpirical)
-        {
-        	if(pEvidenceNumber < 0 || pEvidenceNumber >= mAllowEmpirical.length)
-        	{
-        		throw new IllegalStateException("invalid evidence number: " + pEvidenceNumber);
-        	}
-        	mAllowEmpirical[pEvidenceNumber] = new Boolean(pAllowEmpirical);
-        }
         
         
         public Class getColumnClass(int pColumn)
@@ -315,11 +315,6 @@ public class SignificanceCalculatorDriver
                 fireTableCellUpdated(pRow, pColumn);
                 break;
                 
-            case COLUMN_ALLOW_EMPIRICAL:
-            	mAllowEmpirical[pRow] = (Boolean) pValue;
-                fireTableCellUpdated(pRow, pColumn);
-                break;
-            	
             case COLUMN_NUM_BINS:
                 Integer value = (Integer) pValue;
                 if(value.intValue() <= 0)
@@ -329,10 +324,35 @@ public class SignificanceCalculatorDriver
                                   JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-            	mNumBins[pRow] = (Integer) pValue;
+            	mNumBins[pRow] = value;
             	fireTableCellUpdated(pRow, pColumn);
             	break;
             	
+            case COLUMN_SMOOTHING_LENGTH:
+                Double valueDbl = (Double) pValue;
+                if(valueDbl.doubleValue() <= 0.0)
+                {
+                    JOptionPane.showMessageDialog(mParent,
+                            "The smoothing length must be a positive number", "Invalid smoothing length",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                mSmoothingLength[pRow] = valueDbl;
+                break;
+                
+            case COLUMN_MAX_CHI_SQUARE:
+                valueDbl = (Double) pValue;
+                if(valueDbl.doubleValue() <= 0.0)
+                {
+                    JOptionPane.showMessageDialog(mParent,
+                            "The max chi square must be a positive number", "Invalid max chi square",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                mMaxChiSquare[pRow] = valueDbl;
+                break;
+                
+                
             case COLUMN_COMPUTE_SIGNIFICANCES:
             	mComputeSignificances[pRow] = (Boolean) pValue;
                 fireTableCellUpdated(pRow, pColumn);
@@ -350,15 +370,14 @@ public class SignificanceCalculatorDriver
         
         public boolean isCellEditable(int pRow, int pColumn)
         {
-        	if(pColumn != COLUMN_ALLOW_EMPIRICAL)
-        	{
-        		return IS_CELL_EDITABLE[pColumn];
-        	}
-        	else
-        	{
-        		return (null == mNegativeControlData[pRow] &&
-                        mAllowEditingEmpiricalColumn);
-        	}
+            switch(pColumn)
+            {
+            case COLUMN_SINGLE_TAILED:
+                return (mObsMins[pRow] >= 0.0 || !(mFormula.equals(SignificanceCalculationFormula.PDF)));
+                
+            default:
+                return IS_CELL_EDITABLE[pColumn];
+            }
         }
         
         public String getColumnName(int pColumn)
@@ -379,12 +398,15 @@ public class SignificanceCalculatorDriver
             case COLUMN_SINGLE_TAILED:
                 return mSingleTailed[pRow];
             
-            case COLUMN_ALLOW_EMPIRICAL:
-            	return mAllowEmpirical[pRow];
-            
             case COLUMN_NUM_BINS:
             	return mNumBins[pRow];
-            	
+            
+            case COLUMN_SMOOTHING_LENGTH:
+                return mSmoothingLength[pRow];
+                
+            case COLUMN_MAX_CHI_SQUARE:
+                return mMaxChiSquare[pRow];
+                
             case COLUMN_COMPUTE_SIGNIFICANCES:
             	return mComputeSignificances[pRow];
             	
@@ -411,7 +433,7 @@ public class SignificanceCalculatorDriver
         
         public String getToolTipText(int pRow, int pColumn)
         {
-        	if(pRow >= mAllowEmpirical.length)
+        	if(pRow >= mObsMins.length)
         	{
         		throw new IllegalStateException("invalid row: " + pRow);
         	}
@@ -420,15 +442,32 @@ public class SignificanceCalculatorDriver
         		throw new IllegalStateException("invalid column: " + pColumn);
         	}
         	String tip = null;
-        	if(pRow == -1 || pColumn != COLUMN_ALLOW_EMPIRICAL || (null == mNegativeControlData[pRow] &&
-               mAllowEditingEmpiricalColumn))
-        	{
-        		tip = TOOL_TIPS_EVIDENCE_CHOICES_TABLE[pColumn];
-        	}
-        	else
-        	{
-        		tip = TOOL_TIP_NO_EDITING_EMPIRICAL_FIELD;
-        	}
+            
+            if(pRow != -1)
+            {
+                switch(pColumn)
+                {                    
+                case COLUMN_SINGLE_TAILED:
+                    if(mObsMins[pRow] < 0.0 && mFormula.equals(SignificanceCalculationFormula.PDF))
+                    {
+                        tip = TOOL_TIP_NO_EDITING_SINGLE_TAILED_FIELD;
+                    }
+                    else
+                    {
+                        tip = TOOL_TIPS_EVIDENCE_CHOICES_TABLE[pColumn];
+                    }
+                    break;
+                    
+                default:
+                    tip = TOOL_TIPS_EVIDENCE_CHOICES_TABLE[pColumn];
+                break;
+                }
+            }
+            else
+            {
+                tip = TOOL_TIPS_EVIDENCE_CHOICES_TABLE[pColumn];
+            }
+
         	return tip;
         }        
     }
@@ -514,8 +553,6 @@ public class SignificanceCalculatorDriver
             mObservationsTable.setToolTipText(TOOL_TIP_OBSERVATIONS_TABLE);
             mFormulaLabel.setToolTipText(TOOL_TIP_FORMULAS_BOX);
             mFormulasBox.setToolTipText(TOOL_TIP_FORMULAS_BOX);
-            mMaxChiSquareLabel.setToolTipText(TOOL_TIP_MAX_CHI_SQUARE);
-            mMaxChiSquareField.setToolTipText(TOOL_TIP_MAX_CHI_SQUARE);
             mCalcSigsButton.setToolTipText(TOOL_TIP_CALCULATE_SIGNIFICANCES_BUTTON);
             mResetFormButton.setToolTipText(TOOL_TIP_RESET_FORM_BUTTON);
         }
@@ -524,8 +561,6 @@ public class SignificanceCalculatorDriver
             mObservationsTable.setToolTipText(null);
             mFormulaLabel.setToolTipText(null);
             mFormulasBox.setToolTipText(null);
-            mMaxChiSquareLabel.setToolTipText(null);
-            mMaxChiSquareField.setToolTipText(null);
             mCalcSigsButton.setToolTipText(null);
             mResetFormButton.setToolTipText(null);
         }
@@ -547,8 +582,6 @@ public class SignificanceCalculatorDriver
         mFileClearButton.setEnabled(pFileLoaded);
         mFormulaLabel.setEnabled(pFileLoaded);
         mFormulasBox.setEnabled(pFileLoaded);
-        mMaxChiSquareLabel.setEnabled(pFileLoaded);
-        mMaxChiSquareField.setEnabled(pFileLoaded);
         mCalcSigsButton.setEnabled(pFileLoaded && ((EvidenceChoicesTableModel) mEvidenceChoicesTable.getModel()).atLeastOneEvidenceSelected());
         mClearResultsButton.setEnabled(pResultsObtained);
         mSaveResultsButton.setEnabled(pResultsObtained);
@@ -565,7 +598,6 @@ public class SignificanceCalculatorDriver
     {
         clearResults();
         mFormulasBox.setSelectedItem(DEFAULT_SIGNIFICANCE_CALCULATION_FORMULA.getName());
-        mMaxChiSquareField.setText(mNumberFormat.format(DEFAULT_MAX_CHI_SQUARE));
         TableModel tableModel = mEvidenceChoicesTable.getModel();
         if(tableModel instanceof EvidenceChoicesTableModel)
         {
@@ -583,6 +615,12 @@ public class SignificanceCalculatorDriver
     {
         EvidenceChoicesTableModel evidenceChoicesTableModel = new EvidenceChoicesTableModel(mObservationsData, mParent);
         mEvidenceChoicesTable.setModel(evidenceChoicesTableModel);
+        TableColumnModel columnModel = mEvidenceChoicesTable.getColumnModel();
+        mColumnMaxChiSquare = columnModel.getColumn(EvidenceChoicesTableModel.COLUMN_MAX_CHI_SQUARE);
+        mColumnSmoothingLength = columnModel.getColumn(EvidenceChoicesTableModel.COLUMN_SMOOTHING_LENGTH);
+        columnModel.removeColumn(mColumnMaxChiSquare);
+        columnModel.removeColumn(mColumnSmoothingLength);
+        setSignificanceCalculationFormula(DEFAULT_SIGNIFICANCE_CALCULATION_FORMULA);
     }
     
     private SignificanceCalculationFormula getSignificanceCalculationFormula()
@@ -674,6 +712,28 @@ public class SignificanceCalculatorDriver
         mResultsTable.setModel(mEmptyTableModel);
         setEnableStateForFields(null != mObservationsData, false);
         setToolTipsForFields(null != mObservationsData, false);
+    }
+    
+    private void setSignificanceCalculationFormula(SignificanceCalculationFormula pFormula)
+    {
+        TableColumnModel columnModel = mEvidenceChoicesTable.getColumnModel();
+        if(pFormula.equals(SignificanceCalculationFormula.PDF))
+        {
+            columnModel.removeColumn(mColumnSmoothingLength);
+            columnModel.addColumn(mColumnMaxChiSquare);
+        }
+        else if(pFormula.equals(SignificanceCalculationFormula.CDF))
+        {
+            columnModel.removeColumn(mColumnMaxChiSquare);
+            columnModel.addColumn(mColumnSmoothingLength);
+        }
+        else
+        {
+            throw new IllegalStateException("unknown significance calculation formula: " + pFormula.getName());
+        }
+        columnModel.moveColumn(columnModel.getColumnCount() - 1, EvidenceChoicesTableModel.COLUMN_SWITCHABLE);
+        EvidenceChoicesTableModel tableModel = (EvidenceChoicesTableModel) mEvidenceChoicesTable.getModel();
+        tableModel.setSignificanceCalculationFormula(pFormula);
     }
     
     private void handleHelp()
@@ -939,17 +999,20 @@ public class SignificanceCalculatorDriver
                 {
                     public void itemStateChanged(ItemEvent e)
                     {
-                        boolean allowEditingEmpiricalColumn = ! (getSignificanceCalculationFormula().equals(SignificanceCalculationFormula.PDF));
-                        ((EvidenceChoicesTableModel) mEvidenceChoicesTable.getModel()).setAllowEditingEmpiricalColumn(allowEditingEmpiricalColumn);
+                        if(e.getStateChange() == ItemEvent.SELECTED)
+                        {
+                            String formulaStr = (String) mFormulasBox.getSelectedItem();
+                            SignificanceCalculationFormula formula = SignificanceCalculationFormula.get(formulaStr);
+                            if(null == formula)
+                            {
+                                throw new IllegalStateException("unrecognized significance calculation formula name: " + formulaStr);
+                            }
+                            setSignificanceCalculationFormula(formula);
+                        }
                     }
                 });
         choicesPanel.add(formulasBox);
         mFormulasBox = formulasBox;
-        
-        mMaxChiSquareLabel = new JLabel("Maximum reduced chi-square: ");
-        choicesPanel.add(mMaxChiSquareLabel);
-        mMaxChiSquareField = new JTextField(NUM_COLUMNS_TEXT_FIELD_NUMERIC);
-        choicesPanel.add(mMaxChiSquareField);
         
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -1086,9 +1149,7 @@ public class SignificanceCalculatorDriver
             NegativeControlData negativeControlData = new NegativeControlData(mFile, pSelectedColumn, observations);
             EvidenceChoicesTableModel tableModel = (EvidenceChoicesTableModel) mEvidenceChoicesTable.getModel();
             tableModel.setNegativeControlData(mEvidenceNum, negativeControlData);
-            tableModel.setAllowEmpirical(mEvidenceNum, false);
             tableModel.fireTableCellUpdated(mEvidenceNum, EvidenceChoicesTableModel.COLUMN_NEGATIVE_CONTROLS);
-            tableModel.fireTableCellUpdated(mEvidenceNum, EvidenceChoicesTableModel.COLUMN_ALLOW_EMPIRICAL);
         }
     }
     
@@ -1096,27 +1157,6 @@ public class SignificanceCalculatorDriver
     {
         EvidenceChoicesTableModel tableModel = (EvidenceChoicesTableModel) mEvidenceChoicesTable.getModel();
         EvidenceChoices []evidenceChoicesArray = tableModel.getEvidenceChoices();
-
-        String maxChiSquareText = mMaxChiSquareField.getText().trim();
-        double maxChiSquare;
-        try
-        {
-            maxChiSquare = Double.parseDouble(maxChiSquareText);
-        }
-        catch(NumberFormatException e)
-        {
-            handleMessage("The maximum reduced chi square you specified, \"" + maxChiSquareText + "\", is not a valid floating-point number.",
-                    "Invalid max chi square",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if(maxChiSquare <= 0.0)
-        {
-            handleMessage("The maximum reduced chi square you specified, \"" + maxChiSquare + "\", is not a positive-definite number.",
-                    "Invalid max chi square",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
 
         EvidenceChoices evidenceChoices = null;
         int numEvidences = evidenceChoicesArray.length;
@@ -1133,12 +1173,8 @@ public class SignificanceCalculatorDriver
                 if(null != evidenceChoices)
                 {
                     mResults[evidenceCtr] = mSignificanceCalculator.calculateSignificances(evidenceChoices.mObservationsData,
-                                                                                           evidenceChoices.mObservationsData,
-                                                                                           evidenceChoices.mNumBins,
-                                                                                           maxChiSquare,
-                                                                                           evidenceChoices.mSingleTailed,
-                                                                                           evidenceChoices.mAllowEmpirical,
-                                                                                           sigCalcFormula);
+                                                                                           evidenceChoices.mControlData,
+                                                                                           evidenceChoices.mParams);
                 }
                 else
                 {

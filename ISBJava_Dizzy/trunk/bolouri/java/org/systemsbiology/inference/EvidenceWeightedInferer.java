@@ -15,7 +15,6 @@ import cern.colt.function.*;
 import cern.colt.matrix.*;
 import cern.colt.matrix.doublealgo.*;
 import org.systemsbiology.math.AccuracyException;
-import org.systemsbiology.math.probability.IContinuousDistribution;
 
 /**
  * An implementation of the Pointillist algorithm for
@@ -473,8 +472,6 @@ public final class EvidenceWeightedInferer
             mNegLogCombinedEffectiveSignificances.set(i, negLogCombinedEffectiveSignificance);
         }
         
-        // :TODO: add code to compute CDF here?
-        
         double maxCombinedSigAffected = 0.0;
         double minCombinedSigAffected = Double.MAX_VALUE;
         mAffectedSignificances.assign(Double.MIN_VALUE);
@@ -618,13 +615,16 @@ public final class EvidenceWeightedInferer
         //System.out.println("cost function: " + objFunction);
     }
     
+
+    
+    
     public void findAffectedElements(DoubleMatrix2D pSignificances,
                                      int pNumBins,
                                      double pInitialCutoff,
                                      double pCombinedSignificanceCutoff,
                                      double pFractionToRemove,
                                      double pMinFractionalCostChange,
-                                     double pMaxChiSquare,
+                                     double pSmoothingLength,
                                      EvidenceWeightType pWeightType,
                                      EvidenceWeightedInfererResults pRetResults) throws AccuracyException
     {
@@ -672,9 +672,9 @@ public final class EvidenceWeightedInferer
         {
             throw new IllegalArgumentException("illegal array size for weights array");
         }
-        if(pMaxChiSquare <= 0.0)
+        if(pSmoothingLength <= 0.0)
         {
-            throw new IllegalArgumentException("illegal maximum reduced chi square: " + pMaxChiSquare);
+            throw new IllegalArgumentException("illegal smoothing length: " + pSmoothingLength);
         }
         if(pCombinedSignificanceCutoff < 0.0 || pCombinedSignificanceCutoff > 1.0)
         {
@@ -901,8 +901,6 @@ public final class EvidenceWeightedInferer
                                   pFractionToRemove,
                                   pWeightType,
                                   iterationResults);
-            
-            numAffected += numProbableFalseNegatives;
         }
 
         Double []allSignificances = new Double[numElements];
@@ -921,50 +919,91 @@ public final class EvidenceWeightedInferer
             }
         }
         
-        boolean singleTailed = false;
-        boolean allowEmpirical = false;
-        mSignificanceCalculator.calculateSignificances(allSignificances, 
+        boolean singleTailed = true;
+        mSignificanceCalculator.calculateSignificancesCDF(allSignificances, 
                                                        unaffectedSignificances,
                                                        mNumBins,
-                                                       pMaxChiSquare,
                                                        singleTailed,
-                                                       allowEmpirical,
-                                                       SignificanceCalculationFormula.CDF,
+                                                       pSmoothingLength,
                                                        mSignificanceCalculationResults);
         
-        IContinuousDistribution probDist = mSignificanceCalculationResults.mBestFitDistribution;
-        double meanNegLogCombinedEffectiveSignificance = probDist.mean();
-        //System.out.println("prob dist used: " + probDist.name() + "; chi square: " + mSignificanceCalculationResults.mReducedChiSquare);
         double []cumulativeSignificances = mSignificanceCalculationResults.mSignificances;
         double finalSignificance = 0.0;
         for(i = numElements; --i >= 0; )
         {
-            negLogCombinedEffectiveSignificance = mNegLogCombinedEffectiveSignificances.get(i);
-            if(negLogCombinedEffectiveSignificance > meanNegLogCombinedEffectiveSignificance)
-            {
-                finalSignificance = 0.5 * cumulativeSignificances[i];
-            }
-            else
-            {
-                finalSignificance = 1.0 - (0.5*cumulativeSignificances[i]);
-            }
-            pRetResults.mCombinedEffectiveSignificances[i] = finalSignificance;
+            pRetResults.mCombinedEffectiveSignificances[i] = cumulativeSignificances[i];
         }
         pRetResults.mSignificanceDistributionSeparation = iterationResults.mSignificanceDistributionSeparation;
         pRetResults.mAlphaParameter = iterationResults.mAlphaParameter;
         pRetResults.mNumIterations = iterationCtr;
-        pRetResults.mReducedChiSquare = mSignificanceCalculationResults.mReducedChiSquare;
         mWeights.toArray(pRetResults.mWeights);
     }
     
+    public void findAffectedElements(DoubleMatrix2D pSignificances,
+                                     EvidenceWeightedInfererParams pParams,
+                                     EvidenceWeightedInfererResults pResults) throws AccuracyException
+    {
+        Integer numBinsObj = pParams.getNumBins();
+        if(null == numBinsObj)
+        {
+            throw new IllegalArgumentException("missing parameter: num bins");
+        }
+        int numBins = numBinsObj.intValue();
+        
+        Double initialSignificanceCutoffObj = pParams.getInitialSignificanceCutoff();
+        if(null == initialSignificanceCutoffObj)
+        {
+            throw new IllegalArgumentException("missing parameter: initial significance cutoff");
+        }
+        double initialSignificanceCutoff = initialSignificanceCutoffObj.doubleValue();
+        
+        Double combinedSignificanceCutoffObj = pParams.getCombinedSignificanceCutoff();
+        if(null == combinedSignificanceCutoffObj)
+        {
+            throw new IllegalArgumentException("missing parameter: combined significance cutoff");
+        }
+        double combinedSignificanceCutoff = combinedSignificanceCutoffObj.doubleValue();
+        
+        Double fractionToRemoveObj = pParams.getFractionToRemove();
+        if(null == fractionToRemoveObj)
+        {
+            throw new IllegalArgumentException("missing parameter:  fraction to remove");
+        }
+        double fractionToRemove = fractionToRemoveObj.doubleValue();
+        
+        Double minFractionalCostChangeObj = pParams.getMinFractionalCostChange();
+        if(null == minFractionalCostChangeObj)
+        {
+            throw new IllegalArgumentException("missing parameter:  min fractional cost change");
+        }
+        double minFractionalCostChange = minFractionalCostChangeObj.doubleValue();
+        
+        Double smoothingLengthObj = pParams.getSmoothingLength();
+        if(null == smoothingLengthObj)
+        {
+            throw new IllegalArgumentException("missing parameter:  smoothing length");
+        }
+        double smoothingLength = smoothingLengthObj.doubleValue();
+        
+        EvidenceWeightType weightType = pParams.getEvidenceWeightType();
+        if(null == weightType)
+        {
+            throw new IllegalArgumentException("missing parameter:  weight type");
+        }
+        
+        findAffectedElements(pSignificances,
+                numBins,
+                initialSignificanceCutoff,
+                combinedSignificanceCutoff,
+                fractionToRemove,
+                minFractionalCostChange,
+                smoothingLength,
+                weightType,
+                pResults);
+    }
+    
     public EvidenceWeightedInfererResults findAffectedElements(DoubleMatrix2D pSignificances,
-                                                               int pNumBins,
-                                                               double pInitialCutoff,
-                                                               double pCombinedSignificanceCutoff,
-                                                               double pFractionToRemove,
-                                                               double pMinFractionalCostChange,
-                                                               double pMaxChiSquare,
-                                                               EvidenceWeightType pWeightType) throws AccuracyException
+                                                               EvidenceWeightedInfererParams pParams) throws AccuracyException
     {
         EvidenceWeightedInfererResults results = new EvidenceWeightedInfererResults();
         int numElements = pSignificances.rows();
@@ -976,13 +1015,7 @@ public final class EvidenceWeightedInferer
         results.mWeights = new double[numEvidences];
         
         findAffectedElements(pSignificances,
-                             pNumBins,
-                             pInitialCutoff,
-                             pCombinedSignificanceCutoff,
-                             pFractionToRemove,
-                             pMinFractionalCostChange,
-                             pMaxChiSquare,
-                             pWeightType,
+                             pParams,
                              results);
         
         return results;

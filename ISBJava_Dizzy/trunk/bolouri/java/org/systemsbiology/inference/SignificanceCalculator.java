@@ -28,6 +28,10 @@ public class SignificanceCalculator
     private DoubleMatrix1D mHistogram;
     private int mNumBins;
     
+    private double []mPDFs;
+    private double []mCDFs;
+    private double []mXs;
+    
     public SignificanceCalculator()
     {
         setMissingDataSignificance(DEFAULT_MISSING_DATA_SIGNIFICANCE);
@@ -41,6 +45,10 @@ public class SignificanceCalculator
         {
             mNumBins = pNumBins;
             mHistogram = DoubleFactory1D.dense.make(mNumBins);
+            
+            mPDFs = new double[pNumBins];
+            mCDFs = new double[pNumBins];
+            mXs = new double[pNumBins];
         }
     }
     
@@ -401,14 +409,192 @@ public class SignificanceCalculator
         }              
     }
 
-    public void calculateSignificances(Double []pObservations, 
-                                       Double []pControlData,
-                                       int pNumBins, 
-                                       double pMaxChiSquare, 
-                                       boolean pSingleTailed,
-                                       boolean pAllowEmpirical,
-                                       SignificanceCalculationFormula pSignificanceType,
-                                       SignificanceCalculationResults pRetResults) throws AccuracyException
+ 
+    
+    public void calculateSignificancesCDF(Double []pObservations, 
+                                          Double []pControlData,
+                                          int pNumBins, 
+                                          boolean pSingleTailed,
+                                          double pSmoothingLength,
+                                          SignificanceCalculationResults pRetResults) 
+    {
+        int numObservations = pObservations.length;
+        if(numObservations == 0)
+        {
+            throw new IllegalArgumentException("no observations");
+        }
+        
+        int numControlValues = pControlData.length;
+        if(numControlValues == 0)
+        {
+            throw new IllegalArgumentException("no control data");
+        }
+        
+        double []significances = pRetResults.mSignificances;
+        if(null == significances)
+        {
+            throw new IllegalArgumentException("missing return array for significances");
+        }
+        if(significances.length != numObservations)
+        {
+            throw new IllegalArgumentException("improper array length");
+        }
+                
+        if(pSmoothingLength <= 0.0)
+        {
+            throw new IllegalArgumentException("improper smoothing length");
+        }
+        
+        initialize(pNumBins);
+        
+        DoubleArrayList controlsList = mDataList;
+        controlsList.clear();
+        Double controlValObj = null;
+        for(int i = 0; i < numControlValues; ++i)
+        {
+            controlValObj = pControlData[i];
+            if(null != controlValObj)
+            {
+                controlsList.add(controlValObj.doubleValue());
+            }
+        }
+        double controlMax = Descriptive.max(controlsList);
+        double controlMin = Descriptive.min(controlsList);
+
+        double obsMax = 0.0;
+        double obsMin = Double.MAX_VALUE;
+        Double obsObj = null;
+        double obsVal = 0.0;
+        for(int i = 0; i < numObservations; ++i)
+        {
+            obsObj = pObservations[i];
+            if(null != obsObj)
+            {
+                obsVal = obsObj.doubleValue();
+                if(obsVal > obsMax)
+                {
+                    obsMax = obsVal;
+                }
+                if(obsVal < obsMin)
+                {
+                    obsMin = obsVal;
+                }
+            }
+        }
+
+        double []controls = controlsList.elements();
+        double []pdfs = mPDFs;
+
+        double numBinsDouble = (double) pNumBins;
+        double binSize = (obsMax - obsMin)/numBinsDouble;
+        double x = 0.0;
+        double pdfx = 0.0;
+        
+        double variance = pSmoothingLength*pSmoothingLength;
+        double numControlsDouble = (double) numControlValues;
+        double pdfInt = 0.0;
+        
+        double []xs = mXs;
+        for(int k = 0; k < pNumBins; ++k)
+        {
+            x = obsMin + binSize*(((double) k) + 0.5);
+            xs[k] = x;
+            pdfx = 0.0;
+            
+            for(int i = 0; i < numControlValues; ++i)
+            {
+                pdfx += Normal.pdf(controls[i], variance, x);
+            }
+            
+            pdfx /= numControlsDouble;
+            
+            pdfs[k] = pdfx;
+            pdfInt += pdfx*binSize;
+        }
+
+        // need to rescale the probability distribution function to ensure it has unit integral
+        for(int k = 0; k < pNumBins; ++k)
+        {
+            pdfs[k] /= pdfInt;
+        }
+        
+        pdfInt = 0.0;
+        double []cdfs = mCDFs;
+        for(int k = 0; k < pNumBins; ++k)
+        {
+            x = obsMin + binSize*(((double) k) + 0.5);
+            pdfInt += pdfs[k]*binSize;
+            cdfs[k] = Math.min(pdfInt, 1.0);
+        }            
+        
+        Double obsValObj = null;
+        int k = 0;
+        double kdouble = 0.0;
+        double yLeft = 0.0;
+        double yRight = 0.0;
+        double xLeft = 0.0;
+        double slope = 0.0;
+        double cdf = 0.0;
+        double sig = 0.0;
+        
+        for(int i = 0; i < numObservations; ++i)
+        {
+            obsValObj = pObservations[i];
+            if(null != obsValObj)
+            {
+                obsVal = obsValObj.doubleValue();
+                kdouble = (obsVal - obsMin)/binSize;
+                
+                if(kdouble > 0.5 && kdouble < numBinsDouble - 0.5)
+                {
+                    k = (int) (kdouble - 0.5);
+                    yLeft = cdfs[k];
+                    yRight = cdfs[k+1];
+                    xLeft = xs[k];
+                }
+                else if(kdouble <= 0.5)
+                {
+                    yLeft = 0.0;
+                    yRight = pdfs[0];
+                    xLeft = xs[0] - binSize;
+                }
+                else
+                {
+                    yLeft = pdfs[pNumBins - 1];
+                    yRight = 0.0;
+                    xLeft = xs[pNumBins - 1];
+                }
+                
+                slope = (yRight - yLeft)/binSize;
+                
+                cdf = Math.min(1.0, yLeft + slope*(obsVal - xLeft));                
+                
+                sig = 0.0;
+                
+                if(! pSingleTailed)
+                {
+                    sig = 2.0 * Math.min(cdf, 1.0 - cdf);
+                }
+                else
+                {
+                    sig = 1.0 - cdf;
+                }
+
+            }
+            else
+            {
+                sig = mMissingDataSignificance;
+            }
+            significances[i] = sig;
+        }
+    }
+    
+    public void calculateSignificancesPDF(Double []pObservations, 
+                                          Double []pControlData,
+                                          int pNumBins, 
+                                          boolean pSingleTailed,
+                                          double pMaxChiSquare, 
+                                          SignificanceCalculationResults pRetResults) throws AccuracyException
     {
         int numObservations = pObservations.length;
         if(numObservations == 0)
@@ -452,43 +638,43 @@ public class SignificanceCalculator
             }
         }
         
-        if(pSignificanceType.equals(SignificanceCalculationFormula.PDF) &&
-           pAllowEmpirical)
+        double obsMax = 0.0;
+        double obsMin = Double.MAX_VALUE;
+        Double obsObj = null;
+        double obsVal = 0.0;
+        for(int i = 0; i < numObservations; ++i)
         {
-        	double obsMax = 0.0;
-        	double obsMin = Double.MAX_VALUE;
-        	Double obsObj = null;
-        	double obsVal = 0.0;
-        	for(int i = 0; i < numObservations; ++i)
-        	{
-        		obsObj = pObservations[i];
-        		if(null != obsObj)
-        		{
-        			obsVal = obsObj.doubleValue();
-        			if(obsVal > obsMax)
-        			{
-        				obsMax = obsVal;
-        			}
-        			if(obsVal < obsMin)
-        			{
-        				obsMin = obsVal;
-        			}
-        		}
-        	}
-        	// check to make sure that the observations are bounded by the 
-        	// negative 
-        	double controlMax = Descriptive.max(controlList);
-        	double controlMin = Descriptive.min(controlList);
-        	if(obsMax > controlMax || obsMin < controlMin)
-        	{
-        		throw new IllegalArgumentException("when allowing the empirical distribution and using the PDF method for calculating significances, observations must be within the data range of the control data");
-        	}
+            obsObj = pObservations[i];
+            if(null != obsObj)
+            {
+                obsVal = obsObj.doubleValue();
+                if(obsVal > obsMax)
+                {
+                    obsMax = obsVal;
+                }
+                if(obsVal < obsMin)
+                {
+                    obsMin = obsVal;
+                }
+            }
+        }
+        
+        // check to make sure that the observations are bounded by the 
+        // negative 
+        double controlMax = Descriptive.max(controlList);
+        double controlMin = Descriptive.min(controlList);
+        
+        if(pSingleTailed && (obsMin < 0.0 || controlMin < 0.0))
+        {
+            throw new IllegalArgumentException("cannot perform single-tailed test on an evidence that contains negative observations");
         }
         		
         DistributionFitResults distributionFitResults = new DistributionFitResults();
+
+        boolean allowEmpirical = false;
         fitDistribution(controlList,
                         pSingleTailed,
-                        pAllowEmpirical,
+                        allowEmpirical,
                         pNumBins,
                         pMaxChiSquare,
                         distributionFitResults);
@@ -503,20 +689,91 @@ public class SignificanceCalculator
         calculateSignificances(pObservations,
                                bestProbDist,
                                pSingleTailed,
-                               pSignificanceType,
+                               SignificanceCalculationFormula.PDF,
                                significances);
         
         pRetResults.mReducedChiSquare = bestChiSquare;
         pRetResults.mBestFitDistribution = bestProbDist;
     }
-                                           
+                          
+    public void calculateSignificances(Double []pObservations,
+                                       Double []pControlData,
+                                       SignificanceCalculatorParams pParams,
+                                       SignificanceCalculationResults pResults) throws AccuracyException
+    {
+        SignificanceCalculationFormula formula = pParams.getSignificanceCalculationFormula();
+        if(null == formula)
+        {
+            throw new IllegalArgumentException("missing required parameter:  significance calculation formula");
+        }
+           
+        Integer numBinsObj = pParams.getNumBins();
+        if(null == numBinsObj)
+        {
+            throw new IllegalArgumentException("missing required parameter:  num bins");
+        }
+        int numBins = numBinsObj.intValue();
+        if(numBins <= 1)
+        {
+            throw new IllegalArgumentException("illegal number of bins: " + numBins);
+        }
+        
+        Boolean singleTailedObj = pParams.getSingleTailed();
+        if(null == singleTailedObj)
+        {
+            throw new IllegalArgumentException("missing required parameter: single tailed");
+        }
+        boolean singleTailed = singleTailedObj.booleanValue();
+        
+        if(formula.equals(SignificanceCalculationFormula.CDF))
+        {
+            Double smoothingLengthObj = pParams.getSmoothingLength();
+            if(null == smoothingLengthObj)
+            {
+                throw new IllegalArgumentException("missing required parameter: smoothing length");
+            }
+            double smoothingLength = smoothingLengthObj.doubleValue();
+            if(smoothingLength <= 0.0)
+            {
+                throw new IllegalArgumentException("illegal smoothing length: " + smoothingLength);
+            }
+            
+            calculateSignificancesCDF(pObservations,
+                                      pControlData,
+                                      numBins,
+                                      singleTailed,
+                                      smoothingLength,
+                                      pResults);
+        }
+        else if(formula.equals(SignificanceCalculationFormula.PDF))
+        {
+            Double maxReducedChiSquareObj = pParams.getMaxReducedChiSquare();
+            if(null == maxReducedChiSquareObj)
+            {
+                throw new IllegalArgumentException("missing required parameter: max reduced chi square");
+            }
+            double maxReducedChiSquare = maxReducedChiSquareObj.doubleValue();
+            if(maxReducedChiSquare <= 0.0)
+            {
+                throw new IllegalArgumentException("illegal max reduced chi square: " + maxReducedChiSquare);
+            }
+            
+            calculateSignificancesPDF(pObservations,
+                                      pControlData,
+                                      numBins,
+                                      singleTailed,
+                                      maxReducedChiSquare,
+                                      pResults);
+        }
+        else
+        {
+            throw new IllegalArgumentException("unknown significance calculation formula: " + formula.getName());
+        }
+    }
+    
     public SignificanceCalculationResults calculateSignificances(Double []pObservations, 
                                                                  Double []pControlData,
-                                                                 int pNumBins, 
-                                                                 double pMaxChiSquare, 
-                                                                 boolean pSingleTailed,
-                                                                 boolean pAllowEmpirical,
-                                                                 SignificanceCalculationFormula pSignificanceType) throws AccuracyException
+                                                                 SignificanceCalculatorParams pParams) throws AccuracyException
     {
         int numObservations = pObservations.length;
         
@@ -529,11 +786,7 @@ public class SignificanceCalculator
         
         calculateSignificances(pObservations, 
                                pControlData,
-                               pNumBins,
-                               pMaxChiSquare,
-                               pSingleTailed,
-                               pAllowEmpirical,
-                               pSignificanceType,
+                               pParams,
                                results);
         
         return results;

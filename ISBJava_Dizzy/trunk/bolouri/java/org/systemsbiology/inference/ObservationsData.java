@@ -15,7 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-
+import cern.colt.list.*;
 import cern.colt.matrix.*;
 
 import org.systemsbiology.data.*;
@@ -92,34 +92,30 @@ public class ObservationsData
         return obsCol;
     }
     
-    public double columnMinimum(int pColumn)
+    public DoubleArrayList getNonMissingColumnVals(int pColumn)
     {
-    	double min = Double.MAX_VALUE;
-    	int numElements = mElementNames.length;
-    	int numEvidences = mEvidenceNames.length;
-    	if(pColumn < 0 || pColumn >= numEvidences)
-    	{
-    		throw new IllegalArgumentException("invalid column number: " + pColumn);
-    	}
-    	Double obsObj = null;
-    	double obs = 0.0;
-    	for(int i = 0; i < numElements; ++i)
-    	{
-    		obsObj = (Double) mObservations.get(i, pColumn);
-    		if(null != obsObj)
-    		{
-    			obs = obsObj.doubleValue();
-    			if(obs < min)
-    			{
-    				min = obs;
-    			}
-    		}
-    	}
-    	if(min == Double.MAX_VALUE)
-    	{
-    		throw new IllegalStateException("could not find minimum value for column: " + pColumn);
-    	}
-    	return min;
+        DoubleArrayList retList = new DoubleArrayList();
+        
+        int numEvidences = mEvidenceNames.length;
+        if(pColumn < 0 || pColumn >= numEvidences)
+        {
+            throw new IllegalArgumentException("invalid column number: " + pColumn);
+        }
+        
+        int numElements = mElementNames.length;
+        Double obsObj = null;
+        double obs = 0.0;
+        for(int i = 0; i < numElements; ++i)
+        {
+            obsObj = (Double) mObservations.get(i, pColumn);
+            if(null != obsObj)
+            {
+                obs = obsObj.doubleValue();
+                retList.add(obs);
+            }
+        }        
+        
+        return retList;
     }
     
     public void loadFromFile(File pFile, DataFileDelimiter pDelimiter) throws FileNotFoundException, IOException, InvalidInputException

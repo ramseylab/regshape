@@ -55,13 +55,12 @@ public class EvidenceWeightedInfererDriver
     private static final String TOOL_TIP_QUANTILE_FIELD = "set this to between 0.05 and 0.1; the larger the value, the quicker (and rougher) the results";
     private static final String TOOL_TIP_INITIAL_CUTOFF_FIELD = "set this to what you believe to be the approximate fraction of elements that are in the affected set";
     private static final String TOOL_TIP_BINS_FIELD = "set this to something between 10 (if you have just a few dozen elements) and 1000 (if you have over 10000 elements)";
-    private static final String TOOL_TIP_CHI_SQUARE_FIELD = "Set this to the maximum reduced chi square for fitting a continuous distribution to the significances.";
-    private static final String TOOL_TIP_CHI_SQUARE_RESULTS = "The reduced chi-square for the continuous distribution fit to the histogram of significances.";
+    private static final String TOOL_TIP_SMOOTHING_LENGTH_FIELD = "Set this to the smoothing length for obtaining the nonparametric distribution of the significances.";
     private static final String RESOURCE_HELP_ICON = "Help24.gif";
     
     private Container mContentPane;
     
-    private static final double DEFAULT_MAX_CHI_SQUARE = 1.0;
+    private static final double DEFAULT_SMOOTHING_LENGTH = 0.05;
     
     private static final int MIN_NUM_BINS = 10;
     private static final double MAX_COMBINED_SIGNIFICANCE_CUTOFF = 1.0e-8;
@@ -111,10 +110,8 @@ public class EvidenceWeightedInfererDriver
     private JButton mSaveResultsButton;
     private JButton mClearResultsButton;
     private JTable mWeightsTable;
-    private JLabel mChiSquareLabel;
-    private JTextField mChiSquareField;
-    private JLabel mChiSquareResultsLabel;
-    private JLabel mChiSquareResultsLabelData;
+    private JLabel mSmoothingLengthLabel;
+    private JTextField mSmoothingLengthField;
     
     class WeightsTableModel extends AbstractTableModel
     {
@@ -497,7 +494,7 @@ public class EvidenceWeightedInfererDriver
             mCombinedSignificanceField.setText(mNumberFormat.format(defaultCombinedSignificance));
         }
         
-        mChiSquareField.setText(Double.toString(DEFAULT_MAX_CHI_SQUARE));
+        mSmoothingLengthField.setText(Double.toString(DEFAULT_SMOOTHING_LENGTH));
         mQuantileField.setText(Double.toString(DEFAULT_QUANTILE_THRESHOLD));
         mSeparationField.setText(Double.toString(DEFAULT_SEPARATION_THRESHOLD));
         mWeightBox.setSelectedItem(DEFAULT_EVIDENCE_WEIGHT_TYPE.toString());
@@ -509,17 +506,6 @@ public class EvidenceWeightedInfererDriver
     {
         SimpleTextArea simpleArea = new SimpleTextArea(pMessage);
         JOptionPane.showMessageDialog(mParent, simpleArea, pTitle, pMessageType);
-    }
-    
-    static class EvidenceWeightedInfererParams
-    {
-        public int mNumBins;
-        public double mInitialCutoff;
-        public double mCombinedSignificance;
-        public double mQuantile;
-        public double mMaxChiSquare;
-        public double mSeparationThreshold;
-        public EvidenceWeightType mWeightType;
     }
     
     private boolean validateFields(EvidenceWeightedInfererParams pParams)
@@ -545,7 +531,7 @@ public class EvidenceWeightedInfererDriver
                           JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        pParams.mNumBins = numBins;
+        pParams.setNumBins(new Integer(numBins));
         
         String initialCutoffString = mInitialCutoffField.getText().trim();
         double initialCutoff = 0.0;
@@ -567,7 +553,7 @@ public class EvidenceWeightedInfererDriver
                           JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        pParams.mInitialCutoff = initialCutoff;
+        pParams.setInitialSignificanceCutoff(new Double(initialCutoff));
         
         String combinedSignificanceString = mCombinedSignificanceField.getText().trim();
         double combinedSignificance = 0.0;
@@ -589,7 +575,7 @@ public class EvidenceWeightedInfererDriver
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        pParams.mCombinedSignificance = combinedSignificance;
+        pParams.setCombinedSignificanceCutoff(new Double(combinedSignificance));
         
         String quantileString = mQuantileField.getText();
         double quantile = 0.0;
@@ -611,7 +597,7 @@ public class EvidenceWeightedInfererDriver
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        pParams.mQuantile = quantile;
+        pParams.setFractionToRemove(new Double(quantile));
         
         String separationString = mSeparationField.getText();
         double separation = 0.0;
@@ -633,30 +619,30 @@ public class EvidenceWeightedInfererDriver
                     JOptionPane.ERROR_MESSAGE);
             return false;            
         }
-        pParams.mSeparationThreshold = separation;
+        pParams.setMinFractionalCostChange(new Double(separation));
         
-        String chiSquareString = mChiSquareField.getText();
-        double chiSquare = 0.0;
+        String smoothingLengthString = mSmoothingLengthField.getText();
+        double smoothingLength = 0.0;
         try
         {
-            chiSquare = Double.parseDouble(chiSquareString);
+            smoothingLength = Double.parseDouble(smoothingLengthString);
         }
         catch(NumberFormatException e)
         {
-            handleMessage("The maximum chi square that you specified, \"" + chiSquareString + "\", is not a valid floating-point number.",
-                    "Invalid maximum chi square",
+            handleMessage("The smoothing length that you specified, \"" + smoothingLengthString + "\", is not a valid floating-point number.",
+                    "Invalid smoothing length",
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        if(chiSquare <= 0.0)
+        if(smoothingLength <= 0.0)
         {
-            handleMessage("The maximum chi square that you specified, \"" + chiSquare + "\", was not greater than 0.0.",
-                          "Invalid maximum chi square",
+            handleMessage("The smoothing length that you specified, \"" + smoothingLength + "\", was not greater than 0.0.",
+                          "Invalid smoothing length",
                           JOptionPane.ERROR_MESSAGE);
             return false;
         
         }
-        pParams.mMaxChiSquare = chiSquare;
+        pParams.setSmoothingLength(new Double(smoothingLength));
         
         String weightString = (String) mWeightBox.getSelectedItem();
         EvidenceWeightType weightType = EvidenceWeightType.get(weightString);
@@ -664,7 +650,7 @@ public class EvidenceWeightedInfererDriver
         {
             throw new IllegalStateException("unknown weight type: " + weightType);
         }
-        pParams.mWeightType = weightType;
+        pParams.setEvidenceWeightType(weightType);
         
         return true;
     }
@@ -739,8 +725,8 @@ public class EvidenceWeightedInfererDriver
         mBinsField.setEnabled(pFileLoaded);
         mInitialCutoffLabel.setEnabled(pFileLoaded);
         mInitialCutoffField.setEnabled(pFileLoaded);
-        mChiSquareField.setEnabled(pFileLoaded);
-        mChiSquareLabel.setEnabled(pFileLoaded);
+        mSmoothingLengthField.setEnabled(pFileLoaded);
+        mSmoothingLengthLabel.setEnabled(pFileLoaded);
         mCombinedSignificanceLabel.setEnabled(pFileLoaded);
         mCombinedSignificanceField.setEnabled(pFileLoaded);
         mQuantileLabel.setEnabled(pFileLoaded);
@@ -761,7 +747,7 @@ public class EvidenceWeightedInfererDriver
             mQuantileField.setToolTipText(TOOL_TIP_QUANTILE_FIELD);
             mSeparationField.setToolTipText(TOOL_TIP_SEPARATION_FIELD);
             mSignificancesTable.setToolTipText(TOOL_TIP_SIGNIFICANCES);
-            mChiSquareField.setToolTipText(TOOL_TIP_CHI_SQUARE_FIELD);
+            mSmoothingLengthField.setToolTipText(TOOL_TIP_SMOOTHING_LENGTH_FIELD);
         }
         else
         {
@@ -773,7 +759,7 @@ public class EvidenceWeightedInfererDriver
             mQuantileField.setToolTipText(null);
             mSeparationField.setToolTipText(null);
             mSignificancesTable.setToolTipText(null);
-            mChiSquareField.setToolTipText(null);
+            mSmoothingLengthField.setToolTipText(null);
         }
         
         if(pResultsObtained)
@@ -786,8 +772,6 @@ public class EvidenceWeightedInfererDriver
             mFinalSeparationLabelData.setToolTipText(TOOL_TIP_SEPARATION);
             mIterationsLabel.setToolTipText(TOOL_TIP_ITERATIONS);
             mIterationsLabelData.setToolTipText(TOOL_TIP_ITERATIONS);
-            mChiSquareResultsLabel.setToolTipText(TOOL_TIP_CHI_SQUARE_RESULTS);
-            mChiSquareResultsLabelData.setToolTipText(TOOL_TIP_CHI_SQUARE_RESULTS);
         }
         else
         {
@@ -799,8 +783,6 @@ public class EvidenceWeightedInfererDriver
             mFinalSeparationLabelData.setToolTipText(null);
             mIterationsLabel.setToolTipText(null);
             mIterationsLabelData.setToolTipText(null);
-            mChiSquareResultsLabel.setToolTipText(null);
-            mChiSquareResultsLabelData.setToolTipText(null);
         }
        
         mIterationsLabel.setEnabled(pResultsObtained);
@@ -811,8 +793,6 @@ public class EvidenceWeightedInfererDriver
         mAlphaLabelData.setEnabled(pResultsObtained);
         mSaveResultsButton.setEnabled(pResultsObtained);
         mClearResultsButton.setEnabled(pResultsObtained);
-        mChiSquareResultsLabel.setEnabled(pResultsObtained);
-        mChiSquareResultsLabelData.setEnabled(pResultsObtained);
     }
     
     private void initializeContentPane()
@@ -1080,8 +1060,8 @@ public class EvidenceWeightedInfererDriver
         topPanel.add(separationField);
         gridLayout.setConstraints(separationField, constraints);        
         
-        JLabel chiSquareLabel = new JLabel("Maximum chi-square for fitting distributions: ");
-        mChiSquareLabel = chiSquareLabel;
+        JLabel smoothingLengthLabel = new JLabel("Smoothing length for fitting distribution: ");
+        mSmoothingLengthLabel = smoothingLengthLabel;
         
         constraints.fill = GridBagConstraints.NONE;
         constraints.gridwidth = 1;
@@ -1091,11 +1071,11 @@ public class EvidenceWeightedInfererDriver
         constraints.gridx = 2;
         //constraints.gridy++;          
 
-        topPanel.add(chiSquareLabel);
-        gridLayout.setConstraints(chiSquareLabel, constraints);
+        topPanel.add(smoothingLengthLabel);
+        gridLayout.setConstraints(smoothingLengthLabel, constraints);
 
-        JTextField chiSquareField = new JTextField(NUM_COLUMNS_NUMERIC_FIELD);
-        mChiSquareField = chiSquareField;
+        JTextField smoothingLengthField = new JTextField(NUM_COLUMNS_NUMERIC_FIELD);
+        mSmoothingLengthField = smoothingLengthField;
         
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -1105,8 +1085,8 @@ public class EvidenceWeightedInfererDriver
         constraints.gridx = 3;
         //constraints.gridy = 5;
         
-        topPanel.add(chiSquareField);
-        gridLayout.setConstraints(chiSquareField, constraints);
+        topPanel.add(smoothingLengthField);
+        gridLayout.setConstraints(smoothingLengthField, constraints);
         
         JLabel weightLabel = new JLabel("Weighting scheme for computing effective significance: ");
         mWeightLabel = weightLabel;
@@ -1248,21 +1228,6 @@ public class EvidenceWeightedInfererDriver
         alphaDataPanel.add(alphaLabelData);
         alphaPanel.add(alphaDataPanel);
         numericResultsPanel.add(alphaPanel);
-             
-        JPanel chiSquarePanel = new JPanel();
-        JLabel chiSquareResultsLabel = new JLabel("reduced chi square: ");
-        mChiSquareResultsLabel = chiSquareResultsLabel;
-        JLabel chiSquareResultsLabelData = new JLabel("");
-        JPanel chiSquareDataPanel = new JPanel();
-        chiSquareDataPanel.setBorder(BorderFactory.createEtchedBorder());
-        chiSquareResultsLabelData.setPreferredSize(new Dimension(75, 10));
-        chiSquareResultsLabelData.setMinimumSize(new Dimension(75, 10));
-        chiSquareDataPanel.add(chiSquareResultsLabelData);
-        mChiSquareResultsLabelData = chiSquareResultsLabelData;
-        chiSquarePanel.add(chiSquareResultsLabel);
-        chiSquarePanel.add(chiSquareDataPanel);
-        
-        numericResultsPanel.add(chiSquarePanel);
         
         constraints.fill = GridBagConstraints.NONE;
         constraints.gridwidth = 1;
@@ -1333,7 +1298,6 @@ public class EvidenceWeightedInfererDriver
         mFinalSeparationLabelData.setText(mNumberFormat.format(pResults.mSignificanceDistributionSeparation));
         double alphaValue = pResults.mAlphaParameter;
         mAlphaLabelData.setText(mNumberFormat.format(alphaValue));
-        mChiSquareResultsLabelData.setText(mNumberFormat.format(pResults.mReducedChiSquare));
         double []weights = pResults.mWeights;
         String []evidences = mSignificancesData.getEvidenceNames();
         WeightsTableModel weightsTableModel = new WeightsTableModel(evidences, weights);
@@ -1442,17 +1406,12 @@ public class EvidenceWeightedInfererDriver
             try
             {
                 results = mEvidenceWeightedInferer.findAffectedElements(significances,
-                                                                        params.mNumBins,
-                                                                        params.mInitialCutoff,
-                                                                        params.mCombinedSignificance,
-                                                                        params.mQuantile,
-                                                                        params.mSeparationThreshold,
-                                                                        params.mMaxChiSquare,
-                                                                        params.mWeightType);
+                                                                        params);
             }
             catch(Exception e)
             {
                 String errorMessage = e.getMessage();
+                e.printStackTrace(System.err);
                 handleMessage("Unable to infer the set of affected elements from the data and parameters you supplied.  The specific error message is: " + errorMessage,
                               "Unable to infer affected elements",
                               JOptionPane.ERROR_MESSAGE);            
