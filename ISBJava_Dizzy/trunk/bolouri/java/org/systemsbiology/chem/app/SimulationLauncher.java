@@ -658,7 +658,7 @@ public class SimulationLauncher
             {
                 simulator = (ISimulator) getSimulatorRegistry().getInstance(simulatorAlias);
                 SimulatorParameters simParams = simulator.getDefaultSimulatorParameters();
-                Integer ensembleSize = simParams.getEnsembleSize();
+                Long ensembleSize = simParams.getEnsembleSize();
                 if(null != ensembleSize)
                 {
                     mEnsembleField.setText(ensembleSize.toString());
@@ -672,7 +672,7 @@ public class SimulationLauncher
                     mEnsembleFieldLabel.setEnabled(false);
                 }
                 
-                Integer minNumSteps = simParams.getMinNumSteps();
+                Long minNumSteps = simParams.getMinNumSteps();
                 if(null != minNumSteps)
                 {
                     mNumStepsField.setText(minNumSteps.toString());
