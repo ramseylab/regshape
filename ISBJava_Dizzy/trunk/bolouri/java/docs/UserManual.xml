@@ -90,6 +90,10 @@ variable:
 <td>JavaHelp</td><td><code>jh.jar</code></td>
 <td><a href="http://java.sun.com/products/javahelp"><code>java.sun.com/products/javahelp</code></a></td><td>Sun Binary Code License</td>
 </tr>
+<tr>
+<td>Netx JNLP client</td><td><code>netx.jar</code></td>
+<td><a href="http://jnlp.sourceforge.net/netx"><code>jnlp.sourceforge.net/netx</code></a></td><td>LGPL</td>
+</tr>
 </table>
 </blockquote>
 Note that the SBW/SBML libraries and packages are only required for
@@ -116,6 +120,15 @@ your mileage may vary.
 Ant is required to use the "build.xml" file in this directory.
 You can download and install Ant from 
 <a href="http://ant.apache.org">the apache Ant project</a>.
+</isb:docsection>
+
+<isb:docsection name="Acknowledgements" label="acknowledgements">
+<p>
+The assistance, advice, and contributions of several individuals 
+to the &appName; project is gratefully acknowledged:  Hamid Bolouri
+(principal investigator), William Longabaugh, and Alistair Rust.
+</p>
+
 </isb:docsection>
 
 <isb:docsection name="Naming Conventions" label="namingconventions">

@@ -26,6 +26,7 @@
 <!-- ========== INTRODUCTION ========== -->
 
 <isb:docsection name="Introduction" label="introduction">
+<isb:docsubsection name="About &appName;" label="about">
 <p />
 &appName; is a chemical kinetics simulation software 
 package implemented in Java.  It provides a model definition environment and 
@@ -122,13 +123,18 @@ A PDF version of this manual is also available on-line at:
 The above hyperlinks for the User Manual are for the most recent
 version of the &appName; system.
 </p>
+</isb:docsubsection>
+<isb:docsubsection name="External Libraries" label="extlib">
 <p>
 <a name="extlib" />
 <b>Externl libraries:</b><br />
-The &appName; system depends on a number of external open-source
-libraries, which are shipped with the &appName; system in a compiled
-format (JAR archive).  The source code for each of these libraries is
-freely available at the web sites identified by the hyperlinks shown below:
+The &appName; system relies upon a number of external open-source
+libraries.  These libraries are bundled with the &appName; program and
+are installed within the &appName; directory when you install
+&appName; on your system.   The libraries are installed in a compiled
+format called a &quot;JAR archive&quot;.  The source code for each of 
+these libraries is freely available at the web sites identified by the 
+hyperlinks shown below:
 <blockquote>
 <table border="1">
 <tr>
@@ -161,6 +167,19 @@ freely available at the web sites identified by the hyperlinks shown below:
 </table>
 </blockquote>
 </p>
+</isb:docsubsection>
+<isb:docsubsection name="Acknowledgements" label="acknowledgements">
+<p>
+The assistance, advice, and contributions of several individuals 
+to the &appName; project is gratefully acknowledged:  William Longabaugh, 
+David Orrell, Andrew Finney, 
+Mike Hucka, and Robert Hubley.  A particular note of thanks is 
+expressed to Paul Shannon and the Cytoscape team, for
+helping to make the Dizzy&lt;-&gt;Cytoscape bridge possible;
+and to Hamid Bolouri, principal investigator and co-designer
+of the &appName; system.
+</p>
+</isb:docsubsection>
 </isb:docsection>
 
 <isb:docsection name="Getting Started" label="gettingstarted">

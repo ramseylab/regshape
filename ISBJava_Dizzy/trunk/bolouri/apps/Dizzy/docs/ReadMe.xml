@@ -29,7 +29,8 @@ The software is based on the
 <a href="../../&localJavaLibraryName;">&localJavaLibraryName;</a> library. 
 </isb:docsection>
 
-<isb:docsection name="License Agreement" label="licenseagreement">
+<isb:docsection name="License and Disclaimer" label="licenseagreement">
+<p>
 This software is licensed under the GNU Lesser General Public 
 License (LGPL), which is a standard &quot;free software&quot;
 and &quot;open source&quot; license.  A 
@@ -37,14 +38,14 @@ and &quot;open source&quot; license.  A
 license agreement is available online</a>, as well as in the
 &quot;<code>docs/License.html</code>&quot; file in the 
 installation directory for this software.
-</isb:docsection>
-
-<isb:docsection name="Disclaimer" label="disclaimer">
+</p>
+<p>
 This version is alpha (experimental) software.  Please be patient while we fix 
 bugs, add new features, and add (much needed) documentation.  Your 
 patience is appreciated.  Please be advised that the
 &mainAffiliation; and the authors disclaim any liability 
 stemming from the use of this software, as stated in the license agreement.
+</p>
 </isb:docsection>
 
 <isb:docsection name="Supported Platforms" label="platforms">
@@ -64,15 +65,21 @@ that is installed in the &quot;<code>src</code>&quot;
 subdirectory of the installation directory for this program.
 </isb:docsection>
 
-<isb:docsection name="External Libraries" label="extlib">
-The &appName; system uses a number of external libraries.
-These libraries are bundled with the &appName; program and
-are installed within the &appName; directory when you install
-&appName; on your system.  For a list of external library
+<isb:docsection name="External Libraries and Credits" label="extlib">
+<p>
+The &appName; system relies upon a number of external libraries,
+all of which are supplied with the &appName; installer.
+For a list of external library
 dependencies and pointers to the web sites where the source
 code for these libraries can be obtained, please refer to the
 <a href="UserManual.html#extlib">external libraries section
 of the user manual</a>.
+</p>
+<p>
+Many individuals have contributed to the &appName; project,
+in one form or another.  A <a href="UserManual.html#acknowledgements">list of
+acknowledgements</a> can be found in the User Manual.
+</p>
 </isb:docsection>
 
 <isb:docsection name="Documentation" label="documentation">
@@ -90,6 +97,7 @@ In addition, the &appName; system provides a set of
 <a href="&appHomePage;/docs/UserManual.html#samplefiles">
 sample model definition files</a>.
 </isb:docsection>
+
 <isb:docsection name="Contact Information" label="contactinfo">
 If you have questions about this software, or if you
 have a bug report that you would like to submit,
@@ -99,5 +107,6 @@ please contact the &appMaintainerFullName; at
 <code>&appMaintainerEmailSafe;</code>.
 </blockquote>
 </isb:docsection>
+
 </isb:document>
 

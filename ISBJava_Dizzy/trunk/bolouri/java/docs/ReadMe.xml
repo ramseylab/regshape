@@ -29,7 +29,7 @@ please refer to the <a href="&webBaseURL;/&appName;">&appName;
 home page</a>.
 </isb:docsection>
 
-<isb:docsection name="License Agreement" label="licenseagreement">
+<isb:docsection name="License and Disclaimer" label="licenseagreement">
 <p>
 This software is licensed under the GNU Lesser General Public 
 License (LGPL), which is a standard &quot;free software&quot;
@@ -39,10 +39,6 @@ license agreement is available online</a>, as well as in the
 &quot;<code>docs/License.html</code>&quot; file in the 
 installation directory for this software.
 </p>
-</isb:docsection>
-
-
-<isb:docsection name="Disclaimer" label="disclaimer">
 <p>
 This version is alpha (experimental) software.  Please be patient while we fix 
 bugs, add new features, and add (much needed) documentation.  Your 
@@ -68,6 +64,24 @@ is included with the library installer.  You can find the code
 in the file &quot;<code>&localJavaLibraryName;-src.tar.gz</code>&quot;
 that is installed in the &quot;<code>src</code>&quot;
 subdirectory of the installation directory for this program.
+</p>
+</isb:docsection>
+
+<isb:docsection name="External Libraries and Credits" label="extlib">
+<p>
+Certain packages in the &appName; library make use of external libraries.
+In order to successfully compile the &appName; library, you will need to
+have these external libraries installed on your computer.
+For a list of external library
+dependencies and pointers to the web sites where the source
+code for these libraries can be obtained, please refer to the
+<a href="UserManual.html#extlib">external libraries section
+of the user manual</a>.
+</p>
+<p>
+Many individuals have contributed to the &appName; project,
+in one form or another.  A <a href="UserManual.html#acknowledgements">list of
+acknowledgements</a> can be found in the User Manual.
 </p>
 </isb:docsection>
 
