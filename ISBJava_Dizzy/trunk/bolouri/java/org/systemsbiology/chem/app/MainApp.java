@@ -35,6 +35,17 @@ public class MainApp
     private EditorPane mEditorPane;
     private int mOriginalWidthPixels;
     private int mOriginalHeightPixels;
+    private Long mTimestampModelLastLoaded;
+
+    private void setTimestampModelLastLoaded(Long pTimestampModelLastLoaded)
+    {
+        mTimestampModelLastLoaded = pTimestampModelLastLoaded;
+    }
+
+    private Long getTimestampModelLastLoaded()
+    {
+        return(mTimestampModelLastLoaded);
+    }
 
     EditorPane getEditorPane()
     {
@@ -156,29 +167,36 @@ public class MainApp
     private void loadModel()
     {
         Model model = mEditorPane.processModel();
-        SimulationLauncher simulationLauncher = getSimulationLauncher();
-        if(null == simulationLauncher)
+
+        if(null != model)
         {
-            throw new IllegalStateException("simulation launcher window does not exist; cannot reload model");
-        }
-        SimulationLauncher.SetModelResult result = simulationLauncher.setModel(model);
-        if(result == SimulationLauncher.SetModelResult.FAILED_RUNNING)
-        {
-            SimpleDialog dialog = new SimpleDialog(mMainFrame, "unable to reload model", 
-                                                   "Sorry, the model cannot be reloaded while a simulation is running.  Please wait for the simulation to complete and then try again.");
-            dialog.show();
-        }
-        else if(result == SimulationLauncher.SetModelResult.FAILED_CLOSED)
-        {
-            throw new IllegalStateException("unexpected condition:  setModel() called after the simulation launcher has closed");
-        }
-        else if(result == SimulationLauncher.SetModelResult.SUCCESS)
-        {
-            simulationLauncher.toFront();
-        }
-        else
-        {
-            throw new IllegalStateException("unexpected condition:  unknown result returned from setModel(); result is: " + result.toString());
+
+            SimulationLauncher simulationLauncher = getSimulationLauncher();
+            if(null == simulationLauncher)
+            {
+                throw new IllegalStateException("simulation launcher window does not exist; cannot reload model");
+            }
+            SimulationLauncher.SetModelResult result = simulationLauncher.setModel(model);
+            if(result == SimulationLauncher.SetModelResult.FAILED_RUNNING)
+            {
+                SimpleDialog dialog = new SimpleDialog(mMainFrame, "unable to reload model", 
+                                                       "Sorry, the model cannot be reloaded while a simulation is running.  Please wait for the simulation to complete and then try again.");
+                dialog.show();
+            }
+            else if(result == SimulationLauncher.SetModelResult.FAILED_CLOSED)
+            {
+                throw new IllegalStateException("unexpected condition:  setModel() called after the simulation launcher has closed");
+            }
+            else if(result == SimulationLauncher.SetModelResult.SUCCESS)
+            {
+                simulationLauncher.toFront();
+                setTimestampModelLastLoaded(new Long(System.currentTimeMillis()));
+                updateMenus();
+            }
+            else
+            {
+                throw new IllegalStateException("unexpected condition:  unknown result returned from setModel(); result is: " + result.toString());
+            }
         }
     }
     
@@ -201,31 +219,35 @@ public class MainApp
         {
             String appName = getName();
             Model model = mEditorPane.processModel();
-            enableSimulateMenuItem(false);
+            enableMenuItem(MainMenu.MenuItem.TOOLS_SIMULATE, false);
             SimulationLauncher simulationLauncher = new SimulationLauncher(appName, model, false);
             setSimulationLauncher(simulationLauncher);
-            enableReloadMenuItem(true);
+            setTimestampModelLastLoaded(new Long(System.currentTimeMillis()));
             simulationLauncher.addListener(new SimulationLauncher.Listener()
             {
                 public void simulationLauncherClosing()
                 {
-                    enableSimulateMenuItem(true);
-                    enableReloadMenuItem(false);
+                    setSimulationLauncher(null);
+                    setTimestampModelLastLoaded(null);
+                    updateMenus();
                 }
                 public void simulationStarting()
                 {
-                    enableReloadMenuItem(false);
+                    updateMenus();
                 }
                 public void simulationEnding()
                 {
-                    enableReloadMenuItem(true);
+                    updateMenus();
                 }
             });
+            updateMenus();
         }
         catch(Exception e)
         {
             UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to create the simulation launcher window");
-            enableSimulateMenuItem(true);
+            setTimestampModelLastLoaded(null);
+            setSimulationLauncher(null);
+            updateMenus();
             errorDialog.show();            
         }
     }
@@ -252,47 +274,6 @@ public class MainApp
         {
             throw new IllegalStateException("could not find menu item " + pMenuItem.toString());
         }
-    }
-
-    void enableReloadMenuItem(boolean pEnabled)
-    {
-        enableMenuItem(MainMenu.MenuItem.TOOLS_RELOAD, pEnabled);
-    }
-
-    void enableSaveMenuItem(boolean pEnabled)
-    {
-        enableMenuItem(MainMenu.MenuItem.FILE_SAVE, pEnabled);
-    }
-
-    void enableCloseMenuItem(boolean pEnabled)
-    {
-        enableMenuItem(MainMenu.MenuItem.FILE_CLOSE, pEnabled);
-    }
-    
-    void enableSimulateMenuItem(boolean pEnabled)
-    {
-        boolean enabled = false;
-        if(pEnabled)
-        {
-            if(! mEditorPane.editorBufferIsEmpty())
-            {
-                enabled = true;
-            }
-        }
-        enableMenuItem(MainMenu.MenuItem.TOOLS_SIMULATE, enabled);
-    }
-
-    void enableToolsMenu(boolean pEnabled) 
-    {
-        boolean enabled = false;
-        if(pEnabled)
-        {
-            if(! mEditorPane.editorBufferIsEmpty())
-            {
-                enabled = true;
-            }
-        }
-        enableMenu(MainMenu.Menu.TOOLS, enabled);
     }
 
     private void initializeAppConfig(String pAppDir) throws DataNotFoundException, InvalidInputException, FileNotFoundException
@@ -340,12 +321,39 @@ public class MainApp
     {
         MainMenu mainMenu = new MainMenu(this);
         mMainMenu = mainMenu;
-        enableToolsMenu(false);
-        enableSimulateMenuItem(false);
-        enableReloadMenuItem(false);
-        enableSaveMenuItem(false);
-        enableCloseMenuItem(false);
         pFrame.setJMenuBar(mainMenu);
+    }
+
+    void updateMenus()
+    {
+        EditorPane editorPane = mEditorPane;
+        boolean bufferDirty = editorPane.getBufferDirty();
+        boolean bufferEmpty = editorPane.editorBufferIsEmpty();
+        long timestampLastChange = editorPane.getTimestampLastChange();
+        String bufferFilename = editorPane.getFileName();
+        SimulationLauncher simulationLauncher = getSimulationLauncher();
+        Long timestampModelLastLoaded = getTimestampModelLastLoaded();
+
+        assert (null == simulationLauncher || null != timestampModelLastLoaded) : "invalid state of mSimulatinoLauncher and mTimesetampModelLastLoaded";
+                
+        assert (bufferEmpty || timestampLastChange != EditorPane.TIMESTAMP_BUFFER_LAST_CHANGE_NULL) : "invalid state of mEditorPane.editorBufferIsEmpty() and mEditorPane.getTimestampLastChange()";
+
+        boolean simulationRunning = false;
+        if(null != simulationLauncher)
+        {
+            simulationRunning = simulationLauncher.getSimulationInProgress();
+        }
+
+        enableMenuItem(MainMenu.MenuItem.FILE_CLOSE, ! bufferEmpty);
+        enableMenuItem(MainMenu.MenuItem.FILE_SAVE_AS, bufferDirty);
+        enableMenuItem(MainMenu.MenuItem.FILE_SAVE, bufferDirty && (null != bufferFilename));
+        enableMenuItem(MainMenu.MenuItem.TOOLS_CYTOSCAPE, ! bufferEmpty);
+        enableMenuItem(MainMenu.MenuItem.TOOLS_EXPORT, ! bufferEmpty);
+        enableMenuItem(MainMenu.MenuItem.TOOLS_SIMULATE, ! bufferEmpty && null == simulationLauncher);
+        enableMenuItem(MainMenu.MenuItem.TOOLS_RELOAD, ! bufferEmpty && null != simulationLauncher &&
+                                                         timestampLastChange > 
+                                                             timestampModelLastLoaded.longValue() &&
+                                                       ! simulationRunning);
     }
 
     private void initializeMainFrame() throws DataNotFoundException
@@ -376,6 +384,7 @@ public class MainApp
                                          heightPixels - mOriginalHeightPixels);
             }
         });
+        updateMenus();
         frame.setVisible(true);
     }
 
@@ -419,7 +428,9 @@ public class MainApp
         ClassRegistry modelExporterRegistry = new ClassRegistry(org.systemsbiology.chem.scripting.IModelExporter.class);
         modelExporterRegistry.buildRegistry();
         setModelExporterRegistry(modelExporterRegistry);
+
         setSimulationLauncher(null);
+        setTimestampModelLastLoaded(null);
 
         initializeMainFrame();
     }

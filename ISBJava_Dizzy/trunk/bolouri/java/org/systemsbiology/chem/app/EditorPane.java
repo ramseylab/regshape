@@ -31,6 +31,7 @@ public class EditorPane
 
     private static final int EDITOR_TEXT_AREA_MIN_WIDTH_CHARS = 4;
     private static final int EDITOR_TEXT_AREA_MIN_HEIGHT_CHARS = 2;
+    static final long TIMESTAMP_BUFFER_LAST_CHANGE_NULL = -1;
 
     private static final String LABEL_FILE =   "file: ";
     private static final String LABEL_PARSER = "parser: ";
@@ -46,7 +47,13 @@ public class EditorPane
     private File mCurrentDirectory;
     private int mOriginalWidthPixels;
     private int mOriginalHeightPixels;
+    private long mTimestampLastChange;
+    private MainApp mMainApp;
 
+    interface EditorStateUpdater
+    {
+        public void updateEditorState();
+    }
 
     private String getParserAlias()
     {
@@ -63,7 +70,7 @@ public class EditorPane
         return(mEditorPaneTextArea);
     }
 
-    private String getFileName()
+    String getFileName()
     {
         return(mFileName);
     }
@@ -73,7 +80,7 @@ public class EditorPane
         mFileName = pFileName;
     }
 
-    private boolean getBufferDirty()
+    boolean getBufferDirty()
     {
         return(mBufferDirty);
     }
@@ -93,13 +100,25 @@ public class EditorPane
         return(mCurrentDirectory);
     }
 
+    private void setTimestampLastChange(long pTimestampLastChange)
+    {
+        mTimestampLastChange = pTimestampLastChange;
+    }
+
+    long getTimestampLastChange()
+    {
+        return(mTimestampLastChange);
+    }
+
     public EditorPane(Container pPane)
     {
         initialize(pPane);
-        mMainFrame = MainApp.getApp().getMainFrame();
+        mMainApp = MainApp.getApp();
+        mMainFrame = mMainApp.getMainFrame();
         setFileNameLabel(null);
         setParserAlias(null);
         setBufferDirty(false);
+        setTimestampLastChange(TIMESTAMP_BUFFER_LAST_CHANGE_NULL);
         setCurrentDirectory(null);
     }
 
@@ -197,8 +216,9 @@ public class EditorPane
         {
             setFileNameLabel(null);
             setBufferDirty(false);
-            setModelToolsMenuEnabled(false);
+            setTimestampLastChange(TIMESTAMP_BUFFER_LAST_CHANGE_NULL);
             clearEditorText();
+            mMainApp.updateMenus();
             setParserAliasLabel(null);
         }
     }
@@ -255,6 +275,7 @@ public class EditorPane
     public void save()
     {
         saveEditBufferToFile(getFileName());
+        mMainApp.updateMenus();
     }
 
     public void saveAs()
@@ -329,6 +350,7 @@ public class EditorPane
         if(doSave)
         {
             saveEditBufferToFile(fileName);
+            mMainApp.updateMenus();
         }
     }
 
@@ -369,12 +391,6 @@ public class EditorPane
         pMainPane.add(editorPanel);
     }
 
-    void setModelToolsMenuEnabled(boolean pEnabled)
-    {
-        MainApp.getApp().enableToolsMenu(pEnabled);
-        MainApp.getApp().enableSimulateMenuItem(pEnabled);
-    }
-
     private void initializeEditorTextArea(Container pPane)
     {
         KeyListener listener = new KeyListener()
@@ -386,13 +402,18 @@ public class EditorPane
 
                                          public void keyReleased(KeyEvent e)
                                          {
-                                             setModelToolsMenuEnabled(true);
-                                             setBufferDirty(true);
+                                             // do nothing
                                          }
 
                                          public void keyTyped(KeyEvent e)
                                          {
-                                             // do nothing
+                                             if(! getBufferDirty())
+                                             {
+                                                 setBufferDirty(true);
+                                                 
+                                             }
+                                             setTimestampLastChange(System.currentTimeMillis());
+                                             mMainApp.updateMenus();
                                          }
                                      };
         JTextArea editorTextArea = new JTextArea(EDITOR_TEXT_AREA_NUM_ROWS,
@@ -468,7 +489,7 @@ public class EditorPane
 
     boolean editorBufferIsEmpty()
     {
-        return(0 == getEditorPaneTextArea().getText().trim().length());
+        return(0 == getEditorPaneTextArea().getText().length());
     }
 
     private void initializeLabel(Container pPane)
@@ -540,7 +561,8 @@ public class EditorPane
 
             setFileNameLabel(pFileName);
             setBufferDirty(false);
-            setModelToolsMenuEnabled(true);
+            setTimestampLastChange(System.currentTimeMillis());
+            mMainApp.updateMenus();
         }
 
         catch(Exception e)
@@ -554,11 +576,9 @@ public class EditorPane
     private void setParserAliasLabel(String pParserAlias)
     {
         setParserAlias(pParserAlias);
-        boolean enableSave = false;
         if(null != pParserAlias)
         {
             mParserAliasLabel.setText(LABEL_PARSER + pParserAlias);
-            enableSave = true;
         }
         else
         {
@@ -569,17 +589,13 @@ public class EditorPane
     private void setFileNameLabel(String pFileName)
     {
         setFileName(pFileName);
-        boolean enableSave = false;
         if(null != pFileName)
         {
             mFileNameLabel.setText(LABEL_FILE + pFileName);
-            enableSave = true;
         }
         else
         {
             mFileNameLabel.setText(LABEL_FILE + "(none)");
         }
-        MainApp.getApp().enableSaveMenuItem(enableSave);
-        MainApp.getApp().enableCloseMenuItem(enableSave);
     }
 }

@@ -22,7 +22,8 @@ public class SimulationLauncher
 {
     private static final int OUTPUT_TEXT_AREA_NUM_ROWS = 20;
     private static final int OUTPUT_TEXT_AREA_NUM_COLS = 40;
-    private static final int SPECIES_LIST_BOX_ROW_COUNT = 6;
+    private static final int SPECIES_LIST_BOX_ROW_COUNT = 10;
+    private static final int SIMULATORS_LIST_BOX_ROW_COUNT = 10;
 
     private ClassRegistry mSimulatorRegistry;
     private Component mLauncherFrame;
@@ -167,12 +168,10 @@ public class SimulationLauncher
     private boolean mSimulationInProgress;
 
 
-    private boolean getSimulationInProgress()
+    boolean getSimulationInProgress()
     {
         return(null != getSimulationRunParameters());
     }
-
-
 
     private SimulationController getSimulationController()
     {
@@ -360,6 +359,8 @@ public class SimulationLauncher
 
     private void simulationEndCleanup()
     {
+        setSimulationRunParameters(null);
+
         Iterator listenerIter = mListeners.iterator();
         while(listenerIter.hasNext())
         {
@@ -367,7 +368,6 @@ public class SimulationLauncher
             listener.simulationEnding();
         }
 
-        setSimulationRunParameters(null);
         updateSimulationControlButtons();
     }
 
@@ -408,8 +408,7 @@ public class SimulationLauncher
                     }
                     catch(InterruptedException e)
                     {
-                        // :TODO: figure out what to do here
-                        e.printStackTrace(System.err);
+                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -425,17 +424,18 @@ public class SimulationLauncher
             simulationController.setCancelled(false);
             simulationController.setStopped(false);
             
-            Iterator listenerIter = mListeners.iterator();
-            while(listenerIter.hasNext())
-            {
-                Listener listener = (Listener) listenerIter.next();
-                listener.simulationStarting();
-            }
-
             SimulationRunParameters simulationRunParameters = createSimulationRunParameters();
             if(null != simulationRunParameters)
             {
                 setSimulationRunParameters(simulationRunParameters);
+
+                Iterator listenerIter = mListeners.iterator();
+                while(listenerIter.hasNext())
+                {
+                    Listener listener = (Listener) listenerIter.next();
+                    listener.simulationStarting();
+                }
+
                 synchronized(mSimulationRunner)
                 {
                     mSimulationRunner.notifyAll();
@@ -576,7 +576,7 @@ public class SimulationLauncher
         Object []simulatorAliasObjects = simulatorAliasesList.toArray();
         final JList simulatorsList = new JList();
         mSimulatorsList = simulatorsList;
-        simulatorsList.setVisibleRowCount(4);
+        simulatorsList.setVisibleRowCount(SIMULATORS_LIST_BOX_ROW_COUNT);
         simulatorsList.setListData(simulatorAliasObjects);
         simulatorsList.setSelectedIndex(0);
         handleSimulatorSelection(0);
