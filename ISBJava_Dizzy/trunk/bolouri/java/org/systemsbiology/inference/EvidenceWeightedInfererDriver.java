@@ -113,6 +113,7 @@ public class EvidenceWeightedInfererDriver
     private JTable mWeightsTable;
     private JLabel mSmoothingLengthLabel;
     private JTextField mSmoothingLengthField;
+    private JLabel mResultsStatisticsLabel;
     
     class WeightsTableModel extends AbstractTableModel
     {
@@ -802,6 +803,7 @@ public class EvidenceWeightedInfererDriver
         mAlphaLabelData.setEnabled(pResultsObtained);
         mSaveResultsButton.setEnabled(pResultsObtained);
         mClearResultsButton.setEnabled(pResultsObtained);
+        mResultsStatisticsLabel.setEnabled(pResultsObtained);
     }
     
     private void initializeContentPane()
@@ -1068,7 +1070,7 @@ public class EvidenceWeightedInfererDriver
         topPanel.add(separationField);
         gridLayout.setConstraints(separationField, constraints);        
         
-        JLabel smoothingLengthLabel = new JLabel("Smoothing length for fitting distribution: ");
+        JLabel smoothingLengthLabel = new JLabel("Smoothing length for significance distribution: ");
         mSmoothingLengthLabel = smoothingLengthLabel;
         
         constraints.fill = GridBagConstraints.NONE;
@@ -1190,6 +1192,12 @@ public class EvidenceWeightedInfererDriver
         topPanel.add(buttonPanel);
         gridLayout.setConstraints(buttonPanel, constraints);
         
+        JPanel resultsStatisticsPanel = new JPanel();
+        resultsStatisticsPanel.setLayout(new BoxLayout(resultsStatisticsPanel, BoxLayout.Y_AXIS));
+        
+        mResultsStatisticsLabel = new JLabel("Results statistics:");
+        resultsStatisticsPanel.add(mResultsStatisticsLabel);
+        
         JPanel numericResultsPanel = new JPanel();
         numericResultsPanel.setBorder(BorderFactory.createEtchedBorder());
         numericResultsPanel.setLayout(new BoxLayout(numericResultsPanel, BoxLayout.Y_AXIS));
@@ -1236,6 +1244,8 @@ public class EvidenceWeightedInfererDriver
         alphaPanel.add(alphaDataPanel);
         numericResultsPanel.add(alphaPanel);
         
+        resultsStatisticsPanel.add(numericResultsPanel);
+        
         constraints.fill = GridBagConstraints.NONE;
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
@@ -1244,8 +1254,8 @@ public class EvidenceWeightedInfererDriver
         constraints.gridx = 0;
         constraints.gridy++;    
         
-        topPanel.add(numericResultsPanel);
-        gridLayout.setConstraints(numericResultsPanel, constraints);
+        topPanel.add(resultsStatisticsPanel);
+        gridLayout.setConstraints(resultsStatisticsPanel, constraints);
         
         JTable weightsTable = new JTable();
         mWeightsTable = weightsTable;
