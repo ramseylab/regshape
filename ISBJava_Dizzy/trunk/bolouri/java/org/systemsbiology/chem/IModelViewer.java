@@ -11,10 +11,13 @@
 package org.systemsbiology.chem;
 
 /**
+ * Represents an object that can display a {@link Model} in graphical
+ * or textual format, on the screen.  All subclasses of this
+ * interface should implement {@link org.systemsbiology.util.IAliasableClass},
+ * and have the public static string field <code>CLASS_ALIAS</code>.
+ *
  * @author sramsey
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public interface IModelViewer
 {

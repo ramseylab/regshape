@@ -13,7 +13,16 @@ import org.systemsbiology.math.*;
 
 /**
  * Represents a named, well-mixed reaction compartment,
- * which has a numeric volume (in milliliters).
+ * which has a numeric volume.  In Model objects constructed using
+ * the {@link ModelBuilderCommandLanguage}, typically only a default 
+ * Compartment object (with 
+ * unit volume) is used, with the actual volume being absorbed
+ * into the values for the reaction parameters.  However, 
+ * Model objects constructed from SBML using the
+ * {@link org.systemsbiology.chem.sbml.ModelBuilderMarkupLanguage}
+ * are special, in that the symbol evaluator implicitly makes
+ * use of the Compartment volume when evaluating a Species symbol
+ * that appears in a <code>kinticLaw</code> formula. 
  *
  * @author Stephen Ramsey
  */

@@ -14,8 +14,11 @@ import java.io.*;
 /**
  * Defines a class that can write a markup language description of a
  * {@link Model} containing a set of chemical {@link Reaction} objects
- *  and the the initial populations of the chemical {@link Species}.
- *
+ * and the the initial populations of the chemical {@link Species}.
+ * All subclasses of this
+ * interface should implement {@link org.systemsbiology.util.IAliasableClass},
+ * and have the public static string field <code>CLASS_ALIAS</code>.
+ * 
  * @see Model
  * @see Species
  *

@@ -11,6 +11,15 @@ package org.systemsbiology.chem;
 import org.systemsbiology.util.DataNotFoundException;
 import org.systemsbiology.util.InvalidInputException;
 
+/**
+ * Represents an object that can solve the dynamics of a
+ * {@link Model} over time.  All subclasses of this
+ * interface should implement {@link org.systemsbiology.util.IAliasableClass},
+ * and have the public static string field <code>CLASS_ALIAS</code>. 
+ * 
+ * @author sramsey
+ *
+ */
 public interface ISimulator
 {
     public static final int MIN_NUM_RESULTS_TIME_POINTS = 2;

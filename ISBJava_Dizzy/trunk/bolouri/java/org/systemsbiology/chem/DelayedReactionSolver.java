@@ -16,11 +16,14 @@ import org.systemsbiology.util.*;
 import cern.jet.random.*;
 
 /**
- * Implements a chemical reaction containing a specified delay
+ * Used to simulate a chemical reaction containing a specified delay
  * time.  The reactant is immediately converted to a (hidden)
  * "intermediate species".  The reaction converting the intermediate
  * species to the product species occurs after the specified delay.
- *
+ * This class is used by subclasses of the {@link Simulator} class.
+ * The application developer will rarely need to work directly with 
+ * an instance of this class.
+ * 
  * @author Stephen Ramsey
  */
 
