@@ -351,7 +351,7 @@ clipboard.</li>
 <ul>
 <li>Added new deterministic (ODE) simulators to the <code>org.systemsbiology.chem</code> package,
 based on the &quot;odeToJava&quot; library for numerical solution of ODEs.  This library
-includes a Dortmand-Prince 4/5 Runge-Kuta solver with adaptive step-size control, and
+includes a Dortmand-Prince 4/5 Runge-Kutta solver with adaptive step-size control, and
 an implicit/explicit Runge-Kutta solver with adaptive step-size control (for models
 with a high degree of stiffness).</li>
 <li>Modified the <code>org.systemsbiology.chem.scripting.ModelBuilderMarkupLanguage</code>
