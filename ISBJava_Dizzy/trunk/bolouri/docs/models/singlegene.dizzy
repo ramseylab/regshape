@@ -6,12 +6,21 @@
 # a single gene, with two transcription factors
 # TFA and TFB. The length of the coding region is
 # a parameter that is defined at the top of the 
-# file.  The model description is in the CCMDL
+# file.  
+#
+# The rate constants and initial populations are
+# not taken from any experiments; the purpose of
+# this model is just to explore the effects of
+# stochasticity in comparsion to deterministic 
+# dynamics.
+#
+# The model description is in the CCMDL
 # (Condensed Chemical Model Definition Language)
 # language, and is meant to be parsed by the
 # "Dizzy" software system.  For more information,
 # please refer to the home page for the Dizzy
 # software system,
+
 # 
 # http://projects.systemsbiology.net/bolouri_group/Dizzy
 #

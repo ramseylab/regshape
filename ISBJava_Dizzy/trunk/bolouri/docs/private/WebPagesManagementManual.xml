@@ -98,13 +98,13 @@ items (2) and (4) above.
 </p>
 <p>
 In addition, your computer will need to be connected to the network, and
-you will need to have read access to the Bolouri Group project
+you will need to have read access to the &mainGroup; project
 directory. The path to this directory is as follows:
 <blockquote>
 <code>/proj/bolrilab</code>&nbsp;&nbsp;(on Linux)   [note the "u" is missing, intentionally]<br />
 <code>\\isb-1\bolourilab</code>&nbsp;&nbsp;(Windows)<br />
 </blockquote>
-The web pages are stored in a CVS repository in the Bolouri Group
+The web pages are stored in a CVS repository in the &mainGroup;
 project directory.  To access the web pages, set your CVSROOT
 environment variable to 
 <blockquote>
@@ -322,7 +322,7 @@ web server, when you are uploading your HTML file!
 <p>
 The biomolecular model repository directory is 
 used to archive biomolecular models that have been 
-found to be useful to the Bolouri Group, and that 
+found to be useful to the &mainGroup;, and that 
 are believed to be of sufficient utility and validity 
 to warrant making them available to the general public.
 Any model definition file placed in this directory will

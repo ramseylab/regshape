@@ -11,6 +11,12 @@
 # the "create_galactose" reaction defined below.
 # The "output" of this model are the three proteins.
 #
+# The rate constants and initial populations are
+# not taken from any experiments; the purpose of
+# this model is just to explore the effects of
+# stochasticity in comparsion to deterministic 
+# dynamics.
+#
 # The model description is in the CCMDL
 # (Condensed Chemical Model Definition Language)
 # language, and is meant to be parsed by the
