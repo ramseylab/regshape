@@ -35,7 +35,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     private static final String KEYWORD_LOOP = "loop";
     private static final String VALID_SYMBOL_REGEX = "^[a-zA-Z]([_a-zA-Z0-9])*$";
     private static final Pattern VALID_SYMBOL_PATTERN = Pattern.compile(VALID_SYMBOL_REGEX);
-    private static final String REQUIRED_CHAR_SET = "ISO-8859-1";
+    private static final String REQUIRED_CHAR_SET = "UTF-8";
     private static final String COMPARTMENT_NAME_DEFAULT = "univ";
 
     private String mNamespace;
