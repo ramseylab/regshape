@@ -655,4 +655,26 @@ public abstract class Simulator
     {
         mMinNumMillisecondsForUpdate = pMinNumMillisecondsForUpdate;
     }
+
+    protected final Double getMinDelayedReactionDelay()
+    {
+        Double retDelay = null;
+        DelayedReactionSolver []delayedReactionSolvers = mDelayedReactionSolvers;
+        int numDelayedReactions = delayedReactionSolvers.length;
+        double minDelay = Double.MAX_VALUE;
+        for(int ctr = 0; ctr < numDelayedReactions; ++ctr)
+        {
+            DelayedReactionSolver delayedReactionSolver = delayedReactionSolvers[ctr];
+            double delay = delayedReactionSolver.getDelay();
+            if(delay < minDelay)
+            {
+                minDelay = delay;
+            }
+        }
+        if(minDelay < Double.MAX_VALUE)
+        {
+            retDelay = new Double(minDelay);
+        }
+        return(retDelay);
+    }
 }
