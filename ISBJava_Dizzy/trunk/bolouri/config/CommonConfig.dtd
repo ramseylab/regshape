@@ -30,3 +30,5 @@
 <!ENTITY eacute "&#x00E9;">
 <!ENTITY nbsp "&#160;">
 
+<!-- this is the name of the main stylesheet file for ISB documentation -->
+<!ENTITY mainDocumentStylesheet "documentation-stylesheet.xml">

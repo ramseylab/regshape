@@ -1,5 +1,11 @@
 <?xml version="1.0"?>
 
+<!DOCTYPE BuildFile [
+<!ENTITY % CommonConfig SYSTEM "config/CommonConfig.dtd">
+%CommonConfig;
+<!ENTITY BuildHeader SYSTEM "config/BuildHeader.xmlinc">
+]>
+
 <!--
   Copyright (C) 2003 by Institute for Systems Biology,
   Seattle, Washington, USA.  All rights reserved.
@@ -10,17 +16,9 @@
  -->
 
 <project name="bolouri" default="compile" basedir=".">
-
   <property name="projRoot"           location="${basedir}" />  
-  <property name="projJavaDir"        location="${basedir}/java" />
-  <property name="projAppsDir"        location="${basedir}/apps" />
-  <property name="projConfigDir"      location="${basedir}/config" />
-  <property name="projDocsDir"        location="${basedir}/docs" />
-  <property name="projImagesDir"      location="${basedir}/images" />
-  <property name="projBuildDir"       location="${basedir}/build" />
-  <property name="projStyleDir"       location="${basedir}/build/html" />
-  <property name="projWebDir"         location="${basedir}/build/web" />
-  <property name="projClassesDir"     location="${basedir}/classes" />
+  
+  &BuildHeader;
 
   <property name="binInstallAnywhere" location="/local/InstallAnywhere_5_Standard/build" />
   <property name="binHtml2PS"         value="html2ps" />
@@ -33,7 +31,6 @@
   <property name="webServerRemoteDir" value="software" />
 
   <!-- THESE PROPERTIES ARE USED THROUGHOUT THE BUILD SYSTEM: -->
-  <property name="docsStyleSheet" value="${projConfigDir}/documentation-stylesheet.xml" />
   <property name="helpMapStyleSheet" value="${projConfigDir}/javahelp-map-stylesheet.xml" />
   <property name="helpTOCStyleSheet" value="${projConfigDir}/javahelp-toc-stylesheet.xml" />
   <property name="helpContentFileParamName" value="contentFile" />

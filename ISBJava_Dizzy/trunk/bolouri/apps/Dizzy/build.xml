@@ -5,6 +5,7 @@
 %CommonConfig;
 <!ENTITY % AppConfig SYSTEM "config/AppConfig.dtd">
 %AppConfig;
+<!ENTITY BuildHeader SYSTEM "../../config/BuildHeader.xmlinc">
 ]>
 
 <!--
@@ -17,6 +18,11 @@
  -->
 
 <project name="&appName;" default="compile" basedir=".">
+
+  <property name="projRoot"                      location="../.." />
+
+  &BuildHeader;
+
   <property name="app.styleDir"                 location="${basedir}/html" />
   <property name="app.buildDir"                 location="${basedir}/build" />
   <property name="app.configDir"                location="${basedir}/config" />
