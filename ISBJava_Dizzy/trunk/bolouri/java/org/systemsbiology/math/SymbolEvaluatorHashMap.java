@@ -21,7 +21,7 @@ import org.systemsbiology.util.DataNotFoundException;
  */
 public class SymbolEvaluatorHashMap extends SymbolEvaluator
 {
-    private HashMap mSymbolMap;
+    protected HashMap mSymbolMap;
 
     public SymbolEvaluatorHashMap(HashMap pSymbolMap)
     {
@@ -33,10 +33,9 @@ public class SymbolEvaluatorHashMap extends SymbolEvaluator
         mSymbolMap = pSymbolMap;
     }
 
-    public double getValue(Symbol pSymbol) throws DataNotFoundException
+    protected double getValue(String pSymbolName) throws DataNotFoundException
     {
-        String symbolName = pSymbol.getName();
-        SymbolValue symbolValue = (SymbolValue) mSymbolMap.get(symbolName);
+        SymbolValue symbolValue = (SymbolValue) mSymbolMap.get(pSymbolName);
         double value = 0.0;
         if(null != symbolValue)
         {
@@ -44,9 +43,15 @@ public class SymbolEvaluatorHashMap extends SymbolEvaluator
         }
         else
         {
-            throw new DataNotFoundException("unable to evaluate symbol: " + symbolName);
+            throw new DataNotFoundException("unable to evaluate symbol: " + pSymbolName);
         }
         return(value);
+    }
+
+    public double getValue(Symbol pSymbol) throws DataNotFoundException
+    {
+        String symbolName = pSymbol.getName();
+        return(getValue(symbolName));
     }
 
     public boolean hasValue(Symbol pSymbol)
