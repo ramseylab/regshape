@@ -38,7 +38,7 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
-<td><a href="../1.7.1/download.html">1.7.1</a></td>
+<td><a href="../1.8.0/download.html">1.8.0</a></td>
 <td>???</td>
 <td>
 <ul>
@@ -69,6 +69,106 @@ text output.
 </li>
 <li>
 Modified build system to enable optimization during compilation, by default.
+</li>
+<li>
+Modified <code>org.systemsbiology.math.Expression</code> so that the
+<code>log()</code> command in the CMDL has been changed to the <code>ln()</code>
+command.  This was done for consistency with standard computer science notation,
+in which <code>ln()</code> represents the natural logarithm, and <code>log()</code> 
+represents the logarithm base 10.
+</li>
+<li>
+Added an <code>initialize()</code> method to
+<code>org.systemsbiology.util.SlidingWindowTimeSeriesQueue</code>, separate
+from the constructor, which can be used to re-initialize the data structure
+with a different number of data points.
+</li>
+<li>
+Added method <code>containsDelayedOrMultistepReaction()</code> to the
+<code>org.systemsbiology.chem.Model</code> class, so that the
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> can 
+query whether a <code>Model</code> contains a delayed or multi-step
+reaction.  This enables the simulation launcher to decide whether or
+not to display the &quot;number of history bins&quot; text field.
+</li>
+<li>
+Added a new text field &quot;number of history bins&quot; to the
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> user
+interface panel.  This field is only displayed if the 
+<code>org.systemsbiology.chem.Model</code> contains a delayed
+or multi-step reaction.  
+</li>
+<li>
+Added a new command-line option &quot;<code>-numHistoryBins</code>&quot; 
+to the <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>
+class.  This option enables the specification of the number of bins 
+that are to be used to store the past values of a species that participates
+in a delayed or multi-step reaction.  Added a new parameter <code>numHistoryBins</code>
+to <code>org.systemsbiology.chem.SimulatorParameters</code>, for passing this
+information to the simulator.  Modified 
+<code>org.systemsbiology.chem.DelayedReactionSolver</code> to allow
+changing the number of bins for storing the species value history.
+</li>
+<li>
+Removed the parameter <code>minNumSteps</code> from the
+<code>org.systemsbiology.chem.SimulatorParameters</code> class,
+and all of the <code>org.systemsbiology.chem.Simulator</code> subclasses
+that depend on this parameter.  This parameter was replaced with a 
+floating-point parameter <code>stepSizeFraction</code>, which
+specifies the initial step size (as a fraction of the total time of
+the simulation) in the case of a deterministic/ODE simulator, and 
+specifies the minimum number ratio of the reaction time to the
+leap time, in the case of the Tau-Leap simulators.
+</li>
+<li>
+Changed the variable <code>flagGetFinalSymbolFluctuations</code> in
+<code>org.systemsbiology.chem.SimulatorParameters</code> to
+<code>computeFluctuations</code>, for consistency with the parameter
+name in the user interface class 
+<code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>.
+</li>
+<li>
+Added a new method <code>checkSimulationParameters</code> to the
+<code>org.systemsbiology.chem.ISimulator</code> interface.  This
+allows validating a set of parameters, without actually running a
+simulation.  If the simulation parameters are determined to be invalid,
+an exception is thrown.
+</li>
+<li>
+Added the option <code>testOnly</code> to
+<code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>.
+This option instructs the simulation launcher to process the model
+definition file, validate the simulation parameters, and then exit.
+It can be used to test a model and simulation parameters for
+correctness, without having to execute a simulation.
+</li>
+<li>Removed the intermediate species history storage in 
+<code>org.systemsbiology.chem.DelayedReactionSolver</code>,
+for performance reasons, since it was not being used by the
+<code>computeRate()</code> method.
+</li>
+<li>
+Refactored the code for validating simulator parameters to
+a method <code>checkSimulationParameters()</code> in 
+<code>org.systemsbiology.chem.Simulator</code>.  This method
+calls an abstract method <code>checkSimulationParametersImpl</code>
+that must be provided by each <code>Simulator</code> subclass,
+in order to allow the subclass to perform its own simulator-specific
+simulation parameter validation.
+</li>
+<li>
+Modified <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>
+to print out the average number of iterations per second, during the
+last status statistics-collecting interval.
+</li>
+<li>
+Fixed a serious inefficiency in <code>org.systemsbiology.chem.Simulator</code>
+in which the <code>clearExpressionValueCaches()</code> method was looping
+over an array of all non-dynamic symbols, including those symbols that
+were not expressions.  Modified to loop only over an array of non-dynamic
+symbols that are expressions.  Changed the aforementioned method to be
+non-static, so that the subclasses of <code>Simulator</code> do not have
+to pass the array data structure to the method.
 </li>
 </ul>
 </td>
