@@ -22,105 +22,17 @@ import org.systemsbiology.util.*;
  */
 public final class Reaction extends SymbolValue
 {
-    private static final long MIN_POPULATION_FOR_COMBINATORIC_EFFECTS = 100000;
-
-    public final static class ParticipantType 
-    {
-        private final String mName;
-        private ParticipantType(String pName)
-        {
-            mName = pName;
-        }
-        
-        public String toString()
-        {
-            return(mName);
-        }
-
-        public static final ParticipantType REACTANT = new ParticipantType("reactant");
-        public static final ParticipantType PRODUCT = new ParticipantType("product");
-    }
-
-    final class ReactionElement implements Comparable
-    {
-        private final Species mSpecies;
-        private final int mStoichiometry;
-        private final boolean mDynamic;
-
-        public ReactionElement(Species pSpecies, int pStoichiometry, boolean pDynamic) throws IllegalArgumentException
-        {
-            if(pSpecies.getValue().isExpression() && pDynamic == true)
-            {
-                throw new IllegalArgumentException("attempt to use a species with a population expression, as a dynamic element of a reaction");
-            }
-            if(pStoichiometry < 1)
-            {
-                throw new IllegalArgumentException("illegal stoichiometry value: " + pStoichiometry);
-            }
-
-            mStoichiometry = pStoichiometry;
-            mSpecies = pSpecies;
-            mDynamic = pDynamic;
-        }
-
-        public int getStoichiometry()
-        {
-            return(mStoichiometry);
-        }
-
-        public boolean getDynamic()
-        {
-            return(mDynamic);
-        }
-
-        public Species getSpecies()
-        {
-            return(mSpecies);
-        }
-
-        public boolean equals(ReactionElement pReactionElement)
-        {
-            return( mSpecies.equals(pReactionElement.mSpecies) &&
-                    mStoichiometry == pReactionElement.mStoichiometry &&
-                    mDynamic == pReactionElement.mDynamic );
-        }
-
-        public int compareTo(Object pReactionElement)
-        {
-            return(mSpecies.getName().compareTo(((ReactionElement) pReactionElement).mSpecies.getName()));
-        }
-
-        public String toString()
-        {
-            StringBuffer sb = new StringBuffer();
-            sb.append("ReactionElement[");
-            sb.append(mSpecies.toString());
-            sb.append(", Stoichiometry: ");
-            sb.append(mStoichiometry);
-            sb.append(", Dynamic: ");
-            sb.append( mDynamic );
-            sb.append("]");
-            return(sb.toString());
-        }
-    }
-
     private final String mName;
     private HashMap mReactantsMap;
     private HashMap mProductsMap;
-    private static final boolean DEFAULT_REACTANT_DYNAMIC = true;
-
-    private Species []mReactantsSpeciesArray;
-    private Species []mProductsSpeciesArray;
-    private boolean []mReactantsDynamicArray;
-    private boolean []mProductsDynamicArray;
-    private int []mProductsStoichiometryArray;
-    private int []mReactantsStoichiometryArray;
     private HashMap mLocalSymbolsValuesMap;
-    private HashMap mLocalSymbolsMap;
-    private Value []mLocalSymbolsValues;
-    private boolean mRateIsExpression;
     private int mNumSteps;
     private double mDelay;
+
+    private static final boolean DEFAULT_REACTANT_DYNAMIC = true;
+
+    private HashMap mLocalSymbolsMap;
+    private boolean mRateIsExpression;
 
     public Object clone()
     {
@@ -128,15 +40,7 @@ public final class Reaction extends SymbolValue
         reaction.setRate((Value) getRate().clone());
         reaction.mReactantsMap = mReactantsMap;
         reaction.mProductsMap = mProductsMap;
-        reaction.mReactantsSpeciesArray = null;
-        reaction.mReactantsStoichiometryArray = null;
-        reaction.mProductsSpeciesArray = null;
-        reaction.mProductsStoichiometryArray = null;
-        reaction.mReactantsDynamicArray = null;
-        reaction.mProductsDynamicArray = null;
         reaction.mLocalSymbolsValuesMap = mLocalSymbolsValuesMap;
-        reaction.mLocalSymbolsMap = mLocalSymbolsMap;
-        reaction.mLocalSymbolsValues = mLocalSymbolsValues;
         reaction.mRateIsExpression = mRateIsExpression;
         reaction.mNumSteps = mNumSteps;
         reaction.mDelay = mDelay;
@@ -146,20 +50,12 @@ public final class Reaction extends SymbolValue
     public Reaction(String pName)
     {
         super(pName);
-        mNumSteps = 1;
         mName = pName;
         mReactantsMap = new HashMap();
         mProductsMap = new HashMap();
         mLocalSymbolsValuesMap = new HashMap();
-        mLocalSymbolsMap = null;
-        mLocalSymbolsValues = null;
-        mReactantsSpeciesArray = null;
-        mReactantsStoichiometryArray = null;
-        mProductsSpeciesArray = null;
-        mProductsStoichiometryArray = null;
         mRateIsExpression = false;
-        mReactantsDynamicArray = null;
-        mProductsDynamicArray = null;
+        mNumSteps = 1;
         mDelay = 0.0;
     }
 
@@ -168,35 +64,6 @@ public final class Reaction extends SymbolValue
         return(null != mReactantsMap.get(pReactantName));
     }
 
-    boolean []getReactantsDynamicArray()
-    {
-        return(mReactantsDynamicArray);
-    }
-
-    boolean []getProductsDynamicArray()
-    {
-        return(mProductsDynamicArray);
-    }
-
-    int []getReactantsStoichiometryArray()
-    {
-        return(mReactantsStoichiometryArray);
-    }
-
-    int []getProductsStoichiometryArray()
-    {
-        return(mProductsStoichiometryArray);
-    }
-    
-    Species []getReactantsSpeciesArray()
-    {
-        return(mReactantsSpeciesArray);
-    }
-
-    Species []getProductsSpeciesArray()
-    {
-        return(mProductsSpeciesArray);
-    }
 
     public Collection getParameters()
     {
@@ -242,10 +109,10 @@ public final class Reaction extends SymbolValue
         return(mNumSteps);
     }
 
-    public int getNumParticipants(ParticipantType pParticipantType)
+    public int getNumParticipants(ReactionParticipant.Type pParticipantType)
     {
         int numParticipants = 0;
-        if(pParticipantType.equals(ParticipantType.REACTANT))
+        if(pParticipantType.equals(ReactionParticipant.Type.REACTANT))
         {
             numParticipants = mReactantsMap.values().size();
         }
@@ -276,105 +143,11 @@ public final class Reaction extends SymbolValue
         return(species);
     }
                 
-    private static double computeRateFactorForSpecies(double pSpeciesValue,
-                                                      int pStoichiometry,
-                                                      boolean pIsStochastic,
-                                                      boolean pIsDynamic)
-    {
-        if(pIsStochastic && pIsDynamic)
-        {
-            if(pSpeciesValue >= pStoichiometry)
-            {
-                if(pSpeciesValue < MIN_POPULATION_FOR_COMBINATORIC_EFFECTS)
-                {
-                    if(1 == pStoichiometry)
-                    {
-                        return(pSpeciesValue);
-                    }
-                    else
-                    {
-                        double retVal = 1.0;
-                        for(int ctr = pStoichiometry; --ctr >= 0; )
-                        {
-                            retVal *= (pSpeciesValue - (double) ctr);
-                        }
-                        return(retVal);
-                    }
-                }
-                else
-                {
-                    return(Math.pow(pSpeciesValue, pStoichiometry));
-                }
-            }
-            else
-            {
-                return(0.0);
-            }
-        }
-        else
-        {
-            if(1 == pStoichiometry)
-            {
-                return(pSpeciesValue);
-            }
-            else
-            {
-                return(Math.pow(pSpeciesValue, pStoichiometry));
-            }
-        }
-    }
-
-
-//     private static double computeRateFactorForSpecies(SymbolEvaluator pSymbolEvaluator,
-//                                                       Species pSpecies,
-//                                                       int pStoichiometry) throws DataNotFoundException
-//     {
-//         if(pStoichiometry == 1)
-//         {
-//             return(pSymbolEvaluator.getValue(pSpecies.getSymbol()));
-//         }
-//         else
-//         {
-//             double numReactantCombinations = 1.0;
-//             double speciesValue = pSymbolEvaluator.getValue(pSpecies.getSymbol());
-            
-//             if(speciesValue < MIN_POPULATION_FOR_COMBINATORIC_EFFECTS &&
-//                speciesValue - Math.floor(speciesValue) == 0.0)
-//             {
-//                 long longSpeciesValue = (long) speciesValue;
-                
-//                 if(longSpeciesValue >= pStoichiometry)
-//                 {
-//                     for(int ctr = pStoichiometry; --ctr >= 0; )
-//                     {
-//                         numReactantCombinations *= (longSpeciesValue - ctr);
-//                     }
-//                 }
-//                 else
-//                 {
-//                     numReactantCombinations = 0.0;
-//                 }
-//             }
-//             else
-//             {
-//                 if(speciesValue >= pStoichiometry)
-//                 {
-//                     numReactantCombinations *= Math.pow(speciesValue, pStoichiometry);
-//                 }
-//                 else
-//                 {
-//                     numReactantCombinations = 0.0;
-//                 }
-//             }
-
-//             return(numReactantCombinations);
-//         }
-//     }
 
     public void constructSpeciesArrays(Species []pSpeciesArray,    // this is the array of species that we are constructing
                                        int []pStoichiometryArray,  // this is the array of stoichiometries that we are constructing
                                        boolean []pDynamicArray,
-                                       ParticipantType pParticipantType)
+                                       ReactionParticipant.Type pParticipantType)
     {
         constructSpeciesArrays(pSpeciesArray,
                                pStoichiometryArray,
@@ -383,16 +156,16 @@ public final class Reaction extends SymbolValue
                                pParticipantType);
     }
 
-    private void constructSpeciesArrays(Species []pSpeciesArray,    // this is the array of species that we are constructing
-                                        int []pStoichiometryArray,  // this is the array of stoichiometries that we are constructing
-                                        boolean []pDynamicArray,
-                                        Species []pDynamicSymbolValues, // a vector of all species in the model
-                                        SymbolValue []pNonDynamicSymbolValues,
-                                        HashMap pSymbolMap,         // a map between species names and the index in previous vector
-                                        ParticipantType pParticipantType)
+    void constructSpeciesArrays(Species []pSpeciesArray,    // this is the array of species that we are constructing
+                                int []pStoichiometryArray,  // this is the array of stoichiometries that we are constructing
+                                boolean []pDynamicArray,
+                                Species []pDynamicSymbolValues, // a vector of all species in the model
+                                SymbolValue []pNonDynamicSymbolValues,
+                                HashMap pSymbolMap,         // a map between species names and the index in previous vector
+                                ReactionParticipant.Type pParticipantType)
     {
         Collection speciesColl = null;
-        if(pParticipantType.equals(ParticipantType.REACTANT))
+        if(pParticipantType.equals(ReactionParticipant.Type.REACTANT))
         {
             speciesColl = mReactantsMap.values();
         }
@@ -414,8 +187,8 @@ public final class Reaction extends SymbolValue
         int reactantCtr = 0;
         while(speciesIter.hasNext())
         {
-            ReactionElement element = (ReactionElement) speciesIter.next();
-            Species species = element.mSpecies;
+            ReactionParticipant participant = (ReactionParticipant) speciesIter.next();
+            Species species = participant.mSpecies;
             if(null != pSymbolMap)
             {
                 species = getIndexedSpecies(species,
@@ -428,96 +201,35 @@ public final class Reaction extends SymbolValue
                 // do nothing
             }
             pSpeciesArray[reactantCtr] = species;
-            pDynamicArray[reactantCtr] = element.mDynamic;
-            int stoic = element.mStoichiometry;
+            pDynamicArray[reactantCtr] = participant.mDynamic;
+            int stoic = participant.mStoichiometry;
             pStoichiometryArray[reactantCtr] = stoic;
 
             reactantCtr++;
         }
     }
 
-    void prepareSymbolVectorsForSimulation(Species []pDynamicSymbolValues, 
-                                           SymbolValue []pNonDynamicSymbolValues,
-                                           HashMap pSymbolMap)
+    public int getNumReactants()
     {
-        int numReactants = mReactantsMap.values().size();
-        mReactantsSpeciesArray = new Species[numReactants];
-        mReactantsStoichiometryArray = new int[numReactants];
-        mReactantsDynamicArray = new boolean[numReactants];
-
-        constructSpeciesArrays(mReactantsSpeciesArray, 
-                               mReactantsStoichiometryArray, 
-                               mReactantsDynamicArray,
-                               pDynamicSymbolValues, 
-                               pNonDynamicSymbolValues,
-                               pSymbolMap, 
-                               ParticipantType.REACTANT);
-
-        int numProducts = mProductsMap.values().size();
-        mProductsSpeciesArray = new Species[numProducts];
-        mProductsStoichiometryArray = new int[numProducts];
-        mProductsDynamicArray = new boolean[numProducts];
-            
-        constructSpeciesArrays(mProductsSpeciesArray, 
-                               mProductsStoichiometryArray, 
-                               mProductsDynamicArray,
-                               pDynamicSymbolValues, 
-                               pNonDynamicSymbolValues,
-                               pSymbolMap, 
-                               ParticipantType.PRODUCT);
-
-        constructLocalSymbolsVector();
+        return(mReactantsMap.values().size());
     }
 
-    private void constructLocalSymbolsVector()
+    public int getNumProducts()
     {
-        Collection localSymbols = mLocalSymbolsValuesMap.values();
-        int numSymbols = localSymbols.size();
-        SymbolValue []localSymbolsArray = new SymbolValue[numSymbols];
-        int symCtr = 0;
-        Iterator symIter = localSymbols.iterator();
-        while(symIter.hasNext())
-        {
-            SymbolValue symValue = (SymbolValue) symIter.next();
-            localSymbolsArray[symCtr] = symValue;
-            symCtr++;
-        }
-        Value []mLocalSymbolsValues = new Value[numSymbols];
-        HashMap localSymbolsMap = new HashMap();
-        Simulator.indexSymbolArray(localSymbolsArray,
-                                   localSymbolsMap,
-                                   null,
-                                   mLocalSymbolsValues);
-        mLocalSymbolsMap = localSymbolsMap;
+        return(mProductsMap.values().size());
     }
 
-    double []constructDynamicSymbolAdjustmentVector(Species []pDynamicSymbols)
+    public int getNumLocalSymbols()
     {
-        int numSymbols = pDynamicSymbols.length;
-        double []dynamicSymbolVector = new double[numSymbols];
-
-        for(int symbolCtr = 0; symbolCtr < numSymbols; ++symbolCtr)
-        {
-            SymbolValue symbolValue = pDynamicSymbols[symbolCtr];
-            Symbol symbol = symbolValue.getSymbol();
-            String symbolName = symbol.getName();
-            double vecElement = 0.0;
-            ReactionElement reactantElement = (ReactionElement) mReactantsMap.get(symbolName);
-            if(null != reactantElement && reactantElement.mDynamic)
-            {
-                vecElement -= reactantElement.mStoichiometry;
-            }
-            ReactionElement productElement = (ReactionElement) mProductsMap.get(symbolName);
-            if(null != productElement && productElement.mDynamic)
-            {
-                vecElement += productElement.mStoichiometry;
-            }
-
-            dynamicSymbolVector[symbolCtr] = vecElement;
-        }
-
-        return(dynamicSymbolVector);
+        return(mLocalSymbolsValuesMap.values().size());
     }
+
+    SymbolValue []getLocalSymbolValues()
+    {
+        SymbolValue []dummyArray = new SymbolValue[0];
+        return((SymbolValue []) mLocalSymbolsValuesMap.values().toArray(dummyArray));
+    }
+
 
     private void addSymbolsToGlobalSymbolsMap(HashMap pReactionSpecies, HashMap pSymbols, ReservedSymbolMapper pReservedSymbolMapper)
     {
@@ -525,58 +237,15 @@ public final class Reaction extends SymbolValue
         Iterator speciesIter = speciesCollection.iterator();
         while(speciesIter.hasNext())
         {
-            ReactionElement reactionElement = (ReactionElement) speciesIter.next();
-            Species species = reactionElement.getSpecies();
+            ReactionParticipant reactionParticipant = (ReactionParticipant) speciesIter.next();
+            Species species = reactionParticipant.getSpecies();
             String speciesSymbolName = species.getSymbol().getName();
 
             species.addSymbolToMap(pSymbols, speciesSymbolName, pReservedSymbolMapper);
         }
     }
 
-    private void addDynamicSpeciesFromReactionSpeciesMapToGlobalSpeciesMap(HashMap pReactionSpecies, HashMap pDynamicSpecies, ReservedSymbolMapper pReservedSymbolMapper)
-    {
-        Collection speciesCollection = pReactionSpecies.values();
-        Iterator speciesIter = speciesCollection.iterator();
-        while(speciesIter.hasNext())
-        {
-            ReactionElement reactionElement = (ReactionElement) speciesIter.next();
-            if(reactionElement.getDynamic())
-            {
-                Species species = reactionElement.getSpecies();
-                String speciesSymbolName = species.getSymbol().getName();
-                species.addSymbolToMap(pDynamicSpecies, speciesSymbolName, pReservedSymbolMapper);
-            }
-        }
-    }
 
-    void addDynamicSpeciesToGlobalSpeciesMap(HashMap pDynamicSpecies, ReservedSymbolMapper pReservedSymbolMapper)
-    {
-        addDynamicSpeciesFromReactionSpeciesMapToGlobalSpeciesMap(getReactantsMap(), pDynamicSpecies, pReservedSymbolMapper);
-        addDynamicSpeciesFromReactionSpeciesMapToGlobalSpeciesMap(getProductsMap(), pDynamicSpecies, pReservedSymbolMapper);
-    }
-    
-    void addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(HashMap pReactionSpeciesMap, HashMap pSymbolMap, ReservedSymbolMapper pReservedSymbolMapper)
-    {
-        Collection speciesCollection = pReactionSpeciesMap.values();
-        Iterator speciesIter = speciesCollection.iterator();
-        while(speciesIter.hasNext())
-        {
-            ReactionElement reactionElement = (ReactionElement) speciesIter.next();
-            Species species = reactionElement.getSpecies();
-            species.addSymbolsToGlobalSymbolMap(pSymbolMap, pReservedSymbolMapper);
-        }        
-    }
-
-    void addSymbolsToGlobalSymbolMap(HashMap pSymbolMap, ReservedSymbolMapper pReservedSymbolMapper)
-    {
-        addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(getReactantsMap(), pSymbolMap, pReservedSymbolMapper);
-        addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(getProductsMap(), pSymbolMap, pReservedSymbolMapper);
-    }
-
-    public Symbol getSymbol()
-    {
-        return(mSymbol);
-    }
 
     HashMap getReactantsMap()
     {
@@ -622,145 +291,65 @@ public final class Reaction extends SymbolValue
         setRate(new Value(pRate));
     }
 
-    void checkReactantValues(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
+    public void addReactionParticipantToMap(ReactionParticipant pReactionParticipant, HashMap pMap) throws IllegalArgumentException
     {
-        Species []reactants = mReactantsSpeciesArray;
-        int numReactants = reactants.length;
-
-        for(int reactantCtr = numReactants; --reactantCtr >= 0; )
-        {
-            SymbolValue reactant = reactants[reactantCtr];
-            Symbol symbol = reactant.getSymbol();
-            double value = pSymbolEvaluator.getValue(reactant.getSymbol());
-            String symbolName = symbol.getName();
-        }
-    }
-
-    /**
-     * The following design choices were motivated by performance:
-     * 
-     * (1) Used abstract class references, rather than interface references, 
-     * for the arguments to this method. 
-     * (2) Reaction loop counts down, so that the integer comparison is with zero.
-     * (3) Using "*=" operator which is faster than the 'A = A * X" expression.
-     *
-     */
-//     double computeRate(SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
-//     {
-
-//         if(! mRateIsExpression)
-//         {
-//             double rate = mValue.getValue();
-//             Species []reactants = mReactantsSpeciesArray;
-//             int []stoichiometries = mReactantsStoichiometryArray;
-
-//             int numReactants = reactants.length;
-
-//             for(int reactantCtr = numReactants; --reactantCtr >= 0; )
-//             {
-//                rate *= computeRateFactorForSpecies(pSymbolEvaluator,
-//                                                    reactants[reactantCtr], 
-//                                                    stoichiometries[reactantCtr]);
-//             }
-
-//             return(rate);
-//         }
-//         else
-//         {
-//             pSymbolEvaluator.setLocalSymbolsMap(mLocalSymbolsMap);
-//             double rate = mValue.getValue(pSymbolEvaluator);
-//             pSymbolEvaluator.setLocalSymbolsMap(null);
-//             return(rate);
-//         }
-
-//     }
-
-    double computeRate(SymbolEvaluatorChem pSymbolEvaluator,
-                       boolean pIsStochastic) throws DataNotFoundException
-    {
-
-        if(! mRateIsExpression)
-        {
-            double rate = mValue.getValue();
-            int numReactants = mReactantsSpeciesArray.length;
-            for(int reactantCtr = numReactants; --reactantCtr >= 0; )
-            {
-                rate *= computeRateFactorForSpecies(pSymbolEvaluator.getValue(mReactantsSpeciesArray[reactantCtr].getSymbol()), 
-                                                    mReactantsStoichiometryArray[reactantCtr],
-                                                    pIsStochastic,
-                                                    mReactantsDynamicArray[reactantCtr]);
-            }
-            return(rate);
-        }
-        else
-        {
-            pSymbolEvaluator.setLocalSymbolsMap(mLocalSymbolsMap);
-            double rate = mValue.getValue(pSymbolEvaluator);
-            pSymbolEvaluator.setLocalSymbolsMap(null);
-            return(rate);
-        }
-    }
-
-
-    public void addReactionElementToMap(ReactionElement pReactionElement, HashMap pMap) throws IllegalArgumentException
-    {
-        Species species = pReactionElement.getSpecies();
+        Species species = pReactionParticipant.getSpecies();
         if(null == species.getValue())
         {
             throw new IllegalArgumentException("species has no initial value defined");
         }
         String speciesSymbolName = species.getName();
-        ReactionElement reactionElement = (ReactionElement) pMap.get(speciesSymbolName);
-        if(null != reactionElement)
+        ReactionParticipant reactionParticipant = (ReactionParticipant) pMap.get(speciesSymbolName);
+        if(null != reactionParticipant)
         {
             throw new IllegalStateException("Species is already defined for this reaction.  Species name: " + speciesSymbolName);
         }
 
-        pMap.put(speciesSymbolName, pReactionElement);
+        pMap.put(speciesSymbolName, pReactionParticipant);
     }
 
-    void addReactant(ReactionElement pReactionElement) throws IllegalStateException
+    void addReactant(ReactionParticipant pReactionParticipant) throws IllegalStateException
     {
-        addReactionElementToMap(pReactionElement, mReactantsMap);
+        addReactionParticipantToMap(pReactionParticipant, mReactantsMap);
     }
 
     public void addReactant(Species pSpecies, int pStoichiometry, boolean pDynamic) throws IllegalStateException
     {
-        addReactant(new ReactionElement(pSpecies, pStoichiometry, pDynamic));
+        addReactant(new ReactionParticipant(pSpecies, pStoichiometry, pDynamic));
     }
 
     public void addReactant(Species pSpecies, int pStoichiometry) throws IllegalStateException
     {
-        addReactant(new ReactionElement(pSpecies, pStoichiometry, DEFAULT_REACTANT_DYNAMIC));
+        addReactant(new ReactionParticipant(pSpecies, pStoichiometry, DEFAULT_REACTANT_DYNAMIC));
     }
 
 
-    void addProduct(ReactionElement pReactionElement) throws IllegalStateException
+    void addProduct(ReactionParticipant pReactionParticipant) throws IllegalStateException
     {
-        addReactionElementToMap(pReactionElement, mProductsMap);
+        addReactionParticipantToMap(pReactionParticipant, mProductsMap);
     }
 
     public void addProduct(Species pSpecies, int pStoichiometry) throws IllegalStateException
     {
         boolean dynamic = true;
-        addProduct(new ReactionElement(pSpecies, pStoichiometry, dynamic));
+        addProduct(new ReactionParticipant(pSpecies, pStoichiometry, dynamic));
     }
 
     public void addProduct(Species pSpecies, int pStoichiometry, boolean pDynamic) throws IllegalStateException
     {
-        addProduct(new ReactionElement(pSpecies, pStoichiometry, pDynamic));
+        addProduct(new ReactionParticipant(pSpecies, pStoichiometry, pDynamic));
     }
 
     public void addSpecies(Species pSpecies, 
                            int pStoichiometry, 
                            boolean pDynamic, 
-                           ParticipantType pParticipantType) throws IllegalArgumentException
+                           ReactionParticipant.Type pParticipantType) throws IllegalArgumentException
     {
-        if(pParticipantType.equals(ParticipantType.REACTANT))
+        if(pParticipantType.equals(ReactionParticipant.Type.REACTANT))
         {
             addReactant(pSpecies, pStoichiometry, pDynamic);
         }
-        else if(pParticipantType.equals(ParticipantType.PRODUCT))
+        else if(pParticipantType.equals(ReactionParticipant.Type.PRODUCT))
         {
             addProduct(pSpecies, pStoichiometry, pDynamic);
         }
@@ -776,12 +365,27 @@ public final class Reaction extends SymbolValue
 // ---------------------------------------------------------------------
 // FOR DEBUGGING PURPOSES:
         sb.append("Reaction: ");
-        Iterator reactantsIter = getReactantsMap().keySet().iterator();
+
+        Iterator reactantsIter = mReactantsMap.keySet().iterator();
         sb.append(getName() + ", ");
         while(reactantsIter.hasNext())
         {
             String reactant = (String) reactantsIter.next();
-            sb.append(reactant);
+            ReactionParticipant participant = (ReactionParticipant) mReactantsMap.get(reactant);
+            int stoic = participant.mStoichiometry;
+            boolean dynamic = participant.mDynamic;
+            for(int i = 0; i < stoic; ++i)
+            {
+                if(! dynamic)
+                {
+                    sb.append("$");
+                }
+                sb.append(reactant);
+                if(i < stoic - 1)
+                {
+                    sb.append(" + ");
+                }
+            }
             if(reactantsIter.hasNext())
             {
                 sb.append(" + ");
@@ -792,7 +396,16 @@ public final class Reaction extends SymbolValue
         while(productsIter.hasNext())
         {
             String product = (String) productsIter.next();
-            sb.append(product);
+            ReactionParticipant participant = (ReactionParticipant) mProductsMap.get(product);
+            int stoic = participant.mStoichiometry;
+            for(int i = 0; i < stoic; ++i)
+            {
+                sb.append(product);
+                if(i < stoic - 1)
+                {
+                    sb.append(" + ");
+                }
+            }
             if(productsIter.hasNext())
             {
                 sb.append(" + ");
@@ -805,38 +418,74 @@ public final class Reaction extends SymbolValue
         return(sb.toString());
     }
 
+
+    private void addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(HashMap pReactionSpeciesMap, HashMap pSymbolMap, ReservedSymbolMapper pReservedSymbolMapper)
+    {
+        Collection speciesCollection = pReactionSpeciesMap.values();
+        Iterator speciesIter = speciesCollection.iterator();
+        while(speciesIter.hasNext())
+        {
+            ReactionParticipant reactionParticipant = (ReactionParticipant) speciesIter.next();
+            Species species = reactionParticipant.getSpecies();
+            species.addSymbolsToGlobalSymbolMap(pSymbolMap, pReservedSymbolMapper);
+        }        
+    }
+
+    void addSymbolsToGlobalSymbolMap(HashMap pSymbolMap, 
+                                     ReservedSymbolMapper pReservedSymbolMapper)
+    {
+        addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(getReactantsMap(), pSymbolMap, pReservedSymbolMapper);
+        addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(getProductsMap(), pSymbolMap, pReservedSymbolMapper);
+    }
+
+    private void addDynamicSpeciesFromReactionSpeciesMapToGlobalSpeciesMap(HashMap pReactionSpecies, HashMap pDynamicSpecies, ReservedSymbolMapper pReservedSymbolMapper)
+    {
+        Collection speciesCollection = pReactionSpecies.values();
+        Iterator speciesIter = speciesCollection.iterator();
+        while(speciesIter.hasNext())
+        {
+            ReactionParticipant reactionParticipant = (ReactionParticipant) speciesIter.next();
+            if(reactionParticipant.getDynamic())
+            {
+                Species species = reactionParticipant.getSpecies();
+                String speciesSymbolName = species.getSymbol().getName();
+                species.addSymbolToMap(pDynamicSpecies, speciesSymbolName, pReservedSymbolMapper);
+            }
+        }
+    }
+    
+
+    void addDynamicSpeciesToGlobalSpeciesMap(HashMap pDynamicSpecies, 
+                                             ReservedSymbolMapper pReservedSymbolMapper)
+    {
+        addDynamicSpeciesFromReactionSpeciesMapToGlobalSpeciesMap(getReactantsMap(), pDynamicSpecies, pReservedSymbolMapper);
+        addDynamicSpeciesFromReactionSpeciesMapToGlobalSpeciesMap(getProductsMap(), pDynamicSpecies, pReservedSymbolMapper);
+    }
+
+
     Expression getRateExpression() throws DataNotFoundException
     {
         Expression retVal = null;
 
-        if(mRateIsExpression)
+        Value rateValue = getRate();
+
+        if(rateValue.isExpression())
         {
-            Expression rateExpression = getValue().getExpressionValue();
-            if(! (rateExpression instanceof DelayedReactionSolver))
-            {
-                retVal = rateExpression;
-            }
-            else
-            {
-//                DelayedReactionSolver solver = (DelayedReactionSolver) rateExpression;
-//                double rateValue = solver.getRate();
-//                Species intermedSpecies = solver.getIntermedSpecies();
-//                retVal = Expression.multiply(new Expression(rateValue),
-//                                             new Expression(intermedSpecies.getName()));
-                retVal = Expression.ZERO;
-            }
+            retVal = rateValue.getExpressionValue();
         }
         else
         {
-            int numReactants = mReactantsSpeciesArray.length;
+            Iterator reactantsIter = mReactantsMap.values().iterator();
+
             StringBuffer expBuf = new StringBuffer();
 
             boolean firstReactant = true;
-            for(int i = 0; i < numReactants; ++i)
+            while(reactantsIter.hasNext())
             {
-                Species species = mReactantsSpeciesArray[i];
+                ReactionParticipant participant = (ReactionParticipant) reactantsIter.next();
+                Species species = participant.mSpecies;
+                int stoic = participant.mStoichiometry;
                 String speciesName = species.getName();
-                int stoic = mReactantsStoichiometryArray[i];
                 if(! firstReactant)
                 {
                     expBuf.append("*");
@@ -855,7 +504,8 @@ public final class Reaction extends SymbolValue
                 }
             }
 
-            double rateVal = getValue().getValue();
+
+            double rateVal = rateValue.getValue();
             Expression rateExp = new Expression(rateVal);
             if(expBuf.length() > 0)
             {
@@ -868,6 +518,7 @@ public final class Reaction extends SymbolValue
         }
         return(retVal);
     }
+
 
     Expression computeRatePartialDerivativeExpression(Expression pRateExpression,
                                                       SymbolValue pSymbolValue,
@@ -915,51 +566,12 @@ public final class Reaction extends SymbolValue
         return(retVal);
     }
 
-    Expression computeRatePartialDerivativeExpression(SymbolValue pSymbolValue,
-                                                      SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
-    {
-        return(computeRatePartialDerivativeExpression(getRateExpression(),
-                                                      pSymbolValue,
-                                                      pSymbolEvaluator));
-    }
-
-    double evaluateExpressionWithReactionRateLocalSymbolTranslation(Expression pExpression,
-                                                                    SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
+    double evaluateExpressionWithLocalSymbolTranslation(Expression pExpression,
+                                                        SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
     {
         pSymbolEvaluator.setLocalSymbolsMap(mLocalSymbolsMap);
         double value = pExpression.computeValue(pSymbolEvaluator);
         pSymbolEvaluator.setLocalSymbolsMap(null);
         return(value);
     }
-
-    double computeRatePartialDerivative(Expression pRateExpression,
-                                        SymbolValue pSymbolValue,
-                                        SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
-    {
-        Expression deriv = computeRatePartialDerivativeExpression(pRateExpression, pSymbolValue, pSymbolEvaluator);
-        double value = evaluateExpressionWithReactionRateLocalSymbolTranslation(deriv, pSymbolEvaluator);
-        return(value);
-    }
-
-    public double computeRatePartialDerivative(SymbolValue pSymbolValue,
-                                               SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
-    {
-        Expression rateExpression = getRateExpression();
-        Expression deriv = computeRatePartialDerivativeExpression(rateExpression, pSymbolValue, pSymbolEvaluator);
-        double value = evaluateExpressionWithReactionRateLocalSymbolTranslation(deriv, pSymbolEvaluator);
-        return(value);
-    }
-
-    public static Expression []getReactionRateExpressions(Reaction []pReactions) throws DataNotFoundException
-    {
-        int numReactions = pReactions.length;
-        Expression []a = new Expression[numReactions];
-        for(int j = 0; j < numReactions; ++j)
-        {
-            Reaction reaction = pReactions[j];
-            a[j] = reaction.getRateExpression();
-        }
-        return(a);
-    }
-
 }
