@@ -98,6 +98,14 @@ by Herbert Sauro and the SBW Project team)</td>
 <td><a href="&publicRepositoryURL;/src/SBMLReader-1.0.tar.gz">full</a></td>
 </tr>
 
+<tr>
+<td>Cytoscape</td><td><code>cytoscape.jar</code></td>
+<td>
+The Cytoscape program.</td>
+<td>LGPL</td>
+<td>1.1</td>
+<td>see <a href="http://www.cytoscape.org">the Cytoscape Project Home Page</a></td>
+</tr>
 </table>
 </blockquote>
 </p>
@@ -157,4 +165,11 @@ CERN makes no representations about the suitability of this software for any pur
 It is provided "as is" without expressed or implied warranty.
 </pre>
 </blockquote>
+</p>
+<p>
+&appName; depends on the Cytoscape program through the Java Network
+Launching Protocol (JNLP), which means that the Cytoscape program is
+not distributed with &appName;.  Instead, the Cytoscape program is
+loaded at run-time over the network, only when an application function 
+is performed that depends on the Cytoscape program.  
 </p>
