@@ -9,6 +9,7 @@ package org.systemsbiology.chem;
  */
 
 import java.util.*;
+import java.text.*;
 
 /**
  * Enumeration class for output file formats that are supported by the
@@ -21,14 +22,19 @@ public class TimeSeriesOutputFormat
     private final String mName;
     private final char mCommentChar;
     private static final HashMap mMap;
+    private final String mNaN;
+    private final String mInfinity;
+    
     static
     {
         mMap = new HashMap();
     }
-    private TimeSeriesOutputFormat(String pName, char pCommentChar)
+    private TimeSeriesOutputFormat(String pName, char pCommentChar, String pNaN, String pInfinity)
     {
         mName = pName;
         mCommentChar = pCommentChar;
+        mNaN = pNaN;
+        mInfinity = pInfinity;
         mMap.put(pName, this);
     }
     public String toString()
@@ -39,9 +45,34 @@ public class TimeSeriesOutputFormat
     {
         return((TimeSeriesOutputFormat) mMap.get(pName));
     }
-    public static final TimeSeriesOutputFormat CSV_EXCEL = new TimeSeriesOutputFormat("CSV-excel", '#');
-    public static final TimeSeriesOutputFormat CSV_MATLAB = new TimeSeriesOutputFormat("CSV-matlab", '%');
-    public static final TimeSeriesOutputFormat CSV_GNUPLOT = new TimeSeriesOutputFormat("CSV-gnuplot", '#');
+    
+    public void updateDecimalFormatSymbols(DecimalFormatSymbols pDecimalFormatSymbols)
+    {
+        if(null != mNaN)
+        {
+            pDecimalFormatSymbols.setNaN(mNaN);
+        }
+        if(null != mInfinity)
+        {
+            pDecimalFormatSymbols.setInfinity(mInfinity);
+        }
+    }
+    
+    public String getNaN()
+    {
+        return(mNaN);
+    }
+    
+    public String getInfinity()
+    {
+        return(mInfinity);
+    }
+    
+    public static final TimeSeriesOutputFormat CSV_EXCEL = new TimeSeriesOutputFormat("CSV-excel", '#', null, null);
+    
+    public static final TimeSeriesOutputFormat CSV_MATLAB = new TimeSeriesOutputFormat("CSV-matlab", '%', "nan", "inf");
+    
+    public static final TimeSeriesOutputFormat CSV_GNUPLOT = new TimeSeriesOutputFormat("CSV-gnuplot", '#', "nan", "inf");
     public static String []getSortedFileFormatNames()
     {
         Set fileFormatNamesSet = mMap.keySet();
