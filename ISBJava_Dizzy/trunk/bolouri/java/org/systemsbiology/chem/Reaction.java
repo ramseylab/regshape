@@ -254,10 +254,7 @@ public class Reaction extends SymbolValue
         Symbol extSymbol = (Symbol) pSymbolMap.get(speciesName);
         assert (null != extSymbol) : "could not find species: " + speciesName;
         int extSpeciesIndex = extSymbol.getArrayIndex();
-        if(Symbol.NULL_ARRAY_INDEX == extSpeciesIndex)
-        {
-            throw new IllegalStateException("invalid array index for species: " + speciesName);
-        }
+        assert (Symbol.NULL_ARRAY_INDEX != extSpeciesIndex) : "invalid array index for species: " + speciesName;
         Species species = null;
         if(null != extSymbol.getDoubleArray())
         {
@@ -310,22 +307,6 @@ public class Reaction extends SymbolValue
                                             pSymbolMap,
                                             pDynamicSymbolValues,
                                             pNonDynamicSymbolValues);
-
-//                 String speciesName = species.getName();
-//                 Symbol extSymbol = (Symbol) pSymbolMap.get(speciesName);
-//                 int extSpeciesIndex = extSymbol.getArrayIndex();
-//                 if(Symbol.NULL_ARRAY_INDEX == extSpeciesIndex)
-//                 {
-//                     throw new IllegalStateException("invalid array index for species: " + speciesName);
-//                 }
-//                 if(null != extSymbol.getDoubleArray())
-//                 {
-//                     species = pDynamicSymbolValues[extSpeciesIndex];
-//                 }
-//                 else
-//                 {
-//                     species = (Species) pNonDynamicSymbolValues[extSpeciesIndex];
-//                 }
             }
             else
             {
@@ -569,8 +550,8 @@ public class Reaction extends SymbolValue
             for(int reactantCtr = numReactants; --reactantCtr >= 0; )
             {
                 numReactantCombinations *= pSpeciesRateFactorEvaluator.computeRateFactorForSpecies(pSymbolEvaluator,
-                                                                                                   reactants[reactantCtr], 
-                                                                                                   stoichiometries[reactantCtr]); 
+                                                                                                reactants[reactantCtr], 
+                                                                                                stoichiometries[reactantCtr]);
             }
 
             rate *= numReactantCombinations;
