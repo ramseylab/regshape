@@ -42,6 +42,7 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
         mPutativeTimeToNextReactions = putativeTimeToNextReactions;
     }
 
+
     private void createDependencyGraph(Model pModel) throws DataNotFoundException
     {
         Reaction []reactions = mReactions;
@@ -164,6 +165,27 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
         }
     }
 
+    private static final double computeTimeToNextReaction(double []pReactionProbabilities,
+                                                          int pIndex,
+                                                          double pTime,
+                                                          Random pRandomNumberGenerator)
+    {
+        double probRate = pReactionProbabilities[pIndex];
+        double timeOfNextReaction = 0.0;
+        if(0.0 < probRate)
+        {
+            timeOfNextReaction = pTime + chooseDeltaTimeToNextReaction(pRandomNumberGenerator,
+                                                                       pReactionProbabilities[pIndex]);
+        }
+        else
+        {
+            timeOfNextReaction = Double.POSITIVE_INFINITY;
+        }
+
+        return(timeOfNextReaction);
+    }
+         
+
     private final void computePutativeTimeToNextReactions(Random pRandomNumberGenerator,
                                                           double pStartTime,
                                                           double []pReactionProbabilities,
@@ -174,21 +196,63 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
         putativeTimeToNextReactions.clear();
         for(int ctr = 0; ctr < numReactions; ++ctr)
         {
-            double reactionProbability = pReactionProbabilities[ctr];
-            double timeToNextReaction = 0.0;
-            if(0.0 < reactionProbability)
-            {
-                timeToNextReaction = pStartTime + chooseDeltaTimeToNextReaction(pRandomNumberGenerator,
-                                                                                reactionProbability);
-            }
-            else
-            {
-                timeToNextReaction = Double.POSITIVE_INFINITY;
-            }
+            double timeToNextReaction = computeTimeToNextReaction(pReactionProbabilities,
+                                                                  ctr,
+                                                                  pStartTime,
+                                                                  pRandomNumberGenerator);
             MutableDouble storeTimeToNextReaction = new MutableDouble(timeToNextReaction);
             putativeTimeToNextReactions.offer(storeTimeToNextReaction);
         }
     }
+
+    private static final void updateReactionRateAndTime(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
+                                                        SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                                        IndexedPriorityQueue pPutativeTimeToNextReactions,
+                                                        int pReactionIndex,
+                                                        Reaction []pReactions,
+                                                        double []pReactionProbabilities,
+                                                        Random pRandomNumberGenerator,
+                                                        int pLastReactionIndex) throws DataNotFoundException
+    {
+        double time = pSymbolEvaluator.getTime();
+        MutableDouble timeOfNextReactionEventObj = (MutableDouble) pPutativeTimeToNextReactions.get(pReactionIndex);
+        double oldTimeOfNextReactionEvent = timeOfNextReactionEventObj.getValue();
+        double oldRate = pReactionProbabilities[pReactionIndex];
+        Reaction reaction = pReactions[pReactionIndex];
+        double newRate = reaction.computeRate(pSpeciesRateFactorEvaluator, pSymbolEvaluator);
+        double newTimeOfNextReactionEvent = 0.0;
+        if(pLastReactionIndex != pReactionIndex)
+        {
+            assert (oldTimeOfNextReactionEvent > time) : "invalid time";
+
+            if(newRate > 0.0 && oldRate > 0.0)
+            {
+                newTimeOfNextReactionEvent = (oldTimeOfNextReactionEvent - time)*oldRate/newRate + time;
+            }
+            else
+            {
+                if(newRate > 0.0)
+                {
+                    newTimeOfNextReactionEvent = time + chooseDeltaTimeToNextReaction(pRandomNumberGenerator, newRate);
+                }
+                else
+                {
+                    newTimeOfNextReactionEvent = Double.POSITIVE_INFINITY;
+                }
+            }
+        }
+        else
+        {
+            newTimeOfNextReactionEvent = time + chooseDeltaTimeToNextReaction(pRandomNumberGenerator, newRate);
+        }
+
+        assert (newTimeOfNextReactionEvent > time) : "invalid time to next reaction";
+                
+        timeOfNextReactionEventObj.setValue(newTimeOfNextReactionEvent);
+        pPutativeTimeToNextReactions.update(pReactionIndex, timeOfNextReactionEventObj);
+        pReactionProbabilities[pReactionIndex] = newRate;
+    }
+                                                 
 
     private static final double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
                                         SymbolEvaluatorChemSimulation pSymbolEvaluator,
@@ -204,6 +268,8 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
     {
 
         double time = pSymbolEvaluator.getTime();
+
+        assert (pSymbolEvaluator.getTime() <= ((MutableDouble) pPutativeTimeToNextReactions.get(pPutativeTimeToNextReactions.peekIndex())).getValue()) : "invalid time";
 
         int lastReactionIndex = pLastReactionIndex.getValue();
         if(lastReactionIndex >= 0)
@@ -223,65 +289,63 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
             {
                 Integer dependentReactionCtrObj = dependentReactions[ctr];
                 int dependentReactionCtr = dependentReactionCtrObj.intValue();
-                Reaction dependentReaction = pReactions[dependentReactionCtr];
 
-                double oldProbability = pReactionProbabilities[dependentReactionCtr];
-                // compute reaction probability
-                double newProbability = dependentReaction.computeRate(pSpeciesRateFactorEvaluator,
-                                                                      pSymbolEvaluator);
+                updateReactionRateAndTime(pSpeciesRateFactorEvaluator,
+                                          pSymbolEvaluator,
+                                          pPutativeTimeToNextReactions,
+                                          dependentReactionCtr,
+                                          pReactions,
+                                          pReactionProbabilities,
+                                          pRandomNumberGenerator,
+                                          lastReactionIndex);
 
-                pReactionProbabilities[dependentReactionCtr] = newProbability;
-                MutableDouble dependentReactionPutativeTime = (MutableDouble) pPutativeTimeToNextReactions.get(dependentReactionCtr);
-                // compute or adjust putative time for reaction
-                double oldPutativeTimeToNextReaction = dependentReactionPutativeTime.doubleValue();
-                double newPutativeTimeToNextReaction = 0.0;
-                if(dependentReactionCtr != lastReactionIndex)
-                {
-                    if(newProbability > 0.0 && oldProbability > 0.0)
-                    {
-//                        System.out.println("rescaling time to next reaction");
-                        newPutativeTimeToNextReaction = ((oldPutativeTimeToNextReaction - time)*oldProbability/newProbability) + time;
-                    }
-                    else
-                    {
-                        if(newProbability == 0.0)
-                        {
-                            newPutativeTimeToNextReaction = Double.POSITIVE_INFINITY;
-                        }
-                        else
-                        {
-//                            System.out.println("generating new time to next reaction");
-                            newPutativeTimeToNextReaction = time + chooseDeltaTimeToNextReaction(pRandomNumberGenerator,
-                                                                                                 newProbability);
-                        }
-                    }
-                }
-                else
-                {
-                    newPutativeTimeToNextReaction = time + chooseDeltaTimeToNextReaction(pRandomNumberGenerator,
-                                                                                         newProbability);
-                }
 //                System.out.println("dependent reaction: " + dependentReaction + "; old time: " + oldPutativeTimeToNextReaction + "; new time: " + newPutativeTimeToNextReaction);
-                dependentReactionPutativeTime.setValue(newPutativeTimeToNextReaction);
-                pPutativeTimeToNextReactions.update(dependentReactionCtr, dependentReactionPutativeTime);
-                assert ( ((MutableDouble) pPutativeTimeToNextReactions.get(dependentReactionCtr)).getValue() == newPutativeTimeToNextReaction) : "inconsistent putative reaction time";
             }
         }
 
-        int indexNextReaction = pPutativeTimeToNextReactions.peekIndex();
-        pLastReactionIndex.setValue(indexNextReaction);
-        Reaction nextReaction = pReactions[indexNextReaction];
+        int reactionIndex = pPutativeTimeToNextReactions.peekIndex();
+        assert (-1 != reactionIndex) : "invalid reaction index";
+        MutableDouble timeOfNextReactionObj = (MutableDouble) pPutativeTimeToNextReactions.get(reactionIndex);
+        assert (null != timeOfNextReactionObj) : "invalid time of next reaction object";
+        double timeOfNextReaction = timeOfNextReactionObj.getValue();
 
-        MutableDouble timeOfNextReaction = (MutableDouble) pPutativeTimeToNextReactions.get(indexNextReaction);
+        if(0 == pMultistepReactionSolvers.length)
+        {
+            // do nothing
+        }
+        else
+        {
+            int nextMultistepReactionIndex = getNextMultistepReactionIndex(pMultistepReactionSolvers);
+            if(nextMultistepReactionIndex >= 0)
+            {
+                MultistepReactionSolver solver = pMultistepReactionSolvers[nextMultistepReactionIndex];
+                double nextMultistepReactionTime = solver.peekNextReactionTime();
+                assert (nextMultistepReactionTime > time) : "invalid time for next multistep reaction";
+//                System.out.println("next multistep reaction will occur at: " + nextMultistepReactionTime);
+                if(nextMultistepReactionTime < timeOfNextReaction)
+                {
+                    // execute multistep reaction
+                    timeOfNextReaction = nextMultistepReactionTime;
+                    reactionIndex = solver.getReactionIndex();
+//                    System.out.println("multistep reaction selected: " + pReactions[reactionIndex]);
+                    solver.pollNextReactionTime();
+                }
+            }
+        }
 
-        double newTime = timeOfNextReaction.doubleValue();
+        pLastReactionIndex.setValue(reactionIndex);
+        Reaction nextReaction = pReactions[reactionIndex];
+
+        double newTime = timeOfNextReaction;
+
+//        System.out.println("reaction selected: " + nextReaction);
+//        System.out.println("time after reaction: " + newTime);
+
         if(newTime < pEndTime)
         {
             // set time to new time value
             pSymbolEvaluator.setTime(newTime);
             time = newTime;
-//            System.out.println("reaction selected: " + nextReaction);
-//            System.out.println("time after reaction: " + newTime);
         }
         else
         {

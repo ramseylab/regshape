@@ -27,8 +27,6 @@ public abstract class Simulator
 
     public static final int NULL_REACTION = -1;
 
-
-
     static void indexSymbolArray(SymbolValue []pSymbolArray, 
                                  HashMap pSymbolMap, 
                                  double []pDoubleArray, 
@@ -184,14 +182,14 @@ public abstract class Simulator
             MultistepReactionSolver solver = new MultistepReactionSolver(reactant,
                                                                          intermedSpecies,
                                                                          numSteps,
-                                                                         rate);
+                                                                         rate,
+                                                                         pReactions.size() - 1);
             pMultistepReactionSolvers.add(solver);
             multistepReaction.setRate(solver);
         }
     }
 
-
-             
+    protected abstract void initializeMultistepReactionSolvers();
 
     protected void initializeSimulator(Model pModel, SimulationController pSimulationController) throws DataNotFoundException
     {
@@ -231,6 +229,8 @@ public abstract class Simulator
         }
 
         mMultistepReactionSolvers = (MultistepReactionSolver []) multistepReactionSolvers.toArray(new MultistepReactionSolver[0]);
+        initializeMultistepReactionSolvers();
+
         int numMultistepReactions = mMultistepReactionSolvers.length;
 
         Species []dynamicSymbols = (Species []) dynamicSymbolsList.toArray(new Species[0]);;
@@ -465,16 +465,14 @@ public abstract class Simulator
 
 
 
-    protected static final double computeReactionProbabilities(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                                               SymbolEvaluatorChemSimulation pSymbolEvaluator,
-                                                               double []pReactionProbabilities,
-                                                               Reaction []pReactions) throws DataNotFoundException
+    protected static final void computeReactionProbabilities(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
+                                                             SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                                             double []pReactionProbabilities,
+                                                             Reaction []pReactions) throws DataNotFoundException
     {
         // loop through all reactions, and for each reaction, compute the reaction probability
         int numReactions = pReactions.length;
         
-        double aggregateReactionProbability = 0.0;
-
         Reaction reaction = null;
         double reactionProbability = 0.0;
 
@@ -487,13 +485,20 @@ public abstract class Simulator
 //            System.out.println("reaction: " + reaction + "; rate: " + reactionProbability);
             // store reaction probability
             pReactionProbabilities[reactionCtr] = reactionProbability;
-
-            // increment aggregate reaction probability
-            aggregateReactionProbability += reactionProbability;
         }
-
-        return(aggregateReactionProbability);
     }
 
-                                                             
+    protected static final double getMultistepReactionEstimatedAverageFutureRate(SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                                                                 MultistepReactionSolver []pMultistepReactionSolvers) throws DataNotFoundException
+    {
+        double compositeRate = 0.0;
+        int numMultistepReactions = pMultistepReactionSolvers.length;
+        for(int ctr = numMultistepReactions; --ctr >= 0; )
+        {
+            MultistepReactionSolver solver = pMultistepReactionSolvers[ctr];
+            double estimatedFutureRate = solver.getEstimatedAverageFutureRate(pSymbolEvaluator);
+            compositeRate += estimatedFutureRate;
+        }
+        return(compositeRate);
+    }
 }

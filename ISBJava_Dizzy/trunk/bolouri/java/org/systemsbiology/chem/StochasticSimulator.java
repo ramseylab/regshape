@@ -18,6 +18,18 @@ public abstract class StochasticSimulator extends Simulator
         return(mRandomNumberGenerator);
     }
 
+    protected void initializeMultistepReactionSolvers()
+    {
+        MultistepReactionSolver []multistepSolvers = mMultistepReactionSolvers;
+        int numMultistepSolvers = multistepSolvers.length;
+        for(int ctr = 0; ctr < numMultistepSolvers; ++ctr)
+        {
+            MultistepReactionSolver solver = multistepSolvers[ctr];
+            boolean isStochasticSimulator = true;
+            solver.initialize(isStochasticSimulator);
+        }
+    }
+
     protected static final double getRandomNumberUniformInterval(Random pRandomNumberGenerator)
     {
         return( 1.0 - pRandomNumberGenerator.nextDouble() );
@@ -41,17 +53,37 @@ public abstract class StochasticSimulator extends Simulator
         }
     }
 
+//     private static final void updateMultistepReactionSolvers(MultistepReactionSolver []pMultistepReactionSolvers,
+//                                                              SymbolEvaluator pSymbolEvaluator,
+//                                                              double pCurrentTime) throws DataNotFoundException
+//     {
+//         int numMultistepReactions = pMultistepReactionSolvers.length;
+//         for(int ctr = numMultistepReactions; --ctr >= 0; )
+//         {
+//             MultistepReactionSolver solver = pMultistepReactionSolvers[ctr];
+//             solver.update(pSymbolEvaluator, pCurrentTime);
+//         }
+//     }
 
-    private static final void updateMultistepReactionSolvers(MultistepReactionSolver []pMultistepReactionSolvers,
-                                                             SymbolEvaluator pSymbolEvaluator,
-                                                             double pCurrentTime) throws DataNotFoundException
+    protected static final int getNextMultistepReactionIndex(MultistepReactionSolver []pMultistepReactionSolvers)
     {
         int numMultistepReactions = pMultistepReactionSolvers.length;
+        int nextReactionSolver = -1;
+        double nextReactionTime = Double.POSITIVE_INFINITY;
         for(int ctr = numMultistepReactions; --ctr >= 0; )
         {
             MultistepReactionSolver solver = pMultistepReactionSolvers[ctr];
-            solver.update(pSymbolEvaluator, pCurrentTime);
+            if(solver.canHaveReaction())
+            {
+                double specReactionTime = solver.peekNextReactionTime();
+                if(specReactionTime < nextReactionTime)
+                {
+                    nextReactionTime = specReactionTime;
+                    nextReactionSolver = ctr;
+                }
+            }
         }
+        return(nextReactionSolver);
     }
 
     protected static final void updateSymbolValuesForReaction(SymbolEvaluatorChemSimulation pSymbolEvaluator,
@@ -62,15 +94,9 @@ public abstract class StochasticSimulator extends Simulator
     {
         int numMultistepReactions = pMultistepReactionSolvers.length;
 
-        if(numMultistepReactions > 0)
-        {
-            updateMultistepReactionSolvers(pMultistepReactionSolvers,
-                                           pSymbolEvaluator,
-                                           pCurrentTime);
-        }
-
         Species []reactantsSpecies = pReaction.getReactantsSpeciesArray();
         boolean []reactantsDynamic = pReaction.getReactantsDynamicArray();
+
         int []reactantsStoichiometry = pReaction.getReactantsStoichiometryArray();
         int numReactants = reactantsSpecies.length;
         for(int ctr = numReactants; --ctr >= 0; )
@@ -98,6 +124,18 @@ public abstract class StochasticSimulator extends Simulator
                 int productIndex = productSymbol.getArrayIndex();
                 assert (productIndex != Symbol.NULL_ARRAY_INDEX) : "null array index";
                 pSymbolValues[productIndex] += ((double) productsStoichiometry[ctr]);
+                if(numMultistepReactions > 0)
+                {
+                    for(int mCtr = numMultistepReactions; --mCtr >= 0; )
+                    {
+                        MultistepReactionSolver solver = pMultistepReactionSolvers[mCtr];
+                        if(solver.hasIntermedSpecies(product))
+                        {
+                            assert (productsStoichiometry[ctr] == 1) : "invalid stoichiometry for multistep reaction";
+                            solver.addReactant(pSymbolEvaluator);
+                        }
+                    }
+                }
             }
         }
     }

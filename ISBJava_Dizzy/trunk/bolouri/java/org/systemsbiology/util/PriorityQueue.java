@@ -62,6 +62,7 @@ public class PriorityQueue
 
             if(null != pNode.mFirstChild)
             {
+                checkIntegrity(pNode.mFirstChild);
                 if(null != pNode.mSecondChild)
                 {
                     checkIntegrity(pNode.mSecondChild);
@@ -130,6 +131,8 @@ public class PriorityQueue
             {
                 parent.mSecondChild = replacement; 
             }
+            parent.mSubtreePopulation--;
+            assert(parent.mSubtreePopulation >= 0) : "invalid subtree population";
         }
         else
         {
@@ -213,7 +216,7 @@ public class PriorityQueue
             pNode.mParent = pTree;
         }
 
-        pTree.mSubtreePopulation += nodeSubtreePop;
+        pTree.mSubtreePopulation += nodeSubtreePop + 1;
     }
 
     protected void insertRoot(Node pNode)

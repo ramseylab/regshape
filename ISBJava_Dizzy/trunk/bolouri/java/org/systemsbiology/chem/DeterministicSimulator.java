@@ -245,6 +245,18 @@ public abstract class DeterministicSimulator extends Simulator
         mDynamicSymbolAdjustmentVectors = dynamicSymbolAdjustmentVectors;
     }
 
+    protected void initializeMultistepReactionSolvers()
+    {
+        MultistepReactionSolver []multistepSolvers = mMultistepReactionSolvers;
+        int numMultistepSolvers = multistepSolvers.length;
+        for(int ctr = 0; ctr < numMultistepSolvers; ++ctr)
+        {
+            MultistepReactionSolver solver = multistepSolvers[ctr];
+            boolean isStochasticSimulator = false;
+            solver.initialize(isStochasticSimulator);
+        }
+    }
+
     public void initialize(Model pModel, SimulationController pSimulationController) throws DataNotFoundException
     {
         initializeSimulator(pModel, pSimulationController);
@@ -327,6 +339,25 @@ public abstract class DeterministicSimulator extends Simulator
         {
             pNumSteps = pNumTimePoints;
         }
+
+        int numMultistepReactionSteps = 0;
+        int numReactions = reactions.length;
+        for(int ctr = 0; ctr < numReactions; ++ctr)
+        {
+            Reaction reaction = reactions[ctr];
+            int numReactionSteps = reaction.getNumSteps();
+            if(numReactionSteps > 1)
+            {
+                numMultistepReactionSteps += numReactionSteps;
+            }
+        }
+        numMultistepReactionSteps *= 5;
+
+        if(pNumSteps < numMultistepReactionSteps)
+        {
+            pNumSteps = numMultistepReactionSteps;
+        }
+
         double maxStepSize = (pEndTime - pStartTime) / ((double) pNumSteps);
         double stepSize = maxStepSize / 5.0;
 

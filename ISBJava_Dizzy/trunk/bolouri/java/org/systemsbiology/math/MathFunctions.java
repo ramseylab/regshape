@@ -34,6 +34,20 @@ public class MathFunctions
         }
     }
 
+    public static final double vectorSumElements(double []vec)
+    {
+        double retVal = 0.0;
+
+        int size = vec.length;
+
+        for(int ctr = size; --ctr >= 0; )
+        {
+            retVal += vec[ctr];
+        }
+
+        return(retVal);
+    }
+
     public static final void vectorAdd(double []addendX, double []addendY, double []sum)
     {
         int size1 = addendX.length;

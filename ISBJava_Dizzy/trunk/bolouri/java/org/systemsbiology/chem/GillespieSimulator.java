@@ -85,65 +85,57 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
                                           pMultistepReactionSolvers);
         }
 
+        
+        computeReactionProbabilities(pSpeciesRateFactorEvaluator,
+                                     pSymbolEvaluator,
+                                     pReactionProbabilities,
+                                     pReactions);
+        
+        double aggregateReactionProbability = MathFunctions.vectorSumElements(pReactionProbabilities);
+        double deltaTimeToNextReaction = Double.POSITIVE_INFINITY;
 
-        double aggregateReactionProbability = computeReactionProbabilities(pSpeciesRateFactorEvaluator,
-                                                                           pSymbolEvaluator,
-                                                                           pReactionProbabilities,
-                                                                           pReactions);
-
-//        double aggregateReactionProbability = 0.0;
-//         boolean acceptableReactionProbability = true;
-//         do
-//         {
-//             aggregateReactionProbability = computeReactionProbabilities(pSpeciesRateFactorEvaluator,
-//                                                                         pSymbolEvaluator,
-//                                                                         pReactionProbabilities,
-//                                                                         pReactions);
-//             // if the aggregate reaction probability is 0.0, no more reactions can happen
-//             double multistepCompositeRate = 10.0 * getMultistepReactionMaxCompositeRate(pSymbolEvaluator,
-//                                                                                         pMultistepReactionSolvers,
-//                                                                                         pMultistepCompositeRates);
-//             System.out.println("computing reaction probabilities at time: " + time + "; multistep rate: " + multistepCompositeRate + "; aggreate rate: " + aggregateReactionProbability);
-//             if(multistepCompositeRate  <= aggregateReactionProbability)
-//             {
-//                 acceptableReactionProbability = true;
-//             }
-//             else
-//             {
-//                 assert (multistepCompositeRate > 0.0) : "invalid multistep composite rate";
-//                 // multistepCompositeRate must be nonzero, in this case
-//                 time += 1.0/multistepCompositeRate;
-//                 if(time >= pEndTime)
-//                 {
-//                     aggregateReactionProbability = 0.0;
-//                     acceptableReactionProbability = true;
-//                 }
-//                 else
-//                 {
-                
-//                     // adjust time and recompute reaction probabilities (which will update the internal state
-//                     // of the multistep reaction solvers)
-                    
-//                     // do not exit the loop
-//                     acceptableReactionProbability = false;
-//                 }
-
-//                 pSymbolEvaluator.setTime(time);
-//             }
-//         }
-//         while(! acceptableReactionProbability);
-
-        // if the aggregate reaction probability is 0.0, no more reactions can happen
         if(aggregateReactionProbability > 0.0)
         {
-            // choose time of next reaction
-            double deltaTimeToNextReaction = chooseDeltaTimeToNextReaction(pRandomNumberGenerator, 
-                                                                           aggregateReactionProbability);
+            deltaTimeToNextReaction = chooseDeltaTimeToNextReaction(pRandomNumberGenerator, 
+                                                                    aggregateReactionProbability);
+        }
+        
+        int reactionIndex = -1;
 
-            int reactionIndex = chooseIndexOfNextReaction(pRandomNumberGenerator,
-                                                          aggregateReactionProbability,
-                                                          pReactions,
-                                                          pReactionProbabilities);
+        if(pMultistepReactionSolvers.length == 0)
+        {
+            // do nothing
+        }
+        else
+        {
+            int nextMultistepReactionIndex = getNextMultistepReactionIndex(pMultistepReactionSolvers);
+            if(nextMultistepReactionIndex >= 0)
+            {
+                MultistepReactionSolver solver = pMultistepReactionSolvers[nextMultistepReactionIndex];
+                double nextMultistepReactionTime = solver.peekNextReactionTime();
+                assert (nextMultistepReactionTime > time) : "invalid time for next multistep reaction";
+//                System.out.println("next multistep reaction will occur at: " + nextMultistepReactionTime);
+                if(nextMultistepReactionTime < time + deltaTimeToNextReaction)
+                {
+                    // execute multistep reaction
+                    deltaTimeToNextReaction = nextMultistepReactionTime - time;
+                    reactionIndex = solver.getReactionIndex();
+//                    System.out.println("multistep reaction selected: " + pReactions[reactionIndex]);
+                    solver.pollNextReactionTime();
+                }
+            }
+        }
+
+        if(-1 == reactionIndex && aggregateReactionProbability > 0.0)
+        {
+            reactionIndex = chooseIndexOfNextReaction(pRandomNumberGenerator,
+                                                      aggregateReactionProbability,
+                                                      pReactions,
+                                                      pReactionProbabilities);
+        }
+
+        if(-1 != reactionIndex)
+        {
             // choose type of next reaction
             Reaction reaction = pReactions[reactionIndex];
 
@@ -151,7 +143,7 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
 
             time += deltaTimeToNextReaction;
             
-//            System.out.println("at time: " + time + "; reaction occurred: " + reaction);
+//            System.out.println("time: " + time + "; reaction occurred: " + reaction);
         }
         else
         {

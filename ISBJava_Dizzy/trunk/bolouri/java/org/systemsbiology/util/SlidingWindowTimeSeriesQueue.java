@@ -22,6 +22,10 @@ public class SlidingWindowTimeSeriesQueue
     private int mNumStoredPoints;
     private int mMinIndex;
     private double mLastTime;
+    private double mAverageValue;
+
+    private double mTimeLastNonzeroValue;
+    private boolean mHasNonzeroValue;
 
     public SlidingWindowTimeSeriesQueue(int pNumTimePoints)
     {
@@ -40,12 +44,30 @@ public class SlidingWindowTimeSeriesQueue
 
     public void clear()
     {
+        mHasNonzeroValue = false;
+        mTimeLastNonzeroValue = 0.0;
         mQueueIndex = 0;
         mMinIndex = 0;
         mLastTime = 0.0;
         mNumStoredPoints = 0;
+        mAverageValue = 0.0;
         MathFunctions.vectorZeroElements(mTimePoints);
         MathFunctions.vectorZeroElements(mValues);
+    }
+
+    public boolean hasNonzeroValue()
+    {
+        return(mHasNonzeroValue);
+    }
+
+    public double getTimeLastNonzeroValue() throws IllegalStateException
+    {
+        if(! mHasNonzeroValue)
+        {
+            throw new IllegalStateException("there is no nonzero value in the history");
+        }
+
+        return(mTimeLastNonzeroValue);
     }
 
     public double getLastTimePoint()
@@ -63,11 +85,21 @@ public class SlidingWindowTimeSeriesQueue
         return(mTimePoints[getInternalIndex(pIndex)]);
     }
 
+    public double getAverageValue()
+    {
+        return(mAverageValue);
+    }
+
     public void insertPoint(double pTime, double pValue)
     {
+        assert (pValue >= 0.0) : "invalid value in history";
         mLastTime = pTime;
         int queueIndex = mQueueIndex;
         int numTimePoints = mNumTimePoints;
+
+        double newAverage = mAverageValue * mNumStoredPoints;
+
+        double lastValue = 0.0;
 
         if(mNumStoredPoints < numTimePoints)
         {
@@ -87,6 +119,8 @@ public class SlidingWindowTimeSeriesQueue
                 nextIndex -= numTimePoints;
             }
 
+            lastValue = mValues[queueIndex];
+
             mMinIndex = nextIndex;
         }
 
@@ -100,6 +134,28 @@ public class SlidingWindowTimeSeriesQueue
         {
             mQueueIndex = 0;
         }
+
+        if(pValue > 0.0)
+        {
+            // need to update the mTimeLastNonzeroValue
+            mTimeLastNonzeroValue = pTime;
+            mHasNonzeroValue = true;
+        }
+        else
+        {
+            if(mHasNonzeroValue)
+            {
+                if(mTimeLastNonzeroValue < mTimePoints[mMinIndex])
+                {
+                    mHasNonzeroValue = false;
+                    mTimeLastNonzeroValue = 0.0;
+                }
+            }
+        }
+
+        newAverage = (Math.abs(newAverage - lastValue) + pValue)/mNumStoredPoints;
+        mAverageValue = newAverage;
+        assert (newAverage >= 0.0) : "invalid average value (negative); lastValue: " + lastValue + "; numStoredPoints: " + mNumStoredPoints + "; newAverage: " + newAverage + "; pValue: " + pValue;
     }
 
     public double getMinTime()
