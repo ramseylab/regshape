@@ -5,6 +5,7 @@
   <property name="localJava.styleDir"                location="${basedir}/html" />
   <property name="localJava.srcDir"                  location="${basedir}/isb" />
   <property name="localJava.docsDir"                 location="${basedir}/docs" />
+  <property name="localJava.extLibDir"               location="${basedir}/extlib" />
   <property name="localJava.buildDir"                location="${projBuildDir}" />
   <property name="localJava.classesDir"              location="${projClassesDir}" />
   <property name="localJava.javadocDir"              location="${projWebDir}/javadoc" />
@@ -13,6 +14,13 @@
 
   <property name="localJava.jarFile"                 location="${localJava.buildDir}/isb.jar" />
   <property name="localJava.srcFile"                 location="${localJava.buildDir}/isb-src.tar.gz" />
+
+  <path id="localJava.classpath">
+    <pathelement location="${localJava.classesDir}" />
+    <fileset dir="${localJava.extLibDir}"> 
+      <include name="*.jar" />
+    </fileset>
+  </path>
 
   <target name="style">
     <mkdir dir="${localJava.styleDir}" />
@@ -42,7 +50,9 @@
              sourcepath="${basedir}" 
              destdir="${localJava.javadocDir}"
              packageList="${basedir}/packageList.txt"
-             additionalparam="-breakiterator" />
+             additionalparam="-breakiterator"> 
+      <classpath refid="localJava.classpath" />
+    </javadoc>
   </target>
 
   <target name="compile">
@@ -51,7 +61,9 @@
            destdir="${localJava.classesDir}" 
            source="${localJava.sourceCompileFlag}" 
            debug="on" 
-           excludes="**/tp/*.java" />
+           excludes="**/tp/*.java">
+      <classpath refid="localJava.classpath" />
+    </javac>
   </target>
 
   <target name="compiletests" depends="compile">
