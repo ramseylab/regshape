@@ -10,7 +10,6 @@ package org.systemsbiology.chem.app;
 
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
-import org.systemsbiology.chem.scripting.*;
 import java.util.*;
 import java.io.*;
 
@@ -29,7 +28,7 @@ public class ModelLoaderApp extends CommandLineApp
     private static final String DEBUG_ARG = "-debug";
     private static final String PARSER_ARG = "-parser";
     private static final int NUM_REQUIRED_ARGS = 1;
-    private static final String DEFAULT_PARSER_ALIAS = org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage.CLASS_ALIAS;
+    private static final String DEFAULT_PARSER_ALIAS = org.systemsbiology.chem.ModelBuilderCommandLanguage.CLASS_ALIAS;
     private boolean mDebug;
     private String mParserAlias;
     private String mFileName;
@@ -71,7 +70,7 @@ public class ModelLoaderApp extends CommandLineApp
         setDebug(false);
         setParserAlias(null);
         setFileName(null);
-        ClassRegistry classRegistry = new ClassRegistry(org.systemsbiology.chem.scripting.IModelBuilder.class);
+        ClassRegistry classRegistry = new ClassRegistry(org.systemsbiology.chem.IModelBuilder.class);
         classRegistry.buildRegistry();
         setModelBuilderRegistry(classRegistry);
     }
@@ -91,7 +90,7 @@ public class ModelLoaderApp extends CommandLineApp
         PrintWriter pw = new PrintWriter(pOutputStream);
         pw.println("usage:    java " + getClass().getName() + " [-debug] [-parser <parserAlias>] <modelFile>");
         pw.println("  <parserAlias>:   the alias of the class implementing the interface ");
-        pw.println("                   org.systemsbiology.chem.scripting.IModelBuilder (default is determined");
+        pw.println("                   org.systemsbiology.chem.IModelBuilder (default is determined");
         pw.println("                   by file extension");
         pw.println("  <modelFile>:     the full filename of the model definition file to be loaded");
         pw.println("Parser aliases:    ");

@@ -10,7 +10,6 @@ package org.systemsbiology.chem.app;
 
 import java.util.*;
 import org.systemsbiology.util.*;
-import org.systemsbiology.chem.scripting.*;
 import org.systemsbiology.chem.*;
 import javax.swing.*;
 import java.awt.*;
@@ -467,11 +466,11 @@ public class MainApp
 
         initializeAppConfig(appDir);
 
-        ClassRegistry modelBuilderRegistry = new ClassRegistry(org.systemsbiology.chem.scripting.IModelBuilder.class);
+        ClassRegistry modelBuilderRegistry = new ClassRegistry(org.systemsbiology.chem.IModelBuilder.class);
         modelBuilderRegistry.buildRegistry();
         setModelBuilderRegistry(modelBuilderRegistry);
 
-        ClassRegistry modelExporterRegistry = new ClassRegistry(org.systemsbiology.chem.scripting.IModelExporter.class);
+        ClassRegistry modelExporterRegistry = new ClassRegistry(org.systemsbiology.chem.IModelExporter.class);
         modelExporterRegistry.buildRegistry();
         setModelExporterRegistry(modelExporterRegistry);
 
