@@ -99,7 +99,6 @@
     <ant dir="${projAppsDir}" target="build" />
   </target>
 
-<!--  <target name="uploadWeb" depends="buildWeb"> -->
   <target name="uploadWeb">
     <apply executable="ncftpput" type="both">
       <arg value="-u" />
