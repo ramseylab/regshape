@@ -1189,7 +1189,7 @@ Press ""Done"" to quit the installer.]]></string>
 						</object>
 					</property>
 					<property name="productURL">
-						<string><![CDATA[http://projects.systemsbiology.net/bolouri_group/Dizzy]]></string>
+						<string><![CDATA[http://labs.systemsbiology.net/bolouri/Dizzy]]></string>
 					</property>
 					<property name="productDescription">
 						<string><![CDATA[Dizzy:  a chemical kinetics stochastic simulation system]]></string>
@@ -1207,7 +1207,7 @@ Press ""Done"" to quit the installer.]]></string>
 						<int>0</int>
 					</property>
 					<property name="supportURL">
-						<string><![CDATA[http://projects.systemsbiology.net/bolouri_group/Dizzy]]></string>
+						<string><![CDATA[http://labs.systemsbiology.net/bolouri/Dizzy]]></string>
 					</property>
 					<property name="vendorName">
 						<string><![CDATA[Institute for Systems Biology]]></string>

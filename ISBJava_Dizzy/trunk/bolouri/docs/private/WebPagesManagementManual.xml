@@ -270,13 +270,13 @@ At this point, you should be able to point your web browser to
 your new web page at (for example):
 <blockquote>
 <pre>
-http://projects.systemsbiology.net/bolouri_group/MyFile.xml
+http://labs.systemsbiology.net/bolouri/MyFile.xml
 </pre>
 </blockquote>
 or the modified group home page at:
 <blockquote>
 <pre>
-http://projects.systemsbiology.net/bolouri_group
+http://labs.systemsbiology.net/bolouri
 </pre>
 </blockquote>
 If you have any questions about this process, please contact the
@@ -330,7 +330,7 @@ the &quot;<code>privateRepository</code>&quot; or the
 following FTP server:
 <blockquote>
 <pre>
-projects.systemsbiology.net
+labs.systemsbiology.net
 </pre>
 </blockquote>
 The two directories differ in that the public directory
@@ -372,8 +372,8 @@ At this point, your document should be visible on the
 external web server, at one of the two following URLs:
 <blockquote>
 <pre>
-http://projects.systemsbiology.net/bolouri_group/privateRepository/YourDocument.html
-http://projects.systemsbiology.net/bolouri_group/publicRepository/YourDocument.html
+http://labs.systemsbiology.net/bolouri/privateRepository/YourDocument.html
+http://labs.systemsbiology.net/bolouri/publicRepository/YourDocument.html
 </pre>
 </blockquote>
 depending on whether you selected (1) or (2) above.
@@ -598,11 +598,11 @@ your personal web page on the lab intranet.  To begin,
 simply write (or export) the web page as a HTML document.
 For example, my personal home page is <code>sramsey.html</code>.
 Next, use the FTP program to transfer the document to
-the FTP server <code>projects.systemsbiology.net</code>,
+the FTP server <code>labs.systemsbiology.net</code>,
 as shown here:
 <blockquote>
 <pre>
-ftp projects.systemsbiology.net
+ftp labs.systemsbiology.net
 username:  bolouri_group
 password:  XXXXXXX
 cd publicRepository
@@ -615,7 +615,7 @@ The HTML file uploaded in the previous example will be visible as the
 following URL:
 <blockquote>
 <pre>
-<a href="../publicRepository/sramsey.html">http://projects.systemsbiology.net/bolouri_group/publicRepository/sramsey.html</a>
+<a href="../publicRepository/sramsey.html">http://labs.systemsbiology.net/bolouri/publicRepository/sramsey.html</a>
 </pre>
 </blockquote>
 At this point, your home page is visible to the outside world.  If you wish

@@ -20,7 +20,7 @@
 
   <property name="webServerUsername"  value="bolouri_group" />
   <property name="webServerPassword"  value="b2G4cIc" />  <!-- icky: find some way to MIME-encode this -->
-  <property name="webServerHostname"  value="projects.systemsbiology.net" />
+  <property name="webServerHostname"  value="labs.systemsbiology.net" />
   <property name="webServerRemoteDir" value="." />
 
   <!-- THESE PROPERTIES ARE USED THROUGHOUT THE BUILD SYSTEM: -->

@@ -9,7 +9,7 @@
 <project name="localJava" default="compile" basedir=".">
 
   <property name="app.styleDir"                location="${basedir}/html" />
-  <property name="app.srcDir"                  location="${basedir}/isb" />
+  <property name="app.srcDir"                  location="${basedir}/org" />
   <property name="app.configDir"               location="${basedir}/config" />
   <property name="app.buildDir"                location="${basedir}/build" />
   <property name="app.docsDir"                 location="${basedir}/docs" />
@@ -22,7 +22,7 @@
   <property name="app.version"                 value="&appVersion;" />
   <property name="app.downloadDir"             location="${app.webDir}/&appVersion;" />
   <property name="app.installerDir"            location="${app.downloadDir}/installer" />
-  <property name="app.rootPackage"             value="isb" />
+  <property name="app.rootPackage"             value="org" />
 
   <property name="app.sourceCompileFlag"       value="1.4" />
 
