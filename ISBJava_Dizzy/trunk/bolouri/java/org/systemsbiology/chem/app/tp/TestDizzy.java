@@ -51,9 +51,8 @@ public class TestDizzy
             IncludeHandler includeHandler = new IncludeHandler();
             includeHandler.setDirectory(new File(file.getParentFile().getAbsolutePath()));
 
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            Model model = modelBuilder.buildModel(bufferedReader, includeHandler);
+            InputStream fileInputStream = new FileInputStream(file);
+            Model model = modelBuilder.buildModel(fileInputStream, includeHandler);
 
             SimulationLauncher launcher = new SimulationLauncher("Dizzy", model, true);
         }

@@ -8,10 +8,7 @@ package org.systemsbiology.chem.tp;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
+import java.io.*;
 import org.systemsbiology.chem.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.sbml.*;
@@ -30,14 +27,11 @@ public class TestModelBuilderMarkupLanguage
                 File file = new File(fileName);
                 if(file.exists())
                 {
-                    FileReader fileReader = new FileReader(file);
-                    BufferedReader bufferedReader = new BufferedReader(fileReader);
+                    InputStream inputStream = new FileInputStream(file);
                     MarkupLanguageImporter importer = new MarkupLanguageImporter();
-//                    ModelBuilderMarkupLanguage builder = new ModelBuilderMarkupLanguage(importer);
                     ModelBuilderCommandLanguage builder = new ModelBuilderCommandLanguage();
-                    IncludeHandler includeHandler = new IncludeHandler();
-                    includeHandler.setDirectory(new File(file.getParentFile().getAbsolutePath()));
-                    Model model = builder.buildModel(bufferedReader, includeHandler);
+                    IncludeHandler includeHandler = null;
+                    Model model = builder.buildModel(inputStream, includeHandler);
                     System.out.println(model.toString());
                     System.exit(1);
                     SimulatorDeterministicRungeKuttaFixed simulator = new SimulatorDeterministicRungeKuttaFixed();
