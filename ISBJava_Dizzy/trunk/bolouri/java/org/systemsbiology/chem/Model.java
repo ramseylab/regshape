@@ -50,6 +50,16 @@ public final class Model
         return(mReservedSymbolMapper);
     }
 
+    /**
+     * Associate a {@link ReservedSymbolMapper} with this Model.  This
+     * allows {@link org.systemsbiology.math.Expression expressions} that
+     * reference reserved symbols from the ReservedSymbolMapper.  For
+     * example, in order to have a model in which expressions can reference
+     * the symbol "time", you need to create an instance of
+     * {@link ReservedSymbolMapperChemCommandLanguage} and pass it to this method.
+     * 
+     * @param pReservedSymbolMapper
+     */
     public void setReservedSymbolMapper(ReservedSymbolMapper pReservedSymbolMapper)
     {
         mReservedSymbolMapper = pReservedSymbolMapper;
