@@ -188,6 +188,10 @@ kinetic rate expressions.
 <li>
 Renamed the Ant target <code>compiletests</code> to <code>compileTests</code>.
 </li>
+<li>
+Included the first version of the source code for Pointillist application,
+in the package <code>org.systemsbiology.pointillist</code>
+</li>
 </ul>
 </td>
 </tr>
