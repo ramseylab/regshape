@@ -38,7 +38,7 @@ run the build system.
 
 <p>
 <ul>
-<li><a href="&appVersion;/&installerDownloadRelURL;">Download &appName;</a></li>
+<li><a href="&appVersion;/&installerDownloadRelURL;">Download &appName;</a> (<b>ISB only</b>)</li>
 <li><a href="docs/ReadMe.html">&appName; Overview document</a></li>
   <li><a href="docs/UserManual.html">&appName; User Manual</a> (a <a href="docs/UserManual.pdf">PDF version</a> is available)</li>
 <li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
@@ -63,6 +63,9 @@ source&quot; license.  &appName; requires the Java 2 Runtime
 Environment (JRE) version 1.4 or newer, or an equivalent JRE.  For
 more information about the &appName; system, please consult the 
 <a href="docs/UserManual.html">&appName; User Manual</a>.
+<b>Note:</b>  Pointillist is currently only available for download 
+internall within Institute for Systems Biology.  It is expected
+to be available for download by the general public in early 2005.
 </p>
 
 <p>
