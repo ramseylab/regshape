@@ -428,6 +428,10 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             handleCommandLineError("the option \"statusSeconds\" requires the option \"printStatus\"");
         }
 
+        DecimalFormatSymbols decimalFormatSymbols = mScientificNumberFormat.getDecimalFormatSymbols();
+        mOutputFileFormat.updateDecimalFormatSymbols(decimalFormatSymbols);
+        mScientificNumberFormat.setDecimalFormatSymbols(decimalFormatSymbols);
+        
         if(printParameters)
         {
             System.err.println(mSimulatorParameters.toString());
@@ -443,7 +447,6 @@ public class SimulationLauncherCommandLine extends CommandLineApp
         {
             handleCommandLineError("required model name was not specified");
         }
-
 
         if(null == getParserAlias())
         {

@@ -660,6 +660,9 @@ public class SimulationLauncher
                 double []timeValues = pSimulationResults.getResultsTimeValues();
                 Object []symbolValues = pSimulationResults.getResultsSymbolValues();
 
+                DecimalFormatSymbols decimalFormatSymbols = mScientificNumberFormat.getDecimalFormatSymbols();
+                outputFileFormat.updateDecimalFormatSymbols(decimalFormatSymbols);
+                mScientificNumberFormat.setDecimalFormatSymbols(decimalFormatSymbols);
                 TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(printWriter,
                                                                             pRequestedSymbolNames,
                                                                             timeValues,
@@ -671,6 +674,7 @@ public class SimulationLauncher
                                               "output saved to file:\n" + outputFileName,
                                               "output saved",
                                               JOptionPane.INFORMATION_MESSAGE);
+                mScientificNumberFormat.setDecimalFormatSymbols(new DecimalFormatSymbols());
             }
 
             success = true;
@@ -1606,7 +1610,7 @@ public class SimulationLauncher
         OutputType outputType = mOutputType;
         if(outputType.equals(OutputType.FILE))
         {
-            FileChooser outputFileChooser = new FileChooser(mLauncherFrame);
+            FileChooser outputFileChooser = new FileChooser();
             outputFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             outputFileChooser.setDialogTitle("Please specify the output file; the extension \".csv\" is recommended");
             File currentDirectory = getCurrentDirectory();
@@ -1618,8 +1622,7 @@ public class SimulationLauncher
             {
                 outputFileChooser.setCurrentDirectory(currentDirectory);
             }
-            outputFileChooser.setApproveButtonText("approve");
-            outputFileChooser.show();
+            outputFileChooser.showDialog(mLauncherFrame, "approve");
             File outputFile = outputFileChooser.getSelectedFile();
             if(null != outputFile)
             {
