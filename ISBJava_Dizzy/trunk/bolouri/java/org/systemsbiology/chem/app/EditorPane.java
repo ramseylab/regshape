@@ -303,8 +303,8 @@ public class EditorPane
 
     void setModelToolsMenuEnabled(boolean pEnabled)
     {
+        MainApp.getApp().enableToolsMenu(pEnabled);
         MainApp.getApp().enableSimulateMenuItem(pEnabled);
-        MainApp.getApp().enableExportMenuItem(pEnabled);
     }
 
     private void initializeEditorTextArea(Container pPane)

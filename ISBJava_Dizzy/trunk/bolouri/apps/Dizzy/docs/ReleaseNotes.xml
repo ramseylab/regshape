@@ -64,6 +64,17 @@ that is installed in the &quot;<code>src</code>&quot;
 subdirectory of the installation directory for this program.
 </isb:docsection>
 
+<isb:docsection name="External Libraries" label="extlib">
+The &appName; system uses a number of external libraries.
+These libraries are bundled with the &appName; program and
+are installed within the &appName; directory when you install
+&appName; on your system.  For a list of external library
+dependencies and pointers to the web sites where the source
+code for these libraries can be obtained, please refer to the
+<a href="UserManual.html#extlib">external libraries section
+of the user manual</a>.
+</isb:docsection>
+
 <isb:docsection name="Documentation" label="documentation">
 For documentation on how to use the &appName; program,
 please consult the 

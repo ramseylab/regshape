@@ -8,10 +8,10 @@ public class MainMenu extends JMenuBar
 {
     MainApp mApp;
     private JMenuItem mSimulateMenuItem;
-    private JMenuItem mExportMenuItem;
     private JMenuItem mSaveMenuItem;
     private JMenuItem mCloseMenuItem;
     private JMenuItem mProcessMenuItem;
+    private JMenu mToolsMenu;
 
     private static final String ACTION_COMMAND_FILE_OPEN = "Open...";
     private static final String ACTION_COMMAND_FILE_SAVE_AS = "Save As...";
@@ -28,6 +28,7 @@ public class MainMenu extends JMenuBar
 
     private static final String ACTION_COMMAND_TOOLS_EXPORT = "Export...";
     private static final String ACTION_COMMAND_TOOLS_SIMULATE = "Simulate...";
+    private static final String ACTION_COMMAND_TOOLS_CYTOSCAPE = "View in Cytoscape";
 
 
 
@@ -72,6 +73,10 @@ public class MainMenu extends JMenuBar
             {
                 mApp.handleSimulate();
             }
+            else if(actionCommand.equals(ACTION_COMMAND_TOOLS_CYTOSCAPE))
+            {
+                mApp.handleViewInCytoscape();
+            }
             else if(actionCommand.equals(ACTION_COMMAND_EDIT_CUT))
             {
                 mApp.getEditorPane().handleCut();
@@ -102,12 +107,12 @@ public class MainMenu extends JMenuBar
         return(mSimulateMenuItem);
     }
 
-    JMenuItem getExportMenuItem()
+    JMenu getToolsMenu()
     {
-        return(mExportMenuItem);
+        return(mToolsMenu);
     }
 
-    private void createSingleMenu(String pMenuName, String []pMenuItems, int []pShortcuts)
+    private JMenu createSingleMenu(String pMenuName, String []pMenuItems, int []pShortcuts)
     {
         JMenu menu = new JMenu(pMenuName);
         for(int i = 0; i < pMenuItems.length; ++i)
@@ -118,10 +123,6 @@ public class MainMenu extends JMenuBar
             if(menuItemName.equals(ACTION_COMMAND_TOOLS_SIMULATE))
             {
                 mSimulateMenuItem = item;
-            }
-            if(menuItemName.equals(ACTION_COMMAND_TOOLS_EXPORT))
-            {
-                mExportMenuItem = item;
             }
             if(menuItemName.equals(ACTION_COMMAND_FILE_SAVE))
             {
@@ -135,6 +136,7 @@ public class MainMenu extends JMenuBar
         }
 
         add(menu);
+        return(menu);
     }
 
 
@@ -157,17 +159,18 @@ public class MainMenu extends JMenuBar
         createSingleMenu("Edit", editItems, editShortcuts);
 
         String []toolsItems = new String[] {ACTION_COMMAND_TOOLS_EXPORT,
-                                            ACTION_COMMAND_TOOLS_SIMULATE};
-        int []toolsShortcuts = {'E', 'S'};
+                                            ACTION_COMMAND_TOOLS_SIMULATE,
+                                            ACTION_COMMAND_TOOLS_CYTOSCAPE};
+        int []toolsShortcuts = {'E', 'S', 'V'};
 
-        createSingleMenu("Tools", toolsItems, toolsShortcuts);
+        mToolsMenu = createSingleMenu("Tools", toolsItems, toolsShortcuts);
 
         String []helpItems = new String[] {ACTION_COMMAND_HELP_ABOUT,
                                            ACTION_COMMAND_HELP_BROWSER};
         int []helpShortcuts = {'A', 'B'};
         
         mSimulateMenuItem.setEnabled(false);
-        mExportMenuItem.setEnabled(false);
+        mToolsMenu.setEnabled(false);
         mSaveMenuItem.setEnabled(false);
         mCloseMenuItem.setEnabled(false);
 

@@ -116,6 +116,21 @@ public class MainApp
         exporter.exportModel(model, mModelExporterRegistry);
     }
 
+    void handleViewInCytoscape()
+    {
+        try
+        {
+            Model model = mEditorPane.processModel();
+            CytoscapeViewer cv = new CytoscapeViewer();
+            cv.viewModelInCytoscape(model);
+        }
+        catch(Exception e)
+        {
+            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable export model to Cytoscape");
+            errorDialog.show();            
+        }
+    }
+
     void handleSimulate()
     {
         try
@@ -130,19 +145,6 @@ public class MainApp
             enableSimulateMenuItem(true);
             errorDialog.show();            
         }
-    }
-
-    void enableExportMenuItem(boolean pEnabled)
-    {
-        boolean enabled = false;
-        if(pEnabled)
-        {
-            if(! mEditorPane.editorBufferIsEmpty())
-            {
-                enabled = true;
-            }
-        }
-        mMainMenu.getExportMenuItem().setEnabled(enabled);
     }
 
     void enableSaveMenuItem(boolean pEnabled)
@@ -168,6 +170,18 @@ public class MainApp
         mMainMenu.getSimulateMenuItem().setEnabled(enabled);
     }
 
+    void enableToolsMenu(boolean pEnabled)
+    {
+        boolean enabled = false;
+        if(pEnabled)
+        {
+            if(! mEditorPane.editorBufferIsEmpty())
+            {
+                enabled = true;
+            }
+        }
+        mMainMenu.getToolsMenu().setEnabled(enabled);
+    }
 
     private void initializeAppConfig(String pAppDir) throws DataNotFoundException, InvalidInputException, FileNotFoundException
     {

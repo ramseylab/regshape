@@ -7,6 +7,7 @@
 <!ENTITY cmdlExtension ".dizzy">
 <!ENTITY sbmlExtension ".xml">
 <!ENTITY sbmlURL "http://www.sbw-sbml.org">
+<!ENTITY cytoscapeURL "http://www.cytoscape.org">
 <!ENTITY appNameCommandLine "dizzycmd">
    ]>
 
@@ -53,6 +54,8 @@ simulations and export a model to a different model definition language</li>
 <li>a Systems Biology Workbench bridge that allows the simulator to be
 invoked through the Systems Biology Workbench, using a model defined in
 the Systems Biology Markup Language</li>
+<li>a graphical display feature that can display a graphical
+representation of a model using the <a href="&cytoscapeURL;">Cytoscape system</a>.</li>
 </ol>
 Models are defined in text files that you must edit, or generate using
 an external tool (e.g., JDesigner).  This system can understand three types of 
@@ -122,6 +125,8 @@ The above hyperlinks for the User Manual are for the most recent
 version of the &appName; system.
 </p>
 <p>
+<a name="extlib" />
+<b>Externl libraries:</b><br />
 The &appName; system depends on a number of external open-source
 libraries, which are shipped with the &appName; system in a compiled
 format (JAR archive).  The source code for each of these libraries is
@@ -150,6 +155,10 @@ freely available at the web sites identified by the hyperlinks shown below:
 <tr>
 <td>JavaHelp</td><td><code>jh.jar</code></td>
 <td><a href="http://java.sun.com/products/javahelp"><code>java.sun.com/products/javahelp</code></a></td><td>Sun Binary Code License</td>
+</tr>
+<tr>
+<td>Cytoscape</td><td><code>cytoscape.jar</code></td>
+<td><a href="&cytoscapeURL;"><code>www.cytoscape.org</code></a></td><td>LGPL</td>
 </tr>
 </table>
 </blockquote>
