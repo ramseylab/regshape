@@ -196,6 +196,8 @@
     
   </target>
 
+  <taskdef name="buildinstaller" classname="com.zerog.ia.integration.ant.InstallAnywhereAntTask" />
+
   <target name="copyImages">
     <mkdir dir="${app.webDir}/images" />
     <copy todir="${app.webDir}/images">
@@ -212,9 +214,9 @@
     <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
     <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />
 
-    <exec executable="${binInstallAnywhere}" failonerror="true">
-      <arg value="${app.buildDir}/project.iap_xml" />
-    </exec>
+    <buildinstaller IALocation="${dirInstallAnywhere}"
+                    IAProjectFile="${app.buildDir}/project.iap_xml"
+                    failonerror="true" />
 
     <!-- make the installer directory -->
     <mkdir dir="${app.installerDir}" />
