@@ -44,6 +44,40 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.7.0/&installerDownloadRelURL;">1.7.0</a></td>
+<td>2004/06/08</td>
+<td>
+<ul>
+<li>Modified &appName; to correctly implement the importing and simulation of
+an SBML model for which the unit of &quot;substance&quot; is &quot;mole&quot;.
+This fixes incorrect simulation behavior when an SBML model with
+the default substance unit (&quot;mole&quot;) is imported.
+</li>
+<li>Fixed a bug that was causing an exception to be thrown in the
+simulation launcher, when &appName; is deployed using Java Web
+Start.</li> 
+<li>Modified the simulation framework to model multi-step
+reactions differently than delayed reactions.  Multi-step reactions
+are now simulated using the Gamma Distribution as described by Gibson
+and Bruck in their Journal of Physical Chemistry A paper (2000), while
+delayed reactions are simulated using delay differential equations or
+(in the case of a stochastic simulation) a time delayed stochastic
+process.</li>
+<li>Modified the SBML model export feature so that it correctly
+preserves the units for &quot;substance&quot; that were originally
+specified for the model.  This avoids a potential problem if a user
+imports a model from SBML, and then exports the model back to SBML.</li>
+<li>Decreased the maximum initial step size for the Dormand-Prince 5/4 ODE
+solver, for the case of a model with a delayed or multistep reaction.</li>
+<li>Fixed a bug whereby the &quot;tauleap-complex&quot; simulator was
+giving an exception, when simulating a model imported from SBML, that
+has local reaction parameters.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.7.0/download.html">1.7.0</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.6.4/&installerDownloadRelURL;">1.6.4</a></td>
 <td>2004/04/05</td>
 <td>
