@@ -22,7 +22,7 @@ package org.systemsbiology.math;
  *
  * @author Stephen Ramsey
  */
-public class MutableDouble
+public final class MutableDouble
 {
     double mDouble;
 
@@ -31,12 +31,12 @@ public class MutableDouble
         return(mDouble);
     }
 
-    public final void setValue(double pDouble)
+    public void setValue(double pDouble)
     {
         mDouble = pDouble;
     }
 
-    public final double doubleValue()
+    public double doubleValue()
     {
         return(mDouble);
     }

@@ -22,7 +22,7 @@ package org.systemsbiology.math;
  *
  * @author Stephen Ramsey
  */
-public class MutableBoolean
+public final class MutableBoolean
 {
     private boolean mBoolean;
 

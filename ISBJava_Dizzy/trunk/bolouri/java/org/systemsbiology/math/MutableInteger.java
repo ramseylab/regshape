@@ -22,7 +22,7 @@ package org.systemsbiology.math;
  *
  * @author Stephen Ramsey
  */
-public class MutableInteger
+public final class MutableInteger
 {
     private int mInteger;
 
