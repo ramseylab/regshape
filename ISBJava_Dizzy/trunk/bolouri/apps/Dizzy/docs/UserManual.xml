@@ -3343,6 +3343,13 @@ the <code>SBMLValidate.jar</code> file and the <code>SBWCore.jar</code>
 file to your <code>CLASSPATH</code>.  Both of these JAR files are in
 the &quot;<code>lib</code>&quot; subdirectory where you installed &appName;.
 </p>
+<p>
+In addition to setting your <code>CLASSPATH</code> variable, your
+shell <code>PATH</code> variable must be set so that the &quot;<code>java</code>&quot;
+program can be found within the <code>PATH</code>, in order to use the
+command-line interface to &appName;.
+</p>
+
 </isb:docsection>
 
 <isb:docsection name="&appName; Programmatic Interface" label="api">
