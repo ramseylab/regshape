@@ -29,11 +29,11 @@ public abstract class Simulator
     protected SpeciesRateFactorEvaluator mSpeciesRateFactorEvaluator;
     protected HashMap mSymbolMap;
     protected SimulationController mSimulationController;
-    protected boolean mInitialized;
+    protected DelayedReactionSolver []mDelayedReactionSolvers;
     protected Species []mDynamicSymbols;
     protected Object []mDynamicSymbolAdjustmentVectors;
 
-    protected DelayedReactionSolver []mDelayedReactionSolvers;
+    protected boolean mInitialized;
 
     public static final int NULL_REACTION = -1;
 
@@ -365,8 +365,6 @@ public abstract class Simulator
 
         mSimulationController = pSimulationController;
 
-        initializeDynamicSymbolAdjustmentVectors(mDynamicSymbols);
-
         mInitialized = true;
     }
 
@@ -406,6 +404,8 @@ public abstract class Simulator
         mSymbolMap = null;
         mSimulationController = null;
         mDelayedReactionSolvers = null;
+        mDynamicSymbols = null;
+        mDynamicSymbolAdjustmentVectors = null;
     }
 
     public Simulator()

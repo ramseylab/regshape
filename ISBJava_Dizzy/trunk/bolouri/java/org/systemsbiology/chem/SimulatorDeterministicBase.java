@@ -220,6 +220,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
     public void initialize(Model pModel, SimulationController pSimulationController) throws DataNotFoundException
     {
         initializeSimulator(pModel, pSimulationController);
+        initializeDynamicSymbolAdjustmentVectors(mDynamicSymbols);
         resetScratchpad();
     }
 

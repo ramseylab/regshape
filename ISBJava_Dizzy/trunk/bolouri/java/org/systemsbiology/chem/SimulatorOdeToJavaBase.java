@@ -28,6 +28,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE
     public void initialize(Model pModel, SimulationController pSimulationController) throws DataNotFoundException
     {
         initializeSimulator(pModel, pSimulationController);
+        initializeDynamicSymbolAdjustmentVectors(mDynamicSymbols);
         int numSpecies = mDynamicSymbolValues.length;
         mDerivative = new double[numSpecies];
         mScratch = new double[numSpecies];
