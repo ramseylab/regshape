@@ -29,6 +29,12 @@ web content</a> described below.  Please note the
 content into the default directory on the FTP server</a>
 in that section.
 </p>
+<p>
+Please note that most of the software packages mentioned
+in this document are available in the &mainGroup; shared
+directory, under the &quot;<code>software</code>&quot;
+subdirectory.
+</p>
 </isb:docsection>
 
 <isb:docsection name="Web Pages Format" label="format">
