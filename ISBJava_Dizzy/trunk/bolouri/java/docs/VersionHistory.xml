@@ -88,6 +88,12 @@ class, and the removal of the
 <li>Fixed a bug in <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>
 where a symbol defined within an included file, would never appear as a species
 in the containing model, even if it is included as a participant in a reaction.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.odetojava.SimulatorOdeToJavaBase</code>
+where the initial step size was too large, in the case of large <code>stopTime</code>,
+in models with a delayed reaction with a large delay time.  Fixed a similar bug in
+<code>org.systemsbiology.chem.SimulatorDeterministicBase</code>, so that it
+correctly calculates the initial step size, for cases of a delayed single-step
+reaction.</li>
 </ul>
 </td>
 </tr>
