@@ -44,6 +44,25 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.3.1/&installerDownloadRelURL;">1.3.1</a></td>
+<td>2004/01/27</td>
+<td>
+<ul>
+<li>Fixed a bug in the command language parser, which was causing
+parser errors when a macro definition contains a loop construct.</li>
+<li>Fixed a bug in the command language parser, which was causing
+parser errors when a loop construct directly precedes a reaction definition statement.</li>
+<li>Modified the command language parser to allow the value of
+a symbol to be redefined, as long as the symbol has not been promoted to a
+<code>Species</code>, <code>Reaction</code>, <code>Parameter</code>, or <code>Compartment</code>
+at the point where the value of the symbol is redefined.  The purpose of this feature is
+to permit the user to define a template definition with an &quot;output&quot; parameter.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.3.1/&installerDownloadRelURL;">1.3.1</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.3.0/&installerDownloadRelURL;">1.3.0</a></td>
 <td>2004/01/26</td>
 <td>
