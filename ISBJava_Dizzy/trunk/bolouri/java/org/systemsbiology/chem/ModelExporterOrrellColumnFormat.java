@@ -132,13 +132,13 @@ public class ModelExporterOrrellColumnFormat implements IModelExporter, IAliasab
             String reactionName = reaction.getName();
 
             // handle reactant species
-            int numReactants = reaction.getNumParticipants(Reaction.ParticipantType.REACTANT);
+            int numReactants = reaction.getNumParticipants(ReactionParticipant.Type.REACTANT);
             if(numReactants > 2)
             {
                 throw new ModelExporterException("reaction " + reactionName + " contains more than two reactant species types");
             }
 
-            int numProducts = reaction.getNumParticipants(Reaction.ParticipantType.PRODUCT);
+            int numProducts = reaction.getNumParticipants(ReactionParticipant.Type.PRODUCT);
             if(numProducts > 2)
             {
                 throw new ModelExporterException("reaction " + reactionName + " contains more than two product species types");
@@ -150,7 +150,7 @@ public class ModelExporterOrrellColumnFormat implements IModelExporter, IAliasab
             reaction.constructSpeciesArrays(reactantSpecies, 
                                             reactantStoichiometries, 
                                             reactantDynamic, 
-                                            Reaction.ParticipantType.REACTANT);
+                                            ReactionParticipant.Type.REACTANT);
 
             Species []productSpecies = new Species[numProducts];
             int []productStoichiometries = new int[numProducts];
@@ -158,7 +158,7 @@ public class ModelExporterOrrellColumnFormat implements IModelExporter, IAliasab
             reaction.constructSpeciesArrays(productSpecies, 
                                             productStoichiometries, 
                                             productDynamic, 
-                                            Reaction.ParticipantType.PRODUCT);
+                                            ReactionParticipant.Type.PRODUCT);
 
             int reactant1 = 0;
             int reactant2 = 0;

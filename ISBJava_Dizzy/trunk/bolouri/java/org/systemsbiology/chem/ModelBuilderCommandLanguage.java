@@ -894,7 +894,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                                          HashMap pSymbolMap,
                                          HashMap pSpeciesStoicMap,
                                          HashMap pSpeciesDynamicMap,
-                                         Reaction.ParticipantType pParticipantType) throws InvalidInputException, DataNotFoundException
+                                         ReactionParticipant.Type pParticipantType) throws InvalidInputException, DataNotFoundException
     {
         while(pTokenIter.hasNext())
         {
@@ -940,7 +940,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             }
 
             token = getNextToken(pTokenIter);
-            if(pParticipantType.equals(Reaction.ParticipantType.REACTANT) &&
+            if(pParticipantType.equals(ReactionParticipant.Type.REACTANT) &&
                token.mCode.equals(Token.Code.HYPHEN))
             {
                 token = getNextToken(pTokenIter);
@@ -951,7 +951,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             {
                 continue;
             }
-            else if(pParticipantType.equals(Reaction.ParticipantType.PRODUCT) &&
+            else if(pParticipantType.equals(ReactionParticipant.Type.PRODUCT) &&
                     token.mCode.equals(Token.Code.COMMA))
             {
                 break;
@@ -964,7 +964,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     }
                                          
     private void handleSpeciesDefinitions(Reaction pReaction, 
-                                          Reaction.ParticipantType pReactionParticipantType,
+                                          ReactionParticipant.Type pReactionParticipantType,
                                           HashMap pSymbolMap,
                                           HashMap pSpeciesStoicMap,
                                           HashMap pSpeciesDynamicMap) throws InvalidInputException
@@ -1091,10 +1091,10 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                                     pSymbolMap,
                                     speciesStoicMap,
                                     speciesDynamicMap,
-                                    Reaction.ParticipantType.REACTANT);
+                                    ReactionParticipant.Type.REACTANT);
 
             handleSpeciesDefinitions(reaction, 
-                                     Reaction.ParticipantType.REACTANT,
+                                     ReactionParticipant.Type.REACTANT,
                                      pSymbolMap,
                                      speciesStoicMap,
                                      speciesDynamicMap);
@@ -1129,10 +1129,10 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                                     pSymbolMap,
                                     speciesStoicMap,
                                     speciesDynamicMap, 
-                                    Reaction.ParticipantType.PRODUCT);
+                                    ReactionParticipant.Type.PRODUCT);
 
             handleSpeciesDefinitions(reaction, 
-                                     Reaction.ParticipantType.PRODUCT,
+                                     ReactionParticipant.Type.PRODUCT,
                                      pSymbolMap,
                                      speciesStoicMap,
                                      speciesDynamicMap);            
