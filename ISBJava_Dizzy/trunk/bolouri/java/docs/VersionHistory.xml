@@ -38,6 +38,18 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.4.4/&installerDownloadRelURL;">1.4.4</a></td>
+<td>2004/02/10</td>
+<td>
+<ul>
+<li>Fixed a bug in <code>org.systemsbiology.chem.SimulatorOdeToJavaBase</code>, in which
+the simulator was failing to delete the temporary file containing the simulation results.
+This was cluttering up the temporary files directory with old (unneeded) data files.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.4.3/&installerDownloadRelURL;">1.4.3</a></td>
 <td>2004/02/06</td>
 <td>
