@@ -230,8 +230,6 @@
 
   <target name="buildHTML" depends="style, copyImages, copyHtml, buildResourcesFile" />
 
-  <target name="build">
-    <!-- do nothing -->
-  </target>
+  <target name="build" depends="buildHTML, buildPDF, buildInstallers" />
 
 </project>
