@@ -777,7 +777,7 @@ public class ScriptRuntime
         }
 
         NumberFormat nf = NumberFormat.getInstance();
-        nf.setMaximumFractionDigits(4);
+        nf.setMaximumFractionDigits(6);
         nf.setGroupingUsed(false);
 
         if(Element.ModifierCode.PRINT == output)
@@ -803,7 +803,7 @@ public class ScriptRuntime
             {
                 StringBuffer sb = new StringBuffer(); 
                 double time = startTime + ((double) timeIndex)*deltaTime;
-                sb.append(time + ", ");
+                sb.append(nf.format(time) + ", ");
                 SpeciesPopulations speciesPopulationSnapshot = speciesPopulationSnapshots[timeIndex];
                 for(int speciesIndex = 0; speciesIndex < numViewSpecies; ++speciesIndex)
                 {
