@@ -59,7 +59,7 @@ dynamically replace the model loaded in the simulation launcher.</li>
 detect when a simulation starts or ends.</li>
 <li>Fixed bug where the &appName; command language interpreter was
 rejecting model definition files that ended with whitespace.</li>
-<li>Added an &quot;append&quot; check-box to the simulation launcher</code>
+<li>Added an &quot;append&quot; check-box to the simulation launcher
 window, which allows for specifying that the output file should be appended to, rather than overwritten.</li>
 <li>Added a &quot;save as PNG image&quot; button to the simulation results plot 
 window, which is used to save the plot as a PNG image file.</li>
