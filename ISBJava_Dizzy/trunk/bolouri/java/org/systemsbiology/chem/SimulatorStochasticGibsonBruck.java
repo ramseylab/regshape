@@ -11,6 +11,7 @@ package org.systemsbiology.chem;
 import java.util.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.math.*;
+import edu.cornell.lassp.houle.RngPack.*;
 
 /**
  * Implementation of the Gibson-Bruck "Next Reaction" algorithm.
@@ -22,9 +23,10 @@ import org.systemsbiology.math.*;
  *
  * @author Stephen Ramsey
  */
-public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase implements IAliasableClass, ISimulator
+public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase implements IAliasableClass, ISimulator
 {
     public static final String CLASS_ALIAS = "gibson-bruck"; 
+    private static final long NUMBER_FIRINGS = 1;
 
     private Object []mReactionDependencies;
     private IndexedPriorityQueue mPutativeTimeToNextReactions;
@@ -71,7 +73,9 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
 
         boolean checkCompartmentValues = false;
 
-        if(pModel.getSymbolEvaluator() instanceof SymbolEvaluatorChemMarkupLanguage)
+        SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = mSymbolEvaluator.getSymbolEvaluationPostProcessor();
+        if(null != symbolEvaluationPostProcessor &&
+           (symbolEvaluationPostProcessor instanceof SymbolEvaluationPostProcessorChemMarkupLanguage))
         {
             checkCompartmentValues = true;
         }
@@ -173,10 +177,10 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
         }
     }
 
-    private static final double computeTimeToNextReaction(double []pReactionProbabilities,
-                                                          int pIndex,
-                                                          double pTime,
-                                                          Random pRandomNumberGenerator)
+    private static double computeTimeToNextReaction(double []pReactionProbabilities,
+                                                    int pIndex,
+                                                    double pTime,
+                                                    RandomElement pRandomNumberGenerator)
     {
         double probRate = pReactionProbabilities[pIndex];
         double timeOfNextReaction = 0.0;
@@ -194,10 +198,10 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
     }
          
 
-    private final void computePutativeTimeToNextReactions(Random pRandomNumberGenerator,
-                                                          double pStartTime,
-                                                          double []pReactionProbabilities,
-                                                          Reaction []pReactions)
+    private void computePutativeTimeToNextReactions(RandomElement pRandomNumberGenerator,
+                                                    double pStartTime,
+                                                    double []pReactionProbabilities,
+                                                    Reaction []pReactions)
     {
         int numReactions = pReactions.length;
         IndexedPriorityQueue putativeTimeToNextReactions = mPutativeTimeToNextReactions;
@@ -213,13 +217,13 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
         }
     }
 
-    private static final void updateReactionRateAndTime(SymbolEvaluatorChem pSymbolEvaluator,
-                                                        IndexedPriorityQueue pPutativeTimeToNextReactions,
-                                                        int pReactionIndex,
-                                                        Reaction []pReactions,
-                                                        double []pReactionProbabilities,
-                                                        Random pRandomNumberGenerator,
-                                                        int pLastReactionIndex) throws DataNotFoundException
+    private static void updateReactionRateAndTime(SymbolEvaluatorChem pSymbolEvaluator,
+                                                  IndexedPriorityQueue pPutativeTimeToNextReactions,
+                                                  int pReactionIndex,
+                                                  Reaction []pReactions,
+                                                  double []pReactionProbabilities,
+                                                  RandomElement pRandomNumberGenerator,
+                                                  int pLastReactionIndex) throws DataNotFoundException
     {
         double time = pSymbolEvaluator.getTime();
         MutableDouble timeOfNextReactionEventObj = (MutableDouble) pPutativeTimeToNextReactions.get(pReactionIndex);
@@ -257,11 +261,12 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
     }
                                                  
 
-    protected final void prepareForStochasticSimulation(SymbolEvaluatorChem pSymbolEvaluator,
-                                                        double pStartTime,
-                                                        Random pRandomNumberGenerator,
-                                                        Reaction []pReactions,
-                                                        double []pReactionProbabilities) throws DataNotFoundException
+    protected void prepareForStochasticSimulation(SymbolEvaluatorChem pSymbolEvaluator,
+                                                  double pStartTime,
+                                                  RandomElement pRandomNumberGenerator,
+                                                  Reaction []pReactions,
+                                                  double []pReactionProbabilities,
+                                                  SimulatorParameters pSimulatorParameters) throws DataNotFoundException
     {
         computeReactionProbabilities(pSymbolEvaluator,
                                      pReactionProbabilities,
@@ -273,14 +278,14 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
                                            pReactions);
     }
 
-    protected final double iterate(SymbolEvaluatorChem pSymbolEvaluator,
-                                   double pEndTime,
-                                   Reaction []pReactions,
-                                   double []pReactionProbabilities,
-                                   Random pRandomNumberGenerator,
-                                   double []pDynamicSymbolValues,
-                                   MutableInteger pLastReactionIndex,
-                                   DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException, IllegalStateException
+    protected double iterate(SymbolEvaluatorChem pSymbolEvaluator,
+                             double pEndTime,
+                             Reaction []pReactions,
+                             double []pReactionProbabilities,
+                             RandomElement pRandomNumberGenerator,
+                             double []pDynamicSymbolValues,
+                             MutableInteger pLastReactionIndex,
+                             DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException, IllegalStateException
     {
         IndexedPriorityQueue putativeTimeToNextReactions = mPutativeTimeToNextReactions;
         Object []reactionDependencies = mReactionDependencies;
@@ -295,7 +300,8 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
             updateSymbolValuesForReaction(pSymbolEvaluator,
                                           lastReaction,
                                           pDynamicSymbolValues,
-                                          pDelayedReactionSolvers);
+                                          pDelayedReactionSolvers,
+                                          NUMBER_FIRINGS);
             clearExpressionValueCaches();
                                           
 
@@ -374,6 +380,17 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
         initializeSimulatorStochastic(pModel);
         createDependencyGraph(pModel);
         initializePutativeTimeToNextReactions();
+    }
+
+    protected void modifyDefaultSimulatorParameters(SimulatorParameters pSimulatorParameters)
+    {
+        // do nothing
+    }
+
+
+    public String getAlias()
+    {
+        return(CLASS_ALIAS);
     }
 }
     

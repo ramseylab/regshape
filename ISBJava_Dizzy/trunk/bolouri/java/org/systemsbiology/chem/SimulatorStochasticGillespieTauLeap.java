@@ -22,7 +22,7 @@ import cern.jet.random.*;
  *
  * @author Stephen Ramsey
  */
-public class SimulatorStochasticGillespieTauLeap extends SimulatorStochasticBase implements IAliasableClass, ISimulator
+public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochasticBase implements IAliasableClass, ISimulator
 {
     private static final long NUM_FIRINGS_GILLESPIE = 1;
     private static final double DEFAULT_MAX_ALLOWED_RELATIVE_ERROR = 0.01;
@@ -41,12 +41,12 @@ public class SimulatorStochasticGillespieTauLeap extends SimulatorStochasticBase
 
     public static final String CLASS_ALIAS = "gillespie-tauleap"; 
 
-    protected final void prepareForStochasticSimulation(SymbolEvaluatorChem pSymbolEvaluator,
-                                                        double pStartTime,
-                                                        RandomElement pRandomNumberGenerator,
-                                                        Reaction []pReactions,
-                                                        double []pReactionProbabilities,
-                                                        SimulatorParameters pSimulatorParameters) throws IllegalArgumentException
+    protected void prepareForStochasticSimulation(SymbolEvaluatorChem pSymbolEvaluator,
+                                                  double pStartTime,
+                                                  RandomElement pRandomNumberGenerator,
+                                                  Reaction []pReactions,
+                                                  double []pReactionProbabilities,
+                                                  SimulatorParameters pSimulatorParameters) throws IllegalArgumentException
     {
         Double maxAllowedError = pSimulatorParameters.getMaxAllowedRelativeError();
         if(null == maxAllowedError)
@@ -68,14 +68,14 @@ public class SimulatorStochasticGillespieTauLeap extends SimulatorStochasticBase
         mLastIterationWasLeap = true;
     }
 
-    protected final double iterate(SymbolEvaluatorChem pSymbolEvaluator,
-                                   double pEndTime,
-                                   Reaction []pReactions,
-                                   double []pReactionProbabilities,
-                                   RandomElement pRandomNumberGenerator,
-                                   double []pDynamicSymbolValues,
-                                   MutableInteger pLastReactionIndex,
-                                   DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException, IllegalStateException
+    protected double iterate(SymbolEvaluatorChem pSymbolEvaluator,
+                             double pEndTime,
+                             Reaction []pReactions,
+                             double []pReactionProbabilities,
+                             RandomElement pRandomNumberGenerator,
+                             double []pDynamicSymbolValues,
+                             MutableInteger pLastReactionIndex,
+                             DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException, IllegalStateException
     {
         double time = pSymbolEvaluator.getTime();
 //        System.out.println("time at start of iteration: " + time);

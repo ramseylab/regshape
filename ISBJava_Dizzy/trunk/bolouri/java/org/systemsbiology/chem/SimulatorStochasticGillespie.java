@@ -11,9 +11,8 @@ package org.systemsbiology.chem;
 import org.systemsbiology.math.*;
 import org.systemsbiology.util.*;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
+import edu.cornell.lassp.houle.RngPack.*;
 
 /**
  * Simulates the dynamics of a set of coupled chemical reactions
@@ -22,60 +21,29 @@ import java.util.Random;
  *
  * @author Stephen Ramsey
  */
-public class SimulatorStochasticGillespie extends SimulatorStochasticBase implements IAliasableClass, ISimulator
+public final class SimulatorStochasticGillespie extends SimulatorStochasticBase implements IAliasableClass, ISimulator
 {
     public static final String CLASS_ALIAS = "gillespie-direct"; 
+    private static final long NUMBER_FIRINGS = 1;
 
-    private static final int chooseIndexOfNextReaction(Random pRandomNumberGenerator,
-                                                       double pAggregateReactionProbabilityDensity, 
-                                                       Reaction []pReactions,
-                                                       double []pReactionProbabilities) throws IllegalArgumentException
-    {
-        double randomNumberUniformInterval = getRandomNumberUniformInterval(pRandomNumberGenerator);
-
-        double cumulativeReactionProbabilityDensity = 0.0;
-
-        double fractionOfAggregateReactionProbabilityDensity = randomNumberUniformInterval * pAggregateReactionProbabilityDensity;
-
-        if(pAggregateReactionProbabilityDensity <= 0.0)
-        {
-            throw new IllegalArgumentException("invalid aggregate reaction probability density: " + pAggregateReactionProbabilityDensity);
-        }
-
-        int numReactions = pReactions.length;
-        int reactionIndex = -1;
-        Reaction reaction = null;
-        for(int reactionCtr = numReactions - 1; reactionCtr >= 0; --reactionCtr)
-        {
-            double reactionProbability = pReactionProbabilities[reactionCtr];
-            reaction = pReactions[reactionCtr];
-            cumulativeReactionProbabilityDensity += reactionProbability;
-            if(cumulativeReactionProbabilityDensity >= fractionOfAggregateReactionProbabilityDensity)
-            {
-                reactionIndex = reactionCtr;
-                break;
-            }
-        }
-        return(reactionIndex);
-    }
-
-    protected final void prepareForStochasticSimulation(SymbolEvaluatorChem pSymbolEvaluator,
-                                                        double pStartTime,
-                                                        Random pRandomNumberGenerator,
-                                                        Reaction []pReactions,
-                                                        double []pReactionProbabilities)
+    protected void prepareForStochasticSimulation(SymbolEvaluatorChem pSymbolEvaluator,
+                                                  double pStartTime,
+                                                  RandomElement pRandomNumberGenerator,
+                                                  Reaction []pReactions,
+                                                  double []pReactionProbabilities,
+                                                  SimulatorParameters pSimulatorParameters)
     {
         // nothing to do
     }
 
-    protected final double iterate(SymbolEvaluatorChem pSymbolEvaluator,
-                                   double pEndTime,
-                                   Reaction []pReactions,
-                                   double []pReactionProbabilities,
-                                   Random pRandomNumberGenerator,
-                                   double []pDynamicSymbolValues,
-                                   MutableInteger pLastReactionIndex,
-                                   DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException, IllegalStateException
+    protected double iterate(SymbolEvaluatorChem pSymbolEvaluator,
+                             double pEndTime,
+                             Reaction []pReactions,
+                             double []pReactionProbabilities,
+                             RandomElement pRandomNumberGenerator,
+                             double []pDynamicSymbolValues,
+                             MutableInteger pLastReactionIndex,
+                             DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException, IllegalStateException
     {
         double time = pSymbolEvaluator.getTime();
 
@@ -87,7 +55,9 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
             updateSymbolValuesForReaction(pSymbolEvaluator,
                                           lastReaction,
                                           pDynamicSymbolValues,
-                                          pDelayedReactionSolvers);
+                                          pDelayedReactionSolvers,
+                                          NUMBER_FIRINGS);
+
             // we have changed the species populations; must clear the expression value caches
             clearExpressionValueCaches();
         }
@@ -166,4 +136,13 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
         initializeSimulatorStochastic(pModel);
     }
 
+    protected void modifyDefaultSimulatorParameters(SimulatorParameters pSimulatorParameters)
+    {
+        // do nothing
+    }
+
+    public String getAlias()
+    {
+        return(CLASS_ALIAS);
+    }
 }

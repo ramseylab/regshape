@@ -22,7 +22,7 @@ import java.util.Random;
  *
  * @author Stephen Ramsey
  */
-public class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDeterministicBase implements IAliasableClass, ISimulator
+public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDeterministicBase implements IAliasableClass, ISimulator
 {
     public static final String CLASS_ALIAS = "ODE-RK5-adaptive";
 
@@ -33,13 +33,13 @@ public class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDetermini
     private static final int MAXSTEPS = 100;
 
 
-    protected final double iterate(SymbolEvaluatorChem pSymbolEvaluator,
-                                   Reaction []pReactions,
-                                   Object []pDynamicSymbolAdjustmentVectors,
-                                   double []pReactionProbabilities,
-                                   RKScratchPad pRKScratchPad,
-                                   double []pDynamicSymbolValues,
-                                   double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
+    protected double iterate(SymbolEvaluatorChem pSymbolEvaluator,
+                             Reaction []pReactions,
+                             Object []pDynamicSymbolAdjustmentVectors,
+                             double []pReactionProbabilities,
+                             RKScratchPad pRKScratchPad,
+                             double []pDynamicSymbolValues,
+                             double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
     {
         double stepSize = pRKScratchPad.stepSize;
 
@@ -57,14 +57,14 @@ public class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDetermini
         return(pSymbolEvaluator.getTime());
     }
 
-    private static final double adaptiveStep(SymbolEvaluatorChem pSymbolEvaluator,
-                                             Reaction []pReactions,
-                                             Object []pDynamicSymbolAdjustmentVectors,
-                                             double []pReactionProbabilities,
-                                             RKScratchPad pRKScratchPad,
-                                             double pTimeStepSize,
-                                             double []pDynamicSymbolValues,
-                                             double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
+    private static double adaptiveStep(SymbolEvaluatorChem pSymbolEvaluator,
+                                       Reaction []pReactions,
+                                       Object []pDynamicSymbolAdjustmentVectors,
+                                       double []pReactionProbabilities,
+                                       RKScratchPad pRKScratchPad,
+                                       double pTimeStepSize,
+                                       double []pDynamicSymbolValues,
+                                       double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
     {
         double stepSize = pTimeStepSize;
         double []yscale = pRKScratchPad.yscale;
@@ -152,10 +152,10 @@ public class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDetermini
         return(nextStepSize);
     }
 
-    protected final void setupScratchPad(double pStartTime,
-                                         double pEndTime,
-                                         SimulatorParameters pSimulatorParams, 
-                                         RKScratchPad pRKScratchPad)
+    protected void setupScratchPad(double pStartTime,
+                                   double pEndTime,
+                                   SimulatorParameters pSimulatorParams, 
+                                   RKScratchPad pRKScratchPad)
     {
         Double maxRelativeErrorObj = pSimulatorParams.getMaxAllowedRelativeError();
         if(null != maxRelativeErrorObj)
@@ -199,5 +199,10 @@ public class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDetermini
 
         pRKScratchPad.stepSize = stepSize;
         pRKScratchPad.maxStepSize = maxStepSize;
+    }
+
+    public String getAlias()
+    {
+        return(CLASS_ALIAS);
     }
 }

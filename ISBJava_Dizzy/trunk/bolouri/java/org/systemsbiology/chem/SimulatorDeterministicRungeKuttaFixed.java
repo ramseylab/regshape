@@ -22,19 +22,19 @@ import java.util.Random;
  *
  * @author Stephen Ramsey
  */
-public class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterministicBase implements IAliasableClass, ISimulator
+public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterministicBase implements IAliasableClass, ISimulator
 {
     public static final String CLASS_ALIAS = "ODE-RK5-fixed";
     private static final int NUM_ITERATIONS_BEFORE_ERROR_CHECK = 10;
 
     // fixed step-size integrator
-    protected final double iterate(SymbolEvaluatorChem pSymbolEvaluator,
-                                   Reaction []pReactions,
-                                   Object []pDynamicSymbolAdjustmentVectors,
-                                   double []pReactionProbabilities,
-                                   RKScratchPad pRKScratchPad,
-                                   double []pDynamicSymbolValues,
-                                   double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
+    protected double iterate(SymbolEvaluatorChem pSymbolEvaluator,
+                             Reaction []pReactions,
+                             Object []pDynamicSymbolAdjustmentVectors,
+                             double []pReactionProbabilities,
+                             RKScratchPad pRKScratchPad,
+                             double []pDynamicSymbolValues,
+                             double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
     {
         double stepSize = pRKScratchPad.stepSize;
 
@@ -101,10 +101,10 @@ public class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterministi
         return(pSymbolEvaluator.getTime());
     }
 
-    protected final void setupScratchPad(double pStartTime,
-                                         double pEndTime,
-                                         SimulatorParameters pSimulatorParams, 
-                                         RKScratchPad pRKScratchPad)
+    protected void setupScratchPad(double pStartTime,
+                                   double pEndTime,
+                                   SimulatorParameters pSimulatorParams, 
+                                   RKScratchPad pRKScratchPad)
     {
         Double maxAbsoluteErrorObj = pSimulatorParams.getMaxAllowedAbsoluteError();
         if(null != maxAbsoluteErrorObj)
@@ -148,4 +148,8 @@ public class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterministi
         pRKScratchPad.stepSize = stepSize;
     }
 
+    public String getAlias()
+    {
+        return(CLASS_ALIAS);
+    }
 }
