@@ -12,6 +12,7 @@ ${INSTALL_DIR}/lib/jcommon.jar:\
 ${INSTALL_DIR}/lib/SBMLReader.jar:\
 ${INSTALL_DIR}/lib/odeToJava.jar:\
 ${INSTALL_DIR}/lib/Jama.jar:\
-${INSTALL_DIR}/lib/jh.jar
+${INSTALL_DIR}/lib/jh.jar:\
+${INSTALL_DIR}/lib/colt.jar
 
 ${JAVA_BIN} -Xmx@APPJAVAMAXHEAPSIZEBYTES@ -cp "${CLASSPATH}" 'org.systemsbiology.chem.app.SimulationLauncherCommandLine' $@
