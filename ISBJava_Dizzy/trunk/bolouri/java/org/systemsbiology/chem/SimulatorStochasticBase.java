@@ -285,13 +285,6 @@ public abstract class SimulatorStochasticBase extends Simulator
                     currentTimeMilliseconds = System.currentTimeMillis();
                     if(currentTimeMilliseconds - timeOfLastUpdateMilliseconds >= minNumMillisecondsForUpdate)
                     {
-                        timeOfLastUpdateMilliseconds = currentTimeMilliseconds;
-                        if(null != simulationProgressReporter)
-                        {
-                            fractionComplete = (((double) (ensembleSize - simCtr - 1)) + time*timeRangeMult)*ensembleMult;
-                            simulationProgressReporter.updateProgressStatistics(fractionComplete, iterationCounter);
-                        }
-
                         if(null != simulationController)
                         {
                             isCancelled = simulationController.handlePauseOrCancel();
@@ -299,6 +292,13 @@ public abstract class SimulatorStochasticBase extends Simulator
                             {
                                 break;
                             }
+                        }
+
+                        timeOfLastUpdateMilliseconds = currentTimeMilliseconds;
+                        if(null != simulationProgressReporter)
+                        {
+                            fractionComplete = (((double) (ensembleSize - simCtr - 1)) + time*timeRangeMult)*ensembleMult;
+                            simulationProgressReporter.updateProgressStatistics(fractionComplete, iterationCounter);
                         }
                     }
                 }

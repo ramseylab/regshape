@@ -515,13 +515,6 @@ public abstract class SimulatorDeterministicBase extends Simulator
                 currentTimeMilliseconds = System.currentTimeMillis();
                 if(currentTimeMilliseconds - timeOfLastUpdateMilliseconds >= minNumMillisecondsForUpdate)
                 {
-                    timeOfLastUpdateMilliseconds = currentTimeMilliseconds;
-                    if(null != simulationProgressReporter)
-                    {
-                        fractionComplete = time*timeRangeMult;
-                        simulationProgressReporter.updateProgressStatistics(fractionComplete, iterationCounter);
-                    }
-                    
                     if(null != simulationController)
                     {
                         isCancelled = simulationController.handlePauseOrCancel();
@@ -529,6 +522,13 @@ public abstract class SimulatorDeterministicBase extends Simulator
                         {
                             break;
                         }
+                    }
+
+                   timeOfLastUpdateMilliseconds = currentTimeMilliseconds;
+                    if(null != simulationProgressReporter)
+                    {
+                        fractionComplete = time*timeRangeMult;
+                        simulationProgressReporter.updateProgressStatistics(fractionComplete, iterationCounter);
                     }
                 }
             }
