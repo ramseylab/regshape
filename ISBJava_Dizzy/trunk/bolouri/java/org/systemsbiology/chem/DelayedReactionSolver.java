@@ -25,13 +25,13 @@ import cern.jet.random.*;
 public final class DelayedReactionSolver 
 {
     private static final double LAMBDA_MAX = 1.1;
-    private static final int MIN_NUM_TIME_POINTS = 4000;
-    private static final int REACTION_TIMES_DOUBLE_POOL_SIZE = 100;
+    public static final int MIN_NUM_HISTORY_BINS = 10;
+    public static final int DEFAULT_NUM_HISTORY_BINS = 400;
 
     private final Species mReactant;
     private final Species mIntermedSpecies;
     private final double mRate;
-    private final double mTimeResolution;
+    private double mTimeResolution;
     private boolean mFirstTimePoint;
     private boolean mIsMultistep;
 
@@ -40,9 +40,9 @@ public final class DelayedReactionSolver
     private final LinkedList mReactionTimesDoublePool;
 
     // used only for deterministic simulation
-    private final SlidingWindowTimeSeriesQueue mReactantHistory;
-    private final SlidingWindowTimeSeriesQueue mIntermedSpeciesHistory;
-    private final int mNumTimePoints;
+    private SlidingWindowTimeSeriesQueue mReactantHistory;
+    private SlidingWindowTimeSeriesQueue mIntermedSpeciesHistory;
+    private int mNumTimePoints;
 
     private final boolean mIsStochasticSimulator;
 
@@ -69,6 +69,36 @@ public final class DelayedReactionSolver
         return(mIntermedSpecies);
     }
 
+    public int getNumHistoryBins()
+    {
+        return(mNumTimePoints);
+    }
+
+    public void setNumHistoryBins(int pNumHistoryBins)
+    {       
+        if(pNumHistoryBins < MIN_NUM_HISTORY_BINS)
+        {
+            throw new IllegalArgumentException("invalid history bin size, must be at least " + MIN_NUM_HISTORY_BINS);
+        }
+
+        mNumTimePoints = pNumHistoryBins;
+        mTimeResolution = LAMBDA_MAX * mDelay / ((double) pNumHistoryBins);
+
+        if(mIsStochasticSimulator)
+        {
+            mReactionTimesDoublePool.clear();
+            for(int ctr = 0; ctr < pNumHistoryBins; ++ctr)
+            {
+                mReactionTimesDoublePool.add(new MutableDouble(0.0));
+            }
+        }
+        else
+        {
+            mReactantHistory.initialize(mNumTimePoints);
+            mIntermedSpeciesHistory.initialize(mNumTimePoints);
+        }
+    }
+
     public DelayedReactionSolver(Species pReactant,
                                  Species pIntermedSpecies, 
                                  double pDelay,
@@ -80,14 +110,6 @@ public final class DelayedReactionSolver
         assert (pDelay > 0.0) : "invalid delay";
         mDelay = pDelay;
 
-        int numTimePoints = (int) (pDelay * LAMBDA_MAX / pRate);
-        if(numTimePoints < MIN_NUM_TIME_POINTS)
-        {
-            numTimePoints = MIN_NUM_TIME_POINTS;
-        }
-        mNumTimePoints = numTimePoints;
-        assert (numTimePoints > 0) : "invalid number of time points";
-
         mReactant = pReactant;
         mIntermedSpecies = pIntermedSpecies;
 
@@ -95,7 +117,6 @@ public final class DelayedReactionSolver
         
         mFirstTimePoint = true;
 
-        mTimeResolution = LAMBDA_MAX * pDelay / ((double) numTimePoints);
         mIsMultistep = pIsMultistep;
         mReactionIndex = pReactionIndex;
 
@@ -117,34 +138,24 @@ public final class DelayedReactionSolver
             {
                 mReactionTimes = new ListQueue();
             }
-
             mReactionTimesDoublePool = new LinkedList();
-            for(int ctr = 0; ctr < REACTION_TIMES_DOUBLE_POOL_SIZE; ++ctr)
-            {
-                mReactionTimesDoublePool.add(new MutableDouble(0.0));
-            }
-
             mReactantHistory = null;
             mIntermedSpeciesHistory = null;
         }
         else
         {
-            mReactantHistory = new SlidingWindowTimeSeriesQueue(numTimePoints);
-            mIntermedSpeciesHistory = new SlidingWindowTimeSeriesQueue(numTimePoints);
-
-            mReactionTimesDoublePool = null;
+            mReactantHistory = new SlidingWindowTimeSeriesQueue(1);
+            mIntermedSpeciesHistory = new SlidingWindowTimeSeriesQueue(1);
             mReactionTimes = null;
+            mReactionTimesDoublePool = null;
         }
+
+        setNumHistoryBins(DEFAULT_NUM_HISTORY_BINS);
     }
 
     int getReactionIndex()
     {
         return(mReactionIndex);
-    }
-
-    boolean hasIntermedSpecies(Species pSpecies)
-    {
-        return(mIntermedSpecies.equals(pSpecies));
     }
 
     void addReactant(SymbolEvaluatorChem pSymbolEvaluator)
