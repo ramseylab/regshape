@@ -2719,6 +2719,8 @@ The &appName; application provides the following features:
 <li>load a model definition file</li>
 <li>run a simulation and store, plot, or print the results</li>
 <li>export a model instance to a file of a specified format</li>
+<li>display a graphical representation of a model using <a href="&cytoscapeURL;">Cytoscape</a>
+system.</li>
 </ul>
 A sample screen shot of the &appName; graphical user interface follows:
 </p>
@@ -2834,7 +2836,7 @@ Gnumeric, Excel, or Matlab.
 
 <isb:docsubsection name="Export model" label="gui-export">
 <p>
-A <a href="#modelinstance">model instance</a> may be exported to one of two
+A model may be exported to one of two
 different formats:  <a href="#sbml">SBML</a> and <a href="#cmdl">CMDL</a>.
 Both of those formats may be subsequently loaded into the &appName; system.
 The export feature
@@ -2847,6 +2849,17 @@ converting, say, a CMDL model instance into a SBML model instance.
 The model instance thus exported can then be imported into a
 variety of modeling and visualization tools that support the SBML format for
 model interchange.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Display in Cytoscape" label="gui-cytoscape">
+<p>
+A graphical representation of a model may be displayed by selecting the
+&quot;View in Cytoscape&quot; menu item from the &quot;Tools&quot; menu.
+This will cause a new window to open, in which the model is displayed
+as a directed graph, with species and reactions being represented as
+nodes in the graph.  An example of such a graph is shown here:
+<img src="../images/screenshot6.png" alt="&appName; screenshot 6" />
 </p>
 </isb:docsubsection>
 
