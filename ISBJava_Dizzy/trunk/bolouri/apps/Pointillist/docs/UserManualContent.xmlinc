@@ -841,6 +841,14 @@ Here is a screen shot of the Significance Calculator program:
     evidence types, based on a ratio of the average of the product (over the evidences)
     of significances (over the putatively unaffected elements) to the product (over evidences)
     of the average (over unaffected elements) of the significances.  It should be very close to 1.0.</dd>
+  <dt><b>Save weights</b></dt>
+  <dd>This button saves the table of evidence-specific weights to a file.  The currently
+    selected delimiter (see above) is used to delimit the columns of the data file
+    that is produced.  The first row contains the column header names.  The 
+    first column contains the evidence names.  The second column contains the weights.
+    If an evidence name contains a delimiter character,  the delimiter characters
+    appearing in the element name will be converted to underscore ("_") 
+    characters.</dd>
   <dt><b>Save results</b></dt>
   <dd>This button saves the results table (the table containing the list of elements,
     their boolean membership in the putative affected set, and their overall significances)
@@ -848,9 +856,9 @@ Here is a screen shot of the Significance Calculator program:
     the columns of the data file that is produced.  The first row of the data file contains
     the column header names.  The data is saved in the same sorting order as it is displayed 
     in the results table.  If you change the delimiter
-    type between when you load the data file and when you save it, and if some element
-    names contain the new delimiter character, the delimiter characters
-    appearing in the element names will be converted to underscore ("_") 
+    type between when you load the data file and when you save it, and if an element
+    name contains the new delimiter character, the delimiter characters
+    appearing in the element name will be converted to underscore ("_") 
     characters.</dd>
   </dl>
 </p>
