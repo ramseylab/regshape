@@ -2104,7 +2104,10 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             throw new InvalidInputException("model definition file ended without a statement-ending token (semicolon); at line " + lineCtr + " of model definition file");
         }
 
-        defineParameters(pSymbolMap, pModel);
+        if(! pInsideInclude)
+        {
+            defineParameters(pSymbolMap, pModel);
+        }
     }
 
 
