@@ -2132,12 +2132,10 @@ my_reaction, A -&gt; B, 1.0;
 </blockquote>
 In the above example, species <code>A</code> and
 <code>B</code> have their initial populations set
-to 100 molecules.  Note that it is required that
-the reaction definition precede the species population
-definitions.  Otherwise, the parser will assume that
-<code>A</code> and <code>B</code> are 
-<a href="#numericmacros">numeric macros</a> instead
-of species.
+to 100 molecules. The appearance of the symbols
+<code>A</code> and <code>B</code> in the reaction
+definition statement causes the &appName; parser to 
+understand that they are species.
 </p>
 <p>
 Instead of using a numeric literal to define the 
