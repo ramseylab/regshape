@@ -102,4 +102,10 @@ public class Symbol
         mValueArray = pSymbol.mValueArray;
     }
 
+    public String toString()
+    {
+        StringBuffer sb = new StringBuffer();
+        sb.append(getName() + "; index: " + mArrayIndex + "; array: " + mDoubleArray);
+        return(sb.toString());
+    }
 }
