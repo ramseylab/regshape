@@ -32,10 +32,6 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
     private static final int NUM_EVALUATIONS_BEFORE_RECOMPUTE_FJJP = 10;
     private static final long MIN_NUM_MILLISECONDS_FOR_PROGRESS_UPDATE = 4000;
 
-    private Expression []mMu;
-    private Expression []mSigma;
-    private Object []mF;
-    private Object []mF_static;
     private double []mEstimatedSpeciesChange;
     private boolean []mReactionHasLocalSymbolsFlags;
 
@@ -43,6 +39,22 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
     private long mNumNonLeapIterationsSinceLastLeapCheck;
     private boolean mLastIterationWasLeap;
     private long mMinRatioOfLeapTimeToReactionTimeScale;
+
+    private Object []mF;
+    private double []mMu;
+    private double []mSigma;
+
+    private int []mJexpCols;
+    private int []mJexpRows;
+    private Expression []mJexp;
+
+    private int []mJinvCols;
+    private int []mJinvRows;
+    private double []mJinv;
+    
+    private double []mAdjVecVals;
+    private int []mAdjVecRows;
+    private int []mAdjVecCols;
 
     public static final String CLASS_ALIAS = "gillespie-tauleap"; 
 
@@ -123,8 +135,6 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
                                                                  mAllowedError,
                                                                  pReactionProbabilities,
                                                                  aggregateReactionProbability,
-                                                                 mF,
-                                                                 mF_static,
                                                                  pReactions,
                                                                  pDynamicSymbolValues,
                                                                  mEstimatedSpeciesChange,
@@ -398,85 +408,135 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
     }
 
 
-    private static double getLargestJumpConsistentWithAllowedError(SymbolEvaluatorChem pSymbolEvaluator,
+    private double getLargestJumpConsistentWithAllowedError(SymbolEvaluatorChem pSymbolEvaluator,
                                                                    double pAllowedError,
                                                                    double []pReactionProbabilities,
                                                                    double pSumReactionProbabilities,
-                                                                   Object []pF,
-                                                                   Object []pF_static,
                                                                    Reaction []pReactions,
                                                                    double []pDynamicSpeciesValues,
                                                                    double []pEstimatedSpeciesChange,
                                                                    boolean []pReactionHasLocalSymbolsFlags) throws DataNotFoundException
     {
         int numReactions = pReactionProbabilities.length;
+        int numSpecies = pEstimatedSpeciesChange.length;
+
+        int numAdjVecElements = mAdjVecVals.length;
+        int numJinvElements = mJinv.length;
+        int numJexpElements = mJexp.length;
+        
+        int j;
+        int jp;
+        int k;
+        int i;
+        int kp;
+
+        Object []F = mF;
+
+        // clear the F matrix
+        for(j = numReactions; --j >= 0; )
+        {
+            MathFunctions.vectorZeroElements((double []) F[j]);
+        }
+
+        Expression derivExp = null;
+        double derivVal = 0.0;
+        double vijp = 0.0;
+
+        int []jexpRows = mJexpRows;
+        int []jexpCols = mJexpCols;
+        Expression []jexp = mJexp;
+
+        int []jinvRows = mJinvRows;
+        int []jinvCols = mJinvCols;
+        double []jinvVals = mJinv;
+
+        int []adjVecCols = mAdjVecCols;
+        int []adjVecRows = mAdjVecRows;
+        double []adjVecVals = mAdjVecVals;
+
+        Reaction reaction = null;
+        double []Fj;
+
+        // compute the values of all of the partial derivatives that are non-invariant
+        // (have expressions instead of static floating-point values)
+        for(k = numJexpElements; --k >= 0; )
+        {
+            j = jexpRows[k];
+            i = jexpCols[k];
+            reaction = pReactions[j];
+            derivExp = jexp[k];
+            if(pReactionHasLocalSymbolsFlags[j])
+            {
+                derivVal = reaction.evaluateExpressionWithReactionRateLocalSymbolTranslation(derivExp, pSymbolEvaluator);
+            }
+            else
+            {
+                derivVal = derivExp.computeValue(pSymbolEvaluator);
+            }
+
+            Fj = (double []) F[j];
+            
+            for(kp = numAdjVecElements; --kp >= 0; )
+            {
+                if(i == adjVecRows[kp])
+                {
+                    Fj[adjVecCols[kp]] += adjVecVals[kp]*derivVal;
+                }
+            }
+        }
+
+        for(k = numJinvElements; --k >= 0; )
+        {
+            j = jinvRows[k];
+            i = jinvCols[k];
+            derivVal = jinvVals[k];
+            Fj = (double []) F[j];
+
+            for(kp = numAdjVecElements; --kp >= 0; )
+            {
+                if(i == adjVecRows[kp])
+                {
+                    Fj[adjVecCols[kp]] += adjVecVals[kp]*derivVal;
+                }
+            }            
+        }
+
+        double []mu = mMu;
+        double []sigma = mSigma;
+        double muj = 0.0;
+        double sigmaj = 0.0;
+        double ftimesrate = 0.0;
+        for(j = numReactions; --j >= 0; )
+        {
+            muj = 0.0;
+            sigmaj = 0.0;
+            Fj = (double []) F[j];
+            for(jp = numReactions; --jp >= 0; )
+            {
+                ftimesrate = Fj[jp]*pReactionProbabilities[jp];
+                muj += ftimesrate;
+                sigmaj += Fj[jp]*ftimesrate;
+            }
+            mu[j] = muj;
+            sigma[j] = sigmaj;
+        }
+
         double jumpTime = Double.MAX_VALUE;
         double muVal = 0.0;
         double sigmaVal = 0.0;
         double muFac = pAllowedError * pSumReactionProbabilities;
         double sigmaFac = muFac*muFac;
-        double muj = 0.0;
-        double fjjp = 0.0;
-        double sigmaj = 0.0;
-        double fjjpTimesRate = 0.0;
 
-        int numSpecies = pEstimatedSpeciesChange.length;
-        double estimatedSpeciesChange = 0.0;
-        double estimatedNumFirings = 0.0;
-        double rate = 0.0;
-        Expression []Fj = null;
-        Reaction reaction = null;
-        boolean reactionHasLocalSymbols = false;
-
-        double []Fj_static = null;
-        
-        for(int j = numReactions; --j >= 0; )
+        for(j = numReactions; --j >= 0; )
         {
-            Fj = (Expression []) pF[j];
-            Fj_static = (double []) pF_static[j];
-
-            reaction = pReactions[j];
-            reactionHasLocalSymbols = pReactionHasLocalSymbolsFlags[j];
-
-            muj = 0.0;
-            sigmaj = 0.0;
-
-            for(int jp = numReactions; --jp >= 0; )
-            {
-                rate = pReactionProbabilities[jp];
-
-                if(rate > 0.0)
-                {
-                    if(null != Fj[jp])
-                    {
-                        if(reactionHasLocalSymbols)
-                        {
-                            fjjp = reaction.evaluateExpressionWithReactionRateLocalSymbolTranslation(Fj[jp], pSymbolEvaluator);
-                        }
-                        else
-                        {
-                            fjjp = Fj[jp].computeValue(pSymbolEvaluator);
-                        }
-                    }
-                    else
-                    {
-                        fjjp = Fj_static[jp];
-                    }
-                    if(fjjp > 0.0)
-                    {
-                        fjjpTimesRate = fjjp * rate;
-                        muj += fjjpTimesRate;
-                        sigmaj += fjjp * fjjpTimesRate;
-                    }
-                }
-            }
-
+            muj = mu[j];
             muVal = muFac / Math.abs(muj);
             if(muVal < jumpTime)
             {
                 jumpTime = muVal;
             }
 
+            sigmaj = sigma[j];
             sigmaVal = sigmaFac / sigmaj;
             if(sigmaVal < jumpTime)
             {
@@ -484,11 +544,14 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
             }
         }
 
+        double estimatedSpeciesChange = 0.0;
+        double estimatedNumFirings = 0.0;
+        double rate = 0.0;
         double numFirings = 0.0;
 
         MathFunctions.vectorZeroElements(pEstimatedSpeciesChange);
 
-        for(int j = numReactions; --j >= 0; )
+        for(j = numReactions; --j >= 0; )
         {
             rate = pReactionProbabilities[j];
             numFirings = rate * jumpTime;
@@ -506,7 +569,7 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         double frac = 0.0;
         double minFrac = 1.0;
         double oldSpeciesValue = 0.0;
-        for(int i = numSpecies; --i >= 0; )
+        for(i = numSpecies; --i >= 0; )
         {
             oldSpeciesValue = pDynamicSpeciesValues[i];
             if(oldSpeciesValue > 0.0)
@@ -531,96 +594,114 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         return(jumpTime);
     }
 
-
-    private void initializeF(SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
+    private void initializeV(SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
     {
         int numReactions = mReactions.length;
         int numSpecies = mDynamicSymbols.length;
 
-        Expression []a = Reaction.getReactionRateExpressions(mReactions);
         Object []v = mDynamicSymbolAdjustmentVectors;
 
+        ArrayList adjVecValues = new ArrayList();
+        ArrayList adjVecRows = new ArrayList();
+        ArrayList adjVecCols = new ArrayList();
+        
         for(int j = 0; j < numReactions; ++j)
         {
-            Reaction reaction = mReactions[j];
-//            System.out.println("a[" + j + "] = " + a[j].toString());
             double []vj = (double []) v[j];
             for(int i = 0; i < numSpecies; ++i)
             {
                 double vji = vj[i];
-//                System.out.println("v[" + i + "][" + j + "] = " + vji);
+                if(vji > 0.0)
+                {
+                    adjVecValues.add(new Double(vji));
+                    adjVecRows.add(new Integer(i));
+                    adjVecCols.add(new Integer(j));
+                }
             }
         }
 
-        for(int i = 0; i < numSpecies; ++i)
+        int numAdjVecElements = adjVecValues.size();
+        mAdjVecVals = new double[numAdjVecElements];
+        mAdjVecRows = new int[numAdjVecElements];
+        mAdjVecCols = new int[numAdjVecElements];
+        for(int k = 0; k < numAdjVecElements; ++k)
         {
-            Species species = mDynamicSymbols[i];
-//            System.out.println("x[" + i + "] is: " + species.getName());
+            mAdjVecVals[k] = ((Double) adjVecValues.get(k)).doubleValue();
+            mAdjVecRows[k] = ((Integer) adjVecRows.get(k)).intValue();
+            mAdjVecCols[k] = ((Integer) adjVecCols.get(k)).intValue();
         }
 
-        // generate the Jji matrix, which is the partial derivative of the jth propensity function
-        // with respect to the ith species
-        Object []J = new Object[numReactions];
+        ArrayList partialDerivValues = new ArrayList();
+        ArrayList partialDerivValuesRows = new ArrayList();
+        ArrayList partialDerivValuesCols = new ArrayList();
+
+        ArrayList partialDerivExpressions = new ArrayList();
+        ArrayList partialDerivRows = new ArrayList();
+        ArrayList partialDerivCols = new ArrayList();
+        Expression []a = Reaction.getReactionRateExpressions(mReactions);
+        Species species = null;
+        Reaction reaction = null;
+        Expression reactionRate = null;
+        Expression deriv = null;
+        double derivValue = 0.0;
         for(int j = 0; j < numReactions; ++j)
         {
-            Reaction reaction = mReactions[j];
-            Expression []Jj = new Expression[numSpecies];
-            Expression aj = a[j];
+            reaction = mReactions[j];
+            reactionRate = a[j];
             for(int i = 0; i < numSpecies; ++i)
             {
-                Species species = mDynamicSymbols[i];
-                Expression Jji = reaction.computeRatePartialDerivativeExpression(aj, species, pSymbolEvaluator);
-                Jj[i] = Jji;
-                if(! Jji.isSimpleNumber())
+                species = mDynamicSymbols[i];
+                deriv = reaction.computeRatePartialDerivativeExpression(reactionRate, species, pSymbolEvaluator);
+                if(! deriv.isSimpleNumber())
                 {
-//                    System.out.println("d(a[" + j + "])/d(x[" + i + "]) = " + Jji.toString());
-                }
-            }
-            J[j] = Jj;
-        }
-
-        Object []f = new Object[numReactions];
-        Object []f_static = new Object[numReactions];
-
-        for(int j = 0; j < numReactions; ++j)
-        {
-            Expression []fj = new Expression[numReactions];
-            double []fj_static = new double[numReactions];
-
-            Expression []Jj = (Expression []) J[j];
-            for(int jp = 0; jp < numReactions; ++jp)
-            {
-                double []vjp = (double []) v[jp];
-                Expression fjjp = new Expression(0.0);
-                for(int i = 0; i < numSpecies; ++i)
-                {
-                    double vijpVal = vjp[i];
-                    Expression Jji = Jj[i];
-                    Expression vijp = new Expression(vijpVal);
-                    Expression mult = Expression.multiply(Jji, vijp);
-                    fjjp = Expression.add(fjjp, mult);
-                }
-                if(! fjjp.isSimpleNumber())
-                {
-                    fj[jp] = fjjp;
-//                    System.out.println("f[" + j + "][" + jp + "] = " + fjjp.toString());
-                    fj_static[jp] = 0.0;
+                    partialDerivExpressions.add(deriv);
+                    partialDerivRows.add(new Integer(j));
+                    partialDerivCols.add(new Integer(i));
                 }
                 else
                 {
-                    fj[jp] = null;
-                    fj_static[jp] = fjjp.getSimpleNumberValue();
+                    derivValue = deriv.getSimpleNumberValue();
+                    if(derivValue > 0.0)
+                    {
+                        partialDerivValues.add(new Double(derivValue));
+                        partialDerivValuesRows.add(new Integer(j));
+                        partialDerivValuesCols.add(new Integer(i));
+                    }
                 }
             }
-
-            f[j] = fj;
-            f_static[j] = fj_static;
         }
 
-        mF = f;
-        mF_static = f_static;
-    }
+        int numPartials = partialDerivExpressions.size();
+        mJexp = new Expression[numPartials];
+        mJexpRows = new int[numPartials];
+        mJexpCols = new int[numPartials];
+        for(int k = 0; k < numPartials; ++k)
+        {
+            mJexp[k] = (Expression) partialDerivExpressions.get(k);
+            mJexpRows[k] = ((Integer) partialDerivRows.get(k)).intValue();
+            mJexpCols[k] = ((Integer) partialDerivCols.get(k)).intValue();
+        }
+        
+        numPartials = partialDerivValues.size();
+        mJinv = new double[numPartials];
+        mJinvRows = new int[numPartials];
+        mJinvCols = new int[numPartials];
+        for(int k = 0; k < numPartials; ++k)
+        {
+            mJinv[k] = ((Double) partialDerivValues.get(k)).doubleValue();
+            mJinvRows[k] = ((Integer) partialDerivValuesRows.get(k)).intValue();
+            mJinvCols[k] = ((Integer) partialDerivValuesCols.get(k)).intValue();
+        }
 
+        mF = new Object[numReactions];
+        for(int j = 0; j < numReactions; ++j)
+        {
+            mF[j] = new double[numReactions];
+        }
+
+        mMu = new double[numReactions];
+        mSigma = new double[numReactions];
+    }
 
     private void initializeReactionHasLocalSymbolsFlags()
     {
@@ -638,7 +719,7 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         initializeSimulator(pModel);
         initializeSimulatorStochastic(pModel);
         initializeDynamicSymbolAdjustmentVectors(mDynamicSymbols);
-        initializeF(mSymbolEvaluator);
+        initializeV(mSymbolEvaluator);
         mEstimatedSpeciesChange = new double[mDynamicSymbolValues.length];
         initializeReactionHasLocalSymbolsFlags();
         mMinNumMillisecondsForUpdate = MIN_NUM_MILLISECONDS_FOR_PROGRESS_UPDATE;
