@@ -37,9 +37,9 @@ public abstract class Simulator
         for(int symbolCtr = 0; symbolCtr < numSymbols; ++symbolCtr)
         {
             SymbolValue symbolValue = pSymbolArray[symbolCtr];
-            Symbol symbol = (Symbol) symbolValue.getSymbol().clone();
+            Symbol symbol = (Symbol) symbolValue.getSymbol();
             String symbolName = symbol.getName();
-            Value value = symbolValue.getValue();
+            Value value = (Value) symbolValue.getValue();
 
             pSymbolMap.put(symbolName, symbol);
 
@@ -51,7 +51,7 @@ public abstract class Simulator
             else
             {
                 symbol.setArray(pValueArray);
-                pValueArray[symbolCtr] = value;
+                pValueArray[symbolCtr] = (Value) value;
             }
 
             symbol.setArrayIndex(symbolCtr);
@@ -79,15 +79,14 @@ public abstract class Simulator
         Reaction []reactions = pModel.constructReactionsArray();
         mReactions = reactions;
 
-        // create an array to hold the reaction probabilities
+        // create an array of doubles to hold the reaction probabilities
         mReactionProbabilities = new double[reactions.length];
 
-        // get an array of all dynamical symbols in the model
-        SymbolValue []dynamicSymbols = pModel.constructDynamicSymbolsArray();
-
+        // get an array of all dynamical SymbolValues in the model
+        Species []dynamicSymbols = pModel.constructDynamicSymbolsArray();
         int numDynamicSymbols = dynamicSymbols.length;
 
-        // create an array of doubles to hold the dynamical symbols values
+        // create an array of doubles to hold the dynamical symbols' values
         double []dynamicSymbolValues = new double[numDynamicSymbols];
 
         mDynamicSymbolValues = dynamicSymbolValues;
@@ -96,6 +95,7 @@ public abstract class Simulator
         for(int symbolCtr = 0; symbolCtr < numDynamicSymbols; ++symbolCtr)
         {
             SymbolValue symbolValue = dynamicSymbols[symbolCtr];
+            assert (null != symbolValue.getValue()) : "null value for symbol: " + symbolValue.getSymbol().getName();
             double symbolValueDouble = symbolValue.getValue().getValue();
             dynamicSymbolValues[symbolCtr] = symbolValueDouble;
         }
@@ -114,6 +114,7 @@ public abstract class Simulator
                          dynamicSymbolValues,
                          null);
 
+
         // get an array of all symbols in the model
         SymbolValue []nonDynamicSymbols = pModel.constructGlobalNonDynamicSymbolsArray();
 
@@ -130,27 +131,44 @@ public abstract class Simulator
         SymbolEvaluatorChemSimulation evaluator = new SymbolEvaluatorChemSimulation(symbolMap, 0.0);
         mSymbolEvaluator = evaluator;
 
-        // test getting value for each symbol in the symbol table
-        Iterator symbolNameIter = symbolMap.keySet().iterator();
-        while(symbolNameIter.hasNext())
-        {
-            String symbolName = (String) symbolNameIter.next();
-            Symbol symbol = (Symbol) symbolMap.get(symbolName);
-            assert (null != symbol) : "found null Symbol where a valid Symbol object was expected";
-            evaluator.getValue(symbol);
-        }
+        checkSymbolsValues();
         
         int numReactions = reactions.length;
         for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
         {
             Reaction reaction = reactions[reactionCtr];
-            reaction.prepareSymbolVectorsForSimulation(dynamicSymbols);
+            reaction.prepareSymbolVectorsForSimulation(dynamicSymbols, symbolMap);
         }
 
         mSpeciesRateFactorEvaluator = pModel.getSpeciesRateFactorEvaluator();
 
+        checkReactionRates();
+
         mSimulationController = pSimulationController;
         mInitialized = true;
+    }
+
+    private void checkReactionRates() throws DataNotFoundException
+    {
+        int numReactions = mReactions.length;
+        for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
+        {
+            Reaction reaction = mReactions[reactionCtr];
+            double reactionRate = reaction.computeRate(mSpeciesRateFactorEvaluator, mSymbolEvaluator);
+            reaction.checkReactantValues(mSymbolEvaluator);
+        }
+    }
+
+    private void checkSymbolsValues() throws DataNotFoundException
+    {
+        // test getting value for each symbol in the symbol table
+        Iterator symbolNameIter = mSymbolMap.keySet().iterator();
+        while(symbolNameIter.hasNext())
+        {
+            String symbolName = (String) symbolNameIter.next();
+            Symbol symbol = (Symbol) mSymbolMap.get(symbolName);
+            assert (null != symbol) : "found null Symbol where a valid Symbol object was expected";
+        }        
     }
 
     protected void clearSimulatorState()

@@ -67,13 +67,27 @@ public class Model
     Reaction []constructReactionsArray()
     {
         Reaction []sampleArray = new Reaction[0];
-        return( (Reaction[]) getReactionsMap().values().toArray(sampleArray) );
+        Reaction []intArray = (Reaction []) getReactionsMap().values().toArray(sampleArray);
+        int numReactions = intArray.length;
+        Reaction []retArray = new Reaction[numReactions];
+        for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
+        {
+            retArray[reactionCtr] = (Reaction) intArray[reactionCtr].clone();
+        }
+        return( retArray );
     }
 
     Species []constructDynamicSymbolsArray()
     {
         Species []sampleArray = new Species[0];
-        return( (Species []) getDynamicSymbolsMap().values().toArray(sampleArray) );
+        Species []intArray = (Species []) getDynamicSymbolsMap().values().toArray(sampleArray);
+        int numSpecies = intArray.length;
+        Species []retArray = new Species[numSpecies];
+        for(int speciesCtr = 0; speciesCtr < numSpecies; ++speciesCtr)
+        {
+            retArray[speciesCtr] = (Species) intArray[speciesCtr].clone();
+        }
+        return( retArray );
     }
 
     SymbolValue []constructGlobalNonDynamicSymbolsArray()
@@ -87,7 +101,8 @@ public class Model
             String symbolName = (String) symbolsIter.next();
             if(null == dynamicSpeciesMap.get(symbolName))
             {
-                retList.add((SymbolValue) symbolsMap.get(symbolName));
+                SymbolValue symbolValue = (SymbolValue) symbolsMap.get(symbolName);
+                retList.add((SymbolValue) symbolValue.clone());
             }
         }
         SymbolValue []sampleArray = new SymbolValue[0];

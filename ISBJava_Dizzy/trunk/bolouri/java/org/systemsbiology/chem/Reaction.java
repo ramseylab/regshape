@@ -119,6 +119,22 @@ public class Reaction extends SymbolValue
     private Value []mLocalSymbolsValues;
     private boolean mRateIsExpression;
 
+    public Object clone()
+    {
+        Reaction reaction = new Reaction(mName);
+        reaction.setRate((Value) getRate().clone());
+        reaction.mReactantsMap = mReactantsMap;
+        reaction.mProductsMap = mProductsMap;
+        reaction.mDynamicSymbolAdjustmentVector = mDynamicSymbolAdjustmentVector;
+        reaction.mReactantsSpeciesArray = null;
+        reaction.mReactantsStoichiometryArray = null;
+        reaction.mLocalSymbolsValuesMap = mLocalSymbolsValuesMap;
+        reaction.mLocalSymbolsMap = mLocalSymbolsMap;
+        reaction.mLocalSymbolsValues = mLocalSymbolsValues;
+        reaction.mRateIsExpression = mRateIsExpression;
+        return(reaction);
+    }
+
     public Reaction(String pName)
     {
         super(pName);
@@ -163,8 +179,10 @@ public class Reaction extends SymbolValue
         return(numParticipants);
     }
 
-    public void constructSpeciesArrays(Species []pSpeciesArray, 
-                                       int []pStoichiometryArray,
+    public void constructSpeciesArrays(Species []pSpeciesArray,    // this is the array of species that we are constructing
+                                       int []pStoichiometryArray,  // this is the array of stoichiometries that we are constructing
+                                       Species []pDynamicSymbolValues, // a vector of all species in the model
+                                       HashMap pSymbolMap,         // a map between species names and the index in previous vector
                                        ParticipantType pParticipantType)
     {
         Collection reactantsColl = null;
@@ -192,8 +210,23 @@ public class Reaction extends SymbolValue
         {
             ReactionElement element = (ReactionElement) reactantsIter.next();
             Species species = element.mSpecies;
+            if(null != pSymbolMap)
+            {
+                String speciesName = species.getName();
+                Symbol extSymbol = (Symbol) pSymbolMap.get(speciesName);
+                int extSpeciesIndex = extSymbol.getArrayIndex();
+                if(Symbol.NULL_ARRAY_INDEX == extSpeciesIndex)
+                {
+                    throw new IllegalStateException("invalid array index for species: " + speciesName);
+                }
+                species = pDynamicSymbolValues[extSpeciesIndex];
+            }
+            else
+            {
+                // do nothing
+            }
             pSpeciesArray[reactantCtr] = species;
-
+            
             int stoic = element.mStoichiometry;
             pStoichiometryArray[reactantCtr] = stoic;
 
@@ -201,7 +234,7 @@ public class Reaction extends SymbolValue
         }
     }
 
-    void prepareSymbolVectorsForSimulation(SymbolValue []pDynamicSymbolValues)
+    void prepareSymbolVectorsForSimulation(Species []pDynamicSymbolValues, HashMap pSymbolMap)
     {
         constructDynamicSymbolAdjustmentVector(pDynamicSymbolValues);
 
@@ -209,7 +242,12 @@ public class Reaction extends SymbolValue
         mReactantsSpeciesArray = new Species[numReactants];
         mReactantsStoichiometryArray = new int[numReactants];
 
-        constructSpeciesArrays(mReactantsSpeciesArray, mReactantsStoichiometryArray, ParticipantType.REACTANT);
+        constructSpeciesArrays(mReactantsSpeciesArray, 
+                               mReactantsStoichiometryArray, 
+                               pDynamicSymbolValues, 
+                               pSymbolMap, 
+                               ParticipantType.REACTANT);
+
         constructLocalSymbolsVector();
     }
 
@@ -365,6 +403,20 @@ public class Reaction extends SymbolValue
     public void setRate(Expression pRate)
     {
         setRate(new Value(pRate));
+    }
+
+    void checkReactantValues(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
+    {
+        Species []reactants = mReactantsSpeciesArray;
+        int numReactants = reactants.length;
+
+        for(int reactantCtr = numReactants; --reactantCtr >= 0; )
+        {
+            SymbolValue reactant = reactants[reactantCtr];
+            Symbol symbol = reactant.getSymbol();
+            double value = pSymbolEvaluator.getValue(reactant.getSymbol());
+            String symbolName = symbol.getName();
+        }
     }
 
     /**
