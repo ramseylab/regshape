@@ -1,4 +1,4 @@
-\<?xml version="1.0"?>
+<?xml version="1.0"?>
 <?xml-stylesheet type="text/xml" href="../config/documentation-stylesheet.xml"?>
 <!DOCTYPE isbdocument [
   <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
