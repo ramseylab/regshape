@@ -23,6 +23,7 @@ with Hamid Bolouri:
 <li><a href="Dizzy/">Dizzy, a chemical simulation program</a>&nbsp;&nbsp;[contains an <a href="javadoc/isb/chem/package-summary.html" target="_new">implementation</a> of the Gillespie stochastic simulator</li>
 <li><a href="http://strc.herts.ac.uk/bio/maria/NetBuilder">NetBuilder</a> (Hertfordshire, UK)</li>
 <li><a href="javadoc/">Java classes developed by the &mainGroup;</a></li>
+<li><a href="models/">&mainGroup; biomolecular model repository</a></li>
 </ul>
 </p>
 

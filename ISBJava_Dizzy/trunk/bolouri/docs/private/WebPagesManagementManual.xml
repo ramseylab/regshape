@@ -135,7 +135,8 @@ somewhere on your desktop computer.  This &quot;checks out&quot;
 the source code for the group web pages onto your computer, from the CVS 
 server.  This will create a subdirectory 
 &quot;<code>bolouri</code>&quot; of your current working
-directory.  The web content is contained within the 
+directory; this subdirectory is known as your CVS 
+&quot;enlistment&quot;.  The web content is contained within the 
 &quot;<code>bolouri/docs</code>&quot;
 subdirectory.  The main group &quot;Resources page&quot;
 content is in the file
@@ -249,7 +250,7 @@ web site maintainer at: <code>&mainEmailSafe;</code>.
 <p>
 The above instructions describe how to publish a web page
 that will be externally (publically) visible.  To publish
-a web page that is only accessible within the 
+a new web page that is only accessible within the 
 &mainAffiliation;, create your new web page within the
 <blockquote>
 <pre>
@@ -266,9 +267,9 @@ subdirectory than it is for files in the
 </p>
 </isb:docsection>
 
-<isb:docsection name="Simpler Method" label="simpler">
+<isb:docsection name="Simpler Method to Publish New Pages" label="simpler">
 <p>
-If you wish to rapidly publish a new web page, and the above
+If you wish to rapidly publish a <b>new</b> web page, and the above
 instructions are too burdensome, there is a more direct method
 to publish a new web page, and bypass CVS and the aforementioned
 &quot;stylesheet&quot; framework.  Simply write a HTML document
@@ -314,6 +315,65 @@ depending on whether you selected (1) or (2) above.
 overwrite any of the web content that is already on the
 web server, when you are uploading your HTML file!
 </blockquote>
+</p>
+</isb:docsection>
+
+
+<isb:docsection name="Biomolecular Model Repository" label="repository">
+<p>
+The biomolecular model repository directory is 
+used to archive biomolecular models that have been 
+found to be useful to the Bolouri Group, and that 
+are believed to be of sufficient utility and validity 
+to warrant making them available to the general public.
+Any model definition file placed in this directory will
+be publically visible on our external web server.
+</p>
+<p>
+To &quot;publish&quot; a model in this repository, 
+the following steps should be used:
+<ol>
+<li>check out the &quot;<code>bolouri</code>&quot;
+CVS archive using the 
+<a href="#managing">checkuot directions</a> above.</li>
+<li>copy your model definition file (for the sake
+of discussion, we will assume it is named 
+&quot;<code>myModel.dizzy</code>&quot;), to the
+subdirectory &quot;<code>bolouri/docs/models</code>&quot;
+in the CVS &quot;enlistment&quot; that was created in step (1)</li>
+<li>edit the <code>index.xml</code> file in the
+aforementioned directory using a text editor, 
+and add a new list element and hyperlink to your
+file.  The link will look something like this:
+<blockquote>
+<pre>
+&lt;li&gt;&lt;a href="myModel.dizzy"&gt;my really interesting model&lt;/a&gt;&lt;/li&gt;
+</pre>
+</blockquote>
+where you will substitute your own description in place of
+the text &quot;my really interesting model&quot; above.
+</li>
+<li>save your edits to <code>index.xml</code>
+and execute the following command from within
+the top-level directory &quot;<code>bolouri</code>&quot; 
+of your enlistment:
+<blockquote>
+<pre>
+cvs add docs/models/myModel.dizzy
+cvs commit -m 'my new model' docs/models/myModel.dizzy
+</pre>
+</blockquote>
+</li>
+<li>from that same directory, run the command:
+<blockquote>
+<pre>
+ant buildWeb
+</pre>
+</blockquote>
+This should publish your new model definition file
+to the Biomolecular Model Repository on the public web site.
+</li>
+</ol>
 </p>
 </isb:docsection>
 

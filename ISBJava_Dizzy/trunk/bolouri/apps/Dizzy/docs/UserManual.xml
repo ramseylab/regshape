@@ -53,7 +53,7 @@ The SBML standard is documented at the web site:
 <a href="http://www.sbw-sbml.org">http://www.sbw-sbml.org</a>.
 You can generate a model in SBML format by using the JDesigner software tool.
 <p />
-File extensions treated as SBML are:  ".xml", ".sbml"
+The file extension of hte SBML language is: &quot;<code>.xml</code>&quot;
 <p />
 </li>
 <li><a href="#cmdl">Chemical Model Definition Language (CMDL)</a>
@@ -63,7 +63,7 @@ is the language understood "natively" by the
 &appName; scripting engine; the engine translates models from other languages 
 into its native language, before processing them.  
 <p />
-The file extension of the CMDL command language is: ".isbchem"
+The file extension of the CMDL command language is: &quot;<code>.isbchem</code>&quot;
 <p />
 </li>
 <li><a href="#ccmdl">Condensed Chemical Model Definition Language (CCMDL)</a>
@@ -75,7 +75,7 @@ and flexible, but also a bit more tedious to type in manually.
 Note that the &appName; system can export into file types (1) and (2) 
 mentioned above, but not into the CCMDL scripting language.
 <p />
-The file extension of the CCMDL scripting language is ".dizzy"
+The file extension of the CCMDL scripting language is &quot;<code>.dizzy</code>&quot;
 <p />
 </li>
 </ol>

@@ -41,12 +41,17 @@
     <style basedir="${projDocsDir}" 
            destdir="${projStyleDir}" 
            includes="*.xml" 
-           excludes="private/*.xml"
            style="${docsStyleSheet}" />
 
     <mkdir dir="${projStyleDir}/private" />
     <style basedir="${projDocsDir}/private" 
            destdir="${projStyleDir}/private" 
+           includes="*.xml" 
+           style="${docsStyleSheet}" />
+
+    <mkdir dir="${projStyleDir}/models" />
+    <style basedir="${projDocsDir}/models" 
+           destdir="${projStyleDir}/models" 
            includes="*.xml" 
            style="${docsStyleSheet}" />
   </target>
@@ -57,6 +62,17 @@
       <fileset dir="${projStyleDir}">
         <include name="*.html" />
         <include name="private/*.html" />
+        <include name="models/*.html" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="copyModels">
+    <copy todir="${projWebDir}">
+      <fileset dir="${projDocsDir}">
+        <include name="models/*.dizzy" />
+        <include name="models/*.xml" />
+        <include name="models/*.isbchem" />
       </fileset>
     </copy>
   </target>
@@ -70,7 +86,7 @@
     </copy>
   </target>
 
-  <target name="buildWeb" depends="copyImages, style, copyHtml">
+  <target name="buildWeb" depends="copyImages, style, copyHtml, copyModels">
     <ant dir="${projJavaDir}" target="buildWeb" />
     <ant dir="${projAppsDir}" target="buildWeb" />
   </target>
