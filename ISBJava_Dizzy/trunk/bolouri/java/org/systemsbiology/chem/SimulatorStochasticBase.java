@@ -63,7 +63,7 @@ public abstract class SimulatorStochasticBase extends Simulator
             double initialValue = mInitialDynamicSymbolValues[ctr];
             if(initialValue > 1.0 && (initialValue - 1.0 == initialValue))
             {
-                throw new InvalidInputException("initial species population value for species is too large for the stochastic Simulator");
+                throw new InvalidInputException("initial species value for species \"" + mDynamicSymbolNames[ctr] + "\" is too large for the stochastic Simulator: " + initialValue);
             }
         }
     }

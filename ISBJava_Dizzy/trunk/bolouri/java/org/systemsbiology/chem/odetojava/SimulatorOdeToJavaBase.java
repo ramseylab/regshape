@@ -401,6 +401,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
         mScratch = new double[numSpecies];
         mSimulationCancelled = false;
         mSimulationCancelledEventNegReturnFlag = false;
+        setInitialized(true);
     }
 
     public SimulatorParameters getDefaultSimulatorParameters()

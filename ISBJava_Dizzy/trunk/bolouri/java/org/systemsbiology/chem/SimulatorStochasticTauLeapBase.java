@@ -361,6 +361,7 @@ public abstract class SimulatorStochasticTauLeapBase extends SimulatorStochastic
         initializeTauLeap(mSymbolEvaluator);
         mEstimatedSpeciesChange = new double[mDynamicSymbolValues.length];
         mMinNumMillisecondsForUpdate = MIN_NUM_MILLISECONDS_FOR_PROGRESS_UPDATE;
+        setInitialized(true);
     }
 
     public String getAlias()

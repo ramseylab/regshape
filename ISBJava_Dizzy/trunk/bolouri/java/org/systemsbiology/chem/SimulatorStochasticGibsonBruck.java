@@ -454,6 +454,7 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
         initializeSimulatorStochastic(pModel);
         createDependencyGraph(pModel);
         initializePutativeTimeToNextReactions();
+        setInitialized(true);
     }
 
     protected void modifyDefaultSimulatorParameters(SimulatorParameters pSimulatorParameters)

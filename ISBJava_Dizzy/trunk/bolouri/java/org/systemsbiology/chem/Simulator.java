@@ -513,10 +513,13 @@ public abstract class Simulator
         mReactionProbabilities = new double[numReactions];
 
         checkReactionRates();
-
-        mInitialized = true;
     }
 
+    protected void setInitialized(boolean pInitialized)
+    {
+        mInitialized = true;
+    }
+    
     static HashMap createLocalSymbolsMap(Reaction pReaction)
     {
         SymbolValue []localSymbolsValues = pReaction.getLocalSymbolValues();

@@ -99,6 +99,7 @@ public final class SimulatorStochasticGillespie extends SimulatorStochasticBase 
     {
         initializeSimulator(pModel);
         initializeSimulatorStochastic(pModel);
+        setInitialized(true);
     }
 
     protected void modifyDefaultSimulatorParameters(SimulatorParameters pSimulatorParameters)

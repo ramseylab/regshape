@@ -180,6 +180,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         initializeSimulator(pModel);
         initializeDynamicSymbolAdjustmentVectors();
         resetScratchpad();
+        setInitialized(true);
     }
 
     protected final void computeScale(double pTimeStepSize,
