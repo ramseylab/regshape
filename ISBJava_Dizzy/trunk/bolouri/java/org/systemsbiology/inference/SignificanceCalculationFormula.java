@@ -15,6 +15,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
+ * Enumerates the possible formulas for computing the significance
+ * of an observation, based on the distribution of "negative control"
+ * observations.  Passed to the {@link SignificanceCalculator} as a
+ * parameter.
+ * 
  * @author sramsey
  *
  */

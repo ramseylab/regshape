@@ -11,6 +11,16 @@
 package org.systemsbiology.inference;
 
 /**
+ * Data structure that holds the parameters that are
+ * passed to the {@link EvidenceWeightedInferer}, to describe
+ * how the Pointillist algorithm should run.  The parameters 
+ * include the number of bins used to calculate the nonparametric
+ * distribution, the initial cutoff for the evidence-specific
+ * significances, the final cutoff for the combined significances,
+ * the smoothing length for the log-ignificance distribution,
+ * and the type of formula to be used to compute the evidence-specific
+ * weights.
+ * 
  * @author sramsey
  *
  */

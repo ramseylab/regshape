@@ -18,11 +18,12 @@ import org.systemsbiology.math.AccuracyException;
 
 /**
  * An implementation of the Pointillist algorithm for
- * inferring the set of probable affected elements.  Uses a Bayesian
- * method to compute the combined probability that an element would
+ * inferring the set elements affected by a perturbation of
+ * a biological system, based on multiple types of evidence.  The
+ * algorithm computes the combined probability that an element would
  * have a given set of significance values, by chance, if it were
  * not in the set of true affected elements.  This algorithm was
- * designed by Daehee Hwang.
+ * designed by Daehee Hwang at Institute for Systems Biology.
  * 
  * @author sramsey
  *

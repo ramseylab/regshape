@@ -17,6 +17,17 @@ import org.systemsbiology.math.probability.*;
 import org.systemsbiology.math.*;
 
 /**
+ * Based on a set of "negative control" observations, computes the
+ * significance of each of a set of observations.  The set of
+ * control ovservations may or may not be identically the same as
+ * the observations for which the significances are to be computed,
+ * which allows for computing the significances of a set of observations
+ * in the absence of separate "negative control" measurements.  The
+ * method used for computing the significance depends on the
+ * {@link SignificanceCalculationFormula} passed as a parameter.
+ * The algorithms used in this class are based on the ideas and designs of
+ * Daehee Hwang at Institute for Systems Biology.
+ * 
  * @author sramsey
  *
  */

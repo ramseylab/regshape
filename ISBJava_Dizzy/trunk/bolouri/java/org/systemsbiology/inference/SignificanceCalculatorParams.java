@@ -11,6 +11,13 @@
 package org.systemsbiology.inference;
 
 /**
+ * The set of parameters that are passed to the
+ * {@link SignificanceCalculator}, describing how the
+ * significance calculation should be performed.  The
+ * parameters include the number of bins for the nonparametric
+ * distribution, the smoothing length for the kernel density,
+ * whether the distribution is single-tailed or two-tailed, etc.
+ * 
  * @author sramsey
  *
  */

@@ -39,6 +39,12 @@ import org.systemsbiology.data.MatrixString;
 import java.util.ArrayList;
 
 /**
+ * Graphical user interface for calling the {@link SignificanceCalculator}
+ * to obtain significances of observations.  Multiple types of evidence can
+ * be processed in a single run of the program, with distinct parameter values
+ * for the different types of evidence. The algorithms used in this class are 
+ * based on the ideas and designs of Daehee Hwang at Institute for Systems Biology.
+ *  
  * @author sramsey
  *
  */

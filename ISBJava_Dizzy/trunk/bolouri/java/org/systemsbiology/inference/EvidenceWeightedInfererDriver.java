@@ -25,12 +25,13 @@ import java.util.*;
 
 /**
  * Graphical user interface for the Pointillist algorithm for
- * inferring the set of probable affected elements.  Uses a Bayesian
- * method to compute the combined significance, which is analogous (but
+ * inferring the set of elements affected by a perturbation of a biological
+ * system.  The algorithm computes the combined significance, which is 
+ * analogous (but
  * not identical) to the joint probability that an element would
  * have a given set of significance values, by chance, if it were
  * not in the set of true affected elements.  This algorithm was
- * designed by Daehee Hwang.
+ * designed by Daehee Hwang at Institute for Systems Biology.
  * 
  * @author sramsey
  *

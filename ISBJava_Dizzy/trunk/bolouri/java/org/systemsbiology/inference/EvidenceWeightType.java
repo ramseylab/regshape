@@ -15,6 +15,10 @@ import java.util.LinkedList;
 import java.util.Collections;
 
 /**
+ * Enumerates the formulas that may be used for computing
+ * the evidence-specific weights.  Passed to the
+ * {@link EvidenceWeightedInferer} as a parameter.  
+ * 
  * @author sramsey
  *
  */

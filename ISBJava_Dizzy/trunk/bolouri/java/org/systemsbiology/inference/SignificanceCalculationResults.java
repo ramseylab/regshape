@@ -13,6 +13,11 @@ package org.systemsbiology.inference;
 import org.systemsbiology.math.probability.IContinuousDistribution;
 
 /**
+ * Data structure containing the results of a call to the
+ * {@link SignificanceCalculator}.  It contains the significance
+ * values of the observations that were passed to the significance
+ * calculator. 
+ * 
  * @author sramsey
  *
  */

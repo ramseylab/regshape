@@ -22,6 +22,14 @@ import org.systemsbiology.data.*;
 import org.systemsbiology.util.InvalidInputException;
 
 /**
+ * A data structure containing a set of
+ * observations for M elements, and N types of
+ * evidence.  Missing obesrvations are stored as
+ * a <code>null</code> in the data matrix.  Non-missing
+ * observations are stored as a {@link Double} object.
+ * This class is used by the {@link SignificanceCalculatorDriver}
+ * class.
+ * 
  * @author sramsey
  *
  */

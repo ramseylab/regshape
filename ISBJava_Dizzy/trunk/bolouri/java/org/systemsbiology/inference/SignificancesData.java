@@ -16,6 +16,13 @@ import cern.colt.matrix.*;
 import org.systemsbiology.util.*;
 
 /**
+ * Contains a matrix of significance values of a set of
+ * observations for M elements and N evidence types.  A
+ * significance of -1 means a missing observation, so no
+ * significance value exists for that (element,evidenc)
+ * ordererd pair.  Non-missing significance values in 
+ * this matrix are always nonnegative.
+ * 
  * @author sramsey
  *
  */
