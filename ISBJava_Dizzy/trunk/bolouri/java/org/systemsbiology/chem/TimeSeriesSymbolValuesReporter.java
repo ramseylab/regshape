@@ -12,53 +12,16 @@ import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.*;
 
+/**
+ * Class for printing time-series data to a file.
+ */
 public class TimeSeriesSymbolValuesReporter
 {
-    public static class OutputFormat
-    {
-        private final String mName;
-        private final char mCommentChar;
-        private static final HashMap mMap;
-        static
-        {
-            mMap = new HashMap();
-        }
-        private OutputFormat(String pName, char pCommentChar)
-        {
-            mName = pName;
-            mCommentChar = pCommentChar;
-            mMap.put(pName, this);
-        }
-        public String toString()
-        {
-            return(mName);
-        }
-        public static OutputFormat get(String pName)
-        {
-            return((OutputFormat) mMap.get(pName));
-        }
-        public static final OutputFormat CSV_EXCEL = new OutputFormat("CSV-excel", '#');
-        public static final OutputFormat CSV_MATLAB = new OutputFormat("CSV-matlab", '%');
-        public static final OutputFormat CSV_GNUPLOT = new OutputFormat("CSV-gnuplot", '#');
-        public static String []getSortedFileFormatNames()
-        {
-            Set fileFormatNamesSet = mMap.keySet();
-            LinkedList fileFormatNamesList = new LinkedList(fileFormatNamesSet);
-            Collections.sort(fileFormatNamesList);
-            return((String []) fileFormatNamesList.toArray(new String[0]));
-        }
-
-        public char getCommentChar()
-        {
-            return(mCommentChar);
-        }
-    }
-
     public static final void reportTimeSeriesSymbolValues(PrintWriter pPrintWriter, 
                                                           String []pRequestedSymbolNames, 
                                                           double []pTimeValues,
                                                           Object []pSymbolValues,
-                                                          OutputFormat pOutputFormat) throws IllegalArgumentException
+                                                          TimeSeriesOutputFormat pTimeSeriesOutputFormat) throws IllegalArgumentException
     {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(6);
@@ -68,7 +31,7 @@ public class TimeSeriesSymbolValuesReporter
                                      pTimeValues,
                                      pSymbolValues,
                                      nf,
-                                     pOutputFormat);
+                                     pTimeSeriesOutputFormat);
     }
 
     public static final void reportTimeSeriesSymbolValues(PrintWriter pPrintWriter, 
@@ -76,14 +39,14 @@ public class TimeSeriesSymbolValuesReporter
                                                           double []pTimeValues,
                                                           Object []pSymbolValues,
                                                           NumberFormat pNumberFormat,
-                                                          OutputFormat pOutputFormat) throws IllegalArgumentException
+                                                          TimeSeriesOutputFormat pTimeSeriesOutputFormat) throws IllegalArgumentException
     
     {
         int numSymbols = pRequestedSymbolNames.length;
 
-        if(null == pOutputFormat)
+        if(null == pTimeSeriesOutputFormat)
         {
-            throw new IllegalArgumentException("required argument pOutputFormat was passed as null");
+            throw new IllegalArgumentException("required argument pTimeSeriesOutputFormat was passed as null");
         }
 
         if(null == pNumberFormat)
@@ -92,7 +55,7 @@ public class TimeSeriesSymbolValuesReporter
         }
 
         StringBuffer sb = new StringBuffer();
-        sb.append(Character.toString(pOutputFormat.getCommentChar()));
+        sb.append(Character.toString(pTimeSeriesOutputFormat.getCommentChar()));
         sb.append(" time, ");
         for(int symCtr = 0; symCtr < numSymbols; ++symCtr)
         {
