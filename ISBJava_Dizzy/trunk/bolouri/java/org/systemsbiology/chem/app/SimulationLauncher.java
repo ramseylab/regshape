@@ -859,10 +859,7 @@ public class SimulationLauncher
         String simulatorAlias = (String) mSimulatorsList.getModel().getElementAt(pSimulatorIndex);
         if(null == simulatorAlias)
         {
-            JOptionPane.showMessageDialog(getLauncherFrame(), 
-                                          "no simulator selected",
-                                          MainApp.UNEXPECTED_ERROR_MESSAGE,
-                                          JOptionPane.ERROR_MESSAGE);
+            throw new IllegalStateException("no simulator was selected");
         }
         else
         {
