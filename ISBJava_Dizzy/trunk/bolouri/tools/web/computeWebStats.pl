@@ -35,6 +35,7 @@
 use GD;
 
 sub SCRATCH_DIR() {'/local/var/webstats'}
+sub TEMP_DIR() {'/tmp'}
 sub DOCUMENT_ROOT() {'/local/apache/htdocs'}
 sub BIN_DIR() {'/local/bin'}
 sub LOG_FILE_PREFIX() {'BolouriWebStats'}
@@ -72,7 +73,9 @@ sub main()
     system(BIN_DIR . "/ncftpget -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " " . SCRATCH_DIR . " " . REMOTE_FTP_DIR . "/" . LOG_FILE_PREFIX . ".log") and die("unable to obtain web statistics file");
     my $temp = SCRATCH_DIR . '/' . LOG_FILE_PREFIX . '.log ' . $logFile;
     system("/bin/mv " . $temp); 
-    system(BIN_DIR . "/webalizer  -D " . SCRATCH_DIR . "/" . DNS_CACHE_FILE . " -N 10 -o " . DOCUMENT_ROOT . "/" . WEB_STATS_WEB_SUBDIR . " " . $logFilePrefix . '*.log') and die("unable to analyze log files");
+    my $tempFile = TEMP_DIR . "/webstats-" . time() . "-" . $$ . ".log";
+    system("/bin/cat " . $logFilePrefix . "*.log >> " . $tempFile) and die("unable to cat files to temp file: $tempFile");
+    system(BIN_DIR . "/webalizer  -D " . SCRATCH_DIR . "/" . DNS_CACHE_FILE . " -N 10 -o " . DOCUMENT_ROOT . "/" . WEB_STATS_WEB_SUBDIR . " " . $tempFile) and die("unable to analyze log files");
 
     open(DIZZY_DOWNLOADS, "<" . SCRATCH_DIR . "/DizzyDownloads.txt") or die("unable to open Dizzy downloads file, for reading");
     my $numDizzyDownloads = <DIZZY_DOWNLOADS>;
