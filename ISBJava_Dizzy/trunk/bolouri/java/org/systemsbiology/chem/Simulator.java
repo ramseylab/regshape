@@ -21,6 +21,8 @@ public abstract class Simulator
     private static final long MAX_POPULATION_FOR_COMBINATORIC_EFFECTS = 100000;
     private static final boolean DEFAULT_USE_EXPRESSION_VALUE_CACHING = true;
 
+    protected String mModelName;
+
     protected Value []mNonDynamicSymbolValues;
     protected Value []mNonDynamicSymbolExpressionValues;
     protected boolean mUseExpressionValueCaching;
@@ -263,6 +265,8 @@ public abstract class Simulator
     protected final void initializeSimulator(Model pModel) throws DataNotFoundException
     {
         clearSimulatorState();
+
+        mModelName = pModel.getName();
 
         // obtain and save an array of all reactions in the model
         ArrayList reactionsList = pModel.constructReactionsList();
@@ -558,6 +562,7 @@ public abstract class Simulator
         mReactionSymbols = null;
         mReactionRates = null;
         mNonDynamicSymbolExpressionValues = null;
+        mModelName = null;
     }
 
     public Simulator()
@@ -602,8 +607,9 @@ public abstract class Simulator
         simulationResults.setResultsTimeValues(pResultsTimeValues);
         simulationResults.setResultsSymbolValues(pResultsSymbolValues);
         simulationResults.setResultsFinalSymbolFluctuations(pResultsFinalSymbolFluctuations);
-        return(simulationResults);
+        simulationResults.setModelName(mModelName);
 
+        return(simulationResults);
     }
 
     protected final int addRequestedSymbolValues(double pCurTime,
@@ -1003,7 +1009,7 @@ public abstract class Simulator
             throw new IllegalArgumentException("missing max allowed relative error");
         }
         double maxAllowedRelativeError = maxAllowedRelativeErrorObj.doubleValue();
-        if(maxAllowedRelativeError <= 0.0)
+        if(maxAllowedRelativeError <= 0.0 || maxAllowedRelativeError >= 1.0)
         {
             throw new IllegalArgumentException("invalid max allowed relative error: " + maxAllowedRelativeError);
         }
