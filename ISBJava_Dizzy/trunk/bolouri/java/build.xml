@@ -18,7 +18,7 @@
 
 <project name="localJava" default="compile" basedir=".">
 
-	  <property name="globalRoot"                     location="../.." />
+	  <property name="globalRoot"                     location=".." />
 	  <property name="globalConfig"                   location="${globalRoot}/config" />
 	  <property name="globalStyle"                 location="${globalRoot}/build/html" />
 	
