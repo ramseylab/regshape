@@ -31,12 +31,12 @@ public class MutableDouble
         return(mDouble);
     }
 
-    public void setValue(double pDouble)
+    public final void setValue(double pDouble)
     {
         mDouble = pDouble;
     }
 
-    public double doubleValue()
+    public final double doubleValue()
     {
         return(mDouble);
     }
