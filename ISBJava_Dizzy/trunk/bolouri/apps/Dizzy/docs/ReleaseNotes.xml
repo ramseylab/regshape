@@ -66,10 +66,10 @@ subdirectory of the installation directory for this program.
 For documentation on how to use the &appName; program,
 please consult the 
 <a href="&appHomePage;/docs/UserManual.html">&appName; User Manual</a>.
-A PDF version of this manual 
-&quot;<code>UserManual.pdf</code>&quot; should have been installed
+When &appName; is installed, a PDF version of the manual 
+&quot;<code>UserManual.pdf</code>&quot; can be found
 in the &quot;<code>docs</code>&quot; subdirectory of the installation
-directory for this program.
+directory.
 For detailed documentation of the application programming
 interface (API) to the &appName; system, please consult the
 <a href="&webBaseURL;/&localJavaLibraryName;">ISBJava</a> home page.

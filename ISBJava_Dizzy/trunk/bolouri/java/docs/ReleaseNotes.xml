@@ -77,10 +77,10 @@ please consult the
 For detailed documentation of the application programming
 interface (API) to the &appName; library, please consult the
 <a href="&webBaseURL;/&localJavaLibraryName;">ISBJava</a> home page.
-A PDF version of the API documentation 
-&quot;<code>APIDocumentation.pdf</code>&quot; should have been installed
+When &appName; is installed, a PDF version of the API documentation 
+&quot;<code>APIDocumentation.pdf</code>&quot; can be found
 in the &quot;<code>docs</code>&quot; subdirectory of the installation
-directory for this library.
+directory.
 </p>
 </isb:docsection>
 
