@@ -11,6 +11,7 @@ package org.systemsbiology.chem;
 import java.util.*;
 import org.systemsbiology.math.*;
 import org.systemsbiology.util.*;
+import cern.jet.random.*;
 
 /**
  * Implements a chemical reaction containing a specified delay
@@ -31,8 +32,8 @@ public final class DelayedReactionSolver
     private final Species mIntermedSpecies;
     private final double mRate;
     private final double mTimeResolution;
-    private final double mPeakTimeRel;
     private boolean mFirstTimePoint;
+    private boolean mIsMultistep;
 
     // used only for stochastic simulations
     private final Queue mReactionTimes;
@@ -72,6 +73,7 @@ public final class DelayedReactionSolver
                                  Species pIntermedSpecies, 
                                  double pDelay,
                                  double pRate,
+                                 boolean pIsMultistep,
                                  int pReactionIndex,
                                  boolean pIsStochasticSimulator)
     {
@@ -93,24 +95,28 @@ public final class DelayedReactionSolver
         
         mFirstTimePoint = true;
 
-        mPeakTimeRel = pDelay;
-
-        mTimeResolution = LAMBDA_MAX * mPeakTimeRel / ((double) numTimePoints);
-
+        mTimeResolution = LAMBDA_MAX * pDelay / ((double) numTimePoints);
+        mIsMultistep = pIsMultistep;
         mReactionIndex = pReactionIndex;
 
         mIsStochasticSimulator = pIsStochasticSimulator;
 
         if(mIsStochasticSimulator)
         {
-//             mReactionTimes = new PriorityQueue( new AbstractComparator()
-//             {
-//                 public final int compare(Object p1, Object p2)
-//                 {
-//                     return(MutableDouble.compare((MutableDouble) p1, (MutableDouble) p2));
-//                 }
-//             });
-            mReactionTimes = new Queue();
+            if(mIsMultistep)
+            {
+                mReactionTimes = new PriorityQueue( new AbstractComparator()
+                {
+                    public final int compare(Object p1, Object p2)
+                    {
+                        return(MutableDouble.compare((MutableDouble) p1, (MutableDouble) p2));
+                    }
+                });
+            }
+            else
+            {
+                mReactionTimes = new ListQueue();
+            }
 
             mReactionTimesDoublePool = new LinkedList();
             for(int ctr = 0; ctr < REACTION_TIMES_DOUBLE_POOL_SIZE; ++ctr)
@@ -144,7 +150,16 @@ public final class DelayedReactionSolver
     void addReactant(SymbolEvaluatorChem pSymbolEvaluator)
     {
         MutableDouble newReactionTime = null;
-        double reactionTime = pSymbolEvaluator.getTime() + mPeakTimeRel;
+        double relTime;
+        if(mIsMultistep)
+        {
+            relTime = Gamma.staticNextDouble(mRate*mDelay, mRate);
+        }
+        else
+        {
+            relTime = mDelay;
+        }
+        double reactionTime = pSymbolEvaluator.getTime() + relTime;
         LinkedList reactionTimesDoublePool = mReactionTimesDoublePool;
 
         if(reactionTimesDoublePool.size() > 0)
@@ -161,29 +176,6 @@ public final class DelayedReactionSolver
         mReactionTimes.add(newReactionTime);
     }
 
-//     void addReactantOld(SymbolEvaluatorChem pSymbolEvaluator)
-//     {
-//         double time = pSymbolEvaluator.getTime();
-//         MutableDouble newReactionTime = null;
-
-//         double reactionTime = time + mPeakTimeRel;
-
-//         LinkedList reactionTimesDoublePool = mReactionTimesDoublePool;
-
-
-//         if(reactionTimesDoublePool.size() > 0)
-//         {
-//             newReactionTime = (MutableDouble) reactionTimesDoublePool.getLast();
-//             reactionTimesDoublePool.removeLast();
-//             newReactionTime.setValue(reactionTime);
-//         }
-//         else
-//         {
-//             newReactionTime = new MutableDouble(reactionTime);
-//         }
-
-//         mReactionTimes.offer(newReactionTime);
-//     }
 
     double pollNextReactionTime() throws IllegalStateException
     {
@@ -217,7 +209,7 @@ public final class DelayedReactionSolver
 
     double getEstimatedAverageFutureRate(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
     {
-        double rate = pSymbolEvaluator.getValue(mIntermedSpecies.getSymbol()) / mPeakTimeRel;
+        double rate = pSymbolEvaluator.getValue(mIntermedSpecies.getSymbol()) / mDelay;
         return(rate);
     }
 
@@ -234,7 +226,6 @@ public final class DelayedReactionSolver
         }
         else
         {
-//            System.out.println("clearing reactant history");
             mReactantHistory.clear();
             mIntermedSpeciesHistory.clear();
             mFirstTimePoint = true;
@@ -299,193 +290,278 @@ public final class DelayedReactionSolver
         }
     }
 
-    // used for deterministic simulator
     public double computeRate(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
     {
-        double prodRate = 0.0;
-
         if(! mIsStochasticSimulator)
         {
-
-            SymbolEvaluatorChem symbolEvaluator = (SymbolEvaluatorChem) pSymbolEvaluator;
-
-            double currentTime = symbolEvaluator.getTime();
-
-            SlidingWindowTimeSeriesQueue reactantSpeciesHistory = mReactantHistory;
-            SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
-
-            double reactantValue = pSymbolEvaluator.getValue(mReactant.getSymbol());
-            
-            double intermedSpeciesValue = symbolEvaluator.getValue(mIntermedSpecies.getSymbol());
-//            System.out.println("intermed species value: " + intermedSpeciesValue + "; average intermed value: " + averageIntermedValue);
-            double minTime = reactantSpeciesHistory.getMinTime();
-            double peakTimeRel = mPeakTimeRel;
-            double peakTime = currentTime - peakTimeRel;
-
-//            double minIntermed = Math.min(intermedSpeciesValue, ((LAMBDA_MAX - 1.0)*intermedSpeciesValue + averageIntermedValue)/LAMBDA_MAX);
-
-            double averageIntermedValue = mIntermedSpeciesHistory.getAverageValue();
-
-            if(intermedSpeciesValue > 0.0 && averageIntermedValue > 0.0 && peakTime >= minTime)
+            if(mIsMultistep)
             {
-                double averageReactantValue = reactantSpeciesHistory.getAverageValue();
-
-                double minIntermed = Math.min(intermedSpeciesValue, averageIntermedValue);
-
-                double numIntermedSpeciesExpected = (mDelay * mRate * averageReactantValue);
-
-                double excessIntermed = minIntermed - numIntermedSpeciesExpected;
-                if(excessIntermed < 0.0)
-                {
-                    excessIntermed = 0.0;
-                }
-
-                int peakIndex = (int) Math.floor( (peakTime - minTime)/mTimeResolution );
-                double peakValue = reactantSpeciesHistory.getValue(peakIndex);
-
-//                System.out.println("peak value: " + peakValue + "; excessIntermed: " + excessIntermed);
-
-                prodRate = mRate * Math.max(peakValue, excessIntermed);
+                return(computeRateMultistep(pSymbolEvaluator));
             }
             else
             {
-                // do nothing; rate of production is zero
+                return(computeRateDelay(pSymbolEvaluator));
             }
         }
         else
         {
-            // do nothing; just use a rate of zero
+            return(0.0);
+        }
+    }
+
+    private double computeRateMultistep(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
+    {
+       double prodRate = 0.0;
+
+       SymbolEvaluatorChem symbolEvaluator = (SymbolEvaluatorChem) pSymbolEvaluator;
+
+       double currentTime = symbolEvaluator.getTime();
+
+       SlidingWindowTimeSeriesQueue reactantSpeciesHistory = mReactantHistory;
+       SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
+
+       double reactantValue = pSymbolEvaluator.getValue(mReactant.getSymbol());
+            
+       double intermedSpeciesValue = symbolEvaluator.getValue(mIntermedSpecies.getSymbol());
+       double minTime = reactantSpeciesHistory.getMinTime();
+       double peakTimeRel = mDelay;
+       double peakTime = currentTime - peakTimeRel;
+
+       double averageIntermedValue = mIntermedSpeciesHistory.getAverageValue();
+
+       if(intermedSpeciesValue > 0.0 && averageIntermedValue > 0.0)
+       {
+           prodRate = computeIntegral(reactantSpeciesHistory,
+                                      mTimeResolution,
+                                      mNumTimePoints,
+                                      mDelay,
+                                      mRate,
+                                      currentTime);
+       }
+       else
+       {
+           // do nothing; rate of production is zero
+       }
+
+       return(prodRate);
+    }
+
+    // used for deterministic simulator
+    private double computeRateDelay(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
+    {
+        double prodRate = 0.0;
+
+        SymbolEvaluatorChem symbolEvaluator = (SymbolEvaluatorChem) pSymbolEvaluator;
+
+        double currentTime = symbolEvaluator.getTime();
+
+        SlidingWindowTimeSeriesQueue reactantSpeciesHistory = mReactantHistory;
+        SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
+
+        double reactantValue = pSymbolEvaluator.getValue(mReactant.getSymbol());
+            
+        double intermedSpeciesValue = symbolEvaluator.getValue(mIntermedSpecies.getSymbol());
+        double minTime = reactantSpeciesHistory.getMinTime();
+        double peakTimeRel = mDelay;
+        double peakTime = currentTime - peakTimeRel;
+
+        if(intermedSpeciesValue > 0.0 && peakTime >= minTime)
+        {
+            double peakValue = 0.0;
+
+            double peakIndexDouble = (peakTime - minTime)/mTimeResolution;
+            double peakIndexDoubleFloor = Math.floor(peakIndexDouble);
+            int peakIndex = (int) peakIndexDouble;
+            if( peakIndexDouble > peakIndexDoubleFloor )
+            {
+                double valueLeft = reactantSpeciesHistory.getValue(peakIndex);
+                peakValue = valueLeft + ((peakIndexDouble - peakIndexDoubleFloor) * 
+                                         (reactantSpeciesHistory.getValue(peakIndex + 1) - 
+                                          valueLeft));
+            }
+            else
+            {
+                peakValue = reactantSpeciesHistory.getValue(peakIndex);
+            }
+
+            prodRate = mRate * peakValue;
+        }
+        else
+        {
+            // do nothing; rate of production is zero
         }
 
         return(prodRate);
     }
 
     // used for deterministic simulator
-    public double computeRateSave(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
+    private double computeRateDelaySave2(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
     {
         double prodRate = 0.0;
 
-        if(! mIsStochasticSimulator)
+        SymbolEvaluatorChem symbolEvaluator = (SymbolEvaluatorChem) pSymbolEvaluator;
+
+        double currentTime = symbolEvaluator.getTime();
+
+        SlidingWindowTimeSeriesQueue reactantSpeciesHistory = mReactantHistory;
+        SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
+
+        double reactantValue = pSymbolEvaluator.getValue(mReactant.getSymbol());
+            
+        double intermedSpeciesValue = symbolEvaluator.getValue(mIntermedSpecies.getSymbol());
+        double minTime = reactantSpeciesHistory.getMinTime();
+        double peakTimeRel = mDelay;
+        double peakTime = currentTime - peakTimeRel;
+
+        double averageIntermedValue = mIntermedSpeciesHistory.getAverageValue();
+
+        if(intermedSpeciesValue > 0.0 && averageIntermedValue > 0.0 && peakTime >= minTime)
         {
+            double averageReactantValue = reactantSpeciesHistory.getAverageValue();
 
-            SymbolEvaluatorChem symbolEvaluator = (SymbolEvaluatorChem) pSymbolEvaluator;
+            double minIntermed = Math.min(intermedSpeciesValue, averageIntermedValue);
 
-            double currentTime = symbolEvaluator.getTime();
+            double numIntermedSpeciesExpected = (mDelay * mRate * averageReactantValue);
 
-            SlidingWindowTimeSeriesQueue reactantHistory = mReactantHistory;
-            SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
-
-            double reactantValue = pSymbolEvaluator.getValue(mReactant.getSymbol());
-            
-            double intermedSpeciesValue = symbolEvaluator.getValue(mIntermedSpecies.getSymbol());
-            double averageIntermedValue = mIntermedSpeciesHistory.getAverageValue();
-//            System.out.println("intermed species value: " + intermedSpeciesValue + "; average intermed value: " + averageIntermedValue);
-            double minTime = reactantHistory.getMinTime();
-            double peakTimeRel = mPeakTimeRel;
-            double peakTime = currentTime - peakTimeRel;
-            
-            if(intermedSpeciesValue >= 0.0 && peakTime >= minTime)
+            double excessIntermed = minIntermed - numIntermedSpeciesExpected;
+            if(excessIntermed < 0.0)
             {
-                double numIntermedSpeciesExpected = (mDelay * mRate) * reactantValue;
-        
-                if(intermedSpeciesValue > 0.0 &&
-                   intermedSpeciesValue > numIntermedSpeciesExpected)
-                {
-                    double rate = mRate;
-                    int peakIndex = (int) Math.floor( (peakTime - minTime)/mTimeResolution );
-                    double peakValue = reactantHistory.getValue(peakIndex);
+                excessIntermed = 0.0;
+            }
 
-                    if(peakValue > 0.0)
-                    {
-                        prodRate = rate * peakValue;
-                    }
-                    else
-                    {
-                        if(averageIntermedValue > numIntermedSpeciesExpected)
-                        {
-                            double excessIntermed = averageIntermedValue - numIntermedSpeciesExpected;
-                            prodRate = rate * excessIntermed;
-                        }
-                        else
-                        {
-                            // do nothing
-                        }
-                    }
-                }
-                else
-                {
-                    // do nothing; rate of production is zero, by mass conservation law
-                }
+            double peakValue = 0.0;
+
+            double peakIndexDouble = (peakTime - minTime)/mTimeResolution;
+            double peakIndexDoubleFloor = Math.floor(peakIndexDouble);
+            int peakIndex = (int) peakIndexDouble;
+            if( peakIndexDouble > peakIndexDoubleFloor )
+            {
+                double valueLeft = reactantSpeciesHistory.getValue(peakIndex);
+                peakValue = valueLeft + ((peakIndexDouble - peakIndexDoubleFloor) * 
+                                         (reactantSpeciesHistory.getValue(peakIndex + 1) - 
+                                          valueLeft) / mTimeResolution);
             }
             else
             {
-                // do nothing; rate of production is zero
+                peakValue = reactantSpeciesHistory.getValue(peakIndex);
             }
+
+            prodRate = mRate * Math.max(peakValue, excessIntermed);
         }
         else
         {
-            // do nothing; just use a rate of zero
+            // do nothing; rate of production is zero
         }
 
         return(prodRate);
     }
 
+    // used for deterministic simulator
+    private double computeRateDelaySave(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
+    {
+        double prodRate = 0.0;
+
+        SymbolEvaluatorChem symbolEvaluator = (SymbolEvaluatorChem) pSymbolEvaluator;
+
+        double currentTime = symbolEvaluator.getTime();
+
+        SlidingWindowTimeSeriesQueue reactantSpeciesHistory = mReactantHistory;
+        SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
+
+        double reactantValue = pSymbolEvaluator.getValue(mReactant.getSymbol());
+            
+        double intermedSpeciesValue = symbolEvaluator.getValue(mIntermedSpecies.getSymbol());
+        double minTime = reactantSpeciesHistory.getMinTime();
+        double peakTimeRel = mDelay;
+        double peakTime = currentTime - peakTimeRel;
+
+        double averageIntermedValue = mIntermedSpeciesHistory.getAverageValue();
+
+        if(intermedSpeciesValue > 0.0 && averageIntermedValue > 0.0 && peakTime >= minTime)
+        {
+            double averageReactantValue = reactantSpeciesHistory.getAverageValue();
+
+            double minIntermed = Math.min(intermedSpeciesValue, averageIntermedValue);
+
+            double numIntermedSpeciesExpected = (mDelay * mRate * averageReactantValue);
+
+            double excessIntermed = minIntermed - numIntermedSpeciesExpected;
+            if(excessIntermed < 0.0)
+            {
+                excessIntermed = 0.0;
+            }
+
+            int peakIndex = (int) Math.floor( (peakTime - minTime)/mTimeResolution );
+            double peakValue = reactantSpeciesHistory.getValue(peakIndex);
+
+            prodRate = mRate * Math.max(peakValue, excessIntermed);
+        }
+        else
+        {
+            // do nothing; rate of production is zero
+        }
+
+        return(prodRate);
+    }
+
+
     // keeping this around for historical purposes
-//     private static double computeIntegral(SlidingWindowTimeSeriesQueue history,
-//                                           double h,
-//                                           int numTimePoints,
-//                                           double sqrtTwoPiNumStepsCorrected,
-//                                           double numStepsCorrected,
-//                                           double rate,
-//                                           double currentTime)
-//     {
-//         double value = 0.0;
-//         double prodRate = 0.0;
-//         int numPoints = history.getNumStoredPoints();
+    private static double computeIntegral(SlidingWindowTimeSeriesQueue history,
+                                          double timeResolution,
+                                          int numTimePoints,
+                                          double delay,
+                                          double rate,
+                                          double currentTime)
+    {
+        double value = 0.0;
+        double prodRate = 0.0;
+        double numStepsCorrected = delay * rate;
+        int numPoints = history.getNumStoredPoints();
 
-//         for(int ctr = numPoints; --ctr >= 0; )
-//         {
-//             value = h * computeIntegrandValue(history,
-//                                               ctr,
-//                                               rate,
-//                                               rate * rate,
-//                                               sqrtTwoPiNumStepsCorrected,
-//                                               numStepsCorrected,
-//                                               currentTime);
+        double sqrtTwoPiNumStepsCorrected = Math.sqrt(2.0 * Math.PI * numStepsCorrected);
 
-//             if(ctr == 0 || ctr == numTimePoints - 1)
-//             {
-//                 prodRate += value/3.0;
-//             }
-//             else if((ctr % 2) == 1)
-//             {
-//                 prodRate += 2.0 * value / 3.0;
-//             }
-//             else
-//             {
-//                 prodRate += 4.0 * value / 3.0;
-//             }
-//         }
-// //        System.out.println("rate: " + prodRate);
-//         return(prodRate);
-//     }
+        for(int ctr = numPoints; --ctr >= 0; )
+        {
+            value = timeResolution * computeIntegrandValue(history,
+                                                           ctr,
+                                                           rate,
+                                                           rate * rate,
+                                                           sqrtTwoPiNumStepsCorrected,
+                                                           numStepsCorrected,
+                                                           currentTime);
 
-//     private static double computeIntegrandValue(SlidingWindowTimeSeriesQueue pReactantHistory,
-//                                                 int pTimePointIndex,
-//                                                 double pRate,
-//                                                 double pRateSquared,
-//                                                 double pSqrtTwoPiNumStepsCorrected,
-//                                                 double numStepsCorrected,
-//                                                 double pCurrentTime)
-//     {
-//         double reactantValue = pReactantHistory.getValue(pTimePointIndex);
-//         double timePoint = pReactantHistory.getTimePoint(pTimePointIndex);
-//         assert (pCurrentTime >= timePoint) : "time point is in the future";
-//         double rate = pRate;
-//         double lambda = rate * (pCurrentTime - timePoint);
-//         double retVal = reactantValue * pRateSquared * 
-//                         Math.pow(lambda * Math.E / numStepsCorrected, numStepsCorrected) / 
-//                         (Math.exp(lambda) * pSqrtTwoPiNumStepsCorrected) ;
-//         return( retVal );
-//     }
+            if(ctr == 0 || ctr == numTimePoints - 1)
+            {
+                prodRate += value/3.0;
+            }
+            else if((ctr % 2) == 1)
+            {
+                prodRate += 2.0 * value / 3.0;
+            }
+            else
+            {
+                prodRate += 4.0 * value / 3.0;
+            }
+        }
+        return(prodRate);
+    }
+
+    private static double computeIntegrandValue(SlidingWindowTimeSeriesQueue pReactantHistory,
+                                                int pTimePointIndex,
+                                                double pRate,
+                                                double pRateSquared,
+                                                double pSqrtTwoPiNumStepsCorrected,
+                                                double numStepsCorrected,
+                                                double pCurrentTime)
+    {
+        double reactantValue = pReactantHistory.getValue(pTimePointIndex);
+        double timePoint = pReactantHistory.getTimePoint(pTimePointIndex);
+        assert (pCurrentTime >= timePoint) : "time point is in the future";
+        double rate = pRate;
+        double lambda = rate * (pCurrentTime - timePoint);
+        double retVal = reactantValue * pRateSquared * 
+                        Math.pow(lambda * Math.E / numStepsCorrected, numStepsCorrected) / 
+                        (Math.exp(lambda) * pSqrtTwoPiNumStepsCorrected) ;
+        return( retVal );
+    }
 }
