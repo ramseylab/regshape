@@ -64,6 +64,11 @@ case of stochastic simulations.</li>
 <li>Fixed a bug the chemical model definition language (CMDL) parser,
 where a symbol defined within an included file, would never appear as a species
 in the containing model, even if it is included as a participant in a reaction.</li>
+<li>Fixed a bug in the deterministic ODE solvers, for the case of a model
+with a delayed reaction with a large time delay, and a large 
+<code>stopTime</code> parameter for the simulation.  In such cases, the
+initial step size could be too large for the delayed reaction solver to
+handle, which would cause the simulation to fail with an exception.</li>
 </ul>
 </td>
 <td><a href="&javaURL;/1.6.0/&installerDownloadRelURL;">1.6.0</a></td>
