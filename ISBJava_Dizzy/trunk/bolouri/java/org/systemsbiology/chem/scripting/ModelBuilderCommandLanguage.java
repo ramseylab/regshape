@@ -97,7 +97,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
     private void tokenizeStatement(String pStatement, List pTokens) throws InvalidInputException
     {
-        StringTokenizer st = new StringTokenizer(pStatement, "=\", []{}()->+;@#", true);
+        StringTokenizer st = new StringTokenizer(pStatement, "=\", \t[]{}()->+;@#", true);
         String tokenString = null;
         boolean inQuote = false;
         StringBuffer symbolTokenBuffer = new StringBuffer();
@@ -138,6 +138,10 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                         token = new Token(Token.Code.EQUALS);
                     }
                     else if(tokenString.equals(" "))
+                    {
+                        // do nothing
+                    }
+                    else if(tokenString.equals("\t"))
                     {
                         // do nothing
                     }
