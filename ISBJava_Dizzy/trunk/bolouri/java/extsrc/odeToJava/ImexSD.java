@@ -7,6 +7,14 @@ import java.io.*;
 /*
    class contains an algorithm for integrating an ODE using an Imex
    Runge-Kutta routine with Step Doubling
+*
+* Originally written by Murray Patterson
+*
+* Modified by Stephen Ramsey in order to allow for a "record()" function
+* to be called on an ODERecorder object, after each successful iteration of
+* the ODE solver.  This provides a "hook" for user-defined code to be
+* invoked to update state in the ODE system, or to check for constraint
+* satisfaction.  (2004/02/06)
 */
 public class ImexSD
 {

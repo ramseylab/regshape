@@ -8,6 +8,14 @@ import java.io.*;
    class is an explicit Runge-Kutta triple solver for any ODE.  It
    features stiffness detection and also event location provided that
    an intepolant has been defined for the Runge-Kutta scheme
+*
+* Originally written by Murray Patterson
+*
+* Modified by Stephen Ramsey in order to allow for a "record()" function
+* to be called on a ODERecorder object, after each successful iteration of
+* the ODE solver.  This provides a "hook" for user-defined code to be
+* invoked to update state in the ODE system, or to check for constraint
+* satisfaction.  (2004/02/06)
 */
 public class ErkTriple
 {
