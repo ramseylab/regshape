@@ -18,5 +18,9 @@ This directory contains the non-Java resources for the
 following Java-based applications:
 
 Dizzy  (in the subdirectory Dizzy)
+Mogul  (in the subdirectory Mogul)
+
+For application-specific notes, look for a README.txt file
+in the application's subdirectory.
 
 -Stephen Ramsey 
