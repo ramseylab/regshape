@@ -16,12 +16,13 @@ public class FileChooser extends JFileChooser
 {
     public FileChooser()
     {
-        ComponentUtils.disableDoubleMouseClick(this);
+        this(null);
     }
     
     public FileChooser(File pCurrentDirectory)
     {
         super(pCurrentDirectory);
+        ComponentUtils.disableDoubleMouseClick(this);
     }
 
     public static boolean handleOutputFileAlreadyExists(Component pFrame, String pOutputFileName)
