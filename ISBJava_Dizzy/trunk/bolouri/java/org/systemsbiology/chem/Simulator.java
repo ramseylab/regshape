@@ -96,11 +96,12 @@ public abstract class Simulator
         System.arraycopy(mInitialDynamicSymbolValues, 0, mDynamicSymbolValues, 0, mDynamicSymbolValues.length);
         MathFunctions.vectorZeroElements(mReactionProbabilities);
         clearDelayedReactionSolvers();
-        clearExpressionValueCaches();
+        if(mHasExpressionValues)
+        {
+            clearExpressionValueCaches(mNonDynamicSymbolValues);
+        }
         mSymbolEvaluator.setTime(pStartTime);
     }
-
-    public abstract boolean usesExpressionValueCaching();
 
     private final static void handleDelayedReaction(Reaction pReaction,
                                                     ArrayList pReactions,
@@ -332,8 +333,7 @@ public abstract class Simulator
 
         ReservedSymbolMapper reservedSymbolMapper = pModel.getReservedSymbolMapper();
         SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = pModel.getSymbolEvaluationPostProcessor();
-        boolean useExpressionValueCaching = usesExpressionValueCaching();
-        
+        boolean useExpressionValueCaching = true;
         SymbolEvaluatorChem evaluator = new SymbolEvaluatorChem(useExpressionValueCaching,
                                                                 symbolEvaluationPostProcessor,
                                                                 reservedSymbolMapper,
@@ -363,7 +363,7 @@ public abstract class Simulator
         for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
         {
             Reaction reaction = mReactions[reactionCtr];
-            double reactionRate = reaction.computeRate(mSymbolEvaluator);
+            double reactionRate = reaction.computeRate(mSymbolEvaluator, isStochasticSimulator());
             reaction.checkReactantValues(mSymbolEvaluator);
         }
     }
@@ -394,12 +394,12 @@ public abstract class Simulator
         mDelayedReactionSolvers = null;
         mDynamicSymbols = null;
         mDynamicSymbolAdjustmentVectors = null;
-        setMinNumMillisecondsForUpdate(DEFAULT_MIN_NUM_MILLISECONDS_FOR_UPDATE);
     }
 
     public Simulator()
     {
         clearSimulatorState();
+        setMinNumMillisecondsForUpdate(DEFAULT_MIN_NUM_MILLISECONDS_FOR_UPDATE);
     }
 
     protected final void initializeDynamicSymbolAdjustmentVectors(Species []pDynamicSymbols)
@@ -441,15 +441,22 @@ public abstract class Simulator
 
     }
 
-    protected final int addRequestedSymbolValues(double pCurTime,
-                                                 int pLastTimeIndex,
-                                                 Symbol []pRequestedSymbols,
-                                                 SymbolEvaluatorChem pSymbolEvaluator,
-                                                 double []pTimeValues,
-                                                 Object []pRetSymbolValues) throws DataNotFoundException
+    protected static final int addRequestedSymbolValues(double pCurTime,
+                                                        int pLastTimeIndex,
+                                                        Symbol []pRequestedSymbols,
+                                                        SymbolEvaluatorChem pSymbolEvaluator,
+                                                        double []pTimeValues,
+                                                        Object []pRetSymbolValues,
+                                                        boolean pHasExpressionValues,
+                                                        Value []pNonDynamicSymbolValues) throws DataNotFoundException
     {
         int numTimePoints = pTimeValues.length;
         int numRequestedSymbolValues = pRequestedSymbols.length;
+
+        if(pHasExpressionValues)
+        {
+            clearExpressionValueCaches(pNonDynamicSymbolValues);
+        }
 
         double saveTime = pSymbolEvaluator.getTime();
 
@@ -554,7 +561,10 @@ public abstract class Simulator
 
     protected static final void computeReactionProbabilities(SymbolEvaluatorChem pSymbolEvaluator,
                                                              double []pReactionProbabilities,
-                                                             Reaction []pReactions) throws DataNotFoundException
+                                                             Reaction []pReactions,
+                                                             boolean pHasExpressionValues,
+                                                             Value []pNonDynamicSymbolValues,
+                                                             boolean pIsStochasticSimulator) throws DataNotFoundException
     {
         // loop through all reactions, and for each reaction, compute the reaction probability
         int numReactions = pReactions.length;
@@ -562,11 +572,16 @@ public abstract class Simulator
         Reaction reaction = null;
         double reactionProbability = 0.0;
 
+        if(pHasExpressionValues)
+        {
+            clearExpressionValueCaches(pNonDynamicSymbolValues);
+        }
+
         for(int reactionCtr = numReactions; --reactionCtr >= 0; )
         {
             reaction = pReactions[reactionCtr];
 
-            reactionProbability = reaction.computeRate(pSymbolEvaluator);
+            reactionProbability = reaction.computeRate(pSymbolEvaluator, pIsStochasticSimulator);
 
             // store reaction probability
             pReactionProbabilities[reactionCtr] = reactionProbability;
@@ -587,14 +602,12 @@ public abstract class Simulator
         return(compositeRate);
     }
 
-    protected final void clearExpressionValueCaches()
+    protected static final void clearExpressionValueCaches(Value []pNonDynamicSymbolValues)
     {
-        if(mHasExpressionValues)
+        int numNonDynamicSymbols = pNonDynamicSymbolValues.length;
+        for(int ctr = numNonDynamicSymbols; --ctr >= 0; )
         {
-            for(int ctr = mNonDynamicSymbolValues.length; --ctr >= 0; )
-            {
-                mNonDynamicSymbolValues[ctr].clearExpressionValueCache();
-            }
+            pNonDynamicSymbolValues[ctr].clearExpressionValueCache();
         }
     }
 
@@ -603,11 +616,17 @@ public abstract class Simulator
                                                   Object []pDynamicSymbolAdjustmentVectors,
                                                   double []pReactionProbabilities,
                                                   double []pTempDynamicSymbolValues,
-                                                  double []pDynamicSymbolDerivatives) throws DataNotFoundException
+                                                  double []pDynamicSymbolDerivatives,
+                                                  boolean pHasExpressionValues,
+                                                  Value []pNonDynamicSymbolValues,
+                                                  boolean pIsStochasticSimulator) throws DataNotFoundException
     {
         computeReactionProbabilities(pSymbolEvaluator,
                                      pReactionProbabilities,
-                                     pReactions);
+                                     pReactions,
+                                     pHasExpressionValues,
+                                     pNonDynamicSymbolValues,
+                                     pIsStochasticSimulator);
 
         int numReactions = pReactions.length;
         Reaction reaction = null;
