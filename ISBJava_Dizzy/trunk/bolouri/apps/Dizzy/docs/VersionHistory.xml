@@ -81,6 +81,10 @@ in some cases.</li>
 incorrect model in the editor pane, leads to a <code>NullPointerException</code>.</li>
 <li>Fixed a bug where models were not displaying correctly within Cytoscape, since
 version 1.0.0.  This is because the Cytoscape SBML reader requires SBML Level 1, version 1.</li>
+<li>Fixed a bug where the &quot;Save As...&quot; menu item was not being
+enabled under the correct conditions (it should be enabled whenever the
+editor buffer is not empty).</li>
+<li>Fixed a bug where the &quot;Reload model&quot; feature was not working properly.</li>
 </ul>
 </td>
 <td><a href="&javaURL;/1.2.0/&installerDownloadRelURL;">1.2.0</a></td>

@@ -78,6 +78,11 @@ to the <code>org.systemsbiology.chem.app.CytoscapeViewer</code> class.</li>
 so that it is capable of exporting SBML Level 1, versions 1 <em>and</em> 2.  Previously it
 was only capable of exporting version 2.  The version 1 export is needed for the
 <code>org.systemsbiology.chem.app.CytoscapeViewer</code> to export a model to Cytoscape.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.app.MainApp</code> where the 
+<code>MainMenu.MenuItem.FILE_SAVE_AS</code> menu item was not being enabled
+under the correct conditions.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.app.SimulationLauncher</code> where model
+reloading (into the simulation launcher window) was not working properly.</li>
 </ul>
 </td>
 </tr>
