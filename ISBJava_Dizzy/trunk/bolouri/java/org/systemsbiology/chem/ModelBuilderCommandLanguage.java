@@ -134,6 +134,26 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         }
     }
 
+    static class LoopIndex extends SymbolValue
+    {
+        public LoopIndex(String pIndexName, int pValue)
+        {
+            super(pIndexName);
+            setValue(new Value((double) pValue));
+        }
+
+        public void setValue(int pValue)
+        {
+            getValue().setValue((double) pValue);
+        }
+
+        public String toString()
+        {
+            int value = (int) getValue().getValue();
+            return(Integer.toString(value));
+        }
+    }
+
     private Pattern mSearchPatternMath;
 
     private Pattern getSearchPatternMath()
