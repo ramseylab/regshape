@@ -14,6 +14,7 @@ import java.util.Random;
 
 public abstract class Simulator 
 {
+    protected String []mDynamicSymbolNames;
     protected double []mDynamicSymbolValues;         
     protected double []mInitialDynamicSymbolValues;  // saves a copy of the initial data
     protected Value []mNonDynamicSymbolValues;
@@ -24,6 +25,9 @@ public abstract class Simulator
     protected HashMap mSymbolMap;
     protected SimulationController mSimulationController;
     protected boolean mInitialized;
+    protected Species []mDynamicSymbols;
+
+    public static final int NULL_REACTION = -1;
 
     static void indexSymbolArray(SymbolValue []pSymbolArray, 
                                  HashMap pSymbolMap, 
@@ -84,10 +88,12 @@ public abstract class Simulator
 
         // get an array of all dynamical SymbolValues in the model
         Species []dynamicSymbols = pModel.constructDynamicSymbolsArray();
+        mDynamicSymbols = dynamicSymbols;
         int numDynamicSymbols = dynamicSymbols.length;
 
         // create an array of doubles to hold the dynamical symbols' values
         double []dynamicSymbolValues = new double[numDynamicSymbols];
+        String []dynamicSymbolNames = new String[numDynamicSymbols];
 
         mDynamicSymbolValues = dynamicSymbolValues;
 
@@ -98,7 +104,10 @@ public abstract class Simulator
             assert (null != symbolValue.getValue()) : "null value for symbol: " + symbolValue.getSymbol().getName();
             double symbolValueDouble = symbolValue.getValue().getValue();
             dynamicSymbolValues[symbolCtr] = symbolValueDouble;
+            dynamicSymbolNames[symbolCtr] = symbolValue.getSymbol().getName();
         }
+
+        mDynamicSymbolNames = dynamicSymbolNames;
 
         double []initialDynamicSymbolValues = new double[numDynamicSymbols];
         System.arraycopy(dynamicSymbolValues, 0, initialDynamicSymbolValues, 0, numDynamicSymbols);
@@ -295,6 +304,7 @@ public abstract class Simulator
                                   Object []pRetSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException;
 
 
+
     protected static final double computeReactionProbabilities(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
                                                                SymbolEvaluatorChemSimulation pSymbolEvaluator,
                                                                double []pReactionProbabilities,
@@ -324,5 +334,5 @@ public abstract class Simulator
         return(aggregateReactionProbability);
     }
 
-
+                                                             
 }

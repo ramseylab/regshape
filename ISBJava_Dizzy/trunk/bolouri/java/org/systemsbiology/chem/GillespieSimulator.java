@@ -5,6 +5,7 @@ import org.systemsbiology.math.Symbol;
 import org.systemsbiology.math.SymbolEvaluator;
 import org.systemsbiology.math.MathFunctions;
 import org.systemsbiology.math.MutableDouble;
+import org.systemsbiology.math.MutableInteger;
 import org.systemsbiology.util.DataNotFoundException;
 import org.systemsbiology.util.InvalidInputException;
 import org.systemsbiology.util.IAliasableClass;
@@ -20,45 +21,15 @@ import java.util.Random;
  *
  * @author Stephen Ramsey
  */
-public class GillespieSimulator extends Simulator implements IAliasableClass, ISimulator
+public class GillespieSimulator extends StochasticSimulator implements IAliasableClass, ISimulator
 {
     public static final String CLASS_ALIAS = "gillespie-direct"; 
 
-    private Random mRandomNumberGenerator;
 
-
-    private void setRandomNumberGenerator(Random pRandomNumberGenerator)
-    {
-        mRandomNumberGenerator = pRandomNumberGenerator;
-    }
-
-    private Random getRandomNumberGenerator()
-    {
-        return(mRandomNumberGenerator);
-    }
-
-    private static final double getRandomNumberUniformInterval(Random pRandomNumberGenerator)
-    {
-        return( 1.0 - pRandomNumberGenerator.nextDouble() );
-    }
-
-    private static final double chooseDeltaTimeToNextReaction(Random pRandomNumberGenerator,
-                                                              double pAggregateReactionProbability)
-    {
-        double randomNumberUniformInterval = getRandomNumberUniformInterval(pRandomNumberGenerator);
-        double inverseRandomNumberUniformInterval = 1.0 / randomNumberUniformInterval;
-        assert (randomNumberUniformInterval >= 0.0) : ("randomNumberUniformInterval: " + randomNumberUniformInterval);
-        double logInverseRandomNumberUniformInterval = Math.log(inverseRandomNumberUniformInterval);
-        double timeConstant = 1.0 / pAggregateReactionProbability;
-
-        double deltaTime = timeConstant * logInverseRandomNumberUniformInterval;
-        return(deltaTime);
-    }
-
-    private static final Reaction chooseTypeOfNextReaction(Random pRandomNumberGenerator,
-                                                           double pAggregateReactionProbabilityDensity, 
-                                                           Reaction []pReactions,
-                                                           double []pReactionProbabilities) throws IllegalArgumentException
+    private static final int chooseIndexOfNextReaction(Random pRandomNumberGenerator,
+                                                       double pAggregateReactionProbabilityDensity, 
+                                                       Reaction []pReactions,
+                                                       double []pReactionProbabilities) throws IllegalArgumentException
     {
         double randomNumberUniformInterval = getRandomNumberUniformInterval(pRandomNumberGenerator);
 
@@ -72,6 +43,7 @@ public class GillespieSimulator extends Simulator implements IAliasableClass, IS
         }
 
         int numReactions = pReactions.length;
+        int reactionIndex = -1;
         Reaction reaction = null;
         for(int reactionCtr = numReactions - 1; reactionCtr >= 0; --reactionCtr)
         {
@@ -80,26 +52,13 @@ public class GillespieSimulator extends Simulator implements IAliasableClass, IS
             cumulativeReactionProbabilityDensity += reactionProbability;
             if(cumulativeReactionProbabilityDensity >= fractionOfAggregateReactionProbabilityDensity)
             {
+                reactionIndex = reactionCtr;
                 break;
             }
         }
-        assert (null != reaction) : "null reaction found in chooseTypeOfNextReaction";
-        return(reaction);
+        assert (-1 != reactionIndex) : "null reaction found in chooseTypeOfNextReaction";
+        return(reactionIndex);
     }
-
-    private void checkDynamicalSymbolsInitialValues() throws InvalidInputException
-    {
-        int numDynamicalSymbols = mInitialDynamicSymbolValues.length;
-        for(int ctr = 0; ctr < numDynamicalSymbols; ++ctr)
-        {
-            double initialValue = mInitialDynamicSymbolValues[ctr];
-            if(initialValue > 1.0 && (initialValue - 1.0 == initialValue))
-            {
-                throw new InvalidInputException("initial species population value for species is too large for the Gillespie Simulator");
-            }
-        }
-    }
-
 
     private static final double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
                                         SymbolEvaluatorChemSimulation pSymbolEvaluator,
@@ -108,9 +67,19 @@ public class GillespieSimulator extends Simulator implements IAliasableClass, IS
                                         double []pReactionProbabilities,
                                         Random pRandomNumberGenerator,
                                         double []pDynamicSymbolValues,
-                                        double []pNewDynamicSymbolValues) throws DataNotFoundException, IllegalStateException
+                                        MutableInteger pLastReactionIndex) throws DataNotFoundException, IllegalStateException
     {
         double time = pSymbolEvaluator.getTime();
+
+        int lastReactionIndex = pLastReactionIndex.getValue();
+        if(lastReactionIndex >= 0)
+        {
+            Reaction lastReaction = pReactions[lastReactionIndex];
+
+            updateSymbolValuesForReaction(pSymbolEvaluator,
+                                          lastReaction,
+                                          pDynamicSymbolValues);
+        }
 
         // loop through all reactions, and for each reaction, compute the reaction probability
         int numReactions = pReactions.length;
@@ -128,19 +97,15 @@ public class GillespieSimulator extends Simulator implements IAliasableClass, IS
                                                                            aggregateReactionProbability);
 
             
-            // choose type of next reaction
-            Reaction reaction = chooseTypeOfNextReaction(pRandomNumberGenerator,
+            int reactionIndex = chooseIndexOfNextReaction(pRandomNumberGenerator,
                                                          aggregateReactionProbability,
                                                          pReactions,
                                                          pReactionProbabilities);
+            // choose type of next reaction
+            Reaction reaction = pReactions[reactionIndex];
             
-            
-            double []dynamicSymbolAdjustmentVector = reaction.getDynamicSymbolAdjustmentVector();
-            
-            MathFunctions.vectorAdd(pDynamicSymbolValues, dynamicSymbolAdjustmentVector, pNewDynamicSymbolValues);
-            
-            MathFunctions.vectorZeroNegativeElements(pDynamicSymbolValues);
-            
+            pLastReactionIndex.setValue(reactionIndex);
+
             time += deltaTimeToNextReaction;
         }
         else
@@ -158,7 +123,7 @@ public class GillespieSimulator extends Simulator implements IAliasableClass, IS
     {
         initializeSimulator(pModel, pSimulationController);
         checkDynamicalSymbolsInitialValues();
-        setRandomNumberGenerator(new Random(System.currentTimeMillis()));
+        initializeRandomNumberGenerator();
     }
 
 
@@ -221,11 +186,11 @@ public class GillespieSimulator extends Simulator implements IAliasableClass, IS
 
         int numRequestedSymbols = requestedSymbols.length;
 
-        double []newSimulationSymbolValues = new double[numDynamicSymbolValues];
-
         boolean isCancelled = false;
 
         int timeCtr = 0;
+
+        MutableInteger lastReactionIndex = new MutableInteger(NULL_REACTION);
 
         for(int simCtr = pNumSteps; --simCtr >= 0; )
         {
@@ -233,9 +198,7 @@ public class GillespieSimulator extends Simulator implements IAliasableClass, IS
 
             double time = pStartTime;
             prepareForSimulation(time);
-
-            // set "last" values for dynamic symbols to be same as initial values
-            System.arraycopy(dynamicSymbolValues, 0, newSimulationSymbolValues, 0, numDynamicSymbolValues);
+            lastReactionIndex.setValue(NULL_REACTION);
 
 //            int numIterations = 0;
 
@@ -248,7 +211,7 @@ public class GillespieSimulator extends Simulator implements IAliasableClass, IS
                                reactionProbabilities,
                                randomNumberGenerator,
                                dynamicSymbolValues,
-                               newSimulationSymbolValues);
+                               lastReactionIndex);
                 
 //                ++numIterations;
 
@@ -267,8 +230,6 @@ public class GillespieSimulator extends Simulator implements IAliasableClass, IS
                         break;
                     }
                 }
-
-                System.arraycopy(newSimulationSymbolValues, 0, dynamicSymbolValues, 0, numDynamicSymbolValues);
             }
             
             if(isCancelled)

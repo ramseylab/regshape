@@ -259,6 +259,8 @@ public class SimulationLauncher
         {
             ISimulator simulator = pSimulationRunParameters.mSimulator;
 
+            long startTime = System.currentTimeMillis(); 
+
             simulator.simulate(pSimulationRunParameters.mStartTime,
                                pSimulationRunParameters.mEndTime,
                                pSimulationRunParameters.mNumTimePoints,
@@ -266,6 +268,9 @@ public class SimulationLauncher
                                pSimulationRunParameters.mRequestedSymbolNames,
                                pSimulationRunParameters.mRetTimeValues,
                                pSimulationRunParameters.mRetSymbolValues);
+
+            long deltaTime = System.currentTimeMillis() - startTime;
+            System.out.println("simulation time: " + ((double) deltaTime)/1000.0 + " seconds");
 
             handleOutput(pSimulationRunParameters.mOutputType,
                          pSimulationRunParameters.mOutputFileName,
