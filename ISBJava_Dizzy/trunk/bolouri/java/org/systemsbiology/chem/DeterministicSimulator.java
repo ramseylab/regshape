@@ -394,11 +394,16 @@ public class DeterministicSimulator extends Simulator implements IAliasableClass
         pSymbolEvaluator.setTime(time);
     }
 
+    private void resetScratchpad()
+    {
+        int numDynamicSymbols = mDynamicSymbolValues.length;
+        mRKScratchPad = new RKScratchPad(numDynamicSymbols);
+    }
+
     public void initialize(Model pModel, SimulationController pSimulationController) throws DataNotFoundException
     {
         initializeSimulator(pModel, pSimulationController);
-        int numDynamicSymbols = mDynamicSymbolValues.length;
-        mRKScratchPad = new RKScratchPad(numDynamicSymbols);
+        resetScratchpad();
     }
 
     public void simulate(double pStartTime, 
@@ -464,7 +469,7 @@ public class DeterministicSimulator extends Simulator implements IAliasableClass
         double time = pStartTime;
         
         prepareForSimulation(time);
-        
+
         // set "last" values for dynamic symbols to be same as initial values
         System.arraycopy(dynamicSymbolValues, 0, newSimulationSymbolValues, 0, numDynamicSymbolValues);
 
