@@ -1064,6 +1064,7 @@ public class SignificanceCalculatorDriver
         resultsScrollPane.setPreferredSize(new Dimension(500, 200));
         resultsScrollPane.setMinimumSize(new Dimension(500, 200));
         resultsScrollPane.setBorder(BorderFactory.createEtchedBorder());
+        mResultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
