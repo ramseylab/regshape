@@ -72,6 +72,10 @@ same human-readable format to a file, using the &quot;Export&quot; menu item.</l
 that occurs when there is a syntax error inside nested loops.</li>
 <li>Modified the simulation launcher to permit the user to optionally specify a 
 texual label that is added as a subtitle to the simulation results plot.</li>
+<li>Fixed a bug in the on-line help search screen where the &quot;jump to next
+search hit&quot; feature was not working for any searches after the first search.</li>
+<li>Added a text area to the on-line help search screen, that explains the
+&quot;jump to the next search hit&quot; feature.</li>
 </ul>
 </td>
 <td><a href="&javaURL;/1.4.0/&installerDownloadRelURL;">1.4.0</a></td>

@@ -77,6 +77,10 @@ nested loops.</li>
 <li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code> to permit
 the user to specify a texual label that is added as a subtitle to the simulation results 
 plot.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.app.ExHelpSearchNavigatorUI</code> 
+where the search hit index was not getting re-set to zero for a subsequent search.</li>
+<li>Added a text area to the <code>org.systemsbiology.chem.app.ExHelpSearchNavigatorUI</code>, 
+that explains the &quot;jump to the next search hit&quot; feature.</li>
 </ul>
 </td>
 
