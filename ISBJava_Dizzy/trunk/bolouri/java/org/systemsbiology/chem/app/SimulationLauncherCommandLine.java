@@ -40,14 +40,17 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     private static final String ENSEMBLE_SIZE_ARG = "-ensembleSize";
     private static final String REL_TOLERANCE_ARG = "-relativeTolerance";
     private static final String ABS_TOLERANCE_ARG = "-absoluteTolerance";
-    private static final String MIN_TIME_STEPS_ARG = "-minTimeSteps";
+    private static final String STEP_SIZE_FRACTION_ARG = "-stepSizeFraction";
+    private static final String NUM_HISTORY_BINS_ARG = "-numHistoryBins";
     private static final String MODEL_FILE_ARG = "-modelFile";
     private static final String OUTPUT_FILE_ARG = "-outputFile";
     private static final String OUTPUT_FILE_FORMAT_ARG = "-outputFormat";
     private static final TimeSeriesOutputFormat DEFAULT_OUTPUT_FORMAT = TimeSeriesOutputFormat.CSV_EXCEL;
+    private static final String TEST_ONLY_ARG = "-testOnly";
     private static final String PRINT_STATUS_ARG = "-printStatus";
     private static final String STATUS_SECONDS_ARG = "-statusSeconds";
     private static final String COMPUTE_FLUCTUATIONS_ARG = "-computeFluctuations";
+    private static final String PRINT_PARAMETERS_ARG = "-printParameters";
 
     private boolean mDebug;
     private String mParserAlias;
@@ -63,16 +66,16 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     private Double mStartTime;
     private Double mStopTime;
     private Integer mNumSamples;
-    private Long mEnsembleSize;
+    private Integer mEnsembleSize;
     private Double mRelativeTolerance;
     private Double mAbsoluteTolerance;
-    private Long mMinTimeSteps;
+    private Double mStepSizeFraction;
+    private Integer mNumHistoryBins;
+
     private PrintWriter mOutputFilePrintWriter;
     private TimeSeriesOutputFormat mOutputFileFormat;
     private SimulationProgressReporter mSimulationProgressReporter;
     private boolean mComputeFluctuations;
-
-    private long mMinNumPoints;
 
     
     private boolean getDebug()
@@ -175,11 +178,13 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     protected void printUsage(OutputStream pOutputStream)
     {
         PrintWriter pw = new PrintWriter(pOutputStream);
-        pw.println("usage:    java " + getClass().getName() + " [-debug] [-parser <parserAlias>] [-startTime <startTime_float>] -stopTime <stopTime_float> [-numSamples <numSamples_int>] [-ensembleSize <ensembleSize_long>] [-relativeTolerance <tolerance_float>] [-absoluteTolerance <tolerance_float>] [-minTimeSteps <steps_long>] -simulator <simulatorAlias> -modelFile <modelFile> [-outputFile <outputFile>] [-outputFormat <formatAlias>] [-printStatus [-statusSeconds <intervalSeconds>]] [-computeFluctuations]");
+        pw.println("usage:    java " + getClass().getName() + " [-debug] [-parser <parserAlias>] [-startTime <startTime_float>] -stopTime <stopTime_float> [-numSamples <numSamples_int>] [-ensembleSize <ensembleSize_int>] [-relativeTolerance <tolerance_float>] [-absoluteTolerance <tolerance_float>] [-stepSizeFraction <numHistoryBins_double>] [-numHistoryBins <numHistoryBins_int>] -simulator <simulatorAlias> -modelFile <modelFile> [-outputFile <outputFile>] [-outputFormat <formatAlias>] [-printStatus [-statusSeconds <intervalSeconds>]] [-computeFluctuations] [-testOnly] [-printParameters]");
         pw.println("  <parserAlias>:   the alias of the class implementing the interface ");
         pw.println("                   org.systemsbiology.chem.IModelBuilder (default is determined");
         pw.println("                   by file extension");
         pw.println("  <modelFile>:     the full filename of the model definition file to be loaded");
+        pw.println("[-testOnly]:       do not run an actual simulation; just parse the command-line and exit");
+        pw.println("[-debug]:          print out debugging information, including all of the simulator parameter values]");
         pw.println("\nThe list of allowed values for the \"-parser\" argument is:    ");
         pw.print(getParserAliasesList());
         pw.println("(If you do not specify a parser, the file suffix is used to select one)\n");
@@ -191,6 +196,10 @@ public class SimulationLauncherCommandLine extends CommandLineApp
         pw.println("\nArguments can be in any order.");
         pw.println("If the argument \"-outputFile\" is not specified, the");
         pw.println("simulation results are printed to standard output.");
+        pw.println("\nFor more information, please consult the user manual.");
+        pw.println("To see this help screen, run with the \"-help\" option.");
+        pw.println("To print the default parameters for simulator \"mysim\" and then exit, run:");
+        pw.println("this program with the options \"-simulator mysim -printParameters\"");
         pw.flush();
     }
 
@@ -238,6 +247,8 @@ public class SimulationLauncherCommandLine extends CommandLineApp
         mOutputFileFormat = DEFAULT_OUTPUT_FORMAT;
         mPrintStatusSeconds = null;
         mComputeFluctuations = false;
+        boolean testOnly = false;
+        boolean printParameters = false;
 
         for(int argCtr = 0; argCtr < numArgs; ++argCtr)
         {
@@ -279,6 +290,10 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             {
                 mStopTime = getRequiredDoubleArgumentModifier(STOP_TIME_ARG, pArgs, ++argCtr);
             }
+            else if(arg.equals(PRINT_PARAMETERS_ARG))
+            {
+                printParameters = true;
+            }
             else if(arg.equals(NUM_SAMPLES_ARG))
             {
                 mNumSamples = getRequiredIntegerArgumentModifier(NUM_SAMPLES_ARG, pArgs, ++argCtr);
@@ -289,7 +304,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             }
             else if(arg.equals(ENSEMBLE_SIZE_ARG))
             {
-                mEnsembleSize = getRequiredLongArgumentModifier(ENSEMBLE_SIZE_ARG, pArgs, ++argCtr);
+                mEnsembleSize = getRequiredIntegerArgumentModifier(ENSEMBLE_SIZE_ARG, pArgs, ++argCtr);
             }
             else if(arg.equals(REL_TOLERANCE_ARG))
             {
@@ -299,9 +314,14 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             {
                 mAbsoluteTolerance = getRequiredDoubleArgumentModifier(ABS_TOLERANCE_ARG, pArgs, ++argCtr);
             }
-            else if(arg.equals(MIN_TIME_STEPS_ARG))
+            else if(arg.equals(STEP_SIZE_FRACTION_ARG))
             {
-                mMinTimeSteps = getRequiredLongArgumentModifier(MIN_TIME_STEPS_ARG, pArgs, ++argCtr);
+                mStepSizeFraction = getRequiredDoubleArgumentModifier(STEP_SIZE_FRACTION_ARG, pArgs, ++argCtr);
+            }
+
+            else if(arg.equals(NUM_HISTORY_BINS_ARG))
+            {
+                mNumHistoryBins = getRequiredIntegerArgumentModifier(NUM_HISTORY_BINS_ARG, pArgs, ++argCtr);
             }
             else if(arg.equals(MODEL_FILE_ARG))
             {
@@ -347,11 +367,10 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                 }
                 mOutputFileFormat = outputFormat;
             }
-        }
-
-        if(null == mStopTime)
-        {
-            handleCommandLineError("required argument not supplied: " + STOP_TIME_ARG);
+            else if(arg.equals(TEST_ONLY_ARG))
+            {
+                testOnly = true;
+            }
         }
 
         if(null == mSimulator)
@@ -359,14 +378,9 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             handleCommandLineError("required argument not supplied: " + SIMULATOR_ARG);
         }
 
-        if(null == mModelFile)
-        {
-            handleCommandLineError("required model name was not specified");
-        }
-
         if(null != mEnsembleSize)
         {
-            mSimulatorParameters.setEnsembleSize(mEnsembleSize.longValue());
+            mSimulatorParameters.setEnsembleSize(mEnsembleSize.intValue());
         }
 
         if(null != mRelativeTolerance)
@@ -379,17 +393,22 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             mSimulatorParameters.setMaxAllowedAbsoluteError(mAbsoluteTolerance.doubleValue());
         }
 
-        mSimulatorParameters.setFlagGetFinalSymbolFluctuations(mComputeFluctuations);
+        mSimulatorParameters.setComputeFluctuations(mComputeFluctuations);
         if(mComputeFluctuations && (mSimulator instanceof org.systemsbiology.chem.SimulatorStochasticBase)
             && null != mEnsembleSize 
-            && mEnsembleSize.longValue() <= 1)
+            && mEnsembleSize.intValue() <= 1)
         {
             handleCommandLineError("for a stochastic simulator, an ensemble size of greater than one is required, in order to compute the final symbol fluctuations");
         }
 
-        if(null != mMinTimeSteps)
+        if(null != mStepSizeFraction)
         {
-            mSimulatorParameters.setMinNumSteps(mMinTimeSteps.longValue());
+            mSimulatorParameters.setStepSizeFraction(mStepSizeFraction.doubleValue());
+        }
+
+        if(null != mNumHistoryBins)
+        {
+            mSimulatorParameters.setNumHistoryBins(mNumHistoryBins.intValue());
         }
 
         if(null == mOutputFilePrintWriter)
@@ -401,6 +420,23 @@ public class SimulationLauncherCommandLine extends CommandLineApp
         {
             handleCommandLineError("the option \"statusSeconds\" requires the option \"printStatus\"");
         }
+
+        if(printParameters)
+        {
+            System.err.println(mSimulatorParameters.toString());
+            System.exit(0);
+        }
+
+        if(null == mStopTime)
+        {
+            handleCommandLineError("required argument not supplied: " + STOP_TIME_ARG);
+        }
+
+        if(null == mModelFile)
+        {
+            handleCommandLineError("required model name was not specified");
+        }
+
 
         if(null == getParserAlias())
         {
@@ -418,8 +454,27 @@ public class SimulationLauncherCommandLine extends CommandLineApp
         if(getDebug())
         {
             System.err.println("using parser alias: " + getParserAlias());
+            System.err.println("using simulator parameters:");
+            System.err.println(mSimulatorParameters.toString());
         }
 
+        if(testOnly)
+        {
+            try
+            {
+                mSimulator.checkSimulationParameters(mStartTime.doubleValue(),
+                                                     mStopTime.doubleValue(),
+                                                     mSimulatorParameters,
+                                                     mNumSamples.intValue());
+                System.exit(0);
+            }
+            catch(Exception e)
+            {
+                System.err.println("simulation parameters were invalid; here is the specific error message: ");
+                e.printStackTrace(System.err);
+                System.exit(1);
+            }
+        }
     }
 
     private void run(String []pArgs)
