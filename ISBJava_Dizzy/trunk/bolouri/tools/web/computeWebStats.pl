@@ -22,7 +22,12 @@
 # and uploads the JPEG images of the web counters to the image directory on
 # the web server.
 #
-# Required programs that must be installed in order to use this software:
+# Usage:  computeWebStats.pl [app1] [installer1] [app2] [installer2] ...
+# 
+# where "app1" is the application name of the first application, and
+# "installer1" is the name of the installer of the first application, and so on.
+#
+# Required programs that must be installed in order to use this software are:
 #  - NCFTP (specifically, we use the "ncftpget" program from this package)
 #  - Webalizer (which also requires the Berkeley Database library "libdb" with the v1.85-compatible API)
 #  - Perl
@@ -32,6 +37,8 @@
 # Stephen Ramsey
 # 2004/06/09
 #
+use strict;
+use lib ("/local/lib/perl5/site_perl/5.8.0/i386-linux-thread-multi");
 use GD;
 
 sub SCRATCH_DIR() {'/local/var/webstats'}
@@ -61,6 +68,49 @@ sub text_to_jpg($$)
     close(OUTPUT_FILE);
 }
 
+sub showUsage()
+{
+    print "Usage:\ncomputeWebStats appName installerName\n";
+}
+
+sub computeWebStats($$$)
+{
+    my $logFile = $_[0];
+    my $appName = $_[1];
+    my $installerName = $_[2];
+    
+    # handle application downloads counter
+    open(DOWNLOADS, "<" . SCRATCH_DIR . "/${appName}Downloads.txt") or die("unable to open ${appName} downloads file, for reading");
+    my $numDownloads = <DOWNLOADS>;
+    close(DOWNLOADS);
+    if(! defined($numDownloads))
+    {
+        $numDownloads = 0;
+    }
+    $numDownloads += `/bin/grep $installerName $logFile | /usr/bin/wc --lines`;
+    open(DOWNLOADS, ">" . SCRATCH_DIR . "/${appName}Downloads.txt") or die("unable do open ${appName} downloads file, for writing");
+    print DOWNLOADS $numDownloads . "\n";
+    close(DOWNLOADS);
+    text_to_jpg($numDownloads, SCRATCH_DIR . "/${appName}Downloads.jpg");
+    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/${appName}/images " . SCRATCH_DIR . "/${appName}Downloads.jpg") and die("unable to FTP ${appName}Downloads.jpg file to FTP server");
+    
+    # handle visitors counter
+    open(VISITORS, "<" . SCRATCH_DIR . "/${appName}Visitors.txt") or die("unable to open ${appName} visitors file, for reading");
+    my $numVisitors = <VISITORS>;
+    close(VISITORS);
+    if(! defined($numVisitors))
+    {
+        $numVisitors = 0;
+    }
+    $numVisitors += `/bin/grep '/${appName}/ HTTP' $logFile | /usr/bin/wc --lines`;
+    open(VISITORS, ">" . SCRATCH_DIR . "/${appName}Visitors.txt") or die("unable do open ${appName} visitors file, for writing");
+    print VISITORS $numVisitors . "\n";
+    close(VISITORS);
+    text_to_jpg($numVisitors, SCRATCH_DIR . "/${appName}Visitors.jpg");
+    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/${appName}/images " . SCRATCH_DIR . "/${appName}Visitors.jpg") and die("unable to FTP ${appName}Visitors.jpg file to FTP server");
+    
+}
+
 sub main()
 {
     my $curTime = localtime();
@@ -72,103 +122,22 @@ sub main()
     my $logFile = $logFilePrefix . '-' . $suffix . '.log';
     system(BIN_DIR . "/ncftpget -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " " . SCRATCH_DIR . " " . REMOTE_FTP_DIR . "/" . LOG_FILE_PREFIX . ".log") and die("unable to obtain web statistics file");
     my $sysCall = "/bin/mv " . SCRATCH_DIR . '/' . LOG_FILE_PREFIX . '.log ' . $logFile;
-    warn "moving file: $sysCall";
     system($sysCall) and die("unable to move file\n"); 
     my $tempFile = TEMP_DIR . "/webstats-" . time() . "-" . $$ . ".log";
     system("/bin/cat " . $logFilePrefix . "*.log >> " . $tempFile) and die("unable to cat files to temp file: $tempFile");
     system(BIN_DIR . "/webalizer  -D " . SCRATCH_DIR . "/" . DNS_CACHE_FILE . " -N 10 -o " . DOCUMENT_ROOT . "/" . WEB_STATS_WEB_SUBDIR . " " . $tempFile) and die("unable to analyze log files");
     unlink($tempFile) or die("unable to delete temp file $tempFile");
 
-    # handle Dizzy downloads counter
-    open(DIZZY_DOWNLOADS, "<" . SCRATCH_DIR . "/DizzyDownloads.txt") or die("unable to open Dizzy downloads file, for reading");
-    my $numDizzyDownloads = <DIZZY_DOWNLOADS>;
-    close(DIZZY_DOWNLOADS);
-    if(! defined($numDizzyDownloads))
+    while(defined(my $appName = shift(@ARGV)))
     {
-        $numDizzyDownloads = 0;
+    	my $installerName = shift(@ARGV);
+    	if(! defined($installerName))
+    	{
+	 		die("no installer defined for app name: ${appName}");
+    	}
+    	
+	    computeWebStats($logFile, $appName, $installerName);
     }
-    $numDizzyDownloads += `/bin/grep insDizzy $logFile | /usr/bin/wc --lines`;
-    open(DIZZY_DOWNLOADS, ">" . SCRATCH_DIR . "/DizzyDownloads.txt") or die("unable do open Dizzy downloads file, for writing");
-    print DIZZY_DOWNLOADS $numDizzyDownloads . "\n";
-    close(DIZZY_DOWNLOADS);
-    text_to_jpg($numDizzyDownloads, SCRATCH_DIR . "/DizzyDownloads.jpg");
-    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/Dizzy/images " . SCRATCH_DIR . "/DizzyDownloads.jpg") and die("unable to FTP DizzyDownloads.jpg file to FTP server");
-
-    # handle ISBJava downloads counter
-    open(ISBJAVA_DOWNLOADS, "<" . SCRATCH_DIR . "/ISBJavaDownloads.txt") or die("unable to open ISBJava downloads file, for reading");
-    my $numISBJavaDownloads = <ISBJAVA_DOWNLOADS>;
-    close(ISBJAVA_DOWNLOADS);
-    if(! defined($numISBJavaDownloads))
-    {
-        $numISBJavaDownloads = 0;
-    }
-    $numISBJavaDownloads += `/bin/grep insISBJ $logFile | /usr/bin/wc --lines`;
-    open(ISBJAVA_DOWNLOADS, ">" . SCRATCH_DIR . "/ISBJavaDownloads.txt") or die("unable do open ISBJava downloads file, for writing");
-    print ISBJAVA_DOWNLOADS $numISBJavaDownloads . "\n";
-    close(ISBJAVA_DOWNLOADS);
-    text_to_jpg($numISBJavaDownloads, SCRATCH_DIR . "/ISBJavaDownloads.jpg");
-    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/ISBJava/images " . SCRATCH_DIR . "/ISBJavaDownloads.jpg") and die("unable to FTP ISBJavaDownloads.jpg file to FTP server");
-
-    # handle Pointillist downloads counter
-    open(POINTILLIST_DOWNLOADS, "<" . SCRATCH_DIR . "/PointillistDownloads.txt") or die("unable to open Pointillist downloads file, for reading");
-    my $numPointDownloads = <POINTILLIST_DOWNLOADS>;
-    close(POINTILLIST_DOWNLOADS);
-    if(! defined($numPointDownloads))
-    {
-        $numPointDownloads = 0;
-    }
-    $numPointDownloads += `/bin/grep insPoint $logFile | /usr/bin/wc --lines`;
-    open(POINTILLIST_DOWNLOADS, ">" . SCRATCH_DIR . "/PointillistDownloads.txt") or die("unable do open Pointillist downloads file, for writing");
-    print POINTILLIST_DOWNLOADS $numPointDownloads . "\n";
-    close(POINTILLIST_DOWNLOADS);
-    text_to_jpg($numPointDownloads, SCRATCH_DIR . "/PointillistDownloads.jpg");
-    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/Pointillist/images " . SCRATCH_DIR . "/PointillistDownloads.jpg") and die("unable to FTP PointillistDownloads.jpg file to FTP server");
-
-    # handle Dizzy visitors counter
-    open(DIZZY_VISITORS, "<" . SCRATCH_DIR . "/DizzyVisitors.txt") or die("unable to open Dizzy visitors file, for reading");
-    my $numDizzyVisitors = <DIZZY_VISITORS>;
-    close(DIZZY_VISITORS);
-    if(! defined($numDizzyVisitors))
-    {
-        $numDizzyVisitors = 0;
-    }
-    $numDizzyVisitors += `/bin/grep '/Dizzy/ HTTP' $logFile | /usr/bin/wc --lines`;
-    open(DIZZY_VISITORS, ">" . SCRATCH_DIR . "/DizzyVisitors.txt") or die("unable do open Dizzy visitors file, for writing");
-    print DIZZY_VISITORS $numDizzyVisitors . "\n";
-    close(DIZZY_VISITORS);
-    text_to_jpg($numDizzyVisitors, SCRATCH_DIR . "/DizzyVisitors.jpg");
-    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/Dizzy/images " . SCRATCH_DIR . "/DizzyVisitors.jpg") and die("unable to FTP DizzyVisitors.jpg file to FTP server");
-
-    # handle ISBJava visitors counter
-    open(ISBJAVA_VISITORS, "<" . SCRATCH_DIR . "/ISBJavaVisitors.txt") or die("unable to open ISBJava visitors file, for reading");
-    my $numISBJavaVisitors = <ISBJAVA_VISITORS>;
-    close(ISBJAVA_VISITORS);
-    if(! defined($numISBJavaVisitors))
-    {
-        $numISBJavaVisitors = 0;
-    }
-    $numISBJavaVisitors += `/bin/grep '/ISBJava/ HTTP' $logFile | /usr/bin/wc --lines`;
-    open(ISBJAVA_VISITORS, ">" . SCRATCH_DIR . "/ISBJavaVisitors.txt") or die("unable do open ISBJava visitors file, for writing");
-    print ISBJAVA_VISITORS $numISBJavaVisitors . "\n";
-    close(ISBJAVA_VISITORS);
-    text_to_jpg($numISBJavaVisitors, SCRATCH_DIR . "/ISBJavaVisitors.jpg");
-    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/ISBJava/images " . SCRATCH_DIR . "/ISBJavaVisitors.jpg") and die("unable to FTP ISBJavaVisitors.jpg file to FTP server");
-
-    # handle Pointillist visitors counter
-    open(POINTILLIST_VISITORS, "<" . SCRATCH_DIR . "/PointVisitors.txt") or die("unable to open Pointillist visitors file, for reading");
-    my $numPointVisitors = <POINTILLIST_VISITORS>;
-    close(POINTILLIST_VISITORS);
-    if(! defined($numPointVisitors))
-    {
-        $numPointVisitors = 0;
-    }
-    $numPointVisitors += `/bin/grep '/Pointillist/ HTTP' $logFile | /usr/bin/wc --lines`;
-    open(POINTILLIST_VISITORS, ">" . SCRATCH_DIR . "/PointillistVisitors.txt") or die("unable do open Pointillist visitors file, for writing");
-    print POINTILLIST_VISITORS $numPointVisitors . "\n";
-    close(POINTILLIST_VISITORS);
-    text_to_jpg($numPointVisitors, SCRATCH_DIR . "/PointillistVisitors.jpg");
-    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/Pointillist/images " . SCRATCH_DIR . "/PointillistVisitors.jpg") and die("unable to FTP PointillistVisitors.jpg file to FTP server");
-
 }
 
 main();
