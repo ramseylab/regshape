@@ -162,25 +162,29 @@ public abstract class SimulationService implements ISimulationService
             {
                 throw new SBWApplicationException("invalid number of points", "number of points requested is less than or equal to zero: " + pNumPoints);
             }
-            double []timeValues = new double[pNumPoints];
-            Object []symbolValues = new Object[pNumPoints];
 
             SimulatorParameters simulatorParameters = simulator.getDefaultSimulatorParameters();
-            
-            simulator.simulate(pStartTime,
-                               pEndTime,
-                               simulatorParameters,
-                               pNumPoints,
-                               pFilter,
-                               timeValues,
-                               symbolValues);
 
-            for(int timeIndex = 0; timeIndex < pNumPoints; ++timeIndex)
+            SimulationController simulationController = getSimulationController();
+
+            SimulationResults simulationResults = simulator.simulate(pStartTime,
+                                                                     pEndTime,
+                                                                     simulatorParameters,
+                                                                     pNumPoints,
+                                                                     pFilter);
+
+            if(! simulationController.getCancelled() && null != simulationResults)
             {
-                double []dataPoints = (double []) symbolValues[timeIndex];
-
-                // pass the data for this time point back to the caller
-                frontEnd.onRowData(dataPoints);
+                double []timeValues = simulationResults.getResultsTimeValues();
+                Object []symbolValues = simulationResults.getResultsSymbolValues();
+                
+                for(int timeIndex = 0; timeIndex < pNumPoints; ++timeIndex)
+                {
+                    double []dataPoints = (double []) symbolValues[timeIndex];
+                    
+                    // pass the data for this time point back to the caller
+                    frontEnd.onRowData(dataPoints);
+                }
             }
 
         }
