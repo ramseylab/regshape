@@ -44,7 +44,7 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
-<td><a href="../0.2.0/&installerDownloadRelURL;">0.2.0</a></td>
+<td><a href="../1.0.0/&installerDownloadRelURL;">1.0.0</a></td>
 <td>2005/04/05</td>
 <td>
 <ul>
@@ -52,8 +52,7 @@ This document contains the version history for the
   See the <a href="UserManual.html">User Manual</a> for more information.</li>
 </ul>
 </td>
-<!-- <td><a href="&javaURL;/2.2.0/download.html">2.2.0</a></td> -->
-<td>2.2.0 (not yet released officially)</td> 
+<td><a href="&javaURL;/2.2.0/download.html">2.2.0</a></td> 
 </tr>
 
 <tr valign="top">

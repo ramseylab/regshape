@@ -13,8 +13,8 @@
 %CommonConfig;
 
 <!ENTITY appName "Pointillist">
-<!ENTITY appVersionMajor "0">
-<!ENTITY appVersionMinor "2">
+<!ENTITY appVersionMajor "1">
+<!ENTITY appVersionMinor "0">
 <!ENTITY appVersionPatch "0">
 <!ENTITY appVersion "&appVersionMajor;.&appVersionMinor;.&appVersionPatch;">
 <!ENTITY appDate "2005/04/05">
