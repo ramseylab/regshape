@@ -44,6 +44,21 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.6.1/&installerDownloadRelURL;">1.6.1</a></td>
+<td>2004/03/12</td>
+<td>
+<ul>
+<li>Fixed some instability problems with the Gillespie Tau-Leap
+stochastic simulator.</li>
+<li>Made some speed improvements to the
+Gillespie Tau-Leap stochastic simulator.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.6.1/&installerDownloadRelURL;">1.6.1</a></td>
+</tr>
+
+
+<tr valign="top">
 <td><a href="../1.6.0/&installerDownloadRelURL;">1.6.0</a></td>
 <td>2004/03/10</td>
 <td>
@@ -69,6 +84,9 @@ with a delayed reaction with a large time delay, and a large
 <code>stopTime</code> parameter for the simulation.  In such cases, the
 initial step size could be too large for the delayed reaction solver to
 handle, which would cause the simulation to fail with an exception.</li>
+<li>Fixed a problem in the simulation engine, that was causing stochastic 
+simulations with a non-integer initial value for species populations,
+to become unstable.</li>
 </ul>
 </td>
 <td><a href="&javaURL;/1.6.0/&installerDownloadRelURL;">1.6.0</a></td>

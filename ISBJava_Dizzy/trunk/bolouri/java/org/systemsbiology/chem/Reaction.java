@@ -208,6 +208,11 @@ public final class Reaction extends SymbolValue
         pParameter.addSymbolToMap(mLocalSymbolsValuesMap, pParameter.getSymbolName());
     }
 
+    public boolean hasLocalSymbols()
+    {
+        return(mLocalSymbolsValuesMap.keySet().size() > 0);
+    }
+
     public void setNumSteps(int pNumSteps)
     {
         if(pNumSteps < 1)

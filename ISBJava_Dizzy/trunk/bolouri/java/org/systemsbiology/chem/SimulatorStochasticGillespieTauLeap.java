@@ -28,13 +28,16 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
     private static final double DEFAULT_MAX_ALLOWED_RELATIVE_ERROR = 0.005;
     private static final long DEFAULT_MIN_RATIO_OF_LEAP_TIME_TO_REACTION_TIME_SCALE = 10;
     private static final long MULTIPLIER_FOR_MIN_NUM_GILLESPIE_STEPS = 4;
-    private static final int MAX_LEAP_ATTEMPTS = 10;
+    private static final int MAX_FAILED_LEAP_ATTEMPTS_BEFORE_ABORT = 10;
+    private static final int NUM_EVALUATIONS_BEFORE_RECOMPUTE_FJJP = 10;
+    private static final long MIN_NUM_MILLISECONDS_FOR_PROGRESS_UPDATE = 4000;
 
     private Expression []mMu;
     private Expression []mSigma;
     private Object []mF;
+    private Object []mF_static;
     private double []mEstimatedSpeciesChange;
-//    private double []mMaxNumReactionFirings;
+    private boolean []mReactionHasLocalSymbolsFlags;
 
     private double mAllowedError;
     private Poisson mPoisson;
@@ -70,6 +73,7 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         mNumNonLeapIterationsSinceLastLeapCheck = 0;
         mLastIterationWasLeap = true;
     }
+
 
     protected double iterate(SymbolEvaluatorChem pSymbolEvaluator,
                              double pEndTime,
@@ -116,13 +120,15 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
 //                                              mMaxNumReactionFirings);
 
              leapTime = getLargestJumpConsistentWithAllowedError(pSymbolEvaluator,
-                                                                           mAllowedError,
-                                                                           pReactionProbabilities,
-                                                                           aggregateReactionProbability,
-                                                                           mF,
-                                                                           pReactions,
-                                                                           pDynamicSymbolValues,
-                                                                           mEstimatedSpeciesChange);
+                                                                 mAllowedError,
+                                                                 pReactionProbabilities,
+                                                                 aggregateReactionProbability,
+                                                                 mF,
+                                                                 mF_static,
+                                                                 pReactions,
+                                                                 pDynamicSymbolValues,
+                                                                 mEstimatedSpeciesChange,
+                                                                 mReactionHasLocalSymbolsFlags);
 
             if(leapTime >= (mMinRatioOfLeapTimeToReactionTimeScale / aggregateReactionProbability))
             {
@@ -227,55 +233,8 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
 
 //            System.out.println("tau-leap");
 
-//             Reaction reaction = null;
-//             double reactionProbability = 0.0;
-//             double maxNumFirings = 0.0;
-
-//             for(int j = numReactions; --j >= 0; )
-//             {
-//                 reaction = pReactions[j];
-//                 reactionProbability = pReactionProbabilities[j];
-
-//                 if(reactionProbability > 0.0)
-//                 {
-//                     long numFirings = 0;
-//                     double lambda = reactionProbability * leapTime;
-
-//                     maxNumFirings = mMaxNumReactionFirings[j];
-
-//                     if(lambda <= 0.8 * maxNumFirings)
-//                     {
-//                         boolean gotSuccessfulNumFirings = false;
-
-//                         do
-//                         {
-//                             try
-//                             {
-//                                 numFirings = (long) mPoisson.nextInt(lambda);
-//                                 gotSuccessfulNumFirings = true;
-//                             }
-//                             catch(ArrayIndexOutOfBoundsException e)
-//                             {
-//                                 System.err.println("internal bug in cern.jet.random.Poisson tripped; this is being handled");
-//                             }
-//                         }
-//                         while(! gotSuccessfulNumFirings);
-//                     }
-//                     else
-//                     {
-//                         numFirings = (long) lambda;
-//                     }
-                        
-//                     updateSymbolValuesForReaction(pSymbolEvaluator,
-//                                                   pReactions[j],
-//                                                   pDynamicSymbolValues,
-//                                                   pDelayedReactionSolvers,
-//                                                   numFirings);
-//                 }
-//             }
-
             boolean successfulLeap = false;
-            for(int failedLeaps = 0; failedLeaps < MAX_LEAP_ATTEMPTS; ++failedLeaps)
+            for(int failedLeaps = 0; failedLeaps < MAX_FAILED_LEAP_ATTEMPTS_BEFORE_ABORT; ++failedLeaps)
             {
                 successfulLeap = attemptLeap(pSymbolEvaluator,
                                              leapTime,
@@ -403,22 +362,6 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         return(succeeded);
     }
 
-    private double computeMuTime(int j, double pAllowedError, double pAggregateReactionProbability) throws DataNotFoundException
-    {
-        Reaction []reactions = mReactions;
-        Reaction reaction = reactions[j];
-        Object []F = mF;
-        Expression []Fj = (Expression []) F[j];
-        int numReactions = reactions.length;
-        double muj = 0.0;
-        for(int jp = 0; jp < numReactions; ++jp)
-        {
-            double  Fjjp = reaction.evaluateExpressionWithReactionRateLocalSymbolTranslation(Fj[jp], mSymbolEvaluator);
-            muj += mReactionProbabilities[jp] * Fjjp;
-        }
-        return(pAllowedError * pAggregateReactionProbability / Math.abs(muj));
-    }
-
     private static void getMaxNumberFiringsForReactions(SymbolEvaluatorChem pSymbolEvaluator,
                                                         Reaction []pReactions,
                                                         double []pSymbolValues,
@@ -474,9 +417,11 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
                                                                    double []pReactionProbabilities,
                                                                    double pSumReactionProbabilities,
                                                                    Object []pF,
+                                                                   Object []pF_static,
                                                                    Reaction []pReactions,
                                                                    double []pDynamicSpeciesValues,
-                                                                   double []pEstimatedSpeciesChange) throws DataNotFoundException
+                                                                   double []pEstimatedSpeciesChange,
+                                                                   boolean []pReactionHasLocalSymbolsFlags) throws DataNotFoundException
     {
         int numReactions = pReactionProbabilities.length;
         double jumpTime = Double.MAX_VALUE;
@@ -487,25 +432,57 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         double muj = 0.0;
         double fjjp = 0.0;
         double sigmaj = 0.0;
-        Reaction reaction = null;
         double fjjpTimesRate = 0.0;
 
         int numSpecies = pEstimatedSpeciesChange.length;
         double estimatedSpeciesChange = 0.0;
         double estimatedNumFirings = 0.0;
+        double rate = 0.0;
+        Expression []Fj = null;
+        Reaction reaction = null;
+        boolean reactionHasLocalSymbols = false;
 
+        double []Fj_static = null;
+        
         for(int j = numReactions; --j >= 0; )
         {
+            Fj = (Expression []) pF[j];
+            Fj_static = (double []) pF_static[j];
+
+            reaction = pReactions[j];
+            reactionHasLocalSymbols = pReactionHasLocalSymbolsFlags[j];
+
             muj = 0.0;
             sigmaj = 0.0;
-            Expression []Fj = (Expression []) pF[j];
-            reaction = pReactions[j];
+
             for(int jp = numReactions; --jp >= 0; )
             {
-                fjjp = reaction.evaluateExpressionWithReactionRateLocalSymbolTranslation(Fj[jp], pSymbolEvaluator);
-                fjjpTimesRate = fjjp * pReactionProbabilities[jp];
-                muj += fjjpTimesRate;
-                sigmaj += fjjp * fjjpTimesRate;
+                rate = pReactionProbabilities[jp];
+
+                if(rate > 0.0)
+                {
+                    if(null != Fj[jp])
+                    {
+                        if(reactionHasLocalSymbols)
+                        {
+                            fjjp = reaction.evaluateExpressionWithReactionRateLocalSymbolTranslation(Fj[jp], pSymbolEvaluator);
+                        }
+                        else
+                        {
+                            fjjp = Fj[jp].computeValue(pSymbolEvaluator);
+                        }
+                    }
+                    else
+                    {
+                        fjjp = Fj_static[jp];
+                    }
+                    if(fjjp > 0.0)
+                    {
+                        fjjpTimesRate = fjjp * rate;
+                        muj += fjjpTimesRate;
+                        sigmaj += fjjp * fjjpTimesRate;
+                    }
+                }
             }
 
             muVal = muFac / Math.abs(muj);
@@ -519,12 +496,9 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
             {
                 jumpTime = sigmaVal;
             }
-
         }
 
-        double rate = 0.0;
         double numFirings = 0.0;
-        DelayedReactionSolver []delayedSolvers = null;
 
         MathFunctions.vectorZeroElements(pEstimatedSpeciesChange);
 
@@ -538,13 +512,11 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
                 updateSymbolValuesForReaction(pSymbolEvaluator,
                                               pReactions[j],
                                               pEstimatedSpeciesChange,
-                                              delayedSolvers,
+                                              null,
                                               (long) numFirings);
             }
         }
 
-        numSpecies = pEstimatedSpeciesChange.length;
-        double newSpeciesValue = 0.0;
         double frac = 0.0;
         double minFrac = 1.0;
         double oldSpeciesValue = 0.0;
@@ -553,10 +525,9 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
             oldSpeciesValue = pDynamicSpeciesValues[i];
             if(oldSpeciesValue > 0.0)
             {
-                newSpeciesValue = oldSpeciesValue + pEstimatedSpeciesChange[i];
-                if(newSpeciesValue < 0.0)
+                if(oldSpeciesValue + pEstimatedSpeciesChange[i] < 0.0)
                 {
-                    frac = 0.5 * oldSpeciesValue/(-1.0 * pEstimatedSpeciesChange[i]);
+                    frac = -0.5 * oldSpeciesValue/pEstimatedSpeciesChange[i];
                     if(frac < minFrac)
                     {
                         minFrac = frac;
@@ -623,10 +594,13 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         }
 
         Object []f = new Object[numReactions];
+        Object []f_static = new Object[numReactions];
 
         for(int j = 0; j < numReactions; ++j)
         {
             Expression []fj = new Expression[numReactions];
+            double []fj_static = new double[numReactions];
+
             Expression []Jj = (Expression []) J[j];
             for(int jp = 0; jp < numReactions; ++jp)
             {
@@ -640,15 +614,37 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
                     Expression mult = Expression.multiply(Jji, vijp);
                     fjjp = Expression.add(fjjp, mult);
                 }
-                fj[jp] = fjjp;
-//                System.out.println("f[" + j + "][" + jp + "] = " + fjjp.toString());
+                if(! fjjp.isSimpleNumber())
+                {
+                    fj[jp] = fjjp;
+//                    System.out.println("f[" + j + "][" + jp + "] = " + fjjp.toString());
+                    fj_static[jp] = 0.0;
+                }
+                else
+                {
+                    fj[jp] = null;
+                    fj_static[jp] = fjjp.getSimpleNumberValue();
+                }
             }
+
             f[j] = fj;
+            f_static[j] = fj_static;
         }
 
         mF = f;
+        mF_static = f_static;
     }
 
+
+    private void initializeReactionHasLocalSymbolsFlags()
+    {
+        int numReactions = mReactions.length;
+        mReactionHasLocalSymbolsFlags = new boolean[numReactions];
+        for(int j = 0; j < numReactions; ++j)
+        {
+            mReactionHasLocalSymbolsFlags[j] = mReactions[j].hasLocalSymbols();
+        }
+    }
 
 
     public void initialize(Model pModel) throws DataNotFoundException, InvalidInputException
@@ -658,8 +654,8 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         initializeDynamicSymbolAdjustmentVectors(mDynamicSymbols);
         initializeF(mSymbolEvaluator);
         mEstimatedSpeciesChange = new double[mDynamicSymbolValues.length];
-//        mMaxNumReactionFirings = new double[mReactions.length];
-        mMinNumMillisecondsForUpdate = 4000;
+        initializeReactionHasLocalSymbolsFlags();
+        mMinNumMillisecondsForUpdate = MIN_NUM_MILLISECONDS_FOR_PROGRESS_UPDATE;
     }
 
     public String getAlias()

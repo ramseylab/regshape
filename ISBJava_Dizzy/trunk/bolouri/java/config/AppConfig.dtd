@@ -13,8 +13,8 @@
 %CommonConfig;
 
 <!ENTITY appName "&localJavaLibraryName;">
-<!ENTITY appVersion "1.6.11">
-<!ENTITY appDate "2004/03/11">
+<!ENTITY appVersion "1.6.1">
+<!ENTITY appDate "2004/03/12">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
 <!ENTITY appIconURL "">
 
