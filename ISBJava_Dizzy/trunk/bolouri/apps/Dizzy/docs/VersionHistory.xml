@@ -61,6 +61,8 @@ modelling of reaction processes with an intrinsic time delay.</li>
 for specifying a multistep or delayed reaction.</li>
 <li>Fixed bugs in the main editor window and the plot window,
 where window resizing was not working correctly on the Windows platform.</li>
+<li>Removed unnecessary label from main editor window, which was taking up 
+space on the screen.</li>
 </ul>
 </td>
 <td>
