@@ -22,10 +22,7 @@ public class ScientificNumberFormat extends DecimalFormat
     private SignificantDigitsCalculator mSignificantDigitsCalculator;
     private int mMinimumDigitsForScientificNotation;
     private NumberFormat mDefaultNumberFormat;
-    private boolean mAllowUnicode;
-    private static final String NAN = "NaN";
-    private static final String INFINITY = "Infinity";
-    
+        
     private static final int DEFAULT_MINIMUM_DIGITS_FOR_SCIENTIFIC_NOTATION = 4;
 
     public ScientificNumberFormat(SignificantDigitsCalculator pSignificantDigitsCalculator)
@@ -34,17 +31,34 @@ public class ScientificNumberFormat extends DecimalFormat
         mSignificantDigitsCalculator = pSignificantDigitsCalculator;
         setMinimumDigitsForScientificNotation(DEFAULT_MINIMUM_DIGITS_FOR_SCIENTIFIC_NOTATION);
         mDefaultNumberFormat = getInstance();
-        mAllowUnicode = true;
+        setNaNString(null);
+        setInfinityString(null);
     }
 
-    public void setAllowUnicode(boolean pAllowUnicode)
+    public void setNaNString(String pNaNString)
     {
-        mAllowUnicode = pAllowUnicode;
+        DecimalFormatSymbols decimalFormatSymbols = getDecimalFormatSymbols();
+        decimalFormatSymbols.setNaN(pNaNString);
+        setDecimalFormatSymbols(decimalFormatSymbols);
     }
     
-    public boolean getAllowUnicode()
+    public String getNaNString()
     {
-        return(mAllowUnicode);
+        DecimalFormatSymbols decimalFormatSymbols = getDecimalFormatSymbols();
+        return(decimalFormatSymbols.getNaN());
+    }
+    
+    public void setInfinityString(String pInfinityString)
+    {
+        DecimalFormatSymbols decimalFormatSymbols = getDecimalFormatSymbols();
+        decimalFormatSymbols.setInfinity(pInfinityString);
+        setDecimalFormatSymbols(decimalFormatSymbols);
+    }
+    
+    public String getInfinityString()
+    {
+        DecimalFormatSymbols decimalFormatSymbols = getDecimalFormatSymbols();
+        return(decimalFormatSymbols.getInfinity());
     }
     
     public int getMinimumDigitsForScientificNotation()
@@ -65,22 +79,12 @@ public class ScientificNumberFormat extends DecimalFormat
 
     public StringBuffer format(double pValue, StringBuffer pResults, FieldPosition pFieldPosition)
     {
-        int numSignificantDigits = mSignificantDigitsCalculator.calculate(pValue);
-        if(!mAllowUnicode)
+        if(Double.isNaN(pValue) || Double.isInfinite(pValue))
         {
-            if(Double.isNaN(pValue))
-            {
-                pResults.append(NAN);
-                pFieldPosition.setEndIndex(NAN.length());
-                return(pResults);
-            }
-            else if(Double.isInfinite(pValue))
-            {
-                pResults.append(INFINITY);
-                pFieldPosition.setEndIndex(INFINITY.length());
-                return(pResults);
-            }
+            return super.format(pValue, pResults, pFieldPosition);
         }
+        
+        int numSignificantDigits = mSignificantDigitsCalculator.calculate(pValue);
      
         if(numSignificantDigits == SignificantDigitsCalculator.SIGNIFICANT_DIGITS_UNKNOWN)
         {
