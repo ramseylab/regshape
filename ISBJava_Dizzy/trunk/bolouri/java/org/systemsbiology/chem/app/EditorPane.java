@@ -28,6 +28,7 @@ public class EditorPane
 {
     private static final int EDITOR_TEXT_AREA_NUM_ROWS = 40;
     private static final int EDITOR_TEXT_AREA_NUM_COLS = 80;
+    private static final int SCROLL_PANE_OFFSET_PIXELS = 20;
 
     private static final int EDITOR_TEXT_AREA_MIN_WIDTH_CHARS = 4;
     private static final int EDITOR_TEXT_AREA_MIN_HEIGHT_CHARS = 2;
@@ -49,6 +50,7 @@ public class EditorPane
     private int mOriginalHeightPixels;
     private long mTimestampLastChange;
     private MainApp mMainApp;
+    private JScrollPane mEditorScrollPane;
 
     interface EditorStateUpdater
     {
@@ -177,6 +179,11 @@ public class EditorPane
 
             mEditorPaneTextArea.setRows(heightChars);
             mEditorPaneTextArea.setColumns(widthChars);
+            mEditorScrollPane.setPreferredSize(new Dimension(widthPixels + SCROLL_PANE_OFFSET_PIXELS, 
+                                                             heightPixels + SCROLL_PANE_OFFSET_PIXELS));
+            mEditorPaneTextArea.revalidate();
+            mEditorScrollPane.revalidate();
+            mEditorScrollPane.repaint();
         }
     }
 
@@ -392,7 +399,6 @@ public class EditorPane
         labelEditorPane.setLayout(layoutManager);
         editorPanel.add(labelEditorPane);
 
-        initializeLabel(labelEditorPane);
         initializeEditorTextArea(labelEditorPane);
 
         pMainPane.add(editorPanel);
@@ -432,6 +438,7 @@ public class EditorPane
         JScrollPane scrollPane = new JScrollPane(editorTextArea);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        mEditorScrollPane = scrollPane;
 
         mOriginalWidthPixels = 0;
         mOriginalHeightPixels = 0;
@@ -497,14 +504,6 @@ public class EditorPane
     boolean editorBufferIsEmpty()
     {
         return(0 == getEditorPaneTextArea().getText().length());
-    }
-
-    private void initializeLabel(Container pPane)
-    {
-        JPanel labelPanel = new JPanel();
-        JLabel label = new JLabel("model definition:");
-        labelPanel.add(label);
-        pPane.add(labelPanel);
     }
 
     public void saveEditBufferToFile(String pFileName)
