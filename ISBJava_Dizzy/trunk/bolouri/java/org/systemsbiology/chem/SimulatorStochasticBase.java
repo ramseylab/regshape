@@ -55,19 +55,28 @@ public abstract class SimulatorStochasticBase extends Simulator
         mPoissonEventGenerator = new Poisson(1.0, mRandomNumberGenerator);
     }
 
-    protected void checkDynamicalSymbolsInitialValues() throws InvalidInputException
+    protected void checkDynamicalSymbolsValues(boolean pSimulationIsRunning, SymbolEvaluatorChem pSymbolEvaluator) throws AccuracyException
     {
-        int numDynamicalSymbols = mInitialDynamicSymbolValues.length;
+        int numDynamicalSymbols = mDynamicSymbolValues.length;
         for(int ctr = 0; ctr < numDynamicalSymbols; ++ctr)
         {
-            double initialValue = mInitialDynamicSymbolValues[ctr];
-            if(initialValue > 1.0 && (initialValue - 1.0 == initialValue))
+            double speciesValue = mDynamicSymbolValues[ctr];
+            if(speciesValue > 1.0 && (speciesValue - 1.0 == speciesValue))
             {
-                throw new InvalidInputException("initial species value for species \"" + mDynamicSymbolNames[ctr] + "\" is too large for the stochastic Simulator: " + initialValue);
+                String timeStr = null;
+                if(! pSimulationIsRunning)
+                {
+                    timeStr = "at the initial time";
+                }
+                else
+                {
+                    timeStr = "at time " + Double.toString(pSymbolEvaluator.getTime());
+                }
+                throw new AccuracyException(timeStr + ", the species value for species \"" + mDynamicSymbolNames[ctr] + "\" is too large for the stochastic Simulator: " + speciesValue);
             }
         }
-    }
-
+    }    
+    
     protected static final int getNextDelayedReactionIndex(DelayedReactionSolver []pDelayedReactionSolvers)
     {
         int numDelayedReactions = pDelayedReactionSolvers.length;
@@ -209,7 +218,16 @@ public abstract class SimulatorStochasticBase extends Simulator
 
     protected final void initializeSimulatorStochastic(Model pModel) throws InvalidInputException
     {
-        checkDynamicalSymbolsInitialValues();
+        try
+        {
+            boolean simulationIsRunning = false;
+            SymbolEvaluatorChem symbolEvaluator = null;
+            checkDynamicalSymbolsValues(simulationIsRunning, symbolEvaluator);
+        }
+        catch(AccuracyException e)
+        {
+            throw new InvalidInputException(e.getMessage(), e);
+        }
         initializeRandomNumberGenerator();
         initializePoissonEventGenerator();
 
@@ -363,6 +381,8 @@ public abstract class SimulatorStochasticBase extends Simulator
             finalSymbolValues = new Object[ensembleSize];
         }
 
+        boolean simulationIsRunning = true;
+        
         while( --simCtr >= 0 )
         {
             // time point index must be re-set to zero
@@ -418,6 +438,7 @@ public abstract class SimulatorStochasticBase extends Simulator
 
                 if(time >= timesArray[timePointIndex])
                 {
+                    checkDynamicalSymbolsValues(simulationIsRunning, symbolEvaluator);
                     timePointIndex = addRequestedSymbolValues(time,
                                                               timePointIndex,
                                                               requestedSymbols,
