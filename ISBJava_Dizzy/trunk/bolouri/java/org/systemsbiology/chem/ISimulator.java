@@ -21,6 +21,10 @@ public interface ISimulator
     public void initialize(Model pModel) throws DataNotFoundException, InvalidInputException;
     public void setProgressReporter(SimulationProgressReporter pSimulationProgressReporter);
     public void setController(SimulationController pSimulationController);
+    public void checkSimulationParameters(double pStartTime,
+                                          double pEndTime,
+                                          SimulatorParameters pSimulatorParameters,
+                                          int pNumResultsTimePoints);
 
     public SimulatorParameters getDefaultSimulatorParameters();
 
