@@ -112,7 +112,8 @@ public class ClassRegistry
         Class theClass = null;
         try
         {
-            theClass = ClassLoader.getSystemClassLoader().loadClass(pClassName);
+//            theClass = ClassLoader.getSystemClassLoader().loadClass(pClassName);
+            theClass = getClass().getClassLoader().loadClass(pClassName);
         }
         catch(ClassNotFoundException e)
         {
