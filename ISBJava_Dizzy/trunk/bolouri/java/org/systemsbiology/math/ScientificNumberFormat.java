@@ -19,9 +19,12 @@ import java.text.*;
 
 public class ScientificNumberFormat extends DecimalFormat
 {
-    SignificantDigitsCalculator mSignificantDigitsCalculator;
-    int mMinimumDigitsForScientificNotation;
-    NumberFormat mDefaultNumberFormat;
+    private SignificantDigitsCalculator mSignificantDigitsCalculator;
+    private int mMinimumDigitsForScientificNotation;
+    private NumberFormat mDefaultNumberFormat;
+    private boolean mAllowUnicode;
+    private static final String NAN = "NaN";
+    private static final String INFINITY = "Infinity";
     
     private static final int DEFAULT_MINIMUM_DIGITS_FOR_SCIENTIFIC_NOTATION = 4;
 
@@ -31,8 +34,19 @@ public class ScientificNumberFormat extends DecimalFormat
         mSignificantDigitsCalculator = pSignificantDigitsCalculator;
         setMinimumDigitsForScientificNotation(DEFAULT_MINIMUM_DIGITS_FOR_SCIENTIFIC_NOTATION);
         mDefaultNumberFormat = getInstance();
+        mAllowUnicode = true;
     }
 
+    public void setAllowUnicode(boolean pAllowUnicode)
+    {
+        mAllowUnicode = pAllowUnicode;
+    }
+    
+    public boolean getAllowUnicode()
+    {
+        return(mAllowUnicode);
+    }
+    
     public int getMinimumDigitsForScientificNotation()
     {
         return(mMinimumDigitsForScientificNotation);
@@ -52,11 +66,22 @@ public class ScientificNumberFormat extends DecimalFormat
     public StringBuffer format(double pValue, StringBuffer pResults, FieldPosition pFieldPosition)
     {
         int numSignificantDigits = mSignificantDigitsCalculator.calculate(pValue);
-        if(Double.isNaN(pValue))
+        if(!mAllowUnicode)
         {
-            pResults.append("NaN");
-            return(pResults);
+            if(Double.isNaN(pValue))
+            {
+                pResults.append(NAN);
+                pFieldPosition.setEndIndex(NAN.length());
+                return(pResults);
+            }
+            else if(Double.isInfinite(pValue))
+            {
+                pResults.append(INFINITY);
+                pFieldPosition.setEndIndex(INFINITY.length());
+                return(pResults);
+            }
         }
+     
         if(numSignificantDigits == SignificantDigitsCalculator.SIGNIFICANT_DIGITS_UNKNOWN)
         {
             return(super.format(pValue, pResults, pFieldPosition));
