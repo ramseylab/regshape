@@ -242,6 +242,23 @@ public class Model
         return((String []) speciesNamesList.toArray(new String[0]));
     }
 
+    public String []getOrderedNonConstantSymbolNamesArray()
+    {
+        List symbolNamesList = new LinkedList();
+        Iterator symbolValuesIter = mSymbolsMap.values().iterator();
+        while(symbolValuesIter.hasNext())
+        {
+            SymbolValue symbolValue = (SymbolValue) symbolValuesIter.next();
+            if(symbolValue.getValue().isExpression() ||
+               symbolValue instanceof Species)
+            {
+                symbolNamesList.add(symbolValue.getSymbol().getName());
+            }
+        }
+        Collections.sort(symbolNamesList);
+        return((String []) symbolNamesList.toArray(new String[0]));
+    }
+
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
