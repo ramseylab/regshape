@@ -132,22 +132,66 @@ public class MainApp
         helpBrowser.displayHelpBrowser(DEFAULT_HELP_SET_VIEW);
     }
 
-    void handleExport()
+    void handleSimulate()
     {
-        Model model = null;
         try
         {
-            model = mEditorPane.processModel();
+            String appName = getName();
+            Model model = mEditorPane.processModel();
+            if(null != model)
+            {
+                enableMenuItem(MainMenu.MenuItem.TOOLS_SIMULATE, false);
+                boolean handleOutputInternally = true;
+                SimulationLauncher simulationLauncher = new SimulationLauncher(appName, model, handleOutputInternally);
+                setSimulationLauncher(simulationLauncher);
+                setTimestampModelLastLoaded(new Long(System.currentTimeMillis()));
+                simulationLauncher.addListener(new SimulationLauncher.Listener()
+                {
+                    public void simulationLauncherClosing()
+                    {
+                        setSimulationLauncher(null);
+                        setTimestampModelLastLoaded(null);
+                        updateMenus();
+                    }
+                    public void simulationStarting()
+                    {
+                        updateMenus();
+                    }
+                    public void simulationEnding()
+                    {
+                        updateMenus();
+                    }
+                });
+                updateMenus();
+            }
         }
-        catch(Exception e)
+        catch(Throwable e)
         {
-            ExceptionDialogOperationCancelled errorDialog = new ExceptionDialogOperationCancelled(mMainFrame, "unable to export model", e);
+            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to create the simulation launcher window");
+            setTimestampModelLastLoaded(null);
+            setSimulationLauncher(null);
+            updateMenus();
+            errorDialog.show();            
+        }
+    }
+
+    void handleExport()
+    {
+        try
+        {
+            Model model = mEditorPane.processModel();
+
+            if(null != model)
+            {
+                ModelExporter exporter = new ModelExporter(getMainFrame());
+                exporter.exportModel(model, mModelExporterRegistry);
+            }
+        }
+
+        catch(Throwable e)
+        {
+            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to export the model: " + e.getMessage());
             errorDialog.show();
-        }
-        if(null != model)
-        {
-            ModelExporter exporter = new ModelExporter(getMainFrame());
-            exporter.exportModel(model, mModelExporterRegistry);
         }
     }
 
@@ -156,12 +200,15 @@ public class MainApp
         try
         {
             Model model = mEditorPane.processModel();
-            CytoscapeViewer cv = new CytoscapeViewer();
-            cv.viewModelInCytoscape(model);
+            if(null != model)
+            {
+                CytoscapeViewer cv = new CytoscapeViewer(mMainFrame);
+                cv.viewModelInCytoscape(model);
+            }
         }
-        catch(Exception e)
+        catch(Throwable e)
         {
-            ExceptionDialogOperationCancelled errorDialog = new ExceptionDialogOperationCancelled(mMainFrame, "unable export model to Cytoscape", e);
+            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to view the model in Cytoscape: " + e.getMessage());
             errorDialog.show();            
         }
     }
@@ -215,45 +262,7 @@ public class MainApp
         }
     }
 
-    void handleSimulate()
-    {
-        try
-        {
-            String appName = getName();
-            Model model = mEditorPane.processModel();
-            enableMenuItem(MainMenu.MenuItem.TOOLS_SIMULATE, false);
-            boolean handleOutputInternally = true;
-            SimulationLauncher simulationLauncher = new SimulationLauncher(appName, model, handleOutputInternally);
-            setSimulationLauncher(simulationLauncher);
-            setTimestampModelLastLoaded(new Long(System.currentTimeMillis()));
-            simulationLauncher.addListener(new SimulationLauncher.Listener()
-            {
-                public void simulationLauncherClosing()
-                {
-                    setSimulationLauncher(null);
-                    setTimestampModelLastLoaded(null);
-                    updateMenus();
-                }
-                public void simulationStarting()
-                {
-                    updateMenus();
-                }
-                public void simulationEnding()
-                {
-                    updateMenus();
-                }
-            });
-            updateMenus();
-        }
-        catch(Exception e)
-        {
-            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to create the simulation launcher window");
-            setTimestampModelLastLoaded(null);
-            setSimulationLauncher(null);
-            updateMenus();
-            errorDialog.show();            
-        }
-    }
+
 
     private void enableMenu(MainMenu.Menu pMenu, boolean pEnabled)
     {

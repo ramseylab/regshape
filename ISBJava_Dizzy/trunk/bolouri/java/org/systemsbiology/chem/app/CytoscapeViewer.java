@@ -15,6 +15,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import java.awt.*;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
@@ -28,6 +29,12 @@ public class CytoscapeViewer
 {
     private static final String JNLP_TEMPLATE_FILE_NAME = "CytoscapeViewer.xml";
     private static final String TAG_NAME_APPLICATION_DESC = "application-desc";
+    private Component mMainFrame;
+
+    public CytoscapeViewer(Component pMainFrame)
+    {
+        mMainFrame = pMainFrame;
+    }
 
     static
     {
@@ -35,29 +42,29 @@ public class CytoscapeViewer
         JNLPRuntime.initialize();
     }
 
-    public void viewModelInCytoscape(Model pModel) throws IllegalArgumentException, DataNotFoundException, IllegalStateException, UnsupportedOperationException, ModelExporterException, IOException
+    public void viewModelInCytoscape(Model pModel) 
     {
-        ModelExporterMarkupLanguage exporterMarkupLanguage = new ModelExporterMarkupLanguage();
-        File tempFile = File.createTempFile("sbml", ".xml");
-        String tempFileName = tempFile.getAbsolutePath();
-        FileWriter fileWriter = new FileWriter(tempFile);
-        PrintWriter printWriter = new PrintWriter(fileWriter);
-        exporterMarkupLanguage.export(pModel, printWriter);
-        URL jnlpFileResource = this.getClass().getResource(JNLP_TEMPLATE_FILE_NAME);
-        if(null == jnlpFileResource)
-        {
-            throw new DataNotFoundException("could not find resource file: " + JNLP_TEMPLATE_FILE_NAME);
-        }
-        InputStream jnlpFileInputStream = jnlpFileResource.openStream();
-
-        File tempJNLPFile = File.createTempFile("cytoscpe", ".jnlp");
-        FileWriter tempJNLPFileWriter = new FileWriter(tempJNLPFile);
-        PrintWriter tempJNLPPrintWriter = new PrintWriter(tempJNLPFileWriter);
-        String tempJNLPFileURLString = URLUtils.createFileURL(tempJNLPFile);
-        URL tempJNLPFileURL = new URL(tempJNLPFileURLString);
-
         try
         {
+            ModelExporterMarkupLanguage exporterMarkupLanguage = new ModelExporterMarkupLanguage();
+            File tempFile = File.createTempFile("sbml", ".xml");
+            String tempFileName = tempFile.getAbsolutePath();
+            FileWriter fileWriter = new FileWriter(tempFile);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            exporterMarkupLanguage.export(pModel, printWriter);
+            URL jnlpFileResource = this.getClass().getResource(JNLP_TEMPLATE_FILE_NAME);
+            if(null == jnlpFileResource)
+            {
+                throw new DataNotFoundException("could not find resource file: " + JNLP_TEMPLATE_FILE_NAME);
+            }
+            InputStream jnlpFileInputStream = jnlpFileResource.openStream();
+            
+            File tempJNLPFile = File.createTempFile("cytoscpe", ".jnlp");
+            FileWriter tempJNLPFileWriter = new FileWriter(tempJNLPFile);
+            PrintWriter tempJNLPPrintWriter = new PrintWriter(tempJNLPFileWriter);
+            String tempJNLPFileURLString = URLUtils.createFileURL(tempJNLPFile);
+            URL tempJNLPFileURL = new URL(tempJNLPFileURLString);
+
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document document = builder.parse(jnlpFileInputStream);
 
@@ -101,7 +108,9 @@ public class CytoscapeViewer
         }
         catch(Exception e)
         {
-            throw new ModelExporterException("unable to export model to Cytoscape: " + e.toString(), e);
+            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame, "View-in-Cytoscape operation failed: " + e.getMessage(), e);
+            dialog.show();
+
         }
     }
 }
