@@ -38,6 +38,39 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td>1.1.2</td>
+<td>2004/01/??</td>
+<td>
+<ul>
+<li>Fixed a bug in the layout of the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+control screen, where the full text of the &quot;select all&quot; button was not being
+displayed.</li>
+<li>Fixed a bug in the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+where the simulation was not being cancelled, in the case where the user
+selects too many symbols for displaying on a plot.</li>
+<li>Fixed a bug in the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>
+where the <code>org.systemsbiology.chem.app.ModelProcessor</code> was
+getting an unexpected <code>IllegalArgumentException</code> when the model definition
+file contains a mathematical expression that has invalid syntax.</li>
+<li>Fixed a bug in the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>
+where parsing errors in the model definition file were resulting in the exception class
+name being unnecessarily included in the message part of the exception.</li>
+<li>Changed the <code>org.systemsbiology.chem.app.Plotter</code> class so that the
+vertical axis label is the more generally applicable &quot;value&quot; rather than 
+&quot;populations&quot;.</li>
+<li>Added a new SBW simulation service, the 
+<code>org.systemsbiology.chem.sbw.GibsonBruckService</code>.</li>
+<li>Modified the class (<code>org.systemsbiology.chem.sbw.SimulationModule</code>)
+that registers the various 
+<code>org.systemsbiology.chem.sbw.SimulationService</code> simulation services 
+with the SBW broker, to add the <code>DeterministicService</code>
+and the <code>GibsonBruckService</code> services to the list of services
+offered by this module.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td>1.1.1</td>
 <td>2004/01/05</td>
 <td>

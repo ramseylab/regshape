@@ -42,6 +42,68 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td>1.1.2</td>
+<td>2004/01/??</td>
+<td>
+<ul>
+<li>Fixed a bug in the layout of the simulation launcher control screen, where the 
+full text of the &quot;select all&quot; button was not being displayed.</li>
+<li>Fixed a bug in the simulation launcher 
+where the simulation was not being cancelled, in the case where the user
+selects too many symbols for displaying on a plot.</li>
+<li>Fixed a bug in the chemical model definition language (CMDL) parser where the
+application was aborting when the parser encountered a mathematical expression that 
+has invalid syntax.</li>
+<li>Fixed a bug in the chemical model definition language (CMDL) parser
+where parsing errors in the model definition file were resulting in the exception class
+name being unnecessarily included in the message part of the exception.</li>
+<li>Changed the simulation results plotter so that the
+vertical axis label is the more generally applicable &quot;value&quot; rather than 
+&quot;populations&quot;.</li>
+<li>Added a new Systems Biology Workbench (SBW) simulation service, for the 
+Gibson-Bruck stochastic simulation algorithm.</li>
+<li>Modified the &quot;Register SBW Simulators&quot; program so that it
+registers services for all three supported simulators:  Gibson-Bruck, Gillespie,
+and Deterministic.</li>
+<li>Implemented a work-around for an InstallAnywhere bug, so that the &appName;
+program now launches correctly when installed on a Mac OSX computer.</li>
+<li>The InstallAnywhere installer for &appName; now logs error messages to a log file
+&quot;<code>ins&appName;.log</code>&quot;.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td>1.1.1</td>
+<td>2004/01/05</td>
+<td>
+<ul>
+<li>Modified the <code>org.systemsbiology.util.SlidingWindowTimeSeriesQueue</code> so that
+the internal average variable is recalculated from scratch, each time <code>numTimePoints</code>
+number of points has been inserted into the queue.
+</li>
+<li>Fixed bug in <code>org.systemsbiology.chem.app.ParserPicker</code> pertaining to case
+where the model builder fails to construct the model from the model definition file.</li>
+<li>Modified <code>org.systemsbiology.chem.app.SimulationLauncher</code> to dump a stack
+backtrace to <code>STDERR</code> if a <code>Throwable</code> (but not an <code>Exception</code>)
+condition is detected.</li>
+<li>Changed <code>org.systemsbiology.chem.MultistepReactionSolver</code> into
+<code>org.systemsbiology.chem.DelayedReactionSolver</code>, to permit phenomenological
+modelling of reaction processes with an intrinsic time delay.</li>
+<li>Changed <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code> 
+for extensions to the chemical model definition language (CMDL) for specifying a 
+multistep or delayed reaction.</li>
+<li>Fixed bugs in <code>org.systemsbiology.chem.app.MainApp</code> and
+<code>org.systemsbiology.chem.app.Plotter</code>, where window resizing
+was not working correctly on the Windows platform.</li>
+</ul>
+</td>
+<td>
+1.1.2
+</td>
+</tr>
+
+<tr valign="top">
 <td>1.1.1</td>
 <td>2004/01/05</td>
 <td>
