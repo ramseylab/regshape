@@ -65,6 +65,7 @@ In particular, in order to be able to compile the full
 source tree, you will need to have the following Java libraries
 installed and available within your <code>CLASSPATH</code> environment
 variable:
+<a name="extlib" />
 <blockquote>
 <table border="1">
 <tr>
