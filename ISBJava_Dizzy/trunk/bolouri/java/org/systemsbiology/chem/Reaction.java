@@ -14,9 +14,29 @@ import org.systemsbiology.util.*;
 
 /**
  * Represents a chemical process that can take
- * place, transforming zero or more reactant
- * {@link Species} into zero or more product
- * {@link Species}.
+ * place, transforming zero or more distinct reactant
+ * {@link Species} into zero or more distinct product
+ * {@link Species}.  Each species that participates in a Reaction
+ * has an integer stoichiometry, specifying the number of molecules
+ * of that species that are consumed or producted in the reaction.
+ * Reactions are typically constructed, and
+ * then added to a {@link Model} object.  Zero reactants <b>and</b>
+ * zero product species is a degenerate case that
+ * is not allowed.  A Species that participates in a Reaction
+ * is described internally using a {@link ReactionParticipant}
+ * object that specifies the Species and stoichiometry.
+ * Reactions are typically defined with a floating-point rate,
+ * which defines the reaction parameter.  The average rate at
+ * which the reaction is occurring is the product of the reaction
+ * parameter, and the number of distinct combinations of reactant
+ * molecules.  Alternatively, a reaction may have its rate defined
+ * in terms of an {@link org.systemsbiology.math.Expression}, which
+ * is an algebraic expression involving various {@link org.systemsbiology.math.Symbol}
+ * names.  Such symbol names may represent {@link Parameter}, 
+ * {@link Compartment}, or {@link Species} objects.  Note that
+ * in this case (using an Expression to define the reaction rate), the
+ * expression is simply evaluated to obtain the rate of the reaction;
+ * there is no post-multiplication by the number of reactant combinations.
  *
  * @author Stephen Ramsey
  */
