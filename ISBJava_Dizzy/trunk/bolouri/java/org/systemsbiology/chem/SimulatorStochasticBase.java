@@ -545,7 +545,7 @@ public abstract class SimulatorStochasticBase extends Simulator
     public SimulatorParameters getDefaultSimulatorParameters()
     {
         SimulatorParameters sp = new SimulatorParameters();
-        sp.setEnsembleSize(DEFAULT_ENSEMBLE_SIZE);
+        sp.setEnsembleSize(new Integer(DEFAULT_ENSEMBLE_SIZE));
         sp.setComputeFluctuations(DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS);
         sp.setNumHistoryBins(DEFAULT_NUM_HISTORY_BINS);
         modifyDefaultSimulatorParameters(sp);

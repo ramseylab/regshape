@@ -36,6 +36,32 @@ public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDet
         return(mSymbolEvaluator.getTime());
     }
 
+    protected void setupErrorTolerances(SimulatorParameters pSimulatorParams,
+                                        RKScratchPad pRKScratchPad)
+    {
+        Double maxRelativeErrorObj = pSimulatorParams.getMaxAllowedRelativeError();
+        if(null != maxRelativeErrorObj)
+        {
+            double maxRelativeError = maxRelativeErrorObj.doubleValue();
+            pRKScratchPad.maxRelativeError = maxRelativeError;
+        }
+        else
+        {
+            throw new IllegalArgumentException("max fractional error must be specified");
+        }
+        
+        Double maxAbsoluteErrorObj = pSimulatorParams.getMaxAllowedAbsoluteError();
+        if(null != maxAbsoluteErrorObj)
+        {
+            double maxAbsoluteError = maxAbsoluteErrorObj.doubleValue();
+            pRKScratchPad.maxAbsoluteError = maxAbsoluteError;
+        }
+        else
+        {
+            throw new IllegalArgumentException("max fractional error must be specified");
+        }
+    }
+    
     private double adaptiveStep(double []pNewDynamicSymbolValues) throws DataNotFoundException, AccuracyException
     {
         double stepSize = mRKScratchPad.stepSize;
@@ -134,6 +160,21 @@ public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDet
         pRKScratchPad.maxStepSize = maxStepSize;
     }
 
+    public void checkSimulationParametersImpl(SimulatorParameters pSimulatorParameters,
+            int pNumResultsTimePoints)
+    {    
+        if(null == pSimulatorParameters.getMaxAllowedAbsoluteError())
+        {
+            throw new IllegalArgumentException("missing max allowed absolute error");
+        }
+        if(null == pSimulatorParameters.getMaxAllowedRelativeError())
+        {
+            throw new IllegalArgumentException("missing max allowed relative error");
+        }        
+        checkSimulationParametersForDeterministicSimulator(pSimulatorParameters,
+                pNumResultsTimePoints);
+    }
+    
     public String getAlias()
     {
         return(CLASS_ALIAS);

@@ -275,31 +275,9 @@ public abstract class SimulatorDeterministicBase extends Simulator
         pRetAggregateAbsoluteError.setValue(aggregateAbsoluteError);
     }
 
-    private void setupErrorTolerances(SimulatorParameters pSimulatorParams,
-                                      RKScratchPad pRKScratchPad)
-    {
-        Double maxRelativeErrorObj = pSimulatorParams.getMaxAllowedRelativeError();
-        if(null != maxRelativeErrorObj)
-        {
-            double maxRelativeError = maxRelativeErrorObj.doubleValue();
-            pRKScratchPad.maxRelativeError = maxRelativeError;
-        }
-        else
-        {
-            throw new IllegalArgumentException("max fractional error must be specified");
-        }
-
-        Double maxAbsoluteErrorObj = pSimulatorParams.getMaxAllowedAbsoluteError();
-        if(null != maxAbsoluteErrorObj)
-        {
-            double maxAbsoluteError = maxAbsoluteErrorObj.doubleValue();
-            pRKScratchPad.maxAbsoluteError = maxAbsoluteError;
-        }
-        else
-        {
-            throw new IllegalArgumentException("max fractional error must be specified");
-        }
-    }
+    protected abstract void setupErrorTolerances(SimulatorParameters pSimulatorParams,
+                                                 RKScratchPad pRKScratchPad);
+    
 
     public SimulationResults simulate(double pStartTime, 
                                       double pEndTime,
@@ -518,10 +496,10 @@ public abstract class SimulatorDeterministicBase extends Simulator
     public SimulatorParameters getDefaultSimulatorParameters()
     {
         SimulatorParameters sp = new SimulatorParameters();
-        sp.setMaxAllowedRelativeError(DEFAULT_MAX_ALLOWED_RELATIVE_ERROR);
-        sp.setMaxAllowedAbsoluteError(DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR);
+        sp.setMaxAllowedRelativeError(new Double(DEFAULT_MAX_ALLOWED_RELATIVE_ERROR));
+        sp.setMaxAllowedAbsoluteError(new Double(DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR));
         sp.setComputeFluctuations(DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS);
-        sp.setStepSizeFraction(DEFAULT_STEP_SIZE_FRACTION);
+        sp.setStepSizeFraction(new Double(DEFAULT_STEP_SIZE_FRACTION));
         sp.setNumHistoryBins(DEFAULT_NUM_HISTORY_BINS);
         return(sp);
     }
@@ -534,13 +512,6 @@ public abstract class SimulatorDeterministicBase extends Simulator
     public boolean allowsInterrupt()
     {
         return(true);
-    }
-
-    public void checkSimulationParametersImpl(SimulatorParameters pSimulatorParameters,
-                                              int pNumResultsTimePoints)
-    {
-        checkSimulationParametersForDeterministicSimulator(pSimulatorParameters,
-                                                           pNumResultsTimePoints);
     }
 
     protected abstract void setupImpl(double pDeltaTime,

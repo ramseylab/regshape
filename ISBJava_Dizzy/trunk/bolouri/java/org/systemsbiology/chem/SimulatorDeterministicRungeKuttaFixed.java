@@ -23,6 +23,32 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
     public static final String CLASS_ALIAS = "ODE-RK5-fixed";
     private static final int NUM_ITERATIONS_BEFORE_ERROR_CHECK = 10;
 
+    protected void setupErrorTolerances(SimulatorParameters pSimulatorParams,
+                                        RKScratchPad pRKScratchPad)
+    {
+        Double maxRelativeErrorObj = pSimulatorParams.getMaxAllowedRelativeError();
+        if(null != maxRelativeErrorObj)
+        {
+            double maxRelativeError = maxRelativeErrorObj.doubleValue();
+            pRKScratchPad.maxRelativeError = maxRelativeError;
+        }
+        else
+        {
+            pRKScratchPad.maxRelativeError = -1.0;
+        }
+        
+        Double maxAbsoluteErrorObj = pSimulatorParams.getMaxAllowedAbsoluteError();
+        if(null != maxAbsoluteErrorObj)
+        {
+            double maxAbsoluteError = maxAbsoluteErrorObj.doubleValue();
+            pRKScratchPad.maxAbsoluteError = maxAbsoluteError;
+        }
+        else
+        {
+            pRKScratchPad.maxAbsoluteError = -1.0;
+        }
+    }
+    
     // fixed step-size integrator
     protected double iterate(double []pNewDynamicSymbolValues) throws DataNotFoundException, AccuracyException
     {
@@ -50,19 +76,25 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
                  absoluteErrorObj);
 
             double maxRelativeError = mRKScratchPad.maxRelativeError;
-            double relativeError = relativeErrorObj.getValue();
-
-            if(maxRelativeError - relativeError < 0.0)
+            if(maxRelativeError > 0.0)
             {
-                throw new AccuracyException("numeric approximation error exceeded threshold; try a smaller value for \"fractional step size\"");
+                double relativeError = relativeErrorObj.getValue();
+
+                if(maxRelativeError - relativeError < 0.0)
+                {
+                    throw new AccuracyException("numeric approximation error exceeded threshold; try a smaller value for \"fractional step size\"");
+                }
             }
-
+            
             double maxAbsoluteError = mRKScratchPad.maxAbsoluteError;
-            double absoluteError = absoluteErrorObj.getValue();
-
-            if(maxAbsoluteError - absoluteError < 0.0)
+            if(maxAbsoluteError > 0.0)
             {
-                throw new AccuracyException("numeric approximation error exceeded threshold; try a smaller value for \"fractional step size\"");
+                double absoluteError = absoluteErrorObj.getValue();
+
+                if(maxAbsoluteError - absoluteError < 0.0)
+                {
+                    throw new AccuracyException("numeric approximation error exceeded threshold; try a smaller value for \"fractional step size\"");
+                }
             }
         }
 
@@ -89,6 +121,13 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
         // nothing to do
     }
 
+    public void checkSimulationParametersImpl(SimulatorParameters pSimulatorParameters,
+            int pNumResultsTimePoints)
+    {          
+        checkSimulationParametersForDeterministicSimulator(pSimulatorParameters,
+                                                           pNumResultsTimePoints);
+    }
+    
     public String getAlias()
     {
         return(CLASS_ALIAS);

@@ -1030,26 +1030,25 @@ public abstract class Simulator
         }
 
         Double maxAllowedRelativeErrorObj = pSimulatorParameters.getMaxAllowedRelativeError();
-        if(null == maxAllowedRelativeErrorObj)
+        if(null != maxAllowedRelativeErrorObj)
         {
-            throw new IllegalArgumentException("missing max allowed relative error");
-        }
-        double maxAllowedRelativeError = maxAllowedRelativeErrorObj.doubleValue();
-        if(maxAllowedRelativeError <= 0.0 || maxAllowedRelativeError >= 1.0)
-        {
-            throw new IllegalArgumentException("invalid max allowed relative error: " + maxAllowedRelativeError);
+            double maxAllowedRelativeError = maxAllowedRelativeErrorObj.doubleValue();
+            if(maxAllowedRelativeError <= 0.0)
+            {
+                throw new IllegalArgumentException("invalid max allowed relative error: " + maxAllowedRelativeError);
+            }
         }
 
         Double maxAllowedAbsoluteErrorObj = pSimulatorParameters.getMaxAllowedAbsoluteError();
-        if(null == maxAllowedAbsoluteErrorObj)
+        if(null != maxAllowedAbsoluteErrorObj)
         {
-            throw new IllegalArgumentException("missing max allowed absolute error");
+            double maxAllowedAbsoluteError = maxAllowedAbsoluteErrorObj.doubleValue();
+            if(maxAllowedAbsoluteError <= 0.0)
+            {
+                throw new IllegalArgumentException("invalid max allowed absolute error: " + maxAllowedAbsoluteError);
+            }            
         }
-        double maxAllowedAbsoluteError = maxAllowedAbsoluteErrorObj.doubleValue();
-        if(maxAllowedAbsoluteError <= 0.0)
-        {
-            throw new IllegalArgumentException("invalid max allowed absolute error: " + maxAllowedAbsoluteError);
-        }
+
 
         // validate the requested fractional step size
         Double stepSizeObj = pSimulatorParameters.getStepSizeFraction();

@@ -45,7 +45,7 @@ public class TestCustom
             SimulatorStochasticGillespie simulator = new SimulatorStochasticGillespie();
             simulator.initialize(model);
             SimulatorParameters simParams = new SimulatorParameters();
-            simParams.setEnsembleSize(1);
+            simParams.setEnsembleSize(new Integer(1));
             String []requestedSymbolNames = { "A", "B" };
             
             long curTime = System.currentTimeMillis();

@@ -42,7 +42,7 @@ public class TestSimulator
             SimulatorStochasticGillespie simulator = new SimulatorStochasticGillespie();
             simulator.initialize(model);
             SimulatorParameters simParams = new SimulatorParameters();
-            simParams.setEnsembleSize(40);
+            simParams.setEnsembleSize(new Integer(40));
             String []requestedSymbolNames = { "A", "B" };
             
             long curTime = System.currentTimeMillis();

@@ -40,6 +40,11 @@ public class SimulatorParameters
         mStepSizeFraction = null;
     }
 
+    public void setStepSizeFraction(Double pStepSizeFraction)
+    {
+        mStepSizeFraction = pStepSizeFraction;
+    }
+    
     public void setStepSizeFraction(double pStepSizeFraction)
     {
         mStepSizeFraction = new Double(pStepSizeFraction);
@@ -70,32 +75,47 @@ public class SimulatorParameters
         return(mComputeFluctuations);
     }
 
+    public void setEnsembleSize(Integer pEnsembleSize)
+    {
+        mEnsembleSize = pEnsembleSize;
+    }
+
     public void setEnsembleSize(int pEnsembleSize)
     {
         mEnsembleSize = new Integer(pEnsembleSize);
     }
-
+    
     public Integer getEnsembleSize()
     {
         return(mEnsembleSize);
     }
 
 
+    public void setMaxAllowedRelativeError(Double pMaxAllowedRelativeError)
+    {
+        mMaxAllowedRelativeError = pMaxAllowedRelativeError;
+    }
+
     public void setMaxAllowedRelativeError(double pMaxAllowedRelativeError)
     {
         mMaxAllowedRelativeError = new Double(pMaxAllowedRelativeError);
     }
-
+    
     public Double getMaxAllowedRelativeError()
     {
         return(mMaxAllowedRelativeError);
+    }
+
+    public void setMaxAllowedAbsoluteError(Double pMaxAllowedAbsoluteError)
+    {
+        mMaxAllowedAbsoluteError = pMaxAllowedAbsoluteError;
     }
 
     public void setMaxAllowedAbsoluteError(double pMaxAllowedAbsoluteError)
     {
         mMaxAllowedAbsoluteError = new Double(pMaxAllowedAbsoluteError);
     }
-
+    
     public Double getMaxAllowedAbsoluteError()
     {
         return(mMaxAllowedAbsoluteError);

@@ -406,10 +406,10 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
     public SimulatorParameters getDefaultSimulatorParameters()
     {
         SimulatorParameters sp = new SimulatorParameters();
-        sp.setMaxAllowedRelativeError(DEFAULT_MAX_ALLOWED_RELATIVE_ERROR);
-        sp.setMaxAllowedAbsoluteError(DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR);
+        sp.setMaxAllowedRelativeError(new Double(DEFAULT_MAX_ALLOWED_RELATIVE_ERROR));
+        sp.setMaxAllowedAbsoluteError(new Double(DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR));
         sp.setComputeFluctuations(DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS);
-        sp.setStepSizeFraction(DEFAULT_STEP_SIZE_FRACTION);
+        sp.setStepSizeFraction(new Double(DEFAULT_STEP_SIZE_FRACTION));
         sp.setNumHistoryBins(DEFAULT_NUM_HISTORY_BINS);
         return(sp);
     }
@@ -422,6 +422,14 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
     public void checkSimulationParametersImpl(SimulatorParameters pSimulatorParameters,
                                               int pNumResultsTimePoints)
     {
+        if(null == pSimulatorParameters.getMaxAllowedAbsoluteError())
+        {
+            throw new IllegalArgumentException("missing max allowed absolute error");
+        }
+        if(null == pSimulatorParameters.getMaxAllowedRelativeError())
+        {
+            throw new IllegalArgumentException("missing max allowed relative error");
+        }
         checkSimulationParametersForDeterministicSimulator(pSimulatorParameters,
                                                            pNumResultsTimePoints);
     }
