@@ -128,6 +128,7 @@
          remotedir="${webServerRemoteDir}">
       <fileset dir="${projWebDir}">
         <include name="*/**/*" />
+        <include name="*.html" />
       </fileset>
     </ftp>
   </target>
