@@ -13,6 +13,10 @@
 <isb:doctitle>Internal Home Page</isb:doctitle>
 <isb:docdate>$Date$</isb:docdate>  
 
+<table>
+<tr>
+<td>
+
 <isb:docsection name="Tools" label="tools">
 <ul>
 <li><a href="../Dizzy">Dizzy</a> (stochastic simulation software)</li>
@@ -31,6 +35,9 @@
 </ul>
 </isb:docsection>
 
+</td>
+<td>
+
 <isb:docsection name="Documents" label="documents">
 <ul>
 <li><a href="WebPagesManagementManual.html">Web Pages Management Manual</a></li>
@@ -45,6 +52,10 @@
 <li><a href="&privateRepositoryURL;/CVSManual.pdf">CVS User Manual (PDF)</a></li>
 </ul>
 </isb:docsection>
+
+</td>
+</tr>
+</table>
 
 <isb:docsection name="Staff" label="staff">
 <blockquote>
