@@ -60,10 +60,8 @@ stemming from the use of this software, as stated in the license agreement.
 <isb:docsection name="Supported Platforms" label="platforms">
 This software requires a Java Runtime Environment (JRE) version 1.4 or
 newer, because it uses Java 1.4 language features and extensions.
-This software has been tested with the Sun Java Runtime Environment 
-version 1.4.1 on the following platforms: Windows XP Professional on 
-the Intel Pentium 4;  Red Hat Linux 8.0 on the Intel Pentium 4; 
-Mac OSX version 10.2.6 on the PowerPC G4.  This software 
+It has been tested on Windows XP Professional, Fedora
+Core 1 Linux, and Mac OSX.  The software 
 should function properly on most platforms for which the Sun Java
 Runtime Environment is available.  
 </isb:docsection>
