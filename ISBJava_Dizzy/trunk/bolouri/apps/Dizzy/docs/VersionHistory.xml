@@ -42,6 +42,24 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td>0.0.7</td>
+<td>2003/11/07</td>
+<td>
+<ul>
+<li>Modified the editor pane so that it &quot;remembers&quot; the directory of the last file
+that was opened; the default directory for the file chooser for the next &quot;open&quot; command,
+is set to this directory.</li>
+<li>Fixed a problem where the ISB and Bolouri Lab logo images were not displaying in the on-line
+help screen, when the computer is not connected to the network.</li>
+<li>Removed the table of contents from the HTML User Manual used in the on-line help (the JavaHelp
+environment provides its own table of contents).</li>
+<li>Adjusted the default vertical dimension of the editor pane for the model editor, to 40 characters.</li>
+</ul>
+</td>
+<td>0.0.7</td>
+</tr>
+
+<tr valign="top">
 <td>0.0.6</td>
 <td>2003/10/22</td>
 <td>

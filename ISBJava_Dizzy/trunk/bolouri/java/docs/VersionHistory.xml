@@ -38,6 +38,21 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td>0.0.7</td>
+<td>2003/11/07</td>
+<td>
+<ul>
+<li>Modified <code>org.systemsbiology.chem.app.EditorPane</code> so that it &quot;remembers&quot; the
+directory of the last file opened in the editor.  The default directory for the 
+<code>org.systemsbiology.chem.app.FileChooser</code>
+for the next &quot;Open&quot; command, is set to this directory.</li>
+<li>Adjusted the default vertical dimension of the <code>org.systemsbiology.chem.app.EditorPane</code>
+for the model editor, to 40 characters.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td>0.0.6</td>
 <td>2003/10/22</td>
 <td>
