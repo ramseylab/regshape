@@ -41,8 +41,7 @@
            excludes="AppConfig.xml" />
   </target>
 
-  <target name="convertHtmlToPDF">
-
+  <target name="tidyHTML"> 
     <apply executable="${binHtmlTidy}" failonerror="true">
       <fileset dir="${app.webDir}/docs">
         <include name="UserManual.html" />
@@ -53,7 +52,9 @@
       <arg value="-asxhtml" />
       <srcfile />
     </apply>
+  </target>
 
+  <target name="convertHtmlToPDF" depends="tidyHTML">
     <apply executable="${binHtml2PS}" failonerror="true" dest="${app.webDir}/docs">
       <mapper type="regexp" from="^(.*)\.html$$" to="\1\.ps" />
       <fileset dir="${app.webDir}/docs">
