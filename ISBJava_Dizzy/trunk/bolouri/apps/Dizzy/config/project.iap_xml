@@ -475,6 +475,36 @@ and any path to a file to read from that file]]></string>
 							</property>
 						</object>
 					</method>
+					<method name="addElement">
+						<object class="com.zerog.ia.installer.actions.InstallZipfile" objectID="705e00c59ac3">
+							<property name="unixPermissions">
+								<string><![CDATA[664]]></string>
+							</property>
+							<property name="sourceName">
+								<string><![CDATA[Jama.jar]]></string>
+							</property>
+							<property name="overrideUnixPermissions">
+								<boolean>false</boolean>
+							</property>
+							<property name="sourcePath">
+								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
+							</property>
+							<property name="shouldUninstall">
+								<boolean>true</boolean>
+							</property>
+							<property name="destinationName">
+								<string><![CDATA[Jama.jar]]></string>
+							</property>
+							<property name="fileSize">
+								<long>-1</long>
+							</property>
+							<property name="macBinary">
+								<boolean>false</boolean>
+							</property>
+						</object>
+					</method>
+
+
 				</object>
 			</property>
 			<property name="installerName">
@@ -2210,6 +2240,7 @@ and any path to a file to read from that file]]></string>
 											</visualChildren>
 										</object>
 										<object refID="520850a99abe"/>
+										<object refID="705e00c59ac3"/>
 										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="6e2e77029afc">
 											<property name="unixPermissions">
 												<string><![CDATA[775]]></string>
@@ -2239,6 +2270,7 @@ and any path to a file to read from that file]]></string>
 												<object refID="36fc7eb193a2"/>
 												<object refID="ecac2ae19abd"/>
 												<object refID="520850a99abe"/>
+												<object refID="705e00c59ac3"/>
 											</visualChildren>
 										</object>
 									</installChildren>
