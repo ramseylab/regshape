@@ -191,19 +191,51 @@ public class Expression implements Cloneable
     {
         private final String mName;
         private static HashMap mFunctionsMap;
+        public final int mIntCode;
+        public final int mNumFunctionArgs;
+
+        public static final int NULL_FUNCTION_CODE = 0;
+        public static final int ELEMENT_CODE_NONE = 0;
+        public static final int ELEMENT_CODE_SYMBOL = 1;
+        public static final int ELEMENT_CODE_NUMBER = 2;
+        public static final int ELEMENT_CODE_MULT = 3;
+        public static final int ELEMENT_CODE_ADD = 4;
+        public static final int ELEMENT_CODE_SUBT = 5;
+        public static final int ELEMENT_CODE_DIV = 6;
+        public static final int ELEMENT_CODE_POW = 7;
+        public static final int ELEMENT_CODE_MOD = 8;
+        public static final int ELEMENT_CODE_NEG = 9;
+        public static final int ELEMENT_CODE_EXP = 10;
+        public static final int ELEMENT_CODE_LOG = 11;
+        public static final int ELEMENT_CODE_SIN = 12;
+        public static final int ELEMENT_CODE_COS = 13;
+        public static final int ELEMENT_CODE_TAN = 14;
+        public static final int ELEMENT_CODE_ASIN = 15;
+        public static final int ELEMENT_CODE_ACOS = 16;
+        public static final int ELEMENT_CODE_ATAN = 17;
+        public static final int ELEMENT_CODE_ABS = 18;
+        public static final int ELEMENT_CODE_FLOOR = 19;
+        public static final int ELEMENT_CODE_CEIL = 20;
+        public static final int ELEMENT_CODE_SQRT = 21;
+        public static final int ELEMENT_CODE_GAMMALN = 22;
+        public static final int ELEMENT_CODE_THETA = 23;
+        public static final int ELEMENT_CODE_RAND = 24;
 
         static
         {
             mFunctionsMap = new HashMap();
         }
 
-        private ElementCode(String pName)
+        private ElementCode(String pName, int pIntCode)
         {
-            this(pName, false);
+            this(pName, pIntCode, false, 0);
         }
-        private ElementCode(String pName, boolean pIsFunction)
+
+        private ElementCode(String pName, int pIntCode, boolean pIsFunction, int pNumFunctionArgs)
         {
             mName = pName;
+            mIntCode = pIntCode;
+            mNumFunctionArgs = pNumFunctionArgs;
             if(pIsFunction)
             {
                 putFunction(this);
@@ -232,157 +264,157 @@ public class Expression implements Cloneable
          * element code indicating an empty element (this should never
          * occur in a valid expression parse tree)
          */
-        public static final ElementCode NONE = new ElementCode("none");
+        public static final ElementCode NONE = new ElementCode("none", ELEMENT_CODE_NONE);
 
         /**
          * element code indicating that the element is a &quot;symbol&quot;
          * (like a variable)
          */
-        public static final ElementCode SYMBOL = new ElementCode("symbol");
+        public static final ElementCode SYMBOL = new ElementCode("symbol", ELEMENT_CODE_SYMBOL);
 
         /**
          * element code indicating that the element is a &quot;value&quot;
          * (like a number)
          */
-        public static final ElementCode NUMBER = new ElementCode("number");
+        public static final ElementCode NUMBER = new ElementCode("number", ELEMENT_CODE_NUMBER);
 
         /**
          * element code indicating that the element is an operation
          * element specifying the multiplication of its two child operands
          */
-        public static final ElementCode MULT = new ElementCode("mult");
+        public static final ElementCode MULT = new ElementCode("mult", ELEMENT_CODE_MULT);
 
         /**
          * element code indicating that the element is an operation
          * element specifying the addition of its two child operands
          */
-        public static final ElementCode ADD = new ElementCode("add");
+        public static final ElementCode ADD = new ElementCode("add", ELEMENT_CODE_ADD);
 
         /**
          * element code indicating that the element is an operation
          * element specifying the subtraction of its two child operands
          * (the second operand is to be subtracted from the first)
          */
-        public static final ElementCode SUBT = new ElementCode("subt");
+        public static final ElementCode SUBT = new ElementCode("subt", ELEMENT_CODE_SUBT);
 
         /**
          * element code indicating that the element is an operation
          * element specifying the division of its two child operands
          */
-        public static final ElementCode DIV = new ElementCode("div");
+        public static final ElementCode DIV = new ElementCode("div", ELEMENT_CODE_DIV);
 
         /**
          * element code indicating that the element is an operation
          * element specifying the exponentiation of its first operand
          * by the value of the second operand
          */    
-        public static final ElementCode POW = new ElementCode("pow");
+        public static final ElementCode POW = new ElementCode("pow", ELEMENT_CODE_POW);
 
         /**
          * element code indicating that the element is an operation
          * element specifying the modulus (remainder) of the quotient
          * of the first and second operands.
          */    
-        public static final ElementCode MOD = new ElementCode("mod");
+        public static final ElementCode MOD = new ElementCode("mod", ELEMENT_CODE_MOD);
 
         /**
          * element code indicating that the element is an operation
          * element specifying the negation of its first (and only)
          * operand
          */    
-        public static final ElementCode NEG = new ElementCode("neg");
+        public static final ElementCode NEG = new ElementCode("neg", ELEMENT_CODE_NEG);
 
         /**
          * element code specifying the exponential function of the 
          * first (and only) argument
          */
-        public static final ElementCode EXP = new ElementCode("exp", true);
+        public static final ElementCode EXP = new ElementCode("exp", ELEMENT_CODE_EXP, true, 1);
 
         /**
          * element code specifying the logarithm function (base e) of the 
          * first (and only) argument
          */
-        public static final ElementCode LOG = new ElementCode("log", true);
+        public static final ElementCode LOG = new ElementCode("log", ELEMENT_CODE_LOG, true, 1);
 
         /**
          * element code specifying the sine function of the 
          * first (and only) argument; argument is in radians
          */
-        public static final ElementCode SIN = new ElementCode("sin", true);
+        public static final ElementCode SIN = new ElementCode("sin", ELEMENT_CODE_SIN, true, 1);
 
         /**
          * element code specifying the cosine function of the 
          * first (and only) argument; argument is in radians
          */
-        public static final ElementCode COS = new ElementCode("cos", true);
+        public static final ElementCode COS = new ElementCode("cos", ELEMENT_CODE_COS, true, 1);
 
         /**
          * element code specifying the tangent function of the 
          * first (and only) argument; argument is in radians
          */
-        public static final ElementCode TAN = new ElementCode("tan", true);
+        public static final ElementCode TAN = new ElementCode("tan", ELEMENT_CODE_TAN, true, 1);
 
         /**
          * element code specifying the inverse sine function of the 
          * first (and only) argument; argument is in the range [-1,1];
          * return value is in radians
          */
-        public static final ElementCode ASIN = new ElementCode("asin", true);
+        public static final ElementCode ASIN = new ElementCode("asin", ELEMENT_CODE_ASIN, true, 1);
 
         /**
          * element code specifying the inverse cosine function of the 
          * first (and only) argument; argument is in the range [-1,1];
          * return value is in radians
          */
-        public static final ElementCode ACOS = new ElementCode("acos", true);
+        public static final ElementCode ACOS = new ElementCode("acos", ELEMENT_CODE_ACOS, true, 1);
 
         /**
          * element code specifying the inverse tangent function of the 
          * first (and only) argument; return value is in radians
          */
-        public static final ElementCode ATAN = new ElementCode("atan", true);
+        public static final ElementCode ATAN = new ElementCode("atan", ELEMENT_CODE_ATAN, true, 1);
 
         /**
          * element code specifying the absolute value of the 
          * first (and only) argument
          */
-        public static final ElementCode ABS = new ElementCode("abs", true);
+        public static final ElementCode ABS = new ElementCode("abs", ELEMENT_CODE_ABS, true, 1);
 
         /**
          * element code specifying the greatest integer value that is
          * less than or equal to the argument
          */
-        public static final ElementCode FLOOR = new ElementCode("floor", true);
+        public static final ElementCode FLOOR = new ElementCode("floor", ELEMENT_CODE_FLOOR, true, 1);
 
         /**
          * element code specifying the smallest integer value that is
          * greater than or equal to the argument
          */
-        public static final ElementCode CEIL = new ElementCode("ceil", true);
+        public static final ElementCode CEIL = new ElementCode("ceil", ELEMENT_CODE_CEIL, true, 1);
 
         /**
          * element code specifying the square root of the argument, which 
          * must be nonnegative.
          */
-        public static final ElementCode SQRT = new ElementCode("sqrt", true);
+        public static final ElementCode SQRT = new ElementCode("sqrt", ELEMENT_CODE_SQRT, true, 1);
 
         /**
          * element code specifying the natural logarithm of the gamma function 
          * of the argument
          */
-        public static final ElementCode GAMMALN = new ElementCode("gammaln", true);
+        public static final ElementCode GAMMALN = new ElementCode("gammaln", ELEMENT_CODE_GAMMALN, true, 1);
 
         /**
          * element code specifying the natural logarithm of the gamma function 
          * of the argument
          */
-        public static final ElementCode THETA = new ElementCode("theta", true);
+        public static final ElementCode THETA = new ElementCode("theta", ELEMENT_CODE_THETA, true, 1);
 
         /**
          * element code specifying a random number chosen from the unit interval
          * with uniform distribution (inclusive of 0.0, exclusive of 1.0).
          */
-        public static final ElementCode RAND = new ElementCode("rand", true);
+        public static final ElementCode RAND = new ElementCode("rand", ELEMENT_CODE_RAND, true, 0);
     }
 
     /**
@@ -817,7 +849,7 @@ public class Expression implements Cloneable
             if(tok.mCode == TokenCode.SYMBOL)
             {
                 String symbolName = tok.mSymbolName;
-                ElementCode functionCode = parseFunctionName(symbolName);
+                ElementCode elementCodeFunction = parseFunctionName(symbolName);
 
                 // check to see if this is a function call
                 if(iter.hasNext())
@@ -828,13 +860,28 @@ public class Expression implements Cloneable
                     {
                         Element functionCallElement = new Element();
                         functionCallElement.mFirstOperand = nextTok.mParsedExpression;
-                        if(null != functionCode)
+                        if(null != elementCodeFunction)
                         {
-                            functionCallElement.mCode = functionCode;
+                            functionCallElement.mCode = elementCodeFunction;
                         }
                         else
                         {
                             throw new IllegalArgumentException("unknown symbol used as function name: " + symbolName);
+                        }
+                        int numArgs = elementCodeFunction.mNumFunctionArgs;
+                        if(numArgs == 0)
+                        {
+                            if(functionCallElement.mFirstOperand != null)
+                            {
+                                throw new IllegalArgumentException("function does not allow any arguments: " + elementCodeFunction);
+                            }
+                        }
+                        else if(numArgs == 1)
+                        {
+                            if(functionCallElement.mFirstOperand == null)
+                            {
+                                throw new IllegalArgumentException("function requires an argument: " + elementCodeFunction);
+                            }
                         }
                         nextTok.mParsedExpression = functionCallElement;
                         iter.previous();
@@ -844,7 +891,7 @@ public class Expression implements Cloneable
                     }
                     else
                     {
-                        if(null != functionCode)
+                        if(null != elementCodeFunction)
                         {
                             throw new IllegalArgumentException("reserved function name used as symbol: " + symbolName);
                         }
@@ -852,7 +899,7 @@ public class Expression implements Cloneable
                 }
                 else
                 {
-                    if(null != functionCode)
+                    if(null != elementCodeFunction)
                     {
                         throw new IllegalArgumentException("reserved function name used as symbol: " + symbolName);
                     }
@@ -1070,156 +1117,144 @@ public class Expression implements Cloneable
         }        
     }
 
-    private double valueOfSubtree(Element pElement, SymbolEvaluator pSymbolValueMap) throws DataNotFoundException
-    {
-        double valueOfSubtree = 0.0;
-        ElementCode elementCode = pElement.mCode;
 
-        if(elementCode == ElementCode.NUMBER)
+    // this method is PERFORMANCE CRITICAL code; that is why it is so ugly
+    private static final double valueOfSubtreeNonSimple(Element pElement, SymbolEvaluator pSymbolEvaluator, int pElementCodeInt) throws DataNotFoundException
+    {
+        double valueOfFirstOperand;
+        Element firstOperand = pElement.mFirstOperand;
+        int firstOperandIntCode = firstOperand.mCode.mIntCode;
+        switch(firstOperandIntCode)
         {
-            valueOfSubtree = pElement.mNumericValue;
+            case ElementCode.ELEMENT_CODE_SYMBOL:
+                valueOfFirstOperand = pSymbolEvaluator.getValue(firstOperand.mSymbol);
+                break;
+            case ElementCode.ELEMENT_CODE_NUMBER:
+                valueOfFirstOperand = firstOperand.mNumericValue;
+                break;
+            default:
+                valueOfFirstOperand = valueOfSubtreeNonSimple(firstOperand, pSymbolEvaluator, firstOperandIntCode);
+                break;
         }
-        else if(elementCode == ElementCode.SYMBOL)
+
+        Element secondOperand = pElement.mSecondOperand;
+        if(null != secondOperand)
         {
-            Symbol symbol = pElement.mSymbol;
-            if(null == symbol)
+            double valueOfSecondOperand;
+            int secondOperandIntCode = secondOperand.mCode.mIntCode;
+            switch(secondOperandIntCode)
             {
-                throw new IllegalArgumentException("found an element in the tree with element code ElementCode.SYMBOL, but with a null symbol object");
+                case ElementCode.ELEMENT_CODE_SYMBOL:
+                    valueOfSecondOperand = pSymbolEvaluator.getValue(secondOperand.mSymbol);
+                    break;
+                case ElementCode.ELEMENT_CODE_NUMBER:
+                    valueOfSecondOperand = secondOperand.mNumericValue;
+                    break;
+                default:
+                    valueOfSecondOperand = valueOfSubtreeNonSimple(secondOperand, pSymbolEvaluator, secondOperandIntCode);
+                    break;
             }
-            // the value of the element is the value of the symbol
-            valueOfSubtree = pSymbolValueMap.getValue(symbol);
+
+            switch(pElementCodeInt)
+            {
+                case ElementCode.ELEMENT_CODE_MULT:
+                    return(valueOfFirstOperand * valueOfSecondOperand);
+                    
+                case ElementCode.ELEMENT_CODE_ADD:
+                    return(valueOfFirstOperand + valueOfSecondOperand);
+                    
+                case ElementCode.ELEMENT_CODE_DIV:
+                    return(valueOfFirstOperand / valueOfSecondOperand);
+                    
+                case ElementCode.ELEMENT_CODE_SUBT:
+                    return(valueOfFirstOperand - valueOfSecondOperand);
+                    
+                case ElementCode.ELEMENT_CODE_POW:
+                    return(Math.pow(valueOfFirstOperand, valueOfSecondOperand));
+                    
+                case ElementCode.ELEMENT_CODE_MOD:
+                    return(valueOfFirstOperand % valueOfSecondOperand);
+                    
+                default:
+                    throw new IllegalStateException("unknown function code: " + pElement.mCode);
+            }
         }
         else
         {
-            // the element must be an operation element, either unary or binary-- 
-            // so get the value of the first operand
-
-            Element firstOperand = pElement.mFirstOperand;
-            if(null == firstOperand)
+            switch(pElementCodeInt)
             {
-                // must be a function call with no arguments
-                if(elementCode == ElementCode.RAND)
-                {
-                    valueOfSubtree = Math.random();
-                }
-                else
-                {
-                    throw new IllegalArgumentException("an argument is required for expression element: \"" + elementCode + "\"");
-                }
-            }
-            else
-            {
-                double valueOfFirstOperand = valueOfSubtree(firstOperand, pSymbolValueMap);
-
-                if(elementCode == ElementCode.NEG)
-                {
-                    valueOfSubtree = -1.0 * valueOfFirstOperand;
-                }
-                else if(elementCode == ElementCode.EXP)
-                {
-                    valueOfSubtree = Math.exp(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.LOG)
-                {
-                    valueOfSubtree = Math.log(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.SIN)
-                {
-                    valueOfSubtree = Math.sin(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.COS)
-                {
-                    valueOfSubtree = Math.cos(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.TAN)
-                {
-                    valueOfSubtree = Math.tan(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.ASIN)
-                {
-                    valueOfSubtree = Math.asin(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.ACOS)
-                {
-                    valueOfSubtree = Math.acos(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.ATAN)
-                {
-                    valueOfSubtree = Math.atan(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.ABS)
-                {
-                    valueOfSubtree = Math.abs(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.FLOOR)
-                {
-                    valueOfSubtree = Math.floor(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.CEIL)
-                {
-                    valueOfSubtree = Math.ceil(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.SQRT)
-                {
-                    valueOfSubtree = Math.sqrt(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.GAMMALN)
-                {
-                    valueOfSubtree = MathFunctions.gammaln(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.THETA)
-                {
-                    valueOfSubtree = MathFunctions.thetaFunction(valueOfFirstOperand);
-                }
-                else if(elementCode == ElementCode.RAND)
-                {
-                    throw new IllegalArgumentException("function rand() does not permit specification of a function argument");
-                }
-                else
-                {
-                    // must be a binary operator
-                    Element secondOperand = pElement.mSecondOperand;
-                    if(null == secondOperand)
-                    {
-                        throw new IllegalArgumentException("found an element in the tree with an element code corresponding to a binary operator, but with a null second operand field");
-                    }
-                    double valueOfSecondOperand = valueOfSubtree(secondOperand, pSymbolValueMap);
-                    if(elementCode == ElementCode.MULT)
-                    {
-                        valueOfSubtree = valueOfFirstOperand * valueOfSecondOperand;
-                    }
-                    else if(elementCode == ElementCode.ADD)
-                    {
-                        valueOfSubtree = valueOfFirstOperand + valueOfSecondOperand;
-                    }
-                    else if(elementCode == ElementCode.DIV)
-                    {
-                        valueOfSubtree = valueOfFirstOperand / valueOfSecondOperand;
-                    }
-                    else if(elementCode == ElementCode.SUBT)
-                    {
-                        valueOfSubtree = valueOfFirstOperand - valueOfSecondOperand;
-                    }
-                    else if(elementCode == ElementCode.POW)
-                    {
-                        valueOfSubtree = Math.pow(valueOfFirstOperand, valueOfSecondOperand);
-                    }
-                    else if(elementCode == ElementCode.MOD)
-                    {
-                        valueOfSubtree = valueOfFirstOperand % valueOfSecondOperand;
-                    }
-                    else if(elementCode.isFunction())
-                    {
-                        throw new IllegalArgumentException("function \"" + elementCode + "\" is not permitted to have two arguments");
-                    }
-                    else
-                    {
-                        throw new IllegalArgumentException("found an element with an unknown element code: " + elementCode);
-                    }
-                }
+                case ElementCode.ELEMENT_CODE_NEG:
+                    return(-1.0 * valueOfFirstOperand);
+                    
+                case ElementCode.ELEMENT_CODE_EXP:
+                    return(Math.exp(valueOfFirstOperand));
+                    
+                case ElementCode.ELEMENT_CODE_LOG:
+                    return(Math.log(valueOfFirstOperand));
+                    
+                case ElementCode.ELEMENT_CODE_SIN:
+                    return(Math.sin(valueOfFirstOperand));
+                    
+                case ElementCode.ELEMENT_CODE_COS:
+                    return(Math.cos(valueOfFirstOperand));
+                    
+                case ElementCode.ELEMENT_CODE_TAN:
+                    return(Math.tan(valueOfFirstOperand));
+                    
+                case ElementCode.ELEMENT_CODE_ASIN:
+                    return(Math.asin(valueOfFirstOperand));
+                    
+                case ElementCode.ELEMENT_CODE_ACOS:
+                    return(Math.acos(valueOfFirstOperand));
+                    
+                case ElementCode.ELEMENT_CODE_ATAN:
+                    return(Math.atan(valueOfFirstOperand));
+                    
+                case ElementCode.ELEMENT_CODE_ABS:
+                    return(Math.abs(valueOfFirstOperand));
+                    
+                case ElementCode.ELEMENT_CODE_FLOOR:
+                    return(Math.floor(valueOfFirstOperand));
+                    
+                case ElementCode.ELEMENT_CODE_CEIL:
+                    return(Math.ceil(valueOfFirstOperand));
+                    
+                case ElementCode.ELEMENT_CODE_SQRT:
+                    return(Math.sqrt(valueOfFirstOperand));
+                    
+                case ElementCode.ELEMENT_CODE_GAMMALN:
+                    return(MathFunctions.gammaln(valueOfFirstOperand));
+                    
+                case ElementCode.ELEMENT_CODE_THETA:
+                    return(MathFunctions.thetaFunction(valueOfFirstOperand));
+                    
+                default:
+                    throw new IllegalStateException("unknown function code: " + pElement.mCode);
             }
         }
-        return(valueOfSubtree);
+    }
+
+    private static final double valueOfSubtree(Element pElement, SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
+    {
+        int elementCodeInt = pElement.mCode.mIntCode;
+
+        switch(elementCodeInt)
+        {
+            // first handle all the cases that have no operands:
+
+            case ElementCode.ELEMENT_CODE_SYMBOL:
+                Symbol symbol = pElement.mSymbol;
+                return(pSymbolEvaluator.getValue(symbol));
+
+            case ElementCode.ELEMENT_CODE_NUMBER:
+                return(pElement.mNumericValue);
+
+            case ElementCode.ELEMENT_CODE_RAND:
+                return(Math.random());
+
+            default:
+                return(valueOfSubtreeNonSimple(pElement, pSymbolEvaluator, elementCodeInt));
+        }
     }
 
     /*========================================*
@@ -1372,7 +1407,7 @@ public class Expression implements Cloneable
      * already in the constructor, or in a call to {@link #setExpression(String)}),
      * using the symbol values defined in the map <code>ISymbolValueMap</code>.
      */
-    public double computeValue(SymbolEvaluator pSymbolValueMap) throws DataNotFoundException, IllegalStateException, IllegalArgumentException
+    public double computeValue(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException, IllegalStateException, IllegalArgumentException
     {
         Element rootElement = getRootElement();
         if(null == rootElement)
@@ -1382,7 +1417,7 @@ public class Expression implements Cloneable
         double retVal = 0.0;
         try
         {
-            retVal = valueOfSubtree(rootElement, pSymbolValueMap);
+            retVal = valueOfSubtree(rootElement, pSymbolEvaluator);
         }
         catch(java.lang.StackOverflowError e)
         {
@@ -1390,7 +1425,7 @@ public class Expression implements Cloneable
         }
 
 
-        return(valueOfSubtree(rootElement, pSymbolValueMap));
+        return(valueOfSubtree(rootElement, pSymbolEvaluator));
     }
 
     public Object clone()
