@@ -16,16 +16,24 @@
 # via FTP from the web server machine.  The analysis program that is run is called
 # Webalizer.  The IP addresses that appear in the log file are translated by
 # the Webalizer program into hostnames, using DNS lookups.  The IP addresses and
-# hostnames are stored in a cache file in Berkeley database ("DB") format.
+# hostnames are stored in a cache file in Berkeley database ("DB") format.  The
+# script also computes the number of times that the Dizzy and ISBJava programs
+# were downloaded, and creates JPEG images representing these counter values,
+# and uploads the JPEG images of the web counters to the image directory on
+# the web server.
 #
 # Required programs that must be installed in order to use this software:
 #  - NCFTP (specifically, we use the "ncftpget" program from this package)
 #  - Webalizer (which also requires the Berkeley Database library "libdb" with the v1.85-compatible API)
 #  - Perl
+#  - Math::Trig (a Perl module available at CPAN)
+#  - GD::Image (a Perl module available at CPAN)
 #
 # Stephen Ramsey
 # 2004/06/09
 #
+use GD;
+
 sub SCRATCH_DIR() {'/local/var/webalizer'}
 sub DOCUMENT_ROOT() {'/local/apache/htdocs'}
 sub BIN_DIR() {'/local/bin'}
@@ -37,17 +45,64 @@ sub REMOTE_FTP_DIR() {'privateRepository'}
 sub DNS_CACHE_FILE() {'dns_cache.db'}
 sub WEB_STATS_WEB_SUBDIR() {'webstats'}
 
-my $curTime = localtime();
-my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime(time);
-my $week = ($yday + 1)/ 7;
-$year += 1900;
-my $suffix = sprintf("%4d-%2d", $year, $week);
-my $logFilePrefix = SCRATCH_DIR . '/' . LOG_FILE_PREFIX;
-my $logFile = $logFilePrefix . '-' . $suffix . '.log';
-system(BIN_DIR . "/ncftpget -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " " . SCRATCH_DIR . " " . REMOTE_FTP_DIR . "/" . LOG_FILE_PREFIX . ".log") and die("unable to obtain web statistics file");
-my $temp = SCRATCH_DIR . '/' . LOG_FILE_PREFIX . '.log ' . $logFile;
-system("/bin/mv " . $temp); 
-system(BIN_DIR . "/webalizer  -D " . SCRATCH_DIR . "/" . DNS_CACHE_FILE . " -N 10 -o " . DOCUMENT_ROOT . "/" . WEB_STATS_WEB_SUBDIR . " " . $logFilePrefix . '*.log') and die("unable to analyze log files");
- 
+sub text_to_jpg($$)
+{
+    my $value = shift(@_);
+    my $outputFile = shift(@_);
 
+    my $im = GD::Image->new(gdLargeFont->width*length($value),
+                            gdLargeFont->height);
+    $im->colorAllocate(255,255,255);
+    $im->string(gdLargeFont,0,0,$value,$im->colorAllocate(0,0,0));
+    open(OUTPUT_FILE, ">$outputFile") or die("unable to open output file: $outputFile");
+    binmode OUTPUT_FILE;
+    print OUTPUT_FILE $im->jpeg(100);
+    close(OUTPUT_FILE);
+}
+
+sub main()
+{
+    my $curTime = localtime();
+    my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime(time);
+    my $week = ($yday + 1)/ 7;
+    $year += 1900;
+    my $suffix = sprintf("%4d-%2d", $year, $week);
+    my $logFilePrefix = SCRATCH_DIR . '/' . LOG_FILE_PREFIX;
+    my $logFile = $logFilePrefix . '-' . $suffix . '.log';
+    system(BIN_DIR . "/ncftpget -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " " . SCRATCH_DIR . " " . REMOTE_FTP_DIR . "/" . LOG_FILE_PREFIX . ".log") and die("unable to obtain web statistics file");
+    my $temp = SCRATCH_DIR . '/' . LOG_FILE_PREFIX . '.log ' . $logFile;
+    system("/bin/mv " . $temp); 
+    system(BIN_DIR . "/webalizer  -D " . SCRATCH_DIR . "/" . DNS_CACHE_FILE . " -N 10 -o " . DOCUMENT_ROOT . "/" . WEB_STATS_WEB_SUBDIR . " " . $logFilePrefix . '*.log') and die("unable to analyze log files");
+
+    open(DIZZY_DOWNLOADS, "<" . SCRATCH_DIR . "/DizzyDownloads.txt") or die("unable to open Dizzy downloads file, for reading");
+    my $numDizzyDownloads = <DIZZY_DOWNLOADS>;
+    close(DIZZY_DOWNLOADS);
+    if(! defined($numDizzyDownloads))
+    {
+        $numDizzyDownloads = 0;
+    }
+    $numDizzyDownloads += `/bin/grep insDizzy $logFile | /usr/bin/wc --lines`;
+    open(DIZZY_DOWNLOADS, ">" . SCRATCH_DIR . "/DizzyDownloads.txt") or die("unable do open Dizzy downloads file, for writing");
+    print DIZZY_DOWNLOADS $numDizzyDownloads . "\n";
+    close(DIZZY_DOWNLOADS);
+    text_to_jpg($numDizzyDownloads, SCRATCH_DIR . "/DizzyDownloads.jpg");
+    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/Dizzy/images " . SCRATCH_DIR . "/DizzyDownloads.jpg") and die("unable to FTP DizzyDownloads.jpg file to FTP server");
+
+    open(ISBJAVA_DOWNLOADS, "<" . SCRATCH_DIR . "/ISBJavaDownloads.txt") or die("unable to open ISBJava downloads file, for reading");
+    my $numISBJavaDownloads = <ISBJAVA_DOWNLOADS>;
+    close(ISBJAVA_DOWNLOADS);
+    if(! defined($numISBJavaDownloads))
+    {
+        $numISBJavaDownloads = 0;
+    }
+    $numISBJavaDownloads += `/bin/grep insISBJ $logFile | /usr/bin/wc --lines`;
+    open(ISBJAVA_DOWNLOADS, ">" . SCRATCH_DIR . "/ISBJavaDownloads.txt") or die("unable do open ISBJava downloads file, for writing");
+    print ISBJAVA_DOWNLOADS $numISBJavaDownloads . "\n";
+    close(ISBJAVA_DOWNLOADS);
+    text_to_jpg($numISBJavaDownloads, SCRATCH_DIR . "/ISBJavaDownloads.jpg");
+    system(BIN_DIR . "/ncftpput -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " software/ISBJava/images " . SCRATCH_DIR . "/ISBJavaDownloads.jpg") and die("unable to FTP ISBJavaDownloads.jpg file to FTP server");
+}
+
+main();
+exit(0);
 
