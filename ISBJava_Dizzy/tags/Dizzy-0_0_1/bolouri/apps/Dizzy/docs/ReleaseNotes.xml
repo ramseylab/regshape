@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>&appName; Release Notes</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
+<isb:docversion>Version &appVersion;, Released &appDate;</isb:docversion>
+<isb:docdate>$Date$</isb:docdate>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+
+<isb:doccontents />
+
+<!-- ========== INTRODUCTION ========== -->
+<isb:docsection name="Introduction" label="introduction">
+&appName; is a chemical kinetics stochastic simulation software package 
+written in Java.  It provides a model definition environment and an implementation of the 
+<a href="&appHomePage;/docs/UserManual.html#gillespie">Gillespie stochastic algorithm</a>.
+The software is based on the 
+<a href="../../&localJavaLibraryName;">&localJavaLibraryName;</a> library. 
+</isb:docsection>
+
+<isb:docsection name="License Agreement" label="licenseagreement">
+This software is licensed under the GNU Lesser General Public 
+License (LGPL), which is a standard &quot;free software&quot;
+and &quot;open source&quot; license.  A 
+<a href="&webBaseURL;/License.html">copy of the 
+license agreement is available online</a>, as well as in the
+&quot;<code>docs/License.html</code>&quot; file in the 
+installation directory for this software.
+</isb:docsection>
+
+<isb:docsection name="Disclaimer" label="disclaimer">
+This version is alpha (experimental) software.  Please be patient while we fix 
+bugs, add new features, and add (much needed) documentation.  Your 
+patience is appreciated.  Please be advised that the
+&mainAffiliation; and the authors disclaim any liability 
+stemming from the use of this software, as stated in the license agreement.
+</isb:docsection>
+
+<isb:docsection name="Supported Platforms" label="platforms">
+This software requires a Java Runtime Environment (JRE) version 1.4 or
+newer, because it uses Java 1.4 language features and extensions.
+This software has been tested on Windows XP and Red Hat Linux 8.0.
+It should function properly on most Windows platforms and on most major
+Linux distributions.  For other operating systems, you may download the 
+&quot;Other Java-Enabled Platforms&quot; version of the installer.
+</isb:docsection>
+
+<isb:docsection name="Source Code" label="sourcecode">
+The source code for this application is included with the 
+application installer. You can find the code in the file 
+&quot;<code>&localJavaLibraryName;-src.tar.gz</code>&quot;
+that is installed in the &quot;<code>src</code>&quot;
+subdirectory of the installation directory for this program.
+</isb:docsection>
+
+<isb:docsection name="Documentation" label="documentation">
+For documentation on how to use the &appName; program,
+please consult the 
+<a href="&appHomePage;/docs/UserManual.html">&appName; User Manual</a>.
+When &appName; is installed, a PDF version of the manual 
+&quot;<code>UserManual.pdf</code>&quot; can be found
+in the &quot;<code>docs</code>&quot; subdirectory of the installation
+directory.
+For detailed documentation of the application programming
+interface (API) to the &appName; system, please consult the
+<a href="&webBaseURL;/&localJavaLibraryName;">ISBJava</a> home page.
+In addition, the &appName; system provides a set of
+<a href="&appHomePage;/docs/UserManual.html#samplefiles">
+sample model definition files</a>.
+</isb:docsection>
+<isb:docsection name="Contact Information" label="contactinfo">
+If you have questions about this software, or if you
+have a bug report that you would like to submit,
+please contact the &appMaintainerFullName; at  
+&appMaintainerAffiliation; by sending email to: 
+<blockquote>
+<code>&appMaintainerEmailSafe;</code>.
+</blockquote>
+</isb:docsection>
+</isb:document>
+

@@ -1,0 +1,94 @@
+//
+// singlegene.dizzy
+//
+// This document contains a model description of a
+// simple stochastic model of the transcription of
+// a single gene, with two transcription factors
+// TFA and TFB. The length of the coding region is
+// a parameter that is defined at the top of the 
+// file.  
+//
+// The rate constants and initial populations are
+// not taken from any experiments; the purpose of
+// this model is just to explore the effects of
+// stochasticity in comparsion to deterministic 
+// dynamics.
+//
+// The model description is in the CMDL
+// (Chemical Model Definition Language)
+// language, and is meant to be parsed by the
+// "Dizzy" software system.  For more information,
+// please refer to the home page for the Dizzy
+// software system,
+// 
+// http://labs.systemsbiology.net/bolouri/Dizzy
+//
+//
+// Author:  Stephen Ramsey
+// Date:    2003/04/09 (revised 2003/07/17)
+//
+
+minBases                 = 45;
+codingRegionLengthBases  = 1000.0;
+transcriptionRate        = 1.0;
+abortProbPerBase         = 0.005;
+
+// setting the initial populations for the chemical species in the model:
+TFA                                   = 5;
+TFB                                   = 5;
+DNA_plus_TFA                          = 0;
+DNA_plus_TFB                          = 0;
+DNA_plus_TFC                          = 0;
+DNA                                   = 1;
+"PCOM_plus_DNA_past_base_[minBases]"  = 0;
+mRNA_product_complete                 = 0;
+mRNA_product_fragment                 = 0;
+PolII                                 = 5;
+
+loop (i, 1, minBases)
+{
+        "PCOM_plus_DNA_at_base_[i]"    = 0;
+}
+
+// polymerization complex moving one base along the template
+loop (i, 1, minBases-1)
+{
+"PCOM_moves_one_base_at_base_[i]", "PCOM_plus_DNA_at_base_[i]" -> "PCOM_plus_DNA_at_base_[i+1]",  transcriptionRate;
+}
+
+// polymerization complex moving past the "minBases" threshold
+PCOM_passing_threshold, "PCOM_plus_DNA_at_base_[minBases]" -> DNA_plus_TFC + "PCOM_plus_DNA_past_base_[minBases]",  transcriptionRate;
+
+// recruitment of PolII
+PolII_recruitment,    DNA_plus_TFC + PolII -> PCOM_plus_DNA_at_base_1,   1.0;
+PolII_derecruitment,  PCOM_plus_DNA_at_base_1 -> DNA_plus_TFC + PolII,   0.1;
+
+// completion of transcription process
+transcription_completed,   "PCOM_plus_DNA_past_base_[minBases]" -> PolII + mRNA_product_complete, transcriptionRate/codingRegionLengthBases;
+
+// aborting of transcription within the first "minBases" bases
+loop (i, 2, minBases)
+{
+"abort_at_base_[i]",   "PCOM_plus_DNA_at_base_[i]" -> DNA_plus_TFC + PolII + mRNA_product_fragment, abortProbPerBase;
+}
+
+// aborting of late-state transcription
+aborting_past_threshold,  "PCOM_plus_DNA_past_base_[minBases]" -> PolII + mRNA_product_fragment, transcriptionRate * abortProbPerBase / codingRegionLengthBases;
+
+// transcription factor A binding to empty DNA template
+TFA_binding_DNA,            DNA + TFA -> DNA_plus_TFA,                  1.0;
+TFA_debinding_DNA,          DNA_plus_TFA -> DNA + TFA,                  0.1;
+
+// transcription factor B binding to empty DNA template
+TFB_binding_DNA,            DNA + TFB -> DNA_plus_TFB,                  1.0;
+TFB_debinding_DNA,          DNA_plus_TFB -> DNA + TFB,                  0.1;
+
+// transcription factor A binding to DNA template (where B is already bound)
+TFA_binding_DNA_plus_TFB,   DNA_plus_TFB + TFA -> DNA_plus_TFC,         1.0;
+TFA_debinding_DNA_plus_TFB, DNA_plus_TFC -> DNA_plus_TFB + TFA,         0.1;
+
+// transcription factor B binding to DNA template (where A is already bound)
+TFB_binding_DNA_plus_TFA,   DNA_plus_TFA + TFB -> DNA_plus_TFC,         1.0;
+TFB_debinding_DNA_plus_TFA, DNA_plus_TFC -> DNA_plus_TFA + TFB,         0.1;
+
+
