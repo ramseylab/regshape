@@ -14,7 +14,7 @@ import odeToJava.modules.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
 
-public class SimulatorOdeToJavaRungeKuttaImplicit extends SimulatorOdeToJavaBase implements IAliasableClass, ISimulator
+public final class SimulatorOdeToJavaRungeKuttaImplicit extends SimulatorOdeToJavaBase implements IAliasableClass, ISimulator
 {
     public static final String CLASS_ALIAS = "ODEtoJava-imex443-stiff";
 
@@ -47,5 +47,9 @@ public class SimulatorOdeToJavaRungeKuttaImplicit extends SimulatorOdeToJavaBase
         imexsd.routine();
     }
 
+    public String getAlias()
+    {
+        return(CLASS_ALIAS);
+    }
     
 }

@@ -14,7 +14,7 @@ import odeToJava.modules.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
 
-public class SimulatorOdeToJavaRungeKuttaAdaptive extends SimulatorOdeToJavaBase implements IAliasableClass, ISimulator
+public final class SimulatorOdeToJavaRungeKuttaAdaptive extends SimulatorOdeToJavaBase implements IAliasableClass, ISimulator
 {
     public static final String CLASS_ALIAS = "ODEtoJava-dopr54-adaptive";
 
@@ -65,6 +65,9 @@ public class SimulatorOdeToJavaRungeKuttaAdaptive extends SimulatorOdeToJavaBase
     {
         return(true);
     }
-
     
+    public String getAlias()
+    {
+        return(CLASS_ALIAS);
+    }
 }
