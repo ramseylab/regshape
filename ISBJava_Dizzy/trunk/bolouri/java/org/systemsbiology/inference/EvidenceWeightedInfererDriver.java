@@ -40,6 +40,8 @@ public class EvidenceWeightedInfererDriver
 {
     public static final double ALPHA_VALUE_DEVIATION_WARNING_THRESHOLD = 0.1;    
     private static final String COLUMN_NAME_ELEMENT = "element";
+    private static final String COLUMN_NAME_AFFECTED = "affected";
+    private static final String COLUMN_NAME_OVERALL_SIGNIFICANCE = "overall significance";
     private static final String TOOL_TIP_LOAD_FILE = "Load the significances file.  The file must contain comma-separated values, with element names in the first column, and evidence type names in the first row";
     private static final String TOOL_TIP_CLEAR_FILE = "Clear the file of significances that was loaded into this form.";
     private static final String TOOL_TIP_SEPARATION = "The degree of separation of the distributions of signfificances for putative affected & unaffected elements; it should be very close to 1.0";
@@ -208,7 +210,9 @@ public class EvidenceWeightedInfererDriver
         public static final int SORT_STATUS_ASCENDING = 1;
         public static final int SORT_STATUS_DESCENDING = -1;
         public static final int NUM_COLUMNS = 3;
-        private final String []COLUMN_NAMES = {COLUMN_NAME_ELEMENT, "affected", "overall significance"};
+        private final String []COLUMN_NAMES = {COLUMN_NAME_ELEMENT, 
+                                               COLUMN_NAME_AFFECTED, 
+                                               COLUMN_NAME_OVERALL_SIGNIFICANCE};
         private Comparator []mSortingComparators;
         
         public void cancelSorting()
@@ -349,6 +353,11 @@ public class EvidenceWeightedInfererDriver
                 throw new IllegalArgumentException("invalid column number: " + pColumn);
             }
             return COLUMN_NAMES[pColumn];
+        }
+
+        public Integer []getSortedIndices()
+        {
+            return (Integer []) mIndex.toArray(new Integer[0]);
         }
         
         public Object getValueAt(int pRow, int pColumn)
@@ -1354,12 +1363,19 @@ public class EvidenceWeightedInfererDriver
         String delimiter = pDelimiter.getDelimiter();
         SignificancesData significancesData = mSignificancesData;
         String elementName = null;
+        
+        InferenceResultsTableModel tableModel = (InferenceResultsTableModel) mResultsTable.getModel();
+        Integer []sortedIndices = tableModel.getSortedIndices();
+        int index = 0;
+        
+        resultsBuf.append(COLUMN_NAME_ELEMENT + delimiter + COLUMN_NAME_AFFECTED + delimiter + COLUMN_NAME_OVERALL_SIGNIFICANCE + "\n"); 
         for(int i = 0; i < numElements; ++i)
         {
-            elementName = pDelimiter.scrubIdentifier(significancesData.getElementName(i));
+            index = sortedIndices[i].intValue();
+            elementName = pDelimiter.scrubIdentifier(significancesData.getElementName(index));
             resultsBuf.append(elementName + delimiter);
-            resultsBuf.append(affectedElements[i] + delimiter);
-            resultsBuf.append(mNumberFormat.format(combinedEffectiveSignificances[i]) + "\n");
+            resultsBuf.append(affectedElements[index] + delimiter);
+            resultsBuf.append(mNumberFormat.format(combinedEffectiveSignificances[index]) + "\n");
         }
 
         try
