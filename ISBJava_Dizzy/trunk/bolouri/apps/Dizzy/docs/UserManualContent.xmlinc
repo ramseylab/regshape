@@ -5,8 +5,9 @@
 <p />
 &appName; is a chemical kinetics simulation software 
 package implemented in Java.  It provides a model definition environment and 
-an implementation of the <a href="#gillespie">Gillespie stochastic algorithm</a>. 
-This software can be used to define a system of interacting chemical species,
+various simulation engines for evolving a dynamical model from specified 
+initial data. 
+A model consists of a system of interacting chemical species,
 and the reactions through which they interact.  The software can then be used 
 to simulate the reaction kinetics of the system of interacting species.
 The software consists of the following elements:
@@ -19,6 +20,9 @@ a model and run simulations on the model, and to export a model to a different
 model definition language</li>
 <li>an implementation of the 
 <a href="#gillespie">Gillespie stochastic algorithm</a> 
+for simulating chemical reaction kinetics</li>
+<li>an implementation of the 
+<a href="#gibsonbruck">Gibson-Bruck stochastic algorithm</a> 
 for simulating chemical reaction kinetics</li>
 <li>an implementation of a deterministic (ODE-based) algorithm for
 simulating chemical reaction kinetics</li>
