@@ -92,6 +92,7 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
                                           pDynamicSymbolValues,
                                           time,
                                           pDelayedReactionSolvers);
+            clearExpressionValueCaches();
         }
 
         computeReactionProbabilities(pSpeciesRateFactorEvaluator,
@@ -159,6 +160,8 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
         }
 
         pSymbolEvaluator.setTime(time);
+        // we have changed the time; must nuke the cache of expression values
+        clearExpressionValueCaches();
 
         return(time);
     }
@@ -169,6 +172,7 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
         initializeSimulator(pModel, pSimulationController);
         checkDynamicalSymbolsInitialValues();
         initializeRandomNumberGenerator();
+        mSymbolEvaluator.setUseExpressionValueCaching(true);
     }
 
 }

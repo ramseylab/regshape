@@ -36,6 +36,7 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
         initializeRandomNumberGenerator();
         createDependencyGraph(pModel);
         initializePutativeTimeToNextReactions();
+        mSymbolEvaluator.setUseExpressionValueCaching(true);
     }
 
     private void initializePutativeTimeToNextReactions()
@@ -314,6 +315,7 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
                                           pDynamicSymbolValues,
                                           time,
                                           pDelayedReactionSolvers);
+            clearExpressionValueCaches();
                                           
 
             Integer []dependentReactions = (Integer []) reactionDependencies[lastReactionIndex];
@@ -377,7 +379,6 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
         if(newTime < pEndTime)
         {
             // set time to new time value
-            pSymbolEvaluator.setTime(newTime);
             time = newTime;
         }
         else
@@ -385,6 +386,8 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
             time = pEndTime;
 //            System.out.println("end of simulation");
         }
+        pSymbolEvaluator.setTime(time);
+        clearExpressionValueCaches();
 
         return(time);
     }

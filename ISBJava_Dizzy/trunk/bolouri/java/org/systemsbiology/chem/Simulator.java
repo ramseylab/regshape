@@ -22,6 +22,7 @@ public abstract class Simulator
     protected double []mDynamicSymbolValues;
     protected double []mInitialDynamicSymbolValues;  // saves a copy of the initial data
     protected Value []mNonDynamicSymbolValues;
+    protected boolean mHasExpressionValues;
     protected SymbolEvaluatorChemSimulation mSymbolEvaluator;
     protected Reaction []mReactions;
     protected double []mReactionProbabilities;
@@ -96,6 +97,7 @@ public abstract class Simulator
         System.arraycopy(mInitialDynamicSymbolValues, 0, mDynamicSymbolValues, 0, mDynamicSymbolValues.length);
         MathFunctions.vectorZeroElements(mReactionProbabilities);
         clearDelayedReactionSolvers();
+        clearExpressionValueCaches();
         mSymbolEvaluator.setTime(pStartTime);
     }
 
@@ -323,6 +325,16 @@ public abstract class Simulator
                          symbolMap,
                          null,
                          nonDynamicSymbolValues);
+
+        boolean hasExpressionValues = false;
+        for(int ctr = 0; ctr < numNonDynamicSymbols; ++ctr)
+        {
+            if(mNonDynamicSymbolValues[ctr].isExpression())
+            {
+                hasExpressionValues = true;
+            }
+        }
+        mHasExpressionValues = hasExpressionValues;
 
         for(int ctr = 0; ctr < numDelayedReactions; ++ctr)
         {
@@ -598,6 +610,17 @@ public abstract class Simulator
             compositeRate += estimatedFutureRate;
         }
         return(compositeRate);
+    }
+
+    protected final void clearExpressionValueCaches()
+    {
+        if(mHasExpressionValues)
+        {
+            for(int ctr = mNonDynamicSymbolValues.length; --ctr >= 0; )
+            {
+                mNonDynamicSymbolValues[ctr].clearExpressionValueCache();
+            }
+        }
     }
 
     protected static final void computeDerivative(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,

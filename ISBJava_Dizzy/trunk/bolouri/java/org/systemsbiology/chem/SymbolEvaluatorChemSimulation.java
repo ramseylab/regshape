@@ -23,6 +23,7 @@ public class SymbolEvaluatorChemSimulation extends SymbolEvaluator
     private static final HashSet sReservedSymbolNames;
     private double mTime;
     private HashMap mLocalSymbolsMap;
+    private boolean mUseExpressionValueCaching;
 
     static
     {
@@ -64,25 +65,32 @@ public class SymbolEvaluatorChemSimulation extends SymbolEvaluator
                isReservedSymbol(symbolName));
     }
 
+    public void setUseExpressionValueCaching(boolean pUseExpressionValueCaching)
+    {
+        mUseExpressionValueCaching = pUseExpressionValueCaching;
+    }
+
+    private static final int NULL_ARRAY_INDEX = Symbol.NULL_ARRAY_INDEX;
+
     public final double getValue(Symbol pSymbol) throws DataNotFoundException
     {
-        boolean hasValue = false;
-        double value = 0.0;
-
-        int arrayIndex = pSymbol.getArrayIndex();
-        if(Symbol.NULL_ARRAY_INDEX == arrayIndex)
+        if(NULL_ARRAY_INDEX == pSymbol.getArrayIndex())
         {
             String symbolName = pSymbol.getName();
-
-            if(symbolName.equals(SYMBOL_TIME))
+            if(sReservedSymbolNames.contains(symbolName))
             {
-                value = mTime;
-                hasValue = true;
-            }
-            else if(symbolName.equals(SYMBOL_AVOGADRO))
-            {
-                value = Constants.AVOGADRO_CONSTANT;
-                hasValue = true;
+                if(symbolName.equals(SYMBOL_TIME))
+                {
+                    return(mTime);
+                }
+                else if(symbolName.equals(SYMBOL_AVOGADRO))
+                {
+                    return(Constants.AVOGADRO_CONSTANT);
+                }
+                else
+                {
+                    throw new IllegalStateException("unknown reserved symbol name: " + symbolName);
+                }
             }
             else
             {
@@ -100,31 +108,17 @@ public class SymbolEvaluatorChemSimulation extends SymbolEvaluator
                     throw new DataNotFoundException("unable to obtain value for symbol: " + symbolName);
                 }
                 pSymbol.copyIndexInfo(indexedSymbol);
-                arrayIndex = pSymbol.getArrayIndex();
             }
         }
 
-        if(! hasValue)
+        if(mUseExpressionValueCaching)
         {
-            double []doubleArray = pSymbol.getDoubleArray();
-
-            assert (arrayIndex >= 0) : "invalid (negative) array index";
-
-            if(null != doubleArray)
-            {
-                value = doubleArray[arrayIndex];
-            }
-            else
-            {
-                Value []valueArray = pSymbol.getValueArray();
-                assert (null != valueArray) : "no value or double array defined for indexed symbol";
-                Value valueObj = valueArray[arrayIndex];
-                assert (null != valueObj) : "no value defined for indexed symbol: " + pSymbol.getName();
-                value = valueObj.getValue(this);
-            }
+            return(pSymbol.getIndexedValueWithCaching(this));
         }
-
-        return(value);
+        else
+        {
+            return(pSymbol.getIndexedValue(this));
+        }
     }
 
 
