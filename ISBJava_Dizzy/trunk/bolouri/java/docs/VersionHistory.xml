@@ -39,7 +39,7 @@ This document contains the version history for the
 
 <tr valign="top">
 <td><a href="../1.3.0/&installerDownloadRelURL;">1.3.0</a></td>
-<td>2004/01/23</td>
+<td>2004/01/26</td>
 <td>
 <ul>
 <li>Added a macro feature to the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>.</li>
