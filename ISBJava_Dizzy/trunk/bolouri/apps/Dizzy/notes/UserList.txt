@@ -58,6 +58,10 @@ Solis, Earl
 MIT
 eps@mit.edu
 
+Taylor, James
+Institute for Systemsb Biology
+jtaylor@systemsbiology.org
+
 Yun, Zheng
 Nanyang Technological University, Singapore
 pg04325488@ntu.edu.sg
