@@ -276,52 +276,99 @@ public final class Reaction extends SymbolValue
         return(species);
     }
                 
-
-    private static double computeRateFactorForSpecies(SymbolEvaluator pSymbolEvaluator,
-                                                            Species pSpecies,
-                                                            int pStoichiometry) throws DataNotFoundException
+    private static double computeRateFactorForSpecies(double pSpeciesValue,
+                                                      int pStoichiometry,
+                                                      boolean pIsStochastic)
     {
-        if(pStoichiometry == 1)
+        if(pIsStochastic)
         {
-            return(pSymbolEvaluator.getValue(pSpecies.getSymbol()));
-        }
-        else
-        {
-            double numReactantCombinations = 1.0;
-            double speciesValue = pSymbolEvaluator.getValue(pSpecies.getSymbol());
-            
-            if(speciesValue < MIN_POPULATION_FOR_COMBINATORIC_EFFECTS &&
-               speciesValue - Math.floor(speciesValue) == 0.0)
+            if(pSpeciesValue >= pStoichiometry)
             {
-                long longSpeciesValue = (long) speciesValue;
-                
-                if(longSpeciesValue >= pStoichiometry)
+                if(pSpeciesValue < MIN_POPULATION_FOR_COMBINATORIC_EFFECTS)
                 {
-                    for(int ctr = pStoichiometry; --ctr >= 0; )
+                    if(1 == pStoichiometry)
                     {
-                        numReactantCombinations *= (longSpeciesValue - ctr);
+                        return(pSpeciesValue);
+                    }
+                    else
+                    {
+                        double retVal = 1.0;
+                        for(int ctr = pStoichiometry; --ctr >= 0; )
+                        {
+                            retVal *= (pSpeciesValue - (double) ctr);
+                        }
+                        return(retVal);
                     }
                 }
                 else
                 {
-                    numReactantCombinations = 0.0;
+                    return(Math.pow(pSpeciesValue, pStoichiometry));
                 }
             }
             else
             {
-                if(speciesValue >= pStoichiometry)
-                {
-                    numReactantCombinations *= Math.pow(speciesValue, pStoichiometry);
-                }
-                else
-                {
-                    numReactantCombinations = 0.0;
-                }
+                return(0.0);
             }
-
-            return(numReactantCombinations);
+        }
+        else
+        {
+            if(1 == pStoichiometry)
+            {
+                return(pSpeciesValue);
+            }
+            else
+            {
+                return(Math.pow(pSpeciesValue, pStoichiometry));
+            }
         }
     }
+
+
+//     private static double computeRateFactorForSpecies(SymbolEvaluator pSymbolEvaluator,
+//                                                       Species pSpecies,
+//                                                       int pStoichiometry) throws DataNotFoundException
+//     {
+//         if(pStoichiometry == 1)
+//         {
+//             return(pSymbolEvaluator.getValue(pSpecies.getSymbol()));
+//         }
+//         else
+//         {
+//             double numReactantCombinations = 1.0;
+//             double speciesValue = pSymbolEvaluator.getValue(pSpecies.getSymbol());
+            
+//             if(speciesValue < MIN_POPULATION_FOR_COMBINATORIC_EFFECTS &&
+//                speciesValue - Math.floor(speciesValue) == 0.0)
+//             {
+//                 long longSpeciesValue = (long) speciesValue;
+                
+//                 if(longSpeciesValue >= pStoichiometry)
+//                 {
+//                     for(int ctr = pStoichiometry; --ctr >= 0; )
+//                     {
+//                         numReactantCombinations *= (longSpeciesValue - ctr);
+//                     }
+//                 }
+//                 else
+//                 {
+//                     numReactantCombinations = 0.0;
+//                 }
+//             }
+//             else
+//             {
+//                 if(speciesValue >= pStoichiometry)
+//                 {
+//                     numReactantCombinations *= Math.pow(speciesValue, pStoichiometry);
+//                 }
+//                 else
+//                 {
+//                     numReactantCombinations = 0.0;
+//                 }
+//             }
+
+//             return(numReactantCombinations);
+//         }
+//     }
 
     public void constructSpeciesArrays(Species []pSpeciesArray,    // this is the array of species that we are constructing
                                        int []pStoichiometryArray,  // this is the array of stoichiometries that we are constructing
@@ -597,7 +644,38 @@ public final class Reaction extends SymbolValue
      * (3) Using "*=" operator which is faster than the 'A = A * X" expression.
      *
      */
-    double computeRate(SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
+//     double computeRate(SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
+//     {
+
+//         if(! mRateIsExpression)
+//         {
+//             double rate = mValue.getValue();
+//             Species []reactants = mReactantsSpeciesArray;
+//             int []stoichiometries = mReactantsStoichiometryArray;
+
+//             int numReactants = reactants.length;
+
+//             for(int reactantCtr = numReactants; --reactantCtr >= 0; )
+//             {
+//                rate *= computeRateFactorForSpecies(pSymbolEvaluator,
+//                                                    reactants[reactantCtr], 
+//                                                    stoichiometries[reactantCtr]);
+//             }
+
+//             return(rate);
+//         }
+//         else
+//         {
+//             pSymbolEvaluator.setLocalSymbolsMap(mLocalSymbolsMap);
+//             double rate = mValue.getValue(pSymbolEvaluator);
+//             pSymbolEvaluator.setLocalSymbolsMap(null);
+//             return(rate);
+//         }
+
+//     }
+
+    double computeRate(SymbolEvaluatorChem pSymbolEvaluator,
+                       boolean pIsStochastic) throws DataNotFoundException
     {
 
         if(! mRateIsExpression)
@@ -607,12 +685,13 @@ public final class Reaction extends SymbolValue
             int []stoichiometries = mReactantsStoichiometryArray;
 
             int numReactants = reactants.length;
-
+            double speciesValue = 0.0;
             for(int reactantCtr = numReactants; --reactantCtr >= 0; )
             {
-               rate *= computeRateFactorForSpecies(pSymbolEvaluator,
-                                                   reactants[reactantCtr], 
-                                                   stoichiometries[reactantCtr]);
+                speciesValue = pSymbolEvaluator.getValue(reactants[reactantCtr].getSymbol());
+                rate *= computeRateFactorForSpecies(speciesValue, 
+                                                    stoichiometries[reactantCtr],
+                                                    pIsStochastic);
             }
 
             return(rate);
@@ -626,6 +705,7 @@ public final class Reaction extends SymbolValue
         }
 
     }
+
 
     public void addReactionElementToMap(ReactionElement pReactionElement, HashMap pMap) throws IllegalArgumentException
     {
