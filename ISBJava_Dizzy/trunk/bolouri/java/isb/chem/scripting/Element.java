@@ -324,8 +324,7 @@ class Element implements Cloneable
         else
         {
             List dataList = getDataList();
-            if(null != dataList &&
-               dataList.size() > 0)
+            if(null != dataList)
             {
                 retStr.append(" (");
                 Iterator dataIter = dataList.iterator();
