@@ -90,7 +90,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
 
 
-    protected abstract double iterate(double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException;
+    protected abstract double iterate(double []pNewDynamicSymbolValues) throws DataNotFoundException, AccuracyException;
 
 
     protected final void rk4step(double pTimeStepSize,
@@ -183,7 +183,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
     }
 
     protected final void computeScale(double pTimeStepSize,
-                                      double []yscale) throws DataNotFoundException, SimulationAccuracyException
+                                      double []yscale) throws DataNotFoundException, AccuracyException
     {
         double []yscratch = mRKScratchPad.yscratch;
         double []dydt = mRKScratchPad.dydt;
@@ -210,7 +210,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         if(! gotNonzero)
         {
             // all of the scale factors are zero!
-            throw new SimulationAccuracyException("unable to determine any scale at time: " + mSymbolEvaluator.getTime());
+            throw new AccuracyException("unable to determine any scale at time: " + mSymbolEvaluator.getTime());
         }
     }
 
@@ -305,7 +305,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
                                       double pEndTime,
                                       SimulatorParameters pSimulatorParameters,
                                       int pNumResultsTimePoints,
-                                      String []pRequestedSymbolNames) throws DataNotFoundException, IllegalStateException, SimulationAccuracyException
+                                      String []pRequestedSymbolNames) throws DataNotFoundException, IllegalStateException, AccuracyException
     {
         checkSimulationParameters(pStartTime,
                                   pEndTime,

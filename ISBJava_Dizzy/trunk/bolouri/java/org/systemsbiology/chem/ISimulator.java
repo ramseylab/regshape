@@ -10,6 +10,7 @@ package org.systemsbiology.chem;
 
 import org.systemsbiology.util.DataNotFoundException;
 import org.systemsbiology.util.InvalidInputException;
+import org.systemsbiology.math.AccuracyException;
 
 /**
  * Represents an object that can solve the dynamics of a
@@ -66,5 +67,5 @@ public interface ISimulator
                                       double pEndTime,
                                       SimulatorParameters pSimulatorParameters,
                                       int pNumResultsTimePoints,
-                                      String []pResultsSymbolNames) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException, SimulationFailedException;
+                                      String []pResultsSymbolNames) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, AccuracyException, SimulationFailedException;
 }

@@ -45,7 +45,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
                                       double pEndTime,
                                       SimulatorParameters pSimulatorParameters,
                                       int pNumResultsTimePoints,
-                                      String []pRequestedSymbolNames) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException, SimulationFailedException
+                                      String []pRequestedSymbolNames) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, AccuracyException, SimulationFailedException
     {
         checkSimulationParameters(pStartTime,
                                   pEndTime,

@@ -24,7 +24,7 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
     private static final int NUM_ITERATIONS_BEFORE_ERROR_CHECK = 10;
 
     // fixed step-size integrator
-    protected double iterate(double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
+    protected double iterate(double []pNewDynamicSymbolValues) throws DataNotFoundException, AccuracyException
     {
         double stepSize = mRKScratchPad.stepSize;
 
@@ -54,7 +54,7 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
 
             if(maxRelativeError - relativeError < 0.0)
             {
-                throw new SimulationAccuracyException("numeric approximation error exceeded threshold; try a larger value for \"min number of timesteps\"");
+                throw new AccuracyException("numeric approximation error exceeded threshold; try a larger value for \"min number of timesteps\"");
             }
 
             double maxAbsoluteError = mRKScratchPad.maxAbsoluteError;
@@ -62,7 +62,7 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
 
             if(maxAbsoluteError - absoluteError < 0.0)
             {
-                throw new SimulationAccuracyException("numeric approximation error exceeded threshold; try a larger value for \"min number of timesteps\"");
+                throw new AccuracyException("numeric approximation error exceeded threshold; try a larger value for \"min number of timesteps\"");
             }
         }
 

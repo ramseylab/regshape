@@ -154,7 +154,7 @@ public abstract class SimulatorStochasticBase extends Simulator
         return(true);
     }
 
-    protected abstract double iterate(MutableInteger pLastReactionIndex) throws DataNotFoundException, IllegalStateException, SimulationAccuracyException;
+    protected abstract double iterate(MutableInteger pLastReactionIndex) throws DataNotFoundException, IllegalStateException, AccuracyException;
 
     protected abstract void prepareForStochasticSimulation(double pStartTime,
                                                            SimulatorParameters pSimulatorParameters) throws DataNotFoundException, IllegalArgumentException;
@@ -273,7 +273,7 @@ public abstract class SimulatorStochasticBase extends Simulator
                                             double pEndTime,
                                             SimulatorParameters pSimulatorParameters,
                                             int pNumResultsTimePoints,
-                                            String []pRequestedSymbolNames) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException
+                                            String []pRequestedSymbolNames) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, AccuracyException
     {
         checkSimulationParameters(pStartTime,
                                   pEndTime,

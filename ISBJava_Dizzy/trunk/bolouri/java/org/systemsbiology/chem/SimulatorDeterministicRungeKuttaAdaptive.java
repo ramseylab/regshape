@@ -29,14 +29,14 @@ public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDet
     private static final int MAXSTEPS = 100;
 
 
-    protected double iterate(double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
+    protected double iterate(double []pNewDynamicSymbolValues) throws DataNotFoundException, AccuracyException
     {
         mRKScratchPad.stepSize = adaptiveStep(pNewDynamicSymbolValues);
 
         return(mSymbolEvaluator.getTime());
     }
 
-    private double adaptiveStep(double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
+    private double adaptiveStep(double []pNewDynamicSymbolValues) throws DataNotFoundException, AccuracyException
     {
         double stepSize = mRKScratchPad.stepSize;
         double []yscale = mRKScratchPad.yscale;
@@ -84,7 +84,7 @@ public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDet
             numSteps++;
             if(numSteps > MAXSTEPS)
             {
-                throw new SimulationAccuracyException("maximum number of time step subdivisions exceeded; this model probably is too stuff for this simple Runge-Kutta adaptive integrator");
+                throw new AccuracyException("maximum number of time step subdivisions exceeded; this model probably is too stuff for this simple Runge-Kutta adaptive integrator");
             }
         }
         while(true);

@@ -59,7 +59,7 @@ public abstract class SimulatorStochasticTauLeapBase extends SimulatorStochastic
         mLastIterationWasLeap = true;
     }
 
-    protected double iterate(MutableInteger pLastReactionIndex) throws DataNotFoundException, IllegalStateException, SimulationAccuracyException
+    protected double iterate(MutableInteger pLastReactionIndex) throws DataNotFoundException, IllegalStateException, AccuracyException
     {
         double time = mSymbolEvaluator.getTime();
 //        System.out.println("time at start of iteration: " + time);
@@ -191,7 +191,7 @@ public abstract class SimulatorStochasticTauLeapBase extends SimulatorStochastic
 
             if(! successfulLeap)
             {
-                throw new SimulationAccuracyException("simulation became unstable; please re-run with a smaller value for the error control parameter");
+                throw new AccuracyException("simulation became unstable; please re-run with a smaller value for the error control parameter");
             }
 
             DoubleVector.add(mEstimatedSpeciesChange, mDynamicSymbolValues, mDynamicSymbolValues);
