@@ -216,12 +216,14 @@
     </copy>
   </target>
 
-  <target name="buildInstallers" depends="setFilters, copySamples, copyScripts">
-    <!-- make the build directory -->
-    <mkdir dir="${app.buildDir}" />
-
-    <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
-    <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />
+	<target name="makeInstallAnywhereConfig" depends="setFilters">
+	    <!-- make the build directory -->
+	    <mkdir dir="${app.buildDir}" />
+	    <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
+	    <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />
+	</target>
+	
+  <target name="buildInstallers" depends="makeInstallAnywhereConfig, copySamples, copyScripts">
 
     <!-- make the installer directory -->
     <mkdir dir="${app.installerDir}" />
