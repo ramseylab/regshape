@@ -37,6 +37,7 @@ import java.util.*;
  */
 public class EvidenceWeightedInfererDriver 
 {
+    public static final double ALPHA_VALUE_DEVIATION_WARNING_THRESHOLD = 0.1;    
     private static final String COLUMN_NAME_ELEMENT = "element";
     private static final String TOOL_TIP_LOAD_FILE = "Load the significances file.  The file must contain comma-separated values, with element names in the first column, and evidence type names in the first row";
     private static final String TOOL_TIP_CLEAR_FILE = "Clear the file of significances that was loaded into this form.";
@@ -1330,13 +1331,20 @@ public class EvidenceWeightedInfererDriver
         resultsTableHeader.setToolTipText("Click to sort; Shift-Click to sort in reverse order");
         mIterationsLabelData.setText(Integer.toString(pResults.mNumIterations));
         mFinalSeparationLabelData.setText(mNumberFormat.format(pResults.mSignificanceDistributionSeparation));
-        mAlphaLabelData.setText(mNumberFormat.format(pResults.mAlphaParameter));
+        double alphaValue = pResults.mAlphaParameter;
+        mAlphaLabelData.setText(mNumberFormat.format(alphaValue));
         mChiSquareResultsLabelData.setText(mNumberFormat.format(pResults.mReducedChiSquare));
         double []weights = pResults.mWeights;
         String []evidences = mSignificancesData.getEvidenceNames();
         WeightsTableModel weightsTableModel = new WeightsTableModel(evidences, weights);
         mWeightsTable.setModel(weightsTableModel);
         setEnableStateForFields(true, true);
+        if(Math.abs(1.0 - alphaValue) > ALPHA_VALUE_DEVIATION_WARNING_THRESHOLD)
+        {
+            JOptionPane.showMessageDialog(mParent, "Warning:  the ratio of the average of the joint significance to the product of the average significances is not close to 1.0; this may indicate lack of independence between the evidences.",
+                     "Evidence types may lack independence",
+                      JOptionPane.WARNING_MESSAGE);
+        }
     }
     
     private void handleHelp()
@@ -1439,7 +1447,7 @@ public class EvidenceWeightedInfererDriver
                                                                         params.mCombinedSignificance,
                                                                         params.mQuantile,
                                                                         params.mSeparationThreshold,
-                                                                        DEFAULT_MAX_CHI_SQUARE,
+                                                                        params.mMaxChiSquare,
                                                                         params.mWeightType);
             }
             catch(Exception e)

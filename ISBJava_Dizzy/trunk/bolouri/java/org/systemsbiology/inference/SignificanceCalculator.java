@@ -243,7 +243,7 @@ public class SignificanceCalculator
             }
             if(bestChiSquare > pMaxChiSquare)
             {
-                throw new IllegalStateException("failed to fit any probability distribution");
+                throw new IllegalStateException("failed to fit any probability distribution; please try making the maximum reduced chi-square parameter smaller");
             }
         }
         else
