@@ -188,7 +188,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
     }
 
     protected void readSimulationOutput(File pSimulationResultsFile, 
-                                        SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                        SymbolEvaluatorChem pSymbolEvaluator,
                                         double []pDynamicSymbolValues,
                                         double pStartTime,
                                         double pEndTime,
@@ -201,7 +201,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
         BufferedReader inputReader = new BufferedReader(fileReader);
         String line = null;
         int lineNumber = 0;
-        SymbolEvaluatorChemSimulation symbolEvaluator = pSymbolEvaluator;
+        SymbolEvaluatorChem symbolEvaluator = pSymbolEvaluator;
         int numDynamicSymbols = pDynamicSymbolValues.length;
         int numRequestedSymbols = pRequestedSymbols.length;
         int []requestedSymbolIndices = new int[numRequestedSymbols];
@@ -269,14 +269,13 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
         // copy the values in x to the array that is read by the "symbol evaluator"
         System.arraycopy(x, 0, mDynamicSymbolValues, 0, mDynamicSymbolValues.length);
 
-        SymbolEvaluatorChemSimulation symbolEvaluator = mSymbolEvaluator;
+        SymbolEvaluatorChem symbolEvaluator = mSymbolEvaluator;
         // set the time to t
         symbolEvaluator.setTime(t);
 
         try
         {
-            computeDerivative(mSpeciesRateFactorEvaluator,
-                              mSymbolEvaluator,
+            computeDerivative(mSymbolEvaluator,
                               mReactions,
                               mDynamicSymbolAdjustmentVectors,
                               mReactionProbabilities,
@@ -347,7 +346,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
             // copy the values in x to the array that is read by the "symbol evaluator"
             System.arraycopy(x, 0, mDynamicSymbolValues, 0, mDynamicSymbolValues.length);
             
-            SymbolEvaluatorChemSimulation symbolEvaluator = mSymbolEvaluator;
+            SymbolEvaluatorChem symbolEvaluator = mSymbolEvaluator;
             // set the time to t
             symbolEvaluator.setTime(t);
             

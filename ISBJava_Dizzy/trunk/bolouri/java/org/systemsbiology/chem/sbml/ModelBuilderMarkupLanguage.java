@@ -108,8 +108,6 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
         }
 
         Model model = new Model(modelName);
-        model.setSpeciesRateFactorEvaluator(new SpeciesRateFactorEvaluatorConcentration());
-
 
         // process compartments and store them in a global map
         int numCompartments = mMarkupLanguageImporter.getNumCompartments();
@@ -167,6 +165,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
 
         HashMap dynamicalSpeciesMap = new HashMap();
         HashMap speciesMap = new HashMap();
+        HashMap speciesCompartmentMap = new HashMap();
 
         for(int speciesCtr = 0; speciesCtr < numSpecies; ++speciesCtr)
         {
@@ -180,6 +179,8 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
             }
 
             Species species = new Species(speciesName, compartment);
+            speciesCompartmentMap.put(speciesName, compartmentName);
+
             speciesMap.put(speciesName, species);
 
             // get initial population for species
@@ -220,10 +221,15 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
                 species.setSpeciesPopulation(initialSpeciesPopulation);
             }
 
+            speciesCompartmentMap.put(speciesName, compartmentName);
+
             model.addSpecies(species);
             SymbolValueChemSimulation.addSymbolValueToMap(boundarySpeciesMap, speciesName, species);
 
         }
+
+        SymbolEvaluatorChemMarkupLanguage symbolEvaluator = new SymbolEvaluatorChemMarkupLanguage(speciesCompartmentMap);
+        model.setSymbolEvaluator(symbolEvaluator);
 
         int numRules = mMarkupLanguageImporter.getNumRules();
         for(int ruleCtr = 0; ruleCtr < numRules; ++ruleCtr)

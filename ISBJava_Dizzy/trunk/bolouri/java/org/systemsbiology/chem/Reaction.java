@@ -22,6 +22,8 @@ import org.systemsbiology.util.*;
  */
 public class Reaction extends SymbolValue
 {
+    private static final long MIN_POPULATION_FOR_COMBINATORIC_EFFECTS = 100000;
+
     public static class ParticipantType 
     {
         private final String mName;
@@ -273,13 +275,64 @@ public class Reaction extends SymbolValue
     }
                 
 
+    private static final double computeRateFactorForSpecies(SymbolEvaluator pSymbolEvaluator,
+                                                            Species pSpecies,
+                                                            int pStoichiometry) throws DataNotFoundException
+    {
+        if(pStoichiometry == 1)
+        {
+            return(pSymbolEvaluator.getValue(pSpecies.getSymbol()));
+        }
+        else
+        {
+            double numReactantCombinations = 1.0;
+            double speciesValue = pSymbolEvaluator.getValue(pSpecies.getSymbol());
+            
+            if(speciesValue < MIN_POPULATION_FOR_COMBINATORIC_EFFECTS &&
+               speciesValue - Math.floor(speciesValue) == 0.0)
+            {
+                long longSpeciesValue = (long) speciesValue;
+                
+                if(longSpeciesValue >= pStoichiometry)
+                {
+                    for(int ctr = pStoichiometry; --ctr >= 0; )
+                    {
+                        numReactantCombinations *= (longSpeciesValue - ctr);
+                    }
+                }
+                else
+                {
+                    numReactantCombinations = 0.0;
+                }
+            }
+            else
+            {
+                numReactantCombinations *= Math.pow(speciesValue, pStoichiometry);
+            }
+
+            return(numReactantCombinations);
+        }
+    }
+
     public void constructSpeciesArrays(Species []pSpeciesArray,    // this is the array of species that we are constructing
                                        int []pStoichiometryArray,  // this is the array of stoichiometries that we are constructing
                                        boolean []pDynamicArray,
-                                       Species []pDynamicSymbolValues, // a vector of all species in the model
-                                       SymbolValue []pNonDynamicSymbolValues,
-                                       HashMap pSymbolMap,         // a map between species names and the index in previous vector
                                        ParticipantType pParticipantType)
+    {
+        constructSpeciesArrays(pSpeciesArray,
+                               pStoichiometryArray,
+                               pDynamicArray,
+                               null, null, null,
+                               pParticipantType);
+    }
+
+    private void constructSpeciesArrays(Species []pSpeciesArray,    // this is the array of species that we are constructing
+                                        int []pStoichiometryArray,  // this is the array of stoichiometries that we are constructing
+                                        boolean []pDynamicArray,
+                                        Species []pDynamicSymbolValues, // a vector of all species in the model
+                                        SymbolValue []pNonDynamicSymbolValues,
+                                        HashMap pSymbolMap,         // a map between species names and the index in previous vector
+                                        ParticipantType pParticipantType)
     {
         Collection speciesColl = null;
         if(pParticipantType.equals(ParticipantType.REACTANT))
@@ -536,8 +589,7 @@ public class Reaction extends SymbolValue
      * (3) Using "*=" operator which is faster than the 'A = A * X" expression.
      *
      */
-    final double computeRate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                             SymbolEvaluatorChemSimulation pSymbolEvaluator) throws DataNotFoundException
+    final double computeRate(SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
     {
 
         if(! mRateIsExpression)
@@ -550,9 +602,9 @@ public class Reaction extends SymbolValue
 
             for(int reactantCtr = numReactants; --reactantCtr >= 0; )
             {
-               rate *= pSpeciesRateFactorEvaluator.computeRateFactorForSpecies(pSymbolEvaluator,
-                                                                               reactants[reactantCtr], 
-                                                                               stoichiometries[reactantCtr]);
+               rate *= computeRateFactorForSpecies(pSymbolEvaluator,
+                                                   reactants[reactantCtr], 
+                                                   stoichiometries[reactantCtr]);
             }
 
             return(rate);
@@ -669,4 +721,5 @@ public class Reaction extends SymbolValue
         sb.append("]");
         return(sb.toString());
     }
+
 }

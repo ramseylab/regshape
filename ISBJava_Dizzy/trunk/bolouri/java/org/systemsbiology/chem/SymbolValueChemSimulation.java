@@ -15,7 +15,7 @@ public class SymbolValueChemSimulation
 {
     public static final void addSymbolValueToMap(HashMap pMap, String pSymbolName, SymbolValue pObject) throws IllegalArgumentException, IllegalStateException
     {
-        if(SymbolEvaluatorChemSimulation.isReservedSymbol(pObject.getSymbol().getName()))
+        if(SymbolEvaluatorChemCommandLanguage.isReservedSymbol(pObject.getSymbol().getName()))
         {
             throw new IllegalArgumentException("reserved symbol used: " + pObject.getSymbol().getName());
         }

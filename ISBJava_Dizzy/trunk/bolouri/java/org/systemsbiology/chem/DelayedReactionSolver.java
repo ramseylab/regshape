@@ -125,7 +125,7 @@ public class DelayedReactionSolver extends Expression
         return(mIntermedSpecies.equals(pSpecies));
     }
 
-    void addReactant(SymbolEvaluatorChemSimulation pSymbolEvaluator)
+    void addReactant(SymbolEvaluatorChem pSymbolEvaluator)
     {
         double time = pSymbolEvaluator.getTime();
         MutableDouble newReactionTime = null;
@@ -268,7 +268,7 @@ public class DelayedReactionSolver extends Expression
         if(! mIsStochasticSimulator)
         {
 
-            SymbolEvaluatorChemSimulation symbolEvaluator = (SymbolEvaluatorChemSimulation) pSymbolEvaluator;
+            SymbolEvaluatorChem symbolEvaluator = (SymbolEvaluatorChem) pSymbolEvaluator;
 
             double currentTime = symbolEvaluator.getTime();
 

@@ -23,13 +23,13 @@ public class SymbolEvaluatorHashMap extends SymbolEvaluator
 {
     protected HashMap mSymbolMap;
 
-    public SymbolEvaluatorHashMap(HashMap pSymbolMap, boolean pUseExpressionValueCaching)
+    public SymbolEvaluatorHashMap(HashMap pSymbolMap)
     {
-        super(pUseExpressionValueCaching);
+        super();
         mSymbolMap = pSymbolMap;
     }
 
-    void setSymbolMap(HashMap pSymbolMap)
+    public void setSymbolMap(HashMap pSymbolMap)
     {
         mSymbolMap = pSymbolMap;
     }
@@ -65,11 +65,5 @@ public class SymbolEvaluatorHashMap extends SymbolEvaluator
         String symbolName = pSymbol.getName();
         SymbolValue symbolValue = (SymbolValue) mSymbolMap.get(symbolName);
         return(null != symbolValue);
-    }
-
-    public Object clone()
-    {
-        SymbolEvaluatorHashMap newObj = new SymbolEvaluatorHashMap(mSymbolMap, mUseExpressionValueCaching);
-        return((Object) newObj);
     }
 }

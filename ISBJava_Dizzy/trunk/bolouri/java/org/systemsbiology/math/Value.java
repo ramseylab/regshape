@@ -161,6 +161,15 @@ public class Value
         return(mExpressionValue.toString());
     }
 
+    public String getExpressionString(Expression.SymbolPrinter pSymbolPrinter) throws IllegalStateException, DataNotFoundException
+    {
+        if(! isExpression())
+        {
+            throw new IllegalStateException("Value object does not have an Expression defined");
+        }
+        return(mExpressionValue.toString(pSymbolPrinter));
+    }
+
     public String toString()
     {
         StringBuffer sb = new StringBuffer();

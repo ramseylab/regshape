@@ -163,6 +163,11 @@ public class Expression implements Cloneable
      * inner class
      *========================================*/
 
+    public interface SymbolPrinter
+    {
+        public String printSymbol(Symbol pSymbol) throws DataNotFoundException;
+    }
+
     static class TokenCode
     {
         private final String mName;
@@ -487,7 +492,7 @@ public class Expression implements Cloneable
          * @return a human-comprehensible textual description of this
          * mathematical expression.
          */
-        public String toString() throws IllegalStateException
+        public String toString(SymbolPrinter pSymbolPrinter) throws IllegalStateException, DataNotFoundException
         {
             ElementCode code = mCode;
             StringBuffer sb = new StringBuffer();
@@ -498,7 +503,7 @@ public class Expression implements Cloneable
                 {
                     sb.append("(");
                 }
-                sb.append(mFirstOperand.toString());
+                sb.append(mFirstOperand.toString(pSymbolPrinter));
                 if(mFirstOperand.mCode != ElementCode.SYMBOL)
                 {
                     sb.append(")");
@@ -511,7 +516,7 @@ public class Expression implements Cloneable
                     sb.append(mCode + "(");
                     if(null != mFirstOperand)
                     {
-                        sb.append(mFirstOperand.toString());
+                        sb.append(mFirstOperand.toString(pSymbolPrinter));
                     }
                     sb.append(")");
                 }
@@ -524,7 +529,7 @@ public class Expression implements Cloneable
                         {
                             sb.append("(");
                         }
-                        sb.append(mFirstOperand.toString());
+                        sb.append(mFirstOperand.toString(pSymbolPrinter));
                         if(mFirstOperand.mCode != ElementCode.SYMBOL)
                         {
                             sb.append(")");
@@ -534,7 +539,7 @@ public class Expression implements Cloneable
                         {
                             sb.append("(");
                         }
-                        sb.append(mSecondOperand.toString());
+                        sb.append(mSecondOperand.toString(pSymbolPrinter));
                         if(mSecondOperand.mCode != ElementCode.SYMBOL)
                         {
                             sb.append(")");
@@ -542,7 +547,14 @@ public class Expression implements Cloneable
                     }
                     else if(code == ElementCode.SYMBOL)
                     {
-                        sb.append(mSymbol.getName());
+                        if(null != pSymbolPrinter)
+                        {
+                            sb.append(pSymbolPrinter.printSymbol(mSymbol));
+                        }
+                        else
+                        {
+                            sb.append(mSymbol.getName());
+                        }
                     }
                     else if(code == ElementCode.NUMBER)
                     {
@@ -666,8 +678,7 @@ public class Expression implements Cloneable
     {
         if(null == mSymbolEvaluator)
         {
-            boolean useExpressionValueCaching = false;
-            mSymbolEvaluator = new SymbolEvaluatorHashMap(pSymbolMap, useExpressionValueCaching);
+            mSymbolEvaluator = new SymbolEvaluatorHashMap(pSymbolMap);
         }
         else
         {
@@ -1364,11 +1375,23 @@ public class Expression implements Cloneable
      */
     public String toString() throws IllegalStateException
     {
+        try
+        {
+            return(toString(null));
+        }
+        catch(DataNotFoundException e)
+        {
+            throw new IllegalStateException(e.getMessage());
+        }
+    }
+
+    public String toString(SymbolPrinter pSymbolPrinter) throws IllegalStateException, DataNotFoundException
+    {
         String retStr;
         Element rootElement = getRootElement();
         if(null != rootElement)
         {
-            retStr = rootElement.toString();
+            retStr = rootElement.toString(pSymbolPrinter);
         }
         else
         {

@@ -59,8 +59,7 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
         return(reactionIndex);
     }
 
-    protected final void prepareForStochasticSimulation(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                                        SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected final void prepareForStochasticSimulation(SymbolEvaluatorChem pSymbolEvaluator,
                                                         double pStartTime,
                                                         Random pRandomNumberGenerator,
                                                         Reaction []pReactions,
@@ -69,8 +68,7 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
         // nothing to do
     }
 
-    protected final double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                   SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected final double iterate(SymbolEvaluatorChem pSymbolEvaluator,
                                    double pEndTime,
                                    Reaction []pReactions,
                                    double []pReactionProbabilities,
@@ -94,8 +92,7 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
             clearExpressionValueCaches();
         }
 
-        computeReactionProbabilities(pSpeciesRateFactorEvaluator,
-                                     pSymbolEvaluator,
+        computeReactionProbabilities(pSymbolEvaluator,
                                      pReactionProbabilities,
                                      pReactions);
         

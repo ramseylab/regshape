@@ -59,19 +59,6 @@ public class SimulatorOdeToJavaRungeKuttaAdaptive extends SimulatorOdeToJavaBase
         erkTriple.setRecorder(this);
 
         erkTriple.routine();
-
-//         ErkTriple.erk_triple(simulationModel, 
-//                              pSimulationTimeSpan, 
-//                              pInitialDynamicSymbolValues, 
-//                              pInitialStepSize,
-//                              simulationButcherTableau,
-//                              highOrderArgument,
-//                              absoluteTolerance,
-//                              relativeTolerance,
-//                              pTempOutputFileName,
-//                              "StiffDetect_Off",
-//                              "EventLoc_Off",
-//                              "Stats_Off");
     }
 
     public boolean allowsInterrupt()

@@ -28,8 +28,7 @@ public class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterministi
     private static final int NUM_ITERATIONS_BEFORE_ERROR_CHECK = 10;
 
     // fixed step-size integrator
-    protected final double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                   SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected final double iterate(SymbolEvaluatorChem pSymbolEvaluator,
                                    Reaction []pReactions,
                                    Object []pDynamicSymbolAdjustmentVectors,
                                    double []pReactionProbabilities,
@@ -43,8 +42,7 @@ public class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterministi
         int numIterations = pRKScratchPad.numIterations;
         if(0 != numIterations % NUM_ITERATIONS_BEFORE_ERROR_CHECK)
         {
-            rk4step(pSpeciesRateFactorEvaluator,
-                    pSymbolEvaluator,
+            rk4step(pSymbolEvaluator,
                     pReactions,
                     pDynamicSymbolAdjustmentVectors,
                     pReactionProbabilities,
@@ -57,8 +55,7 @@ public class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterministi
         {
             double []yscale = pRKScratchPad.yscale;
 
-            computeScale(pSpeciesRateFactorEvaluator,
-                         pSymbolEvaluator,
+            computeScale(pSymbolEvaluator,
                          pReactions,
                          pDynamicSymbolAdjustmentVectors,
                          pReactionProbabilities,
@@ -70,8 +67,7 @@ public class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterministi
             MutableDouble relativeErrorObj = pRKScratchPad.relativeError;
             MutableDouble absoluteErrorObj = pRKScratchPad.absoluteError;
 
-            rkqc(pSpeciesRateFactorEvaluator,
-                 pSymbolEvaluator,
+            rkqc(pSymbolEvaluator,
                  pReactions,
                  pDynamicSymbolAdjustmentVectors,
                  pReactionProbabilities,

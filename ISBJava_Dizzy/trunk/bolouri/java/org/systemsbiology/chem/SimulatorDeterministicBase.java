@@ -97,8 +97,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
 
 
-    protected abstract double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                      SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected abstract double iterate(SymbolEvaluatorChem pSymbolEvaluator,
                                       Reaction []pReactions,
                                       Object []pDynamicSymbolAdjustmentVectors,
                                       double []pReactionProbabilities,
@@ -107,8 +106,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
                                       double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException;
 
 
-    protected static final void rk4step(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                        SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected static final void rk4step(SymbolEvaluatorChem pSymbolEvaluator,
                                         Reaction []pReactions,
                                         Object []pDynamicSymbolAdjustmentVectors,
                                         double []pReactionProbabilities,
@@ -132,8 +130,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         // save a copy of the initial y values
         System.arraycopy(y, 0, ysav, 0, numVars);
 
-        computeDerivative(pSpeciesRateFactorEvaluator,
-                          pSymbolEvaluator,
+        computeDerivative(pSymbolEvaluator,
                           pReactions,
                           pDynamicSymbolAdjustmentVectors,
                           pReactionProbabilities,
@@ -149,8 +146,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         pSymbolEvaluator.setTime(timePlusHalfStep);
 
         double []k2 = pRKScratchPad.k2;
-        computeDerivative(pSpeciesRateFactorEvaluator,
-                          pSymbolEvaluator,
+        computeDerivative(pSymbolEvaluator,
                           pReactions,
                           pDynamicSymbolAdjustmentVectors,
                           pReactionProbabilities,
@@ -162,8 +158,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         // y now contains "y + k2"
 
         double []k3 = pRKScratchPad.k3;
-        computeDerivative(pSpeciesRateFactorEvaluator,
-                          pSymbolEvaluator,
+        computeDerivative(pSymbolEvaluator,
                           pReactions,
                           pDynamicSymbolAdjustmentVectors,
                           pReactionProbabilities,
@@ -182,8 +177,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         double pNextTime = time + pTimeStepSize;
         pSymbolEvaluator.setTime(pNextTime);
 
-        computeDerivative(pSpeciesRateFactorEvaluator,
-                          pSymbolEvaluator,
+        computeDerivative(pSymbolEvaluator,
                           pReactions,
                           pDynamicSymbolAdjustmentVectors,
                           pReactionProbabilities,
@@ -223,8 +217,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         resetScratchpad();
     }
 
-    protected static final void computeScale(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                             SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected static final void computeScale(SymbolEvaluatorChem pSymbolEvaluator,
                                              Reaction []pReactions,
                                              Object []pDynamicSymbolAdjustmentVectors,
                                              double []pReactionProbabilities,
@@ -239,8 +232,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         double dydtn = 0.0;
         double yn = 0.0;
 
-        computeDerivative(pSpeciesRateFactorEvaluator,
-                          pSymbolEvaluator,
+        computeDerivative(pSymbolEvaluator,
                           pReactions,
                           pDynamicSymbolAdjustmentVectors,
                           pReactionProbabilities,
@@ -269,8 +261,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
     }
 
 
-    protected static final void rkqc(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                     SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected static final void rkqc(SymbolEvaluatorChem pSymbolEvaluator,
                                      Reaction []pReactions,
                                      Object []pDynamicSymbolAdjustmentVectors,
                                      double []pReactionProbabilities,
@@ -285,8 +276,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         double time = pSymbolEvaluator.getTime();
         int numDynamicSymbols = pDynamicSymbolValues.length;
 
-        rk4step(pSpeciesRateFactorEvaluator,
-                pSymbolEvaluator,
+        rk4step(pSymbolEvaluator,
                 pReactions,
                 pDynamicSymbolAdjustmentVectors,
                 pReactionProbabilities,
@@ -300,8 +290,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
         double []y1 = pRKScratchPad.y1;
 
-        rk4step(pSpeciesRateFactorEvaluator,
-                pSymbolEvaluator,
+        rk4step(pSymbolEvaluator,
                 pReactions,
                 pDynamicSymbolAdjustmentVectors,
                 pReactionProbabilities,
@@ -318,8 +307,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
         double []y2 = pRKScratchPad.y2;
 
-        rk4step(pSpeciesRateFactorEvaluator,
-                pSymbolEvaluator,
+        rk4step(pSymbolEvaluator,
                 pReactions,
                 pDynamicSymbolAdjustmentVectors,
                 pReactionProbabilities,
@@ -407,8 +395,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
                                                                pRequestedSymbolNames);
         int numRequestedSymbols = requestedSymbols.length;
 
-        SpeciesRateFactorEvaluator speciesRateFactorEvaluator = mSpeciesRateFactorEvaluator;
-        SymbolEvaluatorChemSimulation symbolEvaluator = mSymbolEvaluator;
+        SymbolEvaluatorChem symbolEvaluator = mSymbolEvaluator;
         double []reactionProbabilities = mReactionProbabilities;
         Reaction []reactions = mReactions;
         double []dynamicSymbolValues = mDynamicSymbolValues;        
@@ -476,8 +463,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
         while(pNumResultsTimePoints - timeCtr > 0)
         {
-            time = iterate(speciesRateFactorEvaluator,
-                           symbolEvaluator,
+            time = iterate(symbolEvaluator,
                            reactions,
                            dynamicSymbolAdjustmentVectors,
                            reactionProbabilities,

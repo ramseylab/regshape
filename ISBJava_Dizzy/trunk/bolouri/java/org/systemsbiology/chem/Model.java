@@ -28,8 +28,8 @@ public class Model
     private HashMap mDynamicSymbolsMap;
     private HashMap mSymbolsMap;
     private HashMap mParametersMap;
-    private SpeciesRateFactorEvaluator mSpeciesRateFactorEvaluator;
     public static final String NAMESPACE_IDENTIFIER = "::";
+    private SymbolEvaluatorChem mSymbolEvaluator;
 
     public Model()
     {
@@ -37,8 +37,18 @@ public class Model
         mDynamicSymbolsMap = new HashMap();
         mSymbolsMap = new HashMap();
         mParametersMap = new HashMap();
-        setSpeciesRateFactorEvaluator(new SpeciesRateFactorEvaluatorCombinatoric());
+        mSymbolEvaluator = new SymbolEvaluatorChemCommandLanguage();
         setName(null);
+    }
+
+    public void setSymbolEvaluator(SymbolEvaluatorChem pSymbolEvaluator)
+    {
+        mSymbolEvaluator = pSymbolEvaluator;
+    }
+
+    public SymbolEvaluatorChem getSymbolEvaluator()
+    {
+        return(mSymbolEvaluator);
     }
 
     public Model(String pName)
@@ -59,16 +69,6 @@ public class Model
     public String getName()
     {
         return(mName);
-    }
-
-    public void setSpeciesRateFactorEvaluator(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator)
-    {
-        mSpeciesRateFactorEvaluator = pSpeciesRateFactorEvaluator;
-    }
-
-    public SpeciesRateFactorEvaluator getSpeciesRateFactorEvaluator()
-    {
-        return(mSpeciesRateFactorEvaluator);
     }
 
     HashMap getSymbolsMap()

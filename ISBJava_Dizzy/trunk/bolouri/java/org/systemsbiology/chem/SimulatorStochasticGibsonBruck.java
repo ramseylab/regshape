@@ -70,7 +70,8 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
         }
 
         boolean checkCompartmentValues = false;
-        if(pModel.getSpeciesRateFactorEvaluator() instanceof SpeciesRateFactorEvaluatorConcentration)
+
+        if(pModel.getSymbolEvaluator() instanceof SymbolEvaluatorChemMarkupLanguage)
         {
             checkCompartmentValues = true;
         }
@@ -212,8 +213,7 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
         }
     }
 
-    private static final void updateReactionRateAndTime(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                                        SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    private static final void updateReactionRateAndTime(SymbolEvaluatorChem pSymbolEvaluator,
                                                         IndexedPriorityQueue pPutativeTimeToNextReactions,
                                                         int pReactionIndex,
                                                         Reaction []pReactions,
@@ -226,7 +226,7 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
         double oldTimeOfNextReactionEvent = timeOfNextReactionEventObj.getValue();
         double oldRate = pReactionProbabilities[pReactionIndex];
         Reaction reaction = pReactions[pReactionIndex];
-        double newRate = reaction.computeRate(pSpeciesRateFactorEvaluator, pSymbolEvaluator);
+        double newRate = reaction.computeRate(pSymbolEvaluator);
         double newTimeOfNextReactionEvent = 0.0;
         if(pLastReactionIndex != pReactionIndex)
         {
@@ -257,15 +257,13 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
     }
                                                  
 
-    protected final void prepareForStochasticSimulation(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                                        SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected final void prepareForStochasticSimulation(SymbolEvaluatorChem pSymbolEvaluator,
                                                         double pStartTime,
                                                         Random pRandomNumberGenerator,
                                                         Reaction []pReactions,
                                                         double []pReactionProbabilities) throws DataNotFoundException
     {
-        computeReactionProbabilities(pSpeciesRateFactorEvaluator,
-                                     pSymbolEvaluator,
+        computeReactionProbabilities(pSymbolEvaluator,
                                      pReactionProbabilities,
                                      pReactions);
 
@@ -275,8 +273,7 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
                                            pReactions);
     }
 
-    protected final double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                   SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected final double iterate(SymbolEvaluatorChem pSymbolEvaluator,
                                    double pEndTime,
                                    Reaction []pReactions,
                                    double []pReactionProbabilities,
@@ -309,8 +306,7 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
                 Integer dependentReactionCtrObj = dependentReactions[ctr];
                 int dependentReactionCtr = dependentReactionCtrObj.intValue();
 
-                updateReactionRateAndTime(pSpeciesRateFactorEvaluator,
-                                          pSymbolEvaluator,
+                updateReactionRateAndTime(pSymbolEvaluator,
                                           putativeTimeToNextReactions,
                                           dependentReactionCtr,
                                           pReactions,

@@ -11,18 +11,14 @@ package org.systemsbiology.chem;
 import org.systemsbiology.math.*;
 import org.systemsbiology.util.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
-public class SymbolEvaluatorChemSimulation extends SymbolEvaluator
+public class SymbolEvaluatorChemCommandLanguage extends SymbolEvaluatorChem
 {
     public static final String SYMBOL_TIME = "time";
     public static final String SYMBOL_AVOGADRO = "Navo";
 
-    private final HashMap mSymbolsMap;
     private static final HashSet sReservedSymbolNames;
-    private double mTime;
-    private HashMap mLocalSymbolsMap;
 
     static
     {
@@ -36,35 +32,10 @@ public class SymbolEvaluatorChemSimulation extends SymbolEvaluator
         pReservedSymbolNames.add(SYMBOL_AVOGADRO);
     }
 
-    public SymbolEvaluatorChemSimulation(HashMap pSymbolsMap, double pTime, boolean pUseExpressionValueCaching)
+    public SymbolEvaluatorChemCommandLanguage()
     {
-        super(pUseExpressionValueCaching);
-        mSymbolsMap = pSymbolsMap;
-        setTime(pTime);
+        // do nothing
     }
-
-    final void setLocalSymbolsMap(HashMap pLocalSymbolsMap)
-    {
-        mLocalSymbolsMap = pLocalSymbolsMap;
-    }
-
-    public final void setTime(double pTime)
-    {
-        mTime = pTime;
-    }
-
-    public final double getTime()
-    {
-        return(mTime);
-    }
-
-    public final boolean hasValue(Symbol pSymbol) 
-    {
-        String symbolName = pSymbol.getName();
-        return(null != mSymbolsMap.get(symbolName) ||
-               isReservedSymbol(symbolName));
-    }
-
 
     public final double getUnindexedValue(Symbol pSymbol) throws DataNotFoundException, IllegalStateException
     {
@@ -114,9 +85,11 @@ public class SymbolEvaluatorChemSimulation extends SymbolEvaluator
         return(sReservedSymbolNames.contains(pSymbolName));
     }
 
-    public Object clone()
+    public final boolean hasValue(Symbol pSymbol) 
     {
-        SymbolEvaluatorChemSimulation newObj = new SymbolEvaluatorChemSimulation(mSymbolsMap, mTime, mUseExpressionValueCaching);
-        return((Object) newObj);
+        String symbolName = pSymbol.getName();
+        return(null != mSymbolsMap.get(symbolName) ||
+               isReservedSymbol(symbolName));
     }
+
 }

@@ -351,7 +351,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
     private void checkSymbolValidity(String pSymbolName) throws InvalidInputException
     {
-        if(SymbolEvaluatorChemSimulation.isReservedSymbol(pSymbolName))
+        if(SymbolEvaluatorChemCommandLanguage.isReservedSymbol(pSymbolName))
         {
             throw new InvalidInputException("attempt to define a reserved symbol: " + pSymbolName);
         }
@@ -382,7 +382,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
         public SymbolEvaluatorNamespaced(HashMap pSymbolMap, String pNamespace)
         {
-            super(pSymbolMap, false);
+            super(pSymbolMap);
             mNamespace = pNamespace;
         }
 
@@ -430,7 +430,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         Object retObj = pSymbol;
         if(null != pNamespace)
         {
-            if(! SymbolEvaluatorChemSimulation.isReservedSymbol(pSymbol))
+            if(! SymbolEvaluatorChemCommandLanguage.isReservedSymbol(pSymbol))
             {
                 pSymbol = addNamespaceToSymbol(pSymbol, pNamespace);
                 retObj = pSymbol;
@@ -991,7 +991,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             {
                 if(! speciesSymbolValue.getClass().getSuperclass().equals(Object.class))
                 {
-                    throw new InvalidInputException("symbol: \"" + speciesName + "\" is already defined as s different (non-species) symbol");
+                    throw new InvalidInputException("symbol: \"" + speciesName + "\" is already defined as a different (non-species) symbol of type \"" + speciesSymbolValue.getClass().getName() + "\"");
                 }
                 Compartment compartment = getDefaultCompartment(pSymbolMap);
                 species = new Species(speciesSymbolValue, compartment);
@@ -1624,7 +1624,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
         String loopIndexSymbolName = token.mSymbol;
 
-        if(SymbolEvaluatorChemSimulation.isReservedSymbol(loopIndexSymbolName))
+        if(SymbolEvaluatorChemCommandLanguage.isReservedSymbol(loopIndexSymbolName))
         {
             throw new InvalidInputException("cannot use a reserved symbol as a loop index: " + loopIndexSymbolName);
         }

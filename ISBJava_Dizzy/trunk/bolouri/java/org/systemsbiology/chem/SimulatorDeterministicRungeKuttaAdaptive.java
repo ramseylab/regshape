@@ -33,8 +33,7 @@ public class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDetermini
     private static final int MAXSTEPS = 100;
 
 
-    protected final double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                   SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected final double iterate(SymbolEvaluatorChem pSymbolEvaluator,
                                    Reaction []pReactions,
                                    Object []pDynamicSymbolAdjustmentVectors,
                                    double []pReactionProbabilities,
@@ -44,8 +43,7 @@ public class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDetermini
     {
         double stepSize = pRKScratchPad.stepSize;
 
-        double nextStepSize = adaptiveStep(pSpeciesRateFactorEvaluator,
-                                           pSymbolEvaluator,
+        double nextStepSize = adaptiveStep(pSymbolEvaluator,
                                            pReactions,
                                            pDynamicSymbolAdjustmentVectors,
                                            pReactionProbabilities,
@@ -59,8 +57,7 @@ public class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDetermini
         return(pSymbolEvaluator.getTime());
     }
 
-    private static final double adaptiveStep(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                             SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    private static final double adaptiveStep(SymbolEvaluatorChem pSymbolEvaluator,
                                              Reaction []pReactions,
                                              Object []pDynamicSymbolAdjustmentVectors,
                                              double []pReactionProbabilities,
@@ -72,8 +69,7 @@ public class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDetermini
         double stepSize = pTimeStepSize;
         double []yscale = pRKScratchPad.yscale;
 
-        computeScale(pSpeciesRateFactorEvaluator,
-                     pSymbolEvaluator,
+        computeScale(pSymbolEvaluator,
                      pReactions,
                      pDynamicSymbolAdjustmentVectors,
                      pReactionProbabilities,
@@ -97,8 +93,7 @@ public class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDetermini
 
         do
         {
-            rkqc(pSpeciesRateFactorEvaluator,
-                 pSymbolEvaluator,
+            rkqc(pSymbolEvaluator,
                  pReactions,
                  pDynamicSymbolAdjustmentVectors,
                  pReactionProbabilities,

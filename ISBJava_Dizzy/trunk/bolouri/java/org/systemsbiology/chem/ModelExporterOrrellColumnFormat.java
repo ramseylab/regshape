@@ -150,7 +150,6 @@ public class ModelExporterOrrellColumnFormat implements IModelExporter, IAliasab
             reaction.constructSpeciesArrays(reactantSpecies, 
                                             reactantStoichiometries, 
                                             reactantDynamic, 
-                                            null, null, null, 
                                             Reaction.ParticipantType.REACTANT);
 
             Species []productSpecies = new Species[numProducts];
@@ -159,7 +158,6 @@ public class ModelExporterOrrellColumnFormat implements IModelExporter, IAliasab
             reaction.constructSpeciesArrays(productSpecies, 
                                             productStoichiometries, 
                                             productDynamic, 
-                                            null, null, null, 
                                             Reaction.ParticipantType.PRODUCT);
 
             int reactant1 = 0;

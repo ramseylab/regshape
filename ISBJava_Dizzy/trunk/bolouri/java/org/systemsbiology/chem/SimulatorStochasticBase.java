@@ -77,7 +77,7 @@ public abstract class SimulatorStochasticBase extends Simulator
         return(nextReactionSolver);
     }
 
-    protected static final void updateSymbolValuesForReaction(SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected static final void updateSymbolValuesForReaction(SymbolEvaluatorChem pSymbolEvaluator,
                                                               Reaction pReaction,
                                                               double []pSymbolValues,
                                                               DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException
@@ -151,8 +151,7 @@ public abstract class SimulatorStochasticBase extends Simulator
         return(true);
     }
 
-    protected abstract double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                      SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected abstract double iterate(SymbolEvaluatorChem pSymbolEvaluator,
                                       double pEndTime,
                                       Reaction []pReactions,
                                       double []pReactionProbabilities,
@@ -161,8 +160,7 @@ public abstract class SimulatorStochasticBase extends Simulator
                                       MutableInteger pLastReactionIndex,
                                       DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException, IllegalStateException;
 
-    protected abstract void prepareForStochasticSimulation(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                                           SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected abstract void prepareForStochasticSimulation(SymbolEvaluatorChem pSymbolEvaluator,
                                                            double pStartTime,
                                                            Random pRandomNumberGenerator,
                                                            Reaction []pReactions,
@@ -213,8 +211,7 @@ public abstract class SimulatorStochasticBase extends Simulator
                                                                pRequestedSymbolNames);
         int numRequestedSymbols = requestedSymbols.length;
 
-        SpeciesRateFactorEvaluator speciesRateFactorEvaluator = mSpeciesRateFactorEvaluator;
-        SymbolEvaluatorChemSimulation symbolEvaluator = mSymbolEvaluator;
+        SymbolEvaluatorChem symbolEvaluator = mSymbolEvaluator;
         double []reactionProbabilities = mReactionProbabilities;
         Reaction []reactions = mReactions;
         double []dynamicSymbolValues = mDynamicSymbolValues;        
@@ -259,8 +256,7 @@ public abstract class SimulatorStochasticBase extends Simulator
 
             lastReactionIndex.setValue(NULL_REACTION);
 
-            prepareForStochasticSimulation(speciesRateFactorEvaluator,
-                                           symbolEvaluator,
+            prepareForStochasticSimulation(symbolEvaluator,
                                            pStartTime,
                                            randomNumberGenerator,
                                            reactions,
@@ -268,8 +264,7 @@ public abstract class SimulatorStochasticBase extends Simulator
 
             while(pNumResultsTimePoints - timePointIndex > 0)
             {
-                time = iterate(speciesRateFactorEvaluator,
-                               symbolEvaluator,
+                time = iterate(symbolEvaluator,
                                pEndTime,
                                reactions,
                                reactionProbabilities,

@@ -20,11 +20,36 @@ import org.systemsbiology.util.DataNotFoundException;
  */
 public abstract class SymbolEvaluator implements Cloneable
 {
-    protected final boolean mUseExpressionValueCaching;
+    protected boolean mUseExpressionValueCaching;
 
-    public SymbolEvaluator(boolean pUseExpressionValueCaching)
+    public SymbolEvaluator()
+    {
+        mUseExpressionValueCaching = false;
+    }
+
+    public void setUseExpressionValueCaching(boolean pUseExpressionValueCaching)
     {
         mUseExpressionValueCaching = pUseExpressionValueCaching;
+    }
+
+    protected final double getIndexedValue(int pArrayIndex, Symbol pSymbol) throws DataNotFoundException
+    {
+        double []doubleArray = pSymbol.mDoubleArray;
+        if(null != doubleArray)
+        {
+            return(doubleArray[pArrayIndex]);
+        }
+        else
+        {
+            if(! mUseExpressionValueCaching)
+            {
+                return(pSymbol.mValueArray[pArrayIndex].getValue(this));
+            }
+            else
+            {
+                return(pSymbol.mValueArray[pArrayIndex].getValueWithCaching(this));
+            }
+        }
     }
 
     /**
@@ -37,7 +62,7 @@ public abstract class SymbolEvaluator implements Cloneable
      * @return the floating-point value associated with the specified
      * symbol.
      */
-    public final double getValue(Symbol pSymbol) throws DataNotFoundException
+    public double getValue(Symbol pSymbol) throws DataNotFoundException
     {
         int arrayIndex = pSymbol.mArrayIndex;
         if(NULL_ARRAY_INDEX == arrayIndex)
@@ -61,7 +86,7 @@ public abstract class SymbolEvaluator implements Cloneable
                 {
                     return(pSymbol.mValueArray[arrayIndex].getValueWithCaching(this));
                 }
-            }
+            }        
         }
     }
 
@@ -73,8 +98,6 @@ public abstract class SymbolEvaluator implements Cloneable
      * or false otherwise.
      */
     public abstract boolean hasValue(Symbol pSymbol);
-
-    public abstract Object clone();
 
     public abstract double getUnindexedValue(Symbol pSymbol) throws DataNotFoundException;
 

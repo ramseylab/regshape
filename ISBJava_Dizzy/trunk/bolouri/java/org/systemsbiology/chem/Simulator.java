@@ -24,10 +24,9 @@ public abstract class Simulator
     protected double []mInitialDynamicSymbolValues;  // saves a copy of the initial data
     protected Value []mNonDynamicSymbolValues;
     protected boolean mHasExpressionValues;
-    protected SymbolEvaluatorChemSimulation mSymbolEvaluator;
+    protected SymbolEvaluatorChem mSymbolEvaluator;
     protected Reaction []mReactions;
     protected double []mReactionProbabilities;
-    protected SpeciesRateFactorEvaluator mSpeciesRateFactorEvaluator;
     protected HashMap mSymbolMap;
     protected SimulationController mSimulationController;
     protected DelayedReactionSolver []mDelayedReactionSolvers;
@@ -331,10 +330,12 @@ public abstract class Simulator
                                             
         }
 
-        SymbolEvaluatorChemSimulation evaluator = new SymbolEvaluatorChemSimulation(symbolMap, 0.0, 
-                                                                                    usesExpressionValueCaching());
+        SymbolEvaluatorChem evaluator = pModel.getSymbolEvaluator();
+        evaluator.setSymbolsMap(symbolMap);
+        evaluator.setTime(0.0);
+        evaluator.setUseExpressionValueCaching(usesExpressionValueCaching());
         mSymbolEvaluator = evaluator;
-
+        
         checkSymbolsValues();
         
         for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
@@ -342,8 +343,6 @@ public abstract class Simulator
             Reaction reaction = reactions[reactionCtr];
             reaction.prepareSymbolVectorsForSimulation(dynamicSymbols, nonDynamicSymbols, symbolMap);
         }
-
-        mSpeciesRateFactorEvaluator = pModel.getSpeciesRateFactorEvaluator();
 
         // create an array of doubles to hold the reaction probabilities
         mReactionProbabilities = new double[numReactions];
@@ -359,7 +358,7 @@ public abstract class Simulator
         for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
         {
             Reaction reaction = mReactions[reactionCtr];
-            double reactionRate = reaction.computeRate(mSpeciesRateFactorEvaluator, mSymbolEvaluator);
+            double reactionRate = reaction.computeRate(mSymbolEvaluator);
             reaction.checkReactantValues(mSymbolEvaluator);
         }
     }
@@ -385,7 +384,6 @@ public abstract class Simulator
         mSymbolEvaluator = null;
         mReactions = null;
         mReactionProbabilities = null;
-        mSpeciesRateFactorEvaluator = null;
         mSymbolMap = null;
         mSimulationController = null;
         mDelayedReactionSolvers = null;
@@ -419,7 +417,7 @@ public abstract class Simulator
     protected final int addRequestedSymbolValues(double pCurTime,
                                                  int pLastTimeIndex,
                                                  Symbol []pRequestedSymbols,
-                                                 SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                                 SymbolEvaluatorChem pSymbolEvaluator,
                                                  double []pTimeValues,
                                                  Object []pRetSymbolValues) throws DataNotFoundException
     {
@@ -514,7 +512,7 @@ public abstract class Simulator
     {
        if(! mInitialized)
         {
-            throw new IllegalStateException("simulator has not been initialized yet");
+            throw new IllegalStateException("simulator has not beeni nitialized yet");
         }
 
         if(pNumResultsTimePoints <= 1)
@@ -549,8 +547,7 @@ public abstract class Simulator
 
 
 
-    protected static final void computeReactionProbabilities(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                                             SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected static final void computeReactionProbabilities(SymbolEvaluatorChem pSymbolEvaluator,
                                                              double []pReactionProbabilities,
                                                              Reaction []pReactions) throws DataNotFoundException
     {
@@ -564,14 +561,14 @@ public abstract class Simulator
         {
             reaction = pReactions[reactionCtr];
 
-            reactionProbability = reaction.computeRate(pSpeciesRateFactorEvaluator, pSymbolEvaluator);
+            reactionProbability = reaction.computeRate(pSymbolEvaluator);
 
             // store reaction probability
             pReactionProbabilities[reactionCtr] = reactionProbability;
         }
     }
 
-    protected static final double getDelayedReactionEstimatedAverageFutureRate(SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected static final double getDelayedReactionEstimatedAverageFutureRate(SymbolEvaluatorChem pSymbolEvaluator,
                                                                                  DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException
     {
         double compositeRate = 0.0;
@@ -596,16 +593,14 @@ public abstract class Simulator
         }
     }
 
-    protected static final void computeDerivative(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                                  SymbolEvaluatorChemSimulation pSymbolEvaluator,
+    protected static final void computeDerivative(SymbolEvaluatorChem pSymbolEvaluator,
                                                   Reaction []pReactions,
                                                   Object []pDynamicSymbolAdjustmentVectors,
                                                   double []pReactionProbabilities,
                                                   double []pTempDynamicSymbolValues,
                                                   double []pDynamicSymbolDerivatives) throws DataNotFoundException
     {
-        computeReactionProbabilities(pSpeciesRateFactorEvaluator,
-                                     pSymbolEvaluator,
+        computeReactionProbabilities(pSymbolEvaluator,
                                      pReactionProbabilities,
                                      pReactions);
 
