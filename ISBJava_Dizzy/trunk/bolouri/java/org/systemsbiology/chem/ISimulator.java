@@ -14,6 +14,7 @@ import org.systemsbiology.util.InvalidInputException;
 public interface ISimulator
 {
     public static final int MIN_NUM_RESULTS_TIME_POINTS = 2;
+    public String getAlias();
 
     public boolean isInitialized();
 
@@ -47,11 +48,9 @@ public interface ISimulator
      * be greater than or equal to 2.
      *
      */
-    public void simulate(double pStartTime, 
-                         double pEndTime,
-                         SimulatorParameters pSimulatorParameters,
-                         int pNumResultsTimePoints,
-                         String []pResultsSymbolNames,
-                         double []pRetResultsTimeValues,
-                         Object []pRetResultsSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException, SimulationFailedException;
+    public SimulationResults simulate(double pStartTime, 
+                                      double pEndTime,
+                                      SimulatorParameters pSimulatorParameters,
+                                      int pNumResultsTimePoints,
+                                      String []pResultsSymbolNames) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException, SimulationFailedException;
 }
