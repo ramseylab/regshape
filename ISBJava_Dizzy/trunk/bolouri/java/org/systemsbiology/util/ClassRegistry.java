@@ -190,7 +190,7 @@ public class ClassRegistry
                 retVal = true;
             }
         }
-        catch(Exception e)
+        catch(Throwable e)
         {
             System.err.println("warning:  there is a problem with class file \"" + pClassName + "\"");
         }
