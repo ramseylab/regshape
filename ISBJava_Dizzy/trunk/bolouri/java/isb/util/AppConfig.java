@@ -51,6 +51,7 @@ public class AppConfig
         }
         catch(Exception e)
         {
+            e.printStackTrace(System.err);
             throw new InvalidInputException("unable to load XML configuration file", e);
         }
     }
@@ -68,10 +69,12 @@ public class AppConfig
     private static InputSource getConfigSource(File pAppFile) throws FileNotFoundException
     {
         InputSource retSource = null;
-        String fileDirName = "file://" + pAppFile.getAbsolutePath();
+        String uri = URLUtils.createFileURL(pAppFile);
+        
+        System.out.println("opening URL: " + uri);
         FileInputStream fileInputStream = new FileInputStream(pAppFile);
         retSource = new InputSource(fileInputStream);
-        retSource.setSystemId(fileDirName);
+        retSource.setSystemId(uri);
         return(retSource);
     }
 
