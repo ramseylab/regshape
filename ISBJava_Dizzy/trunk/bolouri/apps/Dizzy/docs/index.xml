@@ -24,7 +24,7 @@
 <li><a href="docs/ReleaseNotes.html">&appName; Release Notes</a></li>
 <li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
 <li><a href="../License.html">License Agreement</a></li>
-<li><a href="docs/UserManual.html#api">Javadoc API documentation</a></li>
+<li><a href="../ISBJava/javadoc">Javadoc API documentation</a></li>
 </ul>
 </p>
 
