@@ -474,7 +474,7 @@ public class MainApp
         return(mApp);
     }
 
-    public static void main(String []pArgs)
+    public static final void main(String []pArgs)
     {
         try
         {
