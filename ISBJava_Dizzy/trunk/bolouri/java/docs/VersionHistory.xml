@@ -74,6 +74,10 @@ some cases.</li>
 <code>org.systemsbiology.chem.app.MainApp</code> class, for the case of when
 a syntactially invalid model is processed and a null pointer is passed
 to the <code>org.systemsbiology.chem.app.CytoscapeViewer</code> class.</li>
+<li>Extended the <code>org.systemsbiology.chem.scripting.ModelExporterMarkupLanguage</code>
+so that it is capable of exporting SBML Level 1, versions 1 <em>and</em> 2.  Previously it
+was only capable of exporting version 2.  The version 1 export is needed for the
+<code>org.systemsbiology.chem.app.CytoscapeViewer</code> to export a model to Cytoscape.</li>
 </ul>
 </td>
 </tr>
