@@ -187,6 +187,16 @@ comprehensive network of hyperlinks.
 
 </isb:docsection>
 
+<isb:docsection name="Source Code" label="sourcecode">
+<p>
+The source code for the &localJavaLibraryName; library 
+is included with the library installer.  You can find the code 
+in the file &quot;<code>&localJavaLibraryName;-src.tar.gz</code>&quot;
+that is installed in the &quot;<code>src</code>&quot;
+subdirectory of the installation directory for this program.
+</p>
+</isb:docsection>
+
 <isb:docsection name="Getting Help" label="gettinghelp">
 <p>
 If you find that the &appName; library does not function in accordance
