@@ -16,9 +16,11 @@ import org.systemsbiology.util.DataNotFoundException;
  *
  * @author Stephen Ramsey
  */
-public abstract class SymbolEvaluationPostProcessor 
+public abstract class SymbolEvaluationPostProcessor implements Cloneable
 {
     public abstract double modifyResult(Symbol pSymbol,
                                         SymbolEvaluator pSymbolEvaluator,
                                         double pSymbolValue) throws DataNotFoundException;
+
+    public abstract Object clone();
 }
