@@ -25,7 +25,7 @@ import cern.jet.random.*;
 public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochasticBase implements IAliasableClass, ISimulator
 {
     private static final long NUM_FIRINGS_GILLESPIE = 1;
-    private static final double DEFAULT_MAX_ALLOWED_RELATIVE_ERROR = 0.01;
+    private static final double DEFAULT_MAX_ALLOWED_RELATIVE_ERROR = 0.005;
     private static final long DEFAULT_MIN_RATIO_OF_LEAP_TIME_TO_REACTION_TIME_SCALE = 10;
     private static final long MULTIPLIER_FOR_MIN_NUM_GILLESPIE_STEPS = 4;
 
