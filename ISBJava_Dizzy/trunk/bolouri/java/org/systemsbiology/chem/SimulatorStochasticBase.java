@@ -113,9 +113,9 @@ public abstract class SimulatorStochasticBase extends Simulator
                 pSymbolValues[productIndex] += ((double) productsStoichiometry[ctr]);
                 if(numDelayedReactions > 0)
                 {
-                    for(int mCtr = numDelayedReactions; --mCtr >= 0; )
+                    for(int i = numDelayedReactions; --i >= 0; )
                     {
-                        DelayedReactionSolver solver = pDelayedReactionSolvers[mCtr];
+                        DelayedReactionSolver solver = pDelayedReactionSolvers[i];
                         if(solver.hasIntermedSpecies(product))
                         {
                             assert (productsStoichiometry[ctr] == 1) : "invalid stoichiometry for delayed reaction";
