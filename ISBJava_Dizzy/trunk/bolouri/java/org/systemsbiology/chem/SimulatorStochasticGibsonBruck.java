@@ -230,7 +230,7 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
         double oldTimeOfNextReactionEvent = timeOfNextReactionEventObj.getValue();
         double oldRate = pReactionProbabilities[pReactionIndex];
         Reaction reaction = pReactions[pReactionIndex];
-        double newRate = reaction.computeRate(pSymbolEvaluator);
+        double newRate = reaction.computeRate(pSymbolEvaluator, true);
         double newTimeOfNextReactionEvent = 0.0;
         if(pLastReactionIndex != pReactionIndex)
         {
@@ -270,7 +270,10 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
     {
         computeReactionProbabilities(pSymbolEvaluator,
                                      pReactionProbabilities,
-                                     pReactions);
+                                     pReactions,
+                                     mHasExpressionValues,
+                                     mNonDynamicSymbolValues,
+                                     true);
 
         computePutativeTimeToNextReactions(pRandomNumberGenerator,
                                            pStartTime,
@@ -285,7 +288,9 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
                              RandomElement pRandomNumberGenerator,
                              double []pDynamicSymbolValues,
                              MutableInteger pLastReactionIndex,
-                             DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException, IllegalStateException
+                             DelayedReactionSolver []pDelayedReactionSolvers,
+                             boolean pHasExpressionValues,
+                             Value []pNonDynamicSymbolValues) throws DataNotFoundException, IllegalStateException
     {
         IndexedPriorityQueue putativeTimeToNextReactions = mPutativeTimeToNextReactions;
         Object []reactionDependencies = mReactionDependencies;
@@ -302,9 +307,11 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
                                           pDynamicSymbolValues,
                                           pDelayedReactionSolvers,
                                           NUMBER_FIRINGS);
-            clearExpressionValueCaches();
+            if(pHasExpressionValues)
+            {
+                clearExpressionValueCaches(pNonDynamicSymbolValues);
+            }
                                           
-
             Integer []dependentReactions = (Integer []) reactionDependencies[lastReactionIndex];
             int numDependentReactions = dependentReactions.length;
             for(int ctr = numDependentReactions; --ctr >= 0; )
