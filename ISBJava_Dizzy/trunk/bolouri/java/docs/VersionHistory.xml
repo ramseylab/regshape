@@ -37,10 +37,10 @@ This document contains the version history for the
 <td>Comments</td>
 </tr>
 
-<!--
-  <tr valign="top">
+
+<tr valign="top">
 <td><a href="../2.2.0/download.html">2.2.0</a></td>
-<td>2005/02/??</td>
+<td>2005/02/28</td>
 <td>
 <ul>
   <li>Updated <code>org.systemsbiology.inference.SignificancesData</code> and 
@@ -49,8 +49,8 @@ This document contains the version history for the
     <code>loadFromFile()</code> methods, thus allowing defining a data object based on
     an alternative type of data stream, other than a file.
   </li>
-  <li>Added a new quantile normalization class, <code>org.systemsbiology.inference.QuantileNormalizer</code>.
-    A graphical user interface driver is included, <code>org.systemsbiology.inference.QuantileNormalizerDriver</code>.</li>
+  <li>Added a new data normalization class, <code>org.systemsbiology.inference.DataNormalizer</code>.
+    A graphical user interface driver is included, <code>org.systemsbiology.inference.DataNormalizerDriver</code>.</li>
   <li>Added a new data management class, <code>org.systemsbiology.inference.DataManagerDriver</code>,
       which is essentially a spreadsheet program adapted for
     manipulating multi-evidence biological systems data.  Data merging, sorting, and (evidence-specific) subselection
@@ -63,10 +63,83 @@ This document contains the version history for the
     Added the <code>org.systemsbiology.inference</code> package, which has code for
     inferring a set of affected network elements from multiple evidence types.
   </li>
+  <li>
+  Fixed a <code>NullPointerException</code> that was occurring when a call to
+  <code>org.systemsbiology.chem.ISimulator.initialize()</code> failed (i.e., threw
+  an exception), and when the exception was handled and <code>initialize()</code> was
+  called again.  This was causing unexpected behavior in <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+  when the model initial conditions validation (i.e., the call to
+  <code>org.systemsbiology.chem.SimulatorStochasticBase.checkDynamicalSymbolsInitialValues()</code>) 
+  failed.  Thanks to Vincent Rouilly for submitting the bug report.</li>
+  <li>
+  Improved the error message in the exception thrown by the <code>org.systemsbiology.chem.SimulatorStochasticBase.checkDynamicalSymbolsInitialValues()</code>
+  method, called indirectly by the <code>org.systemsbiology.chem.Simulator.initialize()</code> method, hen one of the species has an initial population value that exceeds the maximum 
+  allowed for stochastic simulations.  The error message now gives the offending species name and
+  the initial population value.
+  </li>
+  <li>
+  Refactored <code>org.systemsbiology.chem.IModelBuilder</code> so that the
+  <code>getBufferedReader()</code> method is now turned into a <code>readModel()</code>
+  method.  Added a <code>writeModel()</code> method to the same interface.  
+  This creates a set of symmetric methods which decode/encode a model from/to a byte
+  stream, respectively.</li>
+    <li>
+  Fixed a potential problem with <code>org.systemsbiology.chem.app.EditorPane</code>
+  where the <code>saveEditBufferToFile()</code> method was implicitly calling
+  <code>String.getBytes()</code> on the contents of the edit buffer, which means
+  that the file is being written with the platform's default character encoding.  This
+  meant that (in the case of SBML models) the encoding specified in the XML header was
+  being ignored, and (in the case of CMDL models) the model would not be written in
+  the UTF-8 encoding on platforms whose default encoding is not UTF-8.  This means that
+  on certain platforms, the <code>saveEditBufferToFile</code> method would end up writing
+  a file that does not conform to published character encoding specifications for SBML and CMDL.
+  </li>
+  <li>
+  Fixed a bug in <code>org.systemsbiology.chem.app.SimulationLauncher</code> where the
+  "secs remaining" text field would show too many significant digits when the number
+  of estimated seconds remaining is very large.
+  </li>
+  <li>
+  Fixed a potential problem with the editor pane, such that when the user selected
+  "save as" or "save", the file was being written with the platform's default character encoding.  This
+  meant that (in the case of SBML models) the encoding specified in the XML header was
+  being ignored, and (in the case of CMDL models) the model would not be written in
+  the UTF-8 encoding on platforms whose default encoding is not UTF-8.  This means that
+  on certain platforms, the "save" or "save as" functions would end up writing
+  a file that does not conform to published character encoding specifications for SBML and CMDL.
+  </li>
+  <li>
+  Fixed a bug in <code>org.systemsbiology.util.DebugUtils.describeSortedObjectList()</code>
+  where the separator string was not being printed in every case that it should have.
+  </li>
+  <li>Fixed a bug in <code>org.systemsbiology.math.SymbolEvaluator.getValue()</code> that was
+    causing inconsistent results in subsequent calls to <code>getValue()</code> when
+    the model is an SBML model with "substance" units of "mole" and when 
+    expression-value caching is enabled.   Thanks to Vincent Rouilly for 
+    submitting the bug report.</li>
+  <li>Fixed a bug in <code>org.systemsbiology.chem.app.EditorPane</code> that was causing
+    the editor to fail to "forget" the <code>org.systemsbiology.chem.IModelBuilder</code>
+    when the edit buffer is cleared.</li>
+  <li>Modified <code>org.systemsbiology.chem.SimulatorStochasticBase</code> to call
+    <code>org.systemsbiology.chem.SimulatorStochasticBase.checkDynamicalSymbolsValues()</code> to check all
+    dynamical symbols to see if any species value exceeds the maximum allowed for stochastic
+    simulations (approximately 9.0771993e+15), just before <code>addRequestedSymbolValues()</code>
+    is called.  This ensures that the stochastic simulators will continuously check to
+    see if any species values exceed the maximum allowed species value, throughout the
+    course of the simulation.</li>
+  <li>Changed <code>main()</code> method of <code>org.systemsbiology.chem.app.MainApp</code>,
+    to "final".</li>
+  <li>Added a static factory method <code>org.systemsbiology.util.AppConfig.get()</code>,
+    which finds the application configuration file and instantiates an <code>AppConfig</code>
+    object containing the configuration data loaded from the file.  Refactored
+    <code>org.systemsbiology.chem.app.MainApp</code> and all four main
+    programs in <code>org.systemsbiology.inference</code> (<code>EvidenceWeightedInferer</code>,
+    <code>SignificanceCalculator</code>, <code>DataNormalizer</code>, and <code>DataManager</code>)
+    to use this new method.</li>
 </ul>
 </td>
 </tr>
--->
+
 
 
   <tr valign="top">

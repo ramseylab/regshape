@@ -43,21 +43,85 @@ This document contains the version history for the
 <a href="&javaURL;">&localJavaLibraryName;</a> version number:</td>
 </tr>
 
-<!--
+
 <tr valign="top">
 <td><a href="../1.9.1/&installerDownloadRelURL;">1.9.1</a></td>
-<td>2005/02/??</td>
+<td>2005/02/28</td>
 <td>
 <ul>
-<li>
-
-</li>
+  <li>
+  Fixed a <code>NullPointerException</code> that was occurring when a model contained
+  a species whose initial population value exceeded the maximum allowed for stochastic
+  simulations.  This exception would occur the <em>second</em> time the user attempted
+  to initiate a stochastic simulation.  The correct behavior is for the simulator to
+  give the same error message each time the user attempts to run a stochastic simulation
+  with the (flawed) model. Thanks to Vincent Rouilly for submitting the bug report.</li>
+  <li>
+  Improved the error message shown by the simulation launcher, when the user attempts to
+  launch a stochastic simulation and when one of the species has an initial population value that exceeds the maximum 
+  allowed for stochastic simulations.  The error message now gives the offending species name and
+  the initial population value.
+  </li>
+  <li>
+  Fixed a bug whereby a SBML model with <code>UTF-8</code> character encoding (and actually using special
+  UTF-8 characters) loaded into
+  the editor pane, and then subsequently passed to the "simulate..." or the "export model" menu
+  item, would 
+  cause a <code>SAXParserException</code> on the Macintosh OSX platform.  Thanks to Vincent Rouilly
+  for submitting this bug report.</li>  
+  <li>
+  Fixed a bug in the simulation launcher where the
+  "secs remaining" text field would show too many significant digits when the number
+  of estimated seconds remaining is very large.
+  </li>
+    <li>
+  Modified <code>org.systemsbiology.chem.app.EditorPane</code> so that it no longer
+  uses the platform-default character encoding when translating a model into a byte
+  stream that is passed to the <code>org.systemsbiology.chem.IModelBuilder</code>.  This
+  was causing unexpected behavior because different platforms have different default
+  character encodings.  The solution was to add a <code>writeModel()</code> method to the
+  <code>IModelBuilder</code> interface, so that the <code>EditorPane</code> can transparently
+  write the model to a byte stream that can be understood by the <code>IModelBuilder</code>.
+  This fixed a bug whereby a SBML model with <code>UTF-8</code> character encoding loaded into
+  the <code>EditorPane</code>, and then subsequently passed to the <code>IModelBuilder</code>, would 
+  cause a <code>SAXParserException</code> on the Macintosh OSX platform.  Thanks to Vincent Rouilly
+  for submitting this bug report.</li>
+  <li>
+  Fixed a bug in in the "View..." -&gt; "human-readable" menu item feature, 
+  where the comma-and-newline 
+  separator string was not being printed in every case that it should have.  This
+  led to improperly formatted output for the "human-readable" view/export feature.
+  </li>
+  <li>Fixed a bug in the simulation engine that was
+    causing incorrect results when simulating certain SBML 
+    models that have "substance" units of "mole".   Thanks to Vincent Rouilly for 
+    submitting the bug report.  This bug does not affect the results of
+    SBML models with "substance" units of "item" or CMDL models.</li> 
+ <li>Fixed a bug in the editor pane that was causing
+    the editor to fail to "forget" the model parser type,
+    when the edit buffer is cleared using the "File" -&gt; "Close" menu item.</li>
+  <li>Modified the stochastic simulators to check all
+    dynamical symbols to see if any species value exceeds the maximum allowed for stochastic
+    simulations (approximately 9.0771993e+15), each time a "result time point" is sampled
+    (by default, 100 time points spaced at equal intervals during the simulation).
+    This ensures that the stochastic simulators will continuously check to
+    see if any species values exceed the maximum allowed species value, throughout the
+    course of the simulation.  This fixes a potential problem with a simulation
+    such as
+    <blockquote>
+      <pre>
+X = 1.0e+15;
+-&gt; X, 1.0;
+      </pre>
+    </blockquote>
+    which will eventually fail in a stochastic simulator, due numeric precision
+    limitations of floating-point addition.
+    </li>    
 </ul>
 </td>
-<td><a href="&javaURL;/2.1.1/download.html">2.1.1</a></td>
+<td><a href="&javaURL;/2.2.0/download.html">2.2.0</a></td>
 </tr>
-</tr>
--->
+
 
 <tr valign="top">
 <td><a href="../1.9.0/&installerDownloadRelURL;">1.9.0</a></td>
