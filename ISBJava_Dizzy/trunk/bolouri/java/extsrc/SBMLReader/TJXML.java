@@ -426,6 +426,93 @@ class TJXML implements ErrorHandler {
          }
     }
 
+    String getSubstanceUnitsString(NodeList nodeList) throws Exception
+    {
+        Node node;
+        int numNodes = nodeList.getLength();
+        StringBuffer unitsStringBuf = new StringBuffer();
+        String scaleString;
+        boolean firstUnit = true;
+        String name;
+        for(int i = 0; i < numNodes; ++i)
+        {
+            node = nodeList.item(i);
+            if(node.getNodeType() == Node.TEXT_NODE)
+            {
+                continue;
+            }
+            assert (node.getNodeName().equals("unitDefinition")) : "unexpected element instead of unitDefinition: " + node.getNodeName();
+            name = GetAttribute(node, "name", "");
+            if(name.length() != 0)
+            {
+                if(name.equals("substance"))
+                {
+                    NodeList unitDefinitionSubstanceChildren = node.getChildNodes();
+                    int numUnitDefinitionSubstanceChildren = unitDefinitionSubstanceChildren.getLength();
+                    for(int k = 0; k < numUnitDefinitionSubstanceChildren; ++k)
+                    {
+                        Node unitDefinitionSubstanceChild = unitDefinitionSubstanceChildren.item(k);
+                        if(unitDefinitionSubstanceChild.getNodeType() != Node.TEXT_NODE)
+                        {
+                            assert (unitDefinitionSubstanceChild.getNodeName().equals("listOfUnits")) : "unexpected element instead of listOfUnits: " + unitDefinitionSubstanceChild.getNodeName();
+                            NodeList childNodes = unitDefinitionSubstanceChild.getChildNodes();
+                            int numChildNodes = childNodes.getLength();
+                            Node childNode = null;
+                            for(int j = 0; j < numChildNodes; ++j)
+                            {
+                                childNode = childNodes.item(j);
+                                if(childNode.getNodeType() != Node.TEXT_NODE)
+                                {
+                                    if(null != childNode)
+                                    {
+                                        name = GetAttribute(childNode, "kind", "");
+                                        if(name.length() > 0)
+                                        {
+                                            int scale = 1;
+                                            scaleString = GetAttribute(childNode, "scale", "");
+                                            if(scaleString.length() > 0)
+                                            {
+                                                scale = Integer.parseInt(scaleString);
+                                            }
+                                            if(firstUnit)
+                                            {
+                                                firstUnit = false;
+                                            }
+                                            else
+                                            {
+                                                unitsStringBuf.append(" * ");
+                                            }
+                                            unitsStringBuf.append(name.trim());
+                                            if(scale != 1)
+                                            {
+                                                unitsStringBuf.append("^(" + scale + ")");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            throw new Exception("required attribute \"kind\" not supplied, for \"unit\" element");
+                                        }
+                                    }    
+                                }    
+                            }                   
+                            
+                        }
+                    }
+                }
+            }
+        }
+
+        String unitsString = null;
+
+        if(unitsStringBuf.length() > 0)
+        {
+            unitsString = unitsStringBuf.toString();
+        }
+
+        return(unitsString);
+    }
+
+
     // ------------------------------------------------------------------------
     // Stores any local parameters associated with the current rate law
     // ------------------------------------------------------------------------
@@ -556,6 +643,14 @@ class TJXML implements ErrorHandler {
               // process list of rules
           }
 
+          node = doc.getElementsByTagName("listOfUnitDefinitions").item(0);
+          if(null != node)
+          {
+              assert (node.getNodeName().equals("listOfUnitDefinitions")) : "unexpected element instead of listOfUnitDefinitions: " + node.getNodeName();
+              String substanceUnitsString = getSubstanceUnitsString(node.getChildNodes());
+              Network.SubstanceUnitsString = substanceUnitsString;
+          }
+          
           // Read in the reaction specifications
 
           if (doc.getElementsByTagName("listOfReactions") != null) {

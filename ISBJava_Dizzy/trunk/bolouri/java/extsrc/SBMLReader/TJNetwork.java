@@ -79,6 +79,7 @@ public class TJNetwork {
   public TReactionList ReactionList;
   public String Name;
   public TRuleList RuleList;
+    public String SubstanceUnitsString;
 
   public TJNetwork() {
      VolumeList = new TVolumeList();
@@ -87,6 +88,7 @@ public class TJNetwork {
      GlobalParameterList = new TParameterList();
      ReactionList = new TReactionList();
      RuleList = new TRuleList();
+     SubstanceUnitsString = new String("mole");
   }
 
   public TSpecies FindMetabolite (String Name) {

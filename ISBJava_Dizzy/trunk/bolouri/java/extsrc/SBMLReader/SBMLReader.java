@@ -359,7 +359,7 @@ public class SBMLReader
 
     public boolean hasValue(String name) throws SBWException
     {
-        return getSymbol(name).HasValue == uConstants.TConstants.nsUnDefined ? false : true;
+        return getSymbol(name).HasValue == TConstants.nsUnDefined ? false : true;
     }
 
     public double getValue(String name) throws SBWException
@@ -427,6 +427,11 @@ public class SBMLReader
             retType = rule.getType().toString();
         }
         return(retType);
+    }
+
+    public String getSubstanceUnitsString()
+    {
+        return(network.SubstanceUnitsString);
     }
 
     static
