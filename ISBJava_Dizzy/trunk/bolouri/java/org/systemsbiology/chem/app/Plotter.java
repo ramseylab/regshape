@@ -74,7 +74,7 @@ public class Plotter
                     }
                     catch(IOException e2)
                     {
-                        e2.printStackTrace(System.err); // :BUGBUG: what to do here?
+                        throw new RuntimeException(e2);
                     }
                 }
 
@@ -155,7 +155,7 @@ public class Plotter
         StringBuffer subtitleBuffer = new StringBuffer();
         TextTitle modelNameSubtitle = new TextTitle("model name: " + pPlot.mModelName);
         chart.addSubtitle(modelNameSubtitle);
-        TextTitle simulatorAliasSubtitle = new TextTitle("simulator alias: " + pPlot.mSimulatorAlias);
+        TextTitle simulatorAliasSubtitle = new TextTitle("simulator: " + pPlot.mSimulatorAlias);
         chart.addSubtitle(simulatorAliasSubtitle);
         Date simulationDate = pPlot.mSimulationDate;
         DateFormat df = DateFormat.getDateTimeInstance();
