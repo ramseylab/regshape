@@ -444,6 +444,7 @@ public class SimulationLauncher
         catch(Throwable e)
         {
             simulationEndCleanup();
+            e.printStackTrace(System.err);
             ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
                                                                                              "Failure running simulation",
                                                                                              new Exception(e.toString()));
