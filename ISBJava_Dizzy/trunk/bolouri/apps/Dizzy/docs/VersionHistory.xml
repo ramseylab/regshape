@@ -57,7 +57,9 @@ the simulation engine.</li>
 <li>Fixed a problem whereby formulas in imported SBML models were not
 being interpreted correctly by the simulator; species symbols
 were not being interpreted as representing a concentration.</li>
-<li>Fixed a problem with the <code>runmodel.sh</code> script.</li>
+<li>Fixed a problem with the <code>runmodel.sh</code> script; 
+it was not working, due to changes to the SBML reader 
+in the 1.5.0 release.</li>
 </ul>
 </td>
 <td><a href="&javaURL;/1.5.2/&installerDownloadRelURL;">1.5.2</a></td>
