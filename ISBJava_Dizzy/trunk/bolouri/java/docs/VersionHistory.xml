@@ -37,6 +37,99 @@ This document contains the version history for the
 <td>Comments</td>
 </tr>
 
+<tr valign="top">
+<td><a href="../2.0.1/download.html">2.0.1</a></td>
+<td>2004/11/18</td>
+<td>
+<ul>
+<li>
+  Fixed a bug in <code>org.systemsbiology.gui.DataColumnSelector</code>, which
+  was causing a <code>NullPointerException</code> when the "save" button is
+  clicked, when the selector object was constructed using the parameterized 
+  constructor.
+</li>
+<li>
+  Refactored <code>org.systemsbiology.chem.app.ModelExporter</code> to minimize
+  back-references to <code>org.systemsbiology.chem.app.MainApp</code>.
+</li>
+<li>
+  Refactored <code>org.systemsbiology.chem.app.SimulationLauncher</code> to minimize
+  back-references to <code>org.systemsbiology.chem.app.MainApp</code>.
+</li>
+<li>
+  Changed <code>org.systemsbiology.util.AppConfig.getProperty()</code> method
+  so that it is now public.
+</li>
+<li>
+  Modified <code>org.systemsbiology.util.ClassRegistry</code> to cache the
+  set of class names for classes implementing 
+  <code>org.systemsbiology.util.IAliasableClass</code>.  This way, we are
+  only searching the tree of all packages and classes once.  This dramatically
+  speeds up invocations of <code>buildRegistry()</code> for the second and
+  all subsequent instances of <code>ClassRegistry</code>.  
+</li>
+<li>
+  Created <code>org.systemsbiology.chem.IModelViewer</code> as an interface
+  for classes that implement a model-vizualization capability, whether graphical 
+  or textual.  Moved <code>org.systemsbiology.chem.app.CytoscapeViewer</code> to
+  <code>org.systemsbiology.chem.app.ModelViewerCytoscape</code>, which implements
+  this interface.  Modified 
+  <code>org.systemsbiology.chem.app.ModelViewerHumanReadable</code>
+  to implement this interface.  
+  Modified <code>org.systemsbiology.chem.app.MainMenu</code> to have a "View"
+  sub-menu containing the aliases of all classes implementing <code>IModelViewer</code>.
+</li>
+<li>
+  Modified <code>org.systemsbiology.chem.app.MainMenu</code> to have a "Export" 
+  sub-menu containing the aliases of all classes implementing <code>IModelExporter</code>.
+</li>
+<li>
+  Moved the <code>org.systemsbiology.chem.app.MainApp.handleWindowsArgumentMangling()</code>
+  method to the 
+  <code>fixWindowsCommandLineDirectoryNameMangling()</code> 
+  method in the <code>org.systemsbiology.util.FileUtils</code> class..
+</li>
+<li>
+  Created <code>org.systemsbiology.pointillist.IAction</code>, which
+  is now the interface implemented by all "Action" classes in Pointillist.
+</li>
+<li>
+  Moved the GUI part of <code>org.systemsbiology.pointillist.EditPreferencesAction</code> to
+  a new class, <code>org.systemsbiology.pointillist.EditPreferencesFrame</code>.
+</li>
+<li>
+  Fixed a bug in <code>NetworkIntegrationcAction</code>, <code>NormalizeAction</code>,
+  and <code>StatisticalTestsAction</code> that was causing a <code>NullPointerException</code>
+  when the output file already exists, and the user decided to cancel the operation at the
+  confirmation dialog box.
+</li>
+<li>
+  Modified <code>org.systemsbiology.pointillist.App</code> so that it keeps
+  track of all open <code>DataColumnSelector</code> frames for data files, and
+  when someone attemps to re-open a file that is already open, it simply raises
+  the correponding <code>DataColumnSelector</code> frame.  This required changes
+  to the 
+  <code>org.systemsbiology.pointillist.FileOpenAction</code> class also.
+</li>
+<li>
+  Modified <code>org.systemsbiology.pointillist.MatlabConnectAction</code> to
+  set the wait cursor, while the <code>MatlabConnectionManager.connect()</code>
+  method is being called.
+</li>  
+<li>
+  Removed the <code>org.systemsbiology.util.BrowserLauncher</code> class, 
+  because it is hacky, it is not being used, and it no longer works on 
+  Unix-type systems that do not have Netscape installed. 
+</li>
+<li>
+  Deleted unused class <code>org.systemsbiology.math.ISymbolValueMap</code>.
+</li>
+<li>
+  Added a line counter feature to <code>org.systemsbiology.chem.app.EditorPane</code>.
+</li>
+</ul>
+</td>
+</tr>
 
 <tr valign="top">
 <td><a href="../2.0.0/download.html">2.0.0</a></td>

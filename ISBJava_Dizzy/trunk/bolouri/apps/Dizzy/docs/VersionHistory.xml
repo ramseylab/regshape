@@ -44,6 +44,43 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.8.2/download.html">1.8.2</a></td>
+<td>2004/11/18</td>
+<td>
+<ul>
+<li>
+  Decreased the application start-up time by 45%, by making
+  the search for plug-in components more efficient.
+</li>
+<li>
+  Created a "View" sub-menu of "Tools", containing the aliases
+  of all <a href="UserManual.html#viewhuman">model viewers</a>.
+  Moved the "View in Cytoscape" and "View in Human-Readable
+  Format" menu items to this new sub-menu.
+</li>
+<li>
+  Created a "Export" sub-menu of "Tools", containing the aliases
+  of all the <a href="UserManual.html#exporterplugins">model
+  exporters</a>.  The aliases that used to appear in a dialog
+  box when the "Export..." menu item was selected, now appear
+  in the "Export" sub-menu.
+</li>
+<li>
+  Added a "line counter" feature to the main model editor window.
+  The line number of the current cursor position in the editor buffer
+  is displayed, and updated whenever you move the cursor in the editor
+  window.  Thanks to Earl Solis, for suggesting this useful feature.
+</li>
+<li>
+  Added new sample model definition file, <code>Michaelis.cmdl</code>, 
+  to the &quot;<code>samples</code>&quot; directory.
+</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.0.1/download.html">2.0.1</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.8.1/download.html">1.8.1</a></td>
 <td>2004/11/12</td>
 <td>
