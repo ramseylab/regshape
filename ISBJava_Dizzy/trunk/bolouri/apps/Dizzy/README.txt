@@ -60,4 +60,19 @@ Enterprise version of InstallAnywhere, and start using the
 "source path management" feature, and get rid of the cumbersome
 Ant filter tokens in the InstallAnywhere project file.
 
+-------------------------------------------------------------------
+Note regarding the "config/fixMacOSXInstallerProblem.zip" file:
+
+there is a bug in Version 5.0.7 of the InstallAnywhere product,
+such that the Dizzy installer "insDizzy.zip" built for Mac OSX 
+installs incorrect settings in the Dizzy application bundle file
+"Info.plist", on the target Mac computer.  The aforementioned
+"zip" file contains a "Custom Code" extension for InstallAnywhere
+that implements a post-installation step to fix the incorrect
+configuration file on the target Mac computer.  When we upgrade
+to the new version of InstallAnywhere, the "fixMacOSXInstallerProblem.zip"
+file can be removed from the CVS archive, and any references to it
+can be removed from the InstallAnywhere project config file
+"project.iap_xml".
+
 
