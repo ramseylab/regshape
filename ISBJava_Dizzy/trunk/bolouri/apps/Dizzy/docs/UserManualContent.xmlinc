@@ -2490,6 +2490,41 @@ other symbol names.
 
 <dt><b>#define</b></dt>
 <dd>
+The &quot;<code>#define</code>&quot; command is a template
+definition.  For more information, please refer to the
+<a href="#templates">section on templates</a>.
+</dd>
+
+<dt><b>#ref</b></dt>
+<dd>
+The &quot;<code>#ref</code>&quot; command is a template
+reference.  For more information, please refer to the
+<a href="#templates">section on templates</a>.
+</dd>
+</dl>
+
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Templates" label="templates">
+<p>
+This section describes the template feature of the CMDL. The
+template construct is like a parameterized macro.  One defines
+the template, and can later reference the template at various
+places in the model definition file.   Each time the template
+is referenced, the (suitably modified) body of the template is
+inserted into the model definition by the CMDL parser.  Templates
+are most useful when used with parameter lists, which allows
+for passing information &quot;into&quot; and &quot;out of&quot;
+the body of the template.  By default, all symbols within the
+body of the template are not visible outside the body of the
+template.  This is to avoid &quot;naming collisions&quot; with
+symbols defined outside the body of the template.  Therefore,
+templates are really only useful to the extent they can interact
+with other model elements defined within your model definition
+file; this is accomplished using the template parameter list.
+</p>
+<p>
 The &quot;<code>#define</code>&quot; command is used to define
 a template.  Each template has a name, that usually is indicative of
 its function.  An example template definition is shown here:
@@ -2516,11 +2551,8 @@ template definition (e.g., "X" and "Y" in the above example).  The symbol
 &quot;I&quot; defined within the template is known as an <em>internal symbol</em>.
 It is "scoped" by the command language parser so that its name does not 
 conflict with any symbols defined outside the body of the template definition.
-</dd>
-</dl>
-
-<dt><b>#ref</b></dt>
-<dd>
+</p>
+<p>
 The "<code>#ref</code>" command is used to reference a template.
 The template must have been previous defined using the "<code>#define</code>"
 command.  In a template reference, you must provide a parenthetic list of
@@ -2542,8 +2574,8 @@ parser, the model definition would be as follows:
 A = 100.0;
 B = 0.0;
 GAL4::I = 3.0;
-GAL4::r1, A -> GAL4::I, 1.0;
-GAL4::r2, GAL4::I -> B, 0.0;
+GAL4::r1, A -&gt; GAL4::I, 1.0;
+GAL4::r2, GAL4::I -&gt; B, 0.0;
 </pre>
 </blockquote>
 The prepending of the "<code>GAL4::</code>" before each symbol name
@@ -2553,8 +2585,25 @@ outside the template definition.  Template references may exist within template
 definitions (this is simply nesting a template expansion within another 
 template definition), but it is illegal to nest a template definition within the
 body of another template definition.
-</dd>
+</p>
+<p>
+You may pass a numeric value to a template, as shown here:
+<blockquote>
+<pre>
+#define Gene (A, B, k)
+{
+r1, A -&gt; B, k;
+}
 
+X = 100.0;
+Y = 0.0;
+
+#ref Gene "GAL4" (X, Y, 0.5);
+</pre>
+</blockquote>
+In this example, the numeric value is substituted
+anywhere the symbol &quot;k&quot; appears within the
+body of the template.
 </p>
 </isb:docsubsection>
 
