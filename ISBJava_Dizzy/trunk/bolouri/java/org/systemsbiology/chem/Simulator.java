@@ -18,10 +18,12 @@ public abstract class Simulator
     private static final int MIN_NUM_REACTION_STEPS_FOR_USING_DELAY_FUNCTION = 15;
     protected static final long DEFAULT_MIN_NUM_MILLISECONDS_FOR_UPDATE = 1000;
     protected static final int NULL_REACTION = -1;
-    private static final long MIN_POPULATION_FOR_COMBINATORIC_EFFECTS = 100000;
+    private static final long MAX_POPULATION_FOR_COMBINATORIC_EFFECTS = 100000;
+    private static final boolean DEFAULT_USE_EXPRESSION_VALUE_CACHING = true;
 
     protected Value []mNonDynamicSymbolValues;
-    protected boolean mHasExpressionValues;
+    protected Value []mNonDynamicSymbolExpressionValues;
+    protected boolean mUseExpressionValueCaching;
     protected SymbolEvaluatorChem mSymbolEvaluator;
     protected HashMap mSymbolMap; // mapping between symbol names and the corresponding "Symbol" object
     protected SimulationController mSimulationController;
@@ -137,9 +139,9 @@ public abstract class Simulator
         {
             clearDelayedReactionSolvers();
         }
-        if(mHasExpressionValues)
+        if(mUseExpressionValueCaching)
         {
-            clearExpressionValueCaches(mNonDynamicSymbolValues);
+            clearExpressionValueCaches();
         }
         mSymbolEvaluator.setTime(pStartTime);
         mSymbolEvaluator.setLocalSymbolsMap(null);
@@ -364,15 +366,17 @@ public abstract class Simulator
                          null,
                          nonDynamicSymbolValues);
 
+        ArrayList nonDynamicExpressionValues = new ArrayList();
         boolean hasExpressionValues = false;
         for(int ctr = 0; ctr < numNonDynamicSymbols; ++ctr)
         {
             if(mNonDynamicSymbolValues[ctr].isExpression())
             {
+                nonDynamicExpressionValues.add(mNonDynamicSymbolValues[ctr]);
                 hasExpressionValues = true;
             }
         }
-        mHasExpressionValues = hasExpressionValues;
+        mNonDynamicSymbolExpressionValues = (Value []) nonDynamicExpressionValues.toArray(new Value[0]);
 
         if(null != mDelayedReactionSolvers)
         {
@@ -404,8 +408,9 @@ public abstract class Simulator
         {
             symbolEvaluationPostProcessor = (SymbolEvaluationPostProcessor) symbolEvaluationPostProcessor.clone();
         }
-        boolean useExpressionValueCaching = true;
-        SymbolEvaluatorChem evaluator = new SymbolEvaluatorChem(useExpressionValueCaching,
+
+        mUseExpressionValueCaching = DEFAULT_USE_EXPRESSION_VALUE_CACHING && hasExpressionValues;
+        SymbolEvaluatorChem evaluator = new SymbolEvaluatorChem(mUseExpressionValueCaching,
                                                                 symbolEvaluationPostProcessor,
                                                                 reservedSymbolMapper,
                                                                 symbolMap);
@@ -552,6 +557,7 @@ public abstract class Simulator
         mReactionsDelayedReactionAssociations = null;
         mReactionSymbols = null;
         mReactionRates = null;
+        mNonDynamicSymbolExpressionValues = null;
     }
 
     public Simulator()
@@ -609,9 +615,9 @@ public abstract class Simulator
         int numTimePoints = pTimeValues.length;
         int numRequestedSymbolValues = pRequestedSymbols.length;
 
-        if(mHasExpressionValues)
+        if(mUseExpressionValueCaching)
         {
-            clearExpressionValueCaches(mNonDynamicSymbolValues);
+            clearExpressionValueCaches();
         }
 
         double saveTime = mSymbolEvaluator.getTime();
@@ -724,9 +730,9 @@ public abstract class Simulator
         // loop through all reactions, and for each reaction, compute the reaction probability
         int numReactions = mReactions.length;
         
-        if(mHasExpressionValues)
+        if(mUseExpressionValueCaching)
         {
-            clearExpressionValueCaches(mNonDynamicSymbolValues);
+            clearExpressionValueCaches();
         }
 
         for(int reactionCtr = numReactions; --reactionCtr >= 0; )
@@ -750,11 +756,12 @@ public abstract class Simulator
         return(compositeRate);
     }
 
-    protected static final void clearExpressionValueCaches(Value []pNonDynamicSymbolValues)
+    protected final void clearExpressionValueCaches()
     {
-        for(int ctr = pNonDynamicSymbolValues.length; --ctr >= 0; )
+        Value []expressionValues = mNonDynamicSymbolExpressionValues;
+        for(int ctr = expressionValues.length; --ctr >= 0; )
         {
-            pNonDynamicSymbolValues[ctr].clearExpressionValueCache();
+            expressionValues[ctr].clearExpressionValueCache();
         }
     }
 
@@ -836,7 +843,7 @@ public abstract class Simulator
         {
             if(pSpeciesValue >= pStoichiometry)
             {
-                if(pSpeciesValue < MIN_POPULATION_FOR_COMBINATORIC_EFFECTS)
+                if(pSpeciesValue < MAX_POPULATION_FOR_COMBINATORIC_EFFECTS)
                 {
                     if(1 == pStoichiometry)
                     {

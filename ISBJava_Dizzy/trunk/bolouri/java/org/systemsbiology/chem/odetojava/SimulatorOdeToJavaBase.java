@@ -173,9 +173,9 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
             }
             if(estimateFinalSpeciesFluctuations)
             {
-                if(mHasExpressionValues)
+                if(mUseExpressionValueCaching)
                 {
-                    clearExpressionValueCaches(mNonDynamicSymbolValues);
+                    clearExpressionValueCaches();
                 }
                 computeReactionProbabilities();
 
@@ -302,9 +302,9 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
 
         try
         {
-            if(mHasExpressionValues)
+            if(mUseExpressionValueCaching)
             {
-                clearExpressionValueCaches(mNonDynamicSymbolValues);
+                clearExpressionValueCaches();
             }
             computeDerivative(mScratch,
                               mDerivative);

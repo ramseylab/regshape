@@ -383,9 +383,9 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
                                           mDynamicSymbolValues,
                                           mDynamicSymbolDelayedReactionAssociations,
                                           NUMBER_FIRINGS);
-            if(mHasExpressionValues)
+            if(mUseExpressionValueCaching)
             {
-                clearExpressionValueCaches(mNonDynamicSymbolValues);
+                clearExpressionValueCaches();
             }
                            
             updateReactionRateAndTime(time, lastReactionIndex, lastReactionIndex);

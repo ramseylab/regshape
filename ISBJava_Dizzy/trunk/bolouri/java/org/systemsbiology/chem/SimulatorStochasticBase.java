@@ -328,7 +328,6 @@ public abstract class SimulatorStochasticBase extends Simulator
         int numDynamicSymbolValues = dynamicSymbolValues.length;
         DelayedReactionSolver []delayedReactionSolvers = mDelayedReactionSolvers;
 
-        boolean hasExpressionValues = mHasExpressionValues;
         Value []nonDynamicSymbolValues = mNonDynamicSymbolValues;
 
         RandomElement randomNumberGenerator = mRandomNumberGenerator;

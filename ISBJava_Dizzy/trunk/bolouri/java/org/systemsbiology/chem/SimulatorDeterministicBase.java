@@ -363,7 +363,6 @@ public abstract class SimulatorDeterministicBase extends Simulator
         Object []dynamicSymbolAdjustmentVectors = mDynamicSymbolAdjustmentVectors;
 
         Value []nonDynamicSymbolValues = mNonDynamicSymbolValues;
-        boolean hasExpressionValues = mHasExpressionValues;
 
         double time = pStartTime;        
 
@@ -478,9 +477,9 @@ public abstract class SimulatorDeterministicBase extends Simulator
             double []finalSpeciesFluctuations = null;
             if(estimateFinalSpeciesFluctuations)
             {
-                if(mHasExpressionValues)
+                if(mUseExpressionValueCaching)
                 {
-                    clearExpressionValueCaches(mNonDynamicSymbolValues);
+                    clearExpressionValueCaches();
                 }
                 computeReactionProbabilities();
                 double []allFinalSpeciesFluctuations = SteadyStateAnalyzer.estimateSpeciesFluctuations(reactions,
