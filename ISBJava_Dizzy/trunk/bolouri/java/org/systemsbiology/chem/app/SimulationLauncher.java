@@ -357,7 +357,7 @@ public class SimulationLauncher
      */
     public SimulationLauncher(String pAppName,
                               Model pModel,
-                              boolean pHandleOutputInternally) throws ClassNotFoundException, IOException, InstantiationException
+                              boolean pHandleOutputInternally) throws ClassNotFoundException, IOException, InstantiationException, IllegalStateException
     {
         mAppName = pAppName;
         mHandleOutputInternally = pHandleOutputInternally;
@@ -369,7 +369,7 @@ public class SimulationLauncher
         }
         else
         {
-            mResultsQueue = new Queue();
+            mResultsQueue = new ListQueue();
             mPlotter = null;
         }
         mOutputFile = null;
@@ -909,6 +909,10 @@ public class SimulationLauncher
         java.util.List simulatorAliasesList = new LinkedList(simulatorAliases);
         Collections.sort(simulatorAliasesList);
         Object []simulatorAliasObjects = simulatorAliasesList.toArray();
+        if(simulatorAliasObjects.length == 0)
+        {
+            throw new IllegalStateException("there are no simulators available");
+        }
         final JList simulatorsList = new JList();
         mSimulatorsList = simulatorsList;
         simulatorsList.setVisibleRowCount(SIMULATORS_LIST_BOX_ROW_COUNT);
