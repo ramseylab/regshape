@@ -539,36 +539,32 @@ public class Reaction extends SymbolValue
     final double computeRate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
                              SymbolEvaluatorChemSimulation pSymbolEvaluator) throws DataNotFoundException
     {
-        Value rateValue = mValue;
-        double rate = 0.0;
 
         if(! mRateIsExpression)
         {
+            double rate = mValue.getValue();
             Species []reactants = mReactantsSpeciesArray;
             int []stoichiometries = mReactantsStoichiometryArray;
-            rate = rateValue.getValue();
 
             int numReactants = reactants.length;
 
-            double numReactantCombinations = 1.0;
-
             for(int reactantCtr = numReactants; --reactantCtr >= 0; )
             {
-                numReactantCombinations *= pSpeciesRateFactorEvaluator.computeRateFactorForSpecies(pSymbolEvaluator,
-                                                                                                reactants[reactantCtr], 
-                                                                                                stoichiometries[reactantCtr]);
+               rate *= pSpeciesRateFactorEvaluator.computeRateFactorForSpecies(pSymbolEvaluator,
+                                                                               reactants[reactantCtr], 
+                                                                               stoichiometries[reactantCtr]);
             }
 
-            rate *= numReactantCombinations;
+            return(rate);
         }
         else
         {
             pSymbolEvaluator.setLocalSymbolsMap(mLocalSymbolsMap);
-            rate = rateValue.getValue(pSymbolEvaluator);
+            double rate = mValue.getValue(pSymbolEvaluator);
             pSymbolEvaluator.setLocalSymbolsMap(null);
+            return(rate);
         }
 
-        return(rate);
     }
 
     public void addReactionElementToMap(ReactionElement pReactionElement, HashMap pMap) throws IllegalArgumentException
