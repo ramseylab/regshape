@@ -1,0 +1,20 @@
+  <property name="projConfigDir"      location="${projRoot}/config" /> 
+  <property name="projWebDir"         location="${projRoot}/build/web" /> 
+  <property name="docsStyleSheet"     location="${projRoot}/config/&mainDocumentStylesheet;" /> 
+  <property name="projJavaDir"        location="${projRoot}/java" />
+  <property name="projAppsDir"        location="${projRoot}/apps" />
+  <property name="projDocsDir"        location="${projRoot}/docs" />
+  <property name="projImagesDir"      location="${projRoot}/images" />
+  <property name="projBuildDir"       location="${projRoot}/build" />
+  <property name="projStyleDir"       location="${projRoot}/build/html" />
+  <property name="projClassesDir"     location="${projRoot}/classes" />
+
+  <property name="helpMapStyleSheet" value="${projConfigDir}/javahelp-map-stylesheet.xml" />
+  <property name="helpTOCStyleSheet" value="${projConfigDir}/javahelp-toc-stylesheet.xml" />
+  <property name="helpContentFileParamName" value="contentFile" />
+
+  <property name="binInstallAnywhere" location="/local/InstallAnywhere_5_Standard/build" />
+  <property name="binHtml2PS"         value="html2ps" />
+  <property name="binHtmlTidy"        value="tidy" />
+  <property name="binPS2PDF"          value="ps2pdf" />
+
