@@ -19,6 +19,10 @@ public class MainMenu extends JMenuBar
     private static final String ACTION_COMMAND_FILE_CLOSE = "Close";
     private static final String ACTION_COMMAND_FILE_QUIT = "Quit";
 
+    private static final String ACTION_COMMAND_EDIT_CUT = "Cut";
+    private static final String ACTION_COMMAND_EDIT_COPY = "Copy";
+    private static final String ACTION_COMMAND_EDIT_PASTE = "Paste";
+
     private static final String ACTION_COMMAND_HELP_ABOUT = "About...";
     private static final String ACTION_COMMAND_HELP_BROWSER = "Browse help...";
 
@@ -72,6 +76,18 @@ public class MainMenu extends JMenuBar
             else if(actionCommand.equals(ACTION_COMMAND_TOOLS_PROCESS_MODEL))
             {
                 mApp.getEditorPane().process();
+            }
+            else if(actionCommand.equals(ACTION_COMMAND_EDIT_CUT))
+            {
+                mApp.getEditorPane().handleCut();
+            }
+            else if(actionCommand.equals(ACTION_COMMAND_EDIT_COPY))
+            {
+                mApp.getEditorPane().handleCopy();
+            }
+            else if(actionCommand.equals(ACTION_COMMAND_EDIT_PASTE))
+            {
+                mApp.getEditorPane().handlePaste();
             }
         }
     }
@@ -146,6 +162,13 @@ public class MainMenu extends JMenuBar
         int []fileShortcuts = {'O', 'S', 'A', 'C', 'Q'};
         
         createSingleMenu("File", fileItems, fileShortcuts);
+
+        String []editItems = new String[] {ACTION_COMMAND_EDIT_CUT,
+                                           ACTION_COMMAND_EDIT_COPY,
+                                           ACTION_COMMAND_EDIT_PASTE};
+        int []editShortcuts = {'T', 'C', 'P'};
+
+        createSingleMenu("Edit", editItems, editShortcuts);
 
         String []toolsItems = new String[] {ACTION_COMMAND_TOOLS_PROCESS_MODEL,
                                             ACTION_COMMAND_TOOLS_EXPORT,

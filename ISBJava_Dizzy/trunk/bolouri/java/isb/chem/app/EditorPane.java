@@ -73,6 +73,7 @@ public class EditorPane
         setFileNameLabel(null);
         setParserAlias(null);
         setBufferDirty(false);
+        mPasteBuffer = null;
     }
 
     private void handleCancel(String pOperation)
@@ -91,6 +92,60 @@ public class EditorPane
             enabled = true;
         }
         MainApp.getApp().enableProcessMenuItem(enabled);
+    }
+
+    private String mPasteBuffer;
+
+    public void handleCut()
+    {
+        JTextArea textArea = getEditorPaneTextArea();
+        int selectedTextStart = textArea.getSelectionStart();
+        int selectedTextEnd = textArea.getSelectionEnd();
+        String selectedText = textArea.getSelectedText();
+        if(selectedTextStart >= 0 && 
+           selectedTextEnd >= 0 &&
+           selectedTextEnd > selectedTextStart)
+        {
+            textArea.replaceRange("", selectedTextStart, selectedTextEnd);
+            mPasteBuffer = selectedText;
+        }
+    }
+
+    public void handlePaste()
+    {
+        JTextArea textArea = getEditorPaneTextArea();
+        int selectedTextStart = textArea.getSelectionStart();
+        int selectedTextEnd = textArea.getSelectionEnd();
+        if(null != mPasteBuffer)
+        {
+            if(selectedTextStart >= 0 && 
+               selectedTextEnd >= 0 &&
+               selectedTextEnd > selectedTextStart)
+            {
+                textArea.replaceRange(mPasteBuffer, selectedTextStart, selectedTextEnd);
+            }
+            else
+            {
+                int caretPosition = textArea.getCaretPosition();
+                if(caretPosition >= 0)
+                {
+                    textArea.insert(mPasteBuffer, caretPosition);
+                }
+            }
+        }
+    }
+    
+    public void handleCopy()
+    {
+        JTextArea textArea = getEditorPaneTextArea();
+        int selectedTextStart = textArea.getSelectionStart();
+        int selectedTextEnd = textArea.getSelectionEnd();
+        if(selectedTextStart >= 0 && 
+           selectedTextEnd >= 0 &&
+           selectedTextEnd > selectedTextStart)
+        {
+            mPasteBuffer = textArea.getSelectedText();
+        }
     }
 
     public void close()
