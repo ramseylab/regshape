@@ -105,7 +105,7 @@ Our group uses a <b>source code control system</b> in order to track changes
 to software source files.  Our source code control system is CVS, which is
 an open-source product based on the RCS revision control system.  
 
-<isb:docsubsection name="CVS Availability" label="cvsavailability">
+<isb:docsubsection name="Using CVS" label="cvsavailability">
 CVS is available as a command-line utility &quot;<code>cvs</code>&quot; on nearly
 all Unix-like operating systems, including most standard Linux distributions.
 To confirm that CVS is installed correctly, you
