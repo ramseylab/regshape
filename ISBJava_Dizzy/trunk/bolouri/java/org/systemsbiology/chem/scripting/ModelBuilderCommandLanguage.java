@@ -8,10 +8,8 @@ package org.systemsbiology.chem.scripting;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import java.io.*;
+import java.util.regex.*;
 import java.util.*;
 
 import org.systemsbiology.chem.*;
@@ -28,6 +26,42 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     private static final String REACTION_MODIFIER_STEPS = "steps:";
     private static final String REACTION_MODIFIER_DELAY = "delay:";
 
+    private static final String STATEMENT_KEYWORD_INCLUDE = "include";
+    private static final String STATEMENT_KEYWORD_MODEL = "model";
+    private static final String STATEMENT_KEYWORD_REF = "ref";
+    private static final String STATEMENT_KEYWORD_DEFINE = "define";
+    private static final String NAMESPACE_IDENTIFIER = "::";
+    private static final String KEYWORD_LOOP = "loop";
+
+    private static final String VALID_SYMBOL_REGEX = "^[_a-zA-Z]([_a-zA-Z0-9])*$";
+    private static final Pattern VALID_SYMBOL_PATTERN = Pattern.compile(VALID_SYMBOL_REGEX);
+
+    private String mNamespace;
+
+    static class Macro extends SymbolValue
+    {
+        public String mMacroName;
+        public ArrayList mExternalSymbols;
+        public LinkedList mTokenList;
+
+        public Macro(String pMacroName)
+        {
+            super(pMacroName);
+            mMacroName = pMacroName;
+        }
+    }
+
+    static class DummySymbol extends SymbolValue
+    {
+        public String mInstanceSymbolName;
+
+        public DummySymbol(String pDummySymbolName, String pInstanceSymbolName)
+        {
+            super(pDummySymbolName);
+            mInstanceSymbolName = pInstanceSymbolName;
+        }
+    }
+
     static class Token
     {
         static class Code
@@ -37,7 +71,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             {
                 mName = pName;
             }
-            
+
             public static final Code POUNDSIGN = new Code("#");
             public static final Code ATSIGN = new Code("@");
             public static final Code EQUALS = new Code("=");
@@ -54,10 +88,16 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             public static final Code BRACE_END = new Code("}");
             public static final Code QUOTE = new Code("\"");
             public static final Code SEMICOLON = new Code(";");
+            public static final Code DOLLAR = new Code("$");
+            public static final Code ASTERISK = new Code("*");
+            public static final Code PERCENT = new Code("%");
+            public static final Code RIGHT_SLASH = new Code("/");
+            public static final Code CARET = new Code("^");
         }
         
         Code mCode;
         String mSymbol;
+        int mLine;
         
         public Token(Code pCode)
         {
@@ -102,15 +142,45 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     public ModelBuilderCommandLanguage()
     {
         initializeSearchPatternMath();
+        mNamespace = null;
+    }
+
+    private Token getNextToken(ListIterator pTokenIter) throws InvalidInputException
+    {
+        if(! pTokenIter.hasNext())
+        {
+            throw new InvalidInputException("expected a token, but no token was found");
+        }
+
+        Token token = (Token) pTokenIter.next();
+        assert (null != token) : "unexpected null token";
+
+        return(token);
     }
 
 
-    private void tokenizeStatement(String pStatement, List pTokens) throws InvalidInputException
+    private void defineParameters(HashMap pSymbolMap, Model pModel)
     {
-        StringTokenizer st = new StringTokenizer(pStatement, "=\", \t[]{}()->+;@#", true);
+        Iterator symbolValueIter = pSymbolMap.values().iterator();
+        while(symbolValueIter.hasNext())
+        {
+            SymbolValue symbolValue = (SymbolValue) symbolValueIter.next();
+            if(symbolValue.getClass().getSuperclass().equals(Object.class))
+            {
+                Parameter parameter = new Parameter(symbolValue);
+                pModel.addParameter(parameter);
+            }
+        }
+    }
+
+    private void tokenizeStatement(String pStatement, List pTokens, int pStartingLineNumber) 
+    {
+        StringTokenizer st = new StringTokenizer(pStatement, "=\", \t[]{}()->+;@#$*/%^\n", true);
+
         String tokenString = null;
         boolean inQuote = false;
         StringBuffer symbolTokenBuffer = new StringBuffer();
+        int lineCtr = pStartingLineNumber;
 
         while(st.hasMoreElements())
         {
@@ -118,101 +188,129 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
             Token token = null;
 
-            if(tokenString.equals("\""))
-            {
-                if(inQuote)
-                {
-                    inQuote = false;
-                }
-                else
-                {
-                    inQuote = true;
-                }
 
-                token = new Token(Token.Code.QUOTE);
+            if(tokenString.equals("\n"))
+            {
+                ++lineCtr;
             }
             else
             {
-                if(! inQuote)
+                if(tokenString.equals("\""))
                 {
-                    if(tokenString.equals("="))
+                    if(inQuote)
                     {
-                        token = new Token(Token.Code.EQUALS);
-                    }
-                    else if(tokenString.equals(","))
-                    {
-                        token = new Token(Token.Code.COMMA);
-                    }
-                    else if(tokenString.equals("="))
-                    {
-                        token = new Token(Token.Code.EQUALS);
-                    }
-                    else if(tokenString.equals(" "))
-                    {
-                        // do nothing
-                    }
-                    else if(tokenString.equals("\t"))
-                    {
-                        // do nothing
-                    }
-                    else if(tokenString.equals("("))
-                    {
-                        token = new Token(Token.Code.PAREN_BEGIN);
-                    }
-                    else if(tokenString.equals(")"))
-                    {
-                        token = new Token(Token.Code.PAREN_END);
-                    }
-                    else if(tokenString.equals("["))
-                    {
-                        token = new Token(Token.Code.BRACKET_BEGIN);
-                    }
-                    else if(tokenString.equals("]"))
-                    {
-                        token = new Token(Token.Code.BRACKET_END);
-                    }
-                    else if(tokenString.equals("{"))
-                    {
-                        token = new Token(Token.Code.BRACE_BEGIN);
-                    }
-                    else if(tokenString.equals("}"))
-                    {
-                        token = new Token(Token.Code.BRACE_END);
-                    }
-                    else if(tokenString.equals("-"))
-                    {
-                        token = new Token(Token.Code.HYPHEN);
-                    }
-                    else if(tokenString.equals(">"))
-                    {
-                        token = new Token(Token.Code.GREATER_THAN);
-                    }
-                    else if(tokenString.equals("+"))
-                    {
-                        token = new Token(Token.Code.PLUS);
-                    }
-                    else if(tokenString.equals(";"))
-                    {
-                        token = new Token(Token.Code.SEMICOLON);
-                    }
-                    else if(tokenString.equals("@"))
-                    {
-                        token = new Token(Token.Code.ATSIGN);
-                    }
-                    else if(tokenString.equals("#"))
-                    {
-                        token = new Token(Token.Code.POUNDSIGN);
+                        inQuote = false;
                     }
                     else
                     {
-                        token = new Token(Token.Code.SYMBOL);
-                        token.mSymbol = tokenString;
+                        inQuote = true;
                     }
+
+                    token = new Token(Token.Code.QUOTE);
                 }
                 else
                 {
-                    // we are in a quoted environment; just save the token string
-                    symbolTokenBuffer.append(tokenString);
+                    if(! inQuote)
+                    {
+                        if(tokenString.equals("="))
+                        {
+                            token = new Token(Token.Code.EQUALS);
+                        }
+                        else if(tokenString.equals(","))
+                        {
+                            token = new Token(Token.Code.COMMA);
+                        }
+                        else if(tokenString.equals("="))
+                        {
+                            token = new Token(Token.Code.EQUALS);
+                        }
+                        else if(tokenString.equals(" "))
+                        {
+                            // this is whitespace, just ignore
+                        }
+                        else if(tokenString.equals("\t"))
+                        {
+                            // this is a tab character, just ignore
+                        }
+                        else if(tokenString.equals("("))
+                        {
+                            token = new Token(Token.Code.PAREN_BEGIN);
+                        }
+                        else if(tokenString.equals(")"))
+                        {
+                            token = new Token(Token.Code.PAREN_END);
+                        }
+                        else if(tokenString.equals("["))
+                        {
+                            token = new Token(Token.Code.BRACKET_BEGIN);
+                        }
+                        else if(tokenString.equals("]"))
+                        {
+                            token = new Token(Token.Code.BRACKET_END);
+                        }
+                        else if(tokenString.equals("{"))
+                        {
+                            token = new Token(Token.Code.BRACE_BEGIN);
+                        }
+                        else if(tokenString.equals("}"))
+                        {
+                            token = new Token(Token.Code.BRACE_END);
+                        }
+                        else if(tokenString.equals("-"))
+                        {
+                            token = new Token(Token.Code.HYPHEN);
+                        }
+                        else if(tokenString.equals(">"))
+                        {
+                            token = new Token(Token.Code.GREATER_THAN);
+                        }
+                        else if(tokenString.equals("+"))
+                        {
+                            token = new Token(Token.Code.PLUS);
+                        }
+                        else if(tokenString.equals(";"))
+                        {
+                            token = new Token(Token.Code.SEMICOLON);
+                        }
+                        else if(tokenString.equals("@"))
+                        {
+                            token = new Token(Token.Code.ATSIGN);
+                        }
+                        else if(tokenString.equals("#"))
+                        {
+                            token = new Token(Token.Code.POUNDSIGN);
+                        }
+                        else if(tokenString.equals("$"))
+                        {
+                            token = new Token(Token.Code.DOLLAR);
+                        }
+                        else if(tokenString.equals("/"))
+                        {
+                            token = new Token(Token.Code.RIGHT_SLASH);
+                        }
+                        else if(tokenString.equals("*"))
+                        {
+                            token = new Token(Token.Code.ASTERISK);
+                        }
+                        else if(tokenString.equals("%"))
+                        {
+                            token = new Token(Token.Code.PERCENT);
+                        }
+                        else if(tokenString.equals("^"))
+                        {
+                            token = new Token(Token.Code.CARET);
+                        }
+                        else
+                        {
+                            token = new Token(Token.Code.SYMBOL);
+                            token.mSymbol = tokenString;
+                        }
+                    }
+                    else
+                    {
+                        // we are in a quoted environment; just save the token string
+                        symbolTokenBuffer.append(tokenString);
+                    }
                 }
             }
 
@@ -230,6 +328,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
             if(null != token)
             {
+                token.mLine = lineCtr;
                 pTokens.add(token);
                 token = null;
             }
@@ -247,7 +346,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             throw new InvalidInputException("attempt to define a reserved symbol: " + pSymbolName);
         }
 
-        if(! Symbol.isValidSymbol(pSymbolName))
+        if(! isValidSymbol(pSymbolName))
         {
             throw new InvalidInputException("invalid symbol definition: " + pSymbolName);
         }
@@ -260,6 +359,70 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         pSymbolMap.put(COMPARTMENT_NAME_DEFAULT, compartment);
     }
 
+    static class SymbolEvaluatorNamespaced extends SymbolEvaluatorHashMap
+    {
+        private String mNamespace;
+
+        public SymbolEvaluatorNamespaced(HashMap pSymbolMap, String pNamespace)
+        {
+            super(pSymbolMap);
+            mNamespace = pNamespace;
+        }
+
+        public double getValue(Symbol pSymbol) throws DataNotFoundException
+        {
+            String symbolName = convertSymbolWithNamespaceIfNecessary(pSymbol.getName(), mSymbolMap, mNamespace);
+            
+            return(super.getValue(symbolName));
+        }
+    }
+
+    private static String addNamespaceToSymbol(String pSymbolName, String pNamespace)
+    {
+        String retName = pSymbolName;
+        if(null != pNamespace)
+        {
+            retName = pNamespace + NAMESPACE_IDENTIFIER + pSymbolName;
+        }
+        return(retName);
+    }
+
+    private static String convertSymbolWithNamespaceIfNecessary(String pSymbol, HashMap pSymbolMap, String pNamespace)
+    {
+        if(null != pNamespace)
+        {
+            if(! SymbolEvaluatorChemSimulation.isReservedSymbol(pSymbol))
+            {
+                // check to see if this is a dummy symbol
+                SymbolValue symbolValue = (SymbolValue) pSymbolMap.get(pSymbol);
+                if(null != symbolValue)
+                {
+                    if(symbolValue instanceof DummySymbol)
+                    {
+                        // the symbol is a "dummy sumbol"; substitute the instance symbol instead
+                        pSymbol = ((DummySymbol) symbolValue).mInstanceSymbolName;
+                    }
+                    else
+                    {
+                        // the symbol is not a dummy symbol, and its un-namespaced name exists in the symbol table;
+                        // namespace it
+                        pSymbol = addNamespaceToSymbol(pSymbol, pNamespace);
+                    }
+                }
+                else
+                {
+                    // namespace it
+                    pSymbol = addNamespaceToSymbol(pSymbol, pNamespace);
+                }
+            }
+            else
+            {
+                // do nothing; reserved symbols do not get namespace scoping
+            }
+        }
+        return(pSymbol);
+    }
+
     private String translateMathExpressionsInString(String pInputString, 
                                                     HashMap pSymbolMap) throws DataNotFoundException, IllegalArgumentException
     {
@@ -269,7 +432,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         {
             String matchedSubsequence = matcher.group(1);
             Expression exp = new Expression(matchedSubsequence);
-            double value = exp.computeValue(pSymbolMap);
+            SymbolEvaluatorNamespaced evaluator = new SymbolEvaluatorNamespaced(pSymbolMap, mNamespace);
+            double value = exp.computeValue(evaluator);
             String formattedExp = Integer.toString((int) value);
             pInputString = matcher.replaceFirst(formattedExp);
             matcher = searchPatternMath.matcher(pInputString);
@@ -279,8 +443,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
     private String obtainSymbol(ListIterator pTokenIter, HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
     {
-        assert (pTokenIter.hasNext()) : "expected token";
-        Token token = (Token) pTokenIter.next();
+        Token token = getNextToken(pTokenIter);
         String symbolName = null;
         if(token.mCode.equals(Token.Code.SYMBOL))
         {
@@ -306,22 +469,20 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             }
             else
             {
-                throw new InvalidInputException("expected symbol or quoted string");
+                throw new InvalidInputException("expected symbol or quoted string; instead found token: " + token);
             }
         }
 
-        String adjustedSymbol = null;
-        if(symbolName.charAt(0) == '$')
-        {
-            adjustedSymbol = symbolName.substring(1);
-        }
-        else
-        {
-            adjustedSymbol = symbolName;
-        }
-        checkSymbolValidity(adjustedSymbol);
+        checkSymbolValidity(symbolName);
 
         return(symbolName);
+    }
+
+
+    private String obtainSymbolWithNamespace(ListIterator pTokenIter, HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
+    {
+        String symbol = obtainSymbol(pTokenIter, pSymbolMap);
+        return(convertSymbolWithNamespaceIfNecessary(symbol, pSymbolMap, mNamespace));
     }
 
     private Value obtainValue(ListIterator pTokenIter, HashMap pSymbolMap) throws InvalidInputException
@@ -331,7 +492,33 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         boolean deferredExpression = false;
         while(pTokenIter.hasNext())
         {
-            Token token = (Token) pTokenIter.next();
+            Token token = getNextToken(pTokenIter);
+            String symbolName = null;
+
+            if(token.mCode.equals(Token.Code.SYMBOL))
+            {
+                symbolName = token.mSymbol;
+                assert (null != symbolName) : "unexpected null symbol name";
+                if(! Expression.isFunctionName(symbolName))
+                {
+                    // is it a numeric literal?
+                    boolean isNumericLiteral = true;
+                    try
+                    {
+                        Double.valueOf(symbolName);
+                    }
+                    catch(NumberFormatException e)
+                    {
+                        isNumericLiteral = false;
+                    }
+
+                    if(! isNumericLiteral)
+                    {
+                        symbolName = convertSymbolWithNamespaceIfNecessary(symbolName, pSymbolMap, mNamespace);
+                    }
+                }
+            }
+
             if(token.mCode.equals(Token.Code.SEMICOLON))
             {
                 if(firstToken)
@@ -353,6 +540,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                 break;
             }
 
+            boolean appendToken = false;
+
             if(firstToken)
             {
                 if(token.mCode.equals(Token.Code.BRACKET_BEGIN))
@@ -363,7 +552,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                 else
                 {
                     // non-deferred expression
-                    expressionBuffer.append(token.toString());
+                    appendToken = true;
                 }
                 firstToken = false;
             }
@@ -371,7 +560,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             {
                 if(! deferredExpression || ! token.mCode.equals(Token.Code.BRACKET_END))
                 {
-                    expressionBuffer.append(token);
+                    appendToken = true;
                 }
                 else
                 {
@@ -379,6 +568,18 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                     {
                         break;
                     }
+                }
+            }
+
+            if(appendToken)
+            {
+                if(null != symbolName)
+                {
+                    expressionBuffer.append(symbolName);
+                }
+                else
+                {
+                    expressionBuffer.append(token.toString());
                 }
             }
         }
@@ -415,19 +616,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
     private void handleStatementAssociate(ListIterator pTokenIter, Model pModelHashMap, HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
     {
-        assert (pTokenIter.hasPrevious()) : "previous list element not found";
-
-        while(pTokenIter.hasPrevious())
-        {
-            Token token = (Token) pTokenIter.previous();
-            if(token.mCode.equals(Token.Code.SEMICOLON) ||
-               token.mCode.equals(Token.Code.BRACE_END))
-            {
-                break;
-            }
-        }
-
-        String symbolName = obtainSymbol(pTokenIter, pSymbolMap);
+        String symbolName = obtainSymbolWithNamespace(pTokenIter, pSymbolMap);
         assert (null != symbolName) : "null symbol string for symbol token";
 
         Token token = getNextToken(pTokenIter);
@@ -443,7 +632,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             }
         }
 
-        String associatedSymbolName = obtainSymbol(pTokenIter, pSymbolMap);
+        String associatedSymbolName = obtainSymbolWithNamespace(pTokenIter, pSymbolMap);
         SymbolValue associatedSymbolValue = (SymbolValue) pSymbolMap.get(associatedSymbolName);
         Compartment compartment = null;
         if(! (associatedSymbolValue instanceof Compartment))
@@ -483,25 +672,14 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         getEndOfStatement(pTokenIter);
     }
 
-    private void handleStatementDefine(ListIterator pTokenIter, Model pModelHashMap, HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
+    private void handleStatementSymbolDefinition(ListIterator pTokenIter, Model pModelHashMap, HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
     {
-        assert (pTokenIter.hasPrevious()) : "previous list element not found";
-
-        while(pTokenIter.hasPrevious())
-        {
-            Token token = (Token) pTokenIter.previous();
-            if(token.mCode.equals(Token.Code.SEMICOLON) ||
-               token.mCode.equals(Token.Code.BRACE_END))
-            {
-                break;
-            }
-        }
-
-        String symbolName = obtainSymbol(pTokenIter, pSymbolMap);
+        String symbolName = obtainSymbolWithNamespace(pTokenIter, pSymbolMap);
 
         assert (null != symbolName) : "null symbol string for symbol token";
 
         Token token = getNextToken(pTokenIter);
+
         if(! token.mCode.equals(Token.Code.EQUALS))
         {
             if(token.mCode.equals(Token.Code.BRACKET_BEGIN))
@@ -541,14 +719,18 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     {
         while(pTokenIter.hasNext())
         {
-            // get symbol
-            String speciesName = obtainSymbol(pTokenIter, pSymbolMap);
             boolean dynamic = true;
-            if(speciesName.charAt(0) == '$')
+            // get symbol
+            Token token = getNextToken(pTokenIter);
+            if(token.mCode.equals(Token.Code.DOLLAR))
             {
                 dynamic = false;
-                speciesName = speciesName.substring(1);
             }
+            else
+            {
+                pTokenIter.previous();
+            }
+            String speciesName = obtainSymbolWithNamespace(pTokenIter, pSymbolMap);
             MutableInteger speciesStoic = (MutableInteger) pSpeciesStoicMap.get(speciesName);
             if(null == speciesStoic)
             {
@@ -578,7 +760,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                 pSpeciesDynamicMap.put(speciesName, speciesDynamic);
             }
 
-            Token token = getNextToken(pTokenIter);
+            token = getNextToken(pTokenIter);
             if(pParticipantType.equals(Reaction.ParticipantType.REACTANT) &&
                token.mCode.equals(Token.Code.HYPHEN))
             {
@@ -647,13 +829,26 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
     private void handleStatementReaction(ListIterator pTokenIter, Model pModel, HashMap pSymbolMap, MutableInteger pNumReactions) throws InvalidInputException, DataNotFoundException
     {
-        // back up to beginning of statement
         
         Token token = null;
 
         boolean hasName = false;
         boolean hasReactants = false;
 
+        // advance token iterator to reaction symbol "->"
+        boolean gotHyphen = false;
+        while(pTokenIter.hasNext())
+        {
+            token = getNextToken(pTokenIter);
+            if(token.mCode.equals(Token.Code.HYPHEN))
+            {
+                gotHyphen = true;
+                break;
+            }
+        }
+        assert (gotHyphen) : "unable to locate the \"->\" reaction symbol within reaction statement";
+
+        // back up to the beginning of the reaction statement
         while(pTokenIter.hasPrevious())
         {
             token = (Token) pTokenIter.previous();
@@ -672,6 +867,10 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                     hasReactants = true;
                 }
             }
+            else if(token.mCode.equals(Token.Code.DOLLAR))
+            {
+                hasReactants = true;
+            }
             else if(token.mCode.equals(Token.Code.SEMICOLON))
             {
                 pTokenIter.next();
@@ -683,8 +882,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
         if(hasName)
         {
-            reactionName = obtainSymbol(pTokenIter, pSymbolMap);
-            token = (Token) pTokenIter.next();
+            reactionName = obtainSymbolWithNamespace(pTokenIter, pSymbolMap);
+            token = getNextToken(pTokenIter);
             if(! token.mCode.equals(Token.Code.COMMA))
             {
                 throw new InvalidInputException("expected comma after reaction name token");
@@ -845,17 +1044,6 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         }        
     }
 
-    private Token getNextToken(ListIterator pTokenIter) throws InvalidInputException
-    {
-        if(! pTokenIter.hasNext())
-        {
-            throw new InvalidInputException("expected a token, but no token was found");
-        }
-
-        Token token = (Token) pTokenIter.next();
-        return(token);
-    }
-
     private void getEndOfStatement(ListIterator pTokenIter) throws InvalidInputException
     {
         Token token = getNextToken(pTokenIter);
@@ -892,9 +1080,151 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                                       Model pModel,
                                       HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
     {
+        Token token = getNextToken(pTokenIter);
+        assert (token.mCode.equals(Token.Code.POUNDSIGN)) : "where expected a pound sign, got an unexpected token: " + token;
+
+        token = getNextToken(pTokenIter);
+        assert (token.mCode.equals(Token.Code.SYMBOL)) : "where expected a symbol token, got an unexpected token: " + token;
+        assert (token.mSymbol.equals(STATEMENT_KEYWORD_MODEL)) : "where expected the model keyword, got an unexpected symbol token: " + token.mSymbol;
+
+        if(null != mNamespace)
+        {
+            throw new InvalidInputException("it is illegal to define a model name inside a macro reference");
+        }
         String modelName = obtainSymbol(pTokenIter, pSymbolMap);
         pModel.setName(modelName);
         getEndOfStatement(pTokenIter);
+    }
+
+
+   
+    private void handleStatementMacroDefinition(ListIterator pTokenIter, 
+                                                Model pModel, 
+                                                HashMap pSymbolMap, 
+                                                MutableInteger pNumReactions) throws InvalidInputException, DataNotFoundException
+    {
+        Token token = getNextToken(pTokenIter);
+        assert (token.mCode.equals(Token.Code.POUNDSIGN)) : "where expected a pound sign, got an unexpected token: " + token;
+
+        token = getNextToken(pTokenIter);
+        assert (token.mCode.equals(Token.Code.SYMBOL)) : "where expected a symbol token, got an unexpected token: " + token;
+        assert (token.mSymbol.equals(STATEMENT_KEYWORD_DEFINE)) : "where expected the define keyword, got an unexpected symbol token: " + token.mSymbol;
+
+        String macroName = obtainSymbol(pTokenIter, pSymbolMap);
+        if(null != pSymbolMap.get(macroName))
+        {
+            throw new InvalidInputException("symbol " + macroName + " was defined more than once in the same model");
+        }
+
+        if(-1 != macroName.indexOf(NAMESPACE_IDENTIFIER))
+        {
+            throw new InvalidInputException("macro name may not contain the namespace identifier \"" + NAMESPACE_IDENTIFIER + "\"; macro name is: " + macroName);
+        }
+        
+        ArrayList externalSymbolsList = new ArrayList();
+
+        if(! pTokenIter.hasNext())
+        {
+            throw new InvalidInputException("expected parenthesis or curly brace after macro definition statement");
+        }
+
+        token = getNextToken(pTokenIter);
+        
+        if(token.mCode.equals(Token.Code.PAREN_BEGIN))
+        {
+            boolean expectSymbol = true;
+            boolean gotEndParen = false;
+            while(pTokenIter.hasNext())
+            {
+                if(expectSymbol)
+                {
+                    String symbol = obtainSymbol(pTokenIter, pSymbolMap);
+                    externalSymbolsList.add(symbol);
+                    expectSymbol = false;
+                }
+                else
+                {
+                    token = getNextToken(pTokenIter);
+                    if(token.mCode.equals(Token.Code.PAREN_END))
+                    {
+                        gotEndParen = true;
+                        break;
+                    }
+                    else if(token.mCode.equals(Token.Code.SEMICOLON))
+                    {
+                        throw new InvalidInputException("end of statement token encountered inside macro definition symbol list");
+                    }
+                    else if(token.mCode.equals(Token.Code.COMMA))
+                    {
+                        if(expectSymbol)
+                        {
+                            throw new InvalidInputException("comma encountered unexpectedly in macro definition symbol list");
+                        }
+                        expectSymbol = true;
+                    }
+                    else 
+                    {
+                        throw new InvalidInputException("unknown token encountered in macro definition symbol list");
+                    }
+                }
+            }
+            if(! gotEndParen)
+            {
+                throw new InvalidInputException("failed to find end parenthesis");
+            }
+        }
+        else if(token.mCode.equals(Token.Code.BRACE_BEGIN))
+        {
+            pTokenIter.previous();
+        }
+        else
+        {
+            throw new InvalidInputException("unknown token found in macro definition statement");
+        }
+
+        if(! pTokenIter.hasNext())
+        {
+            throw new InvalidInputException("expected curly brace token, instead found nothing");
+        }
+
+        token = getNextToken(pTokenIter);
+
+        if(! token.mCode.equals(Token.Code.BRACE_BEGIN))
+        {
+            throw new InvalidInputException("expected curly brace token in macro definition statement");
+        }
+
+        Macro macro = new Macro(macroName);
+        macro.mExternalSymbols = externalSymbolsList;
+        
+        LinkedList tokenList = new LinkedList();
+
+        boolean gotEndBrace = false;
+        Token prevToken = null;
+        while(pTokenIter.hasNext())
+        {
+            prevToken = token;
+            token = getNextToken(pTokenIter);
+            if(token.mCode.equals(Token.Code.BRACE_END))
+            {
+                gotEndBrace = true;
+                break;
+            }
+            else
+            {
+                if(null != prevToken && prevToken.mCode.equals(Token.Code.POUNDSIGN) && token.mCode.equals(Token.Code.SYMBOL) && token.mSymbol.equals(STATEMENT_KEYWORD_DEFINE))
+                {
+                    throw new InvalidInputException("it is illegal to embed a macro definition inside a macro definition");
+                }
+                tokenList.add(token);
+            }
+        }
+        if(! gotEndBrace)
+        {
+            throw new InvalidInputException("failed to find end brace");
+        }
+        macro.mTokenList = tokenList;
+        pSymbolMap.put(macroName, macro);
     }
 
     private void handleStatementInclude(ListIterator pTokenIter, 
@@ -903,6 +1233,12 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                                         MutableInteger pNumReactions,
                                         IncludeHandler pIncludeHandler) throws InvalidInputException
     {
+        Token token = getNextToken(pTokenIter);
+        assert (token.mCode.equals(Token.Code.POUNDSIGN)) : "where expected a pound sign, got an unexpected token: " + token;
+
+        token = getNextToken(pTokenIter);
+        assert (token.mCode.equals(Token.Code.SYMBOL)) : "where expected a symbol token, got an unexpected token: " + token;
+        assert (token.mSymbol.equals(STATEMENT_KEYWORD_INCLUDE)) : "where expected the include keyword, got an unexpected symbol token: " + token.mSymbol;
 
         String fileName = getQuotedString(pTokenIter);
 
@@ -924,113 +1260,166 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         }
         catch(InvalidInputException e)
         {
-            StringBuffer sb = new StringBuffer(e.toString());
-            sb.append(" \"" + fileName + "\"; included");
+            StringBuffer sb = new StringBuffer(e.getMessage());
+            sb.append(" in file \"" + fileName + "\"; included");
             throw new InvalidInputException(sb.toString(), e);
         }
 
+    }
+
+    private String getErrorMessage(Exception e, int pLineCtr)
+    {
+        StringBuffer message = new StringBuffer(e.getMessage());
+        message.append(" at line " + pLineCtr);    
+        return(message.toString());
+    }
+
+    private void synchIterators(ListIterator master, ListIterator slave)
+    {
+        while(slave.nextIndex() < master.nextIndex())
+        {
+            slave.next();
+        }
     }
 
     private void executeStatementBlock(List pTokens, 
                                        Model pModel, 
                                        IncludeHandler pIncludeHandler, 
                                        HashMap pSymbolMap, 
-                                       MutableInteger pNumReactions) throws InvalidInputException, DataNotFoundException
+                                       MutableInteger pNumReactions) throws InvalidInputException
     {
         ListIterator tokenIter = pTokens.listIterator();
-        Token prevToken = null;
-        Token token = null;
-        while(tokenIter.hasNext())
-        {
-            token = (Token) tokenIter.next();
+        ListIterator tokenIterExec = pTokens.listIterator();
 
-            if(token.mCode.equals(Token.Code.EQUALS))
+        Token prevToken = null;
+
+
+        Token token = null;
+        int lineCtr = 0;
+
+        try
+        {
+
+            while(tokenIter.hasNext())
             {
-                // if an "=" token is detected, this is definitely a symbol definition statement
-                handleStatementDefine(tokenIter, pModel, pSymbolMap);
-            }
-            else if(token.mCode.equals(Token.Code.ATSIGN))
-            {
-                // if an "@" token is detected, this is definitely a compartment association statement
-                handleStatementAssociate(tokenIter, pModel, pSymbolMap);
-            }
-            else if(token.mCode.equals(Token.Code.GREATER_THAN))
-            {
-                // if a ">" token immediately follows a "-" token, this is definitely a reaction statement
-                if(null != prevToken)
+                token = (Token) tokenIter.next();
+                assert (null != token) : "unexpected null token";
+                lineCtr = token.mLine;
+
+                if(token.mCode.equals(Token.Code.EQUALS))
                 {
-                    if(prevToken.mCode.equals(Token.Code.HYPHEN))
+                    // if an "=" token is detected, this is definitely a symbol definition statement
+                    handleStatementSymbolDefinition(tokenIterExec, pModel, pSymbolMap);
+                    synchIterators(tokenIterExec, tokenIter);
+                }
+                else if(token.mCode.equals(Token.Code.ATSIGN))
+                {
+                    // if an "@" token is detected, this is definitely a compartment association statement
+                    handleStatementAssociate(tokenIterExec, pModel, pSymbolMap);
+                    synchIterators(tokenIterExec, tokenIter);
+                }
+                else if(token.mCode.equals(Token.Code.GREATER_THAN))
+                {
+                    // if a ">" token immediately follows a "-" token, this is definitely a reaction statement
+                    if(null != prevToken)
                     {
-                        handleStatementReaction(tokenIter, pModel, pSymbolMap, pNumReactions);
-                    }
-                    else
-                    {
-                        throw new InvalidInputException("encountered \">\" unexpectedly");
-                    }
-                }
-                else
-                {
-                    throw new InvalidInputException("encountered \">\" with no preceding hyphen and outside of an expression context"); 
-                }
-            }
-            else if(token.mCode.equals(Token.Code.SYMBOL) && null != prevToken && prevToken.mCode.equals(Token.Code.POUNDSIGN))
-            {
-                assert (null != token.mSymbol) : "null symbol string found in symbol token";
-                if(token.mSymbol.equals("include"))
-                {
-                    handleStatementInclude(tokenIter, pModel, pSymbolMap, pNumReactions, pIncludeHandler);
-                }
-                else if(token.mSymbol.equals("model"))
-                {
-                    handleStatementModel(tokenIter, pModel, pSymbolMap);
-                }
-                else
-                {
-                    throw new InvalidInputException("unknown command: " + token.mSymbol);
-                }
-            }
-            else if(token.mCode.equals(Token.Code.PAREN_BEGIN))
-            {
-                if(null != prevToken)
-                {
-                    if(prevToken.mCode.equals(Token.Code.SYMBOL))
-                    {
-                        if(prevToken.mSymbol.equals("loop"))
+                        if(prevToken.mCode.equals(Token.Code.HYPHEN))
                         {
-                            handleStatementLoop(tokenIter, pModel, pIncludeHandler, pSymbolMap, pNumReactions);
-                            // handle loop
+                            handleStatementReaction(tokenIterExec, pModel, pSymbolMap, pNumReactions);
+                            synchIterators(tokenIterExec, tokenIter);
                         }
                         else
                         {
-                            throw new InvalidInputException("parenthesis following unknown keyword: " + prevToken.mSymbol);
+                            throw new InvalidInputException("encountered \">\" unexpectedly");
                         }
                     }
                     else
                     {
-                        throw new InvalidInputException("parenthesis following unknown token: " + prevToken);
+                        throw new InvalidInputException("encountered \">\" with no preceding hyphen and outside of an expression context"); 
                     }
                 }
-                else
+                else if(token.mCode.equals(Token.Code.SYMBOL) && null != prevToken && prevToken.mCode.equals(Token.Code.POUNDSIGN))
                 {
-                    throw new InvalidInputException("statement began with a parenthesis");
+                    assert (null != token.mSymbol) : "null symbol string found in symbol token";
+                    if(token.mSymbol.equals(STATEMENT_KEYWORD_INCLUDE))
+                    {
+                        handleStatementInclude(tokenIterExec, pModel, pSymbolMap, pNumReactions, pIncludeHandler);
+                        synchIterators(tokenIterExec, tokenIter);
+                    }
+                    else if(token.mSymbol.equals(STATEMENT_KEYWORD_MODEL))
+                    {
+                        handleStatementModel(tokenIterExec, pModel, pSymbolMap);
+                        synchIterators(tokenIterExec, tokenIter);
+                    }
+                    else if(token.mSymbol.equals(STATEMENT_KEYWORD_DEFINE))
+                    {
+                        handleStatementMacroDefinition(tokenIterExec, pModel, pSymbolMap, pNumReactions);
+                        synchIterators(tokenIterExec, tokenIter);
+                    }
+                    else if(token.mSymbol.equals(STATEMENT_KEYWORD_REF))
+                    {
+                        handleStatementMacroReference(tokenIterExec, pModel, pIncludeHandler, pSymbolMap, pNumReactions);
+                        synchIterators(tokenIterExec, tokenIter);
+                    }
+                    else
+                    {
+                        throw new InvalidInputException("unknown command keyword: " + token.mSymbol);
+                    }
                 }
+                else if(token.mCode.equals(Token.Code.PAREN_BEGIN))
+                {
+                    if(null != prevToken)
+                    {
+                        if(prevToken.mCode.equals(Token.Code.SYMBOL))
+                        {
+                            if(prevToken.mSymbol.equals(KEYWORD_LOOP))
+                            {
+                                handleStatementLoop(tokenIterExec, pModel, pIncludeHandler, pSymbolMap, pNumReactions);
+                                synchIterators(tokenIterExec, tokenIter);
+                            }
+                            else
+                            {
+                                throw new InvalidInputException("parenthesis following unknown keyword: " + prevToken.mSymbol);
+                            }
+                        }
+                        else
+                        {
+                            throw new InvalidInputException("parenthesis following unknown token: " + prevToken);
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidInputException("statement began with a parenthesis");
+                    }
+                }
+                else if(token.mCode.equals(Token.Code.SEMICOLON))
+                {
+                    throw new InvalidInputException("unknown statement type");
+                }
+                prevToken = token;
             }
-            else if(token.mCode.equals(Token.Code.SEMICOLON))
-            {
-                throw new InvalidInputException("unknown statement type");
-            }
-            prevToken = token;
+        }
+        catch(DataNotFoundException e)
+        {
+            throw new InvalidInputException(getErrorMessage(e, lineCtr), e);
+        }
+        catch(InvalidInputException e)
+        {
+            throw new InvalidInputException(getErrorMessage(e, lineCtr), e);
         }
     }
 
-
-    private void handleStatementLoop(ListIterator pTokenIter, 
+   private void handleStatementLoop(ListIterator pTokenIter, 
                                      Model pModel,
                                      IncludeHandler pIncludeHandler,
                                      HashMap pSymbolMap,
                                      MutableInteger pNumReactions) throws InvalidInputException, DataNotFoundException
     {
         Token token = getNextToken(pTokenIter);
+        assert (token.mCode.equals(Token.Code.SYMBOL)) : "expected a symbol token, unexpectedly got token: " + token;
+        assert (token.mSymbol.equals(KEYWORD_LOOP)) : "expected loop keyword; unexpectedly got symbol: " + token.mSymbol;
+
+        token = getNextToken(pTokenIter);
         if(! token.mCode.equals(Token.Code.SYMBOL))
         {
             throw new InvalidInputException("invalid token found when expected loop index symbol");
@@ -1058,7 +1447,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         StringBuffer sb = new StringBuffer();
         while(pTokenIter.hasNext())
         {
-            token = (Token) pTokenIter.next();
+            token = getNextToken(pTokenIter);
             if(token.mCode.equals(Token.Code.COMMA))
             {
                 break; 
@@ -1081,7 +1470,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         Token prevToken = null;
         while(pTokenIter.hasNext())
         {
-            token = (Token) pTokenIter.next();
+            token = getNextToken(pTokenIter);
             if(token.mCode.equals(Token.Code.BRACE_BEGIN))
             {
                 if(null != prevToken)
@@ -1134,7 +1523,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         int braceCtr = 1;
         while(pTokenIter.hasNext())
         {
-            token = (Token) pTokenIter.next();
+            token = getNextToken(pTokenIter);
             if(token.mCode.equals(Token.Code.BRACE_BEGIN))
             {
                 braceCtr++;
@@ -1165,26 +1554,173 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         pSymbolMap.remove(loopIndexSymbolName);
     }
 
+    private void handleStatementMacroReference(ListIterator pTokenIter, 
+                                               Model pModel, 
+                                               IncludeHandler pIncludeHandler,
+                                               HashMap pSymbolMap, 
+                                               MutableInteger pNumReactions) throws InvalidInputException, DataNotFoundException
+    { 
+        Token token = getNextToken(pTokenIter);
+        assert (token.mCode.equals(Token.Code.POUNDSIGN)) : "where expected a pound sign, got an unexpected token: " + token;
+
+        token = getNextToken(pTokenIter);
+        assert (token.mCode.equals(Token.Code.SYMBOL)) : "where expected a symbol token, got an unexpected token: " + token;
+        assert (token.mSymbol.equals(STATEMENT_KEYWORD_REF)) : "where expected the ref keyword, got an unexpected symbol token: " + token.mSymbol;
+
+        String macroName = obtainSymbol(pTokenIter, pSymbolMap);
+
+        SymbolValue symbolValue = (SymbolValue) pSymbolMap.get(macroName);
+        if(null == symbolValue)
+        {
+            throw new InvalidInputException("unknown macro referenced: " + macroName);
+        }
+
+        if(! (symbolValue instanceof Macro))
+        {
+            throw new InvalidInputException("symbol referenced is not a macro: " + macroName);
+        }
+
+        Macro macro = (Macro) symbolValue;
+
+        String macroInstanceName = obtainSymbol(pTokenIter, pSymbolMap);
+        
+        ArrayList externalSymbolsList = new ArrayList();
+
+        if(! pTokenIter.hasNext())
+        {
+            throw new InvalidInputException("expected parenthesis or curly brace after macro definition statement");
+        }
+
+        token = getNextToken(pTokenIter);
+
+        if(token.mCode.equals(Token.Code.PAREN_BEGIN))
+        {
+
+            boolean expectSymbol = true;
+            boolean gotEndParen = false;
+            while(pTokenIter.hasNext())
+            {
+                if(expectSymbol)
+                {
+                    String symbol = obtainSymbol(pTokenIter, pSymbolMap);
+                    externalSymbolsList.add(symbol);
+                    expectSymbol = false;
+                }
+                else
+                {
+                    token = getNextToken(pTokenIter);
+                    if(token.mCode.equals(Token.Code.PAREN_END))
+                    {
+                        gotEndParen = true;
+                        break;
+                    }
+                    else if(token.mCode.equals(Token.Code.SEMICOLON))
+                    {
+                        throw new InvalidInputException("end of statement token encountered inside parentheses");
+                    }
+                    else if(token.mCode.equals(Token.Code.COMMA))
+                    {
+                        if(expectSymbol)
+                        {
+                            throw new InvalidInputException("comma encountered unexpectedly");
+                        }
+                        expectSymbol = true;
+                    }
+                    else 
+                    {
+                        throw new InvalidInputException("unknown symbol encountered " + token);
+                    }
+                }
+            }
+            if(! gotEndParen)
+            {
+                throw new InvalidInputException("failed to find end parenthesis");
+            }
+        }
+        else
+        {
+            pTokenIter.previous();
+        }
+
+        getEndOfStatement(pTokenIter);
+
+        if(externalSymbolsList.size() != macro.mExternalSymbols.size())
+        {
+            throw new InvalidInputException("number of symbols is mismatched, for macro reference: " + macroName);
+        }
+
+        // add the dummy symbols to the global symbols map
+        int numExtSym = externalSymbolsList.size();
+        for(int i = 0; i < numExtSym; ++i)
+        {
+            String extSymDummy = (String) macro.mExternalSymbols.get(i);
+            assert (null != extSymDummy) : "unexpected null array element";
+            String extSymValue = (String) externalSymbolsList.get(i);
+            assert (null != extSymValue) : "unexpected null array element";
+            DummySymbol dummySymbol = new DummySymbol(extSymDummy, extSymValue);
+            if(null != pSymbolMap.get(extSymDummy))
+            {
+                throw new InvalidInputException("dummy symbol is already defined in the global symbol map: " + extSymDummy);
+            }
+            if(null == pSymbolMap.get(extSymValue))
+            {
+                throw new InvalidInputException("unknown symbol referenced: " + extSymValue);
+            }
+            pSymbolMap.put(extSymDummy, dummySymbol);
+        }
+
+        String oldNamespace = mNamespace;
+        mNamespace = addNamespaceToSymbol(macroInstanceName, mNamespace);
+
+        LinkedList tokenList = macro.mTokenList;
+
+        LinkedList updatedTokenList = new LinkedList();
+
+        Iterator iter = tokenList.iterator();
+
+        try
+        {
+            executeStatementBlock(macro.mTokenList,
+                                  pModel,
+                                  pIncludeHandler,
+                                  pSymbolMap,
+                                  pNumReactions);
+        }
+        catch(InvalidInputException e)
+        {
+            StringBuffer messageBuffer = new StringBuffer(e.getMessage());
+            messageBuffer.append(" in macro referenced");
+            throw new InvalidInputException(messageBuffer.toString(), e);
+        }
+
+        mNamespace = oldNamespace;
+
+        // remove the dummy symbols from the global symbols map
+        for(int i = 0; i < numExtSym; ++i)
+        {
+            String extSymDummy = (String) macro.mExternalSymbols.get(i);
+            pSymbolMap.remove(extSymDummy);
+        }
+    }
+
     private void tokenizeAndExecuteStatementBuffer(StringBuffer pStatementBuffer, 
                                                    List pTokenList,
                                                    Model pModel,
                                                    IncludeHandler pIncludeHandler,
                                                    HashMap pSymbolMap,
-                                                   MutableInteger pNumReactions) throws InvalidInputException, DataNotFoundException
+                                                   MutableInteger pNumReactions,
+                                                   int pLineNumber) throws InvalidInputException
     {
         String statement = pStatementBuffer.toString();
-                                
-        //===========================================
-        // TOKENIZE THE STATEMENT:
-        //===========================================
-        tokenizeStatement(statement, pTokenList);
-                                
+
+        tokenizeStatement(statement, pTokenList, pLineNumber);
+        
         pStatementBuffer.delete(0, statement.length());
 
         executeStatementBlock(pTokenList, pModel, pIncludeHandler, pSymbolMap, pNumReactions);
+
         pTokenList.clear();
     }
-
 
     private void parseModelDefinition(BufferedReader pInputReader, 
                                       Model pModel, 
@@ -1192,240 +1728,108 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                                       HashMap pSymbolMap, 
                                       MutableInteger pNumReactions) throws IOException, InvalidInputException
     {
-        String line = null;
-        int lineCtr = 0;
-        StringBuffer statementBuffer = new StringBuffer();
-        boolean finishedStatement = false;
-        boolean inMultilineComment = false;
-        List tokenList = new LinkedList();
+        StreamTokenizer streamTokenizer = new StreamTokenizer(pInputReader);
+
+        streamTokenizer.slashSlashComments(true);
+        streamTokenizer.slashStarComments(true);
+        streamTokenizer.lowerCaseMode(false);
+
+        // our quote character is the "double-quote" mark, 
+        streamTokenizer.quoteChar('\"');
+
+        // we want to preserve newlines
+        streamTokenizer.eolIsSignificant(true);
+
+        // we want to preserve whitespace
+        streamTokenizer.ordinaryChars(' ', ' ');
+        streamTokenizer.ordinaryChars('\t', '\t');
+        
+        // disable parsing of numbers
+        streamTokenizer.ordinaryChars('0', '9');
+        streamTokenizer.ordinaryChars('.', '.');
+        streamTokenizer.ordinaryChars('-', '-');
+
+        // disable interpretation of a single slash character as a comment
+        streamTokenizer.ordinaryChars('/', '/');
+
         initializeModelElements(pSymbolMap);
+        int lineCtr = 1;
+        StringBuffer statementBuffer = new StringBuffer();
+        List tokenList = new LinkedList();
 
         int braceLevel = 0;
-
-        while((line = pInputReader.readLine()) != null)
+        while(true)
         {
-            ++lineCtr;
-
-            try
+            boolean executeStatement = false;
+            int tokenType = streamTokenizer.nextToken();
+            if(StreamTokenizer.TT_EOF == tokenType)
             {
-                StringTokenizer st = new StringTokenizer(line, "\"/*;{}", true);
-                
-                boolean inQuote = false;
-                
-                String token = null;
-                String prevToken = null;
-
-                while(st.hasMoreElements())
+                break;
+            }
+            if(tokenType == '\"')
+            {
+                String quotedString = streamTokenizer.sval;
+                statementBuffer.append("\"" + quotedString + "\"");
+            }
+            else if(tokenType == StreamTokenizer.TT_EOL)
+            {
+                statementBuffer.append("\n");
+            }
+            else if(tokenType == '{')
+            {
+                braceLevel++;
+                statementBuffer.append("{");
+            }
+            else if(tokenType == '}')
+            {
+                if(0 == braceLevel )
                 {
-                    token = st.nextToken();
-                    
-                    if(token.equals("\""))
-                    {
-                        if(! inMultilineComment)
-                        {
-                            if(! inQuote)
-                            {
-                                inQuote = true;
-                            }
-                            else
-                            {
-                                inQuote = false;
-                            }
-                            statementBuffer.append(token);
-                        }
-                    }
-                    else if(token.equals("/"))
-                    {
-                        if(! inMultilineComment)
-                        {
-                            if(! inQuote)
-                            {
-                                if(null != prevToken)
-                                {
-                                    if(prevToken.equals(token))
-                                    {
-                                        // this is a simple comment; kill previous character in buffer and
-                                        // break to end of line
-                                        statementBuffer.deleteCharAt(statementBuffer.toString().length() - 1);
-                                        break;  // quit parsing this line of input; move onto next line
-                                    }
-                                    else
-                                    {
-                                        statementBuffer.append(token);
-                                    }
-                                }
-                                else
-                                {
-                                    statementBuffer.append(token);
-                                }
-                            }
-                            else
-                            {
-                                statementBuffer.append(token);
-                            }
-                        }
-                        else
-                        {
-                            if(null != prevToken)
-                            {
-                                if(prevToken.equals("*"))
-                                {
-                                    // end of multiline comment
-                                    inMultilineComment = false;
-                                }
-                                else
-                                {
-                                    // do nothing
-                                }
-                            }
-                            else
-                            {
-                                // do nothing
-                            }
-                        }
-                    }
-                    else if(token.equals("*"))
-                    {
-                        if(! inMultilineComment)
-                        {
-                            if(! inQuote)
-                            {
-                                if(null != prevToken)
-                                {
-                                    if(prevToken.equals("/"))
-                                    {
-                                        inMultilineComment = true;
-                                        statementBuffer.deleteCharAt(statementBuffer.toString().length() - 1);
-                                        // start of multiline comment
-                                    }
-                                    else
-                                    {
-                                        statementBuffer.append(token);
-                                    }
-                                }
-                                else
-                                {
-                                    statementBuffer.append(token);
-                                }
-                            }
-                            else
-                            {
-                                statementBuffer.append(token);
-                            }
-                        }
-                        else
-                        {
-                            // we are in a multiline comment, in which case a "*" character is ignored
-                        }
-                    }
-                    else if(token.equals(";"))
-                    {
-                        if(! inMultilineComment)
-                        {
-                            if(! inQuote)
-                            {
-                                statementBuffer.append(token);
-                                
-                                if(0 == braceLevel)
-                                {
-                                    tokenizeAndExecuteStatementBuffer(statementBuffer,
-                                                                      tokenList,
-                                                                      pModel,
-                                                                      pIncludeHandler,
-                                                                      pSymbolMap,
-                                                                      pNumReactions);
-                                }
-                            }
-                            else
-                            {
-                                statementBuffer.append(token);
-                            }
-                        }
-                        else
-                        {
-                            // do nothing; ignore semicolons in multiline comments
-                        }
-                    }
-                    else if(token.equals("{"))
-                    {
-                        if(! inMultilineComment)
-                        {
-                            if(! inQuote)
-                            {
-                                braceLevel++;
-                            }
-                            statementBuffer.append(token);
-                        }
-                        else
-                        {
-                            // do nothing; ignore semicolons in multiline comments
-                        }
-                    }
-                    else if(token.equals("}"))
-                    {
-                        if(! inMultilineComment)
-                        {
-                            if(! inQuote)
-                            {
-                                if(0 == braceLevel)
-                                {
-                                    throw new InvalidInputException("encountered close brace \"}\" with no corresponding open brace \"{\"");
-                                }
-                                --braceLevel;
-                            }
-                            statementBuffer.append(token);
-                            if(0 == braceLevel)
-                            {
-                                tokenizeAndExecuteStatementBuffer(statementBuffer,
-                                                                  tokenList,
-                                                                  pModel,
-                                                                  pIncludeHandler,
-                                                                  pSymbolMap,
-                                                                  pNumReactions);                                
-                            }
-                        }
-                        else
-                        {
-                            // do nothing; ignore semicolons in multiline comments
-                        }
-                    }
-                    else
-                    {
-                        if(! inMultilineComment)
-                        {
-                            statementBuffer.append(token);
-                        }
-                    }
-
-                    prevToken = token;
-                       
+                    throw new InvalidInputException("mismatched braces, encountered \"}\" brace without matching \"{\" brace previously");
                 }
-
-                if(inQuote)
+                braceLevel--;
+                statementBuffer.append("}");
+                if(0 == braceLevel)
                 {
-                    throw new InvalidInputException("end of line encountered in a quotation");
-                }
-
-                if(0 != statementBuffer.toString().length())
-                {
-                    statementBuffer.append(" ");
+                    executeStatement = true;
                 }
             }
-
-            catch(InvalidInputException e)
+            else if(tokenType == ';')
             {
-                StringBuffer message = new StringBuffer(e.getMessage());
-                message.append(" at line " + lineCtr + " of model definition file");
-                throw new InvalidInputException(message.toString(), e);
+                statementBuffer.append(";");
+                if(0 == braceLevel)
+                {
+                    executeStatement = true;
+                }
+            }
+            else if(tokenType == StreamTokenizer.TT_WORD)
+            {
+                statementBuffer.append(streamTokenizer.sval);
+            }
+            else if(tokenType == '\t')
+            {
+                statementBuffer.append(" ");
+            }
+            else if(tokenType == StreamTokenizer.TT_NUMBER)
+            {
+                double value = streamTokenizer.nval;
+                statementBuffer.append(value);
+            }
+            else
+            {
+                statementBuffer.append(Character.toString((char) tokenType));
             }
 
-            catch(DataNotFoundException e)
+            if(executeStatement)
             {
-                StringBuffer message = new StringBuffer(e.getMessage());
-                message.append(" at line " + lineCtr + " of model definition file");
-                throw new InvalidInputException(message.toString(), e);
+                tokenizeAndExecuteStatementBuffer(statementBuffer,
+                                                  tokenList,
+                                                  pModel,
+                                                  pIncludeHandler,
+                                                  pSymbolMap,
+                                                  pNumReactions,
+                                                  lineCtr);                    
+                lineCtr = streamTokenizer.lineno();
             }
-
         }
 
         if(statementBuffer.toString().trim().length() != 0)
@@ -1436,19 +1840,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         defineParameters(pSymbolMap, pModel);
     }
 
-    private void defineParameters(HashMap pSymbolMap, Model pModel)
-    {
-        Iterator symbolValueIter = pSymbolMap.values().iterator();
-        while(symbolValueIter.hasNext())
-        {
-            SymbolValue symbolValue = (SymbolValue) symbolValueIter.next();
-            if(symbolValue.getClass().getSuperclass().equals(Object.class))
-            {
-                Parameter parameter = new Parameter(symbolValue);
-                pModel.addParameter(parameter);
-            }
-        }
-    }
+
 
     public Model buildModel( BufferedReader pInputReader,
                              IncludeHandler pIncludeHandler ) throws InvalidInputException, IOException
@@ -1458,8 +1850,14 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         model.setName(DEFAULT_MODEL_NAME);
         HashMap symbolMap = new HashMap();
         MutableInteger numReactions = new MutableInteger(0);
+        mNamespace = null;
         parseModelDefinition(pInputReader, model, pIncludeHandler, symbolMap, numReactions);
         return(model);
+    }
+
+    public static boolean isValidSymbol(String pSymbolName)
+    {
+        return(VALID_SYMBOL_PATTERN.matcher(pSymbolName).matches());
     }
 
     public String getFileRegex()
