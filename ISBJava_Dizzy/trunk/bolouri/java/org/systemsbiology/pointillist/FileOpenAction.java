@@ -77,13 +77,13 @@ public class FileOpenAction
                     {
                         throw new IllegalStateException("unknown delimiter name: " + delimiterName);
                     }
-                    String delimiterString = delimiter.getDelimiter();
                     matrixString.buildFromLineBasedStringDelimitedInput(bufferedReader,
-                            delimiterString);
+                            delimiter);
                     String appName = mApp.getAppConfig().getAppName();
+                    boolean showSaveButton = false;
                     DataColumnSelector dataColumnSelector = new DataColumnSelector(appName + ": " + selectedFile.getName(), 
                             matrixString);
-                    dataColumnSelector.setDelimiter(delimiterString);
+                    dataColumnSelector.setDelimiter(delimiter);
                     
                     FramePlacer framePlacer = mApp.getFramePlacer();
                     framePlacer.placeInCascadeFormat(dataColumnSelector);

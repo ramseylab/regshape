@@ -9,11 +9,16 @@
  *   http://www.gnu.org/copyleft/lesser.html
  */
 package org.systemsbiology.pointillist;
-import java.io.File;
-import java.io.IOException;
 
+import java.io.*;
 import org.systemsbiology.gui.ExceptionNotificationOptionPane;
 import org.systemsbiology.util.*;
+import org.systemsbiology.math.*;
+import org.systemsbiology.data.*;
+import org.systemsbiology.gui.*;
+import java.util.*;
+import java.util.prefs.*;
+import javax.swing.*;
 
 /**
  * @author sramsey
@@ -27,10 +32,14 @@ public class NetworkIntegrationAction implements IAction
     private static final String MATLAB_FUNCTION_NAME = "mainpointillist";
     
     private App mApp;
+    private SignificantDigitsCalculator mSignificantDigitsCalculator;
+    private ScientificNumberFormat mScientificNumberFormat;
     
     public NetworkIntegrationAction(App pApp)
     {
         mApp = pApp;
+        mSignificantDigitsCalculator = new SignificantDigitsCalculator();
+        mScientificNumberFormat = new ScientificNumberFormat(mSignificantDigitsCalculator);
     }
     
     public static double parseCutoff(String pCutoff) throws InvalidInputException
@@ -102,8 +111,79 @@ public class NetworkIntegrationAction implements IAction
         {
             ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
             optionPane.createDialog(mApp, "unable to execute matlab command \"" + matlabCommand + "\"").show();
+            return;
         }
         
-        boolean success = mApp.handleMatlabResult(response, "network integration", outputFile);
+        Preferences prefs = mApp.getPreferences();
+        String matlabScriptsDirName = prefs.get(App.PREFERENCES_KEY_MATLAB_SCRIPTS_LOCATION, "");
+        if(matlabScriptsDirName.length() == 0)
+        {
+            throw new IllegalStateException("unable to obtain matlab scripts directory");
+        }
+        File matlabScriptsDir = new File(matlabScriptsDirName);
+        if(! matlabScriptsDir.exists() || ! matlabScriptsDir.isDirectory())
+        {
+            throw new IllegalStateException("invalid matlab scripts directory \"" + matlabScriptsDirName + "\"");
+        }
+        
+        String statFileName = matlabScriptsDir + File.separator + "stat.txt";
+        File statFile = new File(statFileName);
+        boolean gotValidResults = true;
+        if(statFile.exists() && statFile.isFile())
+        {
+            try
+            {
+                FileReader fileReader = new FileReader(statFile);
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+                String line = null;
+                ArrayList colNames = new ArrayList();
+                ArrayList values = new ArrayList();
+                MatrixString matrixString = new MatrixString();
+                int colCtr = 0;
+                while(null != (line = bufferedReader.readLine()))
+                {
+                    StringTokenizer st = new StringTokenizer(line);
+                    while(st.hasMoreTokens())
+                    {
+                        String token = (String) st.nextToken();
+                        Double value = new Double(token);
+                        if(0 == colCtr)
+                        {
+                            colNames.add("num. of diff. exp. genes");
+                        }
+                        else
+                        {
+                            colNames.add("iter #" + colCtr);
+                        }
+                        values.add(mScientificNumberFormat.format(value.doubleValue()));
+                        colCtr++;
+                    }
+                }
+                matrixString.addRow(colNames);
+                matrixString.addRow(values);
+                DataColumnSelector dcs = new DataColumnSelector("iteration summary", matrixString, false);
+                mApp.getFramePlacer().placeInCascadeFormat(dcs);
+                dcs.setVisible(true);
+            }
+            catch(Exception e)
+            {
+                ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+                optionPane.createDialog(mApp, "unable to obtain output from matlab").show();
+                return;
+            }
+        }
+        else
+        {
+            SimpleTextArea textArea = new SimpleTextArea("unable to find iteration summary file \"" + statFileName + "\"");
+            JOptionPane.showMessageDialog(mApp, textArea, "unable to find iteration summary file", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+//        boolean success = mApp.handleMatlabResult(response, "network integration", outputFile);
+//        
+//        if(success)
+//        {
+//            
+//        }
     }
 }

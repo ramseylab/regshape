@@ -135,6 +135,7 @@ public class App extends JFrame
     public App(String pName)
     {
         super(pName);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mDataFrames = new HashMap();
     }
     
