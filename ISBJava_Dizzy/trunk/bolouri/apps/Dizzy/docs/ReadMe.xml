@@ -11,7 +11,7 @@
               xmlns:html="http://www.w3.org/TR/xhtml1"
               xmlns="http://www.w3.org/TR/xhtml1">
 
-<isb:doctitle>&appName; Release Notes</isb:doctitle>
+<isb:doctitle>&appName; ReadMe Notes</isb:doctitle>
 <isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
 <isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
 <isb:docversion>Version &appVersion;, Released &appDate;</isb:docversion>
