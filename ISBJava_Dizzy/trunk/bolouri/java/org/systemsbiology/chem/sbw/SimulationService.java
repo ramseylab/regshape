@@ -173,6 +173,7 @@ public abstract class SimulationService implements ISimulationService
                                                                      pNumPoints,
                                                                      pFilter);
 
+
             if(! simulationController.getCancelled() && null != simulationResults)
             {
                 double []timeValues = simulationResults.getResultsTimeValues();
@@ -184,6 +185,9 @@ public abstract class SimulationService implements ISimulationService
                     
                     // pass the data for this time point back to the caller
                     frontEnd.onRowData(dataPoints);
+
+                    Thread.sleep(10);  // this is needed to work around an apparent thread
+                                       // timing bug in the SBW simulation driver callback 
                 }
             }
 
