@@ -12,9 +12,14 @@
 <isb:docsection name="Introduction" label="introduction">
 <isb:docsubsection name="About &appName;" label="about">
 <p>
-&appName; is a program for inferring the set elements affected 
+&appName; is a collection of programs for inferring the set elements affected 
 by a perturbation of a biological system, based on a collection 
-of evidences.
+of evidences.  It contains four programs:  
+<a href="#datamanager">Data Manager</a>,
+<a href="#quantilenormalizer">Quantile Normalizer</a>,
+<a href="#significancecalculator">Significance Calculator</a>,
+and 
+<a href="#evidenceweightedinferer">Evidence-Weighted Inferer</a>.
 </p>
 <p>
 This document is the user manual for the &appName; program.
@@ -121,8 +126,7 @@ The assistance, advice, and contributions of several individuals
 to the &appName; project is gratefully acknowledged.
 </p>
 <p>
-Hamid Bolouri: principal investigator 
-system.
+Hamid Bolouri:  principal investigator 
 </p>
 <p>
 Daehee Hwang:  for developing the Pointillist algorithm
@@ -161,8 +165,8 @@ This means that an installation of the Java Runtime Environment
 (JRE) is required in order to be able to use the &appName; system.
 
 A version of the &appName; system installer program 
-(&quot;<code>ins&appName;.bin</code>&quot; on Unix/Linux, 
-or &quot;<code>ins&appName;.exe</code>&quot; on Windows)
+(&quot;<code>&appInstallerName;.bin</code>&quot; on Unix/Linux, 
+or &quot;<code>&appInstallerName;.exe</code>&quot; on Windows)
 is available which has the Sun JRE version 1.4.1 pre-bundled with it.
 This is the recommended approach for users who are not knowledgeable
 in the use of the Java programming language and runtime environment.
@@ -190,7 +194,10 @@ is pre-bundled with the &appName; installer, this issue does not
 apply to you.
 </p>
 <p>
-This software has been tested on Windows XP and Red Hat Linux 8.0.
+This software has been tested with the Sun Java Runtime Environment 
+version 1.4.1 on the following platforms: Windows XP Professional on 
+the Intel Pentium 4;  Fedora Core 1 Linux on the Intel Pentium 4; 
+Mac OSX version 10.2.6 on the PowerPC G4.
 It should function properly on most Windows and Linux distributions.
 For other operating systems, you may download the &quot;Other Java-Enabled
 Platforms&quot; version of the installer.  A Mac OSX version of the
@@ -207,8 +214,8 @@ If there is a need to run &appName; on multiple operating systems
 &appName; should be installed in a separate directory for each
 operating system.  One exception applies: it is possible to install 
 &appName; on one operating system (e.g., Windows) and run it on a 
-different operating system (e.g., Unix), if you run the 
-<a href="#commandline">command-line program</a> and not the GUI.
+different operating system (e.g., Unix), if you are writing your
+own Java programs and just using the &localJavaLibraryName; API.
 </p>
 
 </isb:docsubsection>
@@ -338,7 +345,18 @@ Here is a screen shot of the Data Manager program:
   <dl>
   <dt><b>Load observations</b></dt>
   <dd>This button is used to load a file of data into the program.  The
-    data is displayed in the input data table in the top half of the program window.</dd>
+    data is displayed in the input data table in the top half of the program window.  Only
+    one file may be loaded into the input data table at a time.</dd>
+  <dt><b>Delimiter</b></dt>
+  <dd>This drop-down list is used to specify how your input data file (and output data file)
+    are delimited.  The three choices are "tab", "space", and "comma".  Comma-delimited files
+    are recommended for reasons of unambiguity and compatibility with spreadsheet programs.
+    If you choose "space", be advised that there is a restriction on how you can specify
+    an empty cell (missing data).  With a "space" delimiter, an empty cell must be denoted
+    by the string "null" (without double quotes).  Note that the string is case-sensitive,
+    so you cannot use the string "Null" or "NULL".  Once you have loaded your input data file,
+    you may change the delimiter that you use to save the output file, if you wish.  
+  </dd>
   <dt><b>Normalize using the scale</b></dt>
   <dd>This drop-down list is used to specify how the data is to be scaled.
     The options are "norm_only" and "logarithm".  If you specify "norm_only",
@@ -431,6 +449,86 @@ Here is a screen shot of the Quantile Normalizer program:
   distribution for observations.  The input to the program is a matrix of observations, as described
   in the <a href="#datamanager">Data Manager</a> section.  Missing observations are allowed, 
   and are denoted by an empty cell or the string "null" (quotes not included, case sensitive).
+</p>
+<p>
+  The following list describes the various components and controls of the Significance Calculator
+  program window:
+  <dl>
+  <dt><b>Load observations</b></dt>
+  <dd>This button loads a file of observations.  The observations are displayed in the input data
+    table, in the upper third of the program window..  Only one file may be 
+    loaded into the input data table at a time.</dd>
+  <dt><b>Delimiter</b></dt>
+  <dd>This drop-down list is used to specify how your input data file (and output data file)
+    are delimited.  The three choices are "tab", "space", and "comma".  Comma-delimited files
+    are recommended for reasons of unambiguity and compatibility with spreadsheet programs.
+    If you choose "space", be advised that there is a restriction on how you can specify
+    an empty cell (missing data).  With a "space" delimiter, an empty cell must be denoted
+    by the string "null" (without double quotes).  Note that the string is case-sensitive,
+    so you cannot use the string "Null" or "NULL".  Once you have loaded your input data file,
+    you may change the delimiter that you use to save the output file, if you wish.  
+  </dd>
+  <dt><b>Evidence choices table</b></dt>
+  <dd>This table displays the list of evidence types, and is activated when the input data
+    file is loaded.  The five rightmost columns of the table are used to specify how
+    significances are to be computed for each type of evidence.  Each column type is
+    defined below.</dd>
+  <dt><b>Single-tailed</b></dt>
+  <dd>This checkbox is used to define whether the observations for a given evidence are
+    to be converted to a significance using a single-tailed or two-tailed test.  A 
+    single-tailed test is appropriate if the observations are never negative,
+    or if the observations are always greater than some minimum value (e.g., 1.0).
+    A two-tailed test is appropriate if observations can have large negative or
+    large positive values, e.g., logarithm of a fold-change for protein or mRNA
+    levels.  The program attempts to guess whether the distribution is single-tailed
+    or two-tailed, by looking to see if the evidence type has any negative observations.
+    You can override the initial guess by clicking on the "single-tailed" checkbox.</dd>
+  <dt><b>Number of bins</b></dt>
+  <dd>This text field is used to specify the number of bins that are to be used to
+    calculate the nonparametric distribution for the observations for the given 
+    evidence type.  The program makes an initial guess at an appropriate number of bins,
+    but you may change it to any integer value greater than 1.0.</dd>
+  <dt><b>Smoothing length</b></dt>
+  <dd>This text field is used to specify the smoothing length to be used; this is the
+    standard deviation of the Gaussian used as a kernel density for smoothing the distribution
+    of observations.  The program makes an initial guess at an appropriate smoothing lenght,
+    but you may change it to any value greater than 0.0.</dd>
+  <dt><b>Compute significances</b></dt>
+  <dd>This checkbox is used to specify whether significances should be computed
+    for this evidence type.  By default, the box is checked, meaning the program
+    will compute significances for this evidence type and include it as a column
+    in the reusults data table.  If you uncheck this box, the program will not
+    compute significances for this data type, and will omit the corresponding column
+    from the results data table.</dd>
+  <dt><b>Negative control observations</b></dt>
+  <dd>This field is used to specify a set of "negative control" observations for
+    the evidence type.  It is optional, and by default, set to "&lt;none&gt;".  By
+    double-clicking on the field, a file browser is opened and you are prompted
+    to select a data file.  The data file should contain negative control data 
+    arranged in columns, with each column a different evidence type.  The columns
+    may have different numbers of observations in them, and there is no requirement
+    of uniformity of rows.  You will be prompted to select a column in a separate
+    data table that is displayed, for the negative control file you provided.  If
+    you wish to delete your choice of negative control data for a given evidence,
+    just select the "negative control" cell for that evidence, and press the
+    "delete" key.</dd>
+  <dt><b>Calculate the significances using the formula</b></dt>
+  <dd>This drop-down list is used to specify how the significances are to be
+    computed.   The same method is applied to all evidence types in the
+    input data table.  The two methods allowed are "PDF" and "CDF".  Here,
+    "PDF" means probability distribution function.  The PDF of the smoothed, normalized 
+    nonparametric control distribution is used as the significance of an observation.
+    (If no control data was specified for the evidence type, the global distribution 
+    is used instead.)  In contrast, "CDF" means cumulative distribution function;
+    the significance of an observation is computed as the complement of the CDF 
+    of the smoothed, normalized nonparametric distribution function.  For a two-tailed
+    evidence type, the "complement of the CDF" here means area under the tail to which the
+    observation is closest.  The "CDF" method is also known as the Fisher Method.  The
+    "PDF" method is also known as the Bayesian Method.  If you are unsure of which
+    method to use, it is recommended to use the default, "CDF", because the
+    default settings in the <a href="#evidenceweightedinferer">Evidence-Weighted Inferer</a>
+    are appropriate to a "CDF" choice in the Significance Calculator.</dd>
+  </dl>
 </p>
 <p>
 Here is a screen shot of the Significance Calculator program:
