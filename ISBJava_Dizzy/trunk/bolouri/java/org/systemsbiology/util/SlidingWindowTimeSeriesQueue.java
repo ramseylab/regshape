@@ -38,11 +38,16 @@ public class SlidingWindowTimeSeriesQueue
 
     public SlidingWindowTimeSeriesQueue(int pNumTimePoints)
     {
+        initialize(pNumTimePoints);
+    }
+
+    public void initialize(int pNumTimePoints)
+    {
         assert (pNumTimePoints > 0) : "invalid number of time points";
 
         mTimePoints = new double[pNumTimePoints];
         mValues = new double[pNumTimePoints];
-        mNumTimePoints = pNumTimePoints;
+        mNumTimePoints = pNumTimePoints;        
         clear();
     }
 
