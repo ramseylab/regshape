@@ -29,16 +29,22 @@ public class ModelViewerCytoscape implements IModelViewer, IAliasableClass
     public static final String CLASS_ALIAS = "cytoscape";
     private static final String JNLP_TEMPLATE_FILE_NAME = "CytoscapeViewer.xml";
     private static final String TAG_NAME_APPLICATION_DESC = "application-desc";
-
+    private static boolean sInitialized;
+    
     public ModelViewerCytoscape()
     {
         // do nothing
+        if(! sInitialized)
+        {
+            JNLPRuntime.setSecurityEnabled(false);
+            JNLPRuntime.initialize();
+            sInitialized = true;
+        }
     }
 
     static
     {
-        JNLPRuntime.setSecurityEnabled(false);
-        JNLPRuntime.initialize();
+        sInitialized = false;
     }
 
     public void viewModel(Model pModel, String pAppName) throws ModelViewerException
