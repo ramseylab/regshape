@@ -110,7 +110,6 @@ public class HelpBrowser
         
         try
         {
-            mHelpBroker.setDisplayed(false);
             if(null != pView)
             {
                 mHelpBroker.setCurrentView(pView);
@@ -118,7 +117,7 @@ public class HelpBrowser
             if(null != pMapID)
             {
                 mHelpBroker.setCurrentID(pMapID);
-            }            
+            }  
             mHelpBroker.setDisplayed(true);
         }
         catch(Exception e)
