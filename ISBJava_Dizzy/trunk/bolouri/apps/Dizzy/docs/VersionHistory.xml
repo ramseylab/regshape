@@ -43,7 +43,7 @@ This document contains the version history for the
 
 <tr valign="top">
 <td>1.0.0</td>
-<td>2003/12/04</td>
+<td>2003/12/08</td>
 <td>
 <ul>
 <li>Added new deterministic (ODE) simulators &appName;,
@@ -57,6 +57,8 @@ with a high degree of stiffness).</li>
 fails after the user selects &quot;Export&quot; from the &quot;Tools&quot; menu.</li>
 <li>Created separate fields in the SimulationLauncher
 for specifying the matximum allowed relative and absolute errors</li>
+<li>Fixing bug for the case of a parameter defined as a deferred-evaluation
+expression</li>
 </ul>
 </td>
 <td>
