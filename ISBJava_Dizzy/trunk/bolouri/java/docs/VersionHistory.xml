@@ -38,7 +38,7 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
-<td>1.1.2</td>
+<td><a href="../1.1.2/&appDownloadURL;">1.1.2</a></td>
 <td>2004/01/??</td>
 <td>
 <ul>
@@ -71,7 +71,7 @@ offered by this module.</li>
 </tr>
 
 <tr valign="top">
-<td>1.1.1</td>
+<td><a href="../1.1.1/&appDownloadURL;">1.1.1</a></td>
 <td>2004/01/05</td>
 <td>
 <ul>
@@ -98,7 +98,7 @@ was not working correctly on the Windows platform.</li>
 </tr>
 
 <tr valign="top">
-<td>1.1.0</td>
+<td><a href="../1.1.0/&appDownloadURL;">1.1.0</a></td>
 <td>2003/12/22</td>
 <td>
 <ul>
@@ -143,7 +143,7 @@ clipboard.</li>
 </tr>
 
 <tr valign="top">
-<td>1.0.0</td>
+<td><a href="../1.0.0/&appDownloadURL;">1.0.0</a></td>
 <td>2003/12/08</td>
 <td>
 <ul>
@@ -168,7 +168,7 @@ of the simulator when a parameter is defined with a deferred-evaluation expressi
 </tr>
 
 <tr valign="top">
-<td>0.0.8</td>
+<td><a href="../0.0.8/&appDownloadURL;">0.0.8</a></td>
 <td>2003/11/21</td>
 <td>
 <ul>
@@ -184,7 +184,7 @@ are auto-filled, and are updated when the simulator selection is changed.</li>
 </tr>
 
 <tr valign="top">
-<td>0.0.7</td>
+<td><a href="../0.0.7/&appDownloadURL;">0.0.7</a></td>
 <td>2003/11/07</td>
 <td>
 <ul>
@@ -199,7 +199,7 @@ for the model editor, to 40 characters.</li>
 </tr>
 
 <tr valign="top">
-<td>0.0.6</td>
+<td><a href="../0.0.6/&appDownloadURL;">0.0.6</a></td>
 <td>2003/10/22</td>
 <td>
 <ul>
@@ -212,7 +212,7 @@ reaction rates for dimerization reactions, for model interchangability with the 
 </tr>
 
 <tr valign="top">
-<td>0.0.5</td>
+<td><a href="../0.0.5/&appDownloadURL;">0.0.5</a></td>
 <td>2003/10/20</td>
 <td>
 <ul>
@@ -229,7 +229,7 @@ DOS shell command-line argument processing.</li>
 </tr>
 
 <tr valign="top">
-<td>0.0.4</td>
+<td><a href="../0.0.4/&appDownloadURL;">0.0.4</a></td>
 <td>2003/08/28</td>
 <td>Modified the Cytoscape bridge to use JNLP, so Cytoscape does not have to be bundled with Dizzy.</td>
 </tr>
