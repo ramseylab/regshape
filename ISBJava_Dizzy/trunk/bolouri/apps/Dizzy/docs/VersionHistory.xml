@@ -73,6 +73,10 @@ to the &quot;pause&quot; button.</li>
 (or multi-step) reactions, to improve numerical stability and performance.</li>
 <li>Modified the &quot;<code>odeToJava-dopr54-adaptive</code>&quot; simulator, so
 that it is now possible to pause or cancel a running simulation within this simulator.</li>
+<li>Removed support for the functions <code>gammaln()</code> and <code>rand()</code> in 
+mathematical expressions.  The <code>rand()</code> function causes problems with
+the expression value cachying feature introduced in version 1.4.0, and the
+<code>gammaln()</code> code is likely encumbered with license issues.</li>
 </ul>
 </td>
 <td><a href="&javaURL;/1.4.2/&installerDownloadRelURL;">1.4.2</a></td>
