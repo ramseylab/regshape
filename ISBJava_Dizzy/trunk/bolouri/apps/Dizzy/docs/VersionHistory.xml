@@ -48,12 +48,11 @@ This document contains the version history for the
 <td>2004/04/05</td>
 <td>
 <ul>
-<li>Fixed an inefficiency in the <code>SimulatorStochasticGibsonBruck</code>,
+<li>Fixed an inefficiency in the Gibson-Bruck simulator,
 where reaction rates for reactions with custom reaction rate expressions, were
-being recomputed after every iteration.  Now, the <code>Expression.IVisitor</code>
-interface is used to build a dependency tree of the reaction rate expression.
-The reaction rate is then recomputed only when one of the dynamical elements it is 
-dependent upon, has changed.</li>
+being recomputed after every iteration.  Now, a dependency tree is built of the 
+reaction&apos;s rate expression.  The reaction rate is then recomputed only 
+when one of the dynamical elements it is dependent upon, has changed.</li>
 <li>Split the Tau-Leap simulator into two separate simulators, 
 <code>taulea-complex</code> and <code>tauleap-simple</code>.  This allows for using
 different algorithms for calculating the leap time, for complex and
