@@ -1,3 +1,4 @@
+package edu.caltech.sbml;
 /*
 ** Filename    : TOutputNetwork.java
 ** Description : Write the Network object out to the console for inspection
@@ -48,8 +49,8 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uOutputNetwork;
 
 /**
  * Title:        SBML Validate
@@ -61,9 +62,6 @@ package uOutputNetwork;
  */
 
 // Wrtite the Network object out to the console for inspection
-
-import uJNetwork.*;
-import uReactantList.*;
 
 
 public class TOutputNetwork {

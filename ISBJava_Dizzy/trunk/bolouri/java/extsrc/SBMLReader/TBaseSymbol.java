@@ -1,6 +1,8 @@
+package edu.caltech.sbml;
+
 /*
-** Filename    : TVolumeList.java
-** Description : a list of volume objects, suitably wrapped to avoid casting from Object to Volume
+** Filename    : TBaseSymbol.java
+** Description : base class for SBML objects that have a name and value eg species
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,60 +50,29 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uVolumeList;
-
-import java.util.*;
 
 /**
  * Title:        SBML Validate
- * Description:  SBML Validation Applciation
+ * Description:  SBML Validation Application
  * Copyright:    Copyright (c) 2001
  * Company:      Caltech
  * @author Herbert Sauro
  * @version 1.0
  */
 
-// Define a list of volume objects, suitably wrapped to avoid casting
-// from Object to Volume
-
-import uVolume.*;
-import uIntObject.*;
+// All NOM data classes decent frtom this simple class
 
 
-public class TVolumeList {
-     ArrayList FList;
+public class TBaseSymbol {
+    public String Name;    // Name of the symbol
+    public double Value;   // Value of the symbol
+    public int HasValue;   // Uses to determine whether value has been set or not
 
-     public TVolumeList() {
-       FList = new ArrayList();
-     }
-
-     public TVolume get (int Index) {
-        return (TVolume) FList.get(Index);
-     }
-
-     public void set (int Index, TVolume Item) {
-        FList.set (Index, Item);
-     }
-
-     public int add (String Name, double Value) {
-        FList.add(new TVolume (Name, Value));
-        return FList.size() - 1;
-     }
-
-     public boolean find (String Name, IntObj Index) {
-         boolean result = false; Index.i = -1; int i = 0;
-         for (i=0; i<FList.size(); i++) {
-             if (((TVolume) FList.get(i)).Name.equals(Name)) {
-                result = true;
-                Index.i = i;
-                break;
-             }
-         }
-         return result;
-     }
-
-     public int size() {
-        return FList.size();
-     }
+    public TBaseSymbol() {
+       Name = "";
+       Value = 0.0;
+       HasValue = TConstants.nsUnDefined;
+    }
 }

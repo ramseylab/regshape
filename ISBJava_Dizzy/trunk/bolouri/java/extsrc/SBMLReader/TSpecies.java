@@ -1,6 +1,8 @@
+package edu.caltech.sbml;
+
 /*
-** Filename    : TConstants.java
-** Description : SBML NOM Module wide constants and 'enumerated' data is defined here
+** Filename    : TSpecies.java
+** Description : a signle species in the network
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,8 +50,8 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uConstants;
 
 /**
  * Title:        SBML Validate
@@ -60,19 +62,25 @@ package uConstants;
  * @version 1.0
  */
 
-// System wide constants. Also 'enumerated' data is defined here
+// This class defines the Species type
 
-public class TConstants {
+public class TSpecies extends TBaseSymbol {
+  public TVolume Volume;  // A reference to a element in the VolumeList
+  public int Status;      // Set to jmsFLoat or jmsFixed
 
-  // not part of SBML Standard
-  //public static final String UniversalVolumeName = "uVol";
+  public TSpecies() {
+     Name = "";
+     Value = 0.0;
+     Volume = null;
+     Status = TConstants.jmsFloat;
+     HasValue = TConstants.nsUnDefined;
+  }
 
-  public static final int jmsFloat = 0;
-  public static final int jmsFixed = 1;
-
-  public static final int nsUnDefined = 0;
-  public static final int nsDefined = 1;
-
-  public TConstants() {
+  public TSpecies (String Name, int Status, int HasValue, double Value) {
+      this.Name = Name;
+      this.Status = Status;
+      this.HasValue = HasValue;
+      this.Value = Value;
+      Volume = null;
   }
 }

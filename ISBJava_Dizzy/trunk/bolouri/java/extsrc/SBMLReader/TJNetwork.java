@@ -1,6 +1,7 @@
+package edu.caltech.sbml;
 /*
-** Filename    : TBaseSymbol.java
-** Description : base class for SBML objects that have a name and value eg species
+** Filename    : TJNetwork.java
+** Description : NOM (Network Object Model)
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,8 +49,10 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uBaseSymbol;
+
+import java.util.*;
 
 /**
  * Title:        SBML Validate
@@ -60,19 +63,44 @@ package uBaseSymbol;
  * @version 1.0
  */
 
-// All NOM data classes decent frtom this simple class
+ // NOM (Network Object Model)
 
-import uConstants.*;
+ // Model details are stored in NOM objects. Parsers of particular
+ // information types, eg XML, Jarnac, will load a model into
+ // a NOM object. The NOM acts as a common interchange object
+ // between different export representations.
 
 
-public class TBaseSymbol {
-    public String Name;    // Name of the symbol
-    public double Value;   // Value of the symbol
-    public int HasValue;   // Uses to determine whether value has been set or not
+public class TJNetwork {
+  public TVolumeList VolumeList;
+  public TSpeciesList MetaboliteList;
+  public TSpeciesList BoundaryList;
+  public TParameterList GlobalParameterList;
+  public TReactionList ReactionList;
+  public String Name;
+  public TRuleList RuleList;
 
-    public TBaseSymbol() {
-       Name = "";
-       Value = 0.0;
-       HasValue = TConstants.nsUnDefined;
-    }
+  public TJNetwork() {
+     VolumeList = new TVolumeList();
+     MetaboliteList = new TSpeciesList();
+     BoundaryList = new TSpeciesList();
+     GlobalParameterList = new TParameterList();
+     ReactionList = new TReactionList();
+     RuleList = new TRuleList();
+  }
+
+  public TSpecies FindMetabolite (String Name) {
+       for (int i = 0; i<MetaboliteList.size(); i++) {
+           if (MetaboliteList.get(i).Name.equals(Name)) {
+              return MetaboliteList.get(i);
+           }
+       }
+       for (int i = 0; i<BoundaryList.size(); i++) {
+           if (BoundaryList.get(i).Name.equals(Name)) {
+              return BoundaryList.get(i);
+           }
+       }
+       return null;
+  }
+
 }

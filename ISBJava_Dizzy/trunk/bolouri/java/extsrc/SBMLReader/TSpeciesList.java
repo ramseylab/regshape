@@ -1,6 +1,8 @@
+package edu.caltech.sbml;
+
 /*
-** Filename    : TReactant.java
-** Description : stores details of a reactant
+** Filename    : TSpeciesList.java
+** Description : a list of Species objects, suitably wrapped to avoid casting from Object to Species
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,8 +50,10 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uReactant;
+
+import java.util.*;
 
 /**
  * Title:        SBML Validate
@@ -60,18 +64,30 @@ package uReactant;
  * @version 1.0
  */
 
-// Reactant class
+// Define a list of Species objects, suitably wrapped to avoid casting
+// from Object to Species
 
-import uSpecies.*;
+public class TSpeciesList {
+     ArrayList FList;
 
+     public TSpeciesList() {
+       FList = new ArrayList();
+     }
 
-public class TReactant {
-  // TEMP VARIABLE, ONLY USED DURING READING OF OBJECT, not used yet
-  String MetaboliteName;
+     public TSpecies get (int Index) {
+        return (TSpecies) FList.get(Index);
+     }
 
-  public TSpecies Species;  // Reference only, points to an element in MetaboliteList
-  public int Stoichiometry;
+     public void set (int Index, TSpecies Item) {
+        FList.set (Index, Item);
+     }
 
-  public TReactant() {
-  }
+     public int add (String Name, int Status, int HasValue, double Value) {
+        FList.add(new TSpecies (Name, Status, HasValue, Value));
+        return FList.size() - 1;
+     }
+
+     public int size() {
+        return FList.size();
+     }
 }

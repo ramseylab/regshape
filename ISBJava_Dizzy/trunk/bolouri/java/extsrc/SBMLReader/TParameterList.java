@@ -1,6 +1,7 @@
+package edu.caltech.sbml;
 /*
-** Filename    : TSpecies.java
-** Description : a signle species in the network
+** Filename    : TParameterList.java
+** Description : Define a list of parameter objects, suitably wrapped to avoid casting from Object to Parameter
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,8 +49,10 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uSpecies;
+
+import java.util.*;
 
 /**
  * Title:        SBML Validate
@@ -60,30 +63,37 @@ package uSpecies;
  * @version 1.0
  */
 
-// This class defines the Species type
-
-import uConstants.*;
-import uBaseSymbol.*;
-import uVolume.*;
+// Define a list of parameter objects, suitably wrapped to avoid casting
+// from Object to Parameter
 
 
-public class TSpecies extends TBaseSymbol {
-  public TVolume Volume;  // A reference to a element in the VolumeList
-  public int Status;      // Set to jmsFLoat or jmsFixed
 
-  public TSpecies() {
-     Name = "";
-     Value = 0.0;
-     Volume = null;
-     Status = TConstants.jmsFloat;
-     HasValue = TConstants.nsUnDefined;
-  }
+public class TParameterList {
+     ArrayList FList;
 
-  public TSpecies (String Name, int Status, int HasValue, double Value) {
-      this.Name = Name;
-      this.Status = Status;
-      this.HasValue = HasValue;
-      this.Value = Value;
-      Volume = null;
-  }
+     public TParameterList() {
+       FList = new ArrayList();
+     }
+
+     public TParameter get (int Index) {
+        return (TParameter) FList.get(Index);
+     }
+
+     public void set (int Index, TParameter Item) {
+        FList.set (Index, Item);
+     }
+
+     public int add (String Name, double Value, int HasValue) {
+        FList.add(new TParameter (Name, Value, HasValue));
+        return FList.size() - 1;
+     }
+
+     public int add (TParameter P) {
+        FList.add (P);
+        return FList.size() - 1;
+     }
+
+     public int size() {
+        return FList.size();
+     }
 }

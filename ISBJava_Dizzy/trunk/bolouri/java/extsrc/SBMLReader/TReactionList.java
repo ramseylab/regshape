@@ -1,6 +1,8 @@
+package edu.caltech.sbml;
+
 /*
-** Filename    : IntObj.java
-** Description : Integer object, used to pass integers by reference to methods
+** Filename    : TReactionList.java
+** Description : a list of Reaction objects, suitably wrapped to avoid casting from Object to Reaction
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,9 +50,10 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uIntObject;
 
+import java.util.*;
 /**
  * Title:        SBML Validate
  * Description:  SBML Validation Application
@@ -60,11 +63,36 @@ package uIntObject;
  * @version 1.0
  */
 
-// Integer object, used to pass integers by reference to methods
+// Define a list of Reaction objects, suitably wrapped to avoid casting
+// from Object to Reaction
 
-public class IntObj {
-  public int i;
-  public IntObj() {
-     i = 0;
-  }
+
+public class TReactionList {
+     ArrayList FList;
+
+     public TReactionList() {
+       FList = new ArrayList();
+     }
+
+     public TReaction get (int Index) {
+        return (TReaction) FList.get(Index);
+     }
+
+     public void set (int Index, TReaction Item) {
+        FList.set (Index, Item);
+     }
+
+     public int add (String Name) {
+        FList.add(new TReaction (Name));
+        return FList.size() - 1;
+     }
+
+     public int add (TReaction Reaction) {
+        FList.add(Reaction);
+        return FList.size() - 1;
+     }
+
+      public int size() {
+        return FList.size();
+     }
 }

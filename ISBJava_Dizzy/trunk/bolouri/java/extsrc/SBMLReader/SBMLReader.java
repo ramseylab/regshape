@@ -1,3 +1,5 @@
+package edu.caltech.sbml;
+
 /*
 ** Filename    : NOMService.java
 ** Description : service implementation thats exported by the SBMLValidate module application
@@ -49,15 +51,13 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package; unified
+**                      all the source code in this directory into a single
+**                      package namespace.
 */
-package SBMLValidate;
 
 import edu.caltech.sbw.*;
-import uJNetwork.*;
-import uReactantList.*;
 import java.util.*;
-import uRule.*;
-import uRuleList.*;
 
 /**
  * Title:        SBML Validate
@@ -68,7 +68,7 @@ import uRuleList.*;
  * @version 1.0
  */
 
-public class NOMService
+public class SBMLReader
 {
     public static final String RULE_TYPE_SPECIES = "species";
     public static final String RULE_TYPE_COMPARTMENT = "compartment";
@@ -302,9 +302,9 @@ public class NOMService
         return network.GlobalParameterList.get(globalParameter).Name;
     }
 
-    private uBaseSymbol.TBaseSymbol getSymbol(String name) throws SBWException
+    private TBaseSymbol getSymbol(String name) throws SBWException
     {
-        uBaseSymbol.TBaseSymbol symbol = getSymbolOrNull(name);
+        TBaseSymbol symbol = getSymbolOrNull(name);
 
         if (symbol == null)
             throw new SBWApplicationException("unable to find symbol", "");
@@ -314,14 +314,14 @@ public class NOMService
 
     public boolean exists(String name)
     {
-        uBaseSymbol.TBaseSymbol symbol = getSymbolOrNull(name);
+        TBaseSymbol symbol = getSymbolOrNull(name);
 
         return symbol != null;
     }
 
-    private uBaseSymbol.TBaseSymbol getSymbolOrNull(String name)
+    private TBaseSymbol getSymbolOrNull(String name)
     {
-        uBaseSymbol.TBaseSymbol symbol = network.FindMetabolite(name);
+        TBaseSymbol symbol = network.FindMetabolite(name);
 
         if (symbol != null)
             return symbol ;

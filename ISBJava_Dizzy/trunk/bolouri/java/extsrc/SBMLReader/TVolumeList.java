@@ -1,6 +1,8 @@
+package edu.caltech.sbml;
+
 /*
-** Filename    : TReactantList.java
-** Description : a list of reactant objects, suitably wrapped to avoid casting from Object to Reactant
+** Filename    : TVolumeList.java
+** Description : a list of volume objects, suitably wrapped to avoid casting from Object to Volume
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -49,51 +51,51 @@
 ** Contributor(s):
 **
 */
-package uReactantList;
 
 import java.util.*;
 
 /**
  * Title:        SBML Validate
- * Description:  SBML Validation Application
+ * Description:  SBML Validation Applciation
  * Copyright:    Copyright (c) 2001
  * Company:      Caltech
  * @author Herbert Sauro
  * @version 1.0
  */
 
-// Define a list of reactant objects, suitably wrapped to avoid casting
-// from Object to Reactant
+// Define a list of volume objects, suitably wrapped to avoid casting
+// from Object to Volume
 
-
-import uReactant.*;
-
-public class TReactantList {
+public class TVolumeList {
      ArrayList FList;
 
-     // Constructor
-     public TReactantList() {
+     public TVolumeList() {
        FList = new ArrayList();
      }
 
-     public TReactant get (int Index) {
-        return (TReactant) FList.get(Index);
+     public TVolume get (int Index) {
+        return (TVolume) FList.get(Index);
      }
 
-     public void set (int Index, TReactant Item) {
+     public void set (int Index, TVolume Item) {
         FList.set (Index, Item);
      }
 
-     // Returns the index where the object was stored in the list
-     public int add (String Name, double Value, int HasValue) {
-        FList.add(new TReactant());
+     public int add (String Name, double Value) {
+        FList.add(new TVolume (Name, Value));
         return FList.size() - 1;
      }
 
-     // Returns the index where the object was stored in the list
-     public int add (TReactant P) {
-        FList.add (P);
-        return FList.size() - 1;
+     public boolean find (String Name, IntObj Index) {
+         boolean result = false; Index.i = -1; int i = 0;
+         for (i=0; i<FList.size(); i++) {
+             if (((TVolume) FList.get(i)).Name.equals(Name)) {
+                result = true;
+                Index.i = i;
+                break;
+             }
+         }
+         return result;
      }
 
      public int size() {

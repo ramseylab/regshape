@@ -1,6 +1,7 @@
+package edu.caltech.sbml;
 /*
-** Filename    : TReaction.java
-** Description : represents a single reaction the network
+** Filename    : TConstants.java
+** Description : SBML NOM Module wide constants and 'enumerated' data is defined here
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,8 +49,8 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uReaction;
 
 /**
  * Title:        SBML Validate
@@ -60,32 +61,19 @@ package uReaction;
  * @version 1.0
  */
 
-// The Reaction class
+// System wide constants. Also 'enumerated' data is defined here
 
-import uReactantList.*;
-import uRateLaw.*;
+public class TConstants {
 
+  // not part of SBML Standard
+  //public static final String UniversalVolumeName = "uVol";
 
-public class TReaction {
+  public static final int jmsFloat = 0;
+  public static final int jmsFixed = 1;
 
-  public String Name;   // Name of the reaction
-  public TReactantList ReactantList;
-  public TReactantList ProductList;
-  public TRateLaw RateLaw;
-  public boolean Reversible;
+  public static final int nsUnDefined = 0;
+  public static final int nsDefined = 1;
 
-  public void Init() {
-     ReactantList = new TReactantList();
-     ProductList = new TReactantList();
-     RateLaw = new TRateLaw();
-     Reversible = true;
-  }
-
-  public TReaction() {
-     Init();
-  }
-  public TReaction(String Name) {
-     Init();
-     this.Name = Name;
+  public TConstants() {
   }
 }

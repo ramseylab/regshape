@@ -1,14 +1,7 @@
+package edu.caltech.sbml;
+
 /*
-** Filename    : TRateLaw.java
-** Description : stores details of a ratelaw, its formula and local parameters
-** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
-** Organization: Caltech ERATO Kitano Systems Biology Project
-** Created     : 2001-07-07
-** Revision    : $Id$
-** $Source$
-**
-** Copyright 2001 California Institute of Technology and
-** Japan Science and Technology Corporation.
+** Copyright 2004 Institute for Systems Biology, Seattle Washington
 **
 ** This library is free software; you can redistribute it and/or modify it
 ** under the terms of the GNU Lesser General Public License as published
@@ -36,40 +29,48 @@
 **
 ** The original code contained here was initially developed by:
 **
-**     Andrew Finney, Herbert Sauro, Michael Hucka, Hamid Bolouri
-**     The Systems Biology Workbench Development Group
-**     ERATO Kitano Systems Biology Project
-**     Control and Dynamical Systems, MC 107-81
-**     California Institute of Technology
-**     Pasadena, CA, 91125, USA
-**
-**     http://www.cds.caltech.edu/erato
-**     mailto:sysbio-team@caltech.edu
+**     Stephen RAmsey
+**     Institute for Systems Biology
+**     1441 N 34th St
+**     Seattle, WA 98103
 **
 ** Contributor(s):
 **
 */
-package uRateLaw;
 
-/**
- * Title:        SBML Validate
- * Description:  SBML Validation Application
- * Copyright:    Copyright (c) 2001
- * Company:      Caltech
- * @author Herbert Sauro
- * @version 1.0
- */
+import java.util.*;
 
-// Ratelaw class, stores details of a ratelaw, its formula and local parameters
+public class TRuleList 
+{
+    ArrayList mList;
+    public TRuleList()
+    {
+        mList = new ArrayList();
+    }
 
-import uParameterList.*;
+    public TRule get(int pIndex)
+    {
+        return((TRule) mList.get(pIndex));
+    }
 
-public class TRateLaw {
-    public TParameterList ParameterList;
-    public String expression;  // The formula
+    public void set(int pIndex, TRule pItem)
+    {
+        mList.set(pIndex, pItem);
+    }
 
-  public TRateLaw() {
-     ParameterList = new TParameterList();
-     expression = "";
-  }
+    public int add(String pName, String pFormula, TRule.Type pType)
+    {
+        return(add(new TRule(pName, pFormula, pType)));
+    }
+
+    public int add(TRule pRule)
+    {
+        mList.add(pRule);
+        return(size() - 1);
+    }
+
+    public int size()
+    {
+        return(mList.size());
+    }
 }

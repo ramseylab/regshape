@@ -1,6 +1,7 @@
+package edu.caltech.sbml;
 /*
-** Filename    : TReactionList.java
-** Description : a list of Reaction objects, suitably wrapped to avoid casting from Object to Reaction
+** Filename    : TRateLaw.java
+** Description : stores details of a ratelaw, its formula and local parameters
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,10 +49,9 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uReactionList;
 
-import java.util.*;
 /**
  * Title:        SBML Validate
  * Description:  SBML Validation Application
@@ -61,38 +61,15 @@ import java.util.*;
  * @version 1.0
  */
 
-// Define a list of Reaction objects, suitably wrapped to avoid casting
-// from Object to Reaction
+// Ratelaw class, stores details of a ratelaw, its formula and local parameters
 
 
-import uReaction.*;
+public class TRateLaw {
+    public TParameterList ParameterList;
+    public String expression;  // The formula
 
-public class TReactionList {
-     ArrayList FList;
-
-     public TReactionList() {
-       FList = new ArrayList();
-     }
-
-     public TReaction get (int Index) {
-        return (TReaction) FList.get(Index);
-     }
-
-     public void set (int Index, TReaction Item) {
-        FList.set (Index, Item);
-     }
-
-     public int add (String Name) {
-        FList.add(new TReaction (Name));
-        return FList.size() - 1;
-     }
-
-     public int add (TReaction Reaction) {
-        FList.add(Reaction);
-        return FList.size() - 1;
-     }
-
-      public int size() {
-        return FList.size();
-     }
+  public TRateLaw() {
+     ParameterList = new TParameterList();
+     expression = "";
+  }
 }

@@ -1,6 +1,7 @@
+package edu.caltech.sbml;
 /*
-** Filename    : NOMAnalysis.java
-** Description : service in "Analysis" category - loads SBML into clipboard
+** Filename    : TParameter.java
+** Description : The TParameter class, in reality just a TBaseSymbol, but the name change is useful
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,9 +49,9 @@
 **
 ** Contributor(s):
 **
-*/package SBMLValidate;
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
+*/
 
-import edu.caltech.sbw.*;
 /**
  * Title:        SBML Validate
  * Description:  SBML Validation Application
@@ -60,17 +61,15 @@ import edu.caltech.sbw.*;
  * @version 1.0
  */
 
-public class NOMAnalysis
-{
-    private NOMService service ;
+// The TParameter class, in reality just a TBaseSymbol, but the name change
+// is useful
 
-    public NOMAnalysis(NOMService service)
-    {
-        this.service = service ;
-    }
 
-    public void doAnalysis(String sbml) throws SBWException
-    {
-        service.loadSBML(sbml);
-    }
+public class TParameter extends TBaseSymbol {
+
+   public TParameter (String Name, double Value, int HasValue) {
+       this.Name = Name;
+       this.Value = Value;
+       this.HasValue = HasValue;
+   }
 }

@@ -1,6 +1,8 @@
+package edu.caltech.sbml;
+
 /*
-** Filename    : TParameterList.java
-** Description : Define a list of parameter objects, suitably wrapped to avoid casting from Object to Parameter
+** Filename    : TReactantList.java
+** Description : a list of reactant objects, suitably wrapped to avoid casting from Object to Reactant
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,8 +50,8 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uParameterList;
 
 import java.util.*;
 
@@ -62,33 +64,33 @@ import java.util.*;
  * @version 1.0
  */
 
-// Define a list of parameter objects, suitably wrapped to avoid casting
-// from Object to Parameter
+// Define a list of reactant objects, suitably wrapped to avoid casting
+// from Object to Reactant
 
-import uParameter.*;
-
-
-public class TParameterList {
+public class TReactantList {
      ArrayList FList;
 
-     public TParameterList() {
+     // Constructor
+     public TReactantList() {
        FList = new ArrayList();
      }
 
-     public TParameter get (int Index) {
-        return (TParameter) FList.get(Index);
+     public TReactant get (int Index) {
+        return (TReactant) FList.get(Index);
      }
 
-     public void set (int Index, TParameter Item) {
+     public void set (int Index, TReactant Item) {
         FList.set (Index, Item);
      }
 
+     // Returns the index where the object was stored in the list
      public int add (String Name, double Value, int HasValue) {
-        FList.add(new TParameter (Name, Value, HasValue));
+        FList.add(new TReactant());
         return FList.size() - 1;
      }
 
-     public int add (TParameter P) {
+     // Returns the index where the object was stored in the list
+     public int add (TReactant P) {
         FList.add (P);
         return FList.size() - 1;
      }

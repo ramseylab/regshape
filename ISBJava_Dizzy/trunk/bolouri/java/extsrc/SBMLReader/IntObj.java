@@ -1,6 +1,8 @@
+package edu.caltech.sbml;
+
 /*
-** Filename    : TParameter.java
-** Description : The TParameter class, in reality just a TBaseSymbol, but the name change is useful
+** Filename    : IntObj.java
+** Description : Integer object, used to pass integers by reference to methods
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,8 +50,8 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uParameter;
 
 /**
  * Title:        SBML Validate
@@ -60,17 +62,11 @@ package uParameter;
  * @version 1.0
  */
 
-// The TParameter class, in reality just a TBaseSymbol, but the name change
-// is useful
+// Integer object, used to pass integers by reference to methods
 
-import uBaseSymbol.*;
-
-
-public class TParameter extends TBaseSymbol {
-
-   public TParameter (String Name, double Value, int HasValue) {
-       this.Name = Name;
-       this.Value = Value;
-       this.HasValue = HasValue;
-   }
+public class IntObj {
+  public int i;
+  public IntObj() {
+     i = 0;
+  }
 }

@@ -1,6 +1,8 @@
+package edu.caltech.sbml;
+
 /*
-** Filename    : TJNetwork.java
-** Description : NOM (Network Object Model)
+** Filename    : TUtils.java
+** Description : Useful utility routines, mainly shorter versions of Java string to integer and double conversion methods
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,10 +50,8 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uJNetwork;
-
-import java.util.*;
 
 /**
  * Title:        SBML Validate
@@ -62,51 +62,25 @@ import java.util.*;
  * @version 1.0
  */
 
-import uVolumeList.*;
-import uSpeciesList.*;
-import uParameterList.*;
-import uSpecies.*;
-import uReactionList.*;
-import uRuleList.*;
-
- // NOM (Network Object Model)
-
- // Model details are stored in NOM objects. Parsers of particular
- // information types, eg XML, Jarnac, will load a model into
- // a NOM object. The NOM acts as a common interchange object
- // between different export representations.
+// Useful utility routines, mainly shorter versions of Java string to integer
+// and double conversion methods
 
 
-public class TJNetwork {
-  public TVolumeList VolumeList;
-  public TSpeciesList MetaboliteList;
-  public TSpeciesList BoundaryList;
-  public TParameterList GlobalParameterList;
-  public TReactionList ReactionList;
-  public String Name;
-  public TRuleList RuleList;
+public class TUtils {
 
-  public TJNetwork() {
-     VolumeList = new TVolumeList();
-     MetaboliteList = new TSpeciesList();
-     BoundaryList = new TSpeciesList();
-     GlobalParameterList = new TParameterList();
-     ReactionList = new TReactionList();
-     RuleList = new TRuleList();
+  public TUtils() {
   }
 
-  public TSpecies FindMetabolite (String Name) {
-       for (int i = 0; i<MetaboliteList.size(); i++) {
-           if (MetaboliteList.get(i).Name.equals(Name)) {
-              return MetaboliteList.get(i);
-           }
-       }
-       for (int i = 0; i<BoundaryList.size(); i++) {
-           if (BoundaryList.get(i).Name.equals(Name)) {
-              return BoundaryList.get(i);
-           }
-       }
-       return null;
+  public static double StrToFloat (String str) {
+       return Double.valueOf(str).doubleValue();
+  }
+
+  public static int StrToInt (String str) {
+       return Integer.valueOf(str).intValue();
+  }
+
+  public static String IntToStr (int value) {
+       return String.valueOf(value);
   }
 
 }

@@ -1,6 +1,8 @@
+package edu.caltech.sbml;
+
 /*
-** Filename    : TVolume.java
-** Description : represents a single compartment
+** Filename    : TReactant.java
+** Description : stores details of a reactant
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,28 +50,28 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uVolume;
 
-import uBaseSymbol.*;
-import uConstants.*;
 /**
  * Title:        SBML Validate
- * Description:  SBML Validation Applciation
+ * Description:  SBML Validation Application
  * Copyright:    Copyright (c) 2001
  * Company:      Caltech
  * @author Herbert Sauro
  * @version 1.0
  */
 
-// The TVolume class, in reality just a TBaseSymbol, but the name change
-// is useful
+// Reactant class
 
-public class TVolume extends TBaseSymbol {
 
-   public TVolume (String Name, double Value) {
-       this.Name = Name;
-       this.Value = Value;
-       this.HasValue = TConstants.nsDefined;
-   }
+public class TReactant {
+  // TEMP VARIABLE, ONLY USED DURING READING OF OBJECT, not used yet
+  String MetaboliteName;
+
+  public TSpecies Species;  // Reference only, points to an element in MetaboliteList
+  public int Stoichiometry;
+
+  public TReactant() {
+  }
 }

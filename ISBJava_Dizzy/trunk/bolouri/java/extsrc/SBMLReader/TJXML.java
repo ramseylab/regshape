@@ -1,3 +1,5 @@
+package edu.caltech.sbml;
+
 /*
 ** Filename    : SBMLValidate.java
 ** Description : application class for the SBML validator/NOM module + top level of NOMService implementation
@@ -50,13 +52,17 @@
 **
 ** Contributor(s):
 **
-** Modified by Stephen Ramsey to remove dependence on Xerces library, 
-** 2003/08/28
+** sramsey  2003/08/28  Remove dependence on Xerces library.  Using Crimson
+**                      library instead, because it is the default XML parser
+**                      that ships with the Sun JDK 1.4.2
 **
-** Modified by Stephen Ramsey to permit SBML Level 1, Version 2 documents.
-** 2003/10/20
+** sramsey  2003/10/20  Modified to read SBML Level 1, Version 2 documents,
+**                      including "Rules", which were introduced in SBML L1V2.
+**
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package; unified
+**                      all the source code in this directory into a single
+**                      package namespace.
 */
-package SBMLValidate;
 
 import java.io.*;
 import java.lang.String.*;
@@ -68,20 +74,6 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 
 import edu.caltech.sbw.*;
-
-import uConstants.*;
-import uUtils.*;
-import uJNetwork.*;
-import uSpecies.*;
-import uSpeciesList.*;
-import uIntObject.*;
-import uParameter.*;
-import uParameterList.*;
-import uReaction.*;
-import uReactant.*;
-import uOutputNetwork.*;
-import uRuleList.*;
-import uRule.*;
 
 // TJXML is a XML decorator class for the NOM object class
 // The NOM object class defines the interface to an internal representation
@@ -659,132 +651,3 @@ class TJXML implements ErrorHandler {
 }
 
 
-// ------------------------------------------------------------------------
-// Main entry point
-// ------------------------------------------------------------------------
-
-public class SBMLValidate {
-  private static void sbwProcessing(boolean register, boolean unique)
-  {
-      try
-      {
-          ModuleImpl moduleImpl;
-
-          if (unique)
-          {
-              moduleImpl =
-                  new ModuleImpl(
-                      "edu.caltech.NOMClipboard", "Clipboard Network Object Model",
-                      ModuleImpl.UNIQUE, SBMLValidate.class,
-                      "This module acts as a clipboard for storing SBML"
-                      + " model definitions.  After loading a model into the"
-                      + " clipboard from one module, you can read it out again"
-                      + " in another module.");
-
-              moduleImpl.setCommandLine(moduleImpl.getCommandLine() + " -unique");
-
-              NOMService service = new NOMService() ;
-
-              moduleImpl.addService(
-                  "NOMClipboard", "Save to Network Object Model Clipboard",
-                  "Analysis", new NOMAnalysis(service),
-                  "Service to allow saving an SBML model into the clipboard");
-
-              moduleImpl.addService(
-                  "NOM", "Network Object Model", "", service,
-                  "Provides a method for parsing an SBML model into an"
-                  + " internal representation (a Network Object Model), as"
-                  + " well as methods for accessing the different parts of"
-                  + " that model definition through an API.");
-          }
-          else
-          {
-              moduleImpl =
-                  new ModuleImpl(
-                      "edu.caltech.NOM", "Network Object Model",
-                      ModuleImpl.SELF_MANAGED, SBMLValidate.class,
-                      "Provides facilities for parsing an SBML model"
-                      + " definition into an internal form (a Network"
-                      + " Object Model) and for reading out the parts of"
-                      + " the definition programmatically.");
-
-              moduleImpl.addService(
-                  "NOM", "Network Object Model", "", NOMService.class,
-                  "Provides a method for parsing an SBML model into an"
-                  + " internal representation (a Network Object Model), as"
-                  + " well as methods for accessing the different parts of"
-                  + " that model definition through an API.");
-          }
-
-          if (register)
-          {
-              moduleImpl.registerModule();
-              System.exit(0);
-          }
-          else
-              moduleImpl.enableModuleServices();
-      }
-      catch (SBWException e)
-      {
-          e.handleWithDialog();
-      }
-  }
-
-  /* Main method */
-  public static void main(String[] args) {
-     if (args.length == 0) {
-        System.out.println("Usage, one of either:");
-        System.out.println("java SBMLValidator [-dump] xmlfile");
-        System.out.println("    -dump   write out summary of model");
-        System.out.println("java SBMLValidator -sbwmodule [-unique]");
-        System.out.println("java SBMLValidator -sbwregister [-unique]");
-        System.out.println("    -unique register/run as a unique module");
-        System.exit (0);
-     }
-     System.out.println ("SBML Validator v0.2");
-     TJXML Parser = new TJXML();
-
-     boolean register = false;
-     boolean doSbwProcessing = false ;
-     boolean dumpOpt = false;
-     boolean unique = false ;
-     String fileName = "";
-
-     for (int i=0; i<args.length; i++)
-     {
-         if (args[i].charAt(0) == '-') {
-            String opt = args[i].substring(1, args[i].length());
-            if (opt.equals("dump")) dumpOpt = true;
-            if (opt.equals("sbwregister"))
-            {
-                register = true;
-                doSbwProcessing = true ;
-            }
-            if (opt.equals("sbwmodule"))
-                doSbwProcessing = true ;
-            if (opt.equals("unique"))
-                unique = true ;
-         } else
-           fileName = args[i];
-     }
-
-     if (doSbwProcessing)
-         sbwProcessing(register, unique);
-     else
-     {
-         try {
-           Parser.LoadFromFile(fileName);
-           System.out.println("SBML validation complete\n");
-        } catch (SBWException e) {
-           System.out.println ("[Validation failed] " + e.getMessage() + '\n' + e.getDetailedMessage());
-           //e.printStackTrace();
-        }
-
-        if (dumpOpt) {
-            System.out.println("Processed file: " + fileName);
-            TOutputNetwork on = new TOutputNetwork (Parser.Network);
-            on.OutputNetwork ();
-         }
-     }
-  }
-}

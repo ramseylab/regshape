@@ -1,6 +1,8 @@
+package edu.caltech.sbml;
+
 /*
-** Filename    : TSpeciesList.java
-** Description : a list of Species objects, suitably wrapped to avoid casting from Object to Species
+** Filename    : TVolume.java
+** Description : represents a single compartment
 ** Author(s)   : SBW Development Group <sysbio-team@caltech.edu>
 ** Organization: Caltech ERATO Kitano Systems Biology Project
 ** Created     : 2001-07-07
@@ -48,47 +50,26 @@
 **
 ** Contributor(s):
 **
+** sramsey  2004/02/13  Changed to "edu.caltech.sbml" package
 */
-package uSpeciesList;
-
-import java.util.*;
 
 /**
  * Title:        SBML Validate
- * Description:  SBML Validation Application
+ * Description:  SBML Validation Applciation
  * Copyright:    Copyright (c) 2001
  * Company:      Caltech
  * @author Herbert Sauro
  * @version 1.0
  */
 
-// Define a list of Species objects, suitably wrapped to avoid casting
-// from Object to Species
+// The TVolume class, in reality just a TBaseSymbol, but the name change
+// is useful
 
-import uSpecies.*;
+public class TVolume extends TBaseSymbol {
 
-
-public class TSpeciesList {
-     ArrayList FList;
-
-     public TSpeciesList() {
-       FList = new ArrayList();
-     }
-
-     public TSpecies get (int Index) {
-        return (TSpecies) FList.get(Index);
-     }
-
-     public void set (int Index, TSpecies Item) {
-        FList.set (Index, Item);
-     }
-
-     public int add (String Name, int Status, int HasValue, double Value) {
-        FList.add(new TSpecies (Name, Status, HasValue, Value));
-        return FList.size() - 1;
-     }
-
-     public int size() {
-        return FList.size();
-     }
+   public TVolume (String Name, double Value) {
+       this.Name = Name;
+       this.Value = Value;
+       this.HasValue = TConstants.nsDefined;
+   }
 }
