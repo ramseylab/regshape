@@ -22,18 +22,32 @@ public class DataFileDelimiter implements Comparable
 {
     private final String mName;
     private final String mDelimiter;
+    private final boolean mSingle;
     private static final HashMap sMap;
+    private String mFilterRegex;
+    private String mDefaultExtension;
     
     static
     {
         sMap = new HashMap();
     }
     
-    public static final DataFileDelimiter TAB = new DataFileDelimiter("tab", "\t");
-    public static final DataFileDelimiter COMMA = new DataFileDelimiter("comma", ",");
-    public static final DataFileDelimiter SPACE = new DataFileDelimiter("space", " ");
+    public static final DataFileDelimiter TAB = new DataFileDelimiter("tab", "\t", true, ".*\\.tsv$", "tsv");
+    public static final DataFileDelimiter COMMA = new DataFileDelimiter("comma", ",", true, ".*\\.csv$", "csv");
+    public static final DataFileDelimiter SPACE = new DataFileDelimiter("space", " ", false, ".*\\.txt$", "txt");
     
 
+    /**
+     * Returns true if this delimiter type is just a single character per column.
+     * Returns false if multiple characters of this delimiter can be used to span
+     * between two adjacent columns (as with the "space" delimiter).
+     * 
+     * @return
+     */
+    public boolean getSingle()
+    {
+        return mSingle;
+    }
     
     public int compareTo(Object pObject)
     {
@@ -70,10 +84,23 @@ public class DataFileDelimiter implements Comparable
         return retArray;
     }
     
-    private DataFileDelimiter(String pName, String pDelimiter)
+    public String getFilterRegex()
+    {
+        return mFilterRegex;
+    }
+    
+    public String getDefaultExtension()
+    {
+        return mDefaultExtension;
+    }
+    
+    private DataFileDelimiter(String pName, String pDelimiter, boolean pSingle, String pFilterRegex, String pDefaultExtension)
     {
         mName = pName;
         mDelimiter = pDelimiter;
+        mSingle = pSingle;
+        mFilterRegex = pFilterRegex;
+        mDefaultExtension = pDefaultExtension;
         sMap.put(pName, this); 
     }
 }
