@@ -50,6 +50,8 @@ public final class SteadyStateAnalyzer
                 partialsi[j] = reaction.computeRatePartialDerivative(reactionRateExpression,
                                                                      species,
                                                                      pSymbolEvaluator);
+//                System.out.println("a[" + j + "] = " + reactionRateExpression);
+//                System.out.println("x[" + i + "] = " + species.getName());
             }
         }
 
@@ -60,7 +62,6 @@ public final class SteadyStateAnalyzer
             for(int ip = 0; ip < numSpecies; ++ip)
             {
                 double []partialsip = (double []) partials[ip];
-                Expression jacexp = Expression.ZERO;
                 double sum = 0.0;
                 for(int j = 0; j < numReactions; ++j)
                 {
@@ -84,6 +85,7 @@ public final class SteadyStateAnalyzer
         
         Expression []a = Reaction.getReactionRateExpressions(pReactions);
         Object []Jdbl = computeJacobian(a, pReactions, pSpecies, pReactionSpeciesAdjustmentVectors, pSymbolEvaluator);
+        Algebra algebra = new Algebra();
 
         // allocate storage for the matrix J
         DoubleFactory2D df = DoubleFactory2D.sparse;
@@ -113,8 +115,6 @@ public final class SteadyStateAnalyzer
             T.set(i, i, 1.0/Math.sqrt(Math.abs(eigenvalueRealPart)));
         }
 
-        Algebra algebra = new Algebra();
-
         DoubleMatrix2D Pinv = algebra.inverse(P);
 
         DoubleMatrix2D PT = algebra.mult(P, T);
@@ -140,9 +140,59 @@ public final class SteadyStateAnalyzer
             }
         }
         
-        DoubleMatrix2D Qr = algebra.mult(Q, r);
+//         DoubleMatrix2D UTreal = df.make(numSpecies, numSpecies, 0.0);
+//         DoubleMatrix2D UTimag = df.make(numSpecies, numSpecies, 0.0);
+//         DoubleMatrix2D Ureal = df.make(numSpecies, numSpecies, 0.0);
+//         DoubleMatrix2D Uimag = df.make(numSpecies, numSpecies, 0.0);
+        
+//         DoubleMatrix1D u_imag = eigenvalueDecomposition.getImagEigenvalues();
 
+//         double norm = 1.0/Math.sqrt(2.0);
+
+//         for(int i = 0; i < numSpecies; ++i)
+//         {
+//             double imaginary_part_of_ith_eigenvalue = u_imag.get(i);
+//             if(imaginary_part_of_ith_eigenvalue > 0.0)
+//             {
+//                 UTreal.set(i, i, norm);
+//                 UTreal.set(i + 1, i, norm);
+//                 UTreal.set(i, i + 1, 0.0);
+//                 UTreal.set(i + 1, i + 1, 0.0);
+                
+//                 UTimag.set(i, i, 0.0);
+//                 UTimag.set(i + 1, i, 0.0);
+//                 UTimag.set(i, i + 1, -1.0*norm);
+//                 UTimag.set(i + 1, i + 1, norm);
+
+//                 Ureal.set(i, i, norm);
+//                 Ureal.set(i + 1, i, 0.0);
+//                 Ureal.set(i, i + 1, norm);
+//                 Ureal.set(i + 1, i + 1, 0.0);
+                
+//                 Uimag.set(i, i, 0.0);
+//                 Uimag.set(i + 1, i, norm);
+//                 Uimag.set(i, i + 1, 0.0);
+//                 Uimag.set(i + 1, i + 1, -1.0*norm);
+                
+//                 ++i;
+//             }
+//             else
+//             {
+//                 UTreal.set(i, i, 1.0);
+//                 UTimag.set(i, i, 0.0);
+//                 Ureal.set(i, i, 1.0);
+//                 Uimag.set(i, i, 0.0);
+//             }
+//         }
+        
+//         System.out.println("Ureal: " + Ureal.toString());
+//         System.out.println("Uimag: " + Uimag.toString());
+//         System.out.println("UTreal: " + UTreal.toString());
+//         System.out.println("UTimag: " + UTimag.toString());
+
+        
         DoubleMatrix2D w = df.make(numSpecies, numReactions);
+        DoubleMatrix2D Qr = algebra.mult(Q, r);
 
         for(int i = 0; i < numSpecies; ++i)
         {
