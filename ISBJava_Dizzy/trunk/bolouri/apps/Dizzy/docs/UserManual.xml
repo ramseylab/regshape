@@ -4,9 +4,8 @@
   <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
   %AppConfig;
 
-<!ENTITY appExtension ".dizzy">
-<!ENTITY cmdlExtension ".cmdl">
-<!ENTITY sbmlExtension ".xml">
+<!ENTITY cmdlFileExtension ".cmdl">
+<!ENTITY sbmlFileExtension ".xml">
    ]>
 
 <!-- ========== PREAMBLE ========== -->
@@ -77,8 +76,8 @@ The Chemical Model Definition Language (CMDL)
 is the language understood "natively" by the
 &appName; scripting engine.  
 <p />
-The file extension of the CMDL command language is: &quot;<code>&cmdlExtension;</code>&quot;.
-The extension &quot;<code>&appExtension;</code>&quot; is also recognized as indicating a CMDL file.
+The file extension of the CMDL command language is: &quot;<code>&cmdlFileExtension;</code>&quot;.
+The extension &quot;<code>&appFileExtension;</code>&quot; is also recognized as indicating a CMDL file.
 <p />
 </li>
 </ol>
@@ -254,7 +253,7 @@ directory in which you installed &appName;.  Then navigate into the
 <img src="../images/screenshot4.png" alt="&appName; screenshot 4" />
 </p>
 <p>
-For starters, try selecting the &quot;<code>GAL&cmdlExtension;</code>&quot; 
+For starters, try selecting the &quot;<code>GAL&cmdlFileExtension;</code>&quot; 
 file, by double-clicking on that file name in the dialog box. 
 The &appName; window should now look like this:
 </p>
@@ -265,7 +264,7 @@ The &appName; window should now look like this:
 Note that the model description has appeared in the editor window.
 In this window, you can edit a model description, after which you
 may save your changes.  You probably will not want to modify the 
-<code>GAL&cmdlExtension;</code> model definition file just yet.
+<code>GAL&cmdlFileExtension;</code> model definition file just yet.
 Note that the file name appears after the &quot;<b>file:</b>&quot; label.
 There is also a label &quot;<b>parser:</b>&quot; label, whose function
 will be described later.
@@ -373,11 +372,11 @@ file into &appName;.
 </p>
 <p>
 We will assume that the model definition
-file you are creating will be called &quot;Model&cmdlExtension;&quot;. 
+file you are creating will be called &quot;Model&cmdlFileExtension;&quot;. 
 This file will define the species
 and chemical reactions that make up the model, as well as the kinetic
 parameters that will be used to simulate the reaction kinetics.  The 
-&quot;&cmdlExtension;&quot; file extension is important, so please
+&quot;&cmdlFileExtension;&quot; file extension is important, so please
 type the file name exactly as shown.  This helps the &appName; program
 to recognize the file as an official &quot;&appName; model definition file&quot;,
 and to select the proper interpreter to load the file.
@@ -683,11 +682,11 @@ subdirectory of the directory in which you install the &appName; software.
 sample model definition files in the &quot;samples&quot; subdirectory.
 Please use a different editor, such as WordPad or Emacs, in order to 
 ensure that the files appear properly formatted, in the editor.  <b>You
-may wish to associate &quot;<code>&cmdlExtension;</code>&quot; and
-&quot;<code>&appExtension;</code>&quot; files 
+may wish to associate &quot;<code>&cmdlFileExtension;</code>&quot; and
+&quot;<code>&appFileExtension;</code>&quot; files 
 with the WordPad program, so that you can double-click on a
-&quot;<code>&cmdlExtension;</code>&quot; or
-&quot;<code>&appExtension;</code>&quot; file and have it open
+&quot;<code>&cmdlFileExtension;</code>&quot; or
+&quot;<code>&appFileExtension;</code>&quot; file and have it open
 (properly formatted) in WordPad.</b>
 </blockquote>
 In addition, there is a <a href="&webBaseURL;/models">repository of
@@ -1650,12 +1649,12 @@ The specific syntax for including a model definition file
 within another model definition file, is shown here:
 <blockquote>
 <pre>
-#include "myFile&cmdlExtension;";
+#include "myFile&cmdlFileExtension;";
 </pre>
 </blockquote>
-where &quot;<code>myFile&cmdlExtension;</code>&quot; is the name of the file 
+where &quot;<code>myFile&cmdlFileExtension;</code>&quot; is the name of the file 
 that is to be &quot;included&quot;.  The contents of 
-&quot;<code>myFile&cmdlExtension;</code>&quot; are parsed at exactly the
+&quot;<code>myFile&cmdlFileExtension;</code>&quot; are parsed at exactly the
 point where the include statement is encountered in the file,
 after all statements in the <em>including</em> file preceding
 the <code>include</code> statement have been parsed.  
@@ -1785,8 +1784,8 @@ the simulator alias for the Gillespie algorithm is &quot;<code>gillespie</code>&
 The Chemical Model Definition Language (CMDL) is a simplified
 model definition language designed to minimize the amount of repetitive
 typing required to define a model.   The default file extension of model
-definition files in the CMDL language is the &quot;<code>&cmdlExtension;</code>&quot;
-suffix.  The alternative extension &quot;<code>&appExtension;</code>&quot; is also
+definition files in the CMDL language is the &quot;<code>&cmdlFileExtension;</code>&quot;
+suffix.  The alternative extension &quot;<code>&appFileExtension;</code>&quot; is also
 understood to indicate a CMDL file.
 </p>
 
@@ -2341,7 +2340,7 @@ The following example illustrates a complete CMDL model definition file:
 <blockquote>
 <pre>
 //
-// singlegene&cmdlExtension;
+// singlegene&cmdlFileExtension;
 //
 // This document contains a model description of a
 // simple stochastic model of the transcription of
@@ -2506,20 +2505,20 @@ successful import of most of the SBML models available.
 <isb:docsection name="&appName; Command-line Interface" label="commandline">
 <p>
 A command-line interface to the &appName; scripting engine is available.
-On Windows and Linux/Unix operating systems, the <code>&appNameCommandLine;.bat</code> (Windows)
-and <code>&appNameCommandLine;.sh</code> (Linux/Unix) shell scripts can be used to run the 
+On Windows and Linux/Unix operating systems, the <code>runmodel.bat</code> (Windows)
+and <code>runmodel.sh</code> (Linux/Unix) shell scripts can be used to run the 
 command-line interface to the scripting engine.  These shell scripts should
 be located in the &quot;<code>bin</code>&quot; subdirectory of the directory in 
 you installed &appName;.  For the purposes of illustration, we will assume
-that the <code>&appNameCommandLine;.sh</code> is being used.  If you are using a Windows machine,
-<code>&appNameCommandLine;.bat</code> should be substituted wherever <code>&appNameCommandLine;.sh</code> appears
+that the <code>runmodel.sh</code> is being used.  If you are using a Windows machine,
+<code>runmodel.bat</code> should be substituted wherever <code>runmodel.sh</code> appears
 in the following.
 </p>
 <p>
-The usage synopsis for the <code>&appNameCommandLine;.sh</code> is as follows:
+The usage synopsis for the <code>runmodel.sh</code> is as follows:
 <blockquote>
 <pre>
-&appNameCommandLine;.sh [-debug] [-parser &lt;parserAlias&gt;] &lt;scriptFile&gt;
+runmodel.sh [-debug] [-parser &lt;parserAlias&gt;] &lt;scriptFile&gt;
 </pre>
 </blockquote>
 The symbols above are defined as follows:
@@ -2529,10 +2528,10 @@ The symbols above are defined as follows:
 of file being processed.  The alias identifies a class implementing the interface
 <code>org.systemsbiology.chem.scripting.IModelBuilder</code>.  By default, the parser
 is selected based on the file extension of the file <code>&lt;scriptFile&gt;</code>.
-If the file extension is &quot;<code>&cmdlExtension;</code>&quot; or
-&quot;<code>&appExtension;</code>&quot;, the <a href="#cmdl">CMDL</a>
+If the file extension is &quot;<code>&cmdlFileExtension;</code>&quot; or
+&quot;<code>&appFileExtension;</code>&quot;, the <a href="#cmdl">CMDL</a>
 parser will be used.  If the file extension is 
-&quot;&sbmlExtension;&quot;, the <a href="#sbml">SBML</a> parser will be used.
+&quot;&sbmlFileExtension;&quot;, the <a href="#sbml">SBML</a> parser will be used.
 If the file suffix does not match any of the above, the CMDL parser is assumed.
 To specify a parser rather than using the default parser for the file extension,
 use of the following parser aliases:
@@ -2559,7 +2558,7 @@ variable properly.  On most operating systems, this is an environment
 variable.  If you installed &appName; in the default directory (just
 clicked &quot;next&quot; when prompted to specify the installation directory),
 you should not need to specify the <code>CLASSPATH</code> when running
-the <code>&appNameCommandLine;</code> program.  However, if you selected a directory
+the <code>runmodel</code> program.  However, if you selected a directory
 other than the default directory for &appName; as the installation directory,
 you will need to modify the <code>CLASSPATH</code> environment variable to add
 the <code>&localJavaLibraryName;.jar</code> file to the path.  This file

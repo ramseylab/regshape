@@ -24,7 +24,7 @@
     <filter token="VERSION" value="${app.version}" />
     <filter token="PROJROOT" value="${projRoot}" />
     <filter token="APPNAME" value="${ant.project.name}" />
-    <filter token="APPNAMECOMMANDLINE" value="&appNameCommandLine;" />
+    <filter token="APPJAVARUNTIMEFLAGS" value="&appJavaRuntimeFlags;" />
   </target>
 
   <target name="compile">

@@ -1928,7 +1928,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[664]]></string>
 											</property>
 											<property name="sourceName">
-												<string><![CDATA[@APPNAMECOMMANDLINE@.bat]]></string>
+												<string><![CDATA[runmodel.bat]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
 												<boolean>false</boolean>
@@ -1940,7 +1940,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[@APPNAMECOMMANDLINE@.bat]]></string>
+												<string><![CDATA[runmodel.bat]]></string>
 											</property>
 											<property name="fileSize">
 												<long>70</long>
@@ -1954,7 +1954,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[664]]></string>
 											</property>
 											<property name="sourceName">
-												<string><![CDATA[@APPNAMECOMMANDLINE@.sh]]></string>
+												<string><![CDATA[runmodel.sh]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
 												<boolean>false</boolean>
@@ -1966,7 +1966,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[@APPNAMECOMMANDLINE@.sh]]></string>
+												<string><![CDATA[runmodel.sh]]></string>
 											</property>
 											<property name="fileSize">
 												<long>87</long>
