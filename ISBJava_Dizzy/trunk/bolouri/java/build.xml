@@ -38,7 +38,7 @@
   <property name="app.rootPackage"             value="org" />
   <property name="javadocLink"                 value="http://java.sun.com/j2se/1.4.2/docs/api" />
 
-  <property name="compile.debug"               value="true" />
+  <property name="compile.debug"               value="false" />
   <property name="compile.deprecation"         value="false" />
   <property name="compile.optimize"            value="true" />
 
@@ -107,6 +107,9 @@
         <include name="${app.rootPackage}/**/*.xml" />
         <include name="${app.rootPackage}/**/*.dtd" />
         <include name="${app.rootPackage}/**/*.html" />
+      	<include name="${app.rootPackage}/**/*.gif" />
+      	<include name="${app.rootPackage}/**/*.png" />
+      	<include name="${app.rootPackage}/**/*.jpg" />
         <exclude name="**/tp/*" />
         <exclude name="docs/*.xml" />
         <exclude name="build.xml" />
@@ -215,13 +218,17 @@
     </javac>
   </target>
 
-  <target name="compileTests" depends="compile">
+  <target name="compileTests">
     <mkdir dir="${app.classesDir}" />
     <javac srcdir="${app.srcDir}" 
            destdir="${app.classesDir}" 
            source="${app.sourceCompileFlag}" 
            debug="on" 
-           includes="**/tp/*.java" />
+    	   deprecation="on"
+	       optimize="off"
+           includes="**/tp/*.java">
+  	  <classpath refid="app.classpath" />
+    </javac>
   </target>  
  
   <target name="srcTar">
@@ -251,6 +258,9 @@
         <include name="${app.rootPackage}/**/*.xml" />
         <include name="${app.rootPackage}/**/*.html" />
         <include name="${app.rootPackage}/**/*.dtd" />
+      	<include name="${app.rootPackage}/**/*.gif" />
+      	<include name="${app.rootPackage}/**/*.png" />
+	   	<include name="${app.rootPackage}/**/*.jpg" />
         <exclude name="${app.rootPackage}/**/tp/*.class" />
       </fileset>
     </jar>

@@ -142,6 +142,14 @@ This document contains the version history for the
     that was resulting in a negative argument always being formatted in scientific
     notation.
   </li>
+  <li>
+    Changed the <code>org.systemsbiology.data.DataFileDelimiter.forName()</code> method to
+    <code>get()</code>.
+  </li>
+  <li>
+    Added the <code>org.systemsbiology.inference</code> package, which has code for
+    inferring a set of affected network elements from multiple evidence types.
+  </li>
 </ul>
 </td>
 </tr>
