@@ -134,7 +134,7 @@ on that computer (due to cost reasons).
 Mathematica is installed on the shared Linux computer, in the directory:
 <blockquote>
 <pre>
-/usr/local/Wolfram/Mathematica/4.2
+/usr/local/Wolfram/Mathematica/5.0
 </pre>
 </blockquote>
 To run Mathematica, just type the following at the command prompt:
@@ -143,9 +143,34 @@ To run Mathematica, just type the following at the command prompt:
 /usr/local/bin/mathematica
 </pre>
 </blockquote>
-The version of Mathematica that is installed is version 4.2.
-
-
+The version of Mathematica that is installed is version 5.0.
+</p>
+<p>
+In order to run Mathematica via remote X-windows connection 
+on your desktop Linux computer, you will need to install the
+Mathematica software on your local computer. This gives X-windows
+access to the Mathematica fonts.  This is not difficult to do, and
+involves the following steps (on your desktop Linux computer):
+<blockquote>
+<pre>
+cd /local
+tar xvzf /proj/bolrilab/Mathematica/Mathematica.tgz
+</pre>
+</blockquote>
+Note that in order to perform the above steps, you will need
+to have write privilege for the "/local" directory on your
+desktop Linux computer (if you do not have this, ask the Systems
+group to grant you write privilege for that directory).  Also
+note that the "bolrilab" appearing above is not a typographic
+error; the directory name is an abbreviation of "bolouri lab".
+Once the above steps have been performed, you may "ssh" to
+the remote machine "hamid-lx.systemsbiology.net" and run
+Mathematica in a remote X-windows connection.  Note however
+that the "Num lock" mode must not be activated on your keyboard
+on your desktop Linux computer, when using Mathematica.  If 
+"num lock" mode is enabled, the Mathematica front-end seems to 
+malfunction. 
+</p>
 </isb:docsubsection>
 
 <isb:docsubsection name="JProfiler" label="jprofiler">
