@@ -188,7 +188,7 @@ public class EditorPane
         }
     }
 
-    public void close()
+    public boolean close()
     {
         boolean doClose = false;
         String fileName = getFileName();
@@ -229,6 +229,7 @@ public class EditorPane
             mMainApp.updateMenus();
             setParserAliasLabel(null);
         }
+        return(doClose);
     }
 
     public void open()
@@ -536,11 +537,15 @@ public class EditorPane
 
     public void loadFileToEditBuffer(String pFileName)
     {
-        close();
+        boolean didClose = close();
+        if(!didClose)
+        {
+            return;
+        }
 
         File file = new File(pFileName);
         String shortFileName = file.getName();
-
+            
         try
         {
             StringBuffer fileContents = new StringBuffer();
