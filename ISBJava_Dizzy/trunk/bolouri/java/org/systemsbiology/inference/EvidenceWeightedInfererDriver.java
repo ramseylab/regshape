@@ -1401,7 +1401,7 @@ public class EvidenceWeightedInfererDriver
         String []evidenceNames = mSignificancesData.getEvidenceNames();
         for(j = 0; j < numEvidences; ++j)
         {
-            buf.append(evidenceNames[j] + delimiter + mNumberFormat.format(weights[j]) + "\n");
+            buf.append(pDelimiter.scrubIdentifier(evidenceNames[j]) + delimiter + mNumberFormat.format(weights[j]) + "\n");
         }
         try
         {
