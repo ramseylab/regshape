@@ -34,6 +34,8 @@ public final class SteadyStateAnalyzer
         mModel = pModel;
     }
 
+
+
     public static Object []computeJacobian(Expression []pReactionRateExpressions,
                                            Reaction []pReactions,
                                            Species []pSpecies,
@@ -58,9 +60,9 @@ public final class SteadyStateAnalyzer
             {
                 Reaction reaction = pReactions[j];
                 Expression reactionRateExpression = pReactionRateExpressions[j];
-                partialsi[j] = reaction.computeRatePartialDerivative(reactionRateExpression,
-                                                                     species,
-                                                                     pSymbolEvaluator);
+                partialsi[j] = reaction.computeRatePartialDerivativeExpression(reactionRateExpression,
+                                                                               species,
+                                                                               pSymbolEvaluator).computeValue(pSymbolEvaluator);
             }
         }
 
@@ -99,7 +101,7 @@ public final class SteadyStateAnalyzer
         int numReactions = pReactions.length;
         int numSpecies = pSpecies.length;
         
-        Expression []a = Reaction.getReactionRateExpressions(pReactions);
+        Expression []a = Simulator.getReactionRateExpressions(pReactions);
         Object []Jdbl = computeJacobian(a, pReactions, pSpecies, pReactionSpeciesAdjustmentVectors, pSymbolEvaluator);
         Algebra algebra = new Algebra();
 
