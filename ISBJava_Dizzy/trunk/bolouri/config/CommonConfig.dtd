@@ -10,7 +10,7 @@
 <!ENTITY localJavaLibraryName "ISBJava">
 <!ENTITY privateRepositoryURL "&webBaseURL;/privateRepository">
 <!ENTITY publicRepositoryURL  "&webBaseURL;/publicRepository">
-<!ENTITY groupLogoURL "&webBaseURL;/images/logo-bolourilab.gif">
+<!ENTITY groupLogoURL "&webBaseURL;/images/logo-bolourilab.png">
 
 <!ENTITY cytoscapeURL "http://www.cytoscape.org">
 
