@@ -299,7 +299,7 @@ clipboard (e.g., Windows).</li>
 <ul>
 <li>Added new deterministic (ODE) simulators &appName;,
 based on the &quot;odeToJava&quot; library for numerical solution of ODEs.  This library
-includes a Dortmand-Prince 4/5 Runge-Kuta solver with adaptive step-size control, and
+includes a Dortmand-Prince 4/5 Runge-Kutta solver with adaptive step-size control, and
 an implicit/explicit Runge-Kutta solver with adaptive step-size control (for models
 with a high degree of stiffness).</li>
 <li>Modified the SBML reader to permit inclusion of &quot;rules&quot; in SBML models</li>
