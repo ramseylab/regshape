@@ -24,13 +24,16 @@ public interface ISimulator
 
     public boolean allowsInterrupt();
 
+    public long getIterationCounter();
+
     /**
      * Conduct a simulation of the dynamics of the {@link Model} passed to the
      * {@link #initialize(Model,SimulationController)} method.  The end time
      * must be greater than the start time.  The integer <code>pNumResultsTimePoints</code>
      * must be greater than zero.  The size of the results arrays must be equal to
      * one plus <code>pNumResultsTimePoints</code> (the extra element in the arrays is to
-     * hold the initial data).
+     * hold the initial data).  The parameter <code>pNumResultsTimePoints</code> must
+     * be greater than or equal to 2.
      *
      */
     public void simulate(double pStartTime, 

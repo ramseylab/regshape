@@ -17,7 +17,7 @@ public abstract class Simulator
 {
     private static final int NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION = 15;
     public static final int MIN_NUM_TIME_POINTS = 2;
-    protected static final int NUM_ITERATIONS_CHECK_CANCELLED = 1000;
+    protected static final long NUM_ITERATIONS_CHECK_CANCELLED = 1000;
 
     protected String []mDynamicSymbolNames;
     protected double []mDynamicSymbolValues;
@@ -33,7 +33,7 @@ public abstract class Simulator
     protected DelayedReactionSolver []mDelayedReactionSolvers;
     protected Species []mDynamicSymbols;
     protected Object []mDynamicSymbolAdjustmentVectors;
-    private int mIterationCtr;
+    private long mIterationCtr;
     protected boolean mInitialized;
 
     public static final int NULL_REACTION = -1;
@@ -100,9 +100,7 @@ public abstract class Simulator
         clearDelayedReactionSolvers();
         clearExpressionValueCaches();
         mSymbolEvaluator.setTime(pStartTime);
-        mIterationCtr = 0;
     }
-
 
     private static void handleDelayedReaction(Reaction pReaction,
                                                 ArrayList pReactions,
@@ -401,7 +399,7 @@ public abstract class Simulator
         mDelayedReactionSolvers = null;
         mDynamicSymbols = null;
         mDynamicSymbolAdjustmentVectors = null;
-        mIterationCtr = 0;
+        setIterationCounter(0);
     }
 
     public Simulator()
@@ -494,7 +492,6 @@ public abstract class Simulator
         double []retTimesArray = new double[pNumTimePoints];
 
         double deltaTime = (pEndTime - pStartTime) / ((double) (pNumTimePoints - 1));
-        double halfDeltaTime = deltaTime / 2.0;
 
         for(int timeCtr = 0; timeCtr < pNumTimePoints; ++timeCtr)
         {
@@ -652,6 +649,16 @@ public abstract class Simulator
             
             MathFunctions.vectorAdd(pTempDynamicSymbolValues, pDynamicSymbolDerivatives, pDynamicSymbolDerivatives);
         }
+    }
+
+    protected void setIterationCounter(long pIterationCtr)
+    {
+        mIterationCtr = pIterationCtr;
+    }
+
+    public long getIterationCounter()
+    {
+        return(mIterationCtr);
     }
 
     protected final boolean incrementIterationCounterAndCheckForCancellation()
