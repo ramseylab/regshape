@@ -19,12 +19,23 @@ public interface ISimulator
                            SimulationController pSimulationController) throws DataNotFoundException, InvalidInputException;
 
     public SimulatorParameters getDefaultSimulatorParameters();
-    
+
+    public boolean isStochasticSimulator();
+
+    /**
+     * Conduct a simulation of the dynamics of the {@link Model} passed to the
+     * {@link #initialize(Model,SimulationController)} method.  The end time
+     * must be greater than the start time.  The integer <code>pNumResultsTimePoints</code>
+     * must be greater than zero.  The size of the results arrays must be equal to
+     * one plus <code>pNumResultsTimePoints</code> (the extra element in the arrays is to
+     * hold the initial data).
+     *
+     */
     public void simulate(double pStartTime, 
                          double pEndTime,
                          SimulatorParameters pSimulatorParameters,
                          int pNumResultsTimePoints,
                          String []pResultsSymbolNames,
                          double []pRetResultsTimeValues,
-                         Object []pRetResultsSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException;
+                         Object []pRetResultsSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException, SimulationFailedException;
 }
