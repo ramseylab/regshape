@@ -48,7 +48,7 @@ This document contains the version history for the
 <td>2004/02/25</td>
 <td>
 <ul>
-<li>Fixed a problem with the translation of CMDL ("dizzy") model
+<li>Fixed a problem with the translation of CMDL (".dizzy") model
 descriptions into SBML.  Kinetic Laws and other formulas are now
 correctly output to SBML, with the species symbols in the formulas 
 representing concentrations, rather than substance amounts.</li>
