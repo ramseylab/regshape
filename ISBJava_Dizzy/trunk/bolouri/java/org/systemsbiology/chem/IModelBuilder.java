@@ -8,12 +8,12 @@ package org.systemsbiology.chem;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.*;
 import org.systemsbiology.util.*;
 
 public interface IModelBuilder
 {
-    public Model buildModel( BufferedReader pInputReader, IncludeHandler pIncludeHandler ) throws InvalidInputException, IOException;    
+    public Model buildModel( InputStream pInputStream, IncludeHandler pIncludeHandler ) throws InvalidInputException, IOException;    
     public String getFileRegex();
+    public BufferedReader getBufferedReader( InputStream pInputStream ) throws InvalidInputException;
 }
