@@ -195,6 +195,19 @@ made available for Mac OSX operating system on an &quot;as-is&quot; basis.
 </isb:docsubsection>
 
 <isb:docsubsection name="Quick Start" label="quickstart">
+
+<p>
+&appName; is launched by executing the &quot;&appName;&quot; executable
+that was installed as a symbolic link by the installation program.  The
+default location of this symbolic link depends on your operating system.
+If you are installing on a Windows computer, the symbolic link is created
+in a new Program Group &quot;&appName;&quot;, which will show up in the
+&quot;Start&quot; menu.  If you are installing on a Linux computer, the
+symbolic link is created in your home directory, by default.  Note that
+the installation program permits you to override the default location for
+the symbolic link to be created.  
+</p>
+
 <p>
 For users just starting out, it is recommended to try importing a simple
 SBML model using the GUI application.  Note that the GUI application
