@@ -26,7 +26,8 @@ This document contains the version history for the
 <dt><b>0.0.5 (2003/10/20)</b></dt>
 <dd>Fixed a bug in the <code>GibsonSimulator</code> initialization code, for the case of a boundary
 reactant species.  Fixed a bug in the <code>ModelBuilderCommandLanguage</code> tokenizer, so that
-it can now accept a tab character as valid whitespace in a model definition file.</dd>
+it can now accept a tab character as valid whitespace in a model definition file.  Modified the
+<code>SBMLValidate</code> package so that it can process SBML Level 1, Version 2 model definition files.</dd>
 <dt><b>0.0.4 (2003/08/28)</b></dt>
 <dd>Modified the Cytoscape bridge to use JNLP, so Cytoscape does not have to be bundled with Dizzy</dd>
 <dt><b>0.0.3 (2003/08/26)</b></dt>
