@@ -80,7 +80,7 @@
            destdir="${app.styleDir}" 
            includes="download.xml"
            style="${globalConfig}/${docsStyleSheet}">
-      <param name="hideGroupURL" expression="true" />
+      <param name="hideGroupLogo" expression="true" />
   	</style>
     <style basedir="${app.docsDir}"
   	       destdir="${app.styleDir}"
