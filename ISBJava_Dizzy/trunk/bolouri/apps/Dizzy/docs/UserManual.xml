@@ -63,7 +63,7 @@ filename extension to guess what model definition language the file contains.
 <li><a href="&sbmlURL;">Systems Biology Markup Language</a> ("SBML")
 <p />
 The SBML standard is documented outside the scope of this document, at the
-aforementioned (&sbmlURL;) web site.  The &appName; system
+aforementioned web site.  The &appName; system
 is able to read and write a subset of the SBML Level 1 specification.
 You can generate a model in SBML format by using the JDesigner software tool.
 <p />
