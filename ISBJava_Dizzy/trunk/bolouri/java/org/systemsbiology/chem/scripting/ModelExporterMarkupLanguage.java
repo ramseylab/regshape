@@ -249,6 +249,10 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
             while(reactionsIter.hasNext())
             {
                 Reaction reaction = (Reaction) reactionsIter.next();
+                if(reaction.getNumSteps() > 1)
+                {
+                    throw new UnsupportedOperationException("Cannot export a model that contains a multistep reaction, to SBML");
+                }
                 String reactionName = reaction.getName();
                 Element reactionElement = document.createElement(ELEMENT_NAME_REACTION);
                 listOfReactionsElement.appendChild(reactionElement);
