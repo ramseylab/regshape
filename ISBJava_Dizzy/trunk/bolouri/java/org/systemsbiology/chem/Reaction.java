@@ -131,6 +131,7 @@ public class Reaction extends SymbolValue
     private Value []mLocalSymbolsValues;
     private boolean mRateIsExpression;
     private int mNumSteps;
+    private double mDelay;
 
     public Object clone()
     {
@@ -149,6 +150,7 @@ public class Reaction extends SymbolValue
         reaction.mLocalSymbolsValues = mLocalSymbolsValues;
         reaction.mRateIsExpression = mRateIsExpression;
         reaction.mNumSteps = mNumSteps;
+        reaction.mDelay = mDelay;
         return(reaction);
     }
 
@@ -169,6 +171,7 @@ public class Reaction extends SymbolValue
         mRateIsExpression = false;
         mReactantsDynamicArray = null;
         mProductsDynamicArray = null;
+        mDelay = 0.0;
     }
 
     boolean containsReactant(String pReactantName)
@@ -224,6 +227,20 @@ public class Reaction extends SymbolValue
         }
 
         mNumSteps = pNumSteps;
+    }
+
+    public double getDelay()
+    {
+        return(mDelay);
+    }
+
+    public void setDelay(double pDelay)
+    {
+        if(pDelay < 0.0)
+        {
+            throw new IllegalArgumentException("the delay time is invalid");
+        }
+        mDelay = pDelay;
     }
 
     public int getNumSteps()

@@ -78,7 +78,7 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
                                    Random pRandomNumberGenerator,
                                    double []pDynamicSymbolValues,
                                    MutableInteger pLastReactionIndex,
-                                   MultistepReactionSolver []pMultistepReactionSolvers) throws DataNotFoundException, IllegalStateException
+                                   DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException, IllegalStateException
     {
         double time = pSymbolEvaluator.getTime();
 
@@ -91,7 +91,7 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
                                           lastReaction,
                                           pDynamicSymbolValues,
                                           time,
-                                          pMultistepReactionSolvers);
+                                          pDelayedReactionSolvers);
         }
 
         computeReactionProbabilities(pSpeciesRateFactorEvaluator,
@@ -110,25 +110,25 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
         
         int reactionIndex = -1;
 
-        if(pMultistepReactionSolvers.length == 0)
+        if(pDelayedReactionSolvers.length == 0)
         {
             // do nothing
         }
         else
         {
-            int nextMultistepReactionIndex = getNextMultistepReactionIndex(pMultistepReactionSolvers);
-            if(nextMultistepReactionIndex >= 0)
+            int nextDelayedReactionIndex = getNextDelayedReactionIndex(pDelayedReactionSolvers);
+            if(nextDelayedReactionIndex >= 0)
             {
-                MultistepReactionSolver solver = pMultistepReactionSolvers[nextMultistepReactionIndex];
-                double nextMultistepReactionTime = solver.peekNextReactionTime();
-                assert (nextMultistepReactionTime > time) : "invalid time for next multistep reaction";
-//                System.out.println("next multistep reaction will occur at: " + nextMultistepReactionTime);
-                if(nextMultistepReactionTime < time + deltaTimeToNextReaction)
+                DelayedReactionSolver solver = pDelayedReactionSolvers[nextDelayedReactionIndex];
+                double nextDelayedReactionTime = solver.peekNextReactionTime();
+                assert (nextDelayedReactionTime > time) : "invalid time for next delayed reaction";
+//                System.out.println("next delayed reaction will occur at: " + nextDelayedReactionTime);
+                if(nextDelayedReactionTime < time + deltaTimeToNextReaction)
                 {
-                    // execute multistep reaction
-                    deltaTimeToNextReaction = nextMultistepReactionTime - time;
+                    // execute delayed reaction
+                    deltaTimeToNextReaction = nextDelayedReactionTime - time;
                     reactionIndex = solver.getReactionIndex();
-//                    System.out.println("multistep reaction selected: " + pReactions[reactionIndex]);
+//                    System.out.println("delayed reaction selected: " + pReactions[reactionIndex]);
                     solver.pollNextReactionTime();
                 }
             }

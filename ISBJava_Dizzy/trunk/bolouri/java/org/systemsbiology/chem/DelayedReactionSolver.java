@@ -13,17 +13,15 @@ import org.systemsbiology.math.*;
 import org.systemsbiology.util.*;
 
 /**
- * Helper class for simulating a cascade of N identical chemical
- * reactions that collectively transform a species S0 into a species
- * SN.  Useful for simulating the processes of transcription and
- * translation.  This class is only used if N is large (greater than
- * 10).  For N less than or equal to 15, the cascade is simulated
- * using N actual {@link Reaction} objects in the {@link Model}.
+ * Implements a chemical reaction containing a specified delay
+ * time.  The reactant is immediately converted to a (hidden)
+ * "intermediate species".  The reaction converting the intermediate
+ * species to the product species occurs after the specified delay.
  *
  * @author Stephen Ramsey
  */
 
-public class MultistepReactionSolver extends Expression
+public class DelayedReactionSolver extends Expression
 {
     private static final double LAMBDA_MAX = 4.0;
     private static final int MIN_NUM_TIME_POINTS = 4000;
@@ -32,7 +30,6 @@ public class MultistepReactionSolver extends Expression
     private Species mReactant;
     private Species mIntermedSpecies;
     private double mRate;
-    private int mNumSteps;
     private boolean mFirstTimePoint;
     private double mTimeResolution;
     private double mPeakTimeRel;
@@ -49,22 +46,19 @@ public class MultistepReactionSolver extends Expression
     private boolean mIsStochasticSimulator;
 
     private double mRateSquared;
-    private double mNumStepsCorrected;
-    private double mSqrtTwoPiNumStepsCorrected;
     private int mReactionIndex;
+    private double mDelay;
 
-    public MultistepReactionSolver(Species pReactant,
-                                   Species pIntermedSpecies, 
-                                   int pNumSteps, 
-                                   double pRate,
-                                   int pReactionIndex)
+    public DelayedReactionSolver(Species pReactant,
+                                 Species pIntermedSpecies, 
+                                 double pDelay,
+                                 double pRate,
+                                 int pReactionIndex)
     {
-        assert (pNumSteps > 2) : "invalid number of steps: " + pNumSteps;
-        assert (pRate > 0.0) : "invalid rate: " + pRate;
+        assert (pDelay > 0.0) : "invalid delay";
+        mDelay = pDelay;
 
-        mNumSteps = pNumSteps;
-
-        int numTimePoints = (int) (((double) mNumSteps) * LAMBDA_MAX);
+        int numTimePoints = (int) (pDelay * LAMBDA_MAX / pRate);
         if(numTimePoints < MIN_NUM_TIME_POINTS)
         {
             numTimePoints = MIN_NUM_TIME_POINTS;
@@ -77,18 +71,13 @@ public class MultistepReactionSolver extends Expression
 
         mRate = pRate;
         
-        mNumTimePoints = numTimePoints;
         mFirstTimePoint = true;
 
-        double numStepsCorrected = ((double) mNumSteps - 1);
-        mNumStepsCorrected = numStepsCorrected;
-
-        mPeakTimeRel = numStepsCorrected/mRate;
+        mPeakTimeRel = pDelay;
 
         mTimeResolution = LAMBDA_MAX * mPeakTimeRel / ((double) numTimePoints);
 
         mRateSquared = mRate * mRate;
-        mSqrtTwoPiNumStepsCorrected = Math.sqrt( 2.0 * Math.PI * numStepsCorrected );
 
         mReactionIndex = pReactionIndex;
     }
@@ -155,7 +144,6 @@ public class MultistepReactionSolver extends Expression
         }
         else
         {
-            assert(false) : "test";
             newReactionTime = new MutableDouble(reactionTime);
         }
 
@@ -252,6 +240,7 @@ public class MultistepReactionSolver extends Expression
                 lastTime += mTimeResolution;
 
                 assert (reactantValue >= 0.0) : "invalid value";
+//                System.out.println("inserting reactant value: " + reactantValue);
                 reactantHistory.insertPoint(lastTime, reactantValue);
 
                 assert (intermedSpeciesValue >= 0.0) : "invalid value";
@@ -266,6 +255,7 @@ public class MultistepReactionSolver extends Expression
             double intermedSpeciesValue = pSymbolEvaluator.getValue(mIntermedSpecies.getSymbol());
             assert (intermedSpeciesValue >= 0.0) : "invalid value";
 
+//            System.out.println("inserting reactant value: " + reactantValue);
             reactantHistory.insertPoint(pTime, reactantValue);
             intermedSpeciesHistory.insertPoint(pTime, intermedSpeciesValue);
 
@@ -285,53 +275,42 @@ public class MultistepReactionSolver extends Expression
             SymbolEvaluatorChemSimulation symbolEvaluator = (SymbolEvaluatorChemSimulation) pSymbolEvaluator;
 
             double currentTime = symbolEvaluator.getTime();
-            update(symbolEvaluator, currentTime);
-
-//        System.out.println("intermed species value: " + intermedSpeciesValue);
-
-            double numStepsCorrected = mNumStepsCorrected;
 
             SlidingWindowTimeSeriesQueue reactantHistory = mReactantHistory;
             SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
+
+            double reactantValue = pSymbolEvaluator.getValue(mReactant.getSymbol());
             
             double intermedSpeciesValue = symbolEvaluator.getValue(mIntermedSpecies.getSymbol());
-            assert (intermedSpeciesValue >= 0.0) : "invalid intermediate species value";
 
-            double averageReactantValue = reactantHistory.getAverageValue();
-            assert (averageReactantValue >= 0.0) : "invalid average reactant value";
-
-            double averageIntermedValue = mIntermedSpeciesHistory.getAverageValue();
-            double numIntermedSpeciesExpected = numStepsCorrected * averageReactantValue;
-        
-            double minTime = reactantHistory.getMinTime();
-            double peakTimeRel = mPeakTimeRel;
-            double peakTime = currentTime - peakTimeRel;
-            
-            if(intermedSpeciesValue > numIntermedSpeciesExpected && peakTime >= minTime)
+            if(intermedSpeciesValue >= 0.0)
             {
-                double rate = mRate;
-                int peakIndex = (int) Math.floor( (peakTime - minTime)/mTimeResolution );
-                double peakValue = reactantHistory.getValue(peakIndex);
+                update(symbolEvaluator, currentTime);
 
-                if(peakValue > 0.0)
+                double averageIntermedValue = mIntermedSpeciesHistory.getAverageValue();
+                double numIntermedSpeciesExpected = (mDelay * mRate) * reactantValue;
+        
+                double minTime = reactantHistory.getMinTime();
+                double peakTimeRel = mPeakTimeRel;
+                double peakTime = currentTime - peakTimeRel;
+            
+                if(intermedSpeciesValue > 0.0 &&
+                   intermedSpeciesValue > numIntermedSpeciesExpected && peakTime >= minTime)
                 {
-                    prodRate = rate * peakValue;
-                }
-                else
-                {
-                    peakTime += 1.0/rate;
-                    peakIndex = (int) Math.floor( (peakTime - minTime)/mTimeResolution );
-                    peakValue = intermedSpeciesHistory.getValue(peakIndex);
-
+                    double rate = mRate;
+                    int peakIndex = (int) Math.floor( (peakTime - minTime)/mTimeResolution );
+                    double peakValue = reactantHistory.getValue(peakIndex);
+                    
                     if(peakValue > 0.0)
                     {
-                        prodRate = rate * peakValue / (numStepsCorrected - 1);
+                        prodRate = rate * peakValue;
                     }
                     else
                     {
                         if(averageIntermedValue > numIntermedSpeciesExpected)
                         {
-                            prodRate = rate * (averageIntermedValue - numIntermedSpeciesExpected) / (numStepsCorrected - 1);
+                            double excessIntermed = averageIntermedValue - numIntermedSpeciesExpected;
+                            prodRate = rate * excessIntermed;
                         }
                         else
                         {
@@ -339,13 +318,15 @@ public class MultistepReactionSolver extends Expression
                         }
                     }
                 }
+                else
+                {
+                    // do nothing; rate of production is zero, by mass conservation law
+                }
             }
             else
             {
-                // do nothing; rate of production is zero, by mass conservation law
+                // do nothing; rate of production is zero
             }
-
-            assert (prodRate >= 0.0) : "invalid reaction probability density";
         }
         else
         {
@@ -356,144 +337,8 @@ public class MultistepReactionSolver extends Expression
     }
 
 
-    public double computeValue3(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
-    {
-        SymbolEvaluatorChemSimulation symbolEvaluator = (SymbolEvaluatorChemSimulation) pSymbolEvaluator;
 
-        double currentTime = symbolEvaluator.getTime();
-        update(symbolEvaluator, currentTime);
-
-//        System.out.println("intermed species value: " + intermedSpeciesValue);
-        double prodRate = 0.0;
-
-        double numStepsCorrected = mNumStepsCorrected;
-
-        SlidingWindowTimeSeriesQueue reactantHistory = mReactantHistory;
-        SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
-            
-        double intermedSpeciesValue = symbolEvaluator.getValue(mIntermedSpecies.getSymbol());
-        assert (intermedSpeciesValue >= 0.0) : "invalid intermediate species value";
-
-        double averageReactantValue = reactantHistory.getAverageValue();
-        assert (averageReactantValue >= 0.0) : "invalid average reactant value";
-
-        double averageIntermedValue = mIntermedSpeciesHistory.getAverageValue();
-        double numIntermedSpeciesExpected = numStepsCorrected * averageReactantValue;
-        
-        double minTime = reactantHistory.getMinTime();
-        double peakTimeRel = mPeakTimeRel;
-        double peakTime = currentTime - peakTimeRel;
-            
-        if(intermedSpeciesValue > numIntermedSpeciesExpected && peakTime >= minTime)
-        {
-            double rate = mRate;
-            int peakIndex = (int) Math.floor( (peakTime - minTime)/mTimeResolution );
-            double peakValue = reactantHistory.getValue(peakIndex);
-
-            if(peakValue > 0.0)
-            {
-                prodRate = rate * peakValue;
-            }
-            else
-            {
-                if(averageIntermedValue > numIntermedSpeciesExpected)
-                {
-                    prodRate = rate * (averageIntermedValue - numIntermedSpeciesExpected) / numStepsCorrected;
-                }
-                else
-                {
-                    peakTime += 1.0/rate;
-                    peakIndex = (int) Math.floor( (peakTime - minTime)/mTimeResolution );
-                    peakValue = intermedSpeciesHistory.getValue(peakIndex);
-
-                    if(peakValue > 0.0)
-                    {
-                        prodRate = rate * peakValue / numStepsCorrected;
-                    }
-                    else
-                    {
-                        // do nothing
-                    }
-                }
-            }
-        }
-        else
-        {
-            // do nothing; rate of production is zero, by mass conservation law
-        }
-
-        assert (prodRate >= 0.0) : "invalid reaction probability density";
-        return(prodRate);
-    }
-
-
-    public double computeValue2(SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
-    {
-        SymbolEvaluatorChemSimulation symbolEvaluator = (SymbolEvaluatorChemSimulation) pSymbolEvaluator;
-
-        double currentTime = symbolEvaluator.getTime();
-        update(symbolEvaluator, currentTime);
-
-//        System.out.println("intermed species value: " + intermedSpeciesValue);
-        double prodRate = 0.0;
-
-        double numStepsCorrected = mNumStepsCorrected;
-
-        SlidingWindowTimeSeriesQueue reactantHistory = mReactantHistory;
-        SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
-            
-        double intermedSpeciesValue = symbolEvaluator.getValue(mIntermedSpecies.getSymbol());
-        assert (intermedSpeciesValue >= 0.0) : "invalid intermediate species value";
-
-        double averageReactantValue = reactantHistory.getAverageValue();
-        assert (averageReactantValue >= 0.0) : "invalid average reactant value";
-
-        double averageIntermedValue = mIntermedSpeciesHistory.getAverageValue();
-        double numIntermedSpeciesExpected = numStepsCorrected * averageReactantValue;
-        
-        double minTime = reactantHistory.getMinTime();
-        double peakTimeRel = mPeakTimeRel;
-        double peakTime = currentTime - peakTimeRel;
-            
-        if(intermedSpeciesValue > numIntermedSpeciesExpected && peakTime >= minTime)
-        {
-            double rate = mRate;
-            int peakIndex = (int) Math.floor( (peakTime - minTime)/mTimeResolution );
-            double peakValue = reactantHistory.getValue(peakIndex);
-            prodRate = rate * peakValue;
-            assert (prodRate >= 0.0) : "invalid reaction probability density";
-
-            if(prodRate == 0.0)
-            {
-                peakTime += 1.0/rate;
-                peakIndex = (int) Math.floor( (peakTime - minTime)/mTimeResolution );
-                peakValue = intermedSpeciesHistory.getValue(peakIndex);
-
-                if(peakValue > 0.0)
-                {
-                    prodRate = rate * peakValue / numStepsCorrected;
-                    assert (prodRate >= 0.0) : "invalid reaction probability density";
-                }
-                else
-                {
-                    if(averageIntermedValue > numIntermedSpeciesExpected)
-                    {
-                        prodRate = rate * (averageIntermedValue - numIntermedSpeciesExpected) / numStepsCorrected;
-                        assert (prodRate >= 0.0) : "invalid reaction probability density";
-                    }
-                }
-            }
-        }
-        else
-        {
-            // do nothing; rate of production is zero, by mass conservation law
-        }
-
-        assert (prodRate >= 0.0) : "invalid reaction probability density";
-        return(prodRate);
-    }
-
-
+    // keeping this around for historical purposes
     private static final double computeIntegral(SlidingWindowTimeSeriesQueue history,
                                                 double h,
                                                 int numTimePoints,

@@ -405,7 +405,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
             
         int minNumSteps = pNumResultsTimePoints;
 
-        int numMultistepReactionSteps = 0;
+        int numDelayedReactionSteps = 0;
         int numReactions = reactions.length;
         for(int ctr = 0; ctr < numReactions; ++ctr)
         {
@@ -413,14 +413,14 @@ public abstract class SimulatorDeterministicBase extends Simulator
             int numReactionSteps = reaction.getNumSteps();
             if(numReactionSteps > 1)
             {
-                numMultistepReactionSteps += numReactionSteps;
+                numDelayedReactionSteps += numReactionSteps;
             }
         }
-        numMultistepReactionSteps *= 5;
+        numDelayedReactionSteps *= 5;
 
-        if(minNumSteps < numMultistepReactionSteps)
+        if(minNumSteps < numDelayedReactionSteps)
         {
-            minNumSteps = numMultistepReactionSteps;
+            minNumSteps = numDelayedReactionSteps;
         }
 
         Integer minNumStepsObj = pSimulatorParameters.getMinNumSteps();

@@ -52,14 +52,14 @@ public abstract class SimulatorStochasticBase extends Simulator
         }
     }
 
-    protected static final int getNextMultistepReactionIndex(MultistepReactionSolver []pMultistepReactionSolvers)
+    protected static final int getNextDelayedReactionIndex(DelayedReactionSolver []pDelayedReactionSolvers)
     {
-        int numMultistepReactions = pMultistepReactionSolvers.length;
+        int numDelayedReactions = pDelayedReactionSolvers.length;
         int nextReactionSolver = -1;
         double nextReactionTime = Double.POSITIVE_INFINITY;
-        for(int ctr = numMultistepReactions; --ctr >= 0; )
+        for(int ctr = numDelayedReactions; --ctr >= 0; )
         {
-            MultistepReactionSolver solver = pMultistepReactionSolvers[ctr];
+            DelayedReactionSolver solver = pDelayedReactionSolvers[ctr];
             if(solver.canHaveReaction())
             {
                 double specReactionTime = solver.peekNextReactionTime();
@@ -77,9 +77,9 @@ public abstract class SimulatorStochasticBase extends Simulator
                                                               Reaction pReaction,
                                                               double []pSymbolValues,
                                                               double pCurrentTime,
-                                                              MultistepReactionSolver []pMultistepReactionSolvers) throws DataNotFoundException
+                                                              DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException
     {
-        int numMultistepReactions = pMultistepReactionSolvers.length;
+        int numDelayedReactions = pDelayedReactionSolvers.length;
 
         Species []reactantsSpecies = pReaction.getReactantsSpeciesArray();
         boolean []reactantsDynamic = pReaction.getReactantsDynamicArray();
@@ -111,14 +111,14 @@ public abstract class SimulatorStochasticBase extends Simulator
                 int productIndex = productSymbol.getArrayIndex();
                 assert (productIndex != Symbol.NULL_ARRAY_INDEX) : "null array index";
                 pSymbolValues[productIndex] += ((double) productsStoichiometry[ctr]);
-                if(numMultistepReactions > 0)
+                if(numDelayedReactions > 0)
                 {
-                    for(int mCtr = numMultistepReactions; --mCtr >= 0; )
+                    for(int mCtr = numDelayedReactions; --mCtr >= 0; )
                     {
-                        MultistepReactionSolver solver = pMultistepReactionSolvers[mCtr];
+                        DelayedReactionSolver solver = pDelayedReactionSolvers[mCtr];
                         if(solver.hasIntermedSpecies(product))
                         {
-                            assert (productsStoichiometry[ctr] == 1) : "invalid stoichiometry for multistep reaction";
+                            assert (productsStoichiometry[ctr] == 1) : "invalid stoichiometry for delayed reaction";
                             solver.addReactant(pSymbolEvaluator);
                         }
                     }
@@ -160,7 +160,7 @@ public abstract class SimulatorStochasticBase extends Simulator
                                       Random pRandomNumberGenerator,
                                       double []pDynamicSymbolValues,
                                       MutableInteger pLastReactionIndex,
-                                      MultistepReactionSolver []pMultistepReactionSolvers) throws DataNotFoundException, IllegalStateException;
+                                      DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException, IllegalStateException;
 
     protected abstract void prepareForStochasticSimulation(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
                                                            SymbolEvaluatorChemSimulation pSymbolEvaluator,
@@ -199,7 +199,7 @@ public abstract class SimulatorStochasticBase extends Simulator
         Reaction []reactions = mReactions;
         double []dynamicSymbolValues = mDynamicSymbolValues;        
         int numDynamicSymbolValues = dynamicSymbolValues.length;
-        MultistepReactionSolver []multistepReactionSolvers = mMultistepReactionSolvers;
+        DelayedReactionSolver []delayedReactionSolvers = mDelayedReactionSolvers;
 
         Random randomNumberGenerator = mRandomNumberGenerator;
 
@@ -249,7 +249,7 @@ public abstract class SimulatorStochasticBase extends Simulator
                                randomNumberGenerator,
                                dynamicSymbolValues,
                                lastReactionIndex,
-                               multistepReactionSolvers);
+                               delayedReactionSolvers);
 
                 ++iterationCtr;
                 if(0 == (iterationCtr % NUM_ITERATIONS_CHECK_CANCELLED))
