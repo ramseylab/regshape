@@ -40,7 +40,6 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
     private boolean []mReactionHasLocalSymbolsFlags;
 
     private double mAllowedError;
-    private Poisson mPoisson;
     private long mNumNonLeapIterationsSinceLastLeapCheck;
     private boolean mLastIterationWasLeap;
     private long mMinRatioOfLeapTimeToReactionTimeScale;
@@ -61,8 +60,6 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         }
         mAllowedError = maxAllowedError.doubleValue();
 
-        mPoisson = new Poisson(1.0, pRandomNumberGenerator);
-
         Long minNumSteps = pSimulatorParameters.getMinNumSteps();
         if(null == minNumSteps)
         {
@@ -82,7 +79,9 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
                              RandomElement pRandomNumberGenerator,
                              double []pDynamicSymbolValues,
                              MutableInteger pLastReactionIndex,
-                             DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException, IllegalStateException, SimulationAccuracyException
+                             DelayedReactionSolver []pDelayedReactionSolvers,
+                             boolean pHasExpressionValues,
+                             Value []pNonDynamicSymbolValues) throws DataNotFoundException, IllegalStateException, SimulationAccuracyException
     {
         double time = pSymbolEvaluator.getTime();
 //        System.out.println("time at start of iteration: " + time);
@@ -97,15 +96,16 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
                                           pDynamicSymbolValues,
                                           pDelayedReactionSolvers,
                                           NUM_FIRINGS_GILLESPIE);
-            // we have changed the species populations; must clear the expression value caches
-            clearExpressionValueCaches();
         }
 
         int numReactions = pReactions.length;
 
         computeReactionProbabilities(pSymbolEvaluator,
                                      pReactionProbabilities,
-                                     pReactions);
+                                     pReactions,
+                                     pHasExpressionValues,
+                                     pNonDynamicSymbolValues,
+                                     true);
 
         double aggregateReactionProbability = MathFunctions.vectorSumElements(pReactionProbabilities);
 
@@ -242,7 +242,7 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
                                              pReactions,
                                              pDynamicSymbolValues,
                                              mEstimatedSpeciesChange,
-                                             mPoisson,
+                                             mPoissonEventGenerator,
                                              mAllowedError);
                 if(successfulLeap)
                 {
@@ -289,7 +289,6 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
             }            
 
             pSymbolEvaluator.setTime(time);
-            clearExpressionValueCaches();
         }
 
 //        System.out.println("time at end of iteration: " + time + "\n");
@@ -322,20 +321,7 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
             {
                 if(1.0/Math.sqrt(lambda) > pAllowedError)
                 {
-                    gotSuccessfulNumFirings = false;
-                    do
-                    {
-                        try
-                        {
-                            numFirings = (long) pPoissonEventGenerator.nextInt(lambda);
-                            gotSuccessfulNumFirings = true;
-                        }
-                        catch(ArrayIndexOutOfBoundsException e)
-                        {
-                            System.err.println("internal bug in cern.jet.random.Poisson tripped; this is being handled");
-                        }
-                    }
-                    while(! gotSuccessfulNumFirings);
+                    numFirings = (long) getPoissonEvent(pPoissonEventGenerator, lambda);
                 }
                 else
                 {
