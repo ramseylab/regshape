@@ -8,8 +8,8 @@
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
 <isb:doctitle>Software Development Guidelines</isb:doctitle>
-<isb:docdate>$Date: 2003/04/16 16:49:11 $</isb:docdate>
-<isb:docversion>[DRAFT] $Revision$, $Date$</isb:docversion>
+<isb:docdate>$Date: 2003/04/16 17:24:43 $</isb:docdate>
+<isb:docversion>$Revision: 1.1 $, $Date: 2003/04/16 17:24:43 $</isb:docversion>
 
 <isb:doccontents />
 
@@ -97,16 +97,30 @@ by Karl Franz Fogel (out of print, look on Amazon for availability).<p /></dd>
 </dl>
 </isb:docsection>
 
-<isb:docsection name="CVS Repository Rules of the Road" label="cvsrules">
+<isb:docsection name="CVS Repository" label="cvsrepository">
 Our group uses a <b>source code control system</b> in order to track changes
 to software source files.  Our source code control system is CVS, which is
-an open-source product based on the RCS revision control system.  This section
-describes recommendations and local conventions for how the CVS repository
-should be used.
-<p />
+an open-source product based on the RCS revision control system.  
 
+<isb:docsubsection name="CVS Availability" label="cvsavailability">
+CVS is available as a command-line utility &quot;<code>cvs</code>&quot; on nearly
+all Unix-like operating systems, including most standard Linux distributions.
+To confirm that CVS is installed correctly, you
+should be able to execute the "<code>cvs</code>" command
+from your command shell prompt.  This should be already installed on
+your computer if you are using a modern Linux distribution
+To access CVS from a Windows computer, you will likely need to download and 
+install a Windows CVS client.  There are many CVS clients available for 
+Windows, in particular, <a href="http://www.tortoisecvs.org">TortoiseCVS</a>
+has been recommended.  For more information on how to use the
+Unix (command-line) CVS program, please refer to the 
+<a href="CVSManual.pdf">CVS User Manual</a>. 
+</isb:docsubsection>
+
+<isb:docsubsection name="CVS Rules of the Road" label="cvsrules">
+This section describes recommendations and local conventions for 
+how the CVS repository should be used:
 <dl>
-
 <dt><b>file locking and pipes</b>:</dt>
 <dd>
 Please be advised that CVS has a file-locking mechanism built
@@ -324,7 +338,10 @@ is the most important principle to observe.
 RCS keywords (see the CVS manual for an explanation of their purpose)
 can be useful for embedding version information of a source file,
 into the source file.  However, the use of the specific RCS keyword 
-&quot;$Log$&quot; is strongly discouraged.  It tends (over time) to
+&quot;$Log: SoftwareDevelopmentGuidelines.xml,v $
+&quot;Revision 1.1  2003/04/16 17:24:43  sramsey
+&quot;initial import
+&quot;&quot; is strongly discouraged.  It tends (over time) to
 horribly clutter up the source file, and is merely a repetition of
 information that is available in the CVS commit logs.  Please note
 that RCS keywords should be used with care, as they can cause merge
@@ -444,6 +461,7 @@ problems.
 <p /></dd>
 
 </dl>
+</isb:docsubsection>
 </isb:docsection>
 
 <isb:docsection name="Documentation Standards" label="docstandards">
@@ -574,6 +592,44 @@ or sub-functions.
 </dl>
 
 </isb:docsection>
+
+<isb:docsection name="Building Installers" label="buildinginstallers">
+<p>
+The &mainGroup; has purchased a single-developer license of the
+InstallAnywhere software product from ZeroG Software.  This product
+enables the creation of an executable &quot;installer&quot; file
+for a software application.  This installer program installs the
+software application and creates the necessary links to the application.
+It also can optionally provide a version of the Java Runtime Environment
+(JRE), for target platforms that do not already have a suitable
+Java Runtime Environment installed.  
+</p>
+<p>
+The InstallAnywhere product is currently installed on the Linux host
+<blockquote>
+<pre>
+oahu-lx.systemsbiology.net
+</pre>
+</blockquote>
+To run InstallAnywhere remotely, you will need access to
+a desktop computer with an X-windows server and OpenSSH 
+installed. Any desktop Linux computer will suffice.  From your 
+desktop computer, simply do the following:
+<blockquote>
+<pre>
+ssh -X -C oahu-lx.systemsbiology.net
+/local/InstallAnywhere_5_Standard/InstallAnywhere
+</pre>
+</blockquote>
+This should run the InstallAnywhere program remotely, in a window
+on your desktop computer.  For instructions on how to use the
+InstallAnywhere program, please refer to the
+<a href="InstallAnywhere5_UserManual.pdf">InstallAnywhere
+User Manual</a>.
+</p>
+
+</isb:docsection>
+
 </isb:document>
 
 

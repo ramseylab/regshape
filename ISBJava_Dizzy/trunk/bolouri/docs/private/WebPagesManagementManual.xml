@@ -44,14 +44,9 @@ installed on your computer:
 <p>
 <ol>
 <li><b>CVS client</b><br /> 
-To confirm that CVS is installed correctly, you
-should be able to execute the "<code>cvs</code>" command
-from your command shell prompt.  This should be already installed on
-your computer if you are using a modern Linux distribution.  
-For Windows, you will likely need to download and install a
-CVS client.  There are many CVS clients available for Windows, in
-particular, <a href="http://www.tortoisecvs.org">TortoiseCVS</a>
-has been recommended.
+Please refer to the <a href="SoftwareDevelopmentGuidelines.html#cvsrepository">
+CVS Repository</a> of the Software Development Guidelines document,
+for information on how to obtain and use CVS on your desktop computer.
 </li>
 <li><b>Java Development Kit (JDK)</b><br />
 The JDK version 1.4 or newer must be installed on your computer,
