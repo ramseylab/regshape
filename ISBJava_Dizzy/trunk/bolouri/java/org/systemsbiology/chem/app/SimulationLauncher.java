@@ -1434,7 +1434,7 @@ public class SimulationLauncher
         }
         if(null != ensembleSize)
         {
-            simulatorParameters.setEnsembleSize(ensembleSize.intValue());
+            simulatorParameters.setEnsembleSize(ensembleSize);
         }
 
         String stepSizeFractionStr = mStepSizeFractionField.getText();
@@ -1454,7 +1454,7 @@ public class SimulationLauncher
         }
         if(null != stepSizeFraction)
         {
-            simulatorParameters.setStepSizeFraction(stepSizeFraction.doubleValue());
+            simulatorParameters.setStepSizeFraction(stepSizeFraction);
         }
 
         String allowedRelativeErrorStr = mAllowedRelativeErrorField.getText();
@@ -1471,10 +1471,8 @@ public class SimulationLauncher
                 return(retVal);
             }
         }
-        if(null != allowedRelativeError)
-        {
-            simulatorParameters.setMaxAllowedRelativeError(allowedRelativeError.doubleValue());
-        }
+
+        simulatorParameters.setMaxAllowedRelativeError(allowedRelativeError);
 
         String allowedAbsoluteErrorStr = mAllowedAbsoluteErrorField.getText();
         Double allowedAbsoluteError = null;
@@ -1490,10 +1488,7 @@ public class SimulationLauncher
                 return(retVal);
             }
         }
-        if(null != allowedAbsoluteError)
-        {
-            simulatorParameters.setMaxAllowedAbsoluteError(allowedAbsoluteError.doubleValue());
-        }
+        simulatorParameters.setMaxAllowedAbsoluteError(allowedAbsoluteError);
 
         String numHistoryBinsStr = mNumHistoryBinsField.getText();
         Integer numHistoryBins = null;
