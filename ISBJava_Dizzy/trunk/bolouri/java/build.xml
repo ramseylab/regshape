@@ -215,7 +215,7 @@
     </javac>
   </target>
 
-  <target name="compiletests" depends="compile">
+  <target name="compileTests" depends="compile">
     <mkdir dir="${app.classesDir}" />
     <javac srcdir="${app.srcDir}" 
            destdir="${app.classesDir}" 
@@ -241,7 +241,7 @@
 
   <target name="build" depends="jar" />
 
-  <target name="test" depends="compiletests" />
+  <target name="test" depends="compileTests" />
   
   <target name="jar" depends="compile, copyResources">
     <mkdir dir="${app.buildDir}" />
