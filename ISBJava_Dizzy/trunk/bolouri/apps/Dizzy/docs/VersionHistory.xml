@@ -48,7 +48,8 @@ This document contains the version history for the
 <td>2004/01/30</td>
 <td>
 <ul>
-<li>For complex models, increased the speed of the stochastic simulators
+<li>For complex models (many symbols defined as complex expressions), 
+increased the speed of the stochastic simulators
 by a factor of five.  Slightly improved the speed of the simulators 
 for the case of simple models (all elementary
 reactions, no custom reaction rates).</li>
