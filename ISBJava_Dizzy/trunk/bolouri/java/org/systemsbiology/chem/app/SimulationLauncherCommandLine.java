@@ -72,6 +72,8 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     private Integer mEnsembleSize;
     private Double mRelativeTolerance;
     private Double mAbsoluteTolerance;
+    private boolean mNullRelativeTolerance;
+    private boolean mNullAbsoluteTolerance;
     private Double mStepSizeFraction;
     private Integer mNumHistoryBins;
 
@@ -257,7 +259,9 @@ public class SimulationLauncherCommandLine extends CommandLineApp
         mComputeFluctuations = false;
         boolean testOnly = false;
         boolean printParameters = false;
-
+        mNullAbsoluteTolerance = false;
+        mNullRelativeTolerance = false;
+        
         for(int argCtr = 0; argCtr < numArgs; ++argCtr)
         {
             String arg = pArgs[argCtr];
@@ -317,10 +321,18 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             else if(arg.equals(REL_TOLERANCE_ARG))
             {
                 mRelativeTolerance = getRequiredDoubleArgumentModifier(REL_TOLERANCE_ARG, pArgs, ++argCtr);
+                if(null == mRelativeTolerance)
+                {
+                    mNullRelativeTolerance = true;
+                }
             }
             else if(arg.equals(ABS_TOLERANCE_ARG))
             {
                 mAbsoluteTolerance = getRequiredDoubleArgumentModifier(ABS_TOLERANCE_ARG, pArgs, ++argCtr);
+                if(null == mAbsoluteTolerance)
+                {
+                    mNullAbsoluteTolerance = true;
+                }
             }
             else if(arg.equals(STEP_SIZE_FRACTION_ARG))
             {
@@ -391,9 +403,15 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             mSimulatorParameters.setEnsembleSize(mEnsembleSize);
         }
 
-        mSimulatorParameters.setMaxAllowedRelativeError(mRelativeTolerance);
-
-        mSimulatorParameters.setMaxAllowedAbsoluteError(mAbsoluteTolerance);
+        if(null != mRelativeTolerance || mNullRelativeTolerance)
+        {
+            mSimulatorParameters.setMaxAllowedRelativeError(mRelativeTolerance);
+        }
+        
+        if(null != mAbsoluteTolerance || mNullAbsoluteTolerance)
+        {
+            mSimulatorParameters.setMaxAllowedAbsoluteError(mAbsoluteTolerance);
+        }
 
         mSimulatorParameters.setComputeFluctuations(mComputeFluctuations);
         if(mComputeFluctuations && (mSimulator instanceof org.systemsbiology.chem.SimulatorStochasticBase)
