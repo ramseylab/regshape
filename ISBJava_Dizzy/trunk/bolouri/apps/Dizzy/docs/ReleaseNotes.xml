@@ -57,10 +57,10 @@ you selected for this program.
 <p>
 For documentation on how to use the &appName; program,
 please consult the 
-<a href="&appHomePage;/UserManual.html">&appName; User Manual</a>.
+<a href="UserManual.html">&appName; User Manual</a>.
 For detailed documentation of the application programming
 interface (API) to the &appName; system, please consult the
-<a href="&appHomePage;/../javadoc">ISBJava</a> home page.
+<a href="&webBaseURL;/javadoc">ISBJava</a> home page.
 You will find examples of model defrnition in the "samples"
 subdirectory of the directory in which you install the 
 &appName; software.

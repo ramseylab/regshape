@@ -37,7 +37,7 @@ The software consists of the following elements:
 <ol>
 <li>a set of Java packages or &quot;libraries&quot; that constitute a Java 
 application programming interface (or &quot;API&quot;) for this software system
-There is <a href="../javadoc">javadoc</a> documentation available
+There is <a href="&webBaseURL;/javadoc">javadoc</a> documentation available
 for the API for this software package.</li>
 <li>a scripting engine that can be invoked from the command-line, to define
 a model and run simulations on the model, and to export a model to a different
@@ -89,7 +89,7 @@ The file extension of the CCMDL scripting language is &quot;<code>&ccmdlExtensio
 </ol>
 You will find examples of all three languages in the "samples"
 subdirectory of the directory in which you install the &appName; software.
-In addition, there is a <a href="../models">repository of
+In addition, there is a <a href="&webBaseURL;/models">repository of
 biomolecular models</a> maintained by the &mainGroup;, that
 will serve as a good source of sample model definition files.
 </p>
@@ -105,7 +105,7 @@ release date:      &appDate;
 The release notes for this version of the program can be found
 at the following URL:
 <blockquote>
-<a href="&appHomePage;/README.html">&appHomePage;/README.html</a>
+<a href="ReleaseNotes.html">&appHomePage;/docs/ReleaseNotes.html</a>
 </blockquote>
 The home page for this program is:
 <blockquote>
@@ -113,13 +113,13 @@ The home page for this program is:
 </blockquote>
 The version history for this program can be found at the following URL:
 <blockquote>
-<a href="&appHomePage;/VersionHistory.html">&appHomePage;/VersionHistory.html</a>
+<a href="VersionHistory.html">&appHomePage;/docs/VersionHistory.html</a>
 </blockquote>
 If you are reading this document through a print-out, you can find
 the online version of this document (which may be a more recent version)
 at the following URL:
 <blockquote>
-<a href="&appHomePage;/UserManual.html">&appHomePage;/UserManual.html</a>
+<a href="UserManual.html">&appHomePage;/docs/UserManual.html</a>
 </blockquote>
 </p>
 

@@ -200,6 +200,22 @@ and any path to a file to read from that file]]></string>
 					<property name="destinationName">
 						<string><![CDATA[RegisterSBWSimulators]]></string>
 					</property>
+					<property name="executableIcon">
+						<object class="com.zerog.ia.installer.util.BindingWin32" objectID="a5c85730bd24">
+							<property name="smallIconName">
+								<string><![CDATA[appLogoIcon.gif]]></string>
+							</property>
+							<property name="largeIconName">
+								<string><![CDATA[appLogoIcon.gif]]></string>
+							</property>
+							<property name="smallIconPath">
+								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/images/]]></string>
+							</property>
+							<property name="largeIconPath">
+								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/images/]]></string>
+							</property>
+						</object>
+					</property>
 					<property name="mainClass">
 						<string><![CDATA[isb.chem.sbw.SimulationModule]]></string>
 					</property>
@@ -359,10 +375,10 @@ and any path to a file to read from that file]]></string>
 				<string><![CDATA[The installer cannot run on your configuration. It will now quit.]]></string>
 			</property>
 			<property name="userSplashPath">
-				<string><![CDATA[$IA_PROJECT_DIR$/../../../images/]]></string>
+				<string><![CDATA[$IA_PROJECT_DIR$/../images/]]></string>
 			</property>
 			<property name="userSplashName">
-				<string><![CDATA[logo-isb.png]]></string>
+				<string><![CDATA[appLogo.png]]></string>
 			</property>
 			<property name="localesToBuild">
 				<object class="java.util.Vector">
@@ -442,10 +458,10 @@ and any path to a file to read from that file]]></string>
 				<int>1</int>
 			</property>
 			<property name="splashHeight">
-				<int>63</int>
+				<int>85</int>
 			</property>
 			<property name="splashWidth">
-				<int>144</int>
+				<int>105</int>
 			</property>
 			<property name="defaultInstallSetIndex">
 				<int>0</int>
@@ -2064,6 +2080,32 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 										</object>
+										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="a61db5e9bd12">
+											<property name="unixPermissions">
+												<string><![CDATA[664]]></string>
+											</property>
+											<property name="sourceName">
+												<string><![CDATA[VersionHistory.html]]></string>
+											</property>
+											<property name="overrideUnixPermissions">
+												<boolean>false</boolean>
+											</property>
+											<property name="sourcePath">
+												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/html/]]></string>
+											</property>
+											<property name="shouldUninstall">
+												<boolean>true</boolean>
+											</property>
+											<property name="destinationName">
+												<string><![CDATA[VersionHistory.html]]></string>
+											</property>
+											<property name="fileSize">
+												<long>-1</long>
+											</property>
+											<property name="macBinary">
+												<boolean>false</boolean>
+											</property>
+										</object>
 										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="59b83c599afa">
 											<property name="unixPermissions">
 												<string><![CDATA[775]]></string>
@@ -2088,6 +2130,57 @@ and any path to a file to read from that file]]></string>
 												<object refID="9227b8499aff"/>
 												<object refID="59d91c699afd"/>
 												<object refID="6eb1c31a9b00"/>
+												<object refID="a61db5e9bd12"/>
+											</visualChildren>
+										</object>
+
+										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="a5f39732bd0e">
+											<property name="unixPermissions">
+												<string><![CDATA[664]]></string>
+											</property>
+											<property name="sourceName">
+												<string><![CDATA[appLogoIcon.png]]></string>
+											</property>
+											<property name="overrideUnixPermissions">
+												<boolean>false</boolean>
+											</property>
+											<property name="sourcePath">
+												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/images/]]></string>
+											</property>
+											<property name="shouldUninstall">
+												<boolean>true</boolean>
+											</property>
+											<property name="destinationName">
+												<string><![CDATA[appLogoIcon.png]]></string>
+											</property>
+											<property name="fileSize">
+												<long>-1</long>
+											</property>
+											<property name="macBinary">
+												<boolean>false</boolean>
+											</property>
+										</object>
+										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="a5f2fce2bd0e">
+											<property name="unixPermissions">
+												<string><![CDATA[775]]></string>
+											</property>
+											<property name="overrideUnixPermissions">
+												<boolean>false</boolean>
+											</property>
+											<property name="shouldUninstall">
+												<boolean>true</boolean>
+											</property>
+											<property name="destinationName">
+												<string><![CDATA[images]]></string>
+											</property>
+											<property name="removeRecursively">
+												<boolean>false</boolean>
+											</property>
+											<property name="macBinary">
+												<boolean>false</boolean>
+											</property>
+											<visualChildren>
+												<object refID="a5f39732bd0e"/>
 											</visualChildren>
 										</object>
 									</installChildren>
@@ -2115,6 +2208,7 @@ and any path to a file to read from that file]]></string>
 						<object refID="6e0fbc949afe"/>
 						<object refID="6e2e77029afc"/>
 						<object refID="6e33c6fc9afe"/>
+                                                <object refID="a5f2fce2bd0e"/>
 					</visualChildren>
 				</object>
 				<object class="com.zerog.ia.installer.GhostDirectory" objectID="4a0bf6139afa">

@@ -18,16 +18,16 @@
 <p>
 <ul>
 <li><a href="&appVersion;/installer/Web_Installers/install.htm">Download &appName;</a></li>
-<li><a href="UserManual.html">&appName; User Manual</a></li>
-<li><a href="ReleaseNotes.html">&appName; Release Notes</a></li>
-<li><a href="VersionHistory.html">&appName; Version History</a></li>
+<li><a href="docs/UserManual.html">&appName; User Manual</a></li>
+<li><a href="docs/ReleaseNotes.html">&appName; Release Notes</a></li>
+<li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
 <li><a href="../License.html">License Agreement</a></li>
 <li><a href="../javadoc">ISBJava Javadoc API</a></li>
 </ul>
 </p>
 
 <p>
-<img src="appLogo.png" alt="&appName; logo" border="1" />
+<img src="images/appLogo.png" alt="&appName; logo" border="1" />
 </p>
 
 <p>
@@ -69,7 +69,7 @@ The text of the license agreement is available <a href="../License.html">here</a
 </p>
 
 <p>
-<a href="screenshot1.png"><img src="screenshot1-small.png" alt="screenshot" /></a>Screen shot of the &appName; program
+<a href="images/screenshot1.png"><img src="images/screenshot1-small.png" alt="screenshot" /></a>Screen shot of the &appName; program
 </p>
 
 </isb:document>

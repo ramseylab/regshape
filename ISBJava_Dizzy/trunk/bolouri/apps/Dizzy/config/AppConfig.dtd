@@ -7,6 +7,7 @@
 <!ENTITY appVersion "0.0.1">
 <!ENTITY appDate "2003/04/01">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
+<!ENTITY appIconFile "../images/appLogoIcon.gif">
 
 <!-- these definitions are used only in documentation, not by the app itself: -->
 <!ENTITY appMaintainerFullName "&mainGroup;">

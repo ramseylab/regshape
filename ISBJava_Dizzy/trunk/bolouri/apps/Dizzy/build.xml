@@ -42,16 +42,20 @@
 
   <target name="copyHtml">
     <mkdir dir="${app.webDir}" />
-    <copy todir="${app.webDir}">
+    <copy todir="${app.webDir}" file="${app.styleDir}/index.html" />
+
+    <mkdir dir="${app.webDir}/docs" />
+    <copy todir="${app.webDir}/docs">
       <fileset dir="${app.styleDir}">
         <include name="*.html" />
+        <exclude name="index.html" />
       </fileset>
     </copy>
   </target>
 
   <target name="copyImages">
-    <mkdir dir="${app.webDir}" />
-    <copy todir="${app.webDir}">
+    <mkdir dir="${app.webDir}/images" />
+    <copy todir="${app.webDir}/images">
       <fileset dir="${app.imagesDir}">
         <include name="*.png" />
       </fileset>
@@ -59,13 +63,6 @@
   </target>
 
   <target name="buildWeb" depends="style, copyImages, copyHtml">
-    <mkdir dir="${app.webDir}" />
-    <copy todir="${app.webDir}">
-      <fileset dir="${app.styleDir}">
-        <include name="*.html" />
-      </fileset>
-    </copy>
-
     <!-- make the build directory -->
     <mkdir dir="${app.buildDir}" />
 
