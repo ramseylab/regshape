@@ -128,7 +128,7 @@ Hwang was the architect of the statistical algorithms used within
 &appName;, and provided a reference implentation of the algorithms
 in MATLAB.  Hamid Bolouri is the Principal Investigator for this
 research project.  Larissa Kamenkovich implemented an early prototype 
-of the &appName; software program.  William Longabaugh provided 
+of a Java GUI for the &appName; software program.  William Longabaugh provided 
 frequent advice on Java programming.
 The assistance, advice, and contributions of several individuals 
 to the &appName; project is gratefully acknowledged.
