@@ -60,9 +60,7 @@ public class QuantileNormalizer
     private Object []mColumnIndices;
     private ElementComparator mElementComparator;
     private DoubleMatrix2D mNormalizedObservations;
-    private DoubleMatrix1D mColumnMedians;
     private DoubleMatrix1D mRowMedians;
-    private Object []mRanks;
     
     static class ElementComparator implements IntComparator
     {
@@ -102,8 +100,6 @@ public class QuantileNormalizer
         mNormalizedObservations = null;
         mRawObservations = null;
         mRawObservationsFixedForScaling = null;
-        mColumnMedians = null;
-        mRanks = null;
         mElementComparator = new ElementComparator();
         mRowMedians = null;
     }
@@ -146,15 +142,12 @@ public class QuantileNormalizer
         mColumnMissingObservationsIndices = new IntArrayList();
         mAverageObservations = DoubleFactory1D.dense.make(pNumRows);
         mRawObservationsFixedForScaling = DoubleFactory2D.dense.make(pNumRows, pNumColumns);
-        mColumnMedians = DoubleFactory1D.dense.make(pNumColumns);
         mNormalizedObservations = DoubleFactory2D.dense.make(pNumRows, pNumColumns);
         mColumnIndices = new Object[pNumColumns];
-        mRanks = new Object[pNumColumns];
         mRowMedians = DoubleFactory1D.dense.make(pNumRows);
         for(int j = pNumColumns; --j >= 0; )
         {
             mColumnIndices[j] = new int[pNumRows];
-            mRanks[j] = new int[pNumRows];
         }
     }
     
@@ -200,7 +193,6 @@ public class QuantileNormalizer
         int j = 0;
         int []columnRanks = null;
         double value = 0.0;
-        Object []columnRanksArray = mRanks;
         Object []columnIndicesArray = mColumnIndices;
         DoubleMatrix1D rowAverages = mAverageObservations;
         DoubleMatrix2D normalizedObservations = mNormalizedObservations;
@@ -219,7 +211,6 @@ public class QuantileNormalizer
         int index = 0;
         for(j = numColumns; --j >= 0; )
         {
-            columnRanks = (int []) columnRanksArray[j];
             columnIndices = (int []) columnIndicesArray[j];
             for(rank = 0; rank < numRows + 1; ++rank)
             {
@@ -250,10 +241,7 @@ public class QuantileNormalizer
         }
         
     }
-    
-    
-
-    
+        
     // mLogRawObservations -> mAverageObservations
     private void getRowAverages()
     {
@@ -292,7 +280,6 @@ public class QuantileNormalizer
         ElementComparator elementComparator = mElementComparator;
         Object []columnIndicesArray = mColumnIndices;
         DoubleMatrix2D rescaledRawObservations = mRescaledRawObservations;
-        int []columnRanks = null;
         int index = 0;
         int rank = 0;
         for(j = numColumns; --j >= 0; )
@@ -302,13 +289,6 @@ public class QuantileNormalizer
             elementComparator.setColumnValues(columnMatrix);
             Sorting.mergeSort(columnIndices, 0, numRows, elementComparator);
             columnMatrix.assign(cern.colt.matrix.doublealgo.Sorting.mergeSort.sort(columnMatrix));
-            columnRanks = (int []) mRanks[j];
-            for(i = 0; i < numRows; ++i)
-            {
-                index = columnIndices[i];
-                rank = i;
-                columnRanks[index] = rank;
-            }
         }
     }
         
