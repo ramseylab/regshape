@@ -29,9 +29,9 @@ public class ExceptionNotificationOptionPane extends JOptionPane
         mTextArea.append("\n\n" + stackTrace);
     }
 
-    public ExceptionNotificationOptionPane(Throwable pException)
+    public ExceptionNotificationOptionPane(Throwable pException, String pSummaryText)
     {
-        JTextArea textArea = new JTextArea(pException.toString() + "\n\nThis operation is cancelled", 
+        JTextArea textArea = new JTextArea(pSummaryText + "\n\n" + pException.toString(),
                                            NUM_ROWS, NUM_COLS);
         mTextArea = textArea;
         mException = pException;
@@ -52,5 +52,10 @@ public class ExceptionNotificationOptionPane extends JOptionPane
         };
         detailedButton.addActionListener(detailedButtonListener);
         add(detailedButton);
+    }
+    
+    public ExceptionNotificationOptionPane(Throwable pException)
+    {
+        this(pException, "An exception has occurred.  The specific error message is:");
     }
 }
