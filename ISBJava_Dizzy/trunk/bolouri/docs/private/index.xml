@@ -24,12 +24,17 @@
 <li><a href="../Resources.html">&mainGroup; Resources Page</a></li>
 <li><a href="../models">&mainGroup; Model Repository</a></li>
 <li><a href="&mainPublicURL;">&mainAffiliation;</a></li>
-<li><a href="WebPagesManagementManual.html">Web Pages Management Manual</a></li>
 <li><a href="http://www.sbw-sbml.org">SBW/SBML Project</a></li>
 <li><a href="http://www.cytoscape.org">Cytoscape Project</a></li>
 </ul>
 </isb:docsection>
 
+<isb:docsection name="Documents" label="documents">
+<ul>
+<li><a href="WebPagesManagementManual.html">Web Pages Management Manual</a></li>
+<li><a href="SoftwareDevelopmentGuidelines.html">Software Development Guidelines</a></li>
+</ul>
+</isb:docsection>
 
 <isb:docsection name="Staff" label="staff">
 <blockquote>
