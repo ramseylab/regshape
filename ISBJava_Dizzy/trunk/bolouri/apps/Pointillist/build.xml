@@ -43,6 +43,9 @@
     <filter token="PROJROOT" value="${projRoot}" />
     <filter token="APPNAME" value="${ant.project.name}" />
     <filter token="APPJAVAMAXHEAPSIZEBYTES" value="&appJavaMaxHeapSizeBytes;" />
+  	<filter token="WEBBASEURL" value="&webBaseURL;" />
+  	<filter token="MAINPUBLICURL" value="&mainPublicURL;" />
+  	<filter token="MAINGROUPEMAIL" value="&mainGroupEmail;" />
   </target>
 
   <target name="compile">
