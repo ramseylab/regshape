@@ -94,11 +94,6 @@ locale encoding for text files, and not in the encoding specified in the
 XML file header.
 </li>
 <li>
-Added a new class 
-<code>org.systemsbiology.util.MatlabInterface</code>, that provides
-a TCP/IP bridge for communicating with the Matlab console, from Java.
-</li>
-<li>
 Fixed a bug (reported by Alex Kowald) in the 
 <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>
 in which an exception is thrown, if a
