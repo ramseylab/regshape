@@ -74,7 +74,12 @@
     <style basedir="${app.docsDir}" 
            destdir="${app.styleDir}" 
            includes="*.xml" 
+    	   excludes="JavadocTitlePageSimple.xml"
            style="${globalConfig}/${docsStyleSheet}" />
+  	<style basedir="${app.docsDir}"
+  	       destdir="${app.styleDir}"
+  	       includes="JavadocTitlePageSimpmle.xml"
+  	       style="${globalConfig}/${appConfigStyleSheet}" />
   </target>
 
   <target name="copyImages">
