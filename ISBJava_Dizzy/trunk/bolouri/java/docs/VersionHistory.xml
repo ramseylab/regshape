@@ -38,11 +38,30 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.3.1/&installerDownloadRelURL;">1.3.1</a></td>
+<td>2004/01/27</td>
+<td>
+<ul>
+<li>Fixed a bug in the <code>ModelBuilderCommandLanguage</code> for the case where a
+macro definition contains a loop construct.</li>
+<li>Fixed a bug in the <code>ModelBuilderCommandLanguage</code> for the case where a 
+reaction definition statement comes after a loop construct.</li>
+<li>Modified the <code>ModelBuilderCommandLanguage</code> to allow the value of
+a <code>SymbolValue</code> to be redefined, as long as the symbol has not been promoted to a
+<code>Species</code>, <code>Reaction</code>, <code>Parameter</code>, or <code>Compartment</code>
+at the point where the value of the symbol is redefined.  The purpose of this feature is
+to permit the user to define a template definition with an &quot;output&quot; parameter.</li>
+</ul>
+</td>
+
+</tr>
+
+<tr valign="top">
 <td><a href="../1.3.0/&installerDownloadRelURL;">1.3.0</a></td>
 <td>2004/01/26</td>
 <td>
 <ul>
-<li>Added a macro feature to the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>.</li>
+<li>Added a template feature to the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>.</li>
 <li>Refactored the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code> class 
 to use the <code>java.io.StreamTokenizer</code> for initial tokenization pass.  Improved syntax error
 detection by rewinding the token stream completely to the beginning of the statement, 
@@ -61,11 +80,11 @@ names.</li>
 <code>org.systemsbiology.math.Symbol</code> class to the
 <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>, which moves
 the naming policy out of the base <code>Symbol</code> class and into a more appropriate
-layer; this change was also to facilitate the macro definition feature in the CMDL.</li>
+layer; this change was also to facilitate the template definition feature in the CMDL.</li>
 <li>Modified the <code>org.systemsbiology.math.SymbolEvaluatorHashMap</code> to add a new
 protected <code>getValue(String)</code> method, which is used by the 
 <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code> class in
-processing macro references.</li>
+processing template references.</li>
 <li>Improved error handling in the <code>org.systemsbiology.chem.app.MainApp</code> class,
 by adding debugging code to standard error in cases of exceptions.  Removed an unneeded exit()
 method from same class.</li>
