@@ -79,7 +79,7 @@
   	<style basedir="${app.docsDir}"
   	       destdir="${app.styleDir}"
   	       includes="JavadocTitlePageSimple.xml"
-  	       style="${globalConfig}/${simpleXMLConfigStyleSheet}" />
+  	       style="${globalConfig}/${simpleHTMLConfigStyleSheet}" />
   </target>
 
   <target name="copyImages">
