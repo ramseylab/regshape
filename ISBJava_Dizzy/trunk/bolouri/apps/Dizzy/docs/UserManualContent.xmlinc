@@ -1157,6 +1157,20 @@ the simulation engine only when a value for the symbol "B" is needed.
 The special symbols &quot;time&quot; and &quot;Navo&quot; may be used in
 deferred-evaluation expressions.
 </p>
+<p>
+<b>Important note about time-dependent expressions:</b><br />
+Although it is technically possible to define a rate law or other
+expression that has an explicit time dependence through the use of
+the reserved symbol &quot;<code>time</code>&quot;, this practice
+is discouraged when using the stochastic simulators.  This is because
+the stochastic simulators are based on a mathematical theory of
+reaction kinetics in which the time-invariance of the reaction parameters
+is <em>a priori</em> assumed.  The <code>time</code> reserved symbol
+is intended solely for use with the ODE simulators.  A very slowly-varying
+time dependence for some expression in a model, <em>may</em> be compatible with
+the stochastic simulators, to the extent that on the time scale for
+any reaction to occur, the expression is effectively time-translation-invariant. 
+</p>
 </isb:docsubsection>
 
 <isb:docsubsection name="Gillespie Stochastic Algorithm" label="gillespie">
@@ -3500,6 +3514,17 @@ look different than the other simulators?</b>
 <p>
 See the <a href="#odeToJavaInterpolation">known issue with
 interpolation in the implicit-explicit odeToJava solver</a>.
+</p>
+<p>
+<b>Is it possible to estimate the steady-state stochastic
+fluctuations in a model, without doing a full stochastic simulation?
+</b>
+</p>
+<p>
+Yes, but you will have to use the <a href="#commandline">command-line
+interface to &appName;</a>.  Please refer to the documentation on the
+&quot;<code>-computeFluctuations</code>&quot; command-line option, in the aforementioned
+section.
 </p>
 
 </isb:docsection>
