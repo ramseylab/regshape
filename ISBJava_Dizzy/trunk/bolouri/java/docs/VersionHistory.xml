@@ -136,6 +136,14 @@ This document contains the version history for the
     programs in <code>org.systemsbiology.inference</code> (<code>EvidenceWeightedInferer</code>,
     <code>SignificanceCalculator</code>, <code>DataNormalizer</code>, and <code>DataManager</code>)
     to use this new method.</li>
+  <li>Created a two-argument constructor for
+    <code>org.systemsbiology.util.ExceptionNotificationOptionPane</code>.  This allows passing
+    a message text to be included in the body of the dialog box.</li>
+  <li>Refactored classes <code>SimulationLauncher</code>, <code>MainApp</code>, and
+    <code>EditorPane</code> in <code>org.systemsbiology.chem.app</code>, to use the
+    two-element constructor for <code>org.systemsbiology.util.ExceptionNotificationOptionPane.</code></li>
+  <li>Added a static method <code>org.systemsbiology.math.probability.Normal.cdf()</code>,
+    which is simply a wrapper to a call in the  Colt library .</li>
 </ul>
 </td>
 </tr>
