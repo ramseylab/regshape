@@ -393,26 +393,14 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         {
             if(! SymbolEvaluatorChemSimulation.isReservedSymbol(pSymbol))
             {
+                pSymbol = addNamespaceToSymbol(pSymbol, pNamespace);
+
                 // check to see if this is a dummy symbol
                 SymbolValue symbolValue = (SymbolValue) pSymbolMap.get(pSymbol);
-                if(null != symbolValue)
+                if(null != symbolValue && symbolValue instanceof DummySymbol)
                 {
-                    if(symbolValue instanceof DummySymbol)
-                    {
-                        // the symbol is a "dummy sumbol"; substitute the instance symbol instead
-                        pSymbol = ((DummySymbol) symbolValue).mInstanceSymbolName;
-                    }
-                    else
-                    {
-                        // the symbol is not a dummy symbol, and its un-namespaced name exists in the symbol table;
-                        // namespace it
-                        pSymbol = addNamespaceToSymbol(pSymbol, pNamespace);
-                    }
-                }
-                else
-                {
-                    // namespace it
-                    pSymbol = addNamespaceToSymbol(pSymbol, pNamespace);
+                    // the symbol is a "dummy sumbol"; substitute the instance symbol instead
+                    pSymbol = ((DummySymbol) symbolValue).mInstanceSymbolName;
                 }
             }
             else
@@ -607,7 +595,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             }
             catch(DataNotFoundException e)
             {
-                throw new InvalidInputException("unable to determine value for expression: " + expressionString);
+                throw new InvalidInputException("unable to determine value for expression: " + expressionString, e);
             }
         }
 
@@ -1649,28 +1637,33 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             throw new InvalidInputException("number of symbols is mismatched, for macro reference: " + macroName);
         }
 
+        String oldNamespace = mNamespace;
+        mNamespace = addNamespaceToSymbol(macroInstanceName, mNamespace);
+
         // add the dummy symbols to the global symbols map
         int numExtSym = externalSymbolsList.size();
         for(int i = 0; i < numExtSym; ++i)
         {
             String extSymDummy = (String) macro.mExternalSymbols.get(i);
             assert (null != extSymDummy) : "unexpected null array element";
+
+            // add namespace to the dummy symbol
+            extSymDummy = addNamespaceToSymbol(extSymDummy, mNamespace);
+            
             String extSymValue = (String) externalSymbolsList.get(i);
             assert (null != extSymValue) : "unexpected null array element";
-            DummySymbol dummySymbol = new DummySymbol(extSymDummy, extSymValue);
-            if(null != pSymbolMap.get(extSymDummy))
-            {
-                throw new InvalidInputException("dummy symbol is already defined in the global symbol map: " + extSymDummy);
-            }
+
+            assert (null == pSymbolMap.get(extSymDummy)) : "unexpectedly found dummy symbol in global symbol table: " + extSymDummy;
+            
             if(null == pSymbolMap.get(extSymValue))
             {
                 throw new InvalidInputException("unknown symbol referenced: " + extSymValue);
             }
+
+            DummySymbol dummySymbol = new DummySymbol(extSymDummy, extSymValue);
             pSymbolMap.put(extSymDummy, dummySymbol);
         }
 
-        String oldNamespace = mNamespace;
-        mNamespace = addNamespaceToSymbol(macroInstanceName, mNamespace);
 
         LinkedList tokenList = macro.mTokenList;
 
@@ -1693,14 +1686,16 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             throw new InvalidInputException(messageBuffer.toString(), e);
         }
 
-        mNamespace = oldNamespace;
-
         // remove the dummy symbols from the global symbols map
         for(int i = 0; i < numExtSym; ++i)
         {
             String extSymDummy = (String) macro.mExternalSymbols.get(i);
+            extSymDummy = addNamespaceToSymbol(extSymDummy, mNamespace);
             pSymbolMap.remove(extSymDummy);
         }
+
+        mNamespace = oldNamespace;
+
     }
 
     private void tokenizeAndExecuteStatementBuffer(StringBuffer pStatementBuffer, 
