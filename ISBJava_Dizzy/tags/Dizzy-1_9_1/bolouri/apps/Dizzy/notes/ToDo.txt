@@ -1,0 +1,9 @@
+(1) "Maybe more information could be printed if the "debug" option is used. STOCKS prints in debug mode all 
+reactions performed together with the waiting time until this reaction occured. This is useful to see if 
+some reactions are performed at all."  (Axel Kowald, 2004/10/26)
+
+(2) Modify ModelViewerCytoscape class to use the latest version of the Cytoscape SBML Reader Plug-In
+
+(3) Modify SimulationResultsPlot to use the latest version of JFreeChart
+
+(4) Try compiling ISBJava using a Java-to-Native compiler (Axel Kowald, 2004/03/03)
