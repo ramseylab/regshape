@@ -9,42 +9,72 @@ package org.systemsbiology.chem.app;
  */
 
 import org.systemsbiology.chem.*;
+
+import javax.swing.*;
+import org.systemsbiology.util.*;
 import org.systemsbiology.gui.*;
 import java.awt.*;
-import javax.swing.*;
 
-public class ModelViewerHumanReadable
+public class ModelViewerHumanReadable implements IModelViewer, IAliasableClass
 {
-    private Component mMainFrame;
-
-    public ModelViewerHumanReadable(Component pMainFrame)
+    public static final String CLASS_ALIAS = "human-readable";
+    public static final int WIDTH = 500;
+    public static final int HEIGHT = 600;
+    
+    public ModelViewerHumanReadable()
     {
-        mMainFrame = pMainFrame;
+        // do nothing
     }
 
-    void handleViewModelHumanReadable(Model pModel)
+    public void viewModel(Model pModel, String pAppName) throws ModelViewerException
     {
         String modelName = pModel.getName();
         try
         {
+            JLabel modelNameLabel = new JLabel("model: " + pModel.getName());
+            modelNameLabel.setFont(modelNameLabel.getFont().deriveFont(Font.PLAIN));
+            
             JTextArea modelTextArea = new JTextArea(40, 80);
             modelTextArea.setEditable(false);
             modelTextArea.append(pModel.toString());
             modelTextArea.setCaretPosition(0);
             JScrollPane scrollPane = new JScrollPane(modelTextArea);
-            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-            JPanel modelTextAreaPane = new JPanel();
-            modelTextAreaPane.add(scrollPane);
-            JOptionPane optionPane = new JOptionPane(modelTextAreaPane);
-            JDialog dialog = optionPane.createDialog(mMainFrame, "model description for: " + modelName);
+            JPanel modelTextAreaPanel = new JPanel();
+            GridBagLayout layout = new GridBagLayout();
+            GridBagConstraints constraints = new GridBagConstraints();
+            
+            modelTextAreaPanel.add(modelNameLabel);
+            constraints.fill = GridBagConstraints.NONE;
+            constraints.gridwidth = 1;
+            constraints.gridheight = 1;
+            constraints.weightx = 0;
+            constraints.weighty = 0;
+            constraints.gridx = 0;
+            constraints.gridy = 0;     
+            layout.setConstraints(modelNameLabel, constraints);
+            
+            constraints.fill = GridBagConstraints.BOTH;
+            constraints.gridwidth = GridBagConstraints.REMAINDER;
+            constraints.gridheight = GridBagConstraints.REMAINDER;
+            constraints.weightx = 1;
+            constraints.weighty = 1;
+            constraints.gridx = 0;
+            constraints.gridy = 1;             
+            modelTextAreaPanel.setLayout(layout);
+            modelTextAreaPanel.add(scrollPane);
+            layout.setConstraints(scrollPane, constraints);
+            JDialog dialog = new JDialog();
+            dialog.setSize(WIDTH, HEIGHT);
+            Point location = FramePlacer.placeInCenterOfScreen(WIDTH, HEIGHT);
+            dialog.setLocation(location);
+            dialog.setTitle(pAppName + ": model description");
+            dialog.setContentPane(modelTextAreaPanel);
             dialog.show();
         }
 
         catch(Exception e)
         {
-            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
-            optionPane.createDialog(mMainFrame,
-                                    "View-model operation failed: " + modelName).show();
+            throw new ModelViewerException("unable to view model", e);
         }
     }
 }
