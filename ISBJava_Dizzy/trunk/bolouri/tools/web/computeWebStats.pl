@@ -34,7 +34,7 @@
 #
 use GD;
 
-sub SCRATCH_DIR() {'/local/var/webalizer'}
+sub SCRATCH_DIR() {'/local/var/webstats'}
 sub DOCUMENT_ROOT() {'/local/apache/htdocs'}
 sub BIN_DIR() {'/local/bin'}
 sub LOG_FILE_PREFIX() {'BolouriWebStats'}
