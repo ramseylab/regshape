@@ -296,4 +296,16 @@ public abstract class SimulatorStochasticBase extends Simulator
         System.arraycopy(timesArray, 0, pRetTimeValues, 0, timeCtr);
         
     }
+
+    public boolean allowsInterrupt()
+    {
+        return(true);
+    }
+
+    protected void initializeSimulatorStochastic(Model pModel, SimulationController pSimulationController) throws InvalidInputException
+    {
+        mSymbolEvaluator.setUseExpressionValueCaching(mHasExpressionValues);
+        checkDynamicalSymbolsInitialValues();
+        initializeRandomNumberGenerator();
+    }
 }

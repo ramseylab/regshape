@@ -170,9 +170,7 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
     public void initialize(Model pModel, SimulationController pSimulationController) throws DataNotFoundException, InvalidInputException
     {
         initializeSimulator(pModel, pSimulationController);
-        checkDynamicalSymbolsInitialValues();
-        initializeRandomNumberGenerator();
-        mSymbolEvaluator.setUseExpressionValueCaching(true);
+        initializeSimulatorStochastic(pModel, pSimulationController);
     }
 
 }

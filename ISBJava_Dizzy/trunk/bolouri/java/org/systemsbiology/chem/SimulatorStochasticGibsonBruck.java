@@ -29,15 +29,6 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
     private Object []mReactionDependencies;
     private IndexedPriorityQueue mPutativeTimeToNextReactions;
 
-    public void initialize(Model pModel, SimulationController pSimulationController) throws DataNotFoundException, InvalidInputException
-    {
-        initializeSimulator(pModel, pSimulationController);
-        checkDynamicalSymbolsInitialValues();
-        initializeRandomNumberGenerator();
-        createDependencyGraph(pModel);
-        initializePutativeTimeToNextReactions();
-        mSymbolEvaluator.setUseExpressionValueCaching(true);
-    }
 
     private void initializePutativeTimeToNextReactions()
     {
@@ -392,7 +383,13 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
         return(time);
     }
 
-
+    public void initialize(Model pModel, SimulationController pSimulationController) throws DataNotFoundException, InvalidInputException
+    {
+        initializeSimulator(pModel, pSimulationController);
+        initializeSimulatorStochastic(pModel, pSimulationController);
+        createDependencyGraph(pModel);
+        initializePutativeTimeToNextReactions();
+    }
 }
     
 
