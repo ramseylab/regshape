@@ -147,7 +147,7 @@ public class Plotter
                 public void componentResized(ComponentEvent e) 
                 {
                     handleResize();
-                    pack();
+                    show();
                 }
             });
         }
@@ -191,6 +191,7 @@ public class Plotter
 
             mPlotLabel.setPreferredSize(new Dimension(mPlotWidthPixels, mPlotHeightPixels));
             mPlotLabel.revalidate();
+            mPlotLabel.repaint();
         }
              
         private void handleSaveButton()

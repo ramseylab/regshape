@@ -311,8 +311,6 @@ public class MainApp
     private Container createComponents()
     {
         JPanel mainPane = new JPanel();
-        LayoutManager layoutManager = new BoxLayout(mainPane, BoxLayout.Y_AXIS);
-        mainPane.setLayout(layoutManager);
 
         EditorPane editorPane = new EditorPane(mainPane);
         mEditorPane = editorPane;
@@ -359,6 +357,7 @@ public class MainApp
                                                        ! simulationRunning);
     }
 
+
     private void initializeMainFrame() throws DataNotFoundException
     {
         JFrame frame = new JFrame(getName());
@@ -377,7 +376,7 @@ public class MainApp
         frame.setLocation(frameLocation);
         mOriginalWidthPixels = frameWidth;
         mOriginalHeightPixels = frameHeight;
-
+        
         frame.addComponentListener(new ComponentAdapter()
         {
             public void componentResized(ComponentEvent e)
@@ -388,7 +387,7 @@ public class MainApp
                 int changeHeightPixels = heightPixels - mOriginalHeightPixels;
                 mEditorPane.handleResize(widthPixels - mOriginalWidthPixels,
                                          heightPixels - mOriginalHeightPixels);
-                mMainFrame.pack();
+                mMainFrame.show();  // this is needed to work around a bug on the Windows platform
             }
         });
         updateMenus();
@@ -438,7 +437,7 @@ public class MainApp
 
         setSimulationLauncher(null);
         setTimestampModelLastLoaded(null);
-
+        
         initializeMainFrame();
     }
 
