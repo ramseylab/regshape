@@ -646,7 +646,9 @@ public class SignificanceCalculatorDriver
         try
         {
             ObservationsData observationsData = new ObservationsData();
-            observationsData.loadFromFile(pFile, pDelimiter);
+            FileReader fileReader = new FileReader(pFile);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            observationsData.loadFromFile(bufferedReader, pDelimiter);
             mObservationsData = observationsData;
             ObservationsTableModel observationsTableModel = new ObservationsTableModel(observationsData);
             mObservationsTable.setModel(observationsTableModel);

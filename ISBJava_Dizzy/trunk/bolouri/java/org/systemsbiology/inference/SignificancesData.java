@@ -91,12 +91,12 @@ public class SignificancesData
         return mMissingDataRate;
     }
     
-    public void loadFromFile(File pFile, DataFileDelimiter pDelimiter) throws FileNotFoundException, IOException, InvalidInputException
+    public void loadFromFile(BufferedReader pBufferedReader, DataFileDelimiter pDelimiter) throws IOException, InvalidInputException
     {
         MatrixString matrixString = new MatrixString();
-        FileReader fileReader = new FileReader(pFile);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        matrixString.buildFromLineBasedStringDelimitedInput(bufferedReader, pDelimiter);
+//        FileReader fileReader = new FileReader(pFile);
+//        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        matrixString.buildFromLineBasedStringDelimitedInput(pBufferedReader, pDelimiter);
         int numElements = matrixString.getRowCount() - 1;
         if(numElements < 1)
         {

@@ -662,7 +662,9 @@ public class EvidenceWeightedInfererDriver
         try
         {
             SignificancesData significancesData = new SignificancesData();
-            significancesData.loadFromFile(pFile, pDelimiter);
+            FileReader fileReader = new FileReader(pFile);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            significancesData.loadFromFile(bufferedReader, pDelimiter);
             mSignificancesData = significancesData;
             SignificancesTableModel significancesTableModel = new SignificancesTableModel(significancesData);
             mSignificancesTable.setModel(significancesTableModel);

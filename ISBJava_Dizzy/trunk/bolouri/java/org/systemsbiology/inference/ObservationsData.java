@@ -11,9 +11,6 @@
 package org.systemsbiology.inference;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import cern.colt.list.*;
 import cern.colt.matrix.*;
@@ -41,6 +38,16 @@ public class ObservationsData
     private MatrixString mMatrixString;
     private double mMissingDataRate;
     private int []mNumObservations;
+    
+    ObjectMatrix2D getObservations()
+    {
+        return mObservations;
+    }
+    
+    void setObservations(ObjectMatrix2D pObservations)
+    {
+        mObservations = pObservations;
+    }
     
     public int getNumElements()
     {
@@ -126,12 +133,12 @@ public class ObservationsData
         return retList;
     }
     
-    public void loadFromFile(File pFile, DataFileDelimiter pDelimiter) throws FileNotFoundException, IOException, InvalidInputException
+    public void loadFromFile(BufferedReader pBufferedReader, DataFileDelimiter pDelimiter) throws IOException, InvalidInputException
     {
         MatrixString matrixString = new MatrixString();
-        FileReader fileReader = new FileReader(pFile);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        matrixString.buildFromLineBasedStringDelimitedInput(bufferedReader, pDelimiter);
+//        FileReader fileReader = new FileReader(pFile);
+//        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        matrixString.buildFromLineBasedStringDelimitedInput(pBufferedReader, pDelimiter);
         int numElements = matrixString.getRowCount() - 1;
         if(numElements < 1)
         {
