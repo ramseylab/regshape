@@ -1141,43 +1141,41 @@ public class Expression implements Cloneable
 
 
     // this method is PERFORMANCE CRITICAL code; that is why it is so ugly
-    private static final double valueOfSubtreeNonSimple(Element pElement, SymbolEvaluator pSymbolEvaluator, int pElementCodeInt) throws DataNotFoundException
+    private static final double valueOfSubtreeNonSimple(Element pElement, SymbolEvaluator pSymbolEvaluator) throws DataNotFoundException
     {
         double valueOfFirstOperand;
-        Element firstOperand = pElement.mFirstOperand;
-        int firstOperandIntCode = firstOperand.mCode.mIntCode;
-        switch(firstOperandIntCode)
+        switch(pElement.mFirstOperand.mCode.mIntCode)
         {
             case ElementCode.ELEMENT_CODE_SYMBOL:
-                valueOfFirstOperand = pSymbolEvaluator.getValue(firstOperand.mSymbol);
+                valueOfFirstOperand = pSymbolEvaluator.getValue(pElement.mFirstOperand.mSymbol);
                 break;
             case ElementCode.ELEMENT_CODE_NUMBER:
-                valueOfFirstOperand = firstOperand.mNumericValue;
+                valueOfFirstOperand = pElement.mFirstOperand.mNumericValue;
                 break;
             default:
-                valueOfFirstOperand = valueOfSubtreeNonSimple(firstOperand, pSymbolEvaluator, firstOperandIntCode);
+                valueOfFirstOperand = valueOfSubtreeNonSimple(pElement.mFirstOperand, 
+                                                              pSymbolEvaluator);
                 break;
         }
 
-        Element secondOperand = pElement.mSecondOperand;
-        if(null != secondOperand)
+        if(null != pElement.mSecondOperand)
         {
             double valueOfSecondOperand;
-            int secondOperandIntCode = secondOperand.mCode.mIntCode;
-            switch(secondOperandIntCode)
+            switch(pElement.mSecondOperand.mCode.mIntCode)
             {
                 case ElementCode.ELEMENT_CODE_SYMBOL:
-                    valueOfSecondOperand = pSymbolEvaluator.getValue(secondOperand.mSymbol);
+                    valueOfSecondOperand = pSymbolEvaluator.getValue(pElement.mSecondOperand.mSymbol);
                     break;
                 case ElementCode.ELEMENT_CODE_NUMBER:
-                    valueOfSecondOperand = secondOperand.mNumericValue;
+                    valueOfSecondOperand = pElement.mSecondOperand.mNumericValue;
                     break;
                 default:
-                    valueOfSecondOperand = valueOfSubtreeNonSimple(secondOperand, pSymbolEvaluator, secondOperandIntCode);
+                    valueOfSecondOperand = valueOfSubtreeNonSimple(pElement.mSecondOperand, 
+                                                                   pSymbolEvaluator);
                     break;
             }
 
-            switch(pElementCodeInt)
+            switch(pElement.mCode.mIntCode)
             {
                 case ElementCode.ELEMENT_CODE_MULT:
                     return(valueOfFirstOperand * valueOfSecondOperand);
@@ -1192,18 +1190,6 @@ public class Expression implements Cloneable
                     return(valueOfFirstOperand - valueOfSecondOperand);
                     
                 case ElementCode.ELEMENT_CODE_POW:
-                    if(valueOfSecondOperand == 2.0)
-                    {
-                        return(valueOfFirstOperand * valueOfFirstOperand);
-                    }
-                    else if(valueOfSecondOperand == 3.0)
-                    {
-                        return(valueOfFirstOperand * valueOfFirstOperand * valueOfFirstOperand);
-                    }
-                    else if(valueOfSecondOperand == 4.0)
-                    {
-                        return(valueOfFirstOperand * valueOfFirstOperand * valueOfFirstOperand * valueOfFirstOperand);
-                    }
                     return(Math.pow(valueOfFirstOperand, valueOfSecondOperand));
                     
                 case ElementCode.ELEMENT_CODE_MOD:
@@ -1215,10 +1201,10 @@ public class Expression implements Cloneable
         }
         else
         {
-            switch(pElementCodeInt)
+            switch(pElement.mCode.mIntCode)
             {
                 case ElementCode.ELEMENT_CODE_NEG:
-                    return(-1.0 * valueOfFirstOperand);
+                    return(-valueOfFirstOperand);
                     
                 case ElementCode.ELEMENT_CODE_EXP:
                     return(Math.exp(valueOfFirstOperand));
@@ -1281,7 +1267,7 @@ public class Expression implements Cloneable
                 return(pElement.mNumericValue);
 
             default:
-                return(valueOfSubtreeNonSimple(pElement, pSymbolEvaluator, elementCodeInt));
+                return(valueOfSubtreeNonSimple(pElement, pSymbolEvaluator));
         }
     }
 
