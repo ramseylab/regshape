@@ -1186,6 +1186,7 @@ default exporter is the exporter for <a href="#sbml">Systems Biology
 Markup Language</a> (SBML).  The SBML exporter has the exporter
 alias &quot;<code>markup-language</code>&quot; (quotes not included).
 The full list of exporters is defined here:
+<blockquote>
 <dl>
 <dt><code>markup-language</code></dt>
 <dd>exports a model instance to <a href="#sbml">SBML</a>
@@ -1196,6 +1197,7 @@ The full list of exporters is defined here:
 <p />
 </dd>
 </dl>
+</blockquote>
 Currently there is no exporter plug-in for the 
 <a href="#ccmdl">CCMDL</a> language.  This is because
 the CCMDL language is not sufficiently expressive to
@@ -1205,7 +1207,27 @@ Additional exporter plug-ins may be defined in the future.
 </p>
 </isb:docsubsection>
 
+<!-- ========== SIMULATOR PLUG-INS ========== -->
+<isb:docsubsection name="Simulator Plug-Ins" label="simplugins">
+<p>
+The &appName; system has a framework for pluggable simulation
+modules.  Each simulator plug-in has a simulator &quot;alias&quot;.
+Currently the simulator plug-ins available are:
+<blockquote>
+  <dl>
+  <dt><code>gillespie</code></dt>
+  <dd>An implementation of the 
+<a href="&webBaseURL;/javadoc/isb/chem/GillespieSimulator.html">Gillespie stochastic algorithm</a>
+for modeling the reaction kinetics.</dd>
+  </dl>
+</blockquote>
+Each simulator above is identified by its &quot;simulator alias&quot;.
+The simulator alias for the Gillespie algorithm is &quot;<code>gillespie</code>&quot;.
+</p>
+</isb:docsubsection>
+
 </isb:docsection>
+
 
 <!-- ========== CCMDL ========== -->
 
@@ -1989,7 +2011,14 @@ intended for use with the command-line &appName; program, in
 order to run simulations, export to different file formats, etc.  
 The graphical &appName; program actually ignores any of the 
 action-performing statements that appear in a model definition
-file.  This section documents the various action-performing
+file.  Most users will probably use the graphical user interface,
+rather than the action-performing statements described herein.  
+The action-performing statements are documented here for 
+completeness, and to facilitate use of the &appName; system
+in a command-line mode of operation.
+</p>
+<p>
+This section documents the various action-performing
 statements available in the CCMDL language.  In a model
 definition file, the action-performing statement should be
 put after all of the model-definition statements.  Typically
@@ -2034,6 +2063,156 @@ The above example instructs the &appName; system to export
 the model instance in the <a href="#cmdl">CMDL</a> language.
 <p />
 </dd>
+<dt><code>simulate:</code></dt>
+<dd>
+<p>
+Runs a simulation of the reaction kinetics of the default 
+<a href="#modelinstances">model instance</a>.  This default
+model instance contains the default <a href="#models">model</a>
+and the default <a href="#speciespopulations">species populations
+collection</a>, the latter specifying the initial species populations
+for the simulation.  Required parameters are:
+     <dl>
+     <dt><code>stopTime <em>nnnnn</em></code></dt>
+     <dd>The stop time of the simulation, where <code>nnnnn</code>
+is a floating-point number.  The units of the stop time are the
+same as the units of the reciprocal of the reaction parameters
+defined for the chemical reactions in the model,
+which is normally seconds.</dd>
+     <dt><code>viewSpecies ("s1" "s2" ...)</code></dt>
+     <dd>Specifies the species whose populations are to be 
+taken as the output of the simulation.  Double-quotes
+are required around each species name.  Note that the
+list of species is delimited with whitespace, not commas.
+The list of species is initiated and terminated with
+parentheses.</dd>
+     </dl>
+</p>
+<p>
+There are a number of optional parameters for the 
+<code>simulate</code> statement:
+     <dl>
+     <dt><code>startTime <em>nnnnn</em></code></dt>
+     <dd>Specifies the starting time of the simulation, where
+<code>nnnnn</code> is a floating-point number.  The units of
+the start time are the same as the units of the reciprocal
+of the reaction parameters defined for the chemical reactions
+in the model, which is normally seconds.  The default value
+for this starting time is zero.  It is rarely necessary to
+specify this parameter; the only case where it might be needed
+is with reaction rate expressions or species population
+expressions that explicitly involve the <code>time</code> symbol.
+     </dd>
+     <dt><code>numTimePoints <em>nnnnn</em></code></dt>
+     <dd>This important parameter specifies the number of
+&quot;snapshots&quot; of the species populations are to
+be recorded over the course of the simulation.  The total
+duration of the simulation (<code>stopTime</code> minus
+<code>startTime</code>) is divided into <code>numTimePoints</code>
+sub-intervals.  After each time subinterval has elapsed during
+the course of the simulation, a &quot;snapshot&quot;
+of the species populations (for those species specified with the
+<code>viewSpecies</code> parameter defined above) is recorded.
+The default value for this parameter is 100.  The parameter value
+must be an integer greater than zero.</dd>
+     <dt><code>output [print|store]</code></dt>
+     <dd>This parameter defines what should be done with the
+&quot;snapshots&quot; of the species populations, that are
+the &quot;output&quot; of the simulation.  The allowed
+values are &quot;<code>store</code>&quot; and
+&quot;<code>print</code>&quot;.  
+         <dl>
+         <dt><code>print</code></dt>
+         <dd>this
+value is the default, and means that the output should be
+printed to &quot;standard output&quot;, in comma-separated
+value format (a format suitable for loading into Microsoft 
+Excel or a similar spreadsheet application).</dd>
+         <dt><code>store</code></dt>
+         <dd>The value
+&quot;<code>store</code>&quot; means that the output
+should be stored as a variable.  This is mostly useful
+when chaining together multiple simulations with 
+different reaction kinetics or simulators.  The output
+from one simulation can be stored, and subsequently
+used as the input to another simulation.  When you specify
+&quot;<code>store</code>&quot; as the <code>output</code>
+type of the <code>simulate</code> command, it is required that
+you also specify the &quot;<code>storeName</code>&quot;
+parameter, which is defined below.</dd>
+         </dl></dd>
+     <dt><code>storeName &quot;myName&quot;</code></dt>
+     <dd>
+This parameter is required only when specifying an
+output type of &quot;<code>store</code>&quot; (defined
+above).  It specifies the variable name under which the
+output species populations should be stored.  This is
+useful for chaining together multiple simulations, 
+in which the output of one simulation becomes the
+input for a subsequent simulation, within the invocation
+of a single model definition script.
+     </dd>
+     <dt><code>ensembleSize <em>nnnnn</em></code></dt>
+     <dd>
+This parameter specifies that <em>nnnnn</em> separate
+simulations should be run with the same parameters, and
+the resulting &quot;snapshot&quot; values for species
+populations over time, should be averaged for each time
+point and species, over the &quot;ensemble&quot; of
+realizations of the simulation.  This essentially implements
+an ensemble average of time-series species populations.
+The parameter <code>nnnnn</code> is required to be an
+integer greater than zero.  The species population
+values that are printed will be floating-point numbers,
+even for floating species (which can only have integer
+population values within a given realization of the ensemble),
+due to the averaging process.  The &quot;<code>ensembleSize</code>&quot;
+parameter may <em>not</em> be specified with the
+&quot;<code>output store</code>&quot; parameter, because
+floating-point values may not be stored in a 
+<a href="#speciespopulations">species populations collection</a>
+object, for floating species.
+    </dd>
+    <dt><code>outputFile &quot;myFile.csv&quot;</code></dt>
+    <dd>Species the file name to which the simulation output
+should be saved.  The &quot;<code>output print</code>&quot;
+output type should be specified, if this parameter is specified.
+The output is saved in comma-separated-value (CSV) format.  If
+you specify the file extension (&quot;<code>.csv</code>&quot;),
+it should enable the output file to be opened in the default
+spreadsheet application for your desktop computer's graphical
+windowing system (e.g., GNOME or Windows).</dd>
+    <dt><code>debug <em>nnnnn</em></code></dt>
+    <dd>Specifies an integer &quot;debug level&quot; for the
+simulator.  The higher the debug level specified, the more
+verbose the debugging information that will be displayed
+by the simulator.  This is useful for &quot;debugging&quot;
+simulations that appear to be malfunctioning or giving 
+unexpected reaction kinetics.  Possible values are:
+      <ol start="0">
+        <li><code>NONE</code>: no debugging output</li>
+        <li><code>LOW</code>: minimal debugging output (number of iterations, start and stop of simulation)</li>
+        <li><code>MEDIUM</code>: medium level of debugging output</li>
+        <li><code>HIGH</code>: high level of debugging output (each reaction step is printed)</li>
+        <li><code>EXTREME</code>:  extreme level of debugging output</li>
+      </ol>
+The amount and type of debugging information that will 
+be printed will vary with the type of 
+<a href="#simplugins">simulator plug-in</a> that
+is being used.  This option should be used carefully, as it
+can severely degrade the efficiency of the simulation engine,
+and it can generate voluminous output that must be buffered
+and printed to the &quot;standard error&quot; stream (console).
+The default value of this parameter is 0 (no debugging output),
+which is (by far) the most efficient in terms of performance.
+    </dd>
+    <dt><code>simulator &quot;gillespie&quot;</code></dt>
+    <dd>Specifies the simulator plug-in to use for the simulation.
+The default is &quot;<code>gillespie</code>&quot;, the Gillespie
+simulator plug-in.</dd>
+    </dl>
+    </p>
+</dd>       
 </dl>
 </p>
 </isb:docsubsection>
