@@ -936,7 +936,7 @@ Press "Done" to quit the installer.]]></string>
 						</object>
 					</property>
 					<property name="vendorURL">
-						<string><![CDATA[http://www.systemsbiology.org]]></string>
+						<string><![CDATA[@MAINPUBLICURL@]]></string>
 					</property>
 					<property name="email">
 						<string><![CDATA[bolourilab@systemsbiology.org]]></string>
