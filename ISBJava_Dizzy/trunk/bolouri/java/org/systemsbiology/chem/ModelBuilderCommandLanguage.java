@@ -86,7 +86,10 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             {
                 mName = pName;
             }
-
+            public String toString()
+            {
+                return mName;
+            }
             public static final Code POUNDSIGN = new Code("#");
             public static final Code ATSIGN = new Code("@");
             public static final Code EQUALS = new Code("=");
@@ -1403,7 +1406,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                     }
                     else 
                     {
-                        throw new InvalidInputException("unknown token encountered in macro definition symbol list");
+                        throw new InvalidInputException("unexpected token encountered in macro definition symbol list \"" + token.mCode + "\"");
                     }
                 }
             }
