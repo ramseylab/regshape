@@ -1205,6 +1205,41 @@ uses the &quot;direct method&quot; variant of Gillespie's algorithm.
 </p>
 </isb:docsubsection>
 
+<isb:docsubsection name="Gillespie Tau-Leap Stochastic Algorithm" label="tauleap">
+<p>
+The Gillespie Tau-Leap algorithm is a method for obtaining
+approximate solutions for the stochastic kinetics of a coupled set of
+chemical reactions.  An dimensionless relative tolerance &quot;epsilon&quot;
+controls the amount of error (as compared to the <a href="#gillespie">Gillespie Direct</a> 
+method) permitted in the solution, by scaling the maximum allowed &quot;leap time&quot;
+which is recomputed after each iteration of the algorithm.  The leap time
+is the amount by which the time is stepped forward during the iteration.
+The number of times each reaction in the model occured during the leap
+time is computed as the result of a Poisson stochastic process.  Species
+populations are adjusted in accordance with the number of times each reaction
+occurred during the leap time interval.  In the limit as the epsilon parameter
+is set to zero, the Tau-Leap algorithm should agree precisely with the results
+of the Gillespie Direct algorithm.  For complex models with a significant
+separation of time scales, this algorithm may potentially be much faster than
+the Gillespie Direct algorithm.
+</p>
+<p>
+The Tau-Leap algorithm is described in:
+<blockquote>
+<table border="1">
+<tr><td>
+D. T. Gillespie and L. R. Petzold, &quot;Improved Leap-Size Selection for
+Accelerated Stochastic Simulation&quot;, <em>J. Chem. Phys.</em>
+<b>119</b>, 8229-8234 (2003).
+</td>
+</tr>
+</table>
+</blockquote>
+and in references therein.
+</p>
+
+</isb:docsubsection>
+
 <isb:docsubsection name="Gibson-Bruck Stochastic Algorithm" label="gibsonbruck">
 <p>
 The Gibson-Bruck stochastic algorithm is an algorithm for modeling
