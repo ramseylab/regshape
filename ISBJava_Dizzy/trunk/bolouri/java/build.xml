@@ -22,6 +22,7 @@
   <property name="app.version"                 value="&appVersion;" />
   <property name="app.downloadDir"             location="${app.webDir}/&appVersion;" />
   <property name="app.installerDir"            location="${app.downloadDir}/installer" />
+  <property name="app.rootPackage"             value="isb" />
 
   <property name="app.sourceCompileFlag"       value="1.4" />
 
@@ -73,9 +74,9 @@
   <target name="copyResources">
     <copy todir="${app.classesDir}">
       <fileset dir="${basedir}">
-        <include name="isb/**/*.xml" />
-        <include name="isb/**/*.dtd" />
-        <include name="isb/**/*.html" />
+        <include name="${app.rootPackage}/**/*.xml" />
+        <include name="${app.rootPackage}/**/*.dtd" />
+        <include name="${app.rootPackage}/**/*.html" />
         <exclude name="**/tp/*" />
         <exclude name="docs/*.xml" />
         <exclude name="build.xml" />
@@ -163,7 +164,7 @@
     <mkdir dir="${projBuildDir}" />
     <tar destfile="${app.srcFile}" 
          basedir="${basedir}"
-         includes="isb/**/*.java,isb/**/*.xml,html/*.html,isb/**/.dtd" 
+         includes="${app.rootPackage}/**/*.java,${app.rootPackage}/**/*.xml,html/*.html,${app.rootPackage}/**/.dtd" 
          compression="gzip">
     </tar>
   </target>
@@ -174,13 +175,13 @@
   
   <target name="jar" depends="clean, compile, copyResources">
     <mkdir dir="${projBuildDir}" />
-    <jar basedir="${app.classesDir}" destfile="${app.jarFile}">
+    <jar destfile="${app.jarFile}">
       <fileset dir="${app.classesDir}">
-        <include name="**/*.class" />
-        <include name="**/*.xml" />
-        <include name="**/*.html" />
-        <include name="**/*.dtd" />
-        <exclude name="**/tp/*.class" />
+        <include name="${app.rootPackage}/**/*.class" />
+        <include name="${app.rootPackage}/**/*.xml" />
+        <include name="${app.rootPackage}/**/*.html" />
+        <include name="${app.rootPackage}/**/*.dtd" />
+        <exclude name="${app.rootPackage}/**/tp/*.class" />
       </fileset>
     </jar>
   </target>
@@ -194,7 +195,7 @@
     </delete>
     <delete dir="${app.buildDir}" quiet="yes" />
     <delete quiet="yes">
-      <fileset dir="${app.classesDir}/isb">
+      <fileset dir="${app.classesDir}/${app.rootPackage}">
         <include name="**/*.class" />
         <include name="**/*.xml" />
         <include name="**/*.dtd" />
