@@ -179,8 +179,14 @@ public final class MathFunctions
         return(retVal);
     }
 
-    public static void main(String []pArgs)
+    public static final double LN10 = Math.log(10.0);
+    
+    /**
+     * Returns the logarithm base 10, of the argument.
+     */
+    // NOTE:  In Java 1.5, switch to using Math.log10()
+    public static double log10(double pArg)
     {
-
+        return(Math.log(pArg)/LN10);
     }
 }
