@@ -220,7 +220,7 @@ an error message, it is probably due to improper XHTML in the edits
 <blockquote>
 <pre>
 java org.apache.xalan.xslt.Process -in docs/MyFile.xml -out build/html/MyFile.html \
-                                   -style config/documentation-stylesheet.xml -edump
+                                   -xsl config/documentation-stylesheet.xml -edump
 </pre>
 </blockquote>
 The last &quot;<code>-edump</code>&quot; causes the parser to spit out
