@@ -47,6 +47,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     private static final TimeSeriesOutputFormat DEFAULT_OUTPUT_FORMAT = TimeSeriesOutputFormat.CSV_EXCEL;
     private static final String PRINT_STATUS_ARG = "-printStatus";
     private static final String STATUS_SECONDS_ARG = "-statusSeconds";
+    private static final String COMPUTE_FLUCTUATIONS_ARG = "-computeFluctuations";
 
     private boolean mDebug;
     private String mParserAlias;
@@ -69,6 +70,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     private PrintWriter mOutputFilePrintWriter;
     private TimeSeriesOutputFormat mOutputFileFormat;
     private SimulationProgressReporter mSimulationProgressReporter;
+    private boolean mComputeFluctuations;
 
     private long mMinNumPoints;
 
@@ -173,7 +175,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     protected void printUsage(OutputStream pOutputStream)
     {
         PrintWriter pw = new PrintWriter(pOutputStream);
-        pw.println("usage:    java " + getClass().getName() + " [-debug] [-parser <parserAlias>] [-startTime <startTime_float>] -stopTime <stopTime_float> [-numSamples <numSamples_int>] [-ensembleSize <ensembleSize_long>] [-relativeTolerance <tolerance_float>] [-absoluteTolerance <tolerance_float>] [-minTimeSteps <steps_long>] -simulator <simulatorAlias> -modelFile <modelFile> [-outputFile <outputFile>] [-outputFormat <formatAlias>] [-printStatus [-statusSeconds <intervalSeconds>]]");
+        pw.println("usage:    java " + getClass().getName() + " [-debug] [-parser <parserAlias>] [-startTime <startTime_float>] -stopTime <stopTime_float> [-numSamples <numSamples_int>] [-ensembleSize <ensembleSize_long>] [-relativeTolerance <tolerance_float>] [-absoluteTolerance <tolerance_float>] [-minTimeSteps <steps_long>] -simulator <simulatorAlias> -modelFile <modelFile> [-outputFile <outputFile>] [-outputFormat <formatAlias>] [-printStatus [-statusSeconds <intervalSeconds>]] [-computeFluctuations]");
         pw.println("  <parserAlias>:   the alias of the class implementing the interface ");
         pw.println("                   org.systemsbiology.chem.IModelBuilder (default is determined");
         pw.println("                   by file extension");
@@ -235,6 +237,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
         mPrintStatus = false;
         mOutputFileFormat = DEFAULT_OUTPUT_FORMAT;
         mPrintStatusSeconds = null;
+        mComputeFluctuations = false;
 
         for(int argCtr = 0; argCtr < numArgs; ++argCtr)
         {
@@ -312,6 +315,10 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             {
                 mPrintStatus = true;
             }
+            else if(arg.equals(COMPUTE_FLUCTUATIONS_ARG))
+            {
+                mComputeFluctuations = true;
+            }
             else if(arg.equals(STATUS_SECONDS_ARG))
             {
                 mPrintStatusSeconds = getRequiredDoubleArgumentModifier(STATUS_SECONDS_ARG, pArgs, ++argCtr);
@@ -369,6 +376,14 @@ public class SimulationLauncherCommandLine extends CommandLineApp
         if(null != mAbsoluteTolerance)
         {
             mSimulatorParameters.setMaxAllowedAbsoluteError(mAbsoluteTolerance.doubleValue());
+        }
+
+        mSimulatorParameters.setFlagGetFinalSymbolFluctuations(mComputeFluctuations);
+        if(mComputeFluctuations && (mSimulator instanceof org.systemsbiology.chem.SimulatorStochasticBase)
+            && null != mEnsembleSize 
+            && mEnsembleSize.longValue() <= 1)
+        {
+            handleCommandLineError("for a stochastic simulator, an ensemble size of greater than one is required, in order to compute the final symbol fluctuations");
         }
 
         if(null != mMinTimeSteps)
@@ -448,8 +463,6 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             String []globalSymbolsArray = (String []) globalSymbolsList.toArray(new String[0]);
             int numGlobalSymbols = globalSymbolsArray.length;
             int numSamples = mNumSamples.intValue();
-            double []resultsTimeValues = new double[numSamples];
-            Object []resultsSymbolValues = new Object[numSamples];
 
             ISimulator simulator = mSimulator;
 
@@ -478,13 +491,14 @@ public class SimulationLauncherCommandLine extends CommandLineApp
 
             long currentTimeStart = System.currentTimeMillis();
 
-            simulator.simulate(mStartTime.doubleValue(),
-                                mStopTime.doubleValue(),
-                                mSimulatorParameters,
-                                numSamples,
-                                globalSymbolsArray,
-                                resultsTimeValues,
-                                resultsSymbolValues);
+            SimulationResults simulationResults = simulator.simulate(mStartTime.doubleValue(),
+                                                                     mStopTime.doubleValue(),
+                                                                     mSimulatorParameters,
+                                                                     numSamples,
+                                                                     globalSymbolsArray);
+
+            double []resultsTimeValues = simulationResults.getResultsTimeValues();
+            Object []resultsSymbolValues = simulationResults.getResultsSymbolValues();
 
             if(mPrintStatus)
             {
@@ -504,6 +518,36 @@ public class SimulationLauncherCommandLine extends CommandLineApp
             if(getDebug())
             {
                 System.err.println("elapsed time to carry out the simulation: " + elapsedTimeSeconds + " seconds");
+            }
+
+            if(mComputeFluctuations)
+            {
+                NumberFormat nf = NumberFormat.getInstance();
+                nf.setMaximumFractionDigits(6);
+                nf.setGroupingUsed(false);
+
+                if(! (simulator instanceof Simulator))
+                {
+                    System.err.println("this simulator is not capable of computing the species fluctuations");
+                }
+                else
+                {
+                    double []finalSymbolFluctuations = simulationResults.getResultsFinalSymbolFluctuations();
+                    if(null != finalSymbolFluctuations)
+                    {
+                        int numRequestedSymbols = globalSymbolsArray.length;
+                        for(int i = 0; i < numRequestedSymbols; ++i)
+                        {
+                            String speciesName = globalSymbolsArray[i];
+                            double speciesFluctuations = finalSymbolFluctuations[i];
+                            mOutputFilePrintWriter.println(speciesName + ", " + nf.format(speciesFluctuations));
+                        }
+                    }
+                    else
+                    {
+                        mOutputFilePrintWriter.println("unable to compute steady-state fluctuations, because the Jacobian has an eigenvalue with a positive-definite real part; this means the system is not in steady-state");
+                    }
+                }
             }
 
             mOutputFilePrintWriter.flush();
