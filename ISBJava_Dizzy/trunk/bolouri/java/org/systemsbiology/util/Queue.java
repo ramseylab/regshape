@@ -15,7 +15,7 @@ package org.systemsbiology.util;
 
 import java.util.*;
 
-public class Queue
+public final class Queue
 {
     private List mQueue;
     public Queue()
@@ -23,12 +23,12 @@ public class Queue
         mQueue = new LinkedList();
     }
 
-    public synchronized final void add(Object pElement)
+    public synchronized void add(Object pElement)
     {
-        mQueue.addLast(pElement);
+        mQueue.add(pElement);
     }
 
-    public synchronized final Object peekNext()
+    public synchronized Object peekNext()
     {
         Object element = null;
         if(mQueue.size() > 0)
@@ -38,7 +38,7 @@ public class Queue
         return(element);
     }
 
-    public synchronized final Object getNext()
+    public synchronized Object getNext()
     {
         Object element = null;
         if(mQueue.size() > 0)
