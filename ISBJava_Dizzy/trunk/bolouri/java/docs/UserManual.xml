@@ -166,6 +166,27 @@ running your program, respectively.
 
 </isb:docsection>
 
+<isb:docsection name="API Documentation" label="apidocumentation">
+<p>
+For technical reasons, the API documentation has been
+separated from the User Manual for the &localJavaLibraryName; library.
+The API documentation is available on-line at:
+<blockquote>
+<a href=""&webBaseURL;/&localJavaLibraryName;/javadoc">&webBaseURL;/&localJavaLibraryName;/javadoc</a>
+</blockquote>
+There is also a PDF version available at:
+<blockquote>
+<a href=""&webBaseURL;/&localJavaLibraryName;/docs/APIDocumentation.pdf">&webBaseURL;/&localJavaLibraryName;/docs/APIDocumentation.pdf</a>
+</blockquote>
+Please note that the PDF documentation is generated using
+an experimental Javadoc-to-PDF translater, so there are
+some glitches in the formatting of the PDF.  At this time,
+the HTML Javadoc is the more readable format and has the more
+comprehensive network of hyperlinks.
+</p>
+
+</isb:docsection>
+
 <isb:docsection name="Getting Help" label="gettinghelp">
 <p>
 If you find that the &appName; library does not function in accordance

@@ -11,10 +11,10 @@
               xmlns="http://www.w3.org/TR/xhtml1">
 
 <isb:doctitle>&appName; Release Notes</isb:doctitle>
-<isb:docowner>&mainGroup;, &mainAffiliation;</isb:docowner>
-<isb:docownerurl>&mainGroupURL;</isb:docownerurl>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
 <isb:docdate>$Date$</isb:docdate>
-<isb:docowneremail>&mainGroupEmailSafe;</isb:docowneremail>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 <isb:docversion>Version &appVersion;, Released &appDate;</isb:docversion>
 
 <isb:doccontents />
