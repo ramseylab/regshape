@@ -155,8 +155,8 @@ freely available at the web sites identified by the hyperlinks shown below:
 <td><a href="http://java.sun.com/products/javahelp"><code>java.sun.com/products/javahelp</code></a></td><td>Sun Binary Code License</td>
 </tr>
 <tr>
-<td>Cytoscape</td><td><code>cytoscape.jar</code></td>
-<td><a href="&cytoscapeURL;"><code>www.cytoscape.org</code></a></td><td>LGPL</td>
+<td>Netx JNLP client</td><td><code>netx.jar</code></td>
+<td><a href="http://jnlp.sourceforge.net/netx"><code>jnlp.sourceforge.net/netx</code></a></td><td>LGPL</td>
 </tr>
 </table>
 </blockquote>
