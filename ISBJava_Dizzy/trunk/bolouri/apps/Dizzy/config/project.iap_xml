@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This script was automatically generated using Zero G's InstallAnywhere 5.0.7 Standard, Build 1680
      STATUS: Fully Functional LICENSED Edition
-     DATE:   Thu Apr 24 16:21:12 PDT 2003 -->
+     DATE:   Tue Apr 29 13:23:55 PDT 2003 -->
 <InstallAnywhere_Deployment_Project increments="1732">
 	<!-- ** DO NOT EDIT ** Essential authorization and configuration data ** DO NOT EDIT ** -->
 	<essentialScriptInfo>
@@ -10,7 +10,7 @@
 		<scriptID>12,42,11,90,80,49,55,54,52,57,88,55,86,67,77,68</scriptID>
 		<buildID>3,13,71,76,105,110,117,120,44,32,50,46,52,46,49,56,45,49,52,44,32,105,51,56,54,59,32,74,97,118,97,32,49,46,51,46,49,95,48,52,44,32,83,117,110,32,77,105,99,114,111,115,121,115,116,101,109,115,32,73,110,99,46,44,32,104,116,116,112,58,47,47,106,97,118,97,46,115,117,110,46,99,111,109,47,59,32,101,110,44,32,85,83,59,32,85,84,70,45,56</buildID>
 		<!-- The authorizationID may change between project saves and builds.  This does not effect the integrity of the project, nor do changes in this value represent changes in the actual InstallAnywhere project. -->
-		<authorizationID>1,0,0,-16,-61,-9,0,0,80,112,114,103,83,98,113,97,113,49,51,67,58,65,70,68,86,69,64,69,66,69,48,63,87,5,2,7,2,43,113,4,0,0,0</authorizationID>
+		<authorizationID>1,0,0,-16,-45,23,112,0,80,112,114,103,83,98,113,97,113,49,51,67,58,65,70,68,86,69,64,69,66,69,48,63,87,5,2,4,14,40,123,4,0,0,0</authorizationID>
 	</essentialScriptInfo>
 	<installationObjects uniqueObjects="95">
 		<object class="com.zerog.ia.installer.Installer" objectID="4a0be70e9aea">
@@ -166,7 +166,7 @@ it will search for ones in this list]]></string>
 								</object>
 							</method>
 							<method name="addElement">
-								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="d57b34389367">
+								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="ee994e469369">
 									<property name="propertyValue">
 										<string><![CDATA[isb.chem.sbw.SimulationModule]]></string>
 									</property>
@@ -235,7 +235,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../../../java/extlib/]]></string>
+								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -263,7 +263,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../../../apps/Dizzy/build/../../../build]]></string>
+								<string><![CDATA[/users/sramsey/cvs/bolouri/build]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -291,7 +291,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../../../java/extlib/]]></string>
+								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -319,7 +319,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../../../java/extlib/]]></string>
+								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -347,7 +347,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../../../java/extlib/]]></string>
+								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -375,7 +375,7 @@ and any path to a file to read from that file]]></string>
 				<string><![CDATA[The installer cannot run on your configuration. It will now quit.]]></string>
 			</property>
 			<property name="userSplashPath">
-				<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../images/]]></string>
+				<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/images/]]></string>
 			</property>
 			<property name="userSplashName">
 				<string><![CDATA[appLogo.png]]></string>
@@ -791,7 +791,7 @@ Press ""Done"" to quit the installer.]]></string>
 				<object class="java.util.Properties">
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.project.save.last.date]]></string>
-						<string><![CDATA[Thu Apr 24 16:21:12 PDT 2003]]></string>
+						<string><![CDATA[Tue Apr 29 13:23:55 PDT 2003]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.merge]]></string>
@@ -815,7 +815,7 @@ Press ""Done"" to quit the installer.]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.unix.novm]]></string>
-						<string><![CDATA[true]]></string>
+						<string><![CDATA[false]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.cdrom]]></string>
@@ -847,7 +847,7 @@ Press ""Done"" to quit the installer.]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.aix.novm]]></string>
-						<string><![CDATA[true]]></string>
+						<string><![CDATA[false]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.platform.unix.ui.default]]></string>
@@ -863,7 +863,7 @@ Press ""Done"" to quit the installer.]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.hpux.novm]]></string>
-						<string><![CDATA[true]]></string>
+						<string><![CDATA[false]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.windows.novm]]></string>
@@ -871,7 +871,7 @@ Press ""Done"" to quit the installer.]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.solaris.novm]]></string>
-						<string><![CDATA[true]]></string>
+						<string><![CDATA[false]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.vmpack.windows.path]]></string>
@@ -879,7 +879,7 @@ Press ""Done"" to quit the installer.]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.macos9.novm]]></string>
-						<string><![CDATA[true]]></string>
+						<string><![CDATA[false]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.installer.options.valid.vm.list]]></string>
@@ -1506,7 +1506,7 @@ it will search for ones in this list]]></string>
 														</object>
 													</method>
 													<method name="addElement">
-														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="d57b34a59372">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="ee994eb59371">
 															<property name="propertyValue">
 																<string><![CDATA[isb.chem.app.MainApp]]></string>
 															</property>
@@ -1608,7 +1608,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../samples/]]></string>
+												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1636,7 +1636,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../samples/]]></string>
+												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1662,7 +1662,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../samples/]]></string>
+												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1688,7 +1688,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../samples/]]></string>
+												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1741,7 +1741,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../html/]]></string>
+												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1767,7 +1767,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../../../build/]]></string>
+												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../build/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1793,7 +1793,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../config/]]></string>
+												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1819,7 +1819,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../config/]]></string>
+												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1924,7 +1924,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../html/]]></string>
+												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1950,7 +1950,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../../../config/]]></string>
+												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2001,7 +2001,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../../../build/web/]]></string>
+												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../build/web/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>

@@ -22,12 +22,11 @@
 
 <!-- ========== INTRODUCTION ========== -->
 <isb:docsection name="Introduction" label="introduction">
-&appName; is a chemical kinetics simulation software 
-package implemented in Java.  This software can be 
-used to define a system of interacting chemical species,
-and the reactions through which they interact.  The 
-software can then be used to simulate the reaction 
-kinetics of the system of interacting species.
+&appName; is a chemical kinetics stochastic simulation software package 
+written in Java.  It provides a model definition environment and an implementation of the 
+<a href="UserManual.html#gillespie">Gillespie stochastic algorithm</a>.
+The software is based on the <a href="../../&localJavaLibraryName;">&localJavaLibraryName;</a>
+library. 
 </isb:docsection>
 
 <isb:docsection name="License Agreement" label="licenseagreement">
@@ -48,14 +47,21 @@ patience is appreciated.  Please be advised that the
 stemming from the use of this software, as stated in the license agreement.
 </isb:docsection>
 
+<isb:docsection name="Supported Platforms" label="platforms">
+This software has been tested on Windows XP and Red Hat Linux 8.0.
+It should function properly on most Windows and Linux distributions.
+It has not been tested on the Mac OSX operating system, but it is
+made available for Mac OSX operating system on an &quot;as-is&quot; basis.
+</isb:docsection>
+
 <isb:docsection name="Source Code" label="sourcecode">
-The source code for this application and the 
-associated &localJavaLibraryName; library 
-&quot;<code>&localJavaLibraryName;.jar</code>&quot; can be found in the file 
+The source code for this application is included with the 
+application installer. You can find the code in the file 
 &quot;<code>&localJavaLibraryName;-src.tar.gz</code>&quot;
-that was installed in the &quot;<code>src</code>&quot;
+that is installed in the &quot;<code>src</code>&quot;
 subdirectory of the installation directory for this program.
 </isb:docsection>
+
 <isb:docsection name="Documentation" label="documentation">
 For documentation on how to use the &appName; program,
 please consult the 

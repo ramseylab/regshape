@@ -52,13 +52,19 @@ stemming from the use of this software, as stated in the license agreement.
 </p>
 </isb:docsection>
 
+<isb:docsection name="Supported Platforms" label="platforms">
+This software has been tested on Windows XP and Red Hat Linux 8.0.
+It should function properly on most Windows and Linux distributions.
+It has not been tested on the Mac OSX operating system, but it is
+made available for Mac OSX operating system on an &quot;as-is&quot; basis.
+</isb:docsection>
+
 <isb:docsection name="Source Code" label="sourcecode">
 <p>
-The source code for this application and the 
-associated &localJavaLibraryName; library 
-&quot;<code>&localJavaLibraryName;.jar</code>&quot; can be found in the file 
-&quot;<code>&localJavaLibraryName;-src.tar.gz</code>&quot;
-that was installed in the &quot;<code>src</code>&quot;
+The source code for the &localJavaLibraryName; library 
+is included with the library installer.  You can find the code 
+in the file &quot;<code>&localJavaLibraryName;-src.tar.gz</code>&quot;
+that is installed in the &quot;<code>src</code>&quot;
 subdirectory of the installation directory for this program.
 </p>
 </isb:docsection>
