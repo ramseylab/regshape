@@ -232,5 +232,237 @@ application window appear that looks like the following picture
 </p>
 
 </isb:docsubsection>
+
+</isb:docsection>
+  
+<isb:docsection name="Data Manager" label="datamanager">
+
+<p>
+The <b>Data Manager</b> program enables merging of data from multiple
+data files that contain observations for different, partially overlapping 
+collections of network elements.  In addition, the Data Manager allows
+averaging over multiple measurements of the same evidence type for the
+same network element (whether across multiple files or within a single
+data file).  The Data Manager displays the data loaded from one or more
+data files in a data table, with each row corresponding to a single element
+and each column corresponding to a single evidence type.  The table
+may be sorted by evidence or element name.   Either the entire table,
+or specific selected columns, may be saved to a data file.
+</p>  
+<p>
+The data file of observations that is loaded into the Data Manager must
+conform to a specific format.  The file must be in ASCII text, arranged
+in columns and rows.  The three allowed delimiters are spaces, tabs, and
+commas.  With commas and tabs, an empty cell is allowed, and it is denoted by
+two adjacent delimiter characters.  With spaces, empty cells are not allowed,
+because multiple adjacent spaces are used to align columns.  A non-empty cell
+must contain a floating-point number in either valid scientific notation
+(e.g., <code>1.23745E+3</code> or <code>1.23745e+3</code>) or in decimal
+notation.  The number must parse successfully as a <code>Double</code> type 
+as defined by the <code>java.lang.Double</code> class of the Java programming
+language.  The exception to the above rule is the first column and the first row,
+which contain alphanumeric identifiers.  The first column contains identifiers
+of the network elements (e.g., genes or proteins).  The first row contains
+identifiers of evidence types.  Evidence type names must be unique within a file, 
+i.e., no duplicate evidence type names are allowed.  The cell at the first row
+and first column must contain a valid identifier, but it is not used.  Typically
+this cell contains the word "element" or the like.  Note that element names
+and evidence names must not contain the character that is used as the delimiter
+for the data file.  If your data file is comma-delimited, your element names and
+evidence names must not contain the comma character.  To denote missing data,
+you can either have an empty cell (which means two delimiter characters appear
+back-to-back), or the cell can have the string "null" (without the double-quotes).
+Note that the "null" string is case-sensitive, so the string "NULL" will not work.
+</p>
+<p>
+Before you load your data file, please make sure you select the proper
+delimiter type, using the "delimiter" drop-down list.  If you attempt to
+load a data file with the wrong delimiter type specified, the Data Manager
+will likely give an error message, or (less likely) it will display incorrect data
+in the data table.  Also, please make sure your data file conforms to the
+format specified above.  If it does not, the Data Manager will not be able to load
+the data file, or it will (less likely) display incorrect data in the data table.
+Once you have loaded the data, it will appear in the data table.  You may 
+click on the "load data" button at any time, to load additional data files.
+You may change the ordering of the data files, which will rearrange the
+order of colums in the data table (if you have not specified a sort
+order for evidence names), using the "move file up" button.  The 
+"allow duplicates" checkbox allows you to specify how you wish for
+the Data Manager to handle the case of multiple measurements of the
+same evidence type and network element.  If you have checked this box,
+the Data Manager will average over the multiple measurements, and use the
+single resulting value as the consensus measurement.  If you have not
+checked the box, the Data Manager will pop up an error message and will
+not load the file, if the file contains multiple measurements for a single
+evidence type and network element.  
+</p>
+<p>
+Here is a screen shot of the Data Manager program:
+</p>
+<p>
+  <a href="../images/DataManager-big.png"><img src="../images/DataManager.png" alt="Data Manager screenshot" /></a>
+</p>
+
 </isb:docsection>
 
+<isb:docsection name="Quantile Normalizer" label="quantilenormalizer">
+
+<p>
+  The <b>Quantile Normalizer</b> is a program that can be used to perform a quantile
+  normalization of microarray expression data that is arranged in a matrix format 
+  in a single ASCII data file.  The quantile normalization algorithm
+  implemented here is based on a prototype written by Daehee Hwang at 
+  Institute for Systems Biology, and it is similar to the quantile normalization 
+  algorithm proposed by Bolstat <em>et al.</em> in their paper
+  <blockquote>
+  Bolstad, B.M., Irizarry R. A., Astrand M., and Speed, T.P. (2003), 
+  "A Comparison of Normalization Methods for High Density Oligonucleotide Array Data 
+  Based on Bias and Variance." <em>Bioinformatics</em> <b>19</b>(2):185-193
+  </blockquote>
+  Note that only the quantile normalization step of the RMA (Robust Multi-Chi Average)
+  procedure is implemented in this class; background adjustment is not implemented here,
+  and is assumed to have been applied to the raw observations before this program 
+  is applied to the data.  Each column of the data file corresponds to a different microarray
+  experiment, and each row of the data file corresponds to a different probe.
+  The first row must contain experiment labels, and each column's experiment label
+  must be unique.  The first column must contain probe names, although there is no
+  uniqueness requirement for probe names.  The cell in the first row and the first
+  column should contain an arbitrary string identifier such as "element", that does not contain
+  the file delimiter (the actual string used is not important; the cell is just a placeholder).
+  Cells in the data file may be empty, just as described in the <a href="#datamanager">Data Manager</a>
+  section above.
+</p>
+<p>
+  The following list describes the various components and controls of the Quantile Normalizer
+  program window:
+  <dl>
+  <dt><b>Load observations</b></dt>
+  <dd>This button is used to load a file of data into the program.  The
+    data is displayed in the input data table in the top half of the program window.</dd>
+  <dt><b>Normalize using the scale</b></dt>
+  <dd>This drop-down list is used to specify how the data is to be scaled.
+    The options are "norm_only" and "logarithm".  If you specify "norm_only",
+    only a normalization is performed, and the data is not rescaled.  If
+    you specify "logarithm", the logarithm of each observation is taken before
+    the normalization is performed.  In addition, the "logarithm" option automatically
+    selects the "Fix negative values" check-box (see below), to ensure that
+    there are no negative observation values when the logarithm is taken.  The
+    "logarithm" option is typically used for normalizing Affymetrix microarray data.</dd>    
+  <dt><b>Specify the error tolerance</b></dt>
+  <dd>This type-in box is used to specify the error tolerance for estimating
+    missing data values.  If there are no missing data in the file of observations
+    loaded into the program, this type-in box will be left disabled.  When there
+    are missing data values, this type-in box will be enabled and pre-populated
+    with a small positive floating-point value.  This value controls the threshold
+    for the average fractional error in estimating the missing data values.  The
+    average fractional error is computed as the average over all missing observations,
+    of the fractional deviation in the interpolated missing observation from one
+    iteration to the next.  Missing observations are estimated as the median of
+    all non-missing observations in the column (evidence type).  The missing
+    observations thus estimated are used only in computing quantiles for normalizing
+    the non-missing data; the missing observations will be removed when the normalized
+    observations are written out by the program.  If you have a really small data set,
+    it is best to set this error tolerance to be a bit larger, perhaps 0.2.  For
+    large data sets (more than a few hundred elements), the default value should work.
+    The error tolerance must be a positive floating-point number, and less than 1.0.</dd>
+  <dt><b>Fix negative values</b></dt>
+  <dd>This check-box is used to specify whether the data should be additively corrected
+    to ensure that no observations are negative, before the rescaling is applied.  Choosing
+    the "logarithm" option for the normalization scale will automatically select this check-box.
+    If you leave the box checked, the data will be additively corrected.  If you de-select
+    the check-box, the data will not be additively corrected.  Note that if you have nonpositive data 
+    values and you selected "logarithm" for the scale and left this box un-checked, you would get an error message when
+    you attempt to normalize the data.  If all your data is positive, nothing will be changed
+    by this option.  The "norm_only" scale option will not give an error message if there
+    are nonpositive observations, and the normalization will be successful in that case.
+  </dd>
+  <dt><b>Max iterations</b></dt>
+  <dd>This type-in box is used to specify the maximum number of iterations that are
+    used for estimating missing data values.  If there is no missing data, this
+    type-in box is left disabled.  If there are empty cells in the data table,
+    this type-in box will be enabled, and will be pre-populated with a small value.
+    You may change it to any positive integer value.  This value places a hard limit
+    on the number of iterations of the normalization algorithm, regardless of the
+    error threshold you selected (see "Specify the error tolerance" above).  If you have
+    an extremely large data set, you may wish to select a small number of iterations, perhaps
+    in the range 3-5.  Alternatively, you could specify a more permissive error tolerance.
+    Note that if you specify an extremely small error tolerance and an extremely large maximum
+    number of iterations, the normalization algorithm could run for a very long time; if this
+    happens, closing the program's window (using the window manager for your computer) and 
+    restarting the program is the best option.
+    </dd>
+  <dt><b>Normalize raw observations</b></dt>
+  <dd>This button starts the normalization.  The normalized observations are displayed
+    in a table in the lower half of the program window.</dd>
+  <dt><b>Iteration count</b></dt>
+  <dd>This box displays the number of iterations required before the normalization
+    process converged to the specified error tolerance.  If no cells were empty (denoting
+    missing data) in the input data table, the number of iterations will always be 1.
+    If there are empty cells in the input data table, the number of iterations may be
+    greater than 1.</dd>
+  <dt><b>Fractional error</b></dt>
+  <dd>This box displays the average fractional error, which is only applicable
+    when there are empty cells in the input data table.  If there are empty cells
+    in the input data table, the average fractional error is computed as the
+    average of the fractional change in the estimated values of the "empty cells" from
+    one iteration to the next.  The value displayed in this box may or may not be 
+    less than the error threshold specified above, depending on the value chosen for
+    the "max iterations" field.</dd>
+  </dl>
+</p>
+<p>
+Here is a screen shot of the Quantile Normalizer program:
+</p>
+<p>
+  <a href="../images/QuantileNormalizer-big.png"><img src="../images/QuantileNormalizer.png" alt="Quantile Normalizer screenshot" /></a>
+</p>
+  
+</isb:docsection>
+
+<isb:docsection name="Significance Calculator" label="significancecalculator">
+<p>
+  The <b>Significance Calculator</b> is a program that can analyze the probability distribution of
+  a set of observations, and compute the statistical signficance of each observation on the
+  basis of the distribution.  Alternatively, the significances can be computed based on the
+  distribution of a separate
+  set of "negative control" observations.  The "significance" of an observation is here defined as
+  the probability
+  that the observation would occur by chance, given either the global or the "negative control" 
+  distribution for observations.  The input to the program is a matrix of observations, as described
+  in the <a href="#datamanager">Data Manager</a> section.  Missing observations are allowed, 
+  and are denoted by an empty cell or the string "null" (quotes not included, case sensitive).
+</p>
+<p>
+Here is a screen shot of the Significance Calculator program:
+</p>
+<p>
+  <a href="../images/SignificanceCalculator-big.png"><img src="../images/SignificanceCalculator.png" alt="Significance Calculator screenshot" /></a>
+</p>
+</isb:docsection>
+
+<isb:docsection name="Evidence-Weighted Inferer" label="evidenceweightedinferer">
+  <p>The <b>Evidence-Weighted Inferer</b> is a classification program that attempts to
+    divide a set of elements into two sets, affected and unaffected.  It comparse multiple evidences
+    to determine which elements of a network are most likely affected by a perturbation
+   of a system.  The input to this program is a matrix of significances for observations
+   for evidence types (columns) and network elements (rows).  Missing data is allowed; a
+   missing significance value is denoted by the value "-1", or an empty cell in the input
+   file.  The smaller a significance
+   value for an observation, the <b>more</b> likely it is that the associated element is
+   affected by the perturbation of the system; in this sense, the significance is analogous
+   to a probability that a given observation would occur, given that the associated element
+   is <em>not</em> a member of the set of affected elements.  The significances may
+   be calculated using the <a href="#significancecalculator">Significance Calculator</a>,
+   or they may be generated by any other procedure that can assign a statistical
+   likelihood or probability.  
+   Each evidence type is assigned a weight, based on consistency with the
+   other types of evidence.  The weights are used to compute an <b>effective significance</b>
+   for each significance value in the matrix.  
+  </p>
+<p>
+Here is a screen shot of the Evidence-Weighted Inferer program:
+</p>
+<p>
+  <a href="../images/EvidenceWeightedInferer-big.png"><img src="../images/EvidenceWeightedInferer.png" alt="Evidence-Weighted Inferer screenshot" /></a>
+</p>  
+</isb:docsection>
