@@ -171,7 +171,7 @@ public abstract class Simulator
         firstReaction.addReactant(reactant, 1);
         String intermedSpeciesName = new String(reactionName + "___intermed_species_0");
         Compartment reactantCompartment = reactant.getCompartment();
-        Species intermedSpecies = new Species(intermedSpeciesName, reactantCompartment);
+        Species intermedSpecies = new Species(Model.INTERNAL_SYMBOL_PREFIX + intermedSpeciesName, reactantCompartment);
         intermedSpecies.setSpeciesPopulation(0.0);
         firstReaction.addProduct(intermedSpecies, 1);
         pReactions.set(pReactionIndex, firstReaction);
@@ -185,7 +185,7 @@ public abstract class Simulator
 
             for(int ctr = 0; ctr < numSteps; ++ctr)
             {
-                Reaction reaction = new Reaction(reactionName + "___multistep_reaction_" + ctr);
+                Reaction reaction = new Reaction(Model.INTERNAL_SYMBOL_PREFIX + reactionName + "___multistep_reaction_" + ctr);
                 reaction.setRate(rate);
 
                 reaction.addReactant(lastIntermedSpecies, 1);
@@ -193,7 +193,7 @@ public abstract class Simulator
                 if(ctr < numSteps - 1)
                 {
                     intermedSpeciesName = new String(reactionName + "___intermed_species_" + (ctr + 1));
-                    intermedSpecies = new Species(intermedSpeciesName, reactantCompartment);                    
+                    intermedSpecies = new Species(Model.INTERNAL_SYMBOL_PREFIX + intermedSpeciesName, reactantCompartment);                    
                     intermedSpecies.setSpeciesPopulation(0.0);
                     reaction.addProduct(intermedSpecies, 1);
                     pDynamicSpecies.add(intermedSpecies);
@@ -209,7 +209,7 @@ public abstract class Simulator
         }
         else
         {
-            Reaction delayedReaction = new Reaction(reactionName + "___delayed_reaction");
+            Reaction delayedReaction = new Reaction(Model.INTERNAL_SYMBOL_PREFIX + reactionName + "___delayed_reaction");
             delayedReaction.addReactant(intermedSpecies, 1);
             delayedReaction.addProduct(product, 1);
             pReactions.add(delayedReaction);
