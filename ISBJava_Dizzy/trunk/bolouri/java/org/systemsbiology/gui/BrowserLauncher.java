@@ -442,9 +442,8 @@ public class BrowserLauncher {
 							}
 						}
 					} catch (IllegalArgumentException iare) {
-						browser = null;
 						errorMessage = iare.getMessage();
-						return browser;
+						return null;
 					} catch (IllegalAccessException iae) {
 						browser = null;
 						errorMessage = iae.getMessage();

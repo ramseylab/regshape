@@ -35,7 +35,7 @@ public class FileChooser extends JFileChooser
         initialize();
     }
 
-    public static boolean handleOutputFileAlreadyExists(Component pFrame, String pOutputFileName)
+    public boolean handleOutputFileAlreadyExists(Component pFrame, String pOutputFileName)
     {
         boolean proceed = true;
         // need to ask user to confirm whether the file should be overwritten
