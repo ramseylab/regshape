@@ -111,8 +111,12 @@ public class Reaction extends SymbolValue
     private HashMap mReactantsMap;
     private HashMap mProductsMap;
     private static final boolean DEFAULT_REACTANT_DYNAMIC = true;
-    private double []mDynamicSymbolAdjustmentVector;
+
     private Species []mReactantsSpeciesArray;
+    private Species []mProductsSpeciesArray;
+    private boolean []mReactantsDynamicArray;
+    private boolean []mProductsDynamicArray;
+    private int []mProductsStoichiometryArray;
     private int []mReactantsStoichiometryArray;
     private HashMap mLocalSymbolsValuesMap;
     private HashMap mLocalSymbolsMap;
@@ -125,9 +129,12 @@ public class Reaction extends SymbolValue
         reaction.setRate((Value) getRate().clone());
         reaction.mReactantsMap = mReactantsMap;
         reaction.mProductsMap = mProductsMap;
-        reaction.mDynamicSymbolAdjustmentVector = mDynamicSymbolAdjustmentVector;
         reaction.mReactantsSpeciesArray = null;
         reaction.mReactantsStoichiometryArray = null;
+        reaction.mProductsSpeciesArray = null;
+        reaction.mProductsStoichiometryArray = null;
+        reaction.mReactantsDynamicArray = null;
+        reaction.mProductsDynamicArray = null;
         reaction.mLocalSymbolsValuesMap = mLocalSymbolsValuesMap;
         reaction.mLocalSymbolsMap = mLocalSymbolsMap;
         reaction.mLocalSymbolsValues = mLocalSymbolsValues;
@@ -144,15 +151,48 @@ public class Reaction extends SymbolValue
         mLocalSymbolsValuesMap = new HashMap();
         mLocalSymbolsMap = null;
         mLocalSymbolsValues = null;
-        mDynamicSymbolAdjustmentVector = null;
         mReactantsSpeciesArray = null;
         mReactantsStoichiometryArray = null;
+        mProductsSpeciesArray = null;
+        mProductsStoichiometryArray = null;
         mRateIsExpression = false;
+        mReactantsDynamicArray = null;
+        mProductsDynamicArray = null;
     }
 
-    double []getDynamicSymbolAdjustmentVector()
+    boolean containsReactant(String pReactantName)
     {
-        return(mDynamicSymbolAdjustmentVector);
+        return(null != mReactantsMap.get(pReactantName));
+    }
+
+    boolean []getReactantsDynamicArray()
+    {
+        return(mReactantsDynamicArray);
+    }
+
+    boolean []getProductsDynamicArray()
+    {
+        return(mProductsDynamicArray);
+    }
+
+    int []getReactantsStoichiometryArray()
+    {
+        return(mReactantsStoichiometryArray);
+    }
+
+    int []getProductsStoichiometryArray()
+    {
+        return(mProductsStoichiometryArray);
+    }
+    
+    Species []getReactantsSpeciesArray()
+    {
+        return(mReactantsSpeciesArray);
+    }
+
+    Species []getProductsSpeciesArray()
+    {
+        return(mProductsSpeciesArray);
     }
 
     public Collection getParameters()
@@ -181,35 +221,36 @@ public class Reaction extends SymbolValue
 
     public void constructSpeciesArrays(Species []pSpeciesArray,    // this is the array of species that we are constructing
                                        int []pStoichiometryArray,  // this is the array of stoichiometries that we are constructing
+                                       boolean []pDynamicArray,
                                        Species []pDynamicSymbolValues, // a vector of all species in the model
                                        SymbolValue []pNonDynamicSymbolValues,
                                        HashMap pSymbolMap,         // a map between species names and the index in previous vector
                                        ParticipantType pParticipantType)
     {
-        Collection reactantsColl = null;
+        Collection speciesColl = null;
         if(pParticipantType.equals(ParticipantType.REACTANT))
         {
-            reactantsColl = mReactantsMap.values();
+            speciesColl = mReactantsMap.values();
         }
         else
         {
-            reactantsColl = mProductsMap.values();
+            speciesColl = mProductsMap.values();
         }
-        int numReactants = reactantsColl.size();
-        if(pSpeciesArray.length < numReactants)
+        int numSpecies = speciesColl.size();
+        if(pSpeciesArray.length < numSpecies)
         {
             throw new IllegalArgumentException("insufficient array size");
         }
-        if(pStoichiometryArray.length < numReactants)
+        if(pStoichiometryArray.length < numSpecies)
         {
             throw new IllegalArgumentException("insufficient array size");
         }
-        Iterator reactantsIter = reactantsColl.iterator();
+        Iterator speciesIter = speciesColl.iterator();
 
         int reactantCtr = 0;
-        while(reactantsIter.hasNext())
+        while(speciesIter.hasNext())
         {
-            ReactionElement element = (ReactionElement) reactantsIter.next();
+            ReactionElement element = (ReactionElement) speciesIter.next();
             Species species = element.mSpecies;
             if(null != pSymbolMap)
             {
@@ -234,7 +275,7 @@ public class Reaction extends SymbolValue
                 // do nothing
             }
             pSpeciesArray[reactantCtr] = species;
-            
+            pDynamicArray[reactantCtr] = element.mDynamic;
             int stoic = element.mStoichiometry;
             pStoichiometryArray[reactantCtr] = stoic;
 
@@ -246,18 +287,31 @@ public class Reaction extends SymbolValue
                                            SymbolValue []pNonDynamicSymbolValues,
                                            HashMap pSymbolMap)
     {
-        constructDynamicSymbolAdjustmentVector(pDynamicSymbolValues);
-
         int numReactants = mReactantsMap.values().size();
         mReactantsSpeciesArray = new Species[numReactants];
         mReactantsStoichiometryArray = new int[numReactants];
-            
+        mReactantsDynamicArray = new boolean[numReactants];
+
         constructSpeciesArrays(mReactantsSpeciesArray, 
                                mReactantsStoichiometryArray, 
+                               mReactantsDynamicArray,
                                pDynamicSymbolValues, 
                                pNonDynamicSymbolValues,
                                pSymbolMap, 
                                ParticipantType.REACTANT);
+
+        int numProducts = mProductsMap.values().size();
+        mProductsSpeciesArray = new Species[numProducts];
+        mProductsStoichiometryArray = new int[numProducts];
+        mProductsDynamicArray = new boolean[numProducts];
+            
+        constructSpeciesArrays(mProductsSpeciesArray, 
+                               mProductsStoichiometryArray, 
+                               mProductsDynamicArray,
+                               pDynamicSymbolValues, 
+                               pNonDynamicSymbolValues,
+                               pSymbolMap, 
+                               ParticipantType.PRODUCT);
 
         constructLocalSymbolsVector();
     }
@@ -284,7 +338,7 @@ public class Reaction extends SymbolValue
         mLocalSymbolsMap = localSymbolsMap;
     }
 
-    private void constructDynamicSymbolAdjustmentVector(SymbolValue []pDynamicSymbols)
+    double []constructDynamicSymbolAdjustmentVector(Species []pDynamicSymbols)
     {
         int numSymbols = pDynamicSymbols.length;
         double []dynamicSymbolVector = new double[numSymbols];
@@ -309,7 +363,7 @@ public class Reaction extends SymbolValue
             dynamicSymbolVector[symbolCtr] = vecElement;
         }
 
-        mDynamicSymbolAdjustmentVector = dynamicSymbolVector;
+        return(dynamicSymbolVector);
     }
 
     private void addSymbolsToGlobalSymbolsMap(HashMap pReactionSpecies, HashMap pSymbols)
@@ -459,7 +513,7 @@ public class Reaction extends SymbolValue
             {
                 numReactantCombinations *= pSpeciesRateFactorEvaluator.computeRateFactorForSpecies(pSymbolEvaluator,
                                                                                                    reactants[reactantCtr], 
-                                                                                                   stoichiometries[reactantCtr]);
+                                                                                                   stoichiometries[reactantCtr]); 
             }
 
             rate *= numReactantCombinations;
@@ -545,17 +599,41 @@ public class Reaction extends SymbolValue
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
-        sb.append("Reaction: ");
-        sb.append(getName());
-        sb.append(" [Rate: ");
-        sb.append(getRate().toString());
-        sb.append(", Reactants: ");
-        DebugUtils.describeSortedObjectList(sb, mReactantsMap);
-        sb.append(", Products: ");
-        DebugUtils.describeSortedObjectList(sb, mProductsMap);
-        sb.append(", Parameters: ");
-        DebugUtils.describeSortedObjectList(sb, mLocalSymbolsValuesMap);
-        sb.append("]");
+// ---------------------------------------------------------------------
+// FOR DEBUGGING PURPOSES:
+        Iterator reactantsIter = getReactantsMap().keySet().iterator();
+        while(reactantsIter.hasNext())
+        {
+            String reactant = (String) reactantsIter.next();
+            sb.append(reactant);
+            if(reactantsIter.hasNext())
+            {
+                sb.append(" + ");
+            }
+        }
+        sb.append(" -> ");
+        Iterator productsIter = getProductsMap().keySet().iterator();
+        while(productsIter.hasNext())
+        {
+            String product = (String) productsIter.next();
+            sb.append(product);
+            if(productsIter.hasNext())
+            {
+                sb.append(" + ");
+            }
+        }
+// ---------------------------------------------------------------------
+//         sb.append("Reaction: ");
+//         sb.append(getName());
+//         sb.append(" [Rate: ");
+//         sb.append(getRate().toString());
+//         sb.append(", Reactants: ");
+//         DebugUtils.describeSortedObjectList(sb, mReactantsMap);
+//         sb.append(", Products: ");
+//         DebugUtils.describeSortedObjectList(sb, mProductsMap);
+//         sb.append(", Parameters: ");
+//         DebugUtils.describeSortedObjectList(sb, mLocalSymbolsValuesMap);
+//         sb.append("]");
         return(sb.toString());
     }
 }

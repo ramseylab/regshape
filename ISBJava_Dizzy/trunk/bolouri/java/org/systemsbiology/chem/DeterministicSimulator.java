@@ -74,13 +74,15 @@ public abstract class DeterministicSimulator extends Simulator
     }
 
     protected RKScratchPad mRKScratchPad;
-    
+    protected Object []mDynamicSymbolAdjustmentVectors;
+
     protected static final void computeDerivative(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                                SymbolEvaluatorChemSimulation pSymbolEvaluator,
-                                                Reaction []pReactions,
-                                                double []pReactionProbabilities,
-                                                double []pTempDynamicSymbolValues,
-                                                double []pDynamicSymbolDerivatives) throws DataNotFoundException
+                                                  SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                                  Reaction []pReactions,
+                                                  Object []pDynamicSymbolAdjustmentVectors,
+                                                  double []pReactionProbabilities,
+                                                  double []pTempDynamicSymbolValues,
+                                                  double []pDynamicSymbolDerivatives) throws DataNotFoundException
     {
         computeReactionProbabilities(pSpeciesRateFactorEvaluator,
                                      pSymbolEvaluator,
@@ -93,12 +95,14 @@ public abstract class DeterministicSimulator extends Simulator
 
         MathFunctions.vectorZeroElements(pDynamicSymbolDerivatives);
 
+        Object []dynamicSymbolAdjustmentVectors = pDynamicSymbolAdjustmentVectors;
+
         for(int reactionCtr = numReactions; --reactionCtr >= 0; )
         {
             reaction = pReactions[reactionCtr];
             reactionRate = pReactionProbabilities[reactionCtr];
 
-            double []symbolAdjustmentVector = reaction.getDynamicSymbolAdjustmentVector();
+            double []symbolAdjustmentVector = (double []) dynamicSymbolAdjustmentVectors[reactionCtr];
             
             // we want to multiply this vector by the reaction rate and add it to the derivative
             MathFunctions.vectorScalarMultiply(symbolAdjustmentVector, reactionRate, pTempDynamicSymbolValues);
@@ -108,17 +112,19 @@ public abstract class DeterministicSimulator extends Simulator
     }
 
     protected abstract double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                        SymbolEvaluatorChemSimulation pSymbolEvaluator,
-                                        Reaction []pReactions,
-                                        double []pReactionProbabilities,
-                                        RKScratchPad pRKScratchPad,
-                                        double []pDynamicSymbolValues,
+                                      SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                      Reaction []pReactions,
+                                      Object []pDynamicSymbolAdjustmentVectors,
+                                      double []pReactionProbabilities,
+                                      RKScratchPad pRKScratchPad,
+                                      double []pDynamicSymbolValues,
                                       double []pNewDynamicSymbolValues) throws DataNotFoundException;
 
 
     protected static final void rk4step(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
                                         SymbolEvaluatorChemSimulation pSymbolEvaluator,
                                         Reaction []pReactions,
+                                        Object []pDynamicSymbolAdjustmentVectors,
                                         double []pReactionProbabilities,
                                         RKScratchPad pRKScratchPad,
                                         double pTimeStepSize,
@@ -143,6 +149,7 @@ public abstract class DeterministicSimulator extends Simulator
         computeDerivative(pSpeciesRateFactorEvaluator,
                           pSymbolEvaluator,
                           pReactions,
+                          pDynamicSymbolAdjustmentVectors,
                           pReactionProbabilities,
                           yscratch,
                           k1);
@@ -159,6 +166,7 @@ public abstract class DeterministicSimulator extends Simulator
         computeDerivative(pSpeciesRateFactorEvaluator,
                           pSymbolEvaluator,
                           pReactions,
+                          pDynamicSymbolAdjustmentVectors,
                           pReactionProbabilities,
                           yscratch,
                           k2);
@@ -171,6 +179,7 @@ public abstract class DeterministicSimulator extends Simulator
         computeDerivative(pSpeciesRateFactorEvaluator,
                           pSymbolEvaluator,
                           pReactions,
+                          pDynamicSymbolAdjustmentVectors,
                           pReactionProbabilities,
                           yscratch,
                           k3);
@@ -190,6 +199,7 @@ public abstract class DeterministicSimulator extends Simulator
         computeDerivative(pSpeciesRateFactorEvaluator,
                           pSymbolEvaluator,
                           pReactions,
+                          pDynamicSymbolAdjustmentVectors,
                           pReactionProbabilities,
                           yscratch,
                           k4);
@@ -219,9 +229,26 @@ public abstract class DeterministicSimulator extends Simulator
         mRKScratchPad = new RKScratchPad(numDynamicSymbols);
     }
 
+    private void initializeDynamicSymbolAdjustmentVectors(Species []pDynamicSymbols)
+    {
+        Reaction []reactions = mReactions;
+
+        int numReactions = reactions.length;
+        Object []dynamicSymbolAdjustmentVectors = new Object[numReactions];
+
+        for(int ctr = 0; ctr < numReactions; ++ctr)
+        {
+            Reaction reaction = reactions[ctr];
+            dynamicSymbolAdjustmentVectors[ctr ] = reaction.constructDynamicSymbolAdjustmentVector(pDynamicSymbols);
+        }
+
+        mDynamicSymbolAdjustmentVectors = dynamicSymbolAdjustmentVectors;
+    }
+
     public void initialize(Model pModel, SimulationController pSimulationController) throws DataNotFoundException
     {
         initializeSimulator(pModel, pSimulationController);
+        initializeDynamicSymbolAdjustmentVectors(mDynamicSymbols);
         resetScratchpad();
     }
 
@@ -270,7 +297,7 @@ public abstract class DeterministicSimulator extends Simulator
         double []dynamicSymbolValues = mDynamicSymbolValues;        
         int numDynamicSymbolValues = dynamicSymbolValues.length;
         HashMap symbolMap = mSymbolMap;
-
+        Object []dynamicSymbolAdjustmentVectors = mDynamicSymbolAdjustmentVectors;
         double []timesArray = new double[pNumTimePoints];
 
         prepareTimesArray(pStartTime, 
@@ -325,6 +352,7 @@ public abstract class DeterministicSimulator extends Simulator
             time = iterate(speciesRateFactorEvaluator,
                            symbolEvaluator,
                            reactions,
+                           dynamicSymbolAdjustmentVectors,
                            reactionProbabilities,
                            scratchPad,
                            dynamicSymbolValues,

@@ -31,12 +31,13 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
     private static final int MAXSTEPS = 100;
 
     protected final double iterate(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
-                                          SymbolEvaluatorChemSimulation pSymbolEvaluator,
-                                          Reaction []pReactions,
-                                          double []pReactionProbabilities,
-                                          RKScratchPad pRKScratchPad,
-                                          double []pDynamicSymbolValues,
-                                          double []pNewDynamicSymbolValues) throws DataNotFoundException
+                                   SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                   Reaction []pReactions,
+                                   Object []pDynamicSymbolAdjustmentVectors,
+                                   double []pReactionProbabilities,
+                                   RKScratchPad pRKScratchPad,
+                                   double []pDynamicSymbolValues,
+                                   double []pNewDynamicSymbolValues) throws DataNotFoundException
     {
         double stepSize = pRKScratchPad.stepSize;
         double maxFractionalError = pRKScratchPad.maxFractionalError;
@@ -44,6 +45,7 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
         double nextStepSize = adaptiveStep(pSpeciesRateFactorEvaluator,
                                            pSymbolEvaluator,
                                            pReactions,
+                                           pDynamicSymbolAdjustmentVectors,
                                            pReactionProbabilities,
                                            pRKScratchPad,
                                            maxFractionalError,
@@ -59,6 +61,7 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
     private static final double rkqc(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
                                      SymbolEvaluatorChemSimulation pSymbolEvaluator,
                                      Reaction []pReactions,
+                                     Object []pDynamicSymbolAdjustmentVectors,
                                      double []pReactionProbabilities,
                                      RKScratchPad pRKScratchPad,
                                      double pTimeStepSize,
@@ -72,6 +75,7 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
         rk4step(pSpeciesRateFactorEvaluator,
                 pSymbolEvaluator,
                 pReactions,
+                pDynamicSymbolAdjustmentVectors,
                 pReactionProbabilities,
                 pRKScratchPad,
                 pTimeStepSize,
@@ -86,6 +90,7 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
         rk4step(pSpeciesRateFactorEvaluator,
                 pSymbolEvaluator,
                 pReactions,
+                pDynamicSymbolAdjustmentVectors,
                 pReactionProbabilities,
                 pRKScratchPad,
                 halfStepSize,
@@ -103,6 +108,7 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
         rk4step(pSpeciesRateFactorEvaluator,
                 pSymbolEvaluator,
                 pReactions,
+                pDynamicSymbolAdjustmentVectors,
                 pReactionProbabilities,
                 pRKScratchPad,
                 halfStepSize,
@@ -129,6 +135,7 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
     private static final double adaptiveStep(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
                                              SymbolEvaluatorChemSimulation pSymbolEvaluator,
                                              Reaction []pReactions,
+                                             Object []pDynamicSymbolAdjustmentVectors,
                                              double []pReactionProbabilities,
                                              RKScratchPad pRKScratchPad,
                                              double pMaxFractionalError,
@@ -143,6 +150,7 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
         computeDerivative(pSpeciesRateFactorEvaluator,
                           pSymbolEvaluator,
                           pReactions,
+                          pDynamicSymbolAdjustmentVectors,
                           pReactionProbabilities,
                           yscratch,
                           dydt);
@@ -171,6 +179,7 @@ public class DeterministicSimulatorAdaptive extends DeterministicSimulator imple
             aggregateError = rkqc(pSpeciesRateFactorEvaluator,
                                   pSymbolEvaluator,
                                   pReactions,
+                                  pDynamicSymbolAdjustmentVectors,
                                   pReactionProbabilities,
                                   pRKScratchPad,
                                   stepSize,
