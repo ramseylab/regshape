@@ -36,10 +36,10 @@ public abstract class Simulator
     protected long mMinNumMillisecondsForUpdate;
     protected SimulationProgressReporter mSimulationProgressReporter;
 
-    static void indexSymbolArray(SymbolValue []pSymbolArray, 
-                                 HashMap pSymbolMap, 
-                                 double []pDoubleArray, 
-                                 Value []pValueArray)
+    static final void indexSymbolArray(SymbolValue []pSymbolArray, 
+                                       HashMap pSymbolMap, 
+                                       double []pDoubleArray, 
+                                       Value []pValueArray)
     {
         assert (null == pDoubleArray ||
                 null == pValueArray) : "either pDoubleArray or pValueArray must be null";
@@ -75,12 +75,12 @@ public abstract class Simulator
         }
     }
 
-    public boolean isInitialized()
+    public final boolean isInitialized()
     {
         return(mInitialized);
     }
 
-    private void clearDelayedReactionSolvers()
+    private final void clearDelayedReactionSolvers()
     {
         int numDelayedReactionSolvers = mDelayedReactionSolvers.length;
         for(int ctr = 0; ctr < numDelayedReactionSolvers; ++ctr)
@@ -102,13 +102,13 @@ public abstract class Simulator
 
     public abstract boolean usesExpressionValueCaching();
 
-    private static void handleDelayedReaction(Reaction pReaction,
-                                              ArrayList pReactions,
-                                              int pReactionIndex,
-                                              ArrayList pDynamicSpecies,
-                                              ArrayList pDelayedReactionSolvers,
-                                              MutableInteger pRecursionDepth,
-                                              boolean pIsStochasticSimulator)
+    private final static void handleDelayedReaction(Reaction pReaction,
+                                                    ArrayList pReactions,
+                                                    int pReactionIndex,
+                                                    ArrayList pDynamicSpecies,
+                                                    ArrayList pDelayedReactionSolvers,
+                                                    MutableInteger pRecursionDepth,
+                                                    boolean pIsStochasticSimulator)
     {
         String reactionName = pReaction.getName();
 
@@ -167,7 +167,7 @@ public abstract class Simulator
 
                 if(ctr < numSteps - 1)
                 {
-                    intermedSpeciesName = new String("delayed_species_" + reactionName + "_" + product.getName() + "_" + (ctr + 1));
+                    intermedSpeciesName = new String("__delayed_species__" + Model.NAMESPACE_IDENTIFIER + reactionName + "_" + product.getName() + "_" + (ctr + 1));
                     intermedSpecies = new Species(intermedSpeciesName, reactantCompartment);                    
                     intermedSpecies.setSpeciesPopulation(0.0);
                     reaction.addProduct(intermedSpecies, 1);
@@ -212,7 +212,7 @@ public abstract class Simulator
 
     public abstract boolean isStochasticSimulator();
 
-    protected void initializeSimulator(Model pModel) throws DataNotFoundException
+    protected final void initializeSimulator(Model pModel) throws DataNotFoundException
     {
         clearSimulatorState();
 
@@ -352,7 +352,7 @@ public abstract class Simulator
         mInitialized = true;
     }
 
-    private void checkReactionRates() throws DataNotFoundException
+    private final void checkReactionRates() throws DataNotFoundException
     {
         int numReactions = mReactions.length;
         for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
@@ -363,7 +363,7 @@ public abstract class Simulator
         }
     }
 
-    private void checkSymbolsValues() throws DataNotFoundException
+    private final void checkSymbolsValues() throws DataNotFoundException
     {
         // test getting value for each symbol in the symbol table
         Iterator symbolNameIter = mSymbolMap.keySet().iterator();
@@ -397,7 +397,7 @@ public abstract class Simulator
         clearSimulatorState();
     }
 
-    protected void initializeDynamicSymbolAdjustmentVectors(Species []pDynamicSymbols)
+    protected final void initializeDynamicSymbolAdjustmentVectors(Species []pDynamicSymbols)
     {
         Reaction []reactions = mReactions;
 
@@ -413,6 +413,28 @@ public abstract class Simulator
         mDynamicSymbolAdjustmentVectors = dynamicSymbolAdjustmentVectors;
     }
 
+    public abstract String getAlias();
+
+    protected final SimulationResults createSimulationResults(double pStartTime,
+                                                              double pEndTime,
+                                                              SimulatorParameters pSimulatorParameters,
+                                                              String []pResultsSymbolNames,
+                                                              double []pResultsTimeValues,
+                                                              Object []pResultsSymbolValues,
+                                                              double []pResultsFinalSymbolFluctuations)
+    {
+        SimulationResults simulationResults = new SimulationResults();
+        simulationResults.setSimulatorAlias(getAlias());
+        simulationResults.setStartTime(pStartTime);
+        simulationResults.setEndTime(pEndTime);
+        simulationResults.setSimulatorParameters(pSimulatorParameters);
+        simulationResults.setResultsSymbolNames(pResultsSymbolNames);
+        simulationResults.setResultsTimeValues(pResultsTimeValues);
+        simulationResults.setResultsSymbolValues(pResultsSymbolValues);
+        simulationResults.setResultsFinalSymbolFluctuations(pResultsFinalSymbolFluctuations);
+        return(simulationResults);
+
+    }
 
     protected final int addRequestedSymbolValues(double pCurTime,
                                                  int pLastTimeIndex,
@@ -461,9 +483,9 @@ public abstract class Simulator
         return(timeCtr);
     }
 
-    protected static double []createTimesArray(double pStartTime,
-                                               double pEndTime,
-                                               int pNumTimePoints)
+    protected final static double []createTimesArray(double pStartTime,
+                                                     double pEndTime,
+                                                     int pNumTimePoints)
     {
         assert (pNumTimePoints > 1) : " invalid number of time points";
 
@@ -484,8 +506,8 @@ public abstract class Simulator
         return(retTimesArray);
     }
 
-    protected Symbol []createRequestedSymbolArray(HashMap pSymbolMap,
-                                                  String []pRequestedSymbols) throws DataNotFoundException
+    protected final Symbol []createRequestedSymbolArray(HashMap pSymbolMap,
+                                                        String []pRequestedSymbols) throws DataNotFoundException
     {
         int numSymbols = pRequestedSymbols.length;
         Symbol []symbols = new Symbol[numSymbols];
@@ -502,13 +524,10 @@ public abstract class Simulator
         return(symbols);
     }
 
-    protected void conductPreSimulationCheck(double pStartTime,
-                                             double pEndTime,
-                                             SimulatorParameters pSimulatorParameters,
-                                             int pNumResultsTimePoints,
-                                             String []pRequestedSymbolNames,
-                                             double []pRetTimeValues,
-                                             Object []pRetSymbolValues) throws IllegalArgumentException, IllegalStateException
+    protected final void conductPreSimulationCheck(double pStartTime,
+                                                   double pEndTime,
+                                                   SimulatorParameters pSimulatorParameters,
+                                                   int pNumResultsTimePoints) throws IllegalArgumentException, IllegalStateException
     {
        if(! mInitialized)
         {
@@ -524,26 +543,7 @@ public abstract class Simulator
         {
             throw new IllegalArgumentException("end time must be greater than the start time");
         }
-        
-        if(pRetTimeValues.length != pNumResultsTimePoints)
-        {
-            throw new IllegalArgumentException("illegal length of pRetTimeValues array");
-        }
-
-        if(pRetSymbolValues.length != pNumResultsTimePoints)
-        {
-            throw new IllegalArgumentException("illegal length of pRetSymbolValues array");
-        }
     }
-
-    protected abstract void simulate(double pStartTime, 
-                                          double pEndTime,
-                                          SimulatorParameters pSimulatorParameters,
-                                          int pNumTimePoints,
-                                          String []pRequestedSymbolNames,
-                                          double []pRetTimeValues,
-                                          Object []pRetSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException, SimulationFailedException;
-
 
 
 
@@ -626,17 +626,17 @@ public abstract class Simulator
         }
     }
 
-    public void setProgressReporter(SimulationProgressReporter pSimulationProgressReporter)
+    public final void setProgressReporter(SimulationProgressReporter pSimulationProgressReporter)
     {
         mSimulationProgressReporter = pSimulationProgressReporter;
     }
 
-    public void setController(SimulationController pSimulationController)
+    public final void setController(SimulationController pSimulationController)
     {
         mSimulationController = pSimulationController;
     }
 
-    public void setStatusUpdateIntervalSeconds(double pUpdateIntervalSeconds) throws IllegalArgumentException
+    public final void setStatusUpdateIntervalSeconds(double pUpdateIntervalSeconds) throws IllegalArgumentException
     {
         if(pUpdateIntervalSeconds <= 0.0)
         {
@@ -646,9 +646,8 @@ public abstract class Simulator
         setMinNumMillisecondsForUpdate(updateIntervalMilliseconds);
     }
 
-    protected void setMinNumMillisecondsForUpdate(long pMinNumMillisecondsForUpdate)
+    protected final void setMinNumMillisecondsForUpdate(long pMinNumMillisecondsForUpdate)
     {
         mMinNumMillisecondsForUpdate = pMinNumMillisecondsForUpdate;
     }
-
 }
