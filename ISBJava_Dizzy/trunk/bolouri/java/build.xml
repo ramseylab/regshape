@@ -4,6 +4,7 @@
 %CommonConfig;
 <!ENTITY % AppConfig SYSTEM "config/AppConfig.dtd">
 %AppConfig;
+<!ENTITY BuildHeader SYSTEM "../config/BuildHeader.xmlinc">
 ]>
 
 <!--
@@ -16,6 +17,10 @@
  -->
 
 <project name="localJava" default="compile" basedir=".">
+  <property name="projRoot"                      location=".." />
+
+  &BuildHeader;
+
 
   <property name="app.styleDir"                location="${basedir}/html" />
   <property name="app.srcDir"                  location="${basedir}/org" />
