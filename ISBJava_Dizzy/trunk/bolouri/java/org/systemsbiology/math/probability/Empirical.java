@@ -11,7 +11,6 @@
 package org.systemsbiology.math.probability;
 
 import cern.colt.matrix.DoubleMatrix1D;
-import cern.jet.math.Functions;
 
 /**
  * @author sramsey
@@ -24,12 +23,6 @@ public class Empirical implements IContinuousDistribution
     private double mMax;
     private double mMean;
     private double mVariance;
-    
-    public Empirical(DoubleMatrix1D pDist)
-    {
-        this(pDist, pDist.aggregate(Functions.min, Functions.identity), 
-                    pDist.aggregate(Functions.max, Functions.identity));
-    }
     
     public Empirical(DoubleMatrix1D pDist, double pMin, double pMax)
     {
