@@ -46,6 +46,9 @@ This document contains the version history for the
 <code>org.systemsbiology.chem.SimulatorStochasticGillespieTauLeap</code> simulator.</li>
 <li>Optimized the 
 <code>org.systemsbiology.chem.SimulatorStochasticGillespieTauLeap</code> simulator.</li>
+<li>Fixed a problem in the <code>org.systemsbiology.chem.Reaction</code> class, that was 
+causing stochastic simulations with a non-integer initial value for species populations,
+to become unstable.</li>
 </ul>
 </td>
 </tr>
