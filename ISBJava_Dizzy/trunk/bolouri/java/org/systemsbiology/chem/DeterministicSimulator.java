@@ -30,7 +30,8 @@ import java.util.Random;
  */
 public abstract class DeterministicSimulator extends Simulator
 {
-    protected static final double MAX_FRACTIONAL_ERROR = 0.001;
+    public static final int DEFAULT_MIN_NUM_STEPS = 1000;
+    public static final double DEFAULT_MAX_ALLOWED_ERROR = 0.01;
     private static final int NUM_ITERATIONS_CHECK_CANCELLED = 100;
 
     class RKScratchPad
@@ -48,6 +49,7 @@ public abstract class DeterministicSimulator extends Simulator
         double stepSize;
         double maxStepSize;
         double maxFractionalError;
+        int numIterations;
 
         public RKScratchPad(int pNumVariables)
         {
@@ -79,11 +81,17 @@ public abstract class DeterministicSimulator extends Simulator
             stepSize = 0.0;
             maxStepSize = 0.0;
             maxFractionalError = 0.0;
+            numIterations = 0;
         }
     }
 
     protected RKScratchPad mRKScratchPad;
     protected Object []mDynamicSymbolAdjustmentVectors;
+
+    protected abstract void setupScratchPad(double pStartTime,
+                                            double pEndTime,
+                                            SimulatorParameters pSimulatorParams, 
+                                            RKScratchPad pRKScratchPad);
 
     protected static final void computeDerivative(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
                                                   SymbolEvaluatorChemSimulation pSymbolEvaluator,
@@ -127,7 +135,7 @@ public abstract class DeterministicSimulator extends Simulator
                                       double []pReactionProbabilities,
                                       RKScratchPad pRKScratchPad,
                                       double []pDynamicSymbolValues,
-                                      double []pNewDynamicSymbolValues) throws DataNotFoundException;
+                                      double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException;
 
 
     protected static final void rk4step(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
@@ -215,14 +223,15 @@ public abstract class DeterministicSimulator extends Simulator
         MathFunctions.vectorScalarMultiply(k4, pTimeStepSize, k4);
         // k4 now contains h * f'(t + h, y + k3)
 
-
+        double newDynamicSymbolValue;
         for(int ctr = numVars; --ctr >= 0; )
         {
-            pNewDynamicSymbolValues[ctr] = ysav[ctr] + 
+            newDynamicSymbolValue = ysav[ctr] + 
                                            (k1[ctr]/3.0) +
                                            (2.0 * k2[ctr] / 3.0) +
                                            (k3[ctr] / 3.0) +
                                            (k4[ctr] / 6.0);
+            pNewDynamicSymbolValues[ctr] = newDynamicSymbolValue;
         }
 
         MathFunctions.vectorZeroNegativeElements(pNewDynamicSymbolValues);
@@ -273,27 +282,151 @@ public abstract class DeterministicSimulator extends Simulator
         resetScratchpad();
     }
 
+    protected static final void computeScale(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
+                                             SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                             Reaction []pReactions,
+                                             Object []pDynamicSymbolAdjustmentVectors,
+                                             double []pReactionProbabilities,
+                                             RKScratchPad pRKScratchPad,
+                                             double pTimeStepSize,
+                                             double []pDynamicSymbolValues,
+                                             double []yscale) throws DataNotFoundException, SimulationAccuracyException
+    {
+        double []yscratch = pRKScratchPad.yscratch;
+        double []dydt = pRKScratchPad.dydt;
+        int numDynamicSymbols = pDynamicSymbolValues.length;
+        double dydtn = 0.0;
+        double yn = 0.0;
+
+        computeDerivative(pSpeciesRateFactorEvaluator,
+                          pSymbolEvaluator,
+                          pReactions,
+                          pDynamicSymbolAdjustmentVectors,
+                          pReactionProbabilities,
+                          yscratch,
+                          dydt);
+
+        double scale;
+        boolean gotNonzero = false;
+        for(int symCtr = numDynamicSymbols; --symCtr >= 0; )
+        {
+            dydtn = dydt[symCtr];
+            yn = pDynamicSymbolValues[symCtr];
+            scale = Math.abs(yn) + Math.abs(dydtn * pTimeStepSize);
+            yscale[symCtr] = scale;
+            if(scale > 0.0)
+            {
+                gotNonzero = true;
+            }
+        }        
+
+        if(! gotNonzero)
+        {
+            // all of the scale factors are zero!
+            throw new SimulationAccuracyException("unable to determine any scale at time: " + pSymbolEvaluator.getTime());
+        }
+    }
+
+
+    protected static final double rkqc(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
+                                       SymbolEvaluatorChemSimulation pSymbolEvaluator,
+                                       Reaction []pReactions,
+                                       Object []pDynamicSymbolAdjustmentVectors,
+                                       double []pReactionProbabilities,
+                                       RKScratchPad pRKScratchPad,
+                                       double pTimeStepSize,
+                                       double []pDynamicSymbolValueScales,
+                                       double []pDynamicSymbolValues,
+                                       double []pNewDynamicSymbolValues) throws DataNotFoundException
+    {
+        double time = pSymbolEvaluator.getTime();
+        int numDynamicSymbols = pDynamicSymbolValues.length;
+
+        rk4step(pSpeciesRateFactorEvaluator,
+                pSymbolEvaluator,
+                pReactions,
+                pDynamicSymbolAdjustmentVectors,
+                pReactionProbabilities,
+                pRKScratchPad,
+                pTimeStepSize,
+                pDynamicSymbolValues,
+                pNewDynamicSymbolValues);
+
+        double halfStepSize = pTimeStepSize / 2.0;
+        double timePlusHalfStep = time + halfStepSize;
+
+        double []y1 = pRKScratchPad.y1;
+
+        rk4step(pSpeciesRateFactorEvaluator,
+                pSymbolEvaluator,
+                pReactions,
+                pDynamicSymbolAdjustmentVectors,
+                pReactionProbabilities,
+                pRKScratchPad,
+                halfStepSize,
+                pDynamicSymbolValues,
+                y1);
+        
+        double []ysav = pRKScratchPad.ysav;
+        System.arraycopy(pDynamicSymbolValues, 0, ysav, 0, numDynamicSymbols);
+        System.arraycopy(y1, 0, pDynamicSymbolValues, 0, numDynamicSymbols);
+        
+        pSymbolEvaluator.setTime(timePlusHalfStep);
+
+        double []y2 = pRKScratchPad.y2;
+
+        rk4step(pSpeciesRateFactorEvaluator,
+                pSymbolEvaluator,
+                pReactions,
+                pDynamicSymbolAdjustmentVectors,
+                pReactionProbabilities,
+                pRKScratchPad,
+                halfStepSize,
+                pDynamicSymbolValues,
+                y2);
+
+        System.arraycopy(ysav, 0, pDynamicSymbolValues, 0, numDynamicSymbols);
+        pSymbolEvaluator.setTime(time);
+
+        double aggregateError = 0.0;
+        double singleError = 0.0;
+        // compute error
+        for(int symCtr = numDynamicSymbols; --symCtr >= 0; )
+        {
+            // FOR DEBUGGING ONLY:
+//            System.out.println("y1[" + symCtr + "]: " + pNewDynamicSymbolValues[symCtr] + "; y2[" + symCtr + "]: " + y2[symCtr] + "; yscal[" + symCtr + "]: " + pDynamicSymbolValueScales[symCtr]);
+
+            double scale = pDynamicSymbolValueScales[symCtr];
+            if(scale > 0.0)
+            {
+                singleError = Math.abs(pNewDynamicSymbolValues[symCtr] - y2[symCtr])/scale;
+                aggregateError += singleError;
+            }
+
+            // problem:  what if there is only one y(t), and the initial y(0) and y'(0) are 0.0?
+        }
+
+        return(aggregateError);
+    }
+
+
+
     public void simulate(double pStartTime, 
                          double pEndTime,
-                         int pNumTimePoints,
-                         int pNumSteps,
+                         SimulatorParameters pSimulatorParameters,
+                         int pNumResultsTimePoints,
                          String []pRequestedSymbolNames,
                          double []pRetTimeValues,
-                         Object []pRetSymbolValues) throws DataNotFoundException, IllegalStateException
+                         Object []pRetSymbolValues) throws DataNotFoundException, IllegalStateException, SimulationAccuracyException
     {
         if(! mInitialized)
         {
             throw new IllegalStateException("simulator has not been initialized yet");
         }
 
-        if(pNumSteps <= 0)
+        if(pNumResultsTimePoints <= 0)
         {
-            throw new IllegalArgumentException("illegal value for number of steps");
-        }
-
-        if(pNumTimePoints <= 0)
-        {
-            throw new IllegalArgumentException("number of time points must be nonnegative");
+            throw new IllegalArgumentException("number of time points must be positive");
         }
 
         if(pStartTime > pEndTime)
@@ -301,12 +434,12 @@ public abstract class DeterministicSimulator extends Simulator
             throw new IllegalArgumentException("end time must come after start time");
         }
         
-        if(pRetTimeValues.length != pNumTimePoints)
+        if(pRetTimeValues.length != pNumResultsTimePoints)
         {
             throw new IllegalArgumentException("illegal length of pRetTimeValues array");
         }
 
-        if(pRetSymbolValues.length != pNumTimePoints)
+        if(pRetSymbolValues.length != pNumResultsTimePoints)
         {
             throw new IllegalArgumentException("illegal length of pRetSymbolValues array");
         }
@@ -319,11 +452,11 @@ public abstract class DeterministicSimulator extends Simulator
         int numDynamicSymbolValues = dynamicSymbolValues.length;
         HashMap symbolMap = mSymbolMap;
         Object []dynamicSymbolAdjustmentVectors = mDynamicSymbolAdjustmentVectors;
-        double []timesArray = new double[pNumTimePoints];
+        double []timesArray = new double[pNumResultsTimePoints];
 
         prepareTimesArray(pStartTime, 
                           pEndTime,
-                          pNumTimePoints,
+                          pNumResultsTimePoints,
                           timesArray);        
 
         Symbol []requestedSymbols = prepareRequestedSymbolArray(symbolMap,
@@ -342,12 +475,7 @@ public abstract class DeterministicSimulator extends Simulator
 
         int timeCtr = 0;
             
-//            int numIterations = 0;
-
-        if(pNumSteps < pNumTimePoints)
-        {
-            pNumSteps = pNumTimePoints;
-        }
+        int minNumSteps = pNumResultsTimePoints;
 
         int numMultistepReactionSteps = 0;
         int numReactions = reactions.length;
@@ -362,32 +490,39 @@ public abstract class DeterministicSimulator extends Simulator
         }
         numMultistepReactionSteps *= 5;
 
-        if(pNumSteps < numMultistepReactionSteps)
+        if(minNumSteps < numMultistepReactionSteps)
         {
-            pNumSteps = numMultistepReactionSteps;
+            minNumSteps = numMultistepReactionSteps;
         }
 
-        double maxStepSize = (pEndTime - pStartTime) / ((double) pNumSteps);
-        double stepSize = maxStepSize / 5.0;
+        Integer minNumStepsObj = pSimulatorParameters.getMinNumSteps();
+        if(null != minNumStepsObj)
+        {
+            if(minNumStepsObj.intValue() < minNumSteps)
+            {
+                pSimulatorParameters.setMinNumSteps(minNumSteps);
+            }
+        }
+        else
+        {
+            pSimulatorParameters.setMinNumSteps(minNumSteps);
+        }
+        
 
         RKScratchPad scratchPad = mRKScratchPad;
         scratchPad.clear();
-        scratchPad.stepSize = stepSize;
-        scratchPad.maxStepSize = maxStepSize;
 
-        double maxFractionalError = 1.0 / ((double) pNumSteps);
-        if(maxFractionalError > MAX_FRACTIONAL_ERROR)
-        {
-            maxFractionalError = MAX_FRACTIONAL_ERROR;
-        }
-        scratchPad.maxFractionalError = maxFractionalError;
+        setupScratchPad(pStartTime,
+                        pEndTime,
+                        pSimulatorParameters,
+                        scratchPad);
 
         boolean isCancelled = false;
 
         int iterationCtr = 0;
         boolean checkCancelled = false;
 
-        while(pNumTimePoints - timeCtr > 0)
+        while(pNumResultsTimePoints - timeCtr > 0)
         {
             time = iterate(speciesRateFactorEvaluator,
                            symbolEvaluator,
@@ -397,8 +532,8 @@ public abstract class DeterministicSimulator extends Simulator
                            scratchPad,
                            dynamicSymbolValues,
                            newSimulationSymbolValues);
-                
-//                ++numIterations;
+
+            ++(scratchPad.numIterations);
 
             if(time > timesArray[timeCtr])
             {
@@ -432,10 +567,16 @@ public abstract class DeterministicSimulator extends Simulator
             }
         }
 
-//        System.out.println("number of iterations: " + numIterations);
-
         // copy array of time points 
-        System.arraycopy(timesArray, 0, pRetTimeValues, 0, timeCtr);
-        
+        System.arraycopy(timesArray, 0, pRetTimeValues, 0, timeCtr);        
+    }
+
+
+    public SimulatorParameters getDefaultSimulatorParameters()
+    {
+        SimulatorParameters sp = new SimulatorParameters();
+        sp.setMinNumSteps(DEFAULT_MIN_NUM_STEPS);
+        sp.setMaxAllowedError(DEFAULT_MAX_ALLOWED_ERROR);
+        return(sp);
     }
 }
