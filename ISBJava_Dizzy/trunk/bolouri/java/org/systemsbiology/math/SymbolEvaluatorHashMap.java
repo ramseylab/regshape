@@ -37,8 +37,14 @@ public class SymbolEvaluatorHashMap extends SymbolEvaluator
     {
         SymbolValue symbolValue = (SymbolValue) mSymbolMap.get(pSymbolName);
         double value = 0.0;
+
         if(null != symbolValue)
         {
+            Value valueObj = symbolValue.getValue();
+            if(null == valueObj)
+            {
+                throw new IllegalStateException("no value was assigned for symbol: " + symbolValue.getSymbol().getName());
+            }
             value = symbolValue.getValue().getValue(this);
         }
         else
