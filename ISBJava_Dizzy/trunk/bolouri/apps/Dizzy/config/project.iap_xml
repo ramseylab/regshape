@@ -1394,13 +1394,13 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<string><![CDATA[@APPNAME@:  a chemical kinetics stochastic simulation system]]></string>
 					</property>
 					<property name="productVersionMajor">
-						<int>1</int>
+						<int>@APPVERSIONMAJOR@</int>
 					</property>
 					<property name="productVersionMinor">
-						<int>6</int>
+						<int>@APPVERSIONMINOR@</int>
 					</property>
 					<property name="productVersionRevision">
-						<int>4</int>
+						<int>@APPVERSIONPATCH@</int>
 					</property>
 					<property name="productVersionSubRevision">
 						<int>0</int>

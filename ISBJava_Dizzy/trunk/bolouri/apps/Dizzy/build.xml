@@ -33,11 +33,13 @@
   <property name="app.webDir"                   location="${projWebDir}/${ant.project.name}" />
   <property name="app.downloadDir"              location="${app.webDir}/&appVersion;" />
   <property name="app.installerDir"             location="${app.downloadDir}/installer" />
-  <property name="app.version"                  value="&appVersion;" />
   <property name="app.resourcesFile"            location="${app.webDir}/AppResources.jar" />
 
   <target name="setFilters">
-    <filter token="VERSION" value="${app.version}" />
+    <filter token="VERSION" value="&appVersion;" />
+    <filter token="APPVERSIONMAJOR" value="&appVersionMajor;" />
+    <filter token="APPVERSIONMINOR" value="&appVersionMinor;" />
+    <filter token="APPVERSIONPATCH" value="&appVersionPatch;" />
     <filter token="PROJROOT" value="${projRoot}" />
     <filter token="APPNAME" value="${ant.project.name}" />
     <filter token="APPJAVAMAXHEAPSIZEBYTES" value="&appJavaMaxHeapSizeBytes;" />
