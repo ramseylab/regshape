@@ -23,7 +23,17 @@ public interface ISimulator
 
     public SimulatorParameters getDefaultSimulatorParameters();
 
-    public void setMinNumMillisecondsForUpdate(long pMinNumMillisecondsForUpdate);
+    /**
+     * Set the update interval, in seconds.  The
+     * updates are provided through the
+     * {@link SimulationProgressReporter} class.  This
+     * also sets the interval for checking the
+     * {@link SimulationController} for pause or cancellation.
+     * The value specified must be greater than zero.
+     * If this method is not called, a default value of 1.0 
+     * seconds is used.
+     */
+    public void setStatusUpdateIntervalSeconds(double pStatusUpdateIntervalSeconds) throws IllegalArgumentException;
 
     public boolean allowsInterrupt();
 
