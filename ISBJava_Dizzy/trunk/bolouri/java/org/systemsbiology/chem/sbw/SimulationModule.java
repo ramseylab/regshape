@@ -39,6 +39,15 @@ public class SimulationModule
                                      "Simulation",
                                      DeterministicService.class);
 
+                if(pArgs[0].equals("-sbwregister"))
+                {
+                    System.out.println("registering SBW simulation module");
+                }
+                else if(pArgs[0].equals("-sbwmodule"))
+                {
+                    System.out.println("running SBW simulation module");
+                }
+
                 moduleImp.run(pArgs);
             }
 
