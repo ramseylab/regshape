@@ -2941,6 +2941,8 @@ A graphical representation of a model may be displayed by selecting the
 This will cause a new window to open, in which the model is displayed
 as a directed graph, with species and reactions being represented as
 nodes in the graph.  An example of such a graph is shown here:
+</p>
+<p>
 <img src="../images/screenshot6.png" alt="&appName; screenshot 6" />
 </p>
 <p>
