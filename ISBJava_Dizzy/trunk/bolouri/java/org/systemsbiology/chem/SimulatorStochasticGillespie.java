@@ -44,7 +44,7 @@ public final class SimulatorStochasticGillespie extends SimulatorStochasticBase 
 
         computeReactionProbabilities();
         
-        double aggregateReactionProbability = MathFunctions.vectorSumElements(mReactionProbabilities);
+        double aggregateReactionProbability = DoubleVector.sumElements(mReactionProbabilities);
         double deltaTimeToNextReaction = Double.POSITIVE_INFINITY;
 
         if(aggregateReactionProbability > 0.0)

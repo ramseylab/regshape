@@ -59,8 +59,8 @@ public class SlidingWindowTimeSeriesQueue
     public void clear()
     {
         mQueueIndex = 0;
-        MathFunctions.vectorZeroElements(mTimePoints);
-        MathFunctions.vectorZeroElements(mValues);
+        DoubleVector.zeroElements(mTimePoints);
+        DoubleVector.zeroElements(mValues);
         mNumStoredPoints = 0;
         mMinIndex = 0;
         mLastTime = 0.0;

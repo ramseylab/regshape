@@ -78,7 +78,7 @@ public abstract class SimulatorStochasticTauLeapBase extends SimulatorStochastic
 
         computeReactionProbabilities();
 
-        double aggregateReactionProbability = MathFunctions.vectorSumElements(mReactionProbabilities);
+        double aggregateReactionProbability = DoubleVector.sumElements(mReactionProbabilities);
 
         double leapTime = 0.0;
         boolean doLeap = false;
@@ -194,7 +194,7 @@ public abstract class SimulatorStochasticTauLeapBase extends SimulatorStochastic
                 throw new SimulationAccuracyException("simulation became unstable; please re-run with a smaller value for the error control parameter");
             }
 
-            MathFunctions.vectorAdd(mEstimatedSpeciesChange, mDynamicSymbolValues, mDynamicSymbolValues);
+            DoubleVector.add(mEstimatedSpeciesChange, mDynamicSymbolValues, mDynamicSymbolValues);
 
             if(null != mDelayedReactionSolvers)
             {
@@ -236,7 +236,7 @@ public abstract class SimulatorStochasticTauLeapBase extends SimulatorStochastic
 
     private boolean attemptLeap(double pLeapTime) throws DataNotFoundException
     {
-        MathFunctions.vectorZeroElements(mEstimatedSpeciesChange);
+        DoubleVector.zeroElements(mEstimatedSpeciesChange);
 
         int numSpecies = mDynamicSymbolValues.length;
         int numReactions = mReactions.length;
@@ -292,7 +292,7 @@ public abstract class SimulatorStochasticTauLeapBase extends SimulatorStochastic
         double rate = 0.0;
         double numFirings = 0.0;
         double []reactionProbabilities = mReactionProbabilities;
-        MathFunctions.vectorZeroElements(pEstimatedSpeciesChange);
+        DoubleVector.zeroElements(pEstimatedSpeciesChange);
 
         for(int j = numReactions; --j >= 0; )
         {

@@ -201,7 +201,7 @@ public class SimulatorStochasticTauLeapComplex extends SimulatorStochasticTauLea
         for(int j = 0; j < numReactions; ++j)
         {
             mFinv[j] = new double[numReactions];
-            MathFunctions.vectorZeroElements((double []) mFinv[j]);
+            DoubleVector.zeroElements((double []) mFinv[j]);
         }
 
         double []v_jp = null;

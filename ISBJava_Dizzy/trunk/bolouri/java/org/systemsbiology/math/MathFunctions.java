@@ -18,101 +18,6 @@ public final class MathFunctions
     private static final double SQTPI  =  2.50662827463100050242E0;
     private static final double LOGPI  =  1.14472988584940017414;
 
-    public static void vectorZeroNegativeElements(double []vec)
-    {
-        int size = vec.length;
-
-        for(int ctr = size; --ctr >= 0; )
-        {
-            if(vec[ctr] < 0.0)
-            {
-                vec[ctr] = 0.0;
-            }
-        }
-    }
-
-    public static void vectorZeroElements(double []vec)
-    {
-        int size = vec.length;
-
-        for(int ctr = size; --ctr >= 0; )
-        {
-            vec[ctr] = 0.0;
-        }
-    }
-
-    public static double vectorMaxElements(double []vec)
-    {
-        assert (vec.length > 0) : "computing the maximum of a vector requires non-zero length";
-        double retVal = -1.0 * Double.MAX_VALUE;
-
-        int size = vec.length;
-
-        for(int ctr = size; --ctr >= 0; )
-        {
-            if(vec[ctr] > retVal)
-            {
-                retVal = vec[ctr];
-            }
-        }
-
-        return(retVal);
-    }
-
-    public static double vectorSumElements(double []vec)
-    {
-        double retVal = 0.0;
-
-        int size = vec.length;
-
-        for(int ctr = size; --ctr >= 0; )
-        {
-            retVal += vec[ctr];
-        }
-
-        return(retVal);
-    }
-
-    public static void vectorAdd(double []addendX, double []addendY, double []sum)
-    {
-        int size1 = addendX.length;
-        int size2 = addendY.length;
-        int size3 = sum.length;
-
-        assert (size1 == size2 && size2 == size3) : "inconsistent vector size";
-
-        for(int ctr = size1; --ctr >= 0; )
-        {
-            sum[ctr] = addendX[ctr] + addendY[ctr];
-        }
-    }
-
-    public static void vectorSubtract(double []addendX, double []addendY, double []sum)
-    {
-        int size1 = addendX.length;
-        int size2 = addendY.length;
-        int size3 = sum.length;
-
-        assert (size1 == size2 && size2 == size3) : "inconsistent vector size";
-
-        for(int ctr = size1; --ctr >= 0; )
-        {
-            sum[ctr] = addendX[ctr] - addendY[ctr];
-        }
-    }
-
-    public static void vectorScalarMultiply(double []vector, double scalar, double []product)
-    {
-        int size1 = vector.length;
-        int size2 = product.length;
-        assert (size1 == size2) : "inconsistent vector size";
-
-        for(int ctr = size1; --ctr >= 0; )
-        {
-            product[ctr] = scalar * vector[ctr];
-        }
-    }
-
     /**
      * Returns the factorial of an integer argument.
      *
@@ -189,4 +94,104 @@ public final class MathFunctions
     {
         return(Math.log(pArg)/LN10);
     }
+    
+    public static void stats(double []pVec, MutableDouble pMean, MutableDouble pStdDev)
+    {
+        int num = pVec.length;
+        if(num <= 1)
+        {
+            throw new IllegalArgumentException("minimum vector length for computing statistics is 2");
+        }
+        double mean = 0.0;
+        for(int i = 0; i < num; ++i)
+        {
+            mean += pVec[i];
+        }
+        mean /= ((double) num);
+        pMean.setValue(mean);
+        double stdev = 0.0;
+        for(int i = 0; i < num; ++i)
+        {
+            stdev += Math.pow( pVec[i] - mean, 2.0 );
+        }
+        stdev = Math.sqrt(stdev/((double) num));
+        pStdDev.setValue(stdev);
+    }    
+    
+    public static double sign(double x)
+    {
+        double retVal = 0.0;
+        if(x > 0.0)
+        {
+            retVal = 1.0;
+        }
+        else if(x < 0.0)
+        {
+            retVal = -1.0;
+        }
+        return retVal;
+    }
+    
+    public static double extendedSimpsonsRule(double []pVals, double pXmin, double pXmax, int pNmin, int pNmax)
+    {
+        double retVal = 0.0;
+        
+        if(pXmax <= pXmin)
+        {
+            throw new IllegalArgumentException("max value must exceed the min value");
+        }
+
+        if(pNmax <= pNmin)
+        {
+            throw new IllegalArgumentException("max bin number must exceed the min bin number");
+        }
+        
+        if(pNmin < 0)
+        {
+            throw new IllegalArgumentException("min bin number must be nonnegative");
+        }
+        
+        if(pNmax >= pVals.length || pNmin >= pVals.length)
+        {
+            throw new IllegalArgumentException("bin range is out of range, for the data array supplied");
+        }
+        
+        int numBins = pNmax - pNmin + 1;
+        
+        if(numBins < 3)
+        {
+            throw new IllegalArgumentException("at least three bins required for using Extended Simpsons Rule");
+        }
+        
+        double cumSum = 0.0;
+        double fac = 0.0;
+        
+        double h = (pXmax - pXmin)/((double) numBins);
+        
+        for(int k = numBins; --k >= 0; )
+        {
+            if(k == numBins - 1)
+            {
+                fac = 1.0/3.0;
+            }
+            else if(k == 0)
+            {
+                fac = 1.0/3.0;
+            }
+            else if(k % 2 == 1)  // this means k+1 is even
+            {
+                fac = 4.0/3.0;
+            }
+            else  // this means k+1 is odd
+            {
+                fac = 2.0/3.0;  
+            }
+        
+            cumSum += h*fac*pVals[k + pNmin];
+        }
+        
+        return cumSum;
+    }
+    
+ 
 }

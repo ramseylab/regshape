@@ -66,16 +66,16 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
         public void clear()
         {
-            MathFunctions.vectorZeroElements(k1);
-            MathFunctions.vectorZeroElements(k2);
-            MathFunctions.vectorZeroElements(k3);
-            MathFunctions.vectorZeroElements(k4);
-            MathFunctions.vectorZeroElements(ysav);
-            MathFunctions.vectorZeroElements(yscratch);
-            MathFunctions.vectorZeroElements(y1);
-            MathFunctions.vectorZeroElements(y2);
-            MathFunctions.vectorZeroElements(yscale);
-            MathFunctions.vectorZeroElements(dydt);
+            DoubleVector.zeroElements(k1);
+            DoubleVector.zeroElements(k2);
+            DoubleVector.zeroElements(k3);
+            DoubleVector.zeroElements(k4);
+            DoubleVector.zeroElements(ysav);
+            DoubleVector.zeroElements(yscratch);
+            DoubleVector.zeroElements(y1);
+            DoubleVector.zeroElements(y2);
+            DoubleVector.zeroElements(yscale);
+            DoubleVector.zeroElements(dydt);
             stepSize = 0.0;
             maxStepSize = 0.0;
             numIterations = 0;
@@ -113,11 +113,11 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
         computeDerivative(yscratch, k1);
 ;
-        MathFunctions.vectorScalarMultiply(k1, halfStep, k1);
+        DoubleVector.scalarMultiply(k1, halfStep, k1);
         // now, k1 contains  h * f'(t, y)/2.0
 
         // set the y values to "y + k1"
-        MathFunctions.vectorAdd(ysav, k1, y);
+        DoubleVector.add(ysav, k1, y);
 
         // set the time to "t + h/2"
         mSymbolEvaluator.setTime(timePlusHalfStep);
@@ -125,18 +125,18 @@ public abstract class SimulatorDeterministicBase extends Simulator
         double []k2 = mRKScratchPad.k2;
         computeDerivative(yscratch, k2);
 
-        MathFunctions.vectorScalarMultiply(k2, halfStep, k2);
+        DoubleVector.scalarMultiply(k2, halfStep, k2);
 
-        MathFunctions.vectorAdd(ysav, k2, y);
+        DoubleVector.add(ysav, k2, y);
         // y now contains "y + k2"
 
         double []k3 = mRKScratchPad.k3;
         computeDerivative(yscratch, k3);
 
-        MathFunctions.vectorScalarMultiply(k3, pTimeStepSize, k3);
+        DoubleVector.scalarMultiply(k3, pTimeStepSize, k3);
         // k3 now contains h * f'(t + h/2, y + k2)
 
-        MathFunctions.vectorAdd(ysav, k3, y);
+        DoubleVector.add(ysav, k3, y);
         // y now contains  "y + k3"
 
         double []k4 = mRKScratchPad.k4;
@@ -148,7 +148,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
         computeDerivative(yscratch, k4);
 
-        MathFunctions.vectorScalarMultiply(k4, pTimeStepSize, k4);
+        DoubleVector.scalarMultiply(k4, pTimeStepSize, k4);
         // k4 now contains h * f'(t + h, y + k3)
 
         double newDynamicSymbolValue;
@@ -162,7 +162,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
             pNewDynamicSymbolValues[ctr] = newDynamicSymbolValue;
         }
 
-        MathFunctions.vectorZeroNegativeElements(pNewDynamicSymbolValues);
+        DoubleVector.zeroNegativeElements(pNewDynamicSymbolValues);
 
         // restore to previous values; allow the driver to update
         System.arraycopy(ysav, 0, y, 0, numVars);

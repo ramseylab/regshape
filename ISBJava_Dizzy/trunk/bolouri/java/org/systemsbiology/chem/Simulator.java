@@ -10,7 +10,6 @@ package org.systemsbiology.chem;
 
 import org.systemsbiology.math.*;
 import org.systemsbiology.util.*;
-
 import java.util.*;
 
 /**
@@ -153,7 +152,7 @@ public abstract class Simulator
     {
         // set initial values for dynamic symbols 
         System.arraycopy(mInitialDynamicSymbolValues, 0, mDynamicSymbolValues, 0, mDynamicSymbolValues.length);
-        MathFunctions.vectorZeroElements(mReactionProbabilities);
+        DoubleVector.zeroElements(mReactionProbabilities);
         if(null != mDelayedReactionSolvers)
         {
             clearDelayedReactionSolvers();
@@ -797,7 +796,7 @@ public abstract class Simulator
         Reaction reaction = null;
         double reactionRate = 0.0;
 
-        MathFunctions.vectorZeroElements(pDynamicSymbolDerivatives);
+        DoubleVector.zeroElements(pDynamicSymbolDerivatives);
 
         Object []dynamicSymbolAdjustmentVectors = mDynamicSymbolAdjustmentVectors;
 
@@ -809,9 +808,9 @@ public abstract class Simulator
             double []symbolAdjustmentVector = (double []) dynamicSymbolAdjustmentVectors[reactionCtr];
             
             // we want to multiply this vector by the reaction rate and add it to the derivative
-            MathFunctions.vectorScalarMultiply(symbolAdjustmentVector, reactionRate, pTempDynamicSymbolValues);
+            DoubleVector.scalarMultiply(symbolAdjustmentVector, reactionRate, pTempDynamicSymbolValues);
             
-            MathFunctions.vectorAdd(pTempDynamicSymbolValues, pDynamicSymbolDerivatives, pDynamicSymbolDerivatives);
+            DoubleVector.add(pTempDynamicSymbolValues, pDynamicSymbolDerivatives, pDynamicSymbolDerivatives);
         }
     }
 
