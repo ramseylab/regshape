@@ -23,12 +23,22 @@ public class Queue
         mQueue = new LinkedList();
     }
 
-    public synchronized void add(Object pElement)
+    public synchronized final void add(Object pElement)
     {
-        mQueue.add(pElement);
+        mQueue.addLast(pElement);
     }
 
-    public synchronized Object getNext()
+    public synchronized final Object peekNext()
+    {
+        Object element = null;
+        if(mQueue.size() > 0)
+        {
+            element = (Object) mQueue.get(0);
+        }
+        return(element);
+    }
+
+    public synchronized final Object getNext()
     {
         Object element = null;
         if(mQueue.size() > 0)
