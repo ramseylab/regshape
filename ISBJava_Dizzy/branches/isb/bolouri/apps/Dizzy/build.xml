@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<project name="Dizzy" default="compile" basedir=".">
+  <property name="styleDir" location="${basedir}/html" />
+  <property name="buildDir" location="${basedir}/build" />
+  <property name="configDir" location="${basedir}/config" />
+  <property name="appWebDir" location="${webDir}/${ant.project.name}" />
+
+  <target name="compile">
+
+  </target>
+
+  <target name="clean">
+    <delete dir="${styleDir}" quiet="yes" />
+    <delete dir="${buildDir}/projectlocales" quiet="yes" />
+    <delete file="${configDir}/CommonConfig.dtd" quiet="yes" />
+  </target>
+
+  <target name="copyCommonConfig">
+    <copy file="${mainConfigDir}/CommonConfig.dtd" todir="${configDir}" />
+    
+  </target>
+
+  <target name="style" depends="copyCommonConfig">
+    <mkdir dir="${styleDir}" />
+    <style basedir="${basedir}/docs" 
+           destdir="${styleDir}" 
+           includes="*.xml" 
+           style="${docsStyleSheet}"
+           excludes="AppConfig.xml" />
+  </target>
+
+  <target name="install-web" depends="style">
+    <mkdir dir="${appWebDir}" />
+    <copy todir="${appWebDir}">
+      <fileset dir="${styleDir}">
+        <include name="*.html" />
+      </fileset>
+      <fileset dir="${basedir}/docs">
+        <include name="*.png" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="build" depends="style">
+
+  </target>
+
+</project>

@@ -1,0 +1,2108 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../docs/documentation-stylesheet.xml"?>
+<!DOCTYPE UserGuide [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+
+<isb:doctitle>&appName; User Manual</isb:doctitle>
+<isb:docauthor>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docauthor>
+<isb:docversion>Revision 0.1 (draft), 2003/04/03</isb:docversion>
+
+<p>
+<blockquote>
+Please send bug reports and corrections to:  &appOriginalAuthorFullName; (<code>&appOriginalAuthorEmailSafe;</code>)
+</blockquote>
+</p>
+
+<hr />
+
+<isb:doccontents />
+
+<!-- ========== INTRODUCTION ========== -->
+
+<isb:docsection name="Introduction" label="introduction">
+<p>
+&appName; is a chemical kinetics simulation software 
+package implemented in Java.  This software can be 
+used to define a system of interacting chemical species,
+and the reactions through which they interact.  The 
+software can then be used to simulate the reaction 
+kinetics of the system of interacting species.
+The software consists of the following elements:
+<ol>
+<li>a set of Java packages or &quot;libraries&quot; that constitute a Java 
+application programming interface (or &quot;API&quot;) for this software system
+There is <a href="../javadoc">javadoc</a> documentation available
+for the API for this software package.</li>
+<li>a scripting engine that can be invoked from the command-line, to define
+a model and run simulations on the model, and to export a model to a different
+model definition language</li>
+<li>a graphical user interface ("GUI") application that can be used to run 
+simulations and export a model to a different model definition language</li>
+<li>a Systems Biology Workbench bridge that allows the simulator to be
+invoked through the Systems Biology Workbench, using a model defined in
+the Systems Biology Markup Language</li>
+</ol>
+Models are defined in text files that you must edit, or generate using
+an external tool (e.g., JDesigner).  This system can understand three types of 
+model definition languages, each of which has an associated filename 
+suffix ("extension").  The GUI program (referred to above) uses the
+filename extension to guess what model definition language the file contains.
+<ol>
+<li>Systems Biology Markup Language ("SBML")
+<p />
+The SBML standard is documented at the web site:  
+<a href="http://www.sbw-sbml.org">http://www.sbw-sbml.org</a>.
+You can generate a model in SBML format by using the JDesigner software tool.
+<p />
+File extensions treated as SBML are:  ".xml", ".sbml"
+<p />
+</li>
+<li><a href="#cmdl">Chemical Model Definition Language (CMDL)</a>
+<p />
+The Chemical Model Definition Language (CMDL) 
+is the language understood "natively" by the
+&appName; scripting engine; the engine translates models from other languages 
+into its native language, before processing them.  
+<p />
+The file extension of the CMDL command language is: ".isbchem"
+<p />
+</li>
+<li><a href="#ccmdl">Condensed Chemical Model Definition Language (CCMDL)</a>
+<p />
+The condensed command language is a simplified, condensed notation
+that is translated into the aforementioned CMDL command language
+by the scripting engine.  The CMDL command language is more powerful
+and flexible, but also a bit more tedious to type in manually.
+Note that the &appName; system can export into file types (1) and (2) 
+mentioned above, but not into the CCMDL scripting language.
+<p />
+The file extension of the CCMDL scripting language is ".dizzy"
+<p />
+</li>
+</ol>
+You will find examples of all three languages in the "samples"
+subdirectory of the directory in which you install the &appName; software.
+</p>
+<p>
+This document is the user manual for the &appName; program.
+This manual applies to the following release version of the program:
+<blockquote>
+<pre>
+release version:   &appVersion;
+release date:      &appDate;
+</pre>
+</blockquote>
+The release notes for this version of the program can be found
+at the following URL:
+<blockquote>
+<a href="&appHomePage;/README.html">&appHomePage;/README.html</a>
+</blockquote>
+The home page for this program is:
+<blockquote>
+<a href="&appHomePage;">&appHomePage;</a>
+</blockquote>
+The version history for this program can be found at the following URL:
+<blockquote>
+<a href="&appHomePage;/VersionHistory.html">&appHomePage;/VersionHistory.html</a>
+</blockquote>
+If you are reading this document through a print-out, you can find
+the online version of this document (which may be a more recent version)
+at the following URL:
+<blockquote>
+<a href="&appHomePage;/UserManual.html">&appHomePage;/UserManual.html</a>
+</blockquote>
+</p>
+
+</isb:docsection>
+
+<isb:docsection name="Getting Started" label="gettingstarted">
+
+<p>
+This section describes how to get started with using the &appName;
+system.
+</p>
+
+<!-- ========== SYSTEM REQUIREMENTS ========== -->
+
+<isb:docsubsection name="System Requirements" label="systemrequirements">
+<p>
+The &appName; system is implemented in the Java programming language.
+This means that an installation of the Java Runtime Environment
+(JRE) is required in order to be able to use the &appName; system.
+A version of the &appName; system installer program 
+(&quot;<code>ins&appName;.bin</code>&quot; on Unix/Linux, 
+or &quot;<code>ins&appName;.exe</code>&quot; on Windows)
+is available which has the Sun JRE version 1.4.1 pre-bundled with it.
+This is the recommended approach for users who are not knowledgeable
+in the use of the Java programming language and runtime environment.
+</p>
+<p>
+You may also download the &quot;thin&quot; version of the installer 
+that does not  have the JRE pre-bundled.  In order to use 
+the &quot;thin&quot; installation of &appName;, you must already have
+a JRE installed on your computer.  
+Certain new features of the Java language are
+used in the implementation of the &appName; system.  This means
+that &appName; will only function properly when used with a Java
+Runtime Environment that implements at least the language features
+of version 1.4 of the Sun Java Development Kit (JDK).  In particular,
+the Java Runtime Environment must have support for assertions, in
+order for &appName; to work properly.
+</p>
+<p>
+The specific hardware requirements for using the &appName; system
+will vary depending on the complexity of the models being
+studied, and on the type of JRE and host operating system.
+A good rule of thumb is that at least 512 MB of RAM is recommended.
+If you are using your own JRE and it is not a Sun JRE, you will need
+to ensure that the appropriate command-line parameters are passed
+to the JRE to ensure that the built-in heap size limit is set to
+at least 512 MB.  If you are using the Sun JRE, or the JRE that
+is pre-bundled with the &appName; installer, this issue does not 
+apply to you.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Quick Start" label="quickstart">
+<p>
+For users just starting out, it is recommended to try importing a simple
+SBML model using the GUI application.  Note that the GUI application
+will ask you to specify how species symbols appearing in reaction rate
+expressions are to be interpreted.  The choices given are "concentration"
+and "molecules".  It is recommended that you try using "concentration" first.
+If the GUI application complains that the initial population of a given
+chemical species is too large for it to handle, try reloading the
+model with the "molecules" choice instead.  This will likely solve 
+the problem.
+</p>
+<p>
+After becoming acquainted with the simulation driver screen, the next
+step is to become acquainted with the <a href="#ccmdl">CCMDL</a>
+language features that permit rapid development of new models. 
+</p>
+
+</isb:docsubsection>
+
+</isb:docsection>
+
+<isb:docsection name="Preliminary Concepts" label="preliminaries">
+
+<p>
+This section describes preliminary concepts that are common
+throughout the various model definition languages for the
+&appName; system.
+</p>
+
+<!-- ========== NUMERIC PRECISION ========== -->
+
+<isb:docsubsection name="Numeric Precision" label="numericprecision">
+<p>
+All floating-point numbers in the &appName; system are Java double-precision
+numbers.  This means that they are floating-point numbers in a 64-bit 
+representation adhering to the IEEE 754-1985 standard.  Java 
+double-precision floating-point numbers provide approximately 15 
+digits of precision.  All internal calculations are performed 
+using double-precision floating-point arithmetic, unless otherwise noted.
+</p>
+<p>
+It should be noted that the above limitation of the number of 
+significant digits of a double-precision floating-point number in 
+Java, means that reaction rates differing by more than 15 orders 
+of magnitude will cause incorrect results from the stochastic simulator.
+In practice, this limitation rarely presents a problem.
+</p>
+</isb:docsubsection>
+
+<!-- ========== CASE SENSITIVITY ========== -->
+
+<isb:docsubsection name="Case Sensitivity" label="casesensitive">
+<p>
+All symbols, keywords and expressions in the &appName; system are
+case-sensitive.  This means that if you define a symbol such as
+&quot;<code>x</code>&quot; (lower-case), you cannot later 
+refer to it as
+&quot;<code>X</code>&quot; (upper-case).  Similarly, mixed-case 
+keywords that are built into the &appName; system,
+such as the keyword <code>exportModelInstance</code>,
+must be entered exactly as shown; case variants such as
+<code>exportmodelinstance</code> would not be recognized as 
+valid keywords.
+</p>
+</isb:docsubsection>
+
+<!-- ========== SYMBOL NAMES ========== -->
+
+<isb:docsubsection name="Symbol Names" label="symbols">
+<p>
+Symbol names are a core ingredient of the &appName; system.  
+Most elements of the &appName; system (reactions, species, parameters,
+compartments, etc.) are named elements whose names must be
+valid symbol names.  A symbol name must conform to the following
+rules:
+<ol>
+<li>A symbol name must be composed entirely of alphanumeric characters, 
+and the underscore character.</li>
+<li>A symbol name must not parsed as a numeric literal (i.e., it cannot
+be a number, such as <code>1.0</code></li>
+<li>the symbols <code>time</code> and <code>N</code> are reserved,
+because they represent clock time and Avogadro&apos;s constant, respectively</li>
+</ol>
+Note that Rule #1 above implies that a symbol name cannot contain 
+parentheses, square brackets, curly braces, or the arithmetic operators: 
+<code>+</code>, <code>-</code>, <code>*</code>,
+<code>/</code>, <code>%</code>, <code>^</code>, or the
+relations <code>&gt;</code>, <code>&lt;</code>, and <code>=</code>.  
+Further, it implies that a symbol name cannot contain the following 
+reserved characters:
+<code>!</code>, <code>@</code>, <code>#</code>, <code>$</code>,
+<code>|</code>, <code>&amp;</code>, <code>;</code>, 
+<code>=</code>, the comma &quot;<code>,</code>&quot;,
+and the period &quot;<code>.</code>&quot;.
+</p>
+<p>
+For the reader who is familiar with the C programming language, the
+above can be summarized as:  a symbol name is legal if it would be 
+a legal variable name in a C program.  
+</p>
+<p>
+Some examples of valid symbol names are shown here:
+<blockquote>
+<pre>
+Species_A
+Galactose
+DNA_plus_TFA
+P1
+</pre>
+</blockquote>
+The following shows some examples of <em>illegal</em> symbol names:
+<blockquote>
+<pre>
+A + B
+DNA plus TFA
+C-D
+1.0
+1e+6
+B!
+</pre>
+</blockquote>
+The underscore can be used as a convenient separator
+when defining a symbol name with multiple words.
+</p>
+<p>
+<a name="namespace" />
+Symbol names are stored in a <b>namespace</b>.  There are two
+types of namespaces, <b>global</b> and <b>local</b>.  Normally,
+all symbol names reside in the <b>global namespace</b>.  This applies
+to <a href="#species">species names</a>, <a href="#reactions">reaction
+names</a>, <a href="#compartments">compartment names</a>, and
+<a href="#parameters">parameter names</a>.  This means that you cannot
+define a species <code>X</code> and a reaction <code>X</code>; their
+names would collide in the global namespace.  
+</p>
+<p>
+The <b>local namespace</b> applies only to a parameter that is defined
+only for a specific reaction (or reactions).  Each reaction has
+a local namespace for its reaction-specific parameters.  It <em>is</em>
+permissible to define a parameter <code>X</code> in the global 
+namespace, and to also define a parameter <code>X</code> with a 
+different value, in the local namespace for one or more reactions.
+In that case, the value associated with <code>X</code> for the
+specific reaction supersedes the value associated with <code>X</code>
+in the global namespace, for the purpose of evaluating the custom
+reaction rate expression for the reaction.  This can be summarized by
+saying that a parameter defined locally supersedes a parameter defined
+globally, of the same name.  The local namespace concept applies only
+to parameters.  Note that defining parameters within the local
+namespace is not possible in the <a href="#ccmdl">Condensed Chemical
+Model Definition Language</a>.
+</p>
+
+</isb:docsubsection>
+
+<!-- ========== MATHEMATICAL EXPRESSIONS ========== -->
+
+<isb:docsubsection name="Mathematical Expressions" label="expressions">
+<p>
+Various aspects of the &appName; system permit the textual
+specification of mathematical expressions.  This is a useful
+method of customizing reaction rate equations and other aspects
+of a chemical system model.  A mathematical
+expression may involve symbols, numeric literals, arithmetic 
+operators, and built-in mathematical functions.  
+</p>
+<p>
+<a href="#symbols">Symbols</a> are analogous 
+to algebraic variables or symbols. Depending on the context,
+a symbol may represent the population or concentration
+of a chemical species, or it may represent a floating
+point parameter defined for a model or a chemical reaction.
+In the context of an expression, a symbol always has
+an associated numeric value.  When a symbol appears in
+a mathematical expression, its associated numeric value
+is used in place of the symbol, for the purpose of evaluating
+the expression.  
+</p>
+<p>
+In the context of a mathematical expression, numeric literals 
+are simply numbers, either floating point or integer.  Note that
+within a mathematical expression, scientific notation 
+(e.g., <code>1.2e-7</code> or <code>1.2e+7</code>) is not
+permitted in the specification of bare numbers.  However,
+this does not pose a problem because constructions such
+as <code>1.2*10^7</code> and <code>1.2*10^(-7)</code>
+are permitted.
+</p>
+<p>
+In the &appName; system, mathematical 
+expressions are described using a syntax similar to the C 
+programming language.  The basic operations permitted are:
+<blockquote>
+<dl>
+<dt><b>addition</b></dt>
+<dd>adding two symbols, numbers, or sub-expressions, such
+as <code>A+B</code>, or <code>A+1.7</code>, or <code>2+2</code></dd>
+
+<dt><b>subtraction</b></dt>
+<dd>computes the difference of two symbols, numbers, or sub-expressions, such
+as <code>A-B</code>, or <code>A-1.7</code>, or <code>2-2</code></dd>
+
+<dt><b>multiplication</b></dt>
+<dd>multiplying two symbols, numbers, or sub-expressions, such
+as <code>A*B</code>, or <code>A*1.7</code>, or <code>2*2</code></dd>
+
+<dt><b>division</b></dt>
+<dd>computes the quotient of two symbols, numbers, or sub-expressions, such
+as <code>A/B</code>, or <code>A/1.7</code>, or <code>2/2</code>.
+The first operand is the dividend, and the second operator is the divisor.</dd>
+
+<dt><b>modulo division</b></dt>
+<dd>computes the remainder of the quotient of two symbols, numbers, or sub-expressions, such
+as <code>A%B</code>, or <code>A%1.7</code>, or <code>2%2</code>.
+The first operand is the dividend, and the second operator is the divisor.</dd>
+
+<dt><b>exponentiation</b></dt>
+<dd>computes the exponent of two symbols, numbers, or sub-expressions, such
+as <code>A^B</code>, or <code>A^1.7</code>, or <code>2^2</code>.
+The first operand is the value being exponentiated.
+The second operand is the exponent.</dd>
+
+<dt><b>parentheses</b></dt>
+<dd>represents a sub-expression whose value is to be
+computed, such as the sub-expression <code>(B+C)</code>
+appearing in the expression <code>A+(B+C)</code>.</dd>
+
+<dt><b>negation</b></dt>
+<dd>computes the negative of a symbol, number, or sub-expression, such as
+<code>-A</code>, or <code>-1.0</code>, or <code>-(A+B)</code>.</dd>
+</dl>
+</blockquote>
+In addition to the above operations, there are a number
+of built-in mathematical functions that may be used in
+mathematical expressions.  Unless otherwise stated, the
+built-in functions described below are implemented by calling
+the corresponding function in the <code>java.lang.Math</code>
+class in the Java Runtime Environment.  The built-in mathematical
+functions available for use in mathematical expressions are:
+<blockquote>
+<dl>
+<dt><b>exp</b></dt>
+<dd>Computes the value of the base of the natural logarithm, 
+<code>e</code>, raised to the power of the (floating-point) 
+argument.</dd>
+
+<dt><b>log</b></dt>
+<dd>Computes the natual logarithm of the argument, which
+must be in the range <code>(0, infinity)</code>.</dd>
+
+<dt><b>sin</b></dt>
+<dd>Computes the trigonometric sine of the argument.
+The argument is an angle, which must be specified in radians.
+Example:  <code>sin(A)</code>, <code>sin(3.14159)</code>.
+</dd>
+
+<dt><b>cos</b></dt>
+<dd>Computes the trigonometric cosine of the argument.
+The argument is an angle, which must be specified in radians.
+Example:  <code>cos(A)</code>, <code>cos(3.14159)</code>.
+</dd>
+
+<dt><b>tan</b></dt>
+<dd>Computes the trigonometric tangent of the argument.
+The argument is an angle, which must be specified in radians.
+Example:  <code>tan(A)</code>, <code>tan(3.14159)</code>.
+</dd>
+
+<dt><b>asin</b></dt>
+<dd>Computes the trigonometric inverse sine of the argument.
+The argument is a dimensionless ratio, that must be within the
+range [-1,1].  The value returned is an angle, in radians.
+Example:  <code>asin(A)</code>, <code>asin(0.5)</code>.
+</dd>
+
+<dt><b>acos</b></dt>
+<dd>Computes the trigonometric inverse cosine of the argument.
+The argument is a dimensionless ratio, that must be within the
+range [-1,1].  The value returned is an angle, in radians.
+Example:  <code>acos(A)</code>, <code>acos(0.5)</code>.
+</dd>
+
+<dt><b>atan</b></dt>
+<dd>Computes the trigonometric inverse tangent of the argument.
+The argument is a dimensionless ratio.  The value returned is 
+an angle, in radians.
+Example:  <code>atan(A)</code>, <code>acos(0.5)</code>.
+</dd>
+
+<dt><b>abs</b></dt>
+<dd>Computes the absolute value of the argument.
+</dd>
+
+<dt><b>floor</b></dt>
+<dd>Computes greatest integer value that is less than
+or equal to the floating-point argument.
+Example:  <code>floor(A)</code>, <code>floor(1.7)</code></dd>
+
+<dt><b>ceil</b></dt>
+<dd>Computes the smallest integer value that is greater than
+or equal to the floating-point argument.
+Example:  <code>ceil(A)</code>, <code>ceil(1.7)</code></dd>
+
+<dt><b>sqrt</b></dt>
+<dd>Computes the value of the square root of the argument.
+The argument must be nonnegative.</dd>
+
+<dt><b>gammaln</b></dt>
+<dd>Computes the value of the natural logarithm of the
+gamma function of the argument.</dd>
+
+<dt><b>rand</b></dt>
+<dd>The <code>rand()</code> function has no arguments.  It
+returns a floating-point random number selected from the 
+unit interval <code>[0, 1)</code> with uniform distribution.  
+Example:  <code>rand()</code>.  It is worth noting that
+unlike all of the other built-in mathematical functions,
+<code>rand()</code> takes no arguments.  But the pair of
+parentheses shown after the &quot;<code>rand</code>&quot; 
+are still required.</dd>
+</dl>
+</blockquote>
+New built-in mathematical functions may be added in 
+forthcoming versions of the &appName; system.
+</p>
+<p>
+Please remember that all elements of the &appName; system
+are <a href="#casesensitive">case-sensitive</a>, 
+including the aforementioned
+built-in mathematical functions.  Therefore an expression
+such as <code>SIN(3.14)</code> would not be recognized
+as referring to the <code>sin</code> trigonometric function.
+The expression would therefore be considered invalid,
+because the <code>SIN</code> function would not be 
+recognized as a valid built-in function.
+</p>
+<p>
+It is important to note that all expressions are evaluated
+using double-precision floating-point arithmetic.  For
+functions that return an integer, such as the <code>floor()</code>
+function appearing in the expression <code>A * floor(B)</code>, 
+the integer result of <code>floor(B)</code> is converted to a 
+double-precision floating-point number, before the result 
+is used in evaluating the <code>A * floor(B)</code> expression.
+</p>
+<p>
+The following are a few examples of valid mathematical
+expressions that have been used in &appName; models:
+<blockquote>
+<pre>
+10*(1/(1+exp(-0.0025*(-2000+time))))
+
+alpha0 + (alpha + PY^n*alpha1)/(K^n + PY^n)
+
+k * (A/(N*V)) * (B/(N*V))
+</pre>
+</blockquote>
+Note that the symbols <code>time</code> and <code>N</code>
+are special symbols, defined <a href="#symbols">above</a>.
+</p>
+</isb:docsubsection>
+
+</isb:docsection>
+
+<isb:docsection name="Model Elements" label="modelelement">
+
+<!-- ========== PARAMETERS ========== -->
+
+<isb:docsubsection name="Parameters" label="parameters">
+
+<p>
+A parameter is a name-value pair that may be referenced
+symbolically (i.e., by its name) in 
+<a href="#expressions">mathematical expressions</a>.  The
+value is always a numeric (floating-point) value.
+The parameter name must be a valid <a href="#symbols">symbol name</a>.
+</p>
+<p>
+A parameter can be associated with a <a href="#models">model</a>,
+in which case it can be referenced in the custom rate expression for
+any chemical <a href="#reactions">reaction</a> associated with the model;
+in addition, it can be referenced in the species population expression
+for any <a href="#species">boundary species</a> within the model.
+</p>
+
+</isb:docsubsection>
+
+<!-- ========== COMPARTMENTS ========== -->
+
+<isb:docsubsection name="Compartments" label="compartments">
+<p>
+A compartment is an abstraction for a named region of space 
+that has a fixed volume.  The contents of this volume are 
+assumed to be well-stirred, so that chemical species do not
+have concentration gradients within this volume.  Every 
+<a href="#species">species</a> must be assigned to a 
+compartment.  The volume of the compartment can be used 
+to compute the concentration of the species, from the 
+number of molecules (population) of the species in the
+compartment.  
+</p>
+<p>
+Users of the <a href="#ccmdl">Condensed
+Chemical Model Definition Language</a> typically use the
+built-in (default) compartment &quot;<code>univ</code>&quot;,
+eliminating the need to explicitly define a compartment.
+In the <a href="#cmdl">Chemical Model Definition Language</a>,
+it is always necessary to explicitly define at least one
+compartment, with which species can be associated.  It is
+permissible to define more than one compartment; this is
+sometimes done in order to separately model the populations
+of chemical species in two distinct volumes, for example,
+&quot;nucleus&quot; and &quot;cytoplasm&quot;.
+</p>
+
+</isb:docsubsection>
+
+<!-- ========== SPECIES ========== -->
+
+<isb:docsubsection name="Species" label="species">
+<p>
+A species is an abstraction representing a type of molecule or
+molecular state.  A species has a name, which must be unique;
+in addition, a species must be assigned to one (and only one)
+compartment.  A species can also be assigned a population value, 
+which must be an integer (subject to an exception described below).
+There are two types of species in the &appName; system, <b>floating</b>
+species and <b>boundary</b> species.  
+</p>
+<p>
+A floating species
+is a species whose population is affected by reactions
+in which it participates.  For example, if a reaction takes
+species X as a reactant, and does not produce species X as
+a product, then when this reaction occurs, the population
+of species X is decremented by one.  The floating species
+is the most commonly used species type, and it is the 
+default species type for species in the &appName; system.
+</p>
+<p>
+A boundary species is a species whose population is 
+externally specified as a boundary condition for the simulation.
+The population of a boundary species is not affected by
+the occurrence of reactions in which the species participates.
+In this sense, a boundary species is not &quot;dynamical&quot;.
+The population of a boundary species can be set to a constant,
+or a more complex tim-dependent function.  The details of
+how to define the population of a boundary species will
+be discussed further below.
+</p>
+<p>
+Occasionally it is desirable to create a model in which
+a given species can reside in more than one compartment.
+This is accomplished in the &appName; system by defining
+two different species with similar (but still distinct)
+names, and assigning each species to a different compartment.
+For example, one might define two different species
+named &quot;<code>SpeciesX_cytoplasm</code>&quot; and
+&quot;<code>SpeciesX_nucleus</code>&quot;, representing
+the instances of chemical species &quot;X&quot; in the
+cytoplasm and nucleus, respectively.
+</p>
+</isb:docsubsection>
+
+
+
+
+<!-- ========== REACTIONS ========== -->
+
+<isb:docsubsection name="Reactions" label="reactions">
+<p>
+A <b>reaction</b> is a one-way process in which zero
+or more chemical species may interact, transforming into
+zero or more (possibly different) chemical species.  
+The interacting species are the <b>reactants</b>, and the 
+chemical species that are produced are called the 
+<b>products</b>.  
+</p>
+<p>
+Here, &quot;one-way&quot; means that a single reaction
+defines a process that can only proceed from reactants 
+to products.  The &quot;reverse&quot; reaction is not
+implicitly defined.  In order to model a chemical system with a 
+&quot;reversible&quot; reaction, a second reaction must 
+be defined in which the roles of reactants and products 
+are swapped. 
+</p>
+<p>
+The mention of &quot;zero species&quot; above merits some 
+explanation.  Consider the case of a chemical reaction with
+zero reactants and a finite number of products.  This represents
+a process in which the products are spontaneously created, 
+somewhat like pair creation of an electron-positron pair
+from the vacuum, in the presence of a strong electic field.
+The case of zero products and a finite number of reactants
+represents a process of annihilation of the reactant
+molecules, such as in electron-positron pair annihilation.  
+Note that a reaction with zero reactants <em>and</em> zero 
+products is not permitted by the &appName; system.  The
+cases of zero reactants or zero products are somewhat
+degenerate, but are useful for defining a signal molecule
+with an (ensemble-averaged) equilibrium population that is a time-dependent
+function.  For example, one can model a signal molecule
+&quot;<code>S</code>&quot; whose equilibrium population 
+is a specified function of time by considering two separate 
+</p>
+<p>
+It is permissible for a chemical species to participate
+in a reaction as both a reactant and a product, as shown
+here:
+<blockquote>
+<pre>
+A + B -&gt; A + C
+</pre>
+</blockquote>
+In such a reaction, a single molecules of species 
+<code>A</code> is used in the reaction, but also
+produced, so the net change in the population of 
+species <code>A</code> from this reaction is zero.
+Note that such a reaction is not a good model of catalysis.
+A simple model of catalysis in which species <code>A</code>
+catalyzes the transformation of species <code>B</code> into
+species <code>C</code> would involve at least
+three reactions, as shown here:
+<blockquote>
+<pre>
+A + B -&gt; AB
+AB -&gt; A + B
+AB -&gt; A + C
+</pre>
+</blockquote>
+with appropriate conditions on the relative rates
+of the second and third reactions.  Note that the species
+named &quot;<code>AB</code>&quot; represents the 
+enzyme-substrate complex.
+</p>
+<p>
+The above discussion assumes that species participating
+in reactions are &quot;floating&quot; (dynamical) species.
+As described above in the <a href="#species">species</a>
+section, a species can also be defined as a &quot;boundary&quot;
+species.  In this case, the population of the species is
+not dynamical but instead a boundary condition of the
+system.  As an illustration, suppose that species 
+<code>X</code> is declared as a boundary species.
+Even if species <code>X</code> were to appear in a
+reaction as a reactant, such as in the reaction
+<code>X + A -&gt; B</code>, the population of species
+<code>X</code> would not be affected by the occurrence
+of this reaction.  This is mostly useful for defining
+a species whose role in a system is as an externally
+applied &quot;signal&quot; or &quot;input&quot;.
+Note that special notation is used to describe a
+boundary species in the Condensed Chemical Model Definition 
+Languae (CCMDL), as described <a href="#ccmdl">below</a>.
+</p>
+
+</isb:docsubsection>
+
+<!-- ========== REACTION RATES ========== -->
+
+<isb:docsubsection name="Reaction Rates" label="reactionrates">
+<p>
+A reaction rate is defined as the probability density
+per unit time, of a given chemical reaction occurring.
+In the &appName; system, there are two methods of defining
+reaction rates, the <b>built-in method</b>
+and the <b>custom expression method</b>.  
+The built-in method is the default method used, and 
+it is preferred for reasions of 
+computational performance (speed).
+</p>
+<p>
+<a name="reactionratebuiltin" />
+In the <b>built-in method</b> of defining a reaction
+rate, one specifies a numeric <b>reaction parameter</b>.
+The units of the reaction parameter depend on the
+<a href="#reactionratespeciesmode">reaction rate species mode</a>
+attribute of the <a href="#model">model</a> with which
+the reaction is associated.  
+</p>
+<p>
+If the model&apos;s reaction rate species mode is <b>molecules</b>
+(the default), the reaction parameter represents the 
+numeric reaction probability density per unit time,
+<em>per distinct combination of reactant molecules</em>.
+The reaction rate is then obtained by first computing
+the number of distinct combinations of reactant molecules
+(which depends on the populations of the various reactant
+species), and multiplying this number by the reaction
+parameter for the reaction.  The result is the reaction 
+rate. 
+</p>
+<p>
+If the model&apos;s reaction rate species mode is <b>concentration</b>,
+the reaction parameter represents the kinetic constant for
+the reaction, in units of inverse molar concentration to the
+power of the number of reactant species, per unit time.
+In this case, the concentration of each reactant species is
+computed, and the concentrations are multiplied together
+(with suitable exponentiation for a reactant species that
+has a stoichiometry greater than one).  The result is then
+multiplied by the reaction parameter, to produce the reaction rate.
+</p>
+<p>
+<a name="reactionratecustom" />
+In the <b>custom expression method</b> of defining a
+reaction rate, one specifies a textual <b>reaction rate
+expression</b>.  This expression is a 
+<a href="#expressions">mathematical expression</a>
+involving symbols, arithmetic operators, and simple 
+built-in mathematical functions.  Symbols can be 
+<a href="#species">species names</a> or parameters.
+A species name appearing in the expression represents
+either the number of molecules of the species, or
+the species concentration, depending on the
+<a href="#reactionratespeciesmode">reaction rate
+species mode</a> of the model with which the
+reaction is associated.  The custom expression
+method is less desirable than the built-in
+method, due to the computational overhead of
+evaluating the mathematical expression for each
+reaction event during the simulation of the model.
+</p>
+</isb:docsubsection>
+
+<!-- ========== MODELS ========== -->
+
+<isb:docsubsection name="Models" label="models">
+<p>
+In the &appName; system, a <b>model</b> is a collection of
+one or more <a href="#reactions">reactions</a>, together
+with all of the chemical <a href="#species">species</a>
+involved in the reactions, and any 
+<a href="#parameters">parameters</a>
+defined for the model or the reactions.  In addition,
+a model contains all of the <a href="#compartments">compartments</a>
+with which the species are associated.  Note that
+a model does not incorporate the initial species populations.
+Initial species populations are supplementary information
+that, together with a model, form the basis for initiating
+a simulation.
+</p>
+<p>
+In the <a href="#cmdl">CMDL</a> language, a model
+is defined by default, and does not need to be explicitly
+defined in a model definition file.  In the 
+<a href="#ccmdl">CCMDL</a> language, a model always
+needs to be explicitly defined.
+</p>
+<p>
+<a name="reactionratespeciesmode" />
+A model has an important attribute called the
+<b>reaction rate species mode</b>.  This attribute
+controls how a given species contributes to a reaction
+rate.  It has two possible values, <b>molecules</b> and
+<b>concentration</b>.  Each will be defined in turn.
+</p>
+<p>
+In the <b>molecules</b> reaction rate species mode,
+the contribution of any given species to a reaction
+rate is always computed using the number of molecules
+of the species.  In the case of the 
+<a href="#reactionratebuiltin">default method of
+computing the reaction rate</a>, this means that
+the reaction rate is computed as the number of
+distinct 
+</p>
+
+</isb:docsubsection>
+
+
+
+<!-- ========== SPECIES POPULATIONS ========== -->
+
+<isb:docsubsection name="Species Populations Collections" label="speciespopulations">
+<p>
+In order to simulate the kinetics of a set of chemical reactions,
+it is necessary to define initial conditions.  This means defining
+the initial species populations for all species in the model.  In
+addition, the time series results of a simulation consist of
+&quot;snapshots&quot; of the species population values at different times.
+Species populations are stored in &quot;species populations collection&quot;
+data structures.  Such a structure maps a species name to a
+&quot;population value&quot;.  Floating species must have an integer 
+population value.  Bounday species may have a fixed population
+defined (which must be an integer), or they may have their population
+defined as a mathematical expression involving the symbol &quot;time&quot;,
+which represents the amount of time elapsed in the simulation.
+</p>
+<p>
+At this time, the stochastic simulator in the &appName; system
+does not permit defining an arbitrary probability distribution 
+of initial conditions.  Instead, precise initial species populations 
+for all species must be defined; these initial populations do 
+not vary across different realizations in the ensemble.
+</p>
+</isb:docsubsection>
+
+<!-- ========== MODEL INSTANCE ========== -->
+
+<isb:docsubsection name="Model Instances" label="modelinstance">
+<p>
+A <a href="#models">model</a> together with initial data consisting
+of <a href="#speciespopulations">species populations</a> for all
+chemical species at the initial time for the simulation, are known
+collectively as a <b>model instance</b>.  A model instance is the
+starting point for running a simulation.  A model instance may be
+defined by taking any model and any collection of initial species
+populations, provided that every species in the model has a corresponding
+population value in the species populations collection.  
+</p>
+</isb:docsubsection>
+
+</isb:docsection>
+
+
+<!-- ========== CMDL COMMON CONCEPTS ========== -->
+<isb:docsection name="Chemical Model Definition Language Common Concepts" label="commonconcepts">
+
+<p>
+A <a href="#modelinstances">model instance</a> can be defined 
+using one or more text files, known as <b>model definition</b> 
+files.  These files can (subject to certain restrictions) be 
+in any of three languages:
+<ul>
+<li>Chemical Model Definition Language (CMDL)</li>
+<li>Condensed Chemical Model Definition Language (CCMDL)</li>
+<li><a href="http://www.sbw-sbml.org">Systems Biology Markup Language</a> (SBML)</li>
+</ul>
+Each language has different strengths and limitations.  The
+model definition file specifies one or more <a href="#models">models</a>
+and <a href="#speciespopulations">species populations collections</a>.
+Once the model definition file has been loaded into &appName;,
+the models and species populations collections are available for
+simulation.  One can select a model and a species populations
+collection (known collectively as a &quot;model instance&quot;),
+and simulate the dyamics of the model with the given species
+populations collection as the initial conditions.
+</p>
+
+
+<!-- ========== Numeric Macros ========== -->
+<isb:docsubsection name="Numeric Macros" label="numericmacros">
+<p>
+Both the CMDL and the CCMDL support a <b>numeric macro</b>
+construct.  This is a name-value pair in which the name
+is required to be a valid <a href="#symbols">symbol name</a>,
+and the value is required to be a number.   Numeric macros
+are referenced using a square bracket notation, as shown in the
+sections describing the <a href="#cmdl">CMDL</a> and
+the <a href="#ccmdl">CCMDL</a> languages below.
+</p>
+<p>
+Although they are superficially similar, numeric macros
+differ from <a href="#parameters">parameters</a> in that
+parameters are associated with a <a href="#models">model</a>
+or <a href="#reactions">reaction</a>, and are exported 
+along with a <a href="#modelinstances">model instance</a>.
+Parameters, when referenced in a rate expression or elsewhere,
+are not evaluated by the parser.  Instead, they are evaluated
+by the underlying scripting engine, when the mathematical
+expression (e.g., rate expression) is evaluated in the
+course of running a simulation.  In contrast, numeric
+macros are evaluated by the parser, and the parser substites
+values for macro references as it parses the model definition
+file.  Parameters are supported mostly for compatibility
+with SBML.  In the CMDL and CCMDL, it is often more convenient
+to use numeric macros.  This avoids needless parameter lookups
+during the execution of a simulation, because the parser
+translates macro references to numeric literals before
+the parsed model definition is passed to the scripting engine.
+</p>
+
+</isb:docsubsection>
+
+<!-- ========== STATEMENTS ========== -->
+
+<isb:docsubsection name="Statements" label="statements">
+<p>
+Both the CMDL and CCMDL languages are centered around the concept
+of a <b>statement</b>.  Model definition files are broken into
+statements by use of the reserved symbol &quot;<code>;</code>&quot;,
+the semicolon.  Each statement must terminate with a semicolon, even
+if there is only one statement in the file.  The CMDL or CCMDL
+model definition file is tokenized and parsed by the parser, and
+turned into an ordered collection of statements that are executed
+by the scripting engine.  In this way, there is a logical decoupling
+between parsing of model definition files and the execution of the
+statements defining the model.
+</p>
+<p>
+There are two types of statements, known as <b>statement categories</b>.
+The first and most important category of statements is known as
+<b>model definition statements</b>.  This category of statements
+includes all statements that define model elements, such as
+species, reactions, parameters, etc. 
+</p>
+<p>
+The second category of statements is known as <b>action performers</b>.
+These statements instruct the scripting engine to perform a concrete
+action, such as conducting a simulation, exporting a model definition,
+printing the contents of a data structure, etc.  This category of 
+statements is supported only for use with the command-line interface
+to the &appName; system.  The graphical user interface for the
+&appName; system allows only the model definition statement category,
+and ignores any statements in the &quot;action performers&quot;
+category.  This is because in the graphical user interface, various
+graphical elements (menu items, dialog boxes, and other controls)
+are used to instruct the application to perform actions, rather
+than the scripting language.
+</p>
+
+</isb:docsubsection>
+
+<!-- ========== Elements ========== -->
+<isb:docsubsection name="Elements" label="elements">
+<p>
+<a href="#statements">Statements</a> may contain
+zero or more <b>elements</b>, that can be thought of
+as modifiers that specify information about the statement.  
+For the case of a chemical <a href="#reactions">reaction</a>
+statement, the reaction rate is a required element, that
+specifies the rate of the reaction being defined.
+</p>
+<p>
+An element can be one of several possible data types.  
+</p>
+<p>
+<b>Numeric</b> elements are evaluated by the parser
+and stored as a double-precision floating-point value.
+A mathematical expression may be used to define
+a numeric element; in this case, the mathematical
+expression is evaluated by the parser, and the result
+is the value of the numeric element. A mathematical
+expression used to define a numeric element is
+represented using square brackets, as shown in the
+following example:
+<blockquote>
+<pre>
+[A + B / 2.0]
+</pre>
+</blockquote>
+In an expression used to define a numeric element,
+all symbols must be previously defined 
+<a href="#numericmacros">numeric macros</a>.
+</p>
+<p>
+<b>String</b> elements are evaluated by the parser 
+and stored as a variable-length text string.  A
+mathematical expression may be embedded in a string
+element.  In this case, the parser evaluates the
+expression and embeds a formatted representation
+of the value of the expression, into the string,
+at the point where the expression was located.
+A mathematical expression embedded in a text string is
+represented using a dollar-sign-square-bracket construct, 
+as shown in the following example:
+<blockquote>
+<pre>
+"the value of my expression is: $[A + B / 2.0]"
+</pre>
+</blockquote>
+In the above example, the parser would attempt to
+evaluate the mathematical expression 
+<blockquote>
+<pre>
+A + B / 2.0
+</pre>
+</blockquote>
+In which the symbols <code>A</code> and <code>B</code>
+are previously defined 
+<a href="#numericmacros">numeric macros</a>.  Assuming 
+that <code>A</code> was previously defined with a value
+of 1.0, and that <code>B</code> was previously defined
+with a value of 2.0, the parser would evaluate the
+mathematical expression and get a result of 2.0.
+In this case, the above string element would be equivalent to:
+<blockquote>
+<pre>
+"the value of my expression is: 2.0"
+</pre>
+</blockquote>
+</p>
+<p>
+It should be noted that in some cases in the 
+<a href="#ccmdl">CCMDL</a> language, string elements are
+<em>implied</em>, even though no double quotes are used.
+For example, in defining a <a href="#reactions">reaction</a>
+in the CCMDL, the reaction name is specified without 
+double quotes.  Despite this, the reaction name is implicitly
+a string element, which has certain implications for
+embedding mathematical expressions within the string,
+as described <a href="#numericmacrosexpressions">below</a>.
+</p>
+<p>
+The details of how <b>elements</b> make up statements
+will be described in the sections defining the
+<a href="#ccmdl">CCMDL</a> and the <a href="#cmdl">CMDL</a>
+languages below.
+</p>
+<p>
+<b>Data list</b> elements are elements that contain
+one or more subelement.  Data lists are indicated
+with parentheses.  An example data list element containing
+string elements is shown here:
+<blockquote>
+<pre>
+("A" "B" "C")
+</pre>
+</blockquote>
+An example data list element containing numeric elements 
+is shown here:
+<blockquote>
+<pre>
+(1.0 3.0 1.0)
+</pre>
+</blockquote>
+It is even possible to mix subelement data types in
+a data list element, as shown here:
+<blockquote>
+<pre>
+(1.0 "A" 2.0)
+</pre>
+</blockquote>
+Note that not all types of data lists are permitted 
+to be used in every <a href="#statements">statement</a>
+context.  
+</p>
+<p>
+<b>Modifier</b> elements are analogous to keywords.
+A modifier element is represented by a single
+bareword, such as &quot;<code>on</code>&quot; or
+&quot;<code>off</code>&quot;.  Modifiers are typically 
+used to describe an aspect of a statement that has
+a finite, discrete set of possible values.  For example,
+in the <a href="#cmdl">CMDL</a> language, 
+the statement that defines a <a href="#species">species</a>, 
+allows for a species to be &quot;floating&quot; or
+a &quot;boundary&quot; species.  Therefore two modifiers
+are permitted, only one of which can be specified for
+a given species definition statement:  
+&quot;<code>floating</code>&quot;
+and &quot;<code>boundary</code>&quot;.  Note that in a
+statement context, only certain modifiers are
+allowed.
+</p>
+
+</isb:docsubsection>
+
+
+<isb:docsubsection name="File Inclusion" label="fileinclusion">
+<p>
+In the &appName; system, a model definition file may include
+another model definition file.  This include mechanism is
+permitted in both of the command-language-based model definition
+language.  Model definitino file inclusion works just as it
+does with the preprocessor in the C programming language.
+The parser splices the text of the included file into the
+including file, at exactly the point where the &quot;include
+directive&quot; occurs.  There is a built-in mechanism to 
+prevent cyclic inclusion of files.  If file <code>A</code>
+includes file <code>B</code>, and file <code>B</code>
+includes file <code>A</code>, then the parser will simply
+ignore the include directive inside file <code>B</code>,
+since it will already have processed file <code>A</code>.
+</p>
+<p>
+The include mechanism is useful for separating out 
+&quot;boilerplate&quot; macro definitions thare are shared
+from model to model.  In addition, the include mechanism 
+might potentially be useful for extending a model.
+</p>
+<p>
+The specific syntax for including a model definition file
+within another model definition file, is described in the
+<a href="#cmdl">CMDL</a> and <a href="#ccmdl">CCMDL</a>
+sections below.
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Comments" label="comments">
+<p>
+Both the CMDL and the CCMDL provide a mechanism for
+embedding explanatory comments in a model definition file.
+A comment is a fragment of text beginning with a pound sign
+character (&quot;<code>#</code>&quot;).  All text from the
+pound sign character, to the end of the line, are considered
+by the parser to be a comment, and are ignored.  The following
+example shows an example of a comment:
+<blockquote>
+<pre>
+        # this is a comment
+</pre>
+</blockquote>
+It is acceptable to include a comment on the same line as an
+actual statement, as shown here:
+<blockquote>
+<pre>
+&lt;some statement&gt;;    # this is a comment
+</pre>
+</blockquote>
+In the above example, the statement would be parsed, but everything
+after (and including)  the pound sign would be ignored.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Exporter Plug-ins" label="exporterplugins">
+<p>
+The &appName; system has two different plug-ins for exporting
+a <a href="#modelinstances">model instance</a> to different formats.
+Each exporter plug-in has an <b>exporter alias</b> defined.  The
+default exporter is the exporter for <a href="#sbml">Systems Biology
+Markup Language</a> (SBML).  The SBML exporter has the exporter
+alias &quot;<code>markup-language</code>&quot; (quotes not included).
+The full list of exporters is defined here:
+<dl>
+<dt><code>markup-language</code></dt>
+<dd>exports a model instance to <a href="#sbml">SBML</a>
+<p />
+</dd>
+<dt><code>command-language</code></dt>
+<dd>exports a model instance to <a href="#cmdl">CMDL</a>
+<p />
+</dd>
+</dl>
+Currently there is no exporter plug-in for the 
+<a href="#ccmdl">CCMDL</a> language.  This is because
+the CCMDL language is not sufficiently expressive to
+describe the full range of possible models that can 
+be defined in the &appName; system.
+Additional exporter plug-ins may be defined in the future.
+</p>
+</isb:docsubsection>
+
+</isb:docsection>
+
+<!-- ========== CCMDL ========== -->
+
+<isb:docsection name="Condensed Chemical Model Definition Language" label="ccmdl">
+
+<p>
+The Condensed Chemical Model Definition Language (CCMDL) is a simplified
+model definition language designed to minimize the amount of repetitive
+typing required to define a model.  It lacks some of the power and flexibility 
+of the <a href="#cmdl">Chemical Model Definition Language</a> (CMDL), but it is
+significantly easier to read and write.  
+</p>
+<p>
+The CCMDL is implemented as 
+a preprocessor that translates CCMDL statements appearing within 
+the model definition file into the equivalent CMDL statements.  The resulting
+CMDL statements are then passed to the &appName; scripting engine. In general
+it is permissible to include CMDL statements within a CCMDL file; the 
+preprocessor should pass them through unmodified.  This might potentially be useful for
+circumventing certain limitations of the CCMDL model definition language.
+</p>
+
+<isb:docsubsection name="Default Model Elements" label="defaultmodelelements">
+<p>
+One of the distinguishing aspects of the CCMDL is that several core
+elements are created by default:
+<ul>
+<li>A <a href="#models">model</a> is created, with model name 
+&quot;<code>myModel</code>&quot;.</li>
+<li>A <a href="#speciespopulations">species populations collection</a> 
+is created, with species populations collection name &quot;<code>sp</code>&quot;.</li>
+<li>A <a href="#compartments">compartment</a> is created, with 
+name &quot;<code>univ</code>&quot; and volume of 1.0 liters</li>
+</ul>
+This provides a built-in &quot;context&quot; for reaction and species
+definitions, without having to manually declare the model, compartment, and
+species populations collection.  Furthermore, species are defined implicitly
+through reaction definitions.  Defining a reaction implicitly defines
+all of the reactant and product species that are declared to participate
+in the reaction.  All species definitions thus implicitly defined are
+automatically associated with the default (&quot;<code>univ</code>&quot;)
+compartment.  All reactions are automatically associated with the 
+default model (&quot;<code>myModel</code>&quot;).
+</p>
+<p>
+The default &quot;model&quot; in the CCMDL language has a 
+<a href="#reactionratespeciesmode">reaction rate species mode</a>
+of &quot;molecules&quot;.  In order to use a reaction rate
+species mode of &quot;concentration&quot;, it is necessary to
+use the <a href="#cmdl">CMDL language</a> instead of the CCMDL 
+language.
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Reaction Statements" label="reactionstatements">
+<p>
+A CCMDL model definition (usually, but not always, a single file) consists
+of a series of <b>statements</b> which are text strings separated by
+semicolons.  Whitespace and newlines are ignored by the CCMDL parser.
+</p>
+<p>
+The centerpiece of the condensed model definition
+language is the reaction statement.  A reaction statement
+defines a one-way chemical reaction in which zero or
+more chemical species participate as reactants, and zero
+or more chemical species participate as products.  The 
+reaction statement implicitly defines the chemical species,
+if they have not been defined by a previous reaction 
+statement.  Reaction statements have three <em>elements</em>
+separated by commas.  The first element is the reaction name,
+and it is an optional element.  The second element defines
+the reactants and products.  The third element defines the
+reaction rate.  The following example shows a reaction 
+statement in the condensed model definition language:
+<blockquote>
+<pre>
+creation_of_c_d,  A + B -&gt; C + D,  1.0;
+</pre>
+</blockquote>
+As explained above, the statement ends with the semicolon 
+character  &quot;<code>;</code>&quot;.
+Note the use of the comma character &quot;<code>,</code>&quot;
+to separate different <em>elements</em> of the statement.
+The statement causes the following definitions to be made:
+<ul>
+<li>a floating species <code>A</code>, in the default compartment</li>
+<li>a floating species <code>B</code>, in the default compartment</li>
+<li>a floating species <code>C</code>, in the default compartment</li>
+<li>a floating species <code>D</code>, in the default compartment</li>
+<li>a reaction <code>creation_of_c_d</code>, in which 
+species <code>A</code> and <code>B</code> participate
+as reactants, and in which species <code>C</code> and
+<code>D</code> are products.</li>
+<li>the reaction rate of the <code>creation_of_c_d</code>
+reaction is computed using the 
+<a href="#reactionratebuiltin">built-in
+method</a>, with a reaction parameter of 1.0.</li>
+</ul>
+Please note that if the reaction name is omitted, 
+the first comma must be omitted as well, as shown here:
+<blockquote>
+<pre>
+A + B -&gt; C + D,  1.0;
+</pre>
+</blockquote>
+In this case, a default reaction name is assigned by
+the &appName; parser.
+</p>
+<p>
+In many cases, it is desirable to specify a 
+<a href="#reactionratecustom">custom reaction rate</a>, 
+rather than using the built-in method of
+computing the reaction rate.   To specify a custom
+reaction rate, the reaction rate element should be
+defined as a string data type.  This is accomplished
+by substituting a quoted string containing a 
+mathematical expression, in lieu of the literal
+numeric reaction parameter.  For the example of
+the above reaction, one might write:
+<blockquote>
+<pre>
+creation_of_c_d,  A + B -&gt; C + D,  "2.0 * A * B";
+</pre>
+</blockquote>
+The double quotes are required in order to tell the
+parser that the reaction rate is a custom reaction rate.
+The text inside the quotes is parsed as a
+<a href="#expressions">mathematical expression</a>
+that typically involves species name symbols, numeric literals,
+and arithmetic operators.  In addition, a mathematical
+expression may involve built-in functions (e.g., 
+<code>log()</code> or <code>gammaln()</code>) and
+special symbols such as &quot;<code>time</code>&quot;.
+In the above example, the reaction rate will be computed
+as the product of the number <code>2.0</code> times the
+product of the populations of species <code>A</code> and 
+<code>B</code>, in molecules.  Note that this is in contrast 
+to the <a href="#cmdl">CMDL</a>, in which a species symbol
+appearing in a reaction rate expression can potentially
+refer to the <em>concentration</em> of the chemical
+species, or to the populations of the species (in molecules).
+</p>
+<p>
+It should be emphasized that the CCMDL parser determines
+which type of reaction rate computation method to use, based
+on the <em>data type</em> of the third element (the text 
+that appears after the second comma) of the reaction
+definition.  As shown above, if the data type is numeric, the
+parser will use the built-in reaction rate computation method.
+If the data type is a quoted string, the parser will assume
+that the reaction rate computation method is a custom rate
+whose expression is contained in the string.  This is why
+it is essential to include the double-quotes when defining
+a chemical reaction with a custom reaction rate expression.
+</p>
+<p>
+Note that specifying a custom reaction rate using a
+mathematical exprssion in a quoted string has a significant
+drawback, relative to using the built-in method of computing
+the reaction rate.  The custom reaction rate method increases
+the computational complexity of the simulation, therefore
+making the simulation of the model slower.  Therefore,
+reaction rates should be specified using quoted strings
+containing mathematical expressions, only in those cases
+where it is truly necessary to do so. 
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Numeric Macros and Expressions" label="numericmacrosexpressions">
+<p>
+Often, a single numeric value will be used frequently
+throughout a model definition file.  For example, a reaction
+rate parameter of <code>1.0</code> may be used for many reactions
+in a given model definition file.  This can make it tedious
+to modify the parameter once the model definition file has
+been written.  The <a href="#numericmacros">numeric macro</a>
+construct makes it easier to centralize definition of numeric
+values or parameters, in the model definition file.  In defining
+a numeric macro in a CCMDL model definition file, it is required
+that the macro name not conflict with any species names previously
+defined.  Here, &quot;previously&quot; means at a point higher
+up in the model definition file that is being parsed.
+When the CCMDL parser encounters a statement such as this:
+<blockquote>
+<pre>
+k = 1.0;
+</pre>
+</blockquote>
+If no species &quot;<code>k</code>&quot; has been previously
+(implicitly) declared by listing &quot;<code>k</code>&quot; as
+a participating species in a chemical reaction, then 
+&quot;<code>k</code>&quot; is declared as a numeric macro with
+the value <code>1.0</code>.  If the symbol &quot;<code>k</code>&quot;
+has been previously declared as a reactant or product in a chemical
+reaction, the statement is taken to mean that the initial
+species population of species &quot;<code>k</code>&quot; is
+the value <code>1.0</code>.
+</p>
+<p>
+To refer to a macro, square brackets are used.  For example,
+to define a reaction in which the reaction rate is the
+built-in reaction rate method, with a reaction rate parameter
+given by the value of the macro &quot;<code>k</code>&quot;,
+one would write a statement such as this:
+<blockquote>
+<pre>
+creation_of_c_d,  A + B -&gt; C + D,  [k];
+</pre>
+</blockquote>
+The square brackets instruct the parser that the symbol
+within the square brackets is a numeric macro whose value
+should be substituted in place of the token 
+&quot;<code>[k]</code>&quot; as the model definition
+file is being parsed.  The parser would then automatically
+(and transparently) translate the above statement into:
+<blockquote>
+<pre>
+creation_of_c_d,  A + B -&gt; C + D,  1.0;
+</pre>
+</blockquote>
+provided that the numeric macro &quot;<code>k</code>&quot;
+had been previously defined as described above.
+</p>
+<p>
+It is also possible to embed a macro reference in
+a quoted string element, such as in a custom reaction
+rate expression:
+<blockquote>
+<pre>
+creation_of_c_d,  A + B -&gt; C + D,  "$[k] * A * B";
+</pre>
+</blockquote>
+Note the dollar sign preceding the &quot;<code>[k]</code>&quot;.
+The dollar sign is required when a macro reference is embedded
+in a quoted string (i.e., in a fragment of text between
+double-quote characters).  
+</p>
+<p>
+A macro definition may reference another macro, as shown
+here:
+<blockquote>
+<pre>
+k1 = 1.0;
+k2 = [k1];
+</pre>
+</blockquote>
+The above definition is equivalent to:
+<blockquote>
+<pre>
+k1 = 1.0;
+k2 = 1.0;
+</pre>
+</blockquote>
+In this case, the parser immediately
+substitutes <code>1.0</code> when the
+token &quot;<code>[k1]</code>&quot; is
+encountered.
+</p>
+<p>
+Beyond being useful for macro references, the square
+brackets actually instruct the parser to evaluate
+a mathematical expression, in which symbols are understood
+to be macro references.  The following example containing
+two macro definitions illustrates:
+<blockquote>
+<pre>
+k1 = 1.0;
+k2 = [k1 + 1.0];
+</pre>
+</blockquote>
+The above definitions are equivalent to:
+<blockquote>
+<pre>
+k1 = 1.0;
+k2 = 2.0;
+</pre>
+</blockquote>
+The parser, upon encountering the square brackets,
+translates everything inside the square brackets as
+a mathematical expression.  Any symbols appearing
+in that expression must be previously defined numeric
+macros; the values of the macros are used in evaluating
+the expression.
+</p>
+<p>
+Note that the dollar-sign-square-bracket construct
+used in quoted strings, also evaluates everything
+inside the square brackets as a mathematical expression.
+This permits constructions as shown here:
+<blockquote>
+<pre>
+k1 = 1.0;
+my_reaction, A + B -&gt; C + D, "$[k1 + 1.0] * A * B";
+</pre>
+</blockquote>
+The parser will attempt to evaluate the text in between
+the square brackets as a mathematical expression in which
+symbols are numeric macros that must have been previously
+defined.  In this case, after the expression is evaluated,
+the above statements would be equivalent to:
+<blockquote>
+<pre>
+k1 = 1.0;
+my_reaction, A + B -&gt; C + D, "2.0 * A * B";
+</pre>
+</blockquote>
+</p>
+<p>
+The mathematical expression facility allows
+for using the special symbol <code>time</code>
+to include simulation time.  As an illustration,
+consider the following exmple reaction definition:
+<blockquote>
+<pre>
+my_reaction, A + B -&gt; C + D, "2.0 * A * B * time^0.5";
+</pre>
+</blockquote>
+The above defines a reaction in which the reaction
+rate increases as the square root of the elapsed
+time.  
+</p>
+<p>
+In addition to the <code>time</code> symbol,
+there is a special symbol <code>N</code> that
+defines the Avogadro constant.  This is occasionally
+useful if you have a numeric macro that you wish
+to specify in terms of moles.  For example:
+<blockquote>
+<pre>
+k = [3.6 * 10^(-45)];
+my_reaction, A + B -&gt; C + D, "k * N * A * N * B";
+</pre>
+</blockquote>
+In the above definition, the macro <code>k</code>
+is defined in terms of inverse moles squared.
+So to regain the correct units in the reaction
+rate expression, the factor <code>N</code>
+is multiplied by each species symbol appearing
+in the reaction rate expression.
+</p>
+<p>
+In addition to using mathematical expressions and
+macros to define the reaction rate, one can also
+use mathematical expressions and macros in defining
+the reaction name, and even the reactant/product
+species.  In this case, it is important to remember
+that the reaction name, and the name of any species
+participating in a reaction, are <em>implicit string
+elements</em>.  This means that they are evaluated
+by the parser as if they are string elements, even
+though no double quotes are required.  Furthermore,
+this means that in order to embed a mathematical
+expression in the reaction name, a dollar-sign-square-bracket
+construct is required.  For example, consider
+the following:
+<blockquote>
+<pre>
+k = 1;
+my_reaction_$[k+1], A -&gt; B, 1.0;
+</pre>
+</blockquote>
+Again, the dollar sign is required because
+the &quot;<code>my_reaction_$[k]</code>&quot;
+is parsed <em>as if it were enclosed in double quotes</em>.
+In a string context, a dollar-sign-square-bracket 
+is required in order to embed a mathematical expression.
+The above example, after the parser translates the
+mathematical expresion, would be equivalent to
+the following:
+<blockquote>
+<pre>
+k = 1;
+my_reaction_2, A -&gt; B, 1.0;
+</pre>
+</blockquote>
+Similarly, a mathematical expression can be used in
+defining a species name.  The following example
+illustrates this:
+<blockquote>
+<pre>
+k = 1;
+my_reaction, A$[k+1] -&gt; B, 1.0;
+</pre>
+</blockquote>
+The above example, after the parser translates the
+mathematical expression, is equivalent to
+the following:
+<blockquote>
+<pre>
+k = 1;
+my_reaction, A2 -&gt; B, 1.0;
+</pre>
+</blockquote>
+The above-described feature of embedding mathematical
+expressions in the definition of string elements such 
+as species names or the reaction name, is primarily
+useful in conjunction with the <a href="#loop">loop</a>
+construct, to be described below.
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Specifying Species Populations" label="specifyingspeciespopulations">
+<p>
+In the CCMDL, the initial populations of species
+are specified using a numeric element, as shown
+here:
+<blockquote>
+<pre>
+my_reaction, A -&gt; B, 1.0;
+A = 100;
+B = 100;
+</pre>
+</blockquote>
+In the above example, species <code>A</code> and
+<code>B</code> have their initial populations set
+to 100 molecules.  Note that it is required that
+the reaction definition precede the species population
+definitions.  Otherwise, the parser will assume that
+<code>A</code> and <code>B</code> are 
+<a href="#numericmacros">numeric macros</a> instead
+of species.
+</p>
+<p>
+Instead of using a numeric literal to define the 
+initial species population, it is also possible
+to use a mathematical expression, as shown here:
+<blockquote>
+<pre>
+N = 10.0;
+my_reaction, A -&gt; B, 1.0;
+A = [N * 10.0];
+B = [N * 10.0];
+</pre>
+</blockquote>
+In this case, the symbol <code>N</code> is 
+defined as a numeric macro with value 10.0.
+The initial populations of <code>A</code>
+and <code>B</code> are defined as the value
+of the expressions contained in the square
+brackets, rounded to the nearest integer.
+In the above example, the initial populations
+of species <code>A</code> and <code>B</code>
+are set to 100.
+</p>
+<p>
+The above discussion has assumed that species
+defined in chemical reactions are always
+floating species.  In order to define a boundary
+species that participates in a chemical reaction, 
+the dollar sign is used, as shown in the following
+example:
+<blockquote>
+<pre>
+my_reaction, $A -&gt; B, 2.0;
+A = 100;
+B = 100;
+</pre>
+</blockquote>
+In the above example, species <code>A</code> is 
+defined as a boundary species with a population 
+of 100.  Species <code>B</code> is
+defined as a boundary species with an initial
+population of 100.  Recall that the population
+of a boundary species is unaffected by the 
+occurrence of a chemical reaction involving
+that species.  Therefore, defining the population
+of a boundary species differs from that of a
+floating species, in that the population definition
+of a boundary species is not just for the inital
+time, but for all times during the simulation.
+Given that the above definition
+specifies the built-in method of computing the
+reaction rate, the above definition could be
+simplified in the following way:
+<blockquote>
+<pre>
+A = 100;
+my_reaction,  -&gt; B, [2.0 * A];
+B = 100;
+</pre>
+</blockquote>
+In the above example, <code>A</code> has been
+changed into a numeric macro, and eliminated as
+a species in the reaction that produces species 
+<code>B</code>.  The reaction rate has been increased
+by a factor of the value of <code>A</code>.
+This method of defining the reaction is slightly
+preferred for reasons of computation speed.  The
+fewer species in a model, and the simpler the
+reactions in the model (in terms of number of 
+reactant and product species), the faster it will
+be to simulate the reaction kinetics of the model.
+</p>
+<p>
+As with floating species, the population definition
+for a boundary species may invole a mathematical
+expression that is parsed immediately by the parser:
+<blockquote>
+<pre>
+num = 10;
+my_reaction, $A -&gt; B, 2.0;
+A = [num * 10];
+B = 100;
+</pre>
+</blockquote>
+The right-hand side of the statement defining the
+population of <code>A</code> is still a numeric element,
+in the above example, which means that the population
+value is determined by the parser, and stored as an
+invariant floating-point value.
+</p>
+<p>
+The population of a boundary species may also be
+defined as a <b>late-evaluation</b> mathematical
+expression.  This means that the actual <em>expression</em>
+is stored, rather than the value of the expression
+evaluated initially.  This is accomplished
+by using a string element rather than a numeric element,
+on the right-hand side of the definition of the 
+boundary species population.  This is useful for two 
+special cases.  Firstly, it can be used in cases where it 
+is desired to have a boundary species with a non-integer
+population value, as shown here:
+<blockquote>
+<pre>
+my_reaction, $A -&gt; B, 2.0;
+A = "0.5";
+B = 100;
+</pre>
+</blockquote>
+This is rarely useful, because it is always possible to just
+rescale the reaction parameter and eliminate the boundary
+species (that formally has the non-integer population) as a 
+participatnt in the reaction.  A more useful case is when
+one wishes to define a boundary species whose value actually
+<em>varies over time</em>, according to a function defined
+by the user.  In this case, the boundary species is still
+not dynamical; the time dependence of its population value
+is governed by a mathematical expression involving the
+special symbol <code>time</code>, as in the following example:
+<blockquote>
+<pre>
+my_reaction, $A -&gt; B, 2.0;
+A = "10 * time";
+B = 100;
+</pre>
+</blockquote>
+In this case, the boundary species <code>A</code>
+has a population that is linearly increasing with time.
+</p>
+<p>
+Specifying the boundary species population as a
+mathematical expression has a significant limitation,
+in that it makes the simulation of the model more
+computationally complex, and therefore, slower.  Therefore,
+one should specify a boundary species population using
+a string representation of a mathematical expression
+<em>only</em> in cases where it is required to have
+a time-varying boundary species population that is
+externally controlled.
+</p>
+<p>
+Note that it is illegal to attempt to define the 
+initial population of a <em>floating</em> species as a
+string element containing a mathematical expression.
+</p>
+<p>
+The definition of the boundary species population
+may include the special symbol <code>time</code>.
+This is useful in cases where it is desired to
+model the effects of a singnal molecule whose
+population is externally controlled.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Loops" label="loops">
+<p>
+The CCMDL language contains a looping construct that
+permits defining a family of model elements where
+a single counter is incremented for each member of the
+family.  For example, one might wish to generate a family
+of species and chemical reactions, parameterized by an integer.
+The species might be
+<blockquote>
+<pre>
+A1, A2, A3, A4
+B1, B2, B3, B4
+</pre>
+</blockquote>
+and the reactions might be of the form
+<blockquote>
+<pre>
+A# -&gt; B#
+</pre>
+</blockquote>
+This can be accomplished with the &quot;<code>loop</code>&quot;
+keyword, as shown here:
+<blockquote>
+<pre>
+loop "i": start 1, stop 4
+{
+  reaction_$[i],   A$[i] -&gt; B$[i], 1.0;
+}
+</pre>
+</blockquote>
+In the above example, the symbol &quot;<code>i</code>&quot; is
+the loop index, and it is incremented from 1 to 4 in steps
+of one.  For each iteration of the loop, all statements between
+the curly braces are executed.  More than one statement can occur
+between the curly braces, although only one statement is shown here.
+The <code>$[i]</code> tokens represent evaluating a mathematical
+expression, in which <code>i</code> appears as a symbol.  The
+<code>i</code> symbol is essentially a numeric macro whose value
+is incremented for each iteration of the loop.  It is important
+to note that in the above example, the dollar sign is required.  
+This is because statement elements specifying the reaction
+name, and the reactant/product species, are all <em>implicit string
+elements</em>.  In implicit string elements, the 
+dollar-sign-square-bracket construct is required in order
+to embed a mathematical expression, just as in explicit strings.
+After the loop statement and the embedded mathematical expressions
+are processed by the parser, the above example is equivalent to:
+<blockquote>
+<pre>
+reaction_1, A1 -&gt; B1, 1.0;
+reaction_2, A2 -&gt; B2, 1.0;
+reaction_3, A3 -&gt; B3, 1.0;
+reaction_4, A4 -&gt; B4, 1.0;
+</pre>
+</blockquote>
+A more nontrivial example of using the looping construct would
+be to define a cascade of reactions, as shown here:
+<blockquote>
+<pre>
+loop "i": start 1, stop 4
+{
+  reaction_$[i], A$[i] -&gt; A$[i+1], 1.0;
+}
+</pre>
+</blockquote>
+This example defines a cascade of reactions that ultimately
+convert species <code>A1</code> into species <code>A5</code>.
+After the loop statement and the embedded mathematical expressions
+are processed by the parser, the above example is equivalent to:
+<blockquote>
+<pre>
+reaction_1, A1 -&gt; A2, 1.0;
+reaction_2, A2 -&gt; A3, 1.0;
+reaction_3, A3 -&gt; A4, 1.0;
+reaction_4, A4 -&gt; A5, 1.0;
+</pre>
+</blockquote>
+In both of the above examples, it is usually the case
+that a loop is used to define the initial species populations.
+For example, one might define (after the reaction definition
+loop):
+<blockquote>
+<pre>
+A1 = 100;
+loop "i": start 1, stop 5
+{
+  A$[i] = 0;
+}
+</pre>
+</blockquote>
+This sets the initial population of species <code>A1</code>
+to 100, and the initial population of species <code>A2</code>
+through <code>A5</code> to zero.
+</p>
+<p>
+In defining a loop, note that the &quot;<code>start</code>&quot; and
+&quot;<code>stop</code>&quot; keywords are followed by numeric elements.
+This means that they can be simple numeric literals (as shown above),
+or mathematical expressions, as shown here:
+<blockquote>
+<pre>
+k = 10;
+loop "i": start 1, stop [k + 2]
+{
+  reaction_$[i], A$[i] -&gt; A$[i+1], 1.0;
+}
+</pre>
+</blockquote>
+In the above example, the loop index <code>i</code> would iterate 
+over the range of integer values from 1 to 12, inclusive.
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Example CCMDL model definition file" label="examplefile">
+<p>
+The following example illustrates a complete CCMDL model definition file:
+<blockquote>
+<pre>
+minBases = 45;
+codingRegionLengthBases = 1000.0;
+transcriptionRate = 1.0;
+abortProbPerBase = 0.005;
+
+# polymerization complex moving one base along the template
+loop "i": start 1, stop [minBases-1]
+{
+PCOM_moves_one_base_at_base_$[i], PCOM_plus_DNA_at_base_$[i] -&gt; 
+                                  PCOM_plus_DNA_at_base_$[i+1],  [transcriptionRate];
+}
+
+# polymerization complex moving past the "minBases" threshold
+PCOM_passing_threshold, PCOM_plus_DNA_at_base_$[minBases] -&gt; 
+                        DNA_plus_TFC + PCOM_plus_DNA_past_base_$[minBases],  [transcriptionRate];
+
+# recruitment of PolII
+PolII_recruitment,    DNA_plus_TFC + PolII -&gt; PCOM_plus_DNA_at_base_1,   1.0;
+PolII_derecruitment,  PCOM_plus_DNA_at_base_1 -&gt; DNA_plus_TFC + PolII,   0.1;
+
+# completion of transcription process
+transcription_completed,   PCOM_plus_DNA_past_base_$[minBases] -&gt; 
+                           PolII + mRNA_product_complete, 
+                           [transcriptionRate/codingRegionLengthBases];
+
+# aborting of transcription within the first "minBases" bases
+loop "i": start 2, stop [minBases]
+{
+abort_at_base_$[i],   PCOM_plus_DNA_at_base_$[i] -&gt; 
+                      DNA_plus_TFC + PolII + mRNA_product_fragment, [abortProbPerBase];
+}
+
+# aborting of late-state transcription
+aborting_past_threshold,  PCOM_plus_DNA_past_base_$[minBases] -&gt; 
+                      PolII + mRNA_product_fragment, 
+                      [transcriptionRate * abortProbPerBase / codingRegionLengthBases];
+
+# transcription factor A binding to empty DNA template
+TFA_binding_DNA,            DNA + TFA -&gt; DNA_plus_TFA,                  1.0;
+TFA_debinding_DNA,          DNA_plus_TFA -&gt; DNA + TFA,                  0.1;
+
+# transcription factor B binding to empty DNA template
+TFB_binding_DNA,            DNA + TFB -&gt; DNA_plus_TFB,                  1.0;
+TFB_debinding_DNA,          DNA_plus_TFB -&gt; DNA + TFB,                  0.1;
+
+# transcription factor A binding to DNA template (where B is already bound)
+TFA_binding_DNA_plus_TFB,   DNA_plus_TFB + TFA -&gt; DNA_plus_TFC,         1.0;
+TFA_debinding_DNA_plus_TFB, DNA_plus_TFC -&gt; DNA_plus_TFB + TFA,         0.1;
+
+# transcription factor B binding to DNA template (where A is already bound)
+TFB_binding_DNA_plus_TFA,   DNA_plus_TFA + TFB -&gt; DNA_plus_TFC,         1.0;
+TFB_debinding_DNA_plus_TFA, DNA_plus_TFC -&gt; DNA_plus_TFA + TFB,         0.1;
+
+# setting the initial populations for the chemical species in the model:
+TFA = 5;
+TFB = 5;
+DNA_plus_TFA = 0;
+DNA_plus_TFB = 0;
+DNA_plus_TFC = 0;
+DNA = 1;
+PCOM_plus_DNA_past_base_$[minBases] = 0;
+mRNA_product_complete = 0;
+mRNA_product_fragment = 0;
+PolII = 5;
+
+loop "i": start 1, stop [minBases]
+{
+        PCOM_plus_DNA_at_base_$[i] = 0;
+}
+</pre>
+</blockquote>
+This model definition file defines a very simple model of transcription.
+The model contains two transcription factors, <code>TFA</code> and 
+<code>TFB</code>.  
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Action Performing Statements" label="actionperformingstatements">
+
+<p>
+In the CCMDL, a number of action-performing statements are
+permitted in a model definition file.  These statements are 
+intended for use with the command-line &appName; program, in
+order to run simulations, export to different file formats, etc.  
+The graphical &appName; program actually ignores any of the 
+action-performing statements that appear in a model definition
+file.  This section documents the various action-performing
+statements available in the CCMDL language.  In a model
+definition file, the action-performing statement should be
+put after all of the model-definition statements.  Typically
+the action-performing statement(s) are put at the end of the
+model definition file.  The list of allowed action-performing
+statements in the CCMDL are:
+</p>
+<p>
+<dl>
+<dt><code>print: model;</code></dt>
+<dd>prints out a string (human-readable) representation of the
+default model, to standard output (the console)
+<p />
+</dd>
+<dt><code>print: speciesPopulations;</code></dt>
+<dd>prints out a string (human-readable) representation of the
+default species populations collection, to standard output
+(the console)
+<p />
+</dd>
+<dt><code>export: modelInstance;</code></dt>
+<dd>exports the default model and species populations collection
+to the <a href="#sbml">Systems Biology Markup Language</a>,
+to standard output (the console).
+Optionally, one may add an element to specify an output file,
+as shown here:
+<blockquote>
+<pre>
+export: modelInstance, outputFile "myFile-sbml.xml";
+</pre>
+</blockquote>
+where the quotes are mandatory, and the text inside the
+quotes is the name of the file to which the model should
+be exported.  Optionally, one may add an element to specify
+an <a href="#exporterplugins">exporter alias</a>, as shown here:
+<blockquote>
+<pre>
+export: modelInstance, outputFile "myFile.isbchem", exporter "command-language";
+</pre>
+</blockquote>
+The above example instructs the &appName; system to export
+the model instance in the <a href="#cmdl">CMDL</a> language.
+<p />
+</dd>
+</dl>
+</p>
+</isb:docsubsection>
+
+</isb:docsection>
+
+
+
+<!-- ========== CMDL ========== -->
+
+<isb:docsection name="Chemical Model Definition Language" label="cmdl">
+<p>
+This section describes the Chemical Model Definition Language.
+</p>
+<p>
+Note that in the CMDL, a species symbol appearing in a
+reaction rate expression can mean one of two things, 
+depending on the <a href="#reactionratespeciesmode">
+reaction rate species mode</a> of the <a href="#models">model</a>
+with which the reaction is associated.  For a reaction rate species
+mode of &quot;molecules&quot; (the default), the symbols 
+<code>A</code> and <code>B</code> in the reaction rate 
+mathematical expression refer to the numeric populations
+of species <code>A</code> and <code>B</code>, respectively.
+For a reaction rate species mode of &quot;concentration&quot;,
+the symbols <code>A</code> and <code>B</code> in the reaction 
+rate mathematical expression refer to the molar concentrations
+of species <code>A</code> and <code>B</code>, respectively.
+In the CCMDL, the only reaction rate species mode is 
+&quot;molecules&quot;, so species symbols appearing in
+a rate expression always denote species populations in
+molecules.
+</p>
+</isb:docsection>
+
+<!-- ========== SBML ========== -->
+
+<isb:docsection name="Systems Biology Markup Language" label="sbml">
+<p>
+This section describes the Systems Biology Markup Language.  The
+systems biology markup language is an XML-based document specification
+for defining a <a href="#modelinstances">model instance</a> for a
+system of interacting chemical species.  The specification for SBML
+can be found at the home page of the 
+<a href="http://www.sbw-sbml.org">Systems Biology Workbench Development 
+Group</a>.  
+</p>
+<p>
+The &appName; system is capable of importing a model instance
+from an SBML document, and exporting a model instance (defined through
+a different language) to an SBML document.  Some features of the &appName;
+system cannot be exported to an SBML document.  In particular, a boundary
+species whose population is a mathematical expression defining a function
+of time, cannot be exported to SBML.   Similarly, certain SBML constructs
+will not be imported into the &appName; system, namely, unit definitions.
+The &appName; system can import SBML documents with either of two systems
+of units:
+<ul>
+<li>Initial species populations specified in moles; Reaction rates
+specified using expressions in which species symbols represent molar concentration</li>
+<li>Initial species populations specified in molecules; Reaction rates
+specified using expressions in which species symbols represent number of molecules</li>
+</ul>
+While this is a fairly significant limitation, the above two cases permit
+successful import of most of the SBML models available.
+</p>
+</isb:docsection>
+
+</isb:document>
+
+
