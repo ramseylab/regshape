@@ -31,6 +31,39 @@ directory:
   build:  Temporary directory created by build system, to hold 
           things like built Jar files, Web content, etc.
 
+The build system used underneath this directory tree is "Ant"
+(http://ant.apache.org).  Invoking "Ant" is just like invoking
+the "make" program familiar from Unix operating systems, as shown
+here:
+
+  ant <target>
+
+where "<target>" is the name of the target to be invoked. 
+
+NOTE: All Ant invocations should be made in the top-level directory
+for this project; attempting to invoke Ant from a lower-level
+subdirectory will likely result in an error and a failed build.
+
+Supported targets are:
+
+  clean:          remove (most) build files (java class files are
+                  not removed, but remain under the "classes" directory)
+
+  distclean:      remove all temporary build files, including the
+                  java class files
+
+  build:          compile all java classes and perform other "build"
+                  functions, resulting in a JAR file being placed
+                  in the "build" subdirectory, along with a source
+                  tarball
+
+  buildWeb:       generate HTML documentation in a build directory
+
+  uploadWeb:      upload the entire web content tree to the web server
+
+
+  
+
 
 
 

@@ -42,4 +42,7 @@
     <!-- do nothing -->
   </target>
 
+  <target name="distclean" depends="clean">
+  </target>
+
 </project>
