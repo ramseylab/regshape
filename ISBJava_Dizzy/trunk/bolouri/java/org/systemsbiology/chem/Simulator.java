@@ -13,6 +13,18 @@ import org.systemsbiology.util.*;
 
 import java.util.*;
 
+/**
+ * Base class extended by all classes implementing
+ * {@link ISimulator}.  This class contains a lot of methods
+ * and fields of common use to all simulator classes.  From 
+ * the standpoint of object-oriented correctness, this really 
+ * should be done by composition rather than inheritance.    
+ * For performance, accessor methods are avoided in favor
+ * of direct field access by subclasses. 
+ * 
+ * @author sramsey
+ *
+ */
 public abstract class Simulator 
 {
     private static final int MIN_NUM_REACTION_STEPS_FOR_USING_DELAY_FUNCTION = 15;
@@ -845,6 +857,11 @@ public abstract class Simulator
         return(retDelay);
     }
 
+    /*
+     * IMPORTANT:  this method is EXTREMELY performance-critical.  Please
+     * do not modify without profiling the code to assess the performance
+     * impact of the change.
+     */
     private static double computeRateFactorForSpecies(double pSpeciesValue,
                                                       int pStoichiometry,
                                                       boolean pIsDynamic,
@@ -918,6 +935,11 @@ public abstract class Simulator
                                                       mReactionsLocalParamSymbolsMaps[pReactionCtr]));
     }
 
+    /*
+     * IMPORTANT:  this method is EXTREMELY performance-critical.  Please
+     * do not modify without profiling the code to assess the performance
+     * impact of the change.
+     */
     final double computeReactionRate(int pReactionCtr) throws DataNotFoundException
     {
         if(null == mReactionsDelayedReactionAssociations || null == mReactionsDelayedReactionAssociations[pReactionCtr])
