@@ -472,7 +472,6 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                 SimulationProgressReporter reporter = new SimulationProgressReporter();
                 if(null != mPrintStatusSeconds)
                 {
-                    System.out.println("status update interval: " + mPrintStatusSeconds);
                     simulator.setStatusUpdateIntervalSeconds(mPrintStatusSeconds.doubleValue());
                 }
                 simulator.setProgressReporter(reporter);
