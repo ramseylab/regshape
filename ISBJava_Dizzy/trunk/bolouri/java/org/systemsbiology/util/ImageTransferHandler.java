@@ -132,7 +132,11 @@ public class ImageTransferHandler extends TransferHandler {
                     }
                     if(null != transferredSuccessfully)
                     {
-                        transferredSuccessfully.setValue(null != retObj);
+                        if(! transferredSuccessfully.getValue())
+                        {
+                            boolean success = (null != retObj);
+                            transferredSuccessfully.setValue(null != retObj);
+                        }
                     }
                     return(retObj);
                 }
