@@ -772,6 +772,17 @@ public class SimulationLauncher
         mSymbolList.setListData(symbolArray);
     }
 
+    private void handleSelectAllSymbolsButton()
+    {
+        int numSymbols = mSymbolList.getModel().getSize();
+        int []selectedSymbols = new int[numSymbols];
+        for(int ctr = 0; ctr < numSymbols; ++ctr)
+        {
+            selectedSymbols[ctr] = ctr;
+        }
+        mSymbolList.setSelectedIndices(selectedSymbols);
+    }
+
     private JPanel createSymbolListPanel()
     {
         JPanel panel = new JPanel();
@@ -781,7 +792,19 @@ public class SimulationLauncher
         JList list = createSymbolList();
         JScrollPane scrollPane = new JScrollPane(list);
         box.add(scrollPane);
+        JButton selectAllButton = new JButton("select all");
+        box.add(selectAllButton);
+        selectAllButton.addActionListener(
+            new ActionListener()
+            {
+                public void actionPerformed(ActionEvent e)
+                {
+                    handleSelectAllSymbolsButton();
+                }
+            }
+            );
         panel.add(box);
+
         panel.setBorder(BorderFactory.createEtchedBorder());
         return(panel);
     }
