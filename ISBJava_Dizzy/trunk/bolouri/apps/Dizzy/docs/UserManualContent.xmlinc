@@ -1119,7 +1119,7 @@ is discouraged when using the stochastic simulators.  This is because
 the stochastic simulators are based on a mathematical theory of
 reaction kinetics in which the time-invariance of the reaction parameters
 is <em>a priori</em> assumed.  The <code>time</code> reserved symbol
-is intended solely for use with the ODE simulators.  A very slowly-varying
+is intended solely for use with the <a href="#odesim">ODE simulators</a>.  A very slowly-varying
 time dependence for some expression in a model, <em>may</em> be compatible with
 the stochastic simulators, to the extent that on the time scale for
 any reaction to occur, the expression is effectively time-translation-invariant. 
@@ -1229,35 +1229,53 @@ the complex data structures needed for the Gibson-Bruck algorithm.
 </p>
 </isb:docsubsection>
 
-<isb:docsubsection name="ODE Simulator (Adaptive)" label="odesimadaptive">
-<p>
-The &appName; system provides a deterministic simulator
-for reaction kinetics, in which the system is modeled as
-a set of coupled ordinary differential equations (ODEs).
-The differential equations are solved using a finite
-difference method, specifically the 5th-order Runge-Kutta
-algorithm with an adaptive stepsize controller.  The 
-error tolerance per iteration of the algorithm is set to 10^-3,
-but can be made smaller by specifying a large integer value
-(greater than 1000) for the "number of steps" input field 
-in the simulation controller window.
-</p>
+<isb:docsubsection name="Deterministic simulation using ODEs" label="odesim">
+The &appName; system provides several simulators for approximately 
+solving the deterministic dynamics of a model as a system of 
+ordinary differential equations (ODEs).  A differential equation, called a
+<b>rate equation</b>, 
+is generated expressing the time rate of change of the concentration of each
+chemical species in the model.  This coupled set of differential equations
+is solved using finite difference techniques.  The simplest methods use
+a fixed time-step size.  More sophisticated methods use a variable time-step
+size that is controlled by an adaptive method involving a formula for estimating
+the error.  If the error gets
+too large, the time-step size is decreased until the error is acceptable.
+If the error becomes very small, the time-step size is increased (to improve
+speed) as much as possible without exceeding the allowed error.
+Each step involves computing the concentration of all species at the next
+time step, using a finite differencing sheme.  Several categories of finite
+differencing schemes exist.  The <b>explicit</b> schemes compute the concentration
+at the next time-step using only derivatives at the previous time-step.  The
+<b>implicit</b> schemes compute the concentration at the next time-step using
+only derivative values from the next time-step; these methods involve solving
+a (usually nonlinear) implicit equation for the concentration at the next 
+time-step, for each iteration.  A <b>linearly implicit</b> or <b>implicit-explicit</b>
+scheme is a compromise where the linear term is treated using an implicit
+method, and the nonlinear term is treated using an explicit method.  This ensures
+that at most a linear system of equations needs to be solved for each iteration.
+For more information, please see the book
+<blockquote>
+  <table border="1">
+    <tr>
+      <td>  
+        <em>Introduction to Numerical Analysis</em>, Second Edition, by J. Stoer and R. Bulirsch.
+        New York:  Springer-Verlag, 1993.
+      </td>
+    </tr>
+  </table>
+</blockquote>
+The deterministic simulators are approximate for two reasons.  First, they
+are solving a set of ordinary differential equations that are themselves
+an approximation to the underlying stochastic kinetics of the system.  Second,
+they are using finite-difference methods that usually only give an approximate
+numerical solution to a system of differential equations.
+However, the deterministic simulators have the advantage of usually being
+much faster than the stochastic simulators, for most models.  This means that
+they can be very beneficial in situations where rapid model solution is required,
+such as multi-parameter optimization of a model.
 </isb:docsubsection>
 
-<isb:docsubsection name="ODE Simulator (Fixed)" label="odesimfixed">
-<p>
-The &appName; system provides a deterministic simulator
-for reaction kinetics, in which the system is modeled as
-a set of coupled ordinary differential equations (ODEs).
-The differential equations are solved using a finite
-difference method, specifically the 5th-order Runge-Kutta
-algorithm with a fixed stepsize.  The number of steps
-defaults to the number of time points at which the 
-species populations are to be sampled (default of 100), but
-this can be modified by changing the "number of steps" input 
-field in the simulation controller window.
-</p>
-</isb:docsubsection>
 
 </isb:docsection>
 
@@ -2877,7 +2895,114 @@ of species <code>A</code> and <code>B</code>, respectively.
 
 </isb:docsection>
 
+<!-- ========== Simulators ============ -->
 
+<isb:docsection name="Simulators" label="simulators">
+  
+<p>
+&appName; provides a collection of simulators for solving the dynamics
+of a model.  Both stochastic and deterministic simulators are available.
+The stochastic simulators use a Monte Carlo-type process to approximately
+solve the stochastic dynamics of the model.  The deterministic simulators
+use finite difference methods to solve the approximate dynamics of the model
+as a system of ordinary differential equations (ODEs).  Each simulator available
+in &appName; has a unique <b>simulator alias</b>, which is the short name by which
+the simulator is referred to throughout this documentation.  The simulator is
+selected by choosing its alias from a list of aliases of all simulators available.
+In this section, we describe the simulators that are available in &appName;
+</p>
+
+<isb:docsubsection name="Simulator:  gibson-bruck" label="sim-gibson">
+  <p>
+A stochastic simulator implemented using the
+<a href="#gibsonbruck">Gibson-Bruck</a> algorithm.
+  </p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Simulator:  gillespie" label="sim-gillespie">
+  <p>
+  A stochastic simulator implemented using the
+<a href="#gillespie">algorithm</a>.
+  </p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Simulator:  tauleap-complex" label="sim-tauleap-complex">
+  <p>
+An approximate accelerated stochastic simulator implemented using the
+<a href="#tauleap">Gillespie Tau-Leap</a> algorithm.  This implementation
+is intended for complex models in which the Jacobian matrix is very computationally
+expensive to compute, and therefore the Jacobian matrix is evaluated first, and
+then the "mu" and "sigma" functions are computed using the pre-computed Jacobian
+matrix.  Although this method is N-squared in the number of species, it is
+faster when the Jacobian is very complicated.
+   </p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Simulator:  tauleap-simple" label="sim-tauleap-simple">
+  <p>
+An approximate accelerated stochastic simulator implemented using the
+<a href="#tauleap">Gillespie Tau-Leap</a> algorithm.  This implementation
+is intended for models in which the Jacobian matrix is easy to
+compute (basically the elements of the Jacobian are at most linear in the
+species concentration), and so no pre-evaluation of the Jacobian matrix is done.
+The "sigma" and "mu" functions are pre-computed symbolically.  This avoids the
+N-squared dependence on the number of species.  This method scales well when
+the number of species gets large, as compared to the "tauleap-complex" method.
+   </p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Simulator:  ODE-RK5-fixed" label="sim-ODE-RK5-fixed">
+<p>
+The &appName; system provides a <a href="#odesim">deterministic simulator</a>
+for reaction kinetics, in which the system is modeled as
+a set of coupled ordinary differential equations (ODEs).
+The simulator alias for this simulator is &quot;<code>ODE-RK5-fixed</code>&quot;.
+The differential equations are solved using a finite
+difference method, specifically the 5th-order Runge-Kutta
+algorithm with a fixed stepsize.  The step size must be specified
+by the user, as a fraction of the total time interval for the
+simulation.  The accuracy of this simulator's solution will 
+depend on the size of the time-step fraction that is specified.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Simulator:  ODE-RK5-adaptive" label="sim-ODE-RK5-adaptive">
+<p>
+The &appName; system provides a <a href="#odesim">deterministic simulator</a>
+for reaction kinetics, in which the system is modeled as
+a set of coupled ordinary differential equations (ODEs).
+The simulator alias for this simulator is 
+&quot;<code>ODE-RK5-adaptive</code>&quot;.
+The differential equations are solved using a finite
+difference method, specifically the 5th-order Runge-Kutta
+algorithm with an adaptive stepsize controller.  The step-size
+controller is based on an error estimation formula that is accurate
+to 4th order.  The user must specify the tolerances for
+relative and absolute errors, as well as the initial step size
+(as a fraction of the total time interval of the simulation).
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Simulator:  ODEtoJava-dopr54-adaptive" label="sim-ODEtoJava-dopr54-adaptive">
+<p>
+  A <a href="#odesim">deterministic simulator</a> implemented by
+  Murray Patterson and Raymond Spiteri, as a part of the &quot;odeToJava&quot; package.
+  This simulator is a 5/4 Dormand-Prince ODE solver with adaptive step-size control.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Simulator:  ODEtoJava-imex443-stiff" label="sim-imex443-stiff">
+  <p>
+  A <a href="#odesim">deterministic simulator</a> implemented by
+  Murray Patterson and Raymond Spiteri, as a part of the &quot;odeToJava&quot; package.
+  This simulator is an implicit-explicit ODE solver with step doubling.  This simulator
+  works well for models with a high degree of stiffness.  However, please see the
+  <a href="#odeToJavaInterpolation">issue with interpolation in the imex443 solver</a>.
+  </p>
+</isb:docsubsection>
+
+
+</isb:docsection>
 <!-- ========== SBML ========== -->
 
 <isb:docsection name="Systems Biology Markup Language (SBML)" label="sbml">
@@ -2933,7 +3058,7 @@ offered through the &appName;-to-SBW interface are:
 simulator.</li>
 <li><code>GibsonBruckService</code>, which is the <a href="#gibsonbruck">Gibson-Bruck</a> simulator.
 </li>
-<li><code>DeterministicService</code>, which is the <a href="#odesimadaptive">Runge-Kutta 5th-order
+<li><code>DeterministicService</code>, which is the <a href="#sim-ODE-RK5-adaptive">Runge-Kutta 5th-order
 adaptive ODE simulator</a>.</li>
 </ul>
 Before the &appName; simulators can be accessed through the SBW, the Systems
