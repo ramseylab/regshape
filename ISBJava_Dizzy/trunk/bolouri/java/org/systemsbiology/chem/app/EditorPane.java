@@ -387,13 +387,14 @@ public class EditorPane
         labelEditorPane.setLayout(layoutManager);
         editorPanel.add(labelEditorPane);
 
-        JLabel lineNumberLabel = new JLabel("line: 0");
-        editorPanel.add(lineNumberLabel);
+        JLabel lineNumberLabel = new JLabel(LABEL_LINE + "???");
         mLineNumberLabel = lineNumberLabel;
+        editorPanel.add(lineNumberLabel);
         lineNumberLabel.setFont(plainFont);
         
         initializeEditorTextArea(labelEditorPane);
 
+        handleCaretPositionChange();
         pMainPane.add(editorPanel);
     }
 
