@@ -81,7 +81,7 @@ n</tr>
 </tr>
 <tr>
 <td>SBW (core)</td><td><code>SBWCore.jar</code></td>
-<td><a href="http://www.sbw-sbml.org/sbw/software"><code>www.sbw-sbml.org/sbw/software/</code></a></td><td>LGPL</td>
+<td><a href="&sbwURL;"><code>&sbwURL;</code></a></td><td>LGPL</td>
 </tr>
 <tr>
 <td>JavaHelp</td><td><code>jh.jar</code></td>
@@ -136,7 +136,7 @@ are provided with the <code>&appName;</code> installation.
 <p />
 The <code>SBMLReader.jar</code> library is based on code from
 the <code>SBMLValidate.jar</code> library, which is available
-at the <a href="http://www.sbw-sbml.org/sbml/software">SBW Project</a>.
+at the <a href="&sbwURL;">SBW Project</a>.
 The <code>SBMLValidate.jar</code> source code has been 
 modified and is distributed under a different library
 name, <code>SBMLReader.jar</code> and a different package name,

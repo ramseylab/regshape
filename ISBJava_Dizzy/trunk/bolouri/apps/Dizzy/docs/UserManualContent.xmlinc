@@ -127,7 +127,7 @@ hyperlinks shown below:
 </tr>
 <tr>
 <td>SBW (core)</td><td><code>SBWCore.jar</code></td>
-<td><a href="&sbwURL;/sbw/software"><code>www.sbw-sbml.org/sbw/software/</code></a></td><td>LGPL</td>
+<td><a href="&sbwURL;"><code>&sbwURL;</code></a></td><td>LGPL</td>
 </tr>
 <tr>
 <td>JavaHelp</td><td><code>jh.jar</code></td>
