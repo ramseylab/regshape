@@ -39,7 +39,7 @@ This document contains the version history for the
 
 <tr valign="top">
 <td><a href="../1.4.0/&installerDownloadRelURL;">1.4.0</a></td>
-<td>2004/01/29</td>
+<td>2004/01/30</td>
 <td>
 <ul>
 <li>Optimized the <code>org.systemsbiology.chem.Reaction.computeRate()</code> method.</li>
