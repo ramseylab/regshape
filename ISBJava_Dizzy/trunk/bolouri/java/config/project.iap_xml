@@ -815,7 +815,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<int>6</int>
 					</property>
 					<property name="productVersionRevision">
-						<int>1</int>
+						<int>2</int>
 					</property>
 					<property name="productVersionSubRevision">
 						<int>0</int>

@@ -38,6 +38,31 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.6.2/&installerDownloadRelURL;">1.6.2</a></td>
+<td>2004/03/22</td>
+<td>
+<ul>
+<li>Implemented expression value caching for the deterministic simulators.
+This improves simulation performance for complex models containing nested 
+sub-expressions.  Removed the <code>usesExpressionValueCaching()</code>
+method from the <code>org.systemsbiology.chem.Simulator</code> class and 
+its subclasses.  Refactored <code>clearExpressionValueCaches()</code> from
+the simulator subclasses to the <code>Simulator</code> parent class, and
+made this method a static method to improve performance.</li>
+<li>Modified the <code>SimulatorStochasticBase</code> so that if the initial
+value for a dynamic species is not an integer, it will use the random number
+generator to select the nearest integer, in a weighted fashion, so that
+on average the initial value is equal to the floating-point value specified.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>,
+such that the output file format specified on the command-line was being ignored.</li>
+<li>Modified <code>org.systemsbiology.chem.Reaction.computeRate()</code> so that it
+correctly handles fractional species populations for non-dynamic (boundary) 
+species, for the case of stochastic simulations.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.6.1/&installerDownloadRelURL;">1.6.1</a></td>
 <td>2004/03/12</td>
 <td>

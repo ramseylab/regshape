@@ -44,6 +44,30 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.6.2/&installerDownloadRelURL;">1.6.2</a></td>
+<td>2004/03/22</td>
+<td>
+<ul>
+<li>Implemented expression value caching for the deterministic simulators.
+This improves simulation performance for complex models containing nested 
+sub-expressions.  Slightly improved the speed of simulations of models
+containing deferred-evaluation expressions.</li>
+<li>Modified the stochastic simulators so that if the initial
+value for a dynamic species is not an integer, the simulator 
+will use the random number generator to select the nearest integer, 
+in a weighted fashion, so that
+on average the initial value is equal to the floating-point value specified.</li>
+<li>Fixed a bug in <code>runmodel</code> program,
+such that the output file format specified on the command-line was being ignored.</li>
+<li>Fixed a problem with the way that reaction rates were being computed,
+for the rare corner-case of a fractional non-dynamic (boundary) species 
+population, in the stochastic simulators.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.6.2/&installerDownloadRelURL;">1.6.2</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.6.1/&installerDownloadRelURL;">1.6.1</a></td>
 <td>2004/03/12</td>
 <td>
