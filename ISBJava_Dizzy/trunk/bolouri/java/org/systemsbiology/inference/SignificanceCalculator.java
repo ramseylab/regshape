@@ -34,6 +34,7 @@ import org.systemsbiology.math.*;
 public class SignificanceCalculator
 {
     public static final double DEFAULT_MISSING_DATA_SIGNIFICANCE = -1.0;
+    
     private double mMissingDataSignificance;
     private DoubleArrayList mDataList;
     private DoubleMatrix1D mHistogram;
@@ -383,6 +384,7 @@ public class SignificanceCalculator
                 controlsList.add(controlValObj.doubleValue());
             }
         }
+        controlsList.sort();
         double controlMax = Descriptive.max(controlsList);
         double controlMin = Descriptive.min(controlsList);
 //        System.out.println("control min: " + controlMin + "; control max: " + controlMax);
@@ -424,6 +426,9 @@ public class SignificanceCalculator
         
         double pdfLeft = 0.0;
         double pdfRight = 0.0;
+        double controlVal = 0.0;
+        double lastControlVal = 0.0;
+        double lastPDFVal = 0.0;
         
         // build the probability distribution
         for(int k = 0; k < pNumBins; ++k)
@@ -432,9 +437,19 @@ public class SignificanceCalculator
             xs[k] = x;
             pdfx = 0.0;
             
+            lastControlVal = controls[0];
+            lastPDFVal = Normal.pdf(lastControlVal, variance, x);
+            
             for(int i = 0; i < numControlValues; ++i)
             {
-                pdfx += Normal.pdf(controls[i], variance, x);
+                controlVal = controls[i];
+                // only recompute the Normal.pdf() if it is necessary (i.e., we are at a new "control" value)
+                if((lastControlVal - controlVal) != 0.0)
+                {
+                    lastPDFVal = Normal.pdf(controlVal, variance, x);
+                    lastControlVal = controlVal;
+                }
+                pdfx += lastPDFVal;
             }
             
             pdfx /= numControlsDouble;
