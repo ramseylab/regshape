@@ -209,7 +209,10 @@ is pre-bundled with the &appName; installer, this issue does not
 apply to you.
 </p>
 <p>
-This software has been tested on Windows XP and Red Hat Linux 8.0.
+This software has been tested with the Sun Java Runtime Environment 
+version 1.4.1 on the following platforms: Windows XP Professional on 
+the Intel Pentium 4;  Fedora Core 1 Linux on the Intel Pentium 4; 
+Mac OSX version 10.2.6 on the PowerPC G4. 
 It should function properly on most Windows and Linux distributions.
 For other operating systems, you may download the &quot;Other Java-Enabled
 Platforms&quot; version of the installer.  A Mac OSX version of the
