@@ -413,38 +413,33 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
         int timeCtr = 0;
             
-        int numDelayedReactionSteps = 0;
-        int numReactions = reactions.length;
-        for(int ctr = 0; ctr < numReactions; ++ctr)
-        {
-            Reaction reaction = reactions[ctr];
-            int numReactionSteps = reaction.getNumSteps();
-            if(numReactionSteps > 1)
-            {
-                numDelayedReactionSteps += numReactionSteps;
-            }
-        }
-        numDelayedReactionSteps *= 5;
-
         long minNumSteps = pNumResultsTimePoints;
-
-        if(minNumSteps < numDelayedReactionSteps)
-        {
-            minNumSteps = numDelayedReactionSteps;
-        }
 
         Long minNumStepsObj = pSimulatorParameters.getMinNumSteps();
         if(null != minNumStepsObj)
         {
-            if(minNumStepsObj.longValue() < minNumSteps)
+            long userSpecifiedMinNumSteps = minNumStepsObj.longValue();
+            if(userSpecifiedMinNumSteps > minNumSteps)
             {
-                pSimulatorParameters.setMinNumSteps(minNumSteps);
+                minNumSteps = userSpecifiedMinNumSteps;
             }
         }
-        else
+
+        Double minDelayObj = getMinDelayedReactionDelay();
+        double minDelay = Double.MAX_VALUE;
+        if(null != minDelayObj)
         {
-            pSimulatorParameters.setMinNumSteps(minNumSteps);
+            minDelay = 0.1 * minDelayObj.doubleValue();
         }
+
+        double initialStepSize = (pEndTime - pStartTime)/((double) minNumSteps);
+        if(initialStepSize > minDelay)
+        {
+            minNumSteps = (long) ((pEndTime - pStartTime)/minDelay);
+        }
+        
+        pSimulatorParameters.setMinNumSteps(minNumSteps);
+
         
         RKScratchPad scratchPad = mRKScratchPad;
         scratchPad.clear();
@@ -455,6 +450,9 @@ public abstract class SimulatorDeterministicBase extends Simulator
                         scratchPad);
 
         boolean isCancelled = false;
+
+        DelayedReactionSolver []delayedReactionSolvers = mDelayedReactionSolvers;
+        int numDelayedReactions = delayedReactionSolvers.length;
 
         long currentTimeMilliseconds = 0;
         double fractionComplete = 0.0;
@@ -484,11 +482,9 @@ public abstract class SimulatorDeterministicBase extends Simulator
             System.arraycopy(newSimulationSymbolValues, 0, dynamicSymbolValues, 0, numDynamicSymbolValues);
 
             // update delayed reaction solvers
-            DelayedReactionSolver []solvers = mDelayedReactionSolvers;
-            int numDelayedReactionSolvers = solvers.length;
-            for(int ctr = numDelayedReactionSolvers; --ctr >= 0; )
+            for(int ctr = numDelayedReactions; --ctr >= 0; )
             {
-                DelayedReactionSolver solver = solvers[ctr];
+                DelayedReactionSolver solver = delayedReactionSolvers[ctr];
                 solver.update(symbolEvaluator, time);
             }
 
