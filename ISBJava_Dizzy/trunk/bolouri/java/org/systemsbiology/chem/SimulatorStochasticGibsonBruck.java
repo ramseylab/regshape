@@ -10,6 +10,8 @@ package org.systemsbiology.chem;
 
 import java.util.*;
 import org.systemsbiology.util.*;
+import org.systemsbiology.data.AbstractComparator;
+import org.systemsbiology.data.IndexedPriorityQueue;
 import org.systemsbiology.math.*;
 import edu.cornell.lassp.houle.RngPack.*;
 
