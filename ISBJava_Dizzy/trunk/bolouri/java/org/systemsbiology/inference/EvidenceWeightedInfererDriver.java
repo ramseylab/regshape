@@ -59,6 +59,7 @@ public class EvidenceWeightedInfererDriver
     private static final String TOOL_TIP_INITIAL_CUTOFF_FIELD = "set this to what you believe to be the approximate fraction of elements that are in the affected set";
     private static final String TOOL_TIP_BINS_FIELD = "set this to something between 10 (if you have just a few dozen elements) and 1000 (if you have over 10000 elements)";
     private static final String TOOL_TIP_SMOOTHING_LENGTH_FIELD = "Set this to the smoothing length for obtaining the nonparametric distribution of the significances.";
+    private static final String TOOL_TIP_NUM_AFFECTED = "The number of elements that are in the final putative set of affected elements.";
     private static final String RESOURCE_HELP_ICON = "Help24.gif";
     private static final String RESOURCE_HELP_SET = "html/AppHelp.hs";
     private static final String HELP_SET_MAP_ID = "evidenceweightedinferer";
@@ -124,6 +125,8 @@ public class EvidenceWeightedInfererDriver
     private JTextField mSmoothingLengthField;
     private JLabel mResultsStatisticsLabel;
     private JButton mSaveWeightsButton;
+    private JLabel mNumAffectedLabel;
+    private JLabel mNumAffectedField;
     
     class WeightsTableModel extends AbstractTableModel
     {
@@ -562,15 +565,15 @@ public class EvidenceWeightedInfererDriver
         }
         catch(NumberFormatException e)
         {
-            handleMessage("The initial p-value cutoff you specified, \"" + initialCutoffString + "\", is not a floating-point number.",
-                          "Invalid initial cutoff",
+            handleMessage("The initial quantile threshold you specified, \"" + initialCutoffString + "\", is not a floating-point number.",
+                          "Invalid initial quantile threshold",
                           JOptionPane.ERROR_MESSAGE);
             return false;
         }
         if(initialCutoff <= 0.0 || initialCutoff >= 1.0)
         {
-            handleMessage("The initial p-value cutoff must be greater than 0.0 and less than 1.0.",
-                          "Invalid initial cutoff",
+            handleMessage("The initial quantile threshold must be greater than 0.0 and less than 1.0.",
+                          "Invalid initial quantile threshold",
                           JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -802,6 +805,8 @@ public class EvidenceWeightedInfererDriver
             mIterationsLabel.setToolTipText(TOOL_TIP_ITERATIONS);
             mIterationsLabelData.setToolTipText(TOOL_TIP_ITERATIONS);
             mSaveWeightsButton.setToolTipText(TOOL_TIP_SAVE_WEIGHTS);
+            mNumAffectedLabel.setToolTipText(TOOL_TIP_NUM_AFFECTED);
+            mNumAffectedField.setToolTipText(TOOL_TIP_NUM_AFFECTED);            
         }
         else
         {
@@ -814,8 +819,12 @@ public class EvidenceWeightedInfererDriver
             mIterationsLabel.setToolTipText(null);
             mIterationsLabelData.setToolTipText(null);
             mSaveWeightsButton.setToolTipText(null);
+            mNumAffectedLabel.setToolTipText(null);
+            mNumAffectedField.setToolTipText(null);            
         }
        
+        mNumAffectedLabel.setEnabled(pResultsObtained);
+        mNumAffectedField.setEnabled(pResultsObtained);
         mIterationsLabel.setEnabled(pResultsObtained);
         mIterationsLabelData.setEnabled(pResultsObtained);
         mFinalSeparationLabel.setEnabled(pResultsObtained);
@@ -981,7 +990,7 @@ public class EvidenceWeightedInfererDriver
         gridLayout.setConstraints(binsField, constraints);
         
 
-        JLabel initialCutoffLabel = new JLabel("Initial P-value cutoff a single evidence type: ");
+        JLabel initialCutoffLabel = new JLabel("Initial quantile threshold for affected: ");
         mInitialCutoffLabel = initialCutoffLabel;
         
         constraints.fill = GridBagConstraints.NONE;
@@ -1236,7 +1245,7 @@ public class EvidenceWeightedInfererDriver
         numericResultsPanel.setLayout(new BoxLayout(numericResultsPanel, BoxLayout.Y_AXIS));
                 
         JPanel iterationsPanel = new JPanel();
-        JLabel iterationsLabel = new JLabel("iterations: ");        
+        JLabel iterationsLabel = new JLabel("num iterations: ");        
         mIterationsLabel = iterationsLabel;
         iterationsPanel.add(iterationsLabel);
         JPanel iterationsDataPanel = new JPanel();
@@ -1276,6 +1285,18 @@ public class EvidenceWeightedInfererDriver
         alphaDataPanel.add(alphaLabelData);
         alphaPanel.add(alphaDataPanel);
         numericResultsPanel.add(alphaPanel);
+        
+        JPanel numAffectedPanel = new JPanel();
+        mNumAffectedLabel = new JLabel("num affected: ");
+        numAffectedPanel.add(mNumAffectedLabel);
+        JPanel numAffectedFieldPanel = new JPanel();
+        numAffectedFieldPanel.setBorder(BorderFactory.createEtchedBorder());
+        numAffectedFieldPanel.setPreferredSize(new Dimension(75, 10));
+        numAffectedFieldPanel.setMinimumSize(new Dimension(75, 10));
+        mNumAffectedField = new JLabel();
+        numAffectedFieldPanel.add(mNumAffectedField);
+        numAffectedPanel.add(numAffectedFieldPanel);
+        numericResultsPanel.add(numAffectedPanel);
         
         resultsStatisticsPanel.add(numericResultsPanel);
         
@@ -1352,13 +1373,16 @@ public class EvidenceWeightedInfererDriver
         String []evidences = mSignificancesData.getEvidenceNames();
         WeightsTableModel weightsTableModel = new WeightsTableModel(evidences, weights);
         mWeightsTable.setModel(weightsTableModel);
-        setEnableStateForFields(true, true);
+        mNumAffectedField.setText(Integer.toString(pResults.mNumAffected));
         if(Math.abs(1.0 - alphaValue) > ALPHA_VALUE_DEVIATION_WARNING_THRESHOLD)
         {
-            JOptionPane.showMessageDialog(mParent, "Warning:  the ratio of the average of the joint significance to the product of the average significances is not close to 1.0; this may indicate lack of independence between the evidences.",
-                     "Evidence types may lack independence",
-                      JOptionPane.WARNING_MESSAGE);
+            mAlphaLabelData.setForeground(Color.RED);
         }
+        else
+        {
+            mAlphaLabelData.setForeground(Color.BLACK);
+        }        
+        setEnableStateForFields(true, true);
     }
     
     private void handleHelp()
@@ -1526,7 +1550,7 @@ public class EvidenceWeightedInfererDriver
             catch(Exception e)
             {
                 String errorMessage = e.getMessage();
-                e.printStackTrace(System.err);
+                //e.printStackTrace(System.err); // for debugging only
                 handleMessage("Unable to infer the set of affected elements from the data and parameters you supplied.  The specific error message is: " + errorMessage,
                               "Unable to infer affected elements",
                               JOptionPane.ERROR_MESSAGE);            

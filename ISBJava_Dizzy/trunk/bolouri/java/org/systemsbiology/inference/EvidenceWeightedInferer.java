@@ -48,7 +48,8 @@ public final class EvidenceWeightedInferer
     
     private DoubleMatrix2D mEffectiveSignificances;
     private DoubleMatrix2D mNonzeroSignificances;
-
+    private DoubleMatrix2D mSignificancesSorted;
+    
     private DoubleMatrix1D mDistNormAffected;
     private DoubleMatrix1D mDistNormUnaffected;
     
@@ -117,6 +118,7 @@ public final class EvidenceWeightedInferer
         mNonzeroSignificances = fac2d.make(mNumElements, mNumEvidences);
         
         mEffectiveSignificances = fac2d.make(mNumElements, mNumEvidences);
+        mSignificancesSorted = fac2d.make(mNumElements, mNumEvidences);
         
         DoubleFactory1D fac1d = DoubleFactory1D.dense;
 
@@ -709,6 +711,12 @@ public final class EvidenceWeightedInferer
         int j = 0;
         int numAffected = 0;
         
+        // obtain sorted significances for each evidence type
+        for(j = numEvidences; --j >= 0; )
+        {
+            mSignificancesSorted.viewColumn(j).assign(Sorting.mergeSort.sort(pSignificances.viewColumn(j)));
+        }
+        
         // calculate the minimum nonzero evidence-specific significances
         double minSig = 0.0;
         for(j = numEvidences; --j >= 0; )
@@ -732,9 +740,17 @@ public final class EvidenceWeightedInferer
         // handle the special case of significances that are identically zero, by
         // setting them to the minimum nonzero evidence-specific significance value
         mNonzeroSignificances.assign(pSignificances);
+        int quantileIndex = (int) (numElements * pInitialCutoff);
+        double minSigQuantile = 0.0;
         for(j = numEvidences; --j >= 0; )
         {
+            minSigQuantile = mSignificancesSorted.get(quantileIndex, j);
             minSig = mMinimumNonzeroEvidenceSpecificSignificances.get(j);
+            
+            if(minSig > minSigQuantile)
+            {
+                throw new IllegalArgumentException("the lowest nonzero significance for evidence number " + j + " is above your initial cutoff; please increase your initial cutoff, or change the zero significances to small positive values.");
+            }
             for(i = numElements; --i >= 0; )
             {
                 sigValue = mNonzeroSignificances.get(i, j);
@@ -745,6 +761,11 @@ public final class EvidenceWeightedInferer
             }
         }
         
+        for(j = numEvidences; --j >= 0; )
+        {
+            mSignificancesSorted.viewColumn(j).assign(Sorting.mergeSort.sort(mNonzeroSignificances.viewColumn(j)));
+        }
+        
         // determine the initial putative set of affected elements, using the "greedy" method
         for(i = numElements; --i >= 0; )
         {
@@ -752,7 +773,7 @@ public final class EvidenceWeightedInferer
             for(j = numEvidences; (--j >= 0) && (! affected); )
             {
                 sigValue = mNonzeroSignificances.get(i, j);
-                if(sigValue >= 0.0 && sigValue < pInitialCutoff)
+                if(sigValue >= 0.0 && sigValue <= mSignificancesSorted.get(quantileIndex, j))
                 {
                     affected = true;
                     ++numAffected;
@@ -760,7 +781,6 @@ public final class EvidenceWeightedInferer
             }
             affectedElements[i] = affected;
         }
-//        System.out.println("initial number putatively affected: " + numAffected);
         
         int numChanged = 0;
         
@@ -929,14 +949,15 @@ public final class EvidenceWeightedInferer
                                                        mSignificanceCalculationResults);
         
         double []cumulativeSignificances = mSignificanceCalculationResults.mSignificances;
-        double finalSignificance = 0.0;
         for(i = numElements; --i >= 0; )
         {
+         //   System.out.println("i: " + i + "; allSig: " + allSignificances[i] + "; affected: " + affectedElements[i] + "; finalSig: " + cumulativeSignificances[i]);
             pRetResults.mCombinedEffectiveSignificances[i] = cumulativeSignificances[i];
         }
         pRetResults.mSignificanceDistributionSeparation = iterationResults.mSignificanceDistributionSeparation;
         pRetResults.mAlphaParameter = iterationResults.mAlphaParameter;
         pRetResults.mNumIterations = iterationCtr;
+        pRetResults.mNumAffected = numAffected;
         mWeights.toArray(pRetResults.mWeights);
     }
     

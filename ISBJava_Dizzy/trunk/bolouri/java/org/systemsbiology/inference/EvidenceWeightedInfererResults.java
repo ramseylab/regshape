@@ -30,4 +30,5 @@ public class EvidenceWeightedInfererResults
     public double []mCombinedEffectiveSignificances;
     public boolean []mAffectedElements;
     public double []mWeights;
+    public int mNumAffected;
 }
