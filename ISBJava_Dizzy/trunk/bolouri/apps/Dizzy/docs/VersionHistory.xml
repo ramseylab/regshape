@@ -96,7 +96,7 @@ This document contains the version history for the
   <blockquote>
     <code>min(A,B)</code>
   </blockquote>
-  Thanks very much to Adam Duguid, for submitting a patch for this improvement.
+  Thanks to Adam Duguid, for submitting the source code patch.
 </li>
 <li>
   Fixed confusing error messages in the Runge-Kutta simulator with fixed step-size,
