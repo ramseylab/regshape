@@ -9,7 +9,8 @@
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
 <isb:doctitle>Software, Publications, and News</isb:doctitle>
-<isb:docauthor>&mainGroup;, &mainAffiliation;</isb:docauthor>
+<isb:docversion>Last updated: $Date$</isb:docversion>
+<isb:docowner>&mainGroup;, &mainAffiliation;</isb:docowner>
 
 <isb:doccontents />
 
@@ -35,6 +36,7 @@ with Hamid Bolouri:
 <li><a href="http://www.cytoscape.org">Cytoscape home page</a></li>
 <li><a href="http://www.sbw-sbml.org" target="_new">Systems Biology Workbench</a> (Pasadena, CA USA)</li>
 <li><a href="http://www.sbw-sbml.org" target="_new">Systems Biology Markup Language</a> (Pasadena, CA USA)</li>
+<li><a href="private/">&mainGroup; internal home page</a></li>
 </ul>
 </p>
 

@@ -29,6 +29,15 @@
            excludes="AppConfig.xml" />
   </target>
 
+  <target name="copyHtml">
+    <mkdir dir="${app.webDir}" />
+    <copy todir="${app.webDir}">
+      <fileset dir="${app.styleDir}">
+        <include name="*.html" />
+      </fileset>
+    </copy>
+  </target>
+
   <target name="buildWeb" depends="style">
     <mkdir dir="${app.webDir}" />
     <copy todir="${app.webDir}">

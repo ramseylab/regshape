@@ -10,7 +10,8 @@
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
 <isb:doctitle>&appName; Home Page</isb:doctitle>
-<isb:docauthor>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docauthor>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
 
 <p>
 <ul>

@@ -10,7 +10,6 @@
 
 <isb:docpreamble>Javadoc documentation for ISB Java classes.</isb:docpreamble>
 <isb:doctitle>ISBJava Home Page</isb:doctitle>
-<isb:docauthor>&mainGroup;, &mainAffiliation;</isb:docauthor>
 
 The ISBJava project is a library (collection) of classes
 written in the <a href="http://java.sun.com">Java</a>

@@ -10,16 +10,10 @@
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
 <isb:doctitle>&appName; User Manual</isb:doctitle>
-<isb:docauthor>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docauthor>
-<isb:docversion>Revision 0.1 (draft), 2003/04/03</isb:docversion>
-
-<p>
-<blockquote>
-Please send bug reports and corrections to:  &appOriginalAuthorFullName; (<code>&appOriginalAuthorEmailSafe;</code>)
-</blockquote>
-</p>
-
-<hr />
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
+<isb:docversion>Last updated: $Date$</isb:docversion>
+<isb:docauthor>&appOriginalAuthorFullName; (<code>&appOriginalAuthorEmailSafe;</code>)</isb:docauthor>
 
 <isb:doccontents />
 

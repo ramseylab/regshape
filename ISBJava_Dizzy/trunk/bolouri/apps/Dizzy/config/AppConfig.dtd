@@ -10,8 +10,9 @@
 
 <!-- these definitions are used only in documentation, not by the app itself: -->
 <!ENTITY appMaintainerFullName "&mainGroup;">
+<!ENTITY appMaintainerURL "&mainGroupURL;">
 <!ENTITY appMaintainerEmailSafe "&mainEmailSafe;"> 
 <!ENTITY appMaintainerAffiliation "&mainAffiliation;">
 
-<!ENTITY appOriginalAuthorFullName "Stephen Ramsaey">
+<!ENTITY appOriginalAuthorFullName "Stephen Ramsey">
 <!ENTITY appOriginalAuthorEmailSafe "sramsey at systemsbiology.org"> 

@@ -9,8 +9,7 @@
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
 <isb:doctitle>Web Pages Management Manual</isb:doctitle>
-<isb:docauthor>&mainGroup;, &mainAffiliation;</isb:docauthor>
-<isb:docversion>$Revision$, $Date$</isb:docversion>
+<isb:docversion>Last updated: $Date$</isb:docversion>
 
 <isb:doccontents />
 

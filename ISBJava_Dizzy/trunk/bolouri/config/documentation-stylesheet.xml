@@ -32,12 +32,64 @@
       <xsl:if test="/isb:document/isb:doctitle != ''">
         <h1><xsl:value-of select="isb:doctitle"/></h1>
       </xsl:if>
+
+      <!-- if an author is specified, use the author information: -->
+
+      <xsl:if test="/isb:document/isb:docowner != ''">
+        <xsl:if test="/isb:document/isb:docownerurl != ''">
+          <xsl:element name="a"> 
+            <xsl:attribute name="href"><xsl:value-of select="/isb:document/isb:docownerurl" /></xsl:attribute>
+            <span style="color: black"><h3><xsl:value-of select="isb:docowner"/></h3></span>
+          </xsl:element>
+        </xsl:if>
+        <xsl:if test="not( /isb:document/isb:docownerurl != '')">
+          <h3><xsl:value-of select="isb:docowner"/></h3>
+        </xsl:if>
+      </xsl:if>
+
+      <!-- if an owner is not specified, generate boilerplate owner information with hyperlink: -->
+
+      <xsl:if test="not( /isb:document/isb:docowner != '' )">
+        <a href="&mainGroupURL;"><span style="color: black"><h3>&mainGroup;, &mainAffiliation;</h3></span></a>
+      </xsl:if>
+
+      <!-- if author information specified, display it: -->
+
       <xsl:if test="/isb:document/isb:docauthor != ''">
-        <h3><xsl:value-of select="isb:docauthor"/></h3>
+        <xsl:if test="/isb:document/isb:docauthorurl != ''">
+          <xsl:element name="a">
+            <xsl:attribute name="href"><xsl:value-of select="isb:docauthorurl" /></xsl:attribute>
+            <span style="color: black">
+            <h4>
+              <xsl:value-of select="isb:docauthor" />
+            </h4>
+            </span>
+          </xsl:element>
+        </xsl:if>
+        <xsl:if test="not( isb:docauthorurl != '' )">
+          <h4>
+            <xsl:value-of select="isb:docauthor" />
+          </h4>
+        </xsl:if>
       </xsl:if>
+ 
+      <!-- if version information specified, strip out RCS keyword stuff ($Date ... $) and display: -->
+
       <xsl:if test="/isb:document/isb:docversion != ''">
-        <h3><xsl:value-of select="isb:docversion"/></h3>
+        <h4>
+          <xsl:if test="contains(isb:docversion, '$Date:')">
+            <xsl:value-of select="translate(concat(
+                                      substring-before(isb:docversion, '$Date:'), 
+                                      substring-after(isb:docversion, '$Date:')),'$','')"/>
+          </xsl:if>
+          <xsl:if test="not( contains( isb:docversion, '$Date:') )">
+            <xsl:value-of select="isb:docversion"/>
+          </xsl:if>
+        </h4>
       </xsl:if>
+
+
+
         </td>
         <td>
           <a href="&mainPublicURL;"><img src="&mainLogoURL;" alt="ISB" border="0" /></a>
@@ -50,9 +102,12 @@
   </xsl:template>
  
   <xsl:template match="isb:doctitle"></xsl:template>
-  <xsl:template match="isb:docauthor"></xsl:template>
+  <xsl:template match="isb:docowner"></xsl:template>
+  <xsl:template match="isb:docownerurl"></xsl:template>
   <xsl:template match="isb:docversion"></xsl:template>
   <xsl:template match="isb:docpreamble"></xsl:template>
+  <xsl:template match="isb:docauthor"></xsl:template>
+  <xsl:template match="isb:docauthorurl"></xsl:template>
 
   <xsl:template match="isb:doccontents">
       <h3>Contents</h3>

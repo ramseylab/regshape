@@ -10,7 +10,9 @@
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
 <isb:doctitle>&appName; Version History</isb:doctitle>
-<isb:docauthor>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docauthor>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
+<isb:docversion>Last updated: $Date$</isb:docversion>
 
 <p>
 <dl>
