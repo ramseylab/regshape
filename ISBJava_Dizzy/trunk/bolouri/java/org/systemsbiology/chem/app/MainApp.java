@@ -10,7 +10,6 @@ package org.systemsbiology.chem.app;
 
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
-import org.systemsbiology.chem.cytoscape.CytoscapeViewer;
 import org.systemsbiology.gui.*;
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +26,7 @@ public class MainApp
     private File mAppDir;
     private ClassRegistry mModelBuilderRegistry;
     private ClassRegistry mModelExporterRegistry;
+    private ClassRegistry mModelViewerRegistry;
     private EditorPane mEditorPane;
     private int mOriginalWidthPixels;
     private int mOriginalHeightPixels;
@@ -36,6 +36,11 @@ public class MainApp
     static final String UNEXPECTED_ERROR_MESSAGE = "an unexpected error has occurred";
     private File mCurrentDirectory;
 
+    public ClassRegistry getModelViewerRegistry()
+    {
+        return mModelViewerRegistry;
+    }
+    
     void setCurrentDirectory(File pCurrentDirectory)
     {
         mCurrentDirectory = pCurrentDirectory;
@@ -81,6 +86,11 @@ public class MainApp
         return(mModelExporterRegistry);
     }
 
+    void setModelViewerRegistry(ClassRegistry pModelViewerRegistry)
+    {
+        mModelViewerRegistry = pModelViewerRegistry;
+    }
+    
     void setModelExporterRegistry(ClassRegistry pModelExporterRegistry)
     {
         mModelExporterRegistry = pModelExporterRegistry;
@@ -186,7 +196,7 @@ public class MainApp
         }
     }
 
-    void handleExport()
+    void handleExport(String pAlias)
     {
         try
         {
@@ -194,8 +204,8 @@ public class MainApp
 
             if(null != model)
             {
-                ModelExporter exporter = new ModelExporter(getMainFrame());
-                exporter.exportModel(model, mModelExporterRegistry);
+                ModelExporter exporter = new ModelExporter((Component) getMainFrame());
+                exporter.exportModel(pAlias, model, mModelExporterRegistry);
             }
         }
 
@@ -206,39 +216,21 @@ public class MainApp
         }
     }
 
-    void handleViewInCytoscape()
+    public void handleView(String pAlias)
     {
         try
         {
             Model model = mEditorPane.processModel();
             if(null != model)
             {
-                CytoscapeViewer cv = new CytoscapeViewer(mMainFrame);
-                cv.viewModelInCytoscape(model);
+                IModelViewer modelViewer = (IModelViewer) mModelViewerRegistry.getInstance(pAlias);
+                modelViewer.viewModel(model, mApp.getName());
             }
         }
         catch(Throwable e)
         {
             ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e);
-            errorOptionPane.createDialog(mMainFrame, "unable to view the model in Cytoscape: " + e.getMessage()).show();
-        }
-    }
-
-    void handleViewModelHumanReadable()
-    {
-        try
-        {
-            Model model = mEditorPane.processModel();
-            if(null != model)
-            {
-                ModelViewerHumanReadable mv = new ModelViewerHumanReadable(mMainFrame);
-                mv.handleViewModelHumanReadable(model);
-            }
-        }
-        catch(Throwable e)
-        {
-            ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e);
-            errorOptionPane.createDialog(mMainFrame, "unable to view the model in human-readable format: " + e.getMessage()).show();
+            errorOptionPane.createDialog(mMainFrame, "unable to view the model: " + e.getMessage()).show();
         }
     }
 
@@ -388,8 +380,7 @@ public class MainApp
         enableMenuItem(MainMenu.MenuItem.FILE_CLOSE, ! bufferEmpty);
         enableMenuItem(MainMenu.MenuItem.FILE_SAVE_AS, ! bufferEmpty);
         enableMenuItem(MainMenu.MenuItem.FILE_SAVE, bufferDirty && (null != bufferFilename));
-        enableMenuItem(MainMenu.MenuItem.TOOLS_CYTOSCAPE, ! bufferEmpty);
-        enableMenuItem(MainMenu.MenuItem.TOOLS_HUMAN_READABLE, ! bufferEmpty);
+        enableMenuItem(MainMenu.MenuItem.TOOLS_VIEW, ! bufferEmpty);
         enableMenuItem(MainMenu.MenuItem.TOOLS_EXPORT, ! bufferEmpty);
         enableMenuItem(MainMenu.MenuItem.TOOLS_SIMULATE, ! bufferEmpty && null == simulationLauncher);
         enableMenuItem(MainMenu.MenuItem.TOOLS_RELOAD, ! bufferEmpty && null != simulationLauncher &&
@@ -475,6 +466,10 @@ public class MainApp
         modelExporterRegistry.buildRegistry();
         setModelExporterRegistry(modelExporterRegistry);
 
+        ClassRegistry modelViewerRegistry = new ClassRegistry(org.systemsbiology.chem.IModelViewer.class);
+        modelViewerRegistry.buildRegistry();
+        setModelViewerRegistry(modelViewerRegistry);
+        
         setSimulationLauncher(null);
         setTimestampModelLastLoaded(null);
         setCurrentDirectory(null);
