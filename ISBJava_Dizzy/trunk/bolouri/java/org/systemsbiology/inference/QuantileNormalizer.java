@@ -49,7 +49,7 @@ public class QuantileNormalizer
 {
     private static final double LOG2 = Math.log(2.0);
     private ObjectMatrix2D mRawObservations;
-    private ObjectMatrix2D mRawObservationsFixedForScaling;
+    private DoubleMatrix2D mRawObservationsFixedForScaling;
     private DoubleMatrix2D mRawObservationsFilledIn;
     private DoubleMatrix2D mRescaledRawObservations;
     private DoubleArrayList mColumnObservations;
@@ -59,7 +59,7 @@ public class QuantileNormalizer
     private int mNumRows;
     private Object []mColumnIndices;
     private ElementComparator mElementComparator;
-    private ObjectMatrix2D mNormalizedObservations;
+    private DoubleMatrix2D mNormalizedObservations;
     private DoubleMatrix1D mRawColumnMediansNonNegative;
     
     static class ElementComparator implements IntComparator
@@ -129,7 +129,6 @@ public class QuantileNormalizer
             initialize(numRows, numColumns);
         } 
         mRawObservations = pRawObservations;
-        mNormalizedObservations = pNormalizedObservations;
     }
         
 
@@ -142,8 +141,9 @@ public class QuantileNormalizer
         mColumnObservations = new DoubleArrayList();
         mColumnMissingObservationsIndices = new IntArrayList();
         mAverageObservations = DoubleFactory1D.dense.make(pNumRows);
-        mRawObservationsFixedForScaling = ObjectFactory2D.dense.make(pNumRows, pNumColumns);
+        mRawObservationsFixedForScaling = DoubleFactory2D.dense.make(pNumRows, pNumColumns);
         mRawColumnMediansNonNegative = DoubleFactory1D.dense.make(pNumColumns);
+        mNormalizedObservations = DoubleFactory2D.dense.make(pNumRows, pNumColumns);
         mColumnIndices = new Object[pNumColumns];
         for(int j = pNumColumns; --j >= 0; )
         {
@@ -198,7 +198,7 @@ public class QuantileNormalizer
         double value = 0.0;
         Object []columnIndicesArray = mColumnIndices;
         DoubleMatrix1D rowAverages = mAverageObservations;
-        ObjectMatrix2D normalizedObservations = mNormalizedObservations;
+        DoubleMatrix2D normalizedObservations = mNormalizedObservations;
         ObjectMatrix2D rawObservations = mRawObservations;
         double rawObs = 0.0;
         for(j = numColumns; --j >= 0; )
@@ -210,11 +210,7 @@ public class QuantileNormalizer
                 value = rowAverages.get(i);
                 if(null != mRawObservations.get(index, j))
                 {
-                    normalizedObservations.set(index, j, new Double(value));
-                }
-                else
-                {
-                    normalizedObservations.set(index, j, null);
+                    normalizedObservations.set(index, j, value);
                 }
             }
         }
@@ -314,7 +310,7 @@ public class QuantileNormalizer
         }
     }
     
-    // mRawColumnMediansNonNegative, mRAwObservationsNonNegative => mRawObservationsFilledIn
+    // mRawColumnMediansNonNegative, mRawObservationsFixedForScaling => mRawObservationsFilledIn
     private double fillInMissingObservations(boolean pComputeError)
     {
         int numColumns = mRawObservationsFixedForScaling.columns();
@@ -331,15 +327,16 @@ public class QuantileNormalizer
         int errDiv = 0;
         double oldVal = 0.0;
         double avgVal = 0.0;
+        Double rawObs = null;
         for(j = numColumns; --j >= 0; )
         {
             median = mRawColumnMediansNonNegative.get(j);
             for(i = numRows; --i >= 0; )
             {
-                obsObj = (Double) mRawObservationsFixedForScaling.get(i, j);
-                if(null != obsObj)
+                rawObs = (Double) mRawObservations.get(i, j);
+                if(null != rawObs)
                 {
-                    obsVal = obsObj.doubleValue();
+                    obsVal = mRawObservationsFixedForScaling.get(i, j);
                     mRawObservationsFilledIn.set(i, j, obsVal);
                 }
                 else
@@ -379,7 +376,7 @@ public class QuantileNormalizer
     }
     
     // [mNormalizedObservations|mRawObservationsNonNegative] -> mRawColumnMediansNonNegative
-    private void computeRawColumnMediansNonNegative(ObjectMatrix2D pObs)
+    private void computeColumnMediansForRawObservationsFixedForScaling(DoubleMatrix2D pObs)
     {
         int numColumns = pObs.columns();
         int numRows = pObs.rows();
@@ -392,10 +389,10 @@ public class QuantileNormalizer
             columnObs.clear();
             for(i = numRows; --i >= 0; )
             {
-                obsObj = (Double) pObs.get(i, j);
+                obsObj = (Double) mRawObservations.get(i, j);
                 if(null != obsObj)
                 {
-                    columnObs.add(obsObj.doubleValue());
+                    columnObs.add(pObs.get(i, j));
                 }
             }
             median = Descriptive.median(columnObs);
@@ -403,57 +400,57 @@ public class QuantileNormalizer
         }
     }
     
-    // mRawObservations => mRawObservationsNonNegative
-    private void fixNonpositiveValues(boolean pFixNonpositiveValues, QuantileNormalizationScale pScale)
+    // mRawObservations => mRawObservationsFixedForScaling
+    private void fixRawObservationsForScaling(boolean pFixNonpositiveValues, QuantileNormalizationScale pScale)
     {
-        ObjectMatrix2D obsNonNeg = mRawObservationsFixedForScaling;
-        obsNonNeg.assign(mRawObservations);
+        DoubleMatrix2D obsFixedForScaling = mRawObservationsFixedForScaling;
+        obsFixedForScaling.assign(0.0);
         boolean usingLogScale = pScale.equals(QuantileNormalizationScale.LOGARITHM);
-        if(pFixNonpositiveValues)
+
+        int numColumns = mRawObservations.columns();
+        int numRows = mRawObservations.rows();
+        double minValue = Double.MAX_VALUE;
+        int j = 0;
+        int i = 0;
+        double value = 0.0;
+        Double obsObj = null;
+        Double rawObs = null;
+        for(j = numColumns; --j >= 0; )
         {
-            int numColumns = mRawObservations.columns();
-            int numRows = mRawObservations.rows();
-            double minValue = Double.MAX_VALUE;
-            int j = 0;
-            int i = 0;
-            double value = 0.0;
-            Double obsObj = null;
-            for(j = numColumns; --j >= 0; )
+            for(i = numRows; --i >= 0; ) 
             {
-                for(i = numRows; --i >= 0; ) 
+                obsObj = (Double) mRawObservations.get(i, j);
+                if(null != obsObj)
                 {
-                    obsObj = (Double) mRawObservations.get(i, j);
-                    if(null != obsObj)
+                    value = obsObj.doubleValue();
+                    if(value < minValue)
                     {
-                        value = obsObj.doubleValue();
-                        if(value < minValue)
-                        {
-                            minValue = value;
-                        }                    
-                    }
+                        minValue = value;
+                    }      
+                    obsFixedForScaling.set(i, j, value);
                 }
             }
-            if(minValue <= 0.0)
+        }
+        if(pFixNonpositiveValues && minValue <= 0.0)
+        {
+            double addTo = 0.0;
+            if(usingLogScale)
             {
-                double addTo = 0.0;
-                if(usingLogScale)
+                addTo = 1.0 - minValue;
+            }
+            else
+            {
+                addTo = -minValue;
+            }
+            for(j = numColumns; --j >= 0; )
+            {
+                for(i = numRows; --i >= 0; )
                 {
-                    addTo = 1.0 - minValue;
-                }
-                else
-                {
-                    addTo = -minValue;
-                }
-                for(j = numColumns; --j >= 0; )
-                {
-                    for(i = numRows; --i >= 0; )
+                    rawObs = (Double) mRawObservations.get(i, j);
+                    if(null != rawObs)
                     {
-                        obsObj = (Double) obsNonNeg.get(i, j);
-                        if(null != obsObj)
-                        {
-                            value = obsObj.doubleValue() + addTo;
-                            obsNonNeg.set(i, j, new Double(value));
-                        }
+                        value = obsFixedForScaling.get(i, j) + addTo;
+                        obsFixedForScaling.set(i, j, value);
                     }
                 }
             }
@@ -479,18 +476,28 @@ public class QuantileNormalizer
         
         if(null != errorTolerance && errorTolerance.doubleValue() <= 0.0)
         {
-            throw new IllegalArgumentException("non-negative error tolerance provide: " + errorTolerance);
+            throw new IllegalArgumentException("non-positive error tolerance provided: " + errorTolerance);
+        }
+        
+        Integer maxIterationsObj = pParams.mMaxIterations;
+        if(null != maxIterationsObj && maxIterationsObj.intValue() <= 0)
+        {
+            throw new IllegalArgumentException("non-positive max iterations provided: " + maxIterationsObj);
+        }
+        if(null != errorTolerance && null == maxIterationsObj)
+        {
+            throw new IllegalArgumentException("max number of iterations is required, when an error tolerance is specified");
         }
         
         initializeIfNecessary(pRawObservations, normalizedObservations);
 
+        mNormalizedObservations.assign(0.0);
+        
         boolean fixNonpositiveValues = pParams.mFixNonpositiveValues;
 
-        fixNonpositiveValues(fixNonpositiveValues, scale);
+        fixRawObservationsForScaling(fixNonpositiveValues, scale);
         
-//        System.out.println("raw obs: " + mRawObservationsNonNegative.toString());
-        computeRawColumnMediansNonNegative(mRawObservationsFixedForScaling);
-//        System.out.println("raw medians non-negative: " + mRawColumnMediansNonNegative.toString());
+        computeColumnMediansForRawObservationsFixedForScaling(mRawObservationsFixedForScaling);
         fillInMissingObservations(false);
         
         boolean computeErrors = false;
@@ -504,6 +511,11 @@ public class QuantileNormalizer
         double errSum = 0.0;
         
         int iterationCtr = 0;
+        int maxIterations = 0;
+        if(null != maxIterationsObj)
+        {
+            maxIterations = maxIterationsObj.intValue();
+        }
         
         do
         {
@@ -514,13 +526,12 @@ public class QuantileNormalizer
 //            System.out.println("sorted log obs:\n" + mLogRawObservations.toString());
             getRowAverages();
             normalizeObservations();
-            computeRawColumnMediansNonNegative(mNormalizedObservations);
+            computeColumnMediansForRawObservationsFixedForScaling(mNormalizedObservations);
             unscaleRawColumnMedians(scale);
             errSum = fillInMissingObservations(computeErrors);
             ++iterationCtr;
-//            System.out.println("errSum: " + errSum);
         }
-        while(computeErrors && errSum > errorToleranceVal);
+        while(computeErrors && errSum > errorToleranceVal && iterationCtr < maxIterations);
         
 //        System.out.println("iterations: " + iterationCtr);        
         
@@ -533,6 +544,29 @@ public class QuantileNormalizer
         else
         {
             pResults.mFinalError = null;
+        }
+        
+        int numElements = normalizedObservations.rows();
+        int numEvidences = normalizedObservations.columns();
+        int i = 0; 
+        int j = 0;
+        ObjectMatrix2D rawObsMat = mRawObservations;
+        DoubleMatrix2D normObsMat = mNormalizedObservations;
+        
+        // copy the normalized observations to the output matrix
+        for(i = numElements; --i >= 0; )
+        {
+            for(j = numEvidences; --j >= 0; )
+            {
+                if(null != rawObsMat.get(i, j))
+                {
+                    normalizedObservations.set(i, j, new Double(normObsMat.get(i, j)));
+                }
+                else
+                {
+                    normalizedObservations.set(i, j, null);
+                }
+            }
         }
     }
     

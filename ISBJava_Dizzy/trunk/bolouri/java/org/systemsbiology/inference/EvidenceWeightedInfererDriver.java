@@ -1096,7 +1096,7 @@ public class EvidenceWeightedInfererDriver
         topPanel.add(smoothingLengthField);
         gridLayout.setConstraints(smoothingLengthField, constraints);
         
-        JLabel weightLabel = new JLabel("Weighting scheme for computing effective significance: ");
+        JLabel weightLabel = new JLabel("Effective significance weighting scheme: ");
         mWeightLabel = weightLabel;
         
         constraints.fill = GridBagConstraints.NONE;
@@ -1346,11 +1346,7 @@ public class EvidenceWeightedInfererDriver
         String elementName = null;
         for(int i = 0; i < numElements; ++i)
         {
-            elementName = significancesData.getElementName(i);
-            if(-1 != elementName.indexOf(delimiter))
-            {
-                elementName = elementName.replaceAll(delimiter, "_");
-            }
+            elementName = pDelimiter.scrubIdentifier(significancesData.getElementName(i));
             resultsBuf.append(elementName + delimiter);
             resultsBuf.append(affectedElements[i] + delimiter);
             resultsBuf.append(mNumberFormat.format(combinedEffectiveSignificances[i]) + "\n");

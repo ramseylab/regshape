@@ -64,7 +64,11 @@ public class QuantileNormalizerDriver
     private JLabel mIterationCountText;
     private JLabel mErrorLabel;
     private JLabel mErrorText;
+    private JLabel mMaxIterationsLabel;
+    private JTextField mMaxIterationsField;
     
+    private static final String TOOL_TIP_MAX_ITERATIONS = "Specify the maximum number of iterations that may be used to compute the normalized observations.";
+    private static final int DEFAULT_MAX_ITERATIONS = 10;
     private static final double DEFAULT_ERROR_TOLERANCE = 1.0e-3;
     private static final String TOOL_TIP_ERROR_TOLERANCE = "Specify the (optional) error tolerance for exiting the iterative normalization procedure; if left blank, only one iteration will be run.";
     private static final String TOOL_TIP_SAVE_RESULTS_BUTTON = "Save the normalized observations to a file.";
@@ -84,7 +88,8 @@ public class QuantileNormalizerDriver
             
     private static final QuantileNormalizationScale DEFAULT_QUANTILE_NORMALIZATION_METHOD = QuantileNormalizationScale.NORM_ONLY;
     private static final DataFileDelimiter DEFAULT_DATA_FILE_DELIMITER = DataFileDelimiter.COMMA;
-    private static final int NUM_COLUMNS_TEXT_FIELD_NUMERIC = 15;
+    private static final int NUM_COLUMNS_TEXT_FIELD_FLOAT = 10;
+    private static final int NUM_COLUMNS_TEXT_FIELD_INT = 4;
 
     private void initializeContentPane()
     {
@@ -211,8 +216,8 @@ public class QuantileNormalizerDriver
         observationsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         JScrollPane observationsScrollPane = new JScrollPane(observationsTable);
         observationsScrollPane.setBorder(BorderFactory.createEtchedBorder());
-        observationsScrollPane.setPreferredSize(new Dimension(500, 200));
-        observationsScrollPane.setMaximumSize(new Dimension(500, 200));
+        observationsScrollPane.setPreferredSize(new Dimension(500, 250));
+        observationsScrollPane.setMaximumSize(new Dimension(500, 250));
         
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -227,7 +232,7 @@ public class QuantileNormalizerDriver
         
         JPanel controlsPanel = new JPanel();
         JPanel scalesPanel = new JPanel();
-        mScalesLabel = new JLabel("Normalize based on quantiles using the scale: ");
+        mScalesLabel = new JLabel("Normalize using the scale: ");
         scalesPanel.add(mScalesLabel);
         QuantileNormalizationScale []scales = QuantileNormalizationScale.getAll();
         int numScales = scales.length;
@@ -252,7 +257,7 @@ public class QuantileNormalizerDriver
         scalesPanel.add(mScalesBox);
         controlsPanel.add(scalesPanel);
         mErrorToleranceLabel = new JLabel("Specify the error tolerance: ");
-        mErrorToleranceField = new JTextField(NUM_COLUMNS_TEXT_FIELD_NUMERIC);
+        mErrorToleranceField = new JTextField(NUM_COLUMNS_TEXT_FIELD_FLOAT);
         JPanel errorTolerancePanel = new JPanel();
         errorTolerancePanel.add(mErrorToleranceLabel);
         errorTolerancePanel.add(mErrorToleranceField);
@@ -264,6 +269,13 @@ public class QuantileNormalizerDriver
         fixNegativesPanel.add(mFixNegativesLabel);
         fixNegativesPanel.add(mFixNegativesBox);
         controlsPanel.add(fixNegativesPanel);
+        
+        JPanel maxIterationsPanel = new JPanel();
+        mMaxIterationsLabel = new JLabel("Max iterations: ");
+        maxIterationsPanel.add(mMaxIterationsLabel);
+        mMaxIterationsField = new JTextField(NUM_COLUMNS_TEXT_FIELD_INT);
+        maxIterationsPanel.add(mMaxIterationsField);
+        controlsPanel.add(maxIterationsPanel);
         
         constraints.fill = GridBagConstraints.NONE;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -415,11 +427,15 @@ public class QuantileNormalizerDriver
             {
                 mErrorToleranceLabel.setToolTipText(TOOL_TIP_ERROR_TOLERANCE);
                 mErrorToleranceField.setToolTipText(TOOL_TIP_ERROR_TOLERANCE);
+                mMaxIterationsLabel.setToolTipText(TOOL_TIP_MAX_ITERATIONS);
+                mMaxIterationsField.setToolTipText(TOOL_TIP_MAX_ITERATIONS);
             }
             else
             {
                 mErrorToleranceLabel.setToolTipText(null);
                 mErrorToleranceField.setToolTipText(null);
+                mMaxIterationsLabel.setToolTipText(null);
+                mMaxIterationsField.setToolTipText(null);
             }
         }
         else
@@ -433,6 +449,8 @@ public class QuantileNormalizerDriver
             mResetFormButton.setToolTipText(null);
             mErrorToleranceLabel.setToolTipText(null);
             mErrorToleranceField.setToolTipText(null);
+            mMaxIterationsLabel.setToolTipText(null);
+            mMaxIterationsField.setToolTipText(null);
         }
         if(pResultsObtained)
         {
@@ -483,11 +501,13 @@ public class QuantileNormalizerDriver
         boolean showErrorTolerance = pFileLoaded && (hasMissingData());
         mErrorToleranceLabel.setEnabled(showErrorTolerance);
         mErrorToleranceField.setEnabled(showErrorTolerance);
-        mIterationCountLabel.setEnabled(pResultsObtained);
-        mIterationCountText.setEnabled(pResultsObtained);
+        mMaxIterationsLabel.setEnabled(showErrorTolerance);
+        mMaxIterationsField.setEnabled(showErrorTolerance);
         boolean showErrorLabel = pResultsObtained && hasMissingData();
         mErrorLabel.setEnabled(showErrorLabel);
         mErrorText.setEnabled(showErrorLabel);
+        mIterationCountLabel.setEnabled(pResultsObtained);
+        mIterationCountText.setEnabled(pResultsObtained);
     }
     
     private void clearResults()
@@ -514,10 +534,12 @@ public class QuantileNormalizerDriver
         if(null != mObservationsData && mObservationsData.getMissingDataRate() > 0.0)
         {
             mErrorToleranceField.setText(Double.toString(DEFAULT_ERROR_TOLERANCE));
+            mMaxIterationsField.setText(Integer.toString(DEFAULT_MAX_ITERATIONS));
         }
         else
         {
             mErrorToleranceField.setText("");
+            mMaxIterationsField.setText("");
         }
         setDefaultForFixNegatives();
     }
@@ -604,33 +626,6 @@ public class QuantileNormalizerDriver
         mDelimiterBox.setSelectedItem(DEFAULT_DATA_FILE_DELIMITER.getName()); 
         setDefaults();
     }
-        
-//    private void initializeLoadFileChooser()
-//    {
-//        mFileChooser = new JFileChooser(mWorkingDirectory);
-//        mFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-//        DataFileDelimiter []delimiters = DataFileDelimiter.getAll();
-//        int numDelimiters = delimiters.length;
-//        DataFileDelimiter delimiter = null;
-//        RegexFileFilter fileFilter = null;
-//        RegexFileFilter defaultFilter = null;
-//        for(int i = 0; i < numDelimiters; ++i)
-//        {
-//            delimiter = delimiters[i];
-//            fileFilter = new RegexFileFilter(delimiter.getFilterRegex(), 
-//                    "data file in " + delimiter.getName() + "-delimited format");
-//            if(null != mDelimiter && mDelimiter.equals(delimiter))
-//            {
-//                defaultFilter = fileFilter; 
-//            }
-//            mFileChooser.addChoosableFileFilter(fileFilter);
-//        }
-//        if(null != defaultFilter)
-//        {
-//            mFileChooser.setFileFilter(defaultFilter);
-//        }
-//    }
-    
 
     
     private void loadFile()
@@ -689,6 +684,40 @@ public class QuantileNormalizerDriver
             }
         }
         
+        Integer maxIterations = null;
+        String maxIterationsString = mMaxIterationsField.getText().trim();
+        if(maxIterationsString.length() > 0)
+        {
+            try
+            {
+                maxIterations = new Integer(maxIterationsString);
+                if(maxIterations.intValue() <= 0)
+                {
+                    handleMessage("The maximum number of iterations specified is not valid, \"" + maxIterations + "\"; it should be a positive integer",
+                            "Invalid max iterations",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;                
+                }
+            }
+            catch(NumberFormatException e)
+            {
+                handleMessage("The maximum number of iterations specified is not a valid integer number, \"" + maxIterationsString + "\"",
+                        "Invalid max iterations",
+                        JOptionPane.ERROR_MESSAGE);
+                return;                
+            }
+        }
+        else
+        {
+            if(null != errorTolerance)
+            {
+                handleMessage("The maximum number of iterations is required to be specified, when an error tolerance is specified",
+                        "Missing max iterations",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        
         // handle normalization scale
         QuantileNormalizationScale scale = getScale();
         boolean fixNegatives = mFixNegativesBox.isSelected();
@@ -698,6 +727,7 @@ public class QuantileNormalizerDriver
         params.mFixNonpositiveValues = fixNegatives;
         params.mErrorTolerance = errorTolerance;
         params.mScale = scale;
+        params.mMaxIterations = maxIterations;
         try
         {
             mQuantileNormalizer.normalize(rawObservations, params, results);
@@ -759,57 +789,15 @@ public class QuantileNormalizerDriver
     
     private void writeResults(File pSelectedFile, DataFileDelimiter pDelimiter)
     {
-        ObservationsTableModel tableModel = (ObservationsTableModel) mResultsTable.getModel();
         ObservationsData resultsData = mResultsData;
-        String []evidences = resultsData.getEvidenceNames();
-        String []elements = resultsData.getElementNames();
-        
-        StringBuffer sb = new StringBuffer();
-        String delimiter = pDelimiter.getDelimiter();
-        int numEvidences = evidences.length;
-        int numElements = elements.length;
-        sb.append(ObservationsTableModel.COLUMN_NAME_ELEMENT + delimiter);
-        for(int j = 0; j < numEvidences; ++j)
-        {
-            sb.append(evidences[j]);
-            if(j < numEvidences - 1)
-            {
-                sb.append(delimiter);
-            }
-        }
-        sb.append("\n");
-        Double obsObj = null;
-        double obs = 0.0;
-        String elementName = null;
-        for(int i = 0; i < numElements; ++i)
-        {
-            elementName = elements[i];
-            if(-1 != elementName.indexOf(delimiter)) 
-            {
-                elementName = elementName.replaceAll(delimiter, "_");
-            }
-            sb.append(elementName + delimiter);
-            for(int j = 0; j < numEvidences; ++j)
-            {
-                obsObj = resultsData.getValueAt(i, j);
-                if(null != obsObj)
-                {
-                    sb.append(mNumberFormat.format(obsObj.doubleValue()));
-                }
-                if(j < numEvidences - 1)
-                {
-                    sb.append(delimiter);
-                }
-            }
-            sb.append("\n");
-        }
         
         try
         {
             FileWriter fileWriter = new FileWriter(pSelectedFile);
             PrintWriter printWriter = new PrintWriter(fileWriter);
-            printWriter.print(sb.toString());
-            printWriter.flush();
+            
+            resultsData.writeToFile(printWriter, pDelimiter, mNumberFormat);
+
             JOptionPane.showMessageDialog(mParent, 
                                           new SimpleTextArea("results were written to the file \"" + pSelectedFile.getAbsolutePath() + "\" successfully."), 
                                           "results written successfully", JOptionPane.INFORMATION_MESSAGE);

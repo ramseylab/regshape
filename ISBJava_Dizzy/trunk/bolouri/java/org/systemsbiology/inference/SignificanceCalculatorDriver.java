@@ -1434,11 +1434,7 @@ public class SignificanceCalculatorDriver
         String elementName = null;
         for(int i = 0; i < numElements; ++i)
         {
-            elementName = elements[i];
-            if(-1 != elementName.indexOf(delimiter)) 
-            {
-                elementName = elementName.replaceAll(delimiter, "_");
-            }
+            elementName = pDelimiter.scrubIdentifier(elements[i]);
             sb.append(elementName + delimiter);
             for(int j = 0; j < numEvidences; ++j)
             {

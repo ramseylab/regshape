@@ -267,8 +267,8 @@ public class DataManagerDriver
                         setToolTipsForFields(null != mData);
                     }
                 });
-        fileNameListScrollPane.setPreferredSize(new Dimension(800, 100));
-        fileNameListScrollPane.setMinimumSize(new Dimension(800, 100));
+        fileNameListScrollPane.setPreferredSize(new Dimension(800, 75));
+        fileNameListScrollPane.setMinimumSize(new Dimension(800, 75));
         fileNameListScrollPane.setBorder(BorderFactory.createEtchedBorder());
         JPanel fileNamePanel = new JPanel();
                 
@@ -298,8 +298,8 @@ public class DataManagerDriver
         mDataTable.setRowSelectionAllowed(false);
         mDataTable.setColumnSelectionAllowed(true);
         JScrollPane dataTablePane = new JScrollPane(mDataTable);
-        dataTablePane.setPreferredSize(new Dimension(800, 300));
-        dataTablePane.setMinimumSize(new Dimension(800, 300));
+        dataTablePane.setPreferredSize(new Dimension(800, 400));
+        dataTablePane.setMinimumSize(new Dimension(800, 400));
         
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -608,11 +608,7 @@ public class DataManagerDriver
         String elementName = null;
         for(int i = 0; i < numElements; ++i)
         {
-            elementName = elements[i];
-            if(-1 != elementName.indexOf(delimiter)) 
-            {
-                elementName = elementName.replaceAll(delimiter, "_");
-            }
+            elementName = pDelimiter.scrubIdentifier(elements[i]);
             sb.append(elementName + delimiter);
             for(int j = 0; j < numEvidences; ++j)
             {
