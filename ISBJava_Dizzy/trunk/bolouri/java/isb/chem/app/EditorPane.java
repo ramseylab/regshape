@@ -393,8 +393,14 @@ public class EditorPane
 
         if(null == parserAlias)
         {
+            String fileName = getFileName();
+            if(null == fileName)
+            {
+                // user has not set file name yet; ask for parser alias
+                fileName = "";
+            }
             ParserPicker parserPicker = new ParserPicker(mMainFrame);
-            parserAlias = parserPicker.selectParserAliasFromFileName(getFileName());
+            parserAlias = parserPicker.selectParserAliasFromFileName(fileName);
             if(null != parserAlias)
             {
                 setParserAliasLabel(parserAlias);
