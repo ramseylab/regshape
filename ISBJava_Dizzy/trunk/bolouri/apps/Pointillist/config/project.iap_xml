@@ -146,10 +146,10 @@
 				<string><![CDATA[The installer cannot run on your configuration. It will now quit.]]></string>
 			</property>
 			<property name="userSplashPath">
-				<string><![CDATA[com/zerog/ia/installer/images/]]></string>
+				<string><![CDATA[@PROJROOT@/apps/@APPNAME@/images/]]></string>
 			</property>
 			<property name="userSplashName">
-				<string><![CDATA[Splash.png]]></string>
+				<string><![CDATA[appLogo.png]]></string>
 			</property>
 			<property name="localesToBuild">
 				<object class="java.util.Vector">
