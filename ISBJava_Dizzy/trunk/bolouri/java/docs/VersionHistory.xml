@@ -150,6 +150,10 @@ This document contains the version history for the
     Added the <code>org.systemsbiology.inference</code> package, which has code for
     inferring a set of affected network elements from multiple evidence types.
   </li>
+  <li>
+    Fixed some incorrect error messages in <code>org.systemsbiology.chem.SimulatorDeterministicRungeKuttaFixed</code>,
+    for the case of an <code>org.systemsbiology.math.AccuracyException</code>.
+  </li>
 </ul>
 </td>
 </tr>

@@ -82,6 +82,10 @@ This document contains the version history for the
     <code>min(A,B)</code>
   </blockquote>
 </li>
+<li>
+  Fixed confusing error messages in the Runge-Kutta simulator with fixed step-size,
+  for the case when the relative error tolerance is exceeded.
+</li>
 </ul>
 </td>
 </tr>
