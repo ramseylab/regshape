@@ -25,10 +25,8 @@ public class ModelExporter
         mMainFrame = pMainFrame;
     }
 
-    public void exportModel(Model pModel, ClassRegistry pModelExporterRegistry)
+    public void exportModel(Model pModel, ClassRegistry pModelExporterRegistry) throws DataNotFoundException
     {
-        MainApp app = MainApp.getApp();
-        
         Set exporterAliases = pModelExporterRegistry.getRegistryAliasesCopy();
             
         java.util.List exporterAliasesList = new LinkedList(exporterAliases);
@@ -54,85 +52,67 @@ public class ModelExporter
             if(null != outputFile)
             {
                 String fileName = outputFile.getAbsolutePath();
-                IModelExporter exporter = null;
-                try
+                IModelExporter exporter = (IModelExporter) pModelExporterRegistry.getInstance(exporterAlias);
+                String fileRegex = exporter.getFileRegex();
+                boolean fileNameMatchesRegex = fileName.matches(fileRegex);
+                boolean doExport = false;
+                
+                if(! fileNameMatchesRegex)
                 {
-                    exporter = (IModelExporter) pModelExporterRegistry.getInstance(exporterAlias);
-                }
-                catch(DataNotFoundException e)
-                {
-                    JOptionPane.showMessageDialog(mMainFrame, 
-                                                  "unable to create an instance of exporter: " + exporterAlias,
-                                                  MainApp.UNEXPECTED_ERROR_MESSAGE,
-                                                  JOptionPane.ERROR_MESSAGE);
-                }
-                if(null != exporter)
-                {
-                    String fileRegex = exporter.getFileRegex();
-                    boolean fileNameMatchesRegex = fileName.matches(fileRegex);
-                    boolean doExport = false;
-                    
-                    if(! fileNameMatchesRegex)
-                    {
-                        SimpleTextArea textArea = new SimpleTextArea("Your export file name has a non-standard extension:\n" + fileName + "\nThe preferred extension regex is: " + fileRegex + 
-                                         "\nUsing this file name may make it difficult to load the model in the future.  Are you sure you want to proceed?");
-                        JOptionPane exportOptionPane = new JOptionPane();
-                        exportOptionPane.setMessageType(JOptionPane.WARNING_MESSAGE);
-                        exportOptionPane.setOptionType(JOptionPane.YES_NO_OPTION);
-                        exportOptionPane.setMessage(textArea);
-                        exportOptionPane.createDialog(mMainFrame,
-                                                      "Non-standard export filename").show();
-                        Integer response = (Integer) exportOptionPane.getValue();
-                        if(null != response &&
-                           response.intValue() == JOptionPane.YES_OPTION)
-                        {
-                            doExport = true;
-                        }
-                        else
-                        {
-                            // do nothing
-                        }
-                    }
-                    else
+                    SimpleTextArea textArea = new SimpleTextArea("Your export file name has a non-standard extension:\n" + fileName + "\nThe preferred extension regex is: " + fileRegex + 
+                    "\nUsing this file name may make it difficult to load the model in the future.  Are you sure you want to proceed?");
+                    JOptionPane exportOptionPane = new JOptionPane();
+                    exportOptionPane.setMessageType(JOptionPane.WARNING_MESSAGE);
+                    exportOptionPane.setOptionType(JOptionPane.YES_NO_OPTION);
+                    exportOptionPane.setMessage(textArea);
+                    exportOptionPane.createDialog(mMainFrame,
+                    "Non-standard export filename").show();
+                    Integer response = (Integer) exportOptionPane.getValue();
+                    if(null != response &&
+                            response.intValue() == JOptionPane.YES_OPTION)
                     {
                         doExport = true;
                     }
-                    
-                    if(doExport && outputFile.exists())
+                    else
                     {
-                        doExport = FileChooser.handleOutputFileAlreadyExists(mMainFrame,
-                                                                             fileName);
-                    }
-                    
-                    if(doExport)
-                    {
-                        boolean showSuccessfulDialog = false;
-                        String shortName = outputFile.getName();
-                        try
-                        {
-                            FileWriter outputFileWriter = new FileWriter(outputFile);
-                            PrintWriter printWriter = new PrintWriter(outputFileWriter);
-                            exporter.export(pModel, printWriter);
-                            showSuccessfulDialog = true;
-                        }
-                        catch(Exception e)
-                        {
-                            ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e);
-                            errorOptionPane.createDialog(mMainFrame, "Export operation failed: " + shortName).show();
-
-                        }
-                        if(showSuccessfulDialog)
-                        {
-                            JOptionPane.showMessageDialog(mMainFrame,
-                                                          "The file export operation succeeded.\nThe output was saved in file: " + shortName,
-                                                          "Export was successful",
-                                                          JOptionPane.INFORMATION_MESSAGE);
-                        }
+                        // do nothing
                     }
                 }
                 else
                 {
-                    // exporter is null; do nothing because we have already displayed a dialog
+                    doExport = true;
+                }
+                
+                if(doExport && outputFile.exists())
+                {
+                    doExport = FileChooser.handleOutputFileAlreadyExists(mMainFrame,
+                            fileName);
+                }
+                
+                if(doExport)
+                {
+                    boolean showSuccessfulDialog = false;
+                    String shortName = outputFile.getName();
+                    try
+                    {
+                        FileWriter outputFileWriter = new FileWriter(outputFile);
+                        PrintWriter printWriter = new PrintWriter(outputFileWriter);
+                        exporter.export(pModel, printWriter);
+                        showSuccessfulDialog = true;
+                    }
+                    catch(Exception e)
+                    {
+                        ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e);
+                        errorOptionPane.createDialog(mMainFrame, "Export operation failed: " + shortName).show();
+                        
+                    }
+                    if(showSuccessfulDialog)
+                    {
+                        JOptionPane.showMessageDialog(mMainFrame,
+                                "The file export operation succeeded.\nThe output was saved in file: " + shortName,
+                                "Export was successful",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
             }
             else
