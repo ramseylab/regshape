@@ -1,24 +1,29 @@
 <?xml version="1.0"?>
 
-<project name="ISBJava" default="compile" basedir=".">
+<project name="localJava" default="compile" basedir=".">
 
-  <property name="classesDir" location="${basedir}/../classes" />
-  <property name="styleDir" location="${basedir}/html" />
-  <property name="buildDir" location="${basedir}/../build" />
-  <property name="srcDir" location="${basedir}/isb" />
-  <property name="docsDir" location="${basedir}/docs" />
-  <property name="sourceCompileFlag" value="1.4" />
+  <property name="localJava.styleDir"                location="${basedir}/html" />
+  <property name="localJava.srcDir"                  location="${basedir}/isb" />
+  <property name="localJava.docsDir"                 location="${basedir}/docs" />
+  <property name="localJava.buildDir"                location="${projBuildDir}" />
+  <property name="localJava.classesDir"              location="${projClassesDir}" />
+  <property name="localJava.javadocDir"              location="${projWebDir}/javadoc" />
+
+  <property name="localJava.sourceCompileFlag"       value="1.4" />
+
+  <property name="localJava.jarFile"                 location="${localJava.buildDir}/isb.jar" />
+  <property name="localJava.srcFile"                 location="${localJava.buildDir}/isb-src.tar.gz" />
 
   <target name="style">
-    <mkdir dir="${styleDir}" />
-    <style basedir="${docsDir}" 
-           destdir="${styleDir}" 
+    <mkdir dir="${localJava.styleDir}" />
+    <style basedir="${localJava.docsDir}" 
+           destdir="${localJava.styleDir}" 
            includes="*.xml" 
            style="${docsStyleSheet}" />
   </target>
 
   <target name="copyResources">
-    <copy todir="${classesDir}">
+    <copy todir="${localJava.classesDir}">
       <fileset dir="${basedir}">
         <include name="**/*.xml" />
         <include name="**/*.dtd" />
@@ -28,37 +33,38 @@
     </copy>
   </target>
 
-  <target name="install-web" depends="style, javadoc" />
+  <target name="buildWeb" depends="style, javadoc" />
   
   <target name="javadoc">
-    <javadoc source="${sourceCompileFlag}" 
-             Overview="${styleDir}/overview.html" 
+    <mkdir dir="${localJava.javadocDir}" />
+    <javadoc source="${localJava.sourceCompileFlag}" 
+             Overview="${localJava.styleDir}/overview.html" 
              sourcepath="${basedir}" 
-             destdir="${webDir}/javadoc"
+             destdir="${localJava.javadocDir}"
              packageList="${basedir}/packageList.txt"
              additionalparam="-breakiterator" />
   </target>
 
   <target name="compile">
-    <mkdir dir="${classesDir}" />
-    <javac srcdir="${srcDir}" 
-           destdir="${classesDir}" 
-           source="${sourceCompileFlag}" 
+    <mkdir dir="${localJava.classesDir}" />
+    <javac srcdir="${localJava.srcDir}" 
+           destdir="${localJava.classesDir}" 
+           source="${localJava.sourceCompileFlag}" 
            debug="on" 
            excludes="**/tp/*.java" />
   </target>
 
   <target name="compiletests" depends="compile">
-    <mkdir dir="${classesDir}" />
-    <javac srcdir="${srcDir}" 
-           destdir="${classesDir}" 
-           source="${sourceCompileFlag}" 
+    <mkdir dir="${localJava.classesDir}" />
+    <javac srcdir="${localJava.srcDir}" 
+           destdir="${localJava.classesDir}" 
+           source="${localJava.sourceCompileFlag}" 
            debug="on" 
            includes="**/tp/*.java" />
   </target>  
  
   <target name="srctar">
-    <tar destfile="${buildDir}/isb-src.tar.gz" 
+    <tar destfile="${localJava.srcFile}" 
          basedir="${basedir}"
          includes="**/*.java,**/*.xml,**/.dtd" 
          compression="gzip">
@@ -68,9 +74,9 @@
   <target name="build" depends="jar, srctar" />
 
   <target name="jar" depends="clean, compile, copyResources">
-    <mkdir dir="${buildDir}" />
-    <jar basedir="${classesDir}" destfile="${buildDir}/isb.jar">
-      <fileset dir="${classesDir}">
+    <mkdir dir="${localJava.buildDir}" />
+    <jar basedir="${localJava.classesDir}" destfile="${localJava.jarFile}">
+      <fileset dir="${localJava.classesDir}">
         <include name="**/*.class" />
         <include name="**/*.xml" />
         <include name="**/*.dtd" />
@@ -80,15 +86,15 @@
   </target>
 
   <target name="clean">
-    <delete dir="${styleDir}" quiet="yes" />
+    <delete dir="${localJava.styleDir}" quiet="yes" />
     <delete quiet="yes">
-      <fileset dir="${srcDir}">
+      <fileset dir="${localJava.srcDir}">
         <include name="**/*.class" />
       </fileset>
     </delete>
-    <delete dir="${buildDir}" quiet="yes" />
+    <delete dir="${localJava.buildDir}" quiet="yes" />
     <delete quiet="yes">
-      <fileset dir="${classesDir}">
+      <fileset dir="${localJava.classesDir}">
         <include name="**/*.class" />
         <include name="**/*.xml" />
         <include name="**/*.dtd" />

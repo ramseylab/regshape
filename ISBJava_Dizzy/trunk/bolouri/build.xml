@@ -5,41 +5,87 @@
   %CommonConfig;
   ]>
 
-<project name="ISBJava" default="compile" basedir=".">
+<project name="bolouri" default="compile" basedir=".">
+  
+  <property name="projJavaDir"        location="${basedir}/java" />
+  <property name="projAppsDir"        location="${basedir}/apps" />
+  <property name="projConfigDir"      location="${basedir}/config" />
+  <property name="projDocsDir"        location="${basedir}/docs" />
+  <property name="projBuildDir"       location="${basedir}/build" />
+  <property name="projStyleDir"       location="${basedir}/build/html" />
+  <property name="projWebDir"         location="${basedir}/build/web" />
+  <property name="projClassesDir"     location="${basedir}/classes" />
 
-  <property name="webDir" location="&installWebDir;" />
-  <property name="mainDocsDir" location="${basedir}/docs" />
-  <property name="mainConfigDir" location="${basedir}/config" />
-  <property name="docsStyleSheet" value="${mainDocsDir}/documentation-stylesheet.xml" />
-  <property name="javaDir" location="${basedir}/java" />
-  <property name="appsDir" location="${basedir}/apps" />
+  <property name="webServerUsername"  value="bolouri_group" />
+  <property name="webServerPassword"  value="b2G4cIc" />  <!-- icky: find some way to MIME-encode this -->
+  <property name="webServerHostname"  value="projects.systemsbiology.net" />
+  <property name="webServerRemoteDir" value="." />
+
+  <!-- THESE PROPERTIES ARE USED THROUGHOUT THE BUILD SYSTEM: -->
+  <property name="docsStyleSheet" value="${projDocsDir}/documentation-stylesheet.xml" />
 
   <target name="compile">
-    <ant dir="${javaDir}" target="compile" />
-    <ant dir="${appsDir}" target="compile" />
+    <ant dir="${projJavaDir}" target="compile" />
+    <ant dir="${projAppsDir}" target="compile" />
   </target>
 
   <target name="clean">
-    <ant dir="${javaDir}" target="clean" />
-    <ant dir="${appsDir}" target="clean" />
+    <ant dir="${projJavaDir}" target="clean" />
+    <ant dir="${projAppsDir}" target="clean" />
+    <delete dir="${projStyleDir}" quiet="yes" />
+    <delete dir="${projWebDir}" quiet="yes" />
+  </target>
+
+  <target name="style">
+    <mkdir dir="${projStyleDir}" />
+    <style basedir="${projDocsDir}" 
+           destdir="${projStyleDir}" 
+           includes="*.xml" 
+           style="${docsStyleSheet}" />
+  </target>
+
+  <target name="copyHtml">
+    <mkdir dir="${projWebDir}" />
+    <copy todir="${projWebDir}">
+      <fileset dir="${projStyleDir}">
+        <include name="*.html" />
+      </fileset>
+    </copy>
   </target>
 
   <target name="copyImages">
-    <copy todir="${webDir}/images">
-      <fileset dir="docs">
+    <mkdir dir="${projWebDir}/images" />
+    <copy todir="${projWebDir}/images">
+      <fileset dir="${projDocsDir}">
         <include name="*.png" />
       </fileset>
     </copy>
   </target>
 
-  <target name="install-web" depends="copyImages">
-    <ant dir="${javaDir}" target="install-web" />
-    <ant dir="${appsDir}" target="install-web" />
+  <target name="buildWeb" depends="copyImages, style, copyHtml">
+    <ant dir="${projJavaDir}" target="buildWeb" />
+    <ant dir="${projAppsDir}" target="buildWeb" />
   </target>
 
   <target name="build">
-    <ant dir="${javaDir}" target="build" />
-    <ant dir="${appsDir}" target="build" />
+    <ant dir="${projJavaDir}" target="build" />
+    <ant dir="${projAppsDir}" target="build" />
   </target>
+
+  <target name="uploadWeb" depends="buildWeb">
+    <apply executable="ncftpput" type="both">
+      <arg value="-u" />
+      <arg value="${webServerUsername}" />
+      <arg value="-p" />
+      <arg value="${webServerPassword}" /> 
+      <arg value="-R" />
+      <arg value="${webServerHostname}" />
+      <arg value="${webServerRemoteDir}" />
+      <fileset dir="${projWebDir}">
+        <include name="*" />
+      </fileset>
+    </apply>
+  </target>
+
 
 </project>

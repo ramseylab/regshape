@@ -1,16 +1,15 @@
 <?xml version="1.0"?>
-
-<!DOCTYPE StyleSheet [
- <!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
- %CommonConfig;
-  ]>
+<!DOCTYPE xsl:stylesheet [
+  <!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
+  %CommonConfig;
+   ]>
 
 <xsl:stylesheet version="1.0" 
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
                 xmlns:isb="http://www.systemsbiology.org/xmlns"
                 >              
 
-<!--  <xsl:output method="html" encoding="ISO-8859-1" />  -->
+<!-- <xsl:output method="html" encoding="ISO-8859-1" /> -->  
 
   <xsl:template match="/">
     <html>
@@ -207,6 +206,29 @@
     <code>
       <xsl:apply-templates/>
     </code>
+  </xsl:template>
+
+  <xsl:template match="table">
+    <xsl:element name="table">
+      <xsl:if test="@border != ''">
+        <xsl:attribute name="border">
+          <xsl:value-of select="@border" />
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates/>
+    </xsl:element>
+  </xsl:template>
+
+  <xsl:template match="td">
+    <td>
+      <xsl:apply-templates/>
+    </td>
+  </xsl:template>
+
+  <xsl:template match="tr">
+    <tr>
+      <xsl:apply-templates/>
+    </tr>
   </xsl:template>
 
   <xsl:template match="img">

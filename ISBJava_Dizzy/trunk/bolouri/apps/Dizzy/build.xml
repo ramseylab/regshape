@@ -1,49 +1,45 @@
 <?xml version="1.0"?>
 
 <project name="Dizzy" default="compile" basedir=".">
-  <property name="styleDir" location="${basedir}/html" />
-  <property name="buildDir" location="${basedir}/build" />
-  <property name="configDir" location="${basedir}/config" />
-  <property name="appWebDir" location="${webDir}/${ant.project.name}" />
+  <property name="app.styleDir"                 location="${basedir}/html" />
+  <property name="app.buildDir"                 location="${basedir}/build" />
+  <property name="app.configDir"                location="${basedir}/config" />
+  <property name="app.webDir"                   location="${projWebDir}/${ant.project.name}" />
 
   <target name="compile">
-
+    <!-- nothing to do -->
   </target>
 
   <target name="clean">
-    <delete dir="${styleDir}" quiet="yes" />
-    <delete dir="${buildDir}/projectlocales" quiet="yes" />
-    <delete file="${configDir}/CommonConfig.dtd" quiet="yes" />
+    <delete dir="${app.styleDir}" quiet="yes" />
+    <delete dir="${app.buildDir}/projectlocales" quiet="yes" />
+    <delete file="${app.configDir}/CommonConfig.dtd" quiet="yes" />
   </target>
 
   <target name="copyCommonConfig">
-    <copy file="${mainConfigDir}/CommonConfig.dtd" todir="${configDir}" />
-    
+    <copy file="${projConfigDir}/CommonConfig.dtd" todir="${app.configDir}" />
   </target>
 
   <target name="style" depends="copyCommonConfig">
-    <mkdir dir="${styleDir}" />
+    <mkdir dir="${app.styleDir}" />
     <style basedir="${basedir}/docs" 
-           destdir="${styleDir}" 
+           destdir="${app.styleDir}" 
            includes="*.xml" 
            style="${docsStyleSheet}"
            excludes="AppConfig.xml" />
   </target>
 
-  <target name="install-web" depends="style">
-    <mkdir dir="${appWebDir}" />
-    <copy todir="${appWebDir}">
-      <fileset dir="${styleDir}">
+  <target name="buildWeb" depends="style">
+    <mkdir dir="${app.webDir}" />
+    <copy todir="${app.webDir}">
+      <fileset dir="${app.styleDir}">
         <include name="*.html" />
-      </fileset>
-      <fileset dir="${basedir}/docs">
-        <include name="*.png" />
       </fileset>
     </copy>
   </target>
 
-  <target name="build" depends="style">
-
+  <target name="build" depends="style, copyCommonConfig">
+    <!-- do nothing -->
   </target>
 
 </project>

@@ -10,8 +10,8 @@
     <ant dir="${basedir}/Dizzy" target="clean" />
   </target>
 
-  <target name="install-web">
-    <ant dir="${basedir}/Dizzy" target="install-web" />
+  <target name="buildWeb">
+    <ant dir="${basedir}/Dizzy" target="buildWeb" />
   </target>
 
   <target name="build">

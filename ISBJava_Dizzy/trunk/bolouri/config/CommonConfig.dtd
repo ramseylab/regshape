@@ -1,4 +1,11 @@
-<!ENTITY installWebDir "/users/sramsey/public_html/bolouri">
-<!ENTITY webBaseURL    "http://projects.systemsbiology.net/bolouri_group">
-<!ENTITY mainLogoURL   "&webBaseURL;/images/logo-isb.png">
-<!ENTITY mainPublicURL "http://www.systemsbiology.org">
+<!ENTITY webBaseURL         "http://projects.systemsbiology.net/bolouri_group">
+<!ENTITY mainLogoURL        "&webBaseURL;/images/logo-isb.png">
+<!ENTITY mainPublicURL      "http://www.systemsbiology.org">
+
+<!ENTITY mainGroup          "Bolouri Group">
+<!ENTITY mainAffiliation    "Institute for Systems Biology">
+<!ENTITY mainEmailSafe      "bolourilab at systemsbiology.org">
+
+<!-- these definitions are used in styled XHTML files: -->
+<!ENTITY eacute "&#x00E9;">
+<!ENTITY nbsp "&#160;"> 

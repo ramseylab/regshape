@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xml" href="../docs/documentation-stylesheet.xml"?>
 <!DOCTYPE Overview [
+  <!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
+  %CommonConfig;
    ]>
 
 
@@ -8,13 +10,21 @@
 
 <isb:docpreamble>Javadoc documentation for ISB Java classes.</isb:docpreamble>
 <isb:doctitle>ISBJava Home Page</isb:doctitle>
-<isb:docauthor>Bolouri Group, Institute for Systems Biology</isb:docauthor>
+<isb:docauthor>&mainGroup;, &mainAffiliation;</isb:docauthor>
 
-This is the home page for Java classes for the Bolouri
-Group at the Institute for Systems Biology.  Source code
-for these java classes is available by e-mailing 
-<a href="../index.html" target="_new">Stephen Ramsey</a>.
-You will need JDK v1.4 or newer in order to use these classes.
+The ISBJava project is a library (collection) of classes
+written in the <a href="http://java.sun.com">Java</a>
+programming language, that are intended to be used for
+research in computational biology.  The body of source code
+for these java classes is available by contacting the
+group:
+<blockquote>
+<pre>
+&mainEmailSafe;
+</pre>
+</blockquote>
+You will need the Sun Java Development Kit (JDK) vesrion 1.4 
+or newer (or the equivalent) in order to use these classes.
 <p />
 A few notes about conventions used these java packages.
 The &quot;.tp&quot; suffix at the end of a package name
@@ -27,8 +37,8 @@ parent package (in the JUnit framework).
 <p />
 These classes are all in development, and are subject
 to change at any time, without notice.  All classes contained
-herein should be considered copyright of the Institute for
-Systems Biology, 2003.  These classes
+herein should be considered copyright of the &mainAffiliation;, 
+2003.  These classes
 have been tested on the Sun JDK v1.4.1, on the Red Hat
 Linux 8.0 platform.  On other platforms, your mileage 
 may vary.  
@@ -40,8 +50,8 @@ All builds must be initiated from inside the <code>java</code>
 directory (one level up from the <code>java/src</code> directory).
 The end products of the source code in this directory are:
 <ol>
-<li>Class files, stored in: <code>CVSARCHIVE/java/classes/isb/...</code></li>
-<li>A JAR file in: <code>CVSARCHIVE/java/build/isb.jar</code></li>
+<li>Class files, stored in: <code>CVSARCHIVE/bolouri/classes/isb/...</code></li>
+<li>A JAR file in: <code>CVSARCHIVE/bolouri/build/isb.jar</code></li>
 <li>Javadoc documentation:  <code>&lt;WEBDIR&gt;/javadoc</code></li>
 </ol>
 Some of the packages in this source directory tree
@@ -50,7 +60,7 @@ In particular, in order to be able to compile the full
 source tree, you will need to have the following Java libraries
 installed and available within your <code>CLASSPATH</code> environment
 variable:
-<table>
+<table border="1">
 <tr>
 <td>Package name</td><td>JAR name</td><td>Source</td>
 </tr>
@@ -71,7 +81,7 @@ variable:
 <td><code>www.sbw-sbml.org/sbw/software/</code></td>
 </tr>
 </table>
-Note that the SBW/SBML libraries and packages are only requied for
+Note that the SBW/SBML libraries and packages are only required for
 compiling the code in the &quot;<code>isb.chem.sbw</code>&quot; 
 directory.  By omitting this
 directory from the compilation (by adding a suitable 
@@ -82,11 +92,6 @@ directory from the compilation (by adding a suitable
 would not have any dependencies on 
 the aforementioned SBW/SBML libraries.  
 <p />
-Related links:
-<p />
-<a href="../bolourilab.html" target="_new">Bolouri Lab Home Page</a>
-<p />
-<a href="http://java.sun.com" target="_new"><img src="../java.png" alt="java" border="0" /></a><br />
 
 </isb:document>
 

@@ -9,8 +9,9 @@
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
 
 <!-- these definitions are used only in documentation, not by the app itself: -->
-<!ENTITY appMaintainerFullName "Bolouri Group">
-<!ENTITY appMaintainerEmailSafe "bolourilab at systemsbiology.org"> 
-<!ENTITY appMaintainerAffiliation "Institute for Systems Biology">
-<!ENTITY appOriginalAuthorFullName "Stephen Ramsey">
+<!ENTITY appMaintainerFullName "&mainGroup;">
+<!ENTITY appMaintainerEmailSafe "&mainEmailSafe;"> 
+<!ENTITY appMaintainerAffiliation "&mainAffiliation;">
+
+<!ENTITY appOriginalAuthorFullName "Stephen Ramsaey">
 <!ENTITY appOriginalAuthorEmailSafe "sramsey at systemsbiology.org"> 
