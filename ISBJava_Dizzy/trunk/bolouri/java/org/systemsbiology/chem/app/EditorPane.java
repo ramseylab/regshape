@@ -14,6 +14,7 @@ import org.systemsbiology.util.*;
 
 import java.awt.*;
 import javax.swing.event.*;
+import javax.swing.text.*;
 import javax.swing.*;
 import java.io.*;
 
@@ -29,7 +30,8 @@ public class EditorPane
 
     private static final String LABEL_FILE =   "file: ";
     private static final String LABEL_PARSER = "parser: ";
-
+    private static final String LABEL_LINE = "line: ";
+    
     private Component mMainFrame;
     private JTextArea mEditorPaneTextArea;
     private JButton mProcessFileButton;
@@ -45,6 +47,7 @@ public class EditorPane
     private JScrollPane mEditorScrollPane;
     private File mCurrentDirectory;
     private IModelBuilder mModelBuilder;
+    private JLabel mLineNumberLabel;
     
     interface EditorStateUpdater
     {
@@ -364,10 +367,13 @@ public class EditorPane
         LayoutManager labelLayoutManager = new BoxLayout(labelPanel, BoxLayout.Y_AXIS);
         labelPanel.setLayout(labelLayoutManager);
         JLabel fileLabel = new JLabel(LABEL_FILE + "(none)");
+        Font plainFont = fileLabel.getFont().deriveFont(Font.PLAIN);
         labelPanel.add(fileLabel);
+        fileLabel.setFont(plainFont);
         mFileNameLabel = fileLabel;
 
         JLabel parserLabel = new JLabel(LABEL_PARSER + "(none)");
+        parserLabel.setFont(plainFont);
         mParserAliasLabel = parserLabel;
         labelPanel.add(parserLabel);
 
@@ -381,6 +387,11 @@ public class EditorPane
         labelEditorPane.setLayout(layoutManager);
         editorPanel.add(labelEditorPane);
 
+        JLabel lineNumberLabel = new JLabel("line: 0");
+        editorPanel.add(lineNumberLabel);
+        mLineNumberLabel = lineNumberLabel;
+        lineNumberLabel.setFont(plainFont);
+        
         initializeEditorTextArea(labelEditorPane);
 
         pMainPane.add(editorPanel);
@@ -396,6 +407,19 @@ public class EditorPane
         mMainApp.updateMenus();
     }
 
+    private void handleCaretPositionChange()
+    {
+        try
+        {
+            int linePosition = mEditorPaneTextArea.getLineOfOffset(mEditorPaneTextArea.getCaretPosition()) + 1;
+            mLineNumberLabel.setText(LABEL_LINE + linePosition);
+        }
+        catch(BadLocationException e)
+        {
+            mLineNumberLabel.setText(LABEL_LINE + "???");
+        }
+    }
+    
     private void initializeEditorTextArea(Container pPane)
     {
         DocumentListener listener = new DocumentListener()
@@ -420,6 +444,13 @@ public class EditorPane
                                                  EDITOR_TEXT_AREA_NUM_COLS);
         editorTextArea.setEditable(true);
         editorTextArea.getDocument().addDocumentListener(listener);
+        editorTextArea.addCaretListener(new CaretListener()
+                {
+            public void caretUpdate(CaretEvent e)
+            {
+                handleCaretPositionChange();
+            }
+                });
         mEditorPaneTextArea = editorTextArea;
         
         JScrollPane scrollPane = new JScrollPane(editorTextArea);
