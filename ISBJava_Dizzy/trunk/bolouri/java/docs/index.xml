@@ -14,6 +14,16 @@
     http://www.gnu.org/copyleft/lesser.html
  -->
 
+<!--
+This page references an image file ISBJavaDownloads.jpg that
+is created by an external script, computeWebStats.pl.  This
+image file is a counter of the number of times the ISBJava
+software has been downloaded.   The image file is not created
+and uploaded by the build system.  It is created and uploaded
+independently, so that the web counter gets updated without
+having to run the build system.
+-->
+
 <!-- ========== PREAMBLE ========== -->
 
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
