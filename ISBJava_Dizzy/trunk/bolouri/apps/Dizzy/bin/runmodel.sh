@@ -1,5 +1,16 @@
 #!/bin/bash
-ISBCHEMAPPDIR=${HOME}/@APPNAME@
-ISBCHEMAPPCLASSPATH=${ISBCHEMAPPDIR}/lib/ISBJava.jar:${ISBCHEMAPPDIR}/lib/SBWCore.jar:${ISBCHEMAPPDIR}/lib/jfreechart.jar:${ISBCHEMAPPDIR}/lib/jcommon.jar:${ISBCHEMAPPDIR}/lib/SBMLValidate.jar:${ISBCHEMAPPDIR}/lib/odeToJava.jar:${ISBCHEMAPPDIR}/lib/Jama.jar
-java @APPJAVARUNTIMEFLAGS@ -cp "${CLASSPATH}:${ISBCHEMAPPCLASSPATH}" 'org.systemsbiology.chem.app.SimulationLauncherCommandLine' $@
+#----------------------------------------
+# TO BE CONFIGURED BY THE USER:
+JAVA_BIN=java
+INSTALL_DIR=..
+#----------------------------------------
 
+CLASSPATH=${INSTALL_DIR}/lib/ISBJava.jar:\
+${INSTALL_DIR}/lib/SBWCore.jar:\
+${INSTALL_DIR}/lib/jfreechart.jar:\
+${INSTALL_DIR}/lib/jcommon.jar:\
+${INSTALL_DIR}/lib/SBMLValidate.jar:\
+${INSTALL_DIR}/lib/odeToJava.jar:\
+${INSTALL_DIR}/lib/Jama.jar
+
+${JAVA_BIN} -Xmx@APPJAVAMAXHEAPSIZEBYTES@ -cp "${CLASSPATH}" 'org.systemsbiology.chem.app.SimulationLauncherCommandLine' $@
