@@ -133,6 +133,45 @@ that are not custom expressions (i.e., symbols that are bare numbers).
 Modified the simulation engine so that only non-dynamic symbols 
 which are in fact, expressions, have their value caches cleared.
 </li>
+<li>
+Changed the "print" output type, to "table".  The "table"
+output format now displays the simulation results in a resizable table
+with individually resizable column widths.  Changed the "file" output
+type to "store".
+</li>
+<li>
+For the "table" and "store" output formats, floating-point values
+are rounded to the correct number of significant digits, based on the
+relative and absolute error tolerances specified for the simulator.
+</li>
+<li>
+Modified the "plot" output format, so that the model name, simulator
+alias, and date/time are now displayed in a label that is outside
+the plot image.  When the plot image is saved, the labels will not
+be saved with it, which is generally preferable because the desired
+label format and font will differ based on the end application for
+the plot.
+</li>
+<li>
+Added a list of past simulations to the simulation launcher window.
+This list can be used to go back and generate a plot, or tabulator view,
+for the results of a previously run simulation.  The results of a
+previously run simulation may be saved to a file as well.
+</li>
+<li>
+The windows for simulation results plots and tabular views, are now
+tiled in a cascading pattern together, rather than tiled independently.
+</li>
+<li>
+Fixed a potential bug whereby the user was allowed to specify a 
+relative error tolerance of greater than 1.0.
+</li>
+<li>
+Modified the command-line simulation runner <code>runmodel</code>, so
+that it prints out simulation results with a number of significant 
+digits that is consistent with the specified absolute and relative
+error tolerances.
+</li>
 </ul>
 </td>
 <td><a href="&javaURL;/1.8.0/download.html">1.8.0</a></td>
@@ -754,7 +793,7 @@ reaction rates for dimerization reactions, for model interchangability with the 
 <tr valign="top">
 <td><a href="../0.0.4/&installerDownloadRelURL;">0.0.4</a></td>
 <td>2003/08/28</td>
-<td>Modified the Cytoscape bridge to use JNLP, so Cytoscape does not have to be bundled with Dizzy</td>
+<td>Modified the Cytoscape bridge to use JNLP, so Cytoscape does not have to be bundled with the application</td>
 <td><a href="&javaURL;/0.0.4/&installerDownloadRelURL;">0.0.4</a></td>
 </tr>
 
