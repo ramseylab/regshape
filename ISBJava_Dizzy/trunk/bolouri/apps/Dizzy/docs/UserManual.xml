@@ -154,6 +154,7 @@ system.
 The &appName; system is implemented in the Java programming language.
 This means that an installation of the Java Runtime Environment
 (JRE) is required in order to be able to use the &appName; system.
+
 A version of the &appName; system installer program 
 (&quot;<code>ins&appName;.bin</code>&quot; on Unix/Linux, 
 or &quot;<code>ins&appName;.exe</code>&quot; on Windows)
@@ -165,14 +166,11 @@ in the use of the Java programming language and runtime environment.
 You may also download the &quot;thin&quot; version of the installer 
 that does not  have the JRE pre-bundled.  In order to use 
 the &quot;thin&quot; installation of &appName;, you must already have
-a JRE installed on your computer.  
-Certain new features of the Java language are
-used in the implementation of the &appName; system.  This means
-that &appName; will only function properly when used with a Java
-Runtime Environment that implements at least the language features
-of version 1.4 of the Sun Java Development Kit (JDK).  In particular,
-the Java Runtime Environment must have support for assertions, in
-order for &appName; to work properly.
+a JRE installed on your computer.  The JRE must be at least version 
+1.4 or newer, because the software uses Java 1.4 language features and 
+extensions.  This software will not function correctly with a 1.3.X 
+version of the JRE; if you attempt to run it under a 1.3.X version
+of the JRE, you will see an <code>UnsupportedClassVersionException</code>.
 </p>
 <p>
 The specific hardware requirements for using the &appName; system
@@ -189,12 +187,13 @@ apply to you.
 <p>
 This software has been tested on Windows XP and Red Hat Linux 8.0.
 It should function properly on most Windows and Linux distributions.
-It has not been tested on the Mac OSX operating system, but it is
-made available for Mac OSX operating system on an &quot;as-is&quot; basis.
+For other operating systems, you may download the &quot;Other Java-Enabled
+Platforms&quot; version of the installer.  A Mac OSX version of the
+installer is under development and will be released soon.
 </p>
 </isb:docsubsection>
 
-<isb:docsubsection name="Quick Start" label="quickstart">
+<isb:docsubsection name="Tutorial" label="tutorial">
 
 <p>
 &appName; is launched by executing the &quot;&appName;&quot; executable
@@ -205,9 +204,338 @@ in a new Program Group &quot;&appName;&quot;, which will show up in the
 &quot;Start&quot; menu.  If you are installing on a Linux computer, the
 symbolic link is created in your home directory, by default.  Note that
 the installation program permits you to override the default location for
-the symbolic link to be created.  
+the symbolic link to be created, so the symbolic link may not be in the 
+default location on your computer, if you selected a different location
+in the installation process.  By double-clicking on the &quot;&appName;&quot;
+symbolic link, the &appName; program should start up.  You should see an
+application window appear that looks like the following picture:
 </p>
-
+<p>
+<img src="../images/screenshot2.png" alt="&appName; screenshot 2" />
+</p>
+<p>
+To load a model definition file into &appName;, select the &quot;Open...&quot;
+item from the &quot;File&quot; menu.  This will open a dialog box, as shown
+here:
+</p>
+<p>
+<img src="../images/screenshot3.png" alt="&appName; screenshot 3" />
+</p>
+<p>
+In the &quot;Please select a file to open&quot; dialog box, navigate to the
+directory in which you installed &appName;.  Then navigate into the
+&quot;samples&quot; subdirectory.  The dialog box should look like this:
+</p>
+<p>
+<img src="../images/screenshot4.png" alt="&appName; screenshot 4" />
+</p>
+<p>
+For starters, try selecting the &quot;<code>GAL.dizzy</code>&quot; 
+file, by double-clicking on that file name in the dialog box. 
+The &appName; window should now look like this:
+<p>
+<img src="../images/screenshot5.png" alt="&appName; screenshot 5" />
+</p>
+Note that the <a href="#models">model name</a> 
+&quot;myModel&quot; has appeared in the 
+&quot;models:&quot; list box, and the 
+<a href="#speciespopulations">species populations collection</a>
+name &quot;sp&quot; has appeared in the &quot;species populations sets:&quot; 
+list box.  
+</p>
+<p>
+Now, select the model &quot;<code>myModel</code>&quot;, and the species
+populations collection &quot;<code>sp</code>&quot; by single-clicking
+on each of them in their respective list boxes.  Now double-click on 
+the model &quot;<code>myModel</code>&quot;, to list the contents of 
+the model.  The &appName; window should now look like this:
+</p>
+<p> 
+<img src="../images/screenshot6.png" alt="&appName; screenshot 6" />
+</p>
+<p>
+You can use the scroll bar in the &quot;runtime output log&quot; text
+box to view all of the text describing the &quot;<code>GAL&ccmdlExtension;</code>&quot;
+model.  
+</p>
+<p>
+To try simulating the kinetics of this model, select the
+&quot;Simulate...&quot; menu item from the &quot;Tools&quot; menu.
+This should create a &quot;&appName;: simulator&quot; 
+dialog box, that looks like this:
+</p>
+<p>
+<img src="../images/screenshot7.png" alt="&appName; screenshot 7" />
+</p>
+<p>
+First, you will need to specify a &quot;stop time&quot; for the simulation.
+This is a floating-point number that you must type into the text box next
+to the &quot;stop time:&quot; label in the &quot;&appName;: simulator&quot;
+dialog box.  Second, you will need to select one or more species whose
+populations are to be returned as time-series data resultant from the simulation.
+For the purposes of demonstration, select the &quot;<code>G3D_G80D</code>&quot;
+species in the list box under the &quot;view species&quot; label in the dialog
+box.  Finally, you will need to specify the &quot;output type&quot; for the
+simulation.  For demonstration purposes, click on the circular button next
+to the &quot;plot&quot; label on the dialog box.  Go ahead and change the
+number of samples to 30 samples, by editing the &quot;100&quot; appearing
+in the text box next to &quot;num samples&quot;.  This controls the number of
+time points for which the result data will be graphed.  At this point, the dialog
+box should look like this:
+</p>
+<p>
+<img src="../images/screenshot8.png" alt="&appName; screenshot 8" />
+</p>
+<p>
+Now, let&apos;s run the simulation, by single-clicking on the &quot;start&quot;
+button in the &quot;&appName;: simulator&quot; dialog box.  After a moment,
+you should see a plot window appear that resembles the following image:
+</p>
+<p>
+<img src="../images/screenshot9.png" alt="&appName; screenshot 9" />
+</p>
+<p>
+For longer-running simulations, you can use the &quot;cancel&quot;,
+&quot;stop&quot;, and &quot;resume&quot; buttons to control a running
+simulation.  It is possible to pause and resume a simulation using the
+&quot;stop&quot; and &quot;resume&quot; buttons.  You may terminate a
+running simulation at any time using the &quot;cancel&quot; button.
+The &quot;start&quot; button is only used to initiate a simulation.
+Only one simulation may be running at a time, in the &appName; application.
+</p>
+<p>
+Now, let&apos;s define a simple model of a chemical system.
+This system will consist of the enzyme-substrate reaction:
+<blockquote>
+<pre>
+   E
+S ---&gt; P
+</pre>
+</blockquote>
+where the &quot;<code>E</code>&quot; is the enzyme, and 
+&quot;<code>S</code>&quot; is the substrate, and &quot;<code>P</code>&quot;
+is the product.  It is well known that the above symbols are
+shorthand for the following three elementary chemical reactions:
+<blockquote>
+<pre>
+E + S ---&gt; ES
+ES ---&gt; E + S
+ES ---&gt; E + P
+</pre>
+</blockquote>
+where the &quot;<code>ES</code>&quot; species is the enzyme-substrate
+complex. We will now investigate the stochastic kinetics of this
+very simple model using the &appName; simulator.
+Please use your text editor (e.g., Notepad on Windows) to create
+a new file, &quot;Model&ccmdlExtension;&quot;.  This will be our
+&quot;model definition file&quot;, in which we will define the species
+and chemical reactions that make up the model, as well as the kinetic
+parameters that will be used to simulate the reaction kinetics.  The 
+&quot;&ccmdlExtension;&quot; file extension is important, so please
+type the file name exactly as shown.  This helps the &appName; program
+to recognize the file as an official &quot;&appName; model definition file&quot;,
+and to select the proper interpreter to load the file.
+The file should start out completely empty.  Let&apos;s begin by defining
+the first of the three elementary reactions that make up the above model.
+We will be defining this model in the 
+<a href="#ccmdl">&quot;condensed&quot; language for entering a model definition file</a>,
+which is syntactically very close to the Jarnac language. At the top of
+the file, please enter the following line, exactly as shown here:
+<blockquote>
+<pre>
+r1, E + S -&gt; ES, 1.0;
+</pre>
+</blockquote>
+This line is an example of a <em>statement</em> called a <em>reaction definition</em>.  
+You will notice that the line ends with a semicolon.  In the &appName; language,
+semicolons divide the model definition file into a sequence of statements.
+Each statement ends with a semicolon.  A statement can in principle extend
+over one line, as shown here:
+<blockquote>
+<pre>
+r1, E + S -&gt; ES,
+                    1.0;
+</pre>
+</blockquote>
+This definition is logically equivalent to the one-line reaction definition
+above it.  
+</p>
+<p>
+The commas in the statement divide the statement into
+<em>elements</em>.  We will explain each element in turn.  In a reaction
+definition statement, the first element is optional, and defines the
+&quot;name&quot; of the reaction.  This is just a symbolic name for the
+reaction, that does not affect the chemical kinetics of the model.  There
+are <a href="#symbols">rules governing allowed symbol names</a> that apply
+to reaction names.  The reaction name specified above was &quot;r1&quot;,
+which is not very descriptive.  Perhaps a more descriptive name would have
+been &quot;enzyme_substrate_combine&quot;, as shown here:
+<blockquote>
+<pre>
+enzyme_substrate_combine, E + S -&gt; ES, 1.0;
+</pre>
+</blockquote>
+Note the use of the underscore character (&quot;<code>_</code>&quot;), which
+is necessary because spaces are not allowed in symbol names such as reaction names.
+The second element of the reaction definition statement defines the
+list of reactant species and products species for the chemical reaction.
+In this case, the reactants are species &quot;<code>E</code>&quot; (the enzyme)
+and species &quot;<code>S</code>&quot; (the substrate).  The special symbol
+&quot;<code>-&gt;</code>&quot; separates the list of reactants and products.
+The sole product species is &quot;<code>ES</code>&quot;, the enzyme-substrate
+complex.  The &quot;<code>+</code>&quot; operator is used to separate species 
+in either the reactant or product side of the reaction.  In passing, we note
+that this is a <em>one-way</em> reaction, meaning that it defines a process
+that is not (by itself) reversible.  To define a reversible reaction in &appName;,
+you would need to follow the above reaction definition statement with a second
+reaction definition statement, in which the reactants and products are reversed,
+for example:
+<blockquote>
+<pre>
+enzyme_substrate_separate, ES -&gt; E + S, 0.1;
+</pre>
+</blockquote>
+The third element is a reaction rate.  This can be specified as a bare
+number (as shown above), or as a double-quoted string.  When you specify the
+reaction rate as a bare number, you are instructing the &appName; simulator
+to compute the reaction rate using its built-in combinatoric method.  This
+means that the reaction probability density (usually designated with the
+symbol &quot;<code>a</code>&quot;) per unit time is computed as
+the product of the number of district combinations of reactant species,
+times the reaction rate parameter you specified in the reaction definition.
+Let us illustrate this with an example.  For the reaction
+<blockquote>
+<pre>
+r1, A + B -&gt; C + D, 2.0;
+</pre>
+</blockquote>
+If species <code>A</code> has a population of 10, and species <code>B</code>
+has a population of 10, the reaction probability density per unit time will
+be evaluated as the number of distinct combinations of reactant molecules 
+(in this case, that is 100) times the reaction rate parameter, 2.0.  The
+resulting reaction probability density per unit time will be 200.  This
+probability density can be used to compute the probability <code>P</code> that a given
+chemical reaction will occur during an infinitesimal time interval <code>dt</code>:
+<blockquote>
+<pre>
+P = a dt
+</pre>
+</blockquote>
+The probability that a given chemical reaction (whose probability density per
+unit time is designated with the symbol &quot;<code>a</code>&quot;) will
+occur during the infitesimal time interval <code>dt</code> is just the product
+of the infinitesimal time interval, and the reaction probability density per
+unit time.  
+</p>
+<p>
+Getting back to our model-building, we see that the forward reaction for
+the enzyme and substrate combining, was given a reaction rate parameter of
+1.0, and the reverse of that reaction (enzyme-substrate complex separating)
+was given the rate of 0.1.  
+</p>
+<p>
+Note that in defining a chemical reaction, the element specifying the
+reaction name is not required.  If you do not specify a reaction name,
+a unique reaction name is automatically assigned to the reaction by &appName;.
+The syntax for a reaction thus defined is:
+<blockquote>
+<pre>
+A + B -&gt; C + D, 2.0;
+</pre>
+</blockquote>
+It is recommended that you specify your own reaction names, because the names 
+automatically assigned by &appName; will be verbose and hard to understand.
+</p>
+<p>
+Now, let&apos; define the third reaction, which takes the enzyme-substrate
+complex to the enzyme plus product,
+<blockquote>
+<pre>
+make_product, ES -&gt; E + P, 0.01;
+</pre>
+</blockquote>
+Putting the three reaction definition statements together, your model
+definition file should look like this:
+<blockquote>
+<pre>
+enzyme_substrate_combine, E + S -&gt; ES, 1.0;
+enzyme_substrate_separate, ES -&gt; E + S, 0.1;
+make_product, ES -&gt; E + P, 0.01;
+</pre>
+</blockquote>
+The &appName; system ignores whitespace that is not in a quoted string,
+so you may reformat your model definition file using spaces, so that
+it is more tabular:
+<blockquote>
+<pre>
+enzyme_substrate_combine,    E + S -&gt; ES,      1.0;
+enzyme_substrate_separate,   ES    -&gt; E + S,   0.1;
+make_product,                ES    -&gt; E + P,   0.01;
+</pre>
+</blockquote>
+The above statements define the reactions and (implicitly) the chemical
+species involved in the reactions.  But they do not define the initial
+conditions for a simulation.  In order to simulate this model, we will
+need to supply initial values for the number of molecules of each species
+in the model.  To do this, add the following statements to your model,
+<em>after the reaction definition statements</em>:
+<blockquote>
+<pre>
+E = 100;
+S = 100;
+P = 0;
+ES = 0;
+</pre>
+</blockquote>
+Note that it is very important that these statements appear after the
+reaction definition statements.  Otherwise, the &appName; interpreter will
+not understand that the symbols refer to species, and will assume that 
+they are <em>macro definitions</em> (a useful and powerful feature defined
+in the reference section of the user manual below).  Note that you must
+specify the initial population of each and every species appearing in the
+model.  They are not implicitly initialized to zero.
+</p>
+<p>
+Now, let&apos;s save this model definition file in your text editor.  Next,
+let&apos;s clear the &appName; of any model definitions by clicking on the
+&quot;clear runtime variables&quot; button on the main window.  This will
+delete any model definitions that have been loaded into &appName; (but don&apos;t
+worry, the model definition files will not be deleted!).  Now, let&apos;s
+open the model definition file in &appName;, as shown above.  Finally, let&apos;s
+select the &quot;Simulate...&quot; menu item from the &quot;Tools&quot; menu,
+and run a simulation.  Select a stop time of 400.0, and specify an output type
+of &quot;plot&quot;, and a &quot;num samples&quot; of 40.  
+Select &quot;<code>P</code>&quot; as the species to view.  Your simulation
+controller dialog box should look like this:
+</p>
+<p>
+<img src="../images/screenshot10.png" alt="screenshot 10" />
+</p>
+<p>
+Now, run the simulation.  You should see the familiar Michaelis-Menten type
+reaction kinetics appear in a plot window:
+</p>
+<p>
+<img src="../images/screenshot11.png" alt="screenshot 11" />
+</p>
+<p>
+Note that the curve is not a perfect Michaelis-Menten kinetics.  This is
+because we are running a <b>stochastic simulation</b>.  The Gillespie
+algorithm introduces the noisy effects of low copy numbers of chemical
+species in the model.  If we were to drastically increase the number of species
+(say, by a factor or 1000) in the model, the curve would become less noisy:
+</p>
+<p>
+<img src="../images/screenshot12.png" alt="screenshot 12" />
+</p>
+<p>
+Note that the larger the initial copy number of the species in the model,
+the more computational time will be requird to simulate the model for
+a given (fixed) choice of &quot;stop time&quot;.  This means that in general,
+when running stochastic simulations you should start with small initial 
+copy numbers for the species in your model, and determine the computational
+run-time, before attempting simulations with large initial species populations.
+</p>
 <p>
 For users just starting out, it is recommended to try importing a simple
 SBML model using the GUI application.  Note that the GUI application
