@@ -11,28 +11,33 @@ package org.systemsbiology.chem;
 import org.systemsbiology.math.*;
 import org.systemsbiology.util.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * Abstract Symbol Evaluator class used for chemical simulations.
  * 
  * @author Stephen Ramsey
  */
-public abstract class SymbolEvaluatorChem extends SymbolEvaluator
+public final class SymbolEvaluatorChem extends SymbolEvaluator
 {
-    protected HashMap mSymbolsMap;
-    protected double mTime;
-    protected HashMap mLocalSymbolsMap;
+    private final HashMap mSymbolsMap;
+    private double mTime;
+    private HashMap mLocalSymbolsMap;
+    private final ReservedSymbolMapper mReservedSymbolMapper;
 
-    public SymbolEvaluatorChem()
+    public SymbolEvaluatorChem(boolean pUseExpressionValueCaching,
+                               SymbolEvaluationPostProcessor pSymbolEvaluationPostProcessor,
+                               ReservedSymbolMapper pReservedSymbolMapper,
+                               HashMap pSymbolsMap)
     {
-        // do nothing
+        super(pUseExpressionValueCaching, pSymbolEvaluationPostProcessor);
+        mReservedSymbolMapper = pReservedSymbolMapper;
+        mSymbolsMap = pSymbolsMap;
     }
 
-    public void setSymbolsMap(HashMap pSymbolsMap) throws DataNotFoundException
+    public ReservedSymbolMapper getReservedSymbolMapper()
     {
-        mSymbolsMap = pSymbolsMap;
+        return(mReservedSymbolMapper);
     }
 
     public void setLocalSymbolsMap(HashMap pLocalSymbolsMap)
@@ -40,12 +45,12 @@ public abstract class SymbolEvaluatorChem extends SymbolEvaluator
         mLocalSymbolsMap = pLocalSymbolsMap;
     }
 
-    public final void setTime(double pTime)
+    public void setTime(double pTime)
     {
         mTime = pTime;
     }
 
-    public final double getTime()
+    public double getTime()
     {
         return(mTime);
     }
@@ -54,7 +59,7 @@ public abstract class SymbolEvaluatorChem extends SymbolEvaluator
     {
         return(mSymbolsMap);
     }
-    
+
     public Expression getExpressionValue(Symbol pSymbol) throws DataNotFoundException
     {
         Expression retVal = null;
@@ -84,4 +89,64 @@ public abstract class SymbolEvaluatorChem extends SymbolEvaluator
         }
         return(retVal);
     }    
+
+    public double getUnindexedValue(Symbol pSymbol) throws DataNotFoundException, IllegalStateException
+    {
+        
+        if(NULL_ARRAY_INDEX != pSymbol.getArrayIndex())
+        {
+            throw new IllegalStateException("getUnindexedValue() was called on symbol with non-null array index: " + pSymbol.getName());
+        }
+
+        if(null != mReservedSymbolMapper)
+        {
+            if(mReservedSymbolMapper.isReservedSymbol(pSymbol))
+            {
+                return(mReservedSymbolMapper.getReservedSymbolValue(pSymbol, this));
+            }
+        }
+
+        String symbolName = pSymbol.getName();
+
+        Symbol indexedSymbol = null;
+        if(null != mLocalSymbolsMap)
+        {
+            indexedSymbol = (Symbol) mLocalSymbolsMap.get(symbolName);
+        }
+        if(null == indexedSymbol)
+        {
+            indexedSymbol = (Symbol) mSymbolsMap.get(symbolName);
+        }
+        if(null == indexedSymbol)
+        {
+            throw new DataNotFoundException("unable to obtain value for symbol: " + symbolName);
+        }
+        pSymbol.copyIndexInfo(indexedSymbol);
+        return(getValue(pSymbol));
+    }
+
+    public boolean hasValue(Symbol pSymbol) 
+    {
+        boolean hasValue = false;
+        if(null != mReservedSymbolMapper )
+        {
+            if(mReservedSymbolMapper.isReservedSymbol(pSymbol))
+            {
+                hasValue = true;
+            }
+        }
+        if(! hasValue)
+        {
+            if(null != mSymbolsMap.get(pSymbol.getName()))
+            {
+                hasValue = true;
+            }
+        }
+        return(hasValue);
+    }
+
+    public Symbol getSymbol(String pSymbolName)
+    {
+        return((Symbol) mSymbolsMap.get(pSymbolName));
+    }
 }
