@@ -16,20 +16,37 @@ import java.util.Date;
  * of the simulator used, the name of the chemical species
  * to be viewed, etc.
  */
-public class SimulationResults
+public final class SimulationResults
 {
     private String mSimulatorAlias;
     private double mStartTime;
     private double mEndTime;
-    private int mEnsembleSize;
+    private SimulatorParameters mSimulatorParameters;
     private String []mResultsSymbolNames;
     private double []mResultsTimeValues;
     private Object []mResultsSymbolValues;
+    private double []mResultsFinalSymbolFluctuations;
     private Date mResultsDateTime;
 
     public SimulationResults()
     {
         mResultsDateTime = new Date(System.currentTimeMillis());
+        mSimulatorAlias = null;
+        mSimulatorParameters = null;
+        mResultsSymbolNames = null;
+        mResultsTimeValues = null;
+        mResultsSymbolValues = null;
+        mResultsFinalSymbolFluctuations = null;
+    }
+
+    public double []getResultsFinalSymbolFluctuations()
+    {
+        return(mResultsFinalSymbolFluctuations);
+    }
+
+    public void setResultsFinalSymbolFluctuations(double []pResultsFinalSymbolFluctuations)
+    {
+        mResultsFinalSymbolFluctuations = pResultsFinalSymbolFluctuations;
     }
 
     public String getSimulatorAlias()
@@ -47,9 +64,9 @@ public class SimulationResults
         return(mEndTime);
     }
 
-    public int getEnsembleSize()
+    public SimulatorParameters getSimulatorParameters()
     {
-        return(mEnsembleSize);
+        return(mSimulatorParameters);
     }
 
     /**
@@ -105,9 +122,9 @@ public class SimulationResults
         mEndTime = pEndTime;
     }
     
-    public void setEnsembleSize(int pEnsembleSize)
+    public void setSimulatorParameters(SimulatorParameters pSimulatorParameters)
     {
-        mEnsembleSize = pEnsembleSize;
+        mSimulatorParameters = pSimulatorParameters;
     }
 
     public void setResultsSymbolNames(String []pResultsSymbolNames)
