@@ -33,6 +33,6 @@ public class ChemFileFilter extends FileFilter
 
     public String getDescription()
     {
-        return("chemical simulation model definition files");
+        return("model definition files");
     }
 }
