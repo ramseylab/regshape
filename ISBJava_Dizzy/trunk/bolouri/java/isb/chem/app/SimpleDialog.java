@@ -34,6 +34,11 @@ public class SimpleDialog
         mPane.setMessageType(pMessageType);
     }
 
+    public void setIcon(Icon pIcon)
+    {
+        mPane.setIcon(pIcon);
+    }
+
     public Object getValue()
     {
         return(mPane.getValue());

@@ -24,6 +24,7 @@ public class AppConfig
     private static final String PROPERTY_NAME_APP_NAME = "appName";
     private static final String PROPERTY_NAME_APP_DATE = "appDate";
     private static final String PROPERTY_NAME_APP_VERSION = "appVersion";
+    private static final String PROPERTY_NAME_APP_ICON_FILE = "appIconFile";
     private static final String PROPERTY_NAME_APP_HOME_PAGE = "appHomePage";
     public static final String CONFIG_FILE_NAME="AppConfig.xml";
 
@@ -126,6 +127,11 @@ public class AppConfig
     public String getAppDate()
     {
         return(getProperty(PROPERTY_NAME_APP_DATE));
+    }
+
+    public String getAppIconFile()
+    {
+        return(getProperty(PROPERTY_NAME_APP_ICON_FILE));
     }
 
     public static void main(String []pArgs)
