@@ -49,6 +49,7 @@ so that it gives a more comprehensible error message if the user attempts to def
 a symbol name that is reserved for a default model element.</li>
 </ul>
 </td>
+</tr>
 
 <tr valign="top">
 <td><a href="../1.4.0/&installerDownloadRelURL;">1.4.0</a></td>
