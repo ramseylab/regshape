@@ -37,7 +37,8 @@
 <isb:docsection name="External Links" label="extlinks">
 <ul>
 <li><a href="http://intranet.systemsbiology.net">&mainAffiliation; Intranet</a></li>
-<li><a href="http://www.sbw-sbml.org">SBW/SBML Project</a></li>
+<li><a href="&sbwURL;">SBW Project</a></li>
+<li><a href="&sbmlURL;">SBML Project</a></li>
 <li><a href="http://www.cytoscape.org">Cytoscape Project</a></li>
 </ul>
 </isb:docsection>
