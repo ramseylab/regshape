@@ -1,0 +1,224 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE StyleSheet [
+ <!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
+ %CommonConfig;
+  ]>
+
+<xsl:stylesheet version="1.0" 
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+                xmlns:isb="http://www.systemsbiology.org/xmlns"
+                >              
+
+<!--  <xsl:output method="html" encoding="ISO-8859-1" />  -->
+
+  <xsl:template match="/">
+    <html>
+      <xsl:apply-templates/>
+    </html>  
+  </xsl:template>
+
+  <xsl:template match="/isb:document">
+    <head>
+      <title><xsl:value-of select="isb:doctitle"/></title>
+    </head>
+    <body>
+    <xsl:if test="/isb:document/isb:docpreamble != ''">
+      <xsl:value-of select="/isb:document/isb:docpreamble" />
+
+    </xsl:if>
+    <table cellpadding="30">
+      <tr>
+        <td>
+      <xsl:if test="/isb:document/isb:doctitle != ''">
+        <h1><xsl:value-of select="isb:doctitle"/></h1>
+      </xsl:if>
+      <xsl:if test="/isb:document/isb:docauthor != ''">
+        <h3><xsl:value-of select="isb:docauthor"/></h3>
+      </xsl:if>
+      <xsl:if test="/isb:document/isb:docversion != ''">
+        <h3><xsl:value-of select="isb:docversion"/></h3>
+      </xsl:if>
+        </td>
+        <td>
+          <a href="&mainPublicURL;"><img src="&mainLogoURL;" alt="ISB" border="0" /></a>
+        </td>
+      </tr>
+      </table>
+      <hr />
+      <xsl:apply-templates/>
+    </body>
+  </xsl:template>
+ 
+  <xsl:template match="isb:doctitle"></xsl:template>
+  <xsl:template match="isb:docauthor"></xsl:template>
+  <xsl:template match="isb:docversion"></xsl:template>
+  <xsl:template match="isb:docpreamble"></xsl:template>
+
+  <xsl:template match="isb:doccontents">
+      <h3>Contents</h3>
+      <ol>
+      <xsl:for-each select="/isb:document/isb:docsection">
+        <li>
+        <xsl:if test="@label != ''">
+          <xsl:element name="a">
+            <xsl:attribute name="href">#<xsl:value-of select="@label" /></xsl:attribute>
+            <b><xsl:value-of select="@name" /></b>
+          </xsl:element>
+        </xsl:if>
+        <xsl:if test="not (@label != '')">
+            <b><xsl:value-of select="@name" /></b>
+        </xsl:if>
+        <xsl:if test="isb:docsubsection != ''">
+          <ul>
+          <xsl:for-each select="isb:docsubsection">
+            <li>
+              <xsl:if test="@label != ''">
+                <xsl:element name="a">
+                  <xsl:attribute name="href">#<xsl:value-of select="@label" /></xsl:attribute>
+                  <b><xsl:value-of select="@name" /></b>
+                </xsl:element>
+              </xsl:if>
+              <xsl:if test="not (@label != '')">
+                  <b><xsl:value-of select="@name" /></b>
+              </xsl:if>
+            </li>
+          </xsl:for-each>
+          </ul>
+        </xsl:if>
+        </li>
+      </xsl:for-each>
+      </ol>
+      <hr />
+  </xsl:template>
+
+  <xsl:template match="//isb:docsubsection">
+    <xsl:if test="@label != ''">
+      <xsl:element name="a">
+        <xsl:attribute name="name"><xsl:value-of select="@label" /></xsl:attribute>
+      </xsl:element>
+    </xsl:if>
+    <p><b><xsl:value-of select="@name" /></b></p>
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="//isb:docsection">
+    <xsl:if test="@label != ''">
+      <xsl:element name="a">
+        <xsl:attribute name="name"><xsl:value-of select="@label" /></xsl:attribute>
+      </xsl:element>
+    </xsl:if>
+    <h3><xsl:value-of select="@name" /></h3>
+    <xsl:apply-templates/>
+  </xsl:template>
+  
+  <xsl:template match="a">
+    <xsl:element name="a">
+      <xsl:if test="@name != ''">
+        <xsl:attribute name="name"><xsl:value-of select="@name" /></xsl:attribute>
+        <xsl:apply-templates/>
+      </xsl:if>
+      <xsl:if test="@href != ''">
+        <xsl:attribute name="href"><xsl:value-of select="@href" /></xsl:attribute>
+        <xsl:apply-templates/>
+      </xsl:if>
+    </xsl:element>
+  </xsl:template>
+
+  <xsl:template match="p">
+    <p>
+      <xsl:apply-templates/>
+    </p>
+  </xsl:template>
+
+  <xsl:template match="b">
+    <b>
+      <xsl:apply-templates/>
+    </b>
+  </xsl:template>
+
+  <xsl:template match="em">
+    <em>
+      <xsl:apply-templates/>
+    </em>
+  </xsl:template>
+
+  <xsl:template match="br">
+    <br>
+      <xsl:apply-templates/>
+    </br>
+  </xsl:template>
+
+  <xsl:template match="ul">
+    <ul>
+      <xsl:apply-templates/>
+    </ul>
+  </xsl:template>
+
+  <xsl:template match="hr">
+    <hr>
+      <xsl:apply-templates/>
+    </hr>
+  </xsl:template>
+
+  <xsl:template match="li">
+    <li>
+      <xsl:apply-templates/>
+    </li>
+  </xsl:template>
+
+  <xsl:template match="ol">
+    <ol>
+      <xsl:apply-templates/>
+    </ol>
+  </xsl:template>
+
+  <xsl:template match="dl">
+    <dl>
+      <xsl:apply-templates/>
+    </dl>
+  </xsl:template>
+
+  <xsl:template match="dt">
+    <dt>
+      <xsl:apply-templates/>
+    </dt>
+  </xsl:template>
+
+  <xsl:template match="dd">
+    <dd>
+      <xsl:apply-templates/>
+    </dd>
+  </xsl:template>
+
+  <xsl:template match="blockquote">
+    <blockquote>
+      <xsl:apply-templates/>
+    </blockquote>
+  </xsl:template>
+
+  <xsl:template match="pre">
+    <pre>
+      <xsl:apply-templates/>
+    </pre>
+  </xsl:template>
+
+  <xsl:template match="code">
+    <code>
+      <xsl:apply-templates/>
+    </code>
+  </xsl:template>
+
+  <xsl:template match="img">
+    <xsl:element name="img">
+      <xsl:if test="@src != ''">
+        <xsl:attribute name="src"><xsl:value-of select="@src" /></xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@alt != ''">
+        <xsl:attribute name="alt"><xsl:value-of select="@alt" /></xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates/>
+    </xsl:element>
+  </xsl:template>
+
+</xsl:stylesheet>
