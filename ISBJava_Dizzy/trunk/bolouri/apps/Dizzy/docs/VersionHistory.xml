@@ -62,6 +62,7 @@ that occurred in the simulation, to the console window, after the simulation
 completes.</li>
 <li>The &quot;ensemble size&quot; and &quot;min number of time steps&quot; 
 simulation parameters are now &quot;long&quot; integer parameters.</li>
+<li>Fixed a bug in the <code>runmodel.bat</code> batch file.</li>
 </ul>
 </td>
 <td><a href="&javaURL;/1.4.3/&installerDownloadRelURL;">1.4.3</a></td>
