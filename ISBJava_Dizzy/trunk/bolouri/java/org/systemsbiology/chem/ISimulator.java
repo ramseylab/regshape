@@ -18,11 +18,13 @@ public interface ISimulator
     public void initialize(Model pModel, 
                            SimulationController pSimulationController) throws DataNotFoundException, InvalidInputException;
 
+    public SimulatorParameters getDefaultSimulatorParameters();
+    
     public void simulate(double pStartTime, 
                          double pEndTime,
-                         int pNumTimePoints,
-                         int pNumSteps,
-                         String []pRequestedSymbolNames,
-                         double []pRetTimeValues,
-                         Object []pRetSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException;
+                         SimulatorParameters pSimulatorParameters,
+                         int pNumResultsTimePoints,
+                         String []pResultsSymbolNames,
+                         double []pRetResultsTimeValues,
+                         Object []pRetResultsSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException;
 }

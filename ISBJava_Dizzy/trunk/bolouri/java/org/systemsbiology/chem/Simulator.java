@@ -463,11 +463,11 @@ public abstract class Simulator
 
     public abstract void simulate(double pStartTime, 
                                   double pEndTime,
+                                  SimulatorParameters pSimulatorParameters,
                                   int pNumTimePoints,
-                                  int pNumSteps,
                                   String []pRequestedSymbolNames,
                                   double []pRetTimeValues,
-                                  Object []pRetSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException;
+                                  Object []pRetSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException;
 
 
 
