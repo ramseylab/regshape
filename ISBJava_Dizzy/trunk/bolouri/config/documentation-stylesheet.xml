@@ -44,6 +44,7 @@
       <xsl:value-of select="/isb:document/isb:docpreamble" />
 
     </xsl:if>
+    <center>
     <table cellpadding="20">
       <tr>
         <td>
@@ -109,6 +110,7 @@
       </xsl:if>
 
         </td>
+      <xsl:if test="&groupLogoRelURL; != ''">
         <td>
           <a href="&mainGroupURL;">
             <xsl:element name="img">
@@ -118,8 +120,10 @@
             </xsl:element>
           </a>
         </td>
+      </xsl:if>
       </tr>
       </table>
+      </center>
       <hr noshade="true" />
       <xsl:apply-templates/>
 
