@@ -29,7 +29,7 @@
 <isb:docversion>&appName; Version: &appVersion;, &nbsp; &appDate;</isb:docversion>
 <isb:docdate>$Date$</isb:docdate>
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
-<isb:docauthor>&appOriginalAuthorFullName; (<code>&mainGroupEmailSafe;</code>)</isb:docauthor>
+<isb:docauthor>&appOriginalAuthorFullName; (<code>&appOriginalAuthorEmailSafe;</code>)</isb:docauthor>
 
 <isb:doccontents />
 
