@@ -56,7 +56,7 @@ stemming from the use of this software, as stated in the license agreement.
 <p>
 The source code for this application and the 
 associated &localJavaLibraryName; library 
-&quot;<code>isb.jar</code>&quot; can be found in the file 
+&quot;<code>&localJavaLibraryName;.jar</code>&quot; can be found in the file 
 &quot;<code>&localJavaLibraryName;-src.tar.gz</code>&quot;
 that was installed in the &quot;<code>src</code>&quot;
 subdirectory of the installation directory for this program.

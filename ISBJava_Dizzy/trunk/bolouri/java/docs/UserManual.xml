@@ -65,7 +65,7 @@ directory from the compilation (by adding a suitable
 &quot;<code>exclude</code>&quot; to the
 &quot;<code>javac</code>&quot; statements in the 
 <code>build.xml</code> file), in principle the resulting
-<code>isb.jar</code> file that would be built, 
+<code>&localJavaLibraryName;.jar</code> file that would be built, 
 would not have any dependencies on 
 the aforementioned SBW/SBML libraries.  
 <p />
@@ -124,11 +124,11 @@ the Javadoc API for &localJavaLibraryName;</a> on the web.
 </p>
 <p>
 The compiled Java code for the library is contained in the
-file &quot;<code>isb.jar</code>&quot;, which is stored in the
+file &quot;<code>&localJavaLibraryName;.jar</code>&quot;, which is stored in the
 &quot;<code>lib</code>&quot; subdirectory of the installation
 directory.  In order to be able to use this library in your
 Java programs, you will need to ensure that the aforementioned
-JAR file (<code>isb.jar</code>) is added to your Java
+JAR file (<code>&localJavaLibraryName;.jar</code>) is added to your Java
 <code>CLASSPATH</code>.  This can be done by modifying (or
 defining) the <code>CLASSPATH</code> environment variable,
 or it can be done by passing the &quot;<code>-cp</code>&quot;

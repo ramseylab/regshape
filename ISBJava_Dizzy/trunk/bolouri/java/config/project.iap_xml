@@ -27,7 +27,7 @@
 				<string><![CDATA[The installer cannot run on your configuration. It will now quit.]]></string>
 			</property>
 			<property name="userSplashPath">
-				<string><![CDATA[/users/sramsey/cvs/bolouri/java/images/]]></string>
+				<string><![CDATA[$IA_PROJECT_DIR$/../images/]]></string>
 			</property>
 			<property name="userSplashName">
 				<string><![CDATA[appLogo.png]]></string>
@@ -859,7 +859,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/java/html/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1096,7 +1096,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/build/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../../build/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1145,7 +1145,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/java/html/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1171,7 +1171,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/build/web/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../../build/web/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1216,19 +1216,19 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[664]]></string>
 											</property>
 											<property name="sourceName">
-												<string><![CDATA[isb.jar]]></string>
+												<string><![CDATA[ISBJava.jar]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/build/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../../build/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[isb.jar]]></string>
+												<string><![CDATA[ISBJava.jar]]></string>
 											</property>
 											<property name="fileSize">
 												<long>-1</long>
