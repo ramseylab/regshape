@@ -59,7 +59,7 @@ Start.</li>
 <li>Modified the simulation framework to model multi-step
 reactions differently than delayed reactions.  Multi-step reactions
 are now simulated using the Gamma Distribution as described by Gibson
-and Bruck in their Journal of Physical Chemistry A paper (2000), while
+and Bruck in their <em>Journal of Physical Chemistry A</em> paper (2000), while
 delayed reactions are simulated using delay differential equations or
 (in the case of a stochastic simulation) a time delayed stochastic
 process.</li>
