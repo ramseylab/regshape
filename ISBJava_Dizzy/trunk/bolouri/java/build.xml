@@ -115,7 +115,7 @@
     </delete>
   </target>
 
-  <target name="distclean" depends="clean">
+  <target name="distClean" depends="clean">
     <delete dir="${projClassesDir}" quiet="yes" />
   </target>
   

@@ -10,7 +10,7 @@
     <ant dir="${basedir}/Dizzy" target="clean" />
   </target>
 
-  <target name="distclean" depends="clean">
+  <target name="distClean" depends="clean">
   </target>
 
   <target name="buildWeb">

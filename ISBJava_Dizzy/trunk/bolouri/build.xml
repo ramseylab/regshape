@@ -11,6 +11,8 @@
   <property name="projWebDir"         location="${basedir}/build/web" />
   <property name="projClassesDir"     location="${basedir}/classes" />
 
+  <property name="binInstallAnywhere" location="/local/InstallAnywhere_5_Standard/build" />
+
   <property name="webServerUsername"  value="bolouri_group" />
   <property name="webServerPassword"  value="b2G4cIc" />  <!-- icky: find some way to MIME-encode this -->
   <property name="webServerHostname"  value="projects.systemsbiology.net" />
@@ -31,9 +33,9 @@
     <delete dir="${projWebDir}" quiet="yes" />
   </target>
 
-  <target name="distclean">
-    <ant dir="${projJavaDir}" target="distclean" />
-    <ant dir="${projAppsDir}" target="distclean" />
+  <target name="distClean">
+    <ant dir="${projJavaDir}" target="distClean" />
+    <ant dir="${projAppsDir}" target="distClean" />
   </target>
 
   <target name="style">
@@ -97,7 +99,8 @@
     <ant dir="${projAppsDir}" target="build" />
   </target>
 
-  <target name="uploadWeb" depends="buildWeb">
+<!--  <target name="uploadWeb" depends="buildWeb"> -->
+  <target name="uploadWeb">
     <apply executable="ncftpput" type="both">
       <arg value="-u" />
       <arg value="${webServerUsername}" />

@@ -1,11 +1,18 @@
 <?xml version="1.0"?>
 
+<!DOCTYPE DizzyBuildFile [
+<!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
+%CommonConfig;
+<!ENTITY % AppConfig SYSTEM "config/AppConfig.dtd">
+%AppConfig;
+]>
+
 <project name="Dizzy" default="compile" basedir=".">
   <property name="app.styleDir"                 location="${basedir}/html" />
   <property name="app.buildDir"                 location="${basedir}/build" />
   <property name="app.configDir"                location="${basedir}/config" />
   <property name="app.webDir"                   location="${projWebDir}/${ant.project.name}" />
-  <property name="app.installerDir"             location="${app.webDir}/installer" />
+  <property name="app.installerDir"             location="${app.webDir}/&appVersion;/installer" />
 
   <target name="compile">
     <!-- nothing to do -->
@@ -13,7 +20,7 @@
 
   <target name="clean">
     <delete dir="${app.styleDir}" quiet="yes" />
-    <delete dir="${app.buildDir}/projectlocales" quiet="yes" />
+    <delete dir="${app.buildDir}" quiet="yes" />
     <delete file="${app.configDir}/CommonConfig.dtd" quiet="yes" />
   </target>
 
@@ -46,7 +53,15 @@
         <include name="*.html" />
       </fileset>
     </copy>
+
+    <!-- make the installer directory -->
     <mkdir dir="${app.installerDir}" />
+
+    <!-- make the build directory -->
+    <mkdir dir="${app.buildDir}" />
+
+    <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
+    <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" />
 
     <!-- create symbolic link for InstallAnywhere build output: -->
     <exec executable="ln">
@@ -54,13 +69,17 @@
       <arg value="${app.installerDir}" />
       <arg value="${app.buildDir}/project_Build_Output" />
     </exec>
+
+    <exec executable="${binInstallAnywhere}">
+      <arg value="${app.buildDir}/project.iap_xml" />
+    </exec>
   </target>
 
   <target name="build" depends="style, copyCommonConfig">
     <!-- do nothing -->
   </target>
 
-  <target name="distclean" depends="clean">
+  <target name="distClean" depends="clean">
   </target>
 
 </project>
