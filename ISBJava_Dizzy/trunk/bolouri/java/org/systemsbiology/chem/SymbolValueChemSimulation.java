@@ -1,6 +1,5 @@
-package org.systemsbiology.chem.scripting;
+package org.systemsbiology.chem;
 
-import org.systemsbiology.chem.SymbolEvaluatorChemSimulation;
 import java.util.HashMap;
 import org.systemsbiology.math.SymbolValue;
 
