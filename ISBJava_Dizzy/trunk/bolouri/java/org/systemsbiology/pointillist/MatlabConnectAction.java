@@ -11,6 +11,7 @@
 package org.systemsbiology.pointillist;
 
 import org.systemsbiology.gui.*;
+import java.awt.*;
 import javax.swing.*;
 
 /**
@@ -19,7 +20,7 @@ import javax.swing.*;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class MatlabConnectAction
+public class MatlabConnectAction implements IAction
 {
     private App mApp;
     
@@ -49,20 +50,25 @@ public class MatlabConnectAction
                                           JOptionPane.WARNING_MESSAGE);
             return;
         }
+        if(mgr.isConnected())
+        {
+            return;
+        }
+        
+        mApp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
         try
         {
-            if(! mgr.isConnected())
-            {
-                mgr.connect();
-                MenuBar menuBar = mApp.getMenu();
-                menuBar.setMenuItemEnabled(MenuBar.ACTION_MATLAB_CONNECT, false);
-                menuBar.setMenuItemEnabled(MenuBar.ACTION_MATLAB_DISCONNECT, true);                
-            }
+            mgr.connect();
         }
         catch(Exception e)
         {
+            mApp.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
             optionPane.createDialog(mApp, "unable to create matlab session").show();
+            return;
         }
+        mApp.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        mApp.handleMatlabConnectionState(true);
     }
 }
