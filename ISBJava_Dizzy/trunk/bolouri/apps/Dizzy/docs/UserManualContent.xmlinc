@@ -269,7 +269,7 @@ directory in which you installed &appName;.  Then navigate into the
 <img src="../images/screenshot4.png" alt="&appName; screenshot 4" />
 </p>
 <p>
-For starters, try selecting the &quot;<code>GAL&cmdlFileExtension;</code>&quot; 
+For starters, try selecting the &quot;<code>Michaelis&cmdlFileExtension;</code>&quot; 
 file, by double-clicking on that file name in the dialog box. 
 The &appName; window should now look like this:
 </p>
@@ -280,7 +280,7 @@ The &appName; window should now look like this:
 Note that the model description has appeared in the editor window.
 In this window, you can edit a model description, after which you
 may save your changes.  You probably will not want to modify the 
-<code>GAL&cmdlFileExtension;</code> model definition file just yet.
+<code>Michaelis&cmdlFileExtension;</code> model definition file just yet.
 Note that the file name appears after the &quot;<b>file:</b>&quot; label.
 There is also a label &quot;<b>parser:</b>&quot; label, whose function
 will be described later.
@@ -3463,7 +3463,14 @@ is the white text box in the main &appName; window, as seen here:
 <p>
 The file name is indicated in the label that starts with &quot;<b>file:</b>&quot;.
 At this stage, the model has not yet been processed by the scripting runtime,
-so no parser is listed next to the &quot;<b>parser:</b>&quot; label.
+so no parser is listed next to the &quot;<b>parser:</b>&quot; label.  
+</p>
+<p>
+The current line number of the cursor in the editor buffer is displayed
+in the lower left corner of the main editor window, as shown here:
+</p>
+<p>
+  <img src="../images/screenshot13.png" alt="screenshot 13" />
 </p>
 <p>
 To simulate the model, select the &quot;Simulate...&quot; option from the
