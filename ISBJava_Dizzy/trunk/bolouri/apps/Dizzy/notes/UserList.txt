@@ -10,6 +10,10 @@ Finney, Andrew
 University of Hertfordshire, UK
 afinney@cds.caltech.edu
 
+Gilmore, Stephen
+University of Edinburgh
+Stephen.Gilmore@ed.ac.uk
+
 Hu, Bin
 Keio University, Japan
 hubin@sfc.keio.ac.jp
