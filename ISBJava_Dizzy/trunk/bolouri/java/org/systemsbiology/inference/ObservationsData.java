@@ -14,10 +14,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.io.PrintWriter;
+import java.text.NumberFormat;
 import cern.colt.list.*;
 import cern.colt.matrix.*;
-
 import org.systemsbiology.data.*;
 import org.systemsbiology.util.InvalidInputException;
 
@@ -25,10 +25,11 @@ import org.systemsbiology.util.InvalidInputException;
  * A data structure containing a set of
  * observations for M elements, and N types of
  * evidence.  Missing obesrvations are stored as
- * a <code>null</code> in the data matrix.  Non-missing
+ * a <code>null</code> in the data matrix, and can be 
+ * denoted by either an empty cell or the string "null".  Non-missing
  * observations are stored as a {@link Double} object.
  * This class is used by the {@link SignificanceCalculatorDriver}
- * class.
+ * class.  
  * 
  * @author sramsey
  *
@@ -40,6 +41,7 @@ public class ObservationsData implements Cloneable
     private String []mEvidenceNames;
     private double mMissingDataRate;
     private int []mNumObservations;
+    public static final String NULL_OBSERVATION_STRING = "null";
     
     public ObservationsData()
     {
@@ -378,6 +380,56 @@ public class ObservationsData implements Cloneable
         return retList;
     }
     
+    public void writeToFile(PrintWriter pPrintWriter, DataFileDelimiter pDelimiter, NumberFormat pNumberFormat) 
+    {
+        StringBuffer sb = new StringBuffer();
+        String delimiter = pDelimiter.getDelimiter();
+        int numEvidences = mEvidenceNames.length;
+        int numElements = mElementNames.length;
+        sb.append(ObservationsTableModel.COLUMN_NAME_ELEMENT + delimiter);
+        for(int j = 0; j < numEvidences; ++j)
+        {
+            sb.append(mEvidenceNames[j]);
+            if(j < numEvidences - 1)
+            {
+                sb.append(delimiter);
+            }
+        }
+        pPrintWriter.println(sb.toString());
+
+        Double obsObj = null;
+        double obs = 0.0;
+        String elementName = null;
+        for(int i = 0; i < numElements; ++i)
+        {
+            sb.delete(0, sb.length());
+            elementName = pDelimiter.scrubIdentifier(mElementNames[i]);
+            sb.append(elementName + delimiter);
+            for(int j = 0; j < numEvidences; ++j)
+            {
+                obsObj = (Double) mObservations.get(i, j);
+                if(null != obsObj)
+                {
+                    sb.append(pNumberFormat.format(obsObj.doubleValue()));
+                }
+                else
+                {
+                    if(! pDelimiter.getSingle())
+                    {
+                        sb.append(NULL_OBSERVATION_STRING);
+                    }
+                }
+                if(j < numEvidences - 1)
+                {
+                    sb.append(delimiter);
+                }
+            }
+            pPrintWriter.println(sb.toString());
+        }             
+        
+        pPrintWriter.flush();
+    }
+    
     public void loadFromFile(BufferedReader pBufferedReader, DataFileDelimiter pDelimiter) throws IOException, InvalidInputException
     {
         MatrixString matrixString = new MatrixString();
@@ -416,13 +468,20 @@ public class ObservationsData implements Cloneable
                 elemStr = matrixString.getValueAt(i + 1, j + 1).trim();
                 if(elemStr.length() > 0)
                 {
-                    try
+                    if(! elemStr.equals(NULL_OBSERVATION_STRING))
                     {
-                        elemValObj = new Double(elemStr);
+                        try
+                        {
+                            elemValObj = new Double(elemStr);
+                        }
+                        catch(NumberFormatException e)
+                        {
+                            throw new InvalidInputException("invalid numeric data at row " + i + ", column " + j);
+                        }                        
                     }
-                    catch(NumberFormatException e)
+                    else
                     {
-                        throw new InvalidInputException("invalid numeric data at row " + i + ", column " + j);
+                        elemValObj = null;
                     }
                 }
                 else
