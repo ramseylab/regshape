@@ -24,7 +24,8 @@
 
 <isb:docsection name="Links" label="links">
 <ul>
-<li><a href="../Resources.html">Bolouri Group Software and Publications Page</a></li>
+<li><a href="../Resources.html">&mainGroup; Software and Publications Page</a></li>
+<li><a href="../models">&mainGroup; Biomolecular Model Repository</a></li>
 <li><a href="&mainPublicURL;">&mainAffiliation;</a></li>
 <li><a href="WebPagesManagementManual.html">Web Pages Management Manual</a></li>
 <li><a href="http://www.sbw-sbml.org">SBW/SBML Project</a></li>
