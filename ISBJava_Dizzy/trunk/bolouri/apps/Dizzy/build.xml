@@ -72,7 +72,7 @@
     <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
     <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />
 
-    <exec executable="${binInstallAnywhere}">
+    <exec executable="${binInstallAnywhere}" failonerror="true">
       <arg value="${app.buildDir}/project.iap_xml" />
     </exec>
 

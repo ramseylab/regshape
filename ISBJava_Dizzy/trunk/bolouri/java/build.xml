@@ -11,7 +11,7 @@
   <property name="app.styleDir"                location="${basedir}/html" />
   <property name="app.srcDir"                  location="${basedir}/isb" />
   <property name="app.configDir"               location="${basedir}/config" />
-  <property name="app.buildDir"                location="${basedir}/buildDir" />
+  <property name="app.buildDir"                location="${basedir}/build" />
   <property name="app.docsDir"                 location="${basedir}/docs" />
   <property name="app.extLibDir"               location="${basedir}/extlib" />
   <property name="app.buildDir"                location="${projBuildDir}" />
@@ -25,8 +25,8 @@
 
   <property name="app.sourceCompileFlag"       value="1.4" />
 
-  <property name="app.jarFile"                 location="${app.buildDir}/&appName;.jar" />
-  <property name="app.srcFile"                 location="${app.buildDir}/&appName;-src.tar.gz" />
+  <property name="app.jarFile"                 location="${projBuildDir}/&appName;.jar" />
+  <property name="app.srcFile"                 location="${projBuildDir}/&appName;-src.tar.gz" />
 
   <path id="app.classpath">
     <pathelement location="${app.classesDir}" />
@@ -70,11 +70,6 @@
     </copy>
   </target>
 
-  <target name="copySourceTarball">
-    <mkdir dir="${app.downloadDir}" />
-    <copy todir="${app.downloadDir}" file="${app.srcFile}" />
-  </target>
-
   <target name="copyResources">
     <copy todir="${app.classesDir}">
       <fileset dir="${basedir}">
@@ -96,7 +91,7 @@
     <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
     <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />
 
-    <exec executable="${binInstallAnywhere}">
+    <exec executable="${binInstallAnywhere}" failonerror="true">
       <arg value="${app.buildDir}/project.iap_xml" />
     </exec>
 
@@ -121,7 +116,7 @@
     </javadoc>
   </target>
  
-  <target name="buildWeb" depends="style, srctar, copyHtml, copyImages, copySourceTarball, javadoc, buildInstaller" />
+  <target name="buildWeb" depends="style, srcTar, copyHtml, copyImages, javadoc, buildInstaller" />
   
   <target name="compile">
     <mkdir dir="${app.classesDir}" />
@@ -143,7 +138,8 @@
            includes="**/tp/*.java" />
   </target>  
  
-  <target name="srctar">
+  <target name="srcTar">
+    <mkdir dir="${projBuildDir}" />
     <tar destfile="${app.srcFile}" 
          basedir="${basedir}"
          includes="isb/**/*.java,isb/**/*.xml,html/*.html,isb/**/.dtd" 
@@ -154,7 +150,7 @@
   <target name="build" depends="jar" />
 
   <target name="jar" depends="clean, compile, copyResources">
-    <mkdir dir="${app.buildDir}" />
+    <mkdir dir="${projBuildDir}" />
     <jar basedir="${app.classesDir}" destfile="${app.jarFile}">
       <fileset dir="${app.classesDir}">
         <include name="**/*.class" />
