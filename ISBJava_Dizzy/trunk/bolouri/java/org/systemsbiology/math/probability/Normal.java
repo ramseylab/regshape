@@ -27,6 +27,11 @@ public class Normal implements IContinuousDistribution
                Math.sqrt(2.0 * Math.PI * pVariance);
     }
     
+    public static double cdf(double pMean, double pVariance, double x)
+    {
+        return Probability.normal(pMean, pVariance, x);
+    }
+    
     public Normal(double pMean, double pVariance)
     {
         mMean = pMean;
