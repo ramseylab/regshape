@@ -76,6 +76,7 @@ sub main()
     my $tempFile = TEMP_DIR . "/webstats-" . time() . "-" . $$ . ".log";
     system("/bin/cat " . $logFilePrefix . "*.log >> " . $tempFile) and die("unable to cat files to temp file: $tempFile");
     system(BIN_DIR . "/webalizer  -D " . SCRATCH_DIR . "/" . DNS_CACHE_FILE . " -N 10 -o " . DOCUMENT_ROOT . "/" . WEB_STATS_WEB_SUBDIR . " " . $tempFile) and die("unable to analyze log files");
+    unlink($tempFile) or die("unable to delete temp file $tempFile");
 
     open(DIZZY_DOWNLOADS, "<" . SCRATCH_DIR . "/DizzyDownloads.txt") or die("unable to open Dizzy downloads file, for reading");
     my $numDizzyDownloads = <DIZZY_DOWNLOADS>;
