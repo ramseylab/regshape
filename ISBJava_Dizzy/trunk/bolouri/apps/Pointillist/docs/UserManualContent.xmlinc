@@ -675,22 +675,50 @@ Here is a screen shot of the Data Normalizer program:
     you wish to delete your choice of negative control data for a given evidence,
     just select the "negative control" cell for that evidence, and press the
     "delete" key.</dd>
-  <dt><b>Calculate the significances using the formula</b></dt>
+  <dt><b>Calculate the significances using the method</b></dt>
   <dd>This drop-down list is used to specify how the significances are to be
     computed.   The same method is applied to all evidence types in the
-    input data table.  The two methods allowed are "PDF" and "CDF".  Here,
-    "PDF" means probability distribution function.  The PDF of the smoothed, normalized 
-    nonparametric control distribution is used as the significance of an observation.
-    (If no control data was specified for the evidence type, the global distribution 
-    is used instead.)  In contrast, "CDF" means cumulative distribution function;
-    the significance of an observation is computed as the complement of the CDF 
-    of the smoothed, normalized nonparametric distribution function.  For a two-tailed
-    evidence type, the "complement of the CDF" here means area under the tail to which the
-    observation is closest.  The "CDF" method is also known as the Fisher Method.  The
-    "PDF" method is also known as the Bayesian Method.  If you are unsure of which
-    method to use, it is recommended to use the default, "CDF", because the
+    input data table.  The four methods allowed are:
+    <ul>
+      <li><b>CDF_NONPARAMETRIC</b><br />
+        Use a nonparametric distribution with a gaussian kernel density, to calculate
+        the significance using the "cumulative density function" (CDF), which is the
+        area under the probability density function (PDF).  The distribution is smoothed
+        using the gaussian kernel density with standard deviation equal to the specified
+        "smoothing length".  The CDF method is also
+        known as the Fisher Test.  Twice the area under the tail of the distribution closest
+        to the observation is used to compute the significance.
+        </li>
+      <li><b>PDF_NONPARAMETRIC</b><br />
+        Use a nonparametric distribution with a gaussian kernel density, to calculate
+        the significance using the "probability density function" (PDF).  The distribution is 
+        smoothed
+        using the gaussian kernel density with standard deviation equal to the specified
+        "smoothing length". The PDF
+        method is also called the Bayesian method.  
+        </li>
+      <li><b>CDF_PARAMETRIC</b><br />
+        Use a parametric distribution to calculate the significance.  The distribution
+        is a best-fit to the data using one or two parameters.  Various theoretical
+        distributions are attempted, and the one that fits the data best is used.  If
+        no theoretical distribution fits the data within the "maximum chi square"
+        specified, the significance calculation will fail with an error message.  The
+        significance is calculated using the area under the theoretical distribution (i.e.,
+        the CDF).
+        </li>
+        <li><b>PDF_PARAMETRIC</b><br />
+        Use a parametric distribution to calculate the significance.  The distribution
+        is a best-fit to the data using one or two parameters.  Various theoretical
+        distributions are attempted, and the one that fits the data best is used.  If
+        no theoretical distribution fits the data within the "maximum chi square"
+        specified, the significance calculation will fail with an error message.  The
+        significance is calculated using the density of the theoretical distribution (i.e.,
+        the PDF).</li>
+     </ul>
+    If you are unsure of which
+    method to use, it is recommended to use the default, "CDF_NONPARAMETRIC", because the
     default settings in the <a href="#evidenceweightedinferer">Evidence-Weighted Inferer</a>
-    are appropriate to a "CDF" choice in the Significance Calculator.</dd>
+    are appropriate to a "CDF_NONPARAMETRIC" choice in the Significance Calculator.</dd>
   <dt><b>Calculate significances</b></dt>
   <dd>This button causes the program to calculate significances for all evidence types
     in the input data table for which the "compute significance" checkbox in the
@@ -711,6 +739,13 @@ Here is a screen shot of the Data Normalizer program:
     appearing in the evidence/element names will be converted to underscore ("_") 
     characters.</dd>
   </dl>
+</p>
+<p>
+  If you have a large data set, and you are using the <code>CDF_NONPARAMETRIC</code>
+  formula for calculating the significances, the Significance Calculator may take
+  a long time to calculate the significances.  Please be patient.  On Linux, the
+  IBM Java Virtual Machine has been found to give a substantial performance improvement,
+  when using the <code>CDF_NONPARAMETRIC</code> formula.
 </p>
 <p>
 Here is a screen shot of the Significance Calculator program:
@@ -767,13 +802,14 @@ Here is a screen shot of the Significance Calculator program:
   <dd>This type-in box is used to specify how many bins are to be used for the calculating
     the nonparametric distribution of overall significance values of the elements.  The
     program suggests a default value; you may change it to any integer greater than 1.0.</dd>
-  <dt><b>Cut-off value for overall significances</b></dt>
-  <dd>This type-in box is used to specify a "sanity check" threshold for overall (combined) significances.
-    Any element whose overall significance is less than this threshold, is guaranteed to
-    be put in the set of affected elements.  This parameter should be kept very small.  It is OK
-    to set this parameter to 0.0, but it may not be set to a negative value.  If you are not sure
-    what value to use, first try using the default; if you suspect the predicted set of affected
-    elements has too high a rate of false positives, you might try setting this parameter to 0.0.</dd>
+  <dt><b>Combined significances quantile cutoff</b></dt>
+  <dd>This type-in box is used to specify a threshold for overall (combined) significances.
+    Any element whose overall significance quantile is less than this threshold, will be placed to
+    in the set of affected elements, provided the significance value is less than the "critical
+    significance".  The critical significance is the significance value at which the distributions
+    of affected and unaffected element signficances overlap and are equal.  
+    This cutoff parameter should be kept very small.  If you are not sure
+    what value to use, just use the default.</dd>
   <dt><b>Area separation threshold (from unity)</b></dt>
   <dd>This type-in box is used to specify the criterion for exiting the iterative algorithm.
     The algorithm uses an objective function, which is defined as the
@@ -783,8 +819,9 @@ Here is a screen shot of the Significance Calculator program:
     from one iteration to the next, the algorithm will exit.  This value should be kept small,
     and is required to be positive-definite.  If you are not sure what value to use, just leave the default.</dd>
   <dt><b>Effective evidence weighting scheme</b></dt>
-  <dd>This drop-down list is used to specify how the effective significance is to be calculated
-    from the raw (unweighted) significance.  The two choices are "linear" and "power".  The "linear" choice
+  <dd><p>This drop-down list is used to specify how the effective significance is to be calculated
+    from the raw (unweighted) significance.  The three choices are "linear", "power", and
+    "uniform".  The "linear" choice
     means that the effective significance <code>Seff</code> is calculated as:
     <blockquote>
       <pre>
@@ -801,7 +838,16 @@ Here is a screen shot of the Significance Calculator program:
         Seff = S^W
       </pre>
     </blockquote>
-    where the "<code>^</code>" character denotes exponentiation.  The default is "power".  
+    where the "<code>^</code>" character denotes exponentiation. 
+    </p>
+    <p>
+    The "uniform" weight type means that each evidence will be given equal weight.  This
+    can be used in certain cases where &appName; might have difficulty ascertaining the
+    statistical weights from the data distributions.
+    </p>
+    <p>
+    The default evidence weight type is "power".  
+    </p>
   </dd>
   <dt><b>Initial quantile threshold for affected</b></dt>
   <dd>This type-in box is used to specify the quantile for the significance cutoff 
@@ -830,6 +876,13 @@ Here is a screen shot of the Significance Calculator program:
     the Gaussian kernel density function for smoothing the nonparametric distribution of
     overall significances.  The default is a small fraction, but you may set to any
     value greater than 0.0.  If you are not sure what value to use, just use the default.</dd>
+  <dt><b>Maximum number of iterations</b></dt>
+  <dd>This type-in box is used to specify the maximum number of iterations for the
+    inference algorithm.  If this box is left empty, there will be no limit on the
+    number of iterations of the inference algorithm.  In that case, the algorithm
+    will complete only when the change in the "objective function" is less than the
+    threshold specified in "area separation threshold".  If a maximum number of iterations
+    is specified using this field, it must be a positive integer.</dd>
   <dt><b>Infer affected elements</b></dt>
   <dd>This button starts the inference algorithm.  Depending on the size of the input
     data table, and the parameters you chose for "fraction of elements to remove in
@@ -839,12 +892,30 @@ Here is a screen shot of the Significance Calculator program:
     in your computer's window manager.  When the algorithm completes, the results
     are displayed in the Results Data Tables and the Results Statistics frames.</dd>
   <dt><b>Results tables</b></dt>
-  <dd>The results of the inference algorithm are displayed in two tables in the right
-    side of the bottom half of the program window.  The first table has the columns 
+  <dd>The results of the inference algorithm are displayed in three tables in the right
+    side of the bottom half of the program window.  
+    <ul>
+      <li>
+      The first table has the columns 
     "evidence name" and "weight".  It indicates the weight used for the final iteration
     of the inference algorithm, for each evidence type.  A low weight indicates less
-    reliable data, as determined by consistency with the other evidence types.   The
-    second table has the column names "element name", "affected", and "overall
+    reliable data, as determined by consistency with the other evidence types.   
+      </li>
+      <li>
+      The second table (below the weights table) is the "iteration summary table".  This
+      table contains an iteration-by-iteration description of the number of putatively
+      affected elements, and the number of "probable false negative" elements.  Probable
+      false negative elements are members of the set of "putatively unaffected" elements,
+      that nonetheless have high significance.  It should be noted that probable false
+      negatives are not transferred to the "putative affected set" until all iterations
+      have completed.  Thus, the "probable false negative" column is a running estimate
+      of the number of false negatives.  The number appearing for the last iteration
+      indicates the number of elements actually moved from the unaffected to the affected
+      set, because they were identified as probable false negatives.
+      </li>
+      <li>
+    The
+    third table has the column names "element name", "affected", and "overall
     significance".  The "affected" column is a boolean value indicating 
     whether the element is in the final putative affected set.  The "overall
     significance" column gives the final overall significance value for the element;
@@ -852,7 +923,10 @@ Here is a screen shot of the Significance Calculator program:
     in the true affected set.  You may sort the results in the rightmost table, by
     clicking on the table header.  A control-click in the table header allows for
     sorting based on multiple columns.  Repeatedly clicking (or control-clicking) 
-    will cycle through the three different sorting states:  none, ascending, and descending.</dd>
+    will cycle through the three different sorting states:  none, ascending, and descending.
+    </li>
+    </ul>
+    </dd>
   <dt><b>Results statistics</b></dt>
   <dd>This set of fields shows some statistics pertaining to the inference algorithm.
     <ul>
@@ -888,6 +962,14 @@ Here is a screen shot of the Significance Calculator program:
     If an evidence name contains a delimiter character,  the delimiter characters
     appearing in the element name will be converted to underscore ("_") 
     characters.</dd>
+  <dt><b>Save iteration summary</b></dt>
+  <dd>This button saves the table containing the iteration summary, to a file.  The currently
+    selected delimiter (see above) is used to delimit the columns of the data file
+    that is produced.  The first row contains the column header names.  The first column
+    contains the iteration number (starting from 1).  The second column contains the number
+    of putatively affected elements, after that iteration.  The third column contains the
+    number of probable "false negative" elements after that iteration.  
+  </dd>
   <dt><b>Save results</b></dt>
   <dd>This button saves the results table (the table containing the list of elements,
     their boolean membership in the putative affected set, and their overall significances)
