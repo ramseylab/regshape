@@ -192,6 +192,10 @@ Renamed the Ant target <code>compiletests</code> to <code>compileTests</code>.
 Included the first version of the source code for Pointillist application,
 in the package <code>org.systemsbiology.pointillist</code>
 </li>
+<li>
+Added new class <code>org.systemsbiology.util.MatlabInterface</code> for 
+communicating with the Matlab console via a TCP/IP bridge.
+</li>
 </ul>
 </td>
 </tr>
