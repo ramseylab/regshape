@@ -43,6 +43,11 @@ public class Value
         setValue(pNumericValue);
     }
 
+    public Expression getExpressionValue()
+    {
+        return(mExpressionValue);
+    }
+
     /**
      * Stores the specified floating-point value.
      */

@@ -53,6 +53,14 @@ public abstract class SymbolEvaluator implements Cloneable
     }
 
     /**
+     * Returns null if the symbol corresponds to a numeric value; or
+     * returns the Expression if the symbol corresponds to an Expression;
+     * or throws an exception if the symbol is not defined.
+     */
+    public abstract Expression getExpressionValue(Symbol pSymbol) throws DataNotFoundException;
+
+
+    /**
      * Returns the floating-point value associated with the specified
      * {@link Symbol}.
      * 

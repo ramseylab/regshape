@@ -50,9 +50,38 @@ public abstract class SymbolEvaluatorChem extends SymbolEvaluator
         return(mTime);
     }
 
-    public abstract boolean hasValue(Symbol pSymbol);
-
-
-    public abstract double getUnindexedValue(Symbol pSymbol) throws DataNotFoundException, IllegalStateException;
-
+    HashMap getSymbolsMap()
+    {
+        return(mSymbolsMap);
+    }
+    
+    public Expression getExpressionValue(Symbol pSymbol) throws DataNotFoundException
+    {
+        Expression retVal = null;
+        String symbolName = pSymbol.getName();
+        Symbol symbol = (Symbol) mSymbolsMap.get(symbolName);
+        if(null == symbol)
+        {
+            throw new DataNotFoundException("unable to find symbol in symbol map, symbol is \"" + symbolName + "\"");
+        }
+        Value []valueArray = symbol.getValueArray();
+        int arrayIndex = symbol.getArrayIndex();
+        if(NULL_ARRAY_INDEX == arrayIndex)
+        {
+            throw new IllegalStateException("null array index for symbol \"" + symbolName + "\"");
+        }
+        if(null != valueArray)
+        {
+            Value value = valueArray[arrayIndex];
+            if(null == value)
+            {
+                throw new IllegalStateException("unexpected null value for symbol: " + symbolName);
+            }
+            if(value.isExpression())
+            {
+                retVal = value.getExpressionValue();
+            }
+        }
+        return(retVal);
+    }    
 }

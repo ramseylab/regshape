@@ -23,13 +23,12 @@ public class SymbolEvaluatorHashMap extends SymbolEvaluator
 {
     protected HashMap mSymbolMap;
 
-    public SymbolEvaluatorHashMap(HashMap pSymbolMap)
+    public SymbolEvaluatorHashMap()
     {
         super();
-        mSymbolMap = pSymbolMap;
     }
 
-    public void setSymbolMap(HashMap pSymbolMap)
+    public void setSymbolsMap(HashMap pSymbolMap)
     {
         mSymbolMap = pSymbolMap;
     }
@@ -65,5 +64,25 @@ public class SymbolEvaluatorHashMap extends SymbolEvaluator
         String symbolName = pSymbol.getName();
         SymbolValue symbolValue = (SymbolValue) mSymbolMap.get(symbolName);
         return(null != symbolValue);
+    }
+
+    public Expression getExpressionValue(Symbol pSymbol) throws DataNotFoundException
+    {
+        String symbolName = pSymbol.getName();
+        SymbolValue symbolValue = (SymbolValue) mSymbolMap.get(symbolName);
+        if(null == symbolValue)
+        {
+            throw new DataNotFoundException("unable to find symbol in symbol map, symbol is \"" + symbolName + "\"");
+        }
+        Value value = symbolValue.getValue();
+        Expression retVal = null;
+        if(null != value)
+        {
+            if(value.isExpression())
+            {
+                retVal = value.getExpressionValue();
+            }
+        }
+        return(retVal);
     }
 }
