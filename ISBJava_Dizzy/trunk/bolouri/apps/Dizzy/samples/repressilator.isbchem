@@ -1,3 +1,6 @@
+# converted from the Repressilator model of Elowitz and Leibler
+# (Nature 403: 335-338, 2000).
+
 compartment "cell": volume 1.0;
 species "PX": compartment "cell", speciesType floating;
 species "PY": compartment "cell", speciesType floating;
