@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This script was automatically generated using Zero G's InstallAnywhere 5.0.7 Standard, Build 1680
      STATUS: Fully Functional LICENSED Edition
-     DATE:   Wed Apr 30 14:44:10 PDT 2003 -->
+     DATE:   Tue May 06 09:37:46 PDT 2003 -->
 <InstallAnywhere_Deployment_Project increments="1256">
 	<!-- ** DO NOT EDIT ** Essential authorization and configuration data ** DO NOT EDIT ** -->
 	<essentialScriptInfo>
@@ -10,7 +10,7 @@
 		<scriptID>12,42,11,90,80,49,55,54,52,57,88,55,86,67,77,68</scriptID>
 		<buildID>3,13,71,76,105,110,117,120,44,32,50,46,52,46,49,56,45,49,52,44,32,105,51,56,54,59,32,74,97,118,97,32,49,46,51,46,49,95,48,52,44,32,83,117,110,32,77,105,99,114,111,115,121,115,116,101,109,115,32,73,110,99,46,44,32,104,116,116,112,58,47,47,106,97,118,97,46,115,117,110,46,99,111,109,47,59,32,101,110,44,32,85,83,59,32,85,84,70,45,56</buildID>
 		<!-- The authorizationID may change between project saves and builds.  This does not effect the integrity of the project, nor do changes in this value represent changes in the actual InstallAnywhere project. -->
-		<authorizationID>1,0,0,-16,-29,-123,80,16,80,112,114,103,83,98,113,97,113,49,51,67,58,65,70,68,86,69,64,69,66,69,48,63,87,5,2,1,3,24,112,4,0,0,0</authorizationID>
+		<authorizationID>1,0,0,-16,-13,85,-16,-128,80,112,114,103,83,98,113,97,113,49,51,67,58,65,70,68,86,69,64,69,66,69,48,63,87,5,2,5,6,21,126,4,0,0,0</authorizationID>
 	</essentialScriptInfo>
 	<installationObjects uniqueObjects="53">
 		<object class="com.zerog.ia.installer.Installer" objectID="a72af448bd04">
@@ -27,7 +27,7 @@
 				<string><![CDATA[The installer cannot run on your configuration. It will now quit.]]></string>
 			</property>
 			<property name="userSplashPath">
-				<string><![CDATA[/users/sramsey/cvs/bolouri/java/config/../images/]]></string>
+				<string><![CDATA[@PROJROOT@/java/images/]]></string>
 			</property>
 			<property name="userSplashName">
 				<string><![CDATA[appLogo.png]]></string>
@@ -178,7 +178,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<string><![CDATA[Installation and Use of $PRODUCT_NAME$ Requires Acceptance of the Following Open Source License Agreement:]]></string>
 							</property>
 							<property name="resourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/build/web/]]></string>
+								<string><![CDATA[@PROJROOT@/build/web/]]></string>
 							</property>
 							<property name="resourceName">
 								<string><![CDATA[License.html]]></string>
@@ -366,7 +366,7 @@ Press ""Done"" to quit the installer.]]></string>
 								<string><![CDATA[Please read the following release notes]]></string>
 							</property>
 							<property name="resourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/java/html/]]></string>
+								<string><![CDATA[@PROJROOT@/java/html/]]></string>
 							</property>
 							<property name="resourceName">
 								<string><![CDATA[ReleaseNotes.html]]></string>
@@ -499,7 +499,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 				<object class="java.util.Properties">
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.project.save.last.date]]></string>
-						<string><![CDATA[Wed Apr 30 14:44:10 PDT 2003]]></string>
+						<string><![CDATA[Tue May 06 09:37:46 PDT 2003]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.merge]]></string>
@@ -603,7 +603,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.platform.macosx.novm]]></string>
-						<string><![CDATA[false]]></string>
+						<string><![CDATA[true]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.output.cdrom]]></string>
@@ -863,7 +863,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/java/config/../html/]]></string>
+												<string><![CDATA[@PROJROOT@/java/html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1100,7 +1100,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/java/config/../../build/]]></string>
+												<string><![CDATA[@PROJROOT@/build/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1149,7 +1149,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/java/config/../html/]]></string>
+												<string><![CDATA[@PROJROOT@/java/html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1175,7 +1175,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/java/config/../../build/web/]]></string>
+												<string><![CDATA[@PROJROOT@/build/web/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1201,7 +1201,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/java/config/../../build/]]></string>
+												<string><![CDATA[@PROJROOT@/build/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1250,7 +1250,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/build/web/ISBJava/docs/]]></string>
+												<string><![CDATA[@PROJROOT@/build/web/ISBJava/docs/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1276,7 +1276,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/build/web/ISBJava/docs/]]></string>
+												<string><![CDATA[@PROJROOT@/build/web/ISBJava/docs/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>

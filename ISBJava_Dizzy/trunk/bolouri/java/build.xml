@@ -87,6 +87,7 @@
     <mkdir dir="${app.buildDir}" />
 
     <filter token="VERSION" value="${app.version}" />
+    <filter token="PROJROOT" value="${projRoot}" />
 
     <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
     <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />

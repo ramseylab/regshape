@@ -209,10 +209,10 @@ and any path to a file to read from that file]]></string>
 								<string><![CDATA[appLogoIcon.gif]]></string>
 							</property>
 							<property name="smallIconPath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/images/]]></string>
+								<string><![CDATA[@PROJROOT@/apps/Dizzy/images/]]></string>
 							</property>
 							<property name="largeIconPath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/images/]]></string>
+								<string><![CDATA[@PROJROOT@/apps/Dizzy/images/]]></string>
 							</property>
 						</object>
 					</property>
@@ -235,7 +235,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../java/extlib/]]></string>
+								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -263,7 +263,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/build]]></string>
+								<string><![CDATA[@PROJROOT@/build]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -291,7 +291,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../java/extlib/]]></string>
+								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -319,7 +319,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../java/extlib/]]></string>
+								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -347,7 +347,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../java/extlib/]]></string>
+								<string><![CDATA[@PROJROOT@/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -375,7 +375,7 @@ and any path to a file to read from that file]]></string>
 				<string><![CDATA[The installer cannot run on your configuration. It will now quit.]]></string>
 			</property>
 			<property name="userSplashPath">
-				<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/images/]]></string>
+				<string><![CDATA[@PROJROOT@/apps/Dizzy/images/]]></string>
 			</property>
 			<property name="userSplashName">
 				<string><![CDATA[appLogo.png]]></string>
@@ -629,7 +629,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<string><![CDATA[Installation and Use of $PRODUCT_NAME$ Requires Acceptance of the Following Open Source License Agreement:]]></string>
 							</property>
 							<property name="resourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/build/web/]]></string>
+								<string><![CDATA[@PROJROOT@/build/web/]]></string>
 							</property>
 							<property name="resourceName">
 								<string><![CDATA[License.html]]></string>
@@ -775,7 +775,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<string><![CDATA[Please read the following release notes]]></string>
 							</property>
 							<property name="resourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/html/]]></string>
+								<string><![CDATA[@PROJROOT@/apps/Dizzy/html/]]></string>
 							</property>
 							<property name="resourceName">
 								<string><![CDATA[ReleaseNotes.html]]></string>
@@ -1659,10 +1659,10 @@ and any path to a file to read from that file]]></string>
 														<string><![CDATA[appLogoIcon.gif]]></string>
 													</property>
 													<property name="smallIconPath">
-														<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/images/]]></string>
+														<string><![CDATA[@PROJROOT@/apps/Dizzy/images/]]></string>
 													</property>
 													<property name="largeIconPath">
-														<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/images/]]></string>
+														<string><![CDATA[@PROJROOT@/apps/Dizzy/images/]]></string>
 													</property>
 												</object>
 											</property>
@@ -1718,7 +1718,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/samples/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/Dizzy/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1746,7 +1746,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/samples/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/Dizzy/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1772,7 +1772,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/samples/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/Dizzy/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1798,7 +1798,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/samples/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/Dizzy/samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1851,7 +1851,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/html/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/Dizzy/html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1877,7 +1877,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../build/]]></string>
+												<string><![CDATA[@PROJROOT@/build/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1903,7 +1903,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/config/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/Dizzy/config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1929,7 +1929,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/config/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/Dizzy/config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1955,7 +1955,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/bin/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/Dizzy/bin/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1981,7 +1981,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/bin/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/Dizzy/bin/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2034,7 +2034,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../config/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/Dizzy/../../config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2085,7 +2085,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/../../build/web/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/Dizzy/../../build/web/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2111,7 +2111,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/html/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/Dizzy/html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2137,7 +2137,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/images/]]></string>
+												<string><![CDATA[@PROJROOT@/apps/Dizzy/images/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2235,7 +2235,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/build/web/Dizzy/docs/]]></string>
+												<string><![CDATA[@PROJROOT@/build/web/Dizzy/docs/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>

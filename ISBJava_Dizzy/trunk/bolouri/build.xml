@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 
 <project name="bolouri" default="compile" basedir=".">
-  
+
+  <property name="projRoot"           location="${basedir}" />  
   <property name="projJavaDir"        location="${basedir}/java" />
   <property name="projAppsDir"        location="${basedir}/apps" />
   <property name="projConfigDir"      location="${basedir}/config" />
