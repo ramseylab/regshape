@@ -41,24 +41,23 @@ public class TestSimulator
             SimulatorParameters simParams = new SimulatorParameters();
             simParams.setEnsembleSize(40);
             String []requestedSymbolNames = { "A", "B" };
-            double []timeValues = new double[NUM_TIME_POINTS];
-            Object []symbolValues = new Object[NUM_TIME_POINTS];
             
             long curTime = System.currentTimeMillis();
 
-            simulator.simulate(0.0, 
-                               1000.0, 
-                               simParams,
-                               NUM_TIME_POINTS,
-                               requestedSymbolNames,
-                               timeValues,
-                               symbolValues);
+            SimulationResults simulationResults = simulator.simulate(0.0, 
+                                                                     1000.0, 
+                                                                     simParams,
+                                                                     NUM_TIME_POINTS,
+                                                                     requestedSymbolNames);
 
             long finalTime = System.currentTimeMillis();
             double elapsedTimeSec = (double) (finalTime - curTime) / 1000.0;
             System.out.println("elapsed time: " + elapsedTimeSec);
 
             int numSymbols = requestedSymbolNames.length;
+
+            double []timeValues = simulationResults.getResultsTimeValues();
+            Object []symbolValues = simulationResults.getResultsSymbolValues();
 
             TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(new PrintWriter(System.out),
                                                                         requestedSymbolNames,

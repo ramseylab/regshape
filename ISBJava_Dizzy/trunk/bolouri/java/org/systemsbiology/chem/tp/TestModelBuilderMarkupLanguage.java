@@ -43,16 +43,15 @@ public class TestModelBuilderMarkupLanguage
                     SimulatorDeterministicRungeKuttaFixed simulator = new SimulatorDeterministicRungeKuttaFixed();
                     simulator.initialize(model);
                     String []requestedSymbolNames = {"PX", "PY", "PZ"};
-                    double []timeValues = new double[NUM_TIME_POINTS];
-                    Object []symbolValues = new Object[NUM_TIME_POINTS];
                     SimulatorParameters simParams = simulator.getDefaultSimulatorParameters();
-                    simulator.simulate(0.0,
-                                       100.0,
-                                       simParams,
-                                       NUM_TIME_POINTS,
-                                       requestedSymbolNames,
-                                       timeValues,
-                                       symbolValues);
+                    SimulationResults simulationResults = simulator.simulate(0.0,
+                                                                             100.0,
+                                                                             simParams,
+                                                                             NUM_TIME_POINTS,
+                                                                             requestedSymbolNames);
+
+                    double []timeValues = simulationResults.getResultsTimeValues();
+                    Object []symbolValues = simulationResults.getResultsSymbolValues();
 
                     TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(new PrintWriter(System.out),
                                                                                 requestedSymbolNames,
