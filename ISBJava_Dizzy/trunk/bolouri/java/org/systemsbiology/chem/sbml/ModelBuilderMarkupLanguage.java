@@ -131,7 +131,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
                 compartment.setVolume(compVolume);
             }
                 
-            SymbolValueChemSimulation.addSymbolValueToMap(compartmentsMap, compartmentName, compartment);
+            compartment.addSymbolToMap(compartmentsMap, compartmentName);
         }
 
         HashMap globalParamsMap = new HashMap();
@@ -153,7 +153,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
             }
 
             model.addParameter(parameter);
-            SymbolValueChemSimulation.addSymbolValueToMap(globalParamsMap, globalParamName, parameter);
+            parameter.addSymbolToMap(globalParamsMap, globalParamName);
         }
         
         // process floating species and store them in the species map
@@ -193,7 +193,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
             species.setSpeciesPopulation(initialSpeciesPopulation);
 
             model.addSpecies(species);
-            SymbolValueChemSimulation.addSymbolValueToMap(dynamicalSpeciesMap, speciesName, species);
+            species.addSymbolToMap(dynamicalSpeciesMap, speciesName);
         }
 
         // process boundary species and store them in the species map
@@ -224,12 +224,13 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
             speciesCompartmentMap.put(speciesName, compartmentName);
 
             model.addSpecies(species);
-            SymbolValueChemSimulation.addSymbolValueToMap(boundarySpeciesMap, speciesName, species);
+            species.addSymbolToMap(boundarySpeciesMap, speciesName);
 
         }
 
-        SymbolEvaluatorChemMarkupLanguage symbolEvaluator = new SymbolEvaluatorChemMarkupLanguage(speciesCompartmentMap);
-        model.setSymbolEvaluator(symbolEvaluator);
+        SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = new SymbolEvaluationPostProcessorChemMarkupLanguage(speciesCompartmentMap);
+
+        model.setSymbolEvaluationPostProcessor(symbolEvaluationPostProcessor);
 
         int numRules = mMarkupLanguageImporter.getNumRules();
         for(int ruleCtr = 0; ruleCtr < numRules; ++ruleCtr)
