@@ -52,7 +52,8 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
         // as a reactant
         String []speciesArray = mDynamicSymbolNames;
         int numSpecies = speciesArray.length;
-        HashMap speciesReactions = new HashMap();
+        HashMap speciesReactions = new HashMap();  // create a map between species names and the set of reactions
+                                                   // whose rates depend on this species
         for(int ctr = 0; ctr < numSpecies; ++ctr)
         {
             String speciesName = speciesArray[ctr];
@@ -140,7 +141,10 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
             {
                 String productSpeciesName = (String) productIter.next();
                 HashSet dependentReactions = (HashSet) speciesReactions.get(productSpeciesName);
-                reactionDependencies[ctr].addAll(dependentReactions);
+                if(null != dependentReactions)
+                {
+                    reactionDependencies[ctr].addAll(dependentReactions);
+                }
             }
 
             Collection reactantSpecies = reaction.getReactantsMap().keySet();
@@ -149,7 +153,10 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
             {
                 String reactantSpeciesName = (String) reactantIter.next();
                 HashSet dependentReactions = (HashSet) speciesReactions.get(reactantSpeciesName);
-                reactionDependencies[ctr].addAll(dependentReactions);
+                if(null != dependentReactions)
+                {
+                    reactionDependencies[ctr].addAll(dependentReactions);
+                }
             }
 
             reactionDependencies[ctr].addAll(customReactions);
