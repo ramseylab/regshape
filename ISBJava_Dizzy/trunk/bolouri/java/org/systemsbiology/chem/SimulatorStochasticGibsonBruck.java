@@ -298,7 +298,6 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
             updateSymbolValuesForReaction(pSymbolEvaluator,
                                           lastReaction,
                                           pDynamicSymbolValues,
-                                          time,
                                           pDelayedReactionSolvers);
             clearExpressionValueCaches();
                                           
@@ -369,15 +368,14 @@ public class SimulatorStochasticGibsonBruck extends SimulatorStochasticBase impl
 //            System.out.println("end of simulation");
         }
         pSymbolEvaluator.setTime(time);
-        clearExpressionValueCaches();
 
         return(time);
     }
 
-    public void initialize(Model pModel, SimulationController pSimulationController) throws DataNotFoundException, InvalidInputException
+    public void initialize(Model pModel) throws DataNotFoundException, InvalidInputException
     {
-        initializeSimulator(pModel, pSimulationController);
-        initializeSimulatorStochastic(pModel, pSimulationController);
+        initializeSimulator(pModel);
+        initializeSimulatorStochastic(pModel);
         createDependencyGraph(pModel);
         initializePutativeTimeToNextReactions();
     }

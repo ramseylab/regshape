@@ -89,8 +89,8 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
             updateSymbolValuesForReaction(pSymbolEvaluator,
                                           lastReaction,
                                           pDynamicSymbolValues,
-                                          time,
                                           pDelayedReactionSolvers);
+            // we have changed the species populations; must clear the expression value caches
             clearExpressionValueCaches();
         }
 
@@ -158,17 +158,15 @@ public class SimulatorStochasticGillespie extends SimulatorStochasticBase implem
         }
 
         pSymbolEvaluator.setTime(time);
-        // we have changed the time; must nuke the cache of expression values
-        clearExpressionValueCaches();
 
         return(time);
     }
 
 
-    public void initialize(Model pModel, SimulationController pSimulationController) throws DataNotFoundException, InvalidInputException
+    public void initialize(Model pModel) throws DataNotFoundException, InvalidInputException
     {
-        initializeSimulator(pModel, pSimulationController);
-        initializeSimulatorStochastic(pModel, pSimulationController);
+        initializeSimulator(pModel);
+        initializeSimulatorStochastic(pModel);
     }
 
 }
