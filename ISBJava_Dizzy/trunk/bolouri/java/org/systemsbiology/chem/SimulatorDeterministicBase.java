@@ -506,4 +506,9 @@ public abstract class SimulatorDeterministicBase extends Simulator
     {
         return(false);
     }
+
+    public boolean allowsInterrupt()
+    {
+        return(true);
+    }
 }

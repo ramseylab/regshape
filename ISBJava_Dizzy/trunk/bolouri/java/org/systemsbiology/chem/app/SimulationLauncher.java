@@ -262,7 +262,7 @@ public class SimulationLauncher
         return(mSimulationController);
     }
 
-    private void updateSimulationControlButtons()
+    private void updateSimulationControlButtons(boolean pAllowsInterrupt)
     {
         if(! getSimulationInProgress())
         {
@@ -277,14 +277,14 @@ public class SimulationLauncher
             {
                 mStartButton.setEnabled(false);
                 mStopButton.setEnabled(false);
-                mCancelButton.setEnabled(true);
-                mResumeButton.setEnabled(true);
+                mCancelButton.setEnabled(pAllowsInterrupt);
+                mResumeButton.setEnabled(pAllowsInterrupt);
             }
             else
             {
                 mStartButton.setEnabled(false);
-                mStopButton.setEnabled(true);
-                mCancelButton.setEnabled(true);
+                mStopButton.setEnabled(pAllowsInterrupt);
+                mCancelButton.setEnabled(pAllowsInterrupt);
                 mResumeButton.setEnabled(false);
             }
         }
@@ -299,7 +299,7 @@ public class SimulationLauncher
             if(simulationController.getStopped())
             {
                 simulationController.setStopped(false);
-                updateSimulationControlButtons();
+                updateSimulationControlButtons(true);
             }
         }
     }
@@ -312,7 +312,7 @@ public class SimulationLauncher
             if(! simulationController.getStopped())
             {
                 simulationController.setStopped(true);
-                updateSimulationControlButtons();
+                updateSimulationControlButtons(true);
             }
         }
     }
@@ -326,7 +326,7 @@ public class SimulationLauncher
             {
                 simulationController.setCancelled(true);
             }
-            updateSimulationControlButtons();
+            updateSimulationControlButtons(true);
             showCancelledSimulationDialog();
         }
     }
@@ -389,11 +389,11 @@ public class SimulationLauncher
 
     private void runSimulation(SimulationRunParameters pSimulationRunParameters)
     {
-        updateSimulationControlButtons();
+        ISimulator simulator = pSimulationRunParameters.mSimulator;
 
         try
         {
-            ISimulator simulator = pSimulationRunParameters.mSimulator;
+            updateSimulationControlButtons(simulator.allowsInterrupt());
 
             long startTime = System.currentTimeMillis(); 
 
@@ -435,7 +435,7 @@ public class SimulationLauncher
                 
         catch(Exception e)
         {
-            simulationEndCleanup();
+            simulationEndCleanup(simulator);
             ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
                                                                                              "Failure running simulation",
                                                                                              e);
@@ -444,7 +444,7 @@ public class SimulationLauncher
 
         catch(Throwable e)
         {
-            simulationEndCleanup();
+            simulationEndCleanup(simulator);
             e.printStackTrace(System.err);
             ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
                                                                                              "Failure running simulation",
@@ -453,10 +453,10 @@ public class SimulationLauncher
             
         }
 
-        simulationEndCleanup();
+        simulationEndCleanup(simulator);
     }
 
-    private void simulationEndCleanup()
+    private void simulationEndCleanup(ISimulator pSimulator)
     {
         setSimulationRunParameters(null);
 
@@ -467,7 +467,7 @@ public class SimulationLauncher
             listener.simulationEnding();
         }
 
-        updateSimulationControlButtons();
+        updateSimulationControlButtons(pSimulator.allowsInterrupt());
     }
 
     class SimulationRunParameters
@@ -612,7 +612,7 @@ public class SimulationLauncher
                     mEnsembleField.setEnabled(false);
                     mEnsembleFieldLabel.setEnabled(false);
                 }
-
+                
                 Integer minNumSteps = simParams.getMinNumSteps();
                 if(null != minNumSteps)
                 {
@@ -656,6 +656,9 @@ public class SimulationLauncher
                     mAllowedAbsoluteErrorField.setEnabled(false);
                     mAllowedAbsoluteErrorFieldLabel.setEnabled(false);
                 }
+
+                boolean allowsInterrupt = simulator.allowsInterrupt();
+                updateSimulationControlButtons(allowsInterrupt);
             }
             catch(Exception e)
             {
@@ -1462,8 +1465,6 @@ public class SimulationLauncher
         controllerPanel.add(box);
 
         Container contentPane = null;
-
-        updateSimulationControlButtons();
 
          // Add listener for "window-close" event
         if(frame instanceof JFrame)

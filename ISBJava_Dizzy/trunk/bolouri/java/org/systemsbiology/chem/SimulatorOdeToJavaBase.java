@@ -46,6 +46,11 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE
         return(false);
     }
 
+    public boolean allowsInterrupt()
+    {
+        return(false);
+    }
+
     protected abstract void runExternalSimulation(Span pSimulationTimeSpan,
                                                   double []pInitialDynamicSymbolValues,
                                                   double pInitialStepSize,

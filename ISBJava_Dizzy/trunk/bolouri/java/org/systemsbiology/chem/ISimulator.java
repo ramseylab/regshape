@@ -22,6 +22,8 @@ public interface ISimulator
 
     public boolean isStochasticSimulator();
 
+    public boolean allowsInterrupt();
+
     /**
      * Conduct a simulation of the dynamics of the {@link Model} passed to the
      * {@link #initialize(Model,SimulationController)} method.  The end time
