@@ -37,7 +37,7 @@ public class TestSimulator
             model.addReaction(reactionY);
             System.out.println(model.toString());
             SimulatorStochasticGillespie simulator = new SimulatorStochasticGillespie();
-            simulator.initialize(model, null);
+            simulator.initialize(model);
             SimulatorParameters simParams = new SimulatorParameters();
             simParams.setEnsembleSize(40);
             String []requestedSymbolNames = { "A", "B" };
@@ -63,7 +63,8 @@ public class TestSimulator
             TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(new PrintWriter(System.out),
                                                                         requestedSymbolNames,
                                                                         timeValues,
-                                                                        symbolValues);
+                                                                        symbolValues,
+                                                                        TimeSeriesOutputFormat.CSV_EXCEL);
         }
 
         catch(Exception e)

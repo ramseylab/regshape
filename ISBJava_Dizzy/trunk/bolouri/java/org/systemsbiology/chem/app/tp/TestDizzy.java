@@ -10,8 +10,8 @@ package org.systemsbiology.chem.app.tp;
 
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
+import org.systemsbiology.chem.sbml.*;
 import org.systemsbiology.chem.app.*;
-import org.systemsbiology.chem.scripting.*;
 import java.io.*;
 import javax.swing.*;
 import java.awt.*;
@@ -58,7 +58,7 @@ public class TestDizzy
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             Model model = modelBuilder.buildModel(bufferedReader, includeHandler);
 
-            SimulationLauncher launcher = new SimulationLauncher("Dizzy", model, null);
+            SimulationLauncher launcher = new SimulationLauncher("Dizzy", model, true);
         }
 
         catch(Exception e)

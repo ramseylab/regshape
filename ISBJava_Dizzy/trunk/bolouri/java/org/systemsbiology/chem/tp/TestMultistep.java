@@ -43,18 +43,20 @@ public class TestMultistep
             model.addReaction(reactionY);
 
             System.out.println(model.toString());
-            DeterministicSimulatorFixed simulator = new DeterministicSimulatorFixed();
-            simulator.initialize(model, null);
+            SimulatorDeterministicRungeKuttaFixed simulator = new SimulatorDeterministicRungeKuttaFixed();
+            simulator.initialize(model);
             String []requestedSymbolNames = { "A", "B" };
             double []timeValues = new double[NUM_TIME_POINTS];
             Object []symbolValues = new Object[NUM_TIME_POINTS];
             
             long curTime = System.currentTimeMillis();
 
+            SimulatorParameters simParams = simulator.getDefaultSimulatorParameters();
+
             simulator.simulate(0.0, 
                                200.0, 
+                               simParams,
                                NUM_TIME_POINTS,
-                               1,
                                requestedSymbolNames,
                                timeValues,
                                symbolValues);
@@ -68,7 +70,8 @@ public class TestMultistep
             TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(new PrintWriter(System.out),
                                                                         requestedSymbolNames,
                                                                         timeValues,
-                                                                        symbolValues);
+                                                                        symbolValues,
+                                                                        TimeSeriesOutputFormat.CSV_EXCEL);
         }
 
         catch(Exception e)
