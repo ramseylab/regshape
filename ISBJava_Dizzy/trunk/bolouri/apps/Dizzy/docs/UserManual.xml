@@ -30,7 +30,7 @@
 <!-- ========== INTRODUCTION ========== -->
 
 <isb:docsection name="Introduction" label="introduction">
-<p>
+<p />
 &appName; is a chemical kinetics simulation software 
 package implemented in Java.  It provides a model definition environment and 
 an implementation of the <a href="#gillespie">Gillespie stochastic algorithm</a>. 
@@ -94,12 +94,10 @@ The file extension of the CCMDL scripting language is &quot;<code>&ccmdlExtensio
 <p />
 </li>
 </ol>
-You will find examples of all three languages in the "samples"
-subdirectory of the directory in which you install the &appName; software.
-In addition, there is a <a href="&webBaseURL;/models">repository of
-biomolecular models</a> maintained by the &mainGroup;, that
-will serve as a good source of sample model definition files.
-</p>
+For all three of the above languages, 
+<a href="#samplefiles">example model definition files</a> are provided with
+the &appName; installation.
+<p />
 <p>
 This document is the user manual for the &appName; program.
 This manual applies to the following release version of the program:
@@ -304,7 +302,22 @@ The &quot;start&quot; button is only used to initiate a simulation.
 Only one simulation may be running at a time, in the &appName; application.
 </p>
 <p>
-Now, let&apos;s define a simple model of a chemical system.
+A special note applies to the case of importing a model definition file in
+SBML format, using the GUI application.  In this case, the GUI application
+will ask you to specify how species symbols appearing in reaction rate
+expressions are to be interpreted.  The choices given are "concentration"
+and "molecules".  It is recommended that you try using "concentration" first.
+If the GUI application complains that the initial population of a given
+chemical species is too large for it to handle, try reloading the
+model with the "molecules" choice instead.  This will likely solve 
+the problem.
+</p>
+<p>
+Now that you have become acquainted with the simulation driver screen, 
+the next step is to become acquainted with the 
+<a href="#ccmdl">CCMDL model definition language</a>, which permits 
+rapid development of new models. 
+To begin, let&apos;s define a simple model of a chemical system.
 This system will consist of the enzyme-substrate reaction:
 <blockquote>
 <pre>
@@ -557,24 +570,27 @@ when running stochastic simulations you should start with small initial
 copy numbers for the species in your model, and determine the computational
 run-time, before attempting simulations with large initial species populations.
 </p>
-<p>
-For users just starting out, it is recommended to try importing a simple
-SBML model using the GUI application.  Note that the GUI application
-will ask you to specify how species symbols appearing in reaction rate
-expressions are to be interpreted.  The choices given are "concentration"
-and "molecules".  It is recommended that you try using "concentration" first.
-If the GUI application complains that the initial population of a given
-chemical species is too large for it to handle, try reloading the
-model with the "molecules" choice instead.  This will likely solve 
-the problem.
-</p>
-<p>
-After becoming acquainted with the simulation driver screen, the next
-step is to become acquainted with the <a href="#ccmdl">CCMDL</a>
-language features that permit rapid development of new models. 
-</p>
 
 </isb:docsubsection>
+
+<isb:docsubsection name="Sample Model Definition Files" label="samplefiles">
+<p>
+When you install the &appName; application, a subdirectory &quot;samples&quot;
+is created in the directory where &appName; is installed.  
+You will find examples of all three languages in the "samples"
+subdirectory of the directory in which you install the &appName; software.
+<blockquote>
+<b>Note to Windows users:</b> please do not use Notepad to open the
+sample model definition files in the &quot;samples&quot; subdirectory.
+Please use a different editor, such as WordPad or Emacs, in order to 
+ensure that the files appear properly formatted, in the editor.
+</blockquote>
+In addition, there is a <a href="&webBaseURL;/models">repository of
+biomolecular models</a> maintained by the &mainGroup;, that
+will serve as a good source of sample model definition files.
+</p>
+</isb:docsubsection>
+
 
 </isb:docsection>
 
@@ -3198,9 +3214,9 @@ which adds parameter <code>r1</code> to model <code>m1</code>.
 
 <isb:docsubsection name="Example CMDL model definition file" label="cmdl-samplefile">
 The following is a sample model definition file in the CMDL language.
-
-
 <blockquote>
+<table border="1">
+<tr><td>
 <pre>
 compartment "univ": volume 1.0;
 species "DNA3": compartment "univ", speciesType floating;
@@ -3249,9 +3265,26 @@ reaction "G80_dimerization": products ("G80D_free"), rate 1.0, reactants ("G80_p
 reaction "G80_dedimerization": products ("G80_protein" "G80_protein"), rate 0.1, reactants ("G80D_free");
 reaction "G3_dimerization": products ("G3D_free"), rate 1.0, reactants ("G3_protein" "G3_protein");
 reaction "G3_dedimerization": products ("G3_protein" "G3_protein"), rate 0.1, reactants ("G3D_free");
-model "myModel": reactions ("G4_dimer_binding_at_DNA4" "G4_dimer_debinding_at_DNA4" "G80_dimer_binding_at_DNA4" "G80_dimer_debinding_at_DNA4" "G4_dimer_binding_at_DNA80" "G4_dimer_debinding_at_DNA80" "G80_dimer_binding_at_DNA80" "G80_dimer_debinding_at_DNA80" "G4_dimer_binding_at_DNA3" "G4_dimer_debinding_at_DNA3" "G80_dimer_binding_at_DNA3" "G80_dimer_debinding_at_DNA3" "G3D_G80D_complexing" "G3D_G80D_decomplexing" "G4_transcription" "G80_transcription" "G3_transcription" "G4_translation" "G80_translation" "G3_translation" "G4_dimerization" "G4_dedimerization" "G80_dimerization" "G80_dedimerization" "G3_dimerization" "G3_dedimerization"), speciesMode molecules;
-speciesPopulations "sp": populations (1.0 1.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 10.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0), speciesList ("DNA3" "DNA4" "DNA80" "G3D_G80D" "G3D_free" "G3_RNA" "G3_protein" "G4D_DNA3" "G4D_DNA4" "G4D_DNA80" "G4D_free" "G4_RNA" "G4_protein" "G80D_G4D_DNA3" "G80D_G4D_DNA4" "G80D_G4D_DNA80" "G80D_free" "G80_RNA" "G80_protein" "galactose");
+model "myModel": reactions ("G4_dimer_binding_at_DNA4" "G4_dimer_debinding_at_DNA4" 
+                 "G80_dimer_binding_at_DNA4" "G80_dimer_debinding_at_DNA4" 
+                 "G4_dimer_binding_at_DNA80" "G4_dimer_debinding_at_DNA80" 
+                 "G80_dimer_binding_at_DNA80" "G80_dimer_debinding_at_DNA80" 
+                 "G4_dimer_binding_at_DNA3" "G4_dimer_debinding_at_DNA3" 
+                 "G80_dimer_binding_at_DNA3" "G80_dimer_debinding_at_DNA3" 
+                 "G3D_G80D_complexing" "G3D_G80D_decomplexing" "G4_transcription" 
+                 "G80_transcription" "G3_transcription" "G4_translation" 
+                 "G80_translation" "G3_translation" "G4_dimerization" 
+                 "G4_dedimerization" "G80_dimerization" "G80_dedimerization" 
+                 "G3_dimerization" "G3_dedimerization"), speciesMode molecules;
+speciesPopulations "sp": populations (1.0 1.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 
+                                      10.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0), 
+                         speciesList ("DNA3" "DNA4" "DNA80" "G3D_G80D" "G3D_free" "G3_RNA" 
+                                      "G3_protein" "G4D_DNA3" "G4D_DNA4" "G4D_DNA80" "G4D_free" 
+                                      "G4_RNA" "G4_protein" "G80D_G4D_DNA3" "G80D_G4D_DNA4" 
+                                      "G80D_G4D_DNA80" "G80D_free" "G80_RNA" "G80_protein" "galactose");
 </pre>
+</td></tr>
+</table>
 </blockquote>
 </isb:docsubsection>
 

@@ -75,9 +75,9 @@ directory.
 For detailed documentation of the application programming
 interface (API) to the &appName; system, please consult the
 <a href="&webBaseURL;/&localJavaLibraryName;">ISBJava</a> home page.
-You will find examples of model defrnition in the "samples"
-subdirectory of the directory in which you install the 
-&appName; software.
+In addition, the &appName; system provides a set of
+<a href="&appHomePage;/docs/UserManual.html#samplefiles">
+sample model definition files</a>.
 </isb:docsection>
 <isb:docsection name="Contact Information" label="contactinfo">
 If you have questions about this software, or if you
