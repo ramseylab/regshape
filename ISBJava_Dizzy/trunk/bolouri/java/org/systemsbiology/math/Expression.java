@@ -29,7 +29,7 @@ import java.io.*;
  * <b>functions:</b> &nbsp;&nbsp;&nbsp; A small library of built-in functions
  * is supported; the function names are <em>case-sensitive</em>, and parentheses
  * required in order for the parser to detect a function call:  
- * <code>exp()</code>, <code>log()</code>, <code>sin()</code>, 
+ * <code>exp()</code>, <code>ln()</code>, <code>sin()</code>, 
  * <code>cos()</code>, <code>tan()</code>, <code>asin()</code>, 
  * <code>acos()</code>, <code>atan()</code>, <code>abs()</code>, 
  * <code>floor()</code>, <code>ceil()</code>, <code>sqrt()</code>,
@@ -95,10 +95,10 @@ import java.io.*;
  * A (B + C)
  * A B
  * exp A
- * A * log(B)
+ * A * ln(B)
  * </pre>
  * </blockquote>
- * In the above, note that <code>log(B)</code> is not allowed, because
+ * In the above, note that <code>ln(B)</code> is not allowed, because
  * the <code>MathExpression</code> class does not support function calls within 
  * expressions.
  * <p />
@@ -116,13 +116,13 @@ import java.io.*;
  * <p />
  * When an expression string has been parsed, the result is a
  * parse tree rooted at a single object called the &quot;root node&quot;.
- * As an example, the parse tree for the expression <code>log(A * (B + C)) + D</code>
+ * As an example, the parse tree for the expression <code>ln(A * (B + C)) + D</code>
  * might look (conceptually) like this:
  * <blockquote>
  * <pre>
  *        add
  *        / \
- *     log   D
+ *      ln   D
  *      |
  *     mult
  *   /      \
@@ -215,7 +215,7 @@ public class Expression implements Cloneable
         public static final int ELEMENT_CODE_MOD = 8;
         public static final int ELEMENT_CODE_NEG = 9;
         public static final int ELEMENT_CODE_EXP = 10;
-        public static final int ELEMENT_CODE_LOG = 11;
+        public static final int ELEMENT_CODE_LN = 11;
         public static final int ELEMENT_CODE_SIN = 12;
         public static final int ELEMENT_CODE_COS = 13;
         public static final int ELEMENT_CODE_TAN = 14;
@@ -341,7 +341,7 @@ public class Expression implements Cloneable
          * element code specifying the logarithm function (base e) of the 
          * first (and only) argument
          */
-        public static final ElementCode LOG = new ElementCode("log", ELEMENT_CODE_LOG, true, 1);
+        public static final ElementCode LN = new ElementCode("ln", ELEMENT_CODE_LN, true, 1);
 
         /**
          * element code specifying the sine function of the 
@@ -779,7 +779,7 @@ public class Expression implements Cloneable
         // parse for parentheses (sub-expressions)
         parseParentheses(pFormula);
 
-        // parse for built-in function calls (exp, log, sin, cos, tan, etc.)
+        // parse for built-in function calls (exp, ln, sin, cos, tan, etc.)
         parseFunctionCalls(pFormula);
 
         // parse for unary operators
@@ -1209,7 +1209,7 @@ public class Expression implements Cloneable
                 case ElementCode.ELEMENT_CODE_EXP:
                     return(Math.exp(valueOfFirstOperand));
                     
-                case ElementCode.ELEMENT_CODE_LOG:
+                case ElementCode.ELEMENT_CODE_LN:
                     return(Math.log(valueOfFirstOperand));
                     
                 case ElementCode.ELEMENT_CODE_SIN:
@@ -1702,7 +1702,7 @@ public class Expression implements Cloneable
 
                 break;
 
-            case ElementCode.ELEMENT_CODE_LOG:
+            case ElementCode.ELEMENT_CODE_LN:
                 if(! firstOperandDerivZero)
                 {
                     retElement = new Element(ElementCode.DIV);
@@ -1726,7 +1726,7 @@ public class Expression implements Cloneable
 
                         Element xlogx = new Element(ElementCode.MULT);
                         xlogx.mFirstOperand = firstOperand;
-                        Element logx = new Element(ElementCode.LOG);
+                        Element logx = new Element(ElementCode.LN);
                         logx.mFirstOperand = firstOperand;
                         xlogx.mSecondOperand = logx;
                         
@@ -1850,7 +1850,7 @@ public class Expression implements Cloneable
                     {
                         retElement = new Element(ElementCode.MULT);
 
-                        Element logx = new Element(ElementCode.LOG);
+                        Element logx = new Element(ElementCode.LN);
                         logx.mFirstOperand = firstOperand;
 
                         if(! secondOperandDerivUnity)
