@@ -219,7 +219,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/java/extlib/]]></string>
+								<string><![CDATA[$IA_PROJECT_DIR$/../../../java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -247,7 +247,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../../../build]]></string>
+								<string><![CDATA[$IA_PROJECT_DIR$/../../../apps/Dizzy/build/../../../build]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -275,7 +275,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/java/extlib/]]></string>
+								<string><![CDATA[$IA_PROJECT_DIR$/../../../java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -303,7 +303,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/java/extlib/]]></string>
+								<string><![CDATA[$IA_PROJECT_DIR$/../../../java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -331,7 +331,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/java/extlib/]]></string>
+								<string><![CDATA[$IA_PROJECT_DIR$/../../../java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -359,7 +359,7 @@ and any path to a file to read from that file]]></string>
 				<string><![CDATA[The installer cannot run on your configuration. It will now quit.]]></string>
 			</property>
 			<property name="userSplashPath">
-				<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../../../docs/]]></string>
+				<string><![CDATA[$IA_PROJECT_DIR$/../../../docs/]]></string>
 			</property>
 			<property name="userSplashName">
 				<string><![CDATA[logo-isb.png]]></string>
@@ -507,7 +507,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<string><![CDATA[Installation and Use of $PRODUCT_NAME$ Requires Acceptance of the Following Open Source License Agreement:]]></string>
 							</property>
 							<property name="resourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/build/web/]]></string>
+								<string><![CDATA[$IA_PROJECT_DIR$/../../../build/web/]]></string>
 							</property>
 							<property name="resourceName">
 								<string><![CDATA[License.html]]></string>
@@ -653,7 +653,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<string><![CDATA[Please read the following release notes]]></string>
 							</property>
 							<property name="resourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/html/]]></string>
+								<string><![CDATA[$IA_PROJECT_DIR$/../../../apps/Dizzy/html/]]></string>
 							</property>
 							<property name="resourceName">
 								<string><![CDATA[ReleaseNotes.html]]></string>
@@ -1576,7 +1576,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../samples/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1604,7 +1604,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../samples/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1630,7 +1630,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../samples/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1656,7 +1656,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../samples/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../samples/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1709,7 +1709,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../html/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1735,7 +1735,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../../../build/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../../../build/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1761,7 +1761,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../config/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1787,7 +1787,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../config/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1813,7 +1813,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../bin/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../bin/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1839,7 +1839,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../bin/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../bin/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1865,7 +1865,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../bin/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../bin/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1891,7 +1891,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../bin/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../bin/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1972,7 +1972,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../html/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../html/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -1998,7 +1998,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../../../config/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../../../config/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
@@ -2049,7 +2049,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/build/web/]]></string>
+												<string><![CDATA[$IA_PROJECT_DIR$/../../../build/web/]]></string>
 											</property>
 											<property name="shouldUninstall">
 												<boolean>true</boolean>
