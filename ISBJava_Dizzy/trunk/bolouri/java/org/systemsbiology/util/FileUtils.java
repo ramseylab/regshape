@@ -54,6 +54,12 @@ public class FileUtils
         return(retFileName);
     }
     
+    /**
+     * The Windows command-line sometimes passes a file name
+     * terminating in a double-quote character.  This method
+     * strips out the double-quote character and appends a
+     * directory separator character, if necessary.
+     */
     public static String fixWindowsCommandLineDirectoryNameMangling(String pDirName)
     {
         String retString = pDirName;
