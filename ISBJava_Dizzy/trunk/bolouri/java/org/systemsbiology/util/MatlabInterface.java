@@ -45,9 +45,12 @@ import java.io.OutputStreamWriter;
  * thereby employing Matlab as the computation engine.
  * The Matlab engine operates by running in the background as a separate
  * process from your own program.
- *
+ * 
+ * Note:  this class will not work properly with the version of
+ * the Matlab program that runs on the Windows platform.
+ * 
  * @author W. Andreas Klimke, University of Stuttgart
- *         
+ *
  * @version 0.1
  *
  */
