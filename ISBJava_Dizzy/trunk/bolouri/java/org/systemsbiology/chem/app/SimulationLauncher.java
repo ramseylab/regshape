@@ -33,8 +33,11 @@ public class SimulationLauncher
     private JList mSimulatorsList;
     private JList mSpeciesList;
     private JTextField mEnsembleField;
+    private JLabel mEnsembleFieldLabel;
     private JTextField mNumStepsField;
+    private JLabel mNumStepsFieldLabel;
     private JTextField mAllowedErrorField;
+    private JLabel mAllowedErrorFieldLabel;
     private String mOutputType;
     private JButton mStartButton;
     private JButton mStopButton;
@@ -425,28 +428,40 @@ public class SimulationLauncher
                 if(null != ensembleSize)
                 {
                     mEnsembleField.setText(ensembleSize.toString());
+                    mEnsembleField.setEnabled(true);
+                    mEnsembleFieldLabel.setEnabled(true);
                 }
                 else
                 {
                     mEnsembleField.setText("");
+                    mEnsembleField.setEnabled(false);
+                    mEnsembleFieldLabel.setEnabled(false);
                 }
                 Integer minNumSteps = simParams.getMinNumSteps();
                 if(null != minNumSteps)
                 {
                     mNumStepsField.setText(minNumSteps.toString());
+                    mNumStepsField.setEnabled(true);
+                    mNumStepsFieldLabel.setEnabled(true);
                 }
                 else
                 {
                     mNumStepsField.setText("");
+                    mNumStepsField.setEnabled(false);
+                    mNumStepsFieldLabel.setEnabled(false);
                 }
                 Double maxAllowedError = simParams.getMaxAllowedError();
                 if(null != maxAllowedError)
                 {
                     mAllowedErrorField.setText(maxAllowedError.toString());
+                    mAllowedErrorField.setEnabled(true);
+                    mAllowedErrorFieldLabel.setEnabled(true);
                 }
                 else
                 {
                     mAllowedErrorField.setText("");
+                    mAllowedErrorField.setEnabled(false);
+                    mAllowedErrorFieldLabel.setEnabled(false);
                 }
             }
             catch(Exception e)
@@ -600,12 +615,13 @@ public class SimulationLauncher
         JPanel ensemblePanel = new JPanel();
         JPanel ensembleLabelPanel = new JPanel();
         Box ensembleLabelBox = new Box(BoxLayout.Y_AXIS);
-        JLabel ensembleLabel1 = new JLabel("number of ensembles:");
-        ensembleLabelBox.add(ensembleLabel1);
+        JLabel ensembleLabel = new JLabel("number of ensembles:");
+        ensembleLabelBox.add(ensembleLabel);
         ensembleLabelPanel.add(ensembleLabelBox);
         ensemblePanel.add(ensembleLabelPanel);
         JTextField ensembleField = new JTextField(NUM_COLUMNS_TIME_FIELD);
         mEnsembleField = ensembleField;
+        mEnsembleFieldLabel = ensembleLabel;
         ensemblePanel.add(ensembleField);
         box.add(ensemblePanel);
 
@@ -618,6 +634,7 @@ public class SimulationLauncher
         numStepsPanel.add(numStepsLabelPanel);
         JTextField numStepsField = new JTextField(NUM_COLUMNS_TIME_FIELD);
         mNumStepsField = numStepsField;
+        mNumStepsFieldLabel = numStepsLabel;
         numStepsPanel.add(numStepsField);
         box.add(numStepsPanel);
 
@@ -630,6 +647,7 @@ public class SimulationLauncher
         allowedErrorPanel.add(allowedErrorLabelPanel);
         JTextField allowedErrorField = new JTextField(NUM_COLUMNS_TIME_FIELD);
         mAllowedErrorField = allowedErrorField;
+        mAllowedErrorFieldLabel = allowedErrorLabel;
         allowedErrorPanel.add(allowedErrorField);
         box.add(allowedErrorPanel);
 
