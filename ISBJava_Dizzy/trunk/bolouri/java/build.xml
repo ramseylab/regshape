@@ -194,7 +194,7 @@
     </delete>
     <delete dir="${app.buildDir}" quiet="yes" />
     <delete quiet="yes">
-      <fileset dir="${app.classesDir}">
+      <fileset dir="${app.classesDir}/isb">
         <include name="**/*.class" />
         <include name="**/*.xml" />
         <include name="**/*.dtd" />
