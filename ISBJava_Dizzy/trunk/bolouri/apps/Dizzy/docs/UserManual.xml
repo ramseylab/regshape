@@ -47,10 +47,11 @@ model definition languages, each of which has an associated filename
 suffix ("extension").  The GUI program (referred to above) uses the
 filename extension to guess what model definition language the file contains.
 <ol>
-<li>Systems Biology Markup Language ("SBML")
+<li><a href="http://www.sbw-sbml.org">Systems Biology Markup Language</a> ("SBML")
 <p />
-The SBML standard is documented at the web site:  
-<a href="http://www.sbw-sbml.org">http://www.sbw-sbml.org</a>.
+The SBML standard is documented outside the scope of this document, at the
+aforementioned (<code>www.sbw-sbml.org</code>) web site.  The &appName; system
+is able to read and write a subset of the SBML Level 1 specification.
 You can generate a model in SBML format by using the JDesigner software tool.
 <p />
 The file extension of hte SBML language is: &quot;<code>.xml</code>&quot;

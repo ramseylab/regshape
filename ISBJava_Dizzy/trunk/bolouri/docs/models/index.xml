@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE Overview [
+  <!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
+  %CommonConfig;
+  <!ENTITY internalWebServerURL "http://sun01.systemsbiology.net">
+   ]>
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+
+<isb:doctitle>Biomolecular Model Repository</isb:doctitle>
+<isb:docversion>Last updated: $Date$</isb:docversion>
+
+<p>
+This page is an archive of model definition files for biomolecular 
+systems that have been found to be useful or interesting in our group&apos;s
+research.  
+</p>
+<p>
+The filename suffix of each model definition file indicates its
+format.  The possible formats for model definition files, and the
+filename suffxes of each model definition file format, are
+described in the 
+<a href="../Dizzy/UserManual.html#introduction">Dizzy User Manual</a>.
+</p>
+
+<p>
+<ul>
+<li><a href="singlegene.dizzy">Simple stochastic model of 
+transcription of a single gene</a>, with two
+transcription factors TFA and TFB</li>
+<li><a href="GAL.dizzy">Simple stochastic model of GAL4 system</a>,
+from <em>S. cerevisiae</em></li>
+</ul>
+</p>
+
+
+</isb:document>
+
+<!-- <isb:doccontents /> -->  <!-- commented this out because the contents took up too much space -->
