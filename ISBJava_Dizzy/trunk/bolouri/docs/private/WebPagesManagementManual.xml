@@ -1,8 +1,9 @@
-<?xml version="1.0"?>
+><?xml version="1.0"?>
 <?xml-stylesheet type="text/xml" href="../../config/documentation-stylesheet.xml"?>
 <!DOCTYPE isbdocument [
   <!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
   %CommonConfig;
+<!ENTITY baseURL "http://labs.systemsbiology.net/bolouri">
    ]>
 
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
@@ -19,28 +20,171 @@
 This document contains detailed instructions on how to manage
 the &mainGroup; web pages.  The goals of this framework are
 automation of the build/upload processes, ease of style
-modifications, and integration with our Java code base.
-</p>
-<p>
-If you are in a hurry, you might want to skip ahead to
-the <a href="#simpler">simpler method of publishing
-web content</a> described below.  Please note the 
-<a href="#warning">warning about not uploading web 
-content into the default directory on the FTP server</a>
-in that section.
-</p>
-<p>
-Please note that most of the software packages mentioned
-in this document are available in the &mainGroup; shared
-directory, under the &quot;<code>software</code>&quot;
-subdirectory.
+modifications, and integration with our Java code base. 
 </p>
 </isb:docsection>
 
-<isb:docsection name="Web Pages Format" label="format">
+<isb:docsection name="Main web pages" label="main">
+
 <p>
-The &mainGroup; web pages are written in a variant of 
-<a href="http://www.w3c.org/MarkUp">XHTML</a> that uses a
+The main &mainGroup; web pages are stored on our NFS file
+server, and are controlled by a simple Windows scripting mechanism.
+The files are archived in the directory:
+<blockquote>
+<pre>
+/proj/bolrilab/BOLOURI_GROUP_WEB_PAGES/content
+</pre>
+</blockquote>
+On Windows, this directory appears as:
+<blockquote>
+<pre>
+\\isb-1\bolouri\BOLOURI_GROUP_WEB_PAGES\content
+</pre>
+</blockquote> To access 
+the web pages archive, your computer must be on the network.
+</p>
+<p>
+Open the &quot;content&quot; folder of the web site archive
+(full directory name given above) in your
+file browser/explorer.  Then you can edit HTML files
+within the folder, using an appropriate HTML editing
+program.  Make sure to save your changes, and test them
+using your web browser, before proceeding to the next
+step (publishing the pages).  
+</p>
+<p>
+You may add new pages to the &quot;content&quot; folder,
+or even new subdirectories.  However, please do NOT
+create a &quot;software&quot; subdirectory, as this 
+is reserved for web content published from our CVS
+repository.  New web pages should be simple static HTML
+pages, that do not employ any of the following technologies:
+<ul>
+<li>server-side includes (SSI)</li>
+<li>common gateway interface (CGI)</li>
+<li>Apache mod_perl and other embedded scripting languages</li>
+<li>server-side XML/XSL translation</li>
+</ul>
+(If you do not know what the above are, do not worry about
+it.)  
+</p>
+<p>
+<b>images:</b>New images should be put into the &quot;images&quot;
+folder under the &quot;content&quot; folder.  
+</p>
+<p>
+<b>non-HTML documents:</b> You may publish non-HTML documents
+such as PDF documents. Just copy the PDF file to the &quot;content&quot;
+folder, and it will be published the next time someone runs the
+&quot;updateWeb&quot; script.  PDF is generally preferred over
+Word (<code>.doc</code>) and PowerPoint (<code>.ppt</code>) 
+document formats, but this is not a requirement.
+</p>
+<p>
+For any new
+files you add under the &quot;content&quot; folder, make sure
+they have world-readable file permissions (i.e., are
+readable by any user).
+</p>
+<p>
+Please note that any files you place within &quot;content&quot;
+will be (potentially) visible to the outside world.  A file
+<code>MyFile.html</code> placed within the &quot;content&quot;
+directory will be available for unrestricted HTTP download 
+on the web server at the following URL:
+<blockquote>
+<pre>
+&baseURL;/MyFile.html
+</pre>
+</blockquote>
+The only exception to this is files placed within the
+&quot;private&quot; subdirectory.  These are protected
+so that they are not visible outside the local domain
+(the institute).  But they are still visible to anyone within
+the institute.  A file <code>MyFile.html</code> placed within
+the &quot;private&quot; subdirectory of &quot;content&quot;
+will be visible at the following URL:
+<blockquote>
+<pre>
+&baseURL;/private/MyFile.html
+</pre>
+</blockquote>
+</p>
+<p>
+The &quot;models&quot; subdirectory is for publishing
+a new model definition file.  Adding a new model definition
+file to the repository is a two-step process.  First, add
+your model definition file to the &quot;models&quot; subdirectory.
+Then you need to edit the &quot;index.html&quot; file
+within the same directory, in order to add a hyperlink
+to the new model definition file.  Otherwise, a person
+browsing our online model repository will never know that
+your new model definition file is available to download.
+</p>
+<p>
+Once you have added your new web content or made your
+changes to the &quot;content&quot; directory, just run
+the following script to publish it to the web server.
+On Linux:
+<blockquote>
+<pre>
+/proj/bolrilab/BOLOURI_GROUP_WEB_PAGES/tools/uploadWeb.sh
+</pre>
+</blockquote>
+And on Windows:
+<blockquote>
+<pre>
+\\isb-1\bolouri\BOLOURI_GROUP_WEB_PAGES\tools\uploadWeb.bat
+</pre>
+</blockquote>
+Then use your web browser to test to see if the content
+is updated on the web server.
+</p>
+<p>
+It is a good idea to periodically make a back-up copy of 
+all of the web content under the &quot;content&quot; directory.
+There is a script set up to perform this task.  All you need
+to do is to run the script, and all of the web content 
+will be &quot;backed up&quot; (copied to a different directory).
+The script is (on Linux):
+<blockquote>
+<pre>
+/proj/bolrilab/BOLOURI_GROUP_WEB_PAGES/tools/backupWeb.sh
+</pre>
+</blockquote>
+and on Windows:
+<blockquote>
+<pre>
+\\isb-1\bolouri\BOLOURI_GROUP_WEB_PAGES\tools\backupWeb.bat
+</pre>
+</blockquote>
+This script will copy all of the files under &quot;content&quot;
+to the directory:
+<blockquote>
+<pre>
+BOLOURI_GROUP_WEB_PAGES/backup
+</pre>
+</blockquote>
+from where the files can be restored
+should anything get deleted from &quot;content&quot;accidentally.
+</p>
+<p>
+Please note that the &quot;external&quot; group web page
+<blockquote>
+<pre>
+&mainGroupURL;
+</pre>
+</blockquote>
+is maintained by IT Services (<code>&mainHelpEmailSafe;</code>).
+</p>
+
+</isb:docsection>
+
+<isb:docsection name="Software Web Pages" label="software">
+<p>
+The &mainGroup; software web pages are stored and published
+separatedly from the main group web pages.  They are written in a variant 
+of <a href="http://www.w3c.org/MarkUp">XHTML</a> that uses a
 special &quot;stylesheet&quot; to unify the &quot;look and feel&quot; 
 of the web pages.   The use of a
 common stylesheet means that by making an edit to one file, one can (in
@@ -58,11 +202,8 @@ Note that the only knowledge required in order to write a
 web document using this template is a rudimentary understanding of
 <a href="http://www.w3.org/MarkUp">XHTML</a>.
 </p>
-
-</isb:docsection>
-<isb:docsection name="Required Software" label="requiredsoftware">
 <p>
-Managing the &mainGroup; web pages requires that certain software
+Managing the &mainGroup; software web pages requires that certain software
 programs be installed on your computer.  The process is likely to 
 be much easier on a Linux computer, but in principle it should be
 do-able on a Windows computer.  You will need the following software
@@ -155,9 +296,6 @@ to upload your web content to the web server.  For security
 reasons, the web server does not accept FTP connections for 
 the &mainGroup; account from outside the firewall.
 </p>
-</isb:docsection>
-
-<isb:docsection name="Managing Web Content" label="managing">
 <p>
 To start managing web content, first make sure you have 
 installed all of the required software and executed the 
@@ -234,6 +372,7 @@ All of the steps below assume that your current working directory is the
 &quot;<code>bolouri</code>&quot; directory that was created when you 
 executed your &quot;<code>cvs co</code>&quot; command above. 
 </p>
+<p>
 If you are attempting to add a new web page &quot;<code>MyFile.html</code>&quot;
 to the web pages (as described above), run the following commands:
 <blockquote>
@@ -256,7 +395,8 @@ In both the above cases, the text in between the single quotes is a
 &quot;CVS log message&quot; that you should use to briefly describe 
 what you changed. A single sentence usually suffices for the CVS log 
 message.
-
+</p>
+<p>
 Once you have &quot;committed&quot; your changes to the CVS archive, 
 you can then build the web site and &quot;upload&quot; it to the 
 web server.  This is accomplished by executing the following commands:
@@ -270,20 +410,18 @@ At this point, you should be able to point your web browser to
 your new web page at (for example):
 <blockquote>
 <pre>
-http://labs.systemsbiology.net/bolouri/MyFile.xml
+&webBaseURL;/MyFile.xml
 </pre>
 </blockquote>
 or the modified group home page at:
 <blockquote>
 <pre>
-http://labs.systemsbiology.net/bolouri
+&webBaseURL;
 </pre>
 </blockquote>
 If you have any questions about this process, please contact the
 web site maintainer at: <code>&mainGroupEmailSafe;</code>.
-</isb:docsection>
-
-<isb:docsection name="Private Web Pages" label="privatepages">
+</p>
 <p>
 The above instructions describe how to publish a web page
 that will be externally (publically) visible.  To publish
@@ -310,92 +448,6 @@ top of the file is different for files in the
 &quot;<code>bolouri/docs/private</code>&quot;
 subdirectory than it is for files in the
 &quot;<code>bolouri/docs</code>&quot; subdirectory.
-</p>
-</isb:docsection>
-
-<isb:docsection name="Simpler Method to Publish New Pages" label="simpler">
-<p>
-If you wish to rapidly publish a <b>new</b> web page, and the above
-instructions are too burdensome, there is a more direct method
-to publish a new web page, and bypass CVS and the aforementioned
-&quot;stylesheet&quot; framework.  You may use one of the two
-&quot;repositories&quot; established for unmanaged web content,
-which is web content that is not auto-generated using the methods 
-described in the above sections of this document.  These two
-repositories are just subdirectories on the FTP server.  
-To use the simple web publishing method, write a HTML document
-using your favorite HTML editor, and FTP the document to either 
-the &quot;<code>privateRepository</code>&quot; or the
-&quot;<code>publicRepository</code>&quot; directory on the 
-following FTP server:
-<blockquote>
-<pre>
-labs.systemsbiology.net
-</pre>
-</blockquote>
-The two directories differ in that the public directory
-is intended for web content that is visible to the outside,
-and the private directory is intended for web content that
-is visible only to the &mainAffiliation;
-You should log into the FTP server using username
-&quot;<code>bolouri_group</code>&quot;.  The password
-can be obtained by asking one of the permanent staff
-in the &mainGroup;.  Once your FTP connection is established,
-you select the aforementioned directory using the 
-&quot;<code>cd</code>&quot; command:
-<ol>
-<li>If you do want the document
-to be accessible from outside, do the following:
-<blockquote>
-<pre>
-cd publicRepository
-</pre>
-</blockquote> 
-</li>
-<li>If you do <em>not</em> want the
-document to be accessible from outside, do the following:
-<blockquote>
-<pre>
-cd privateRepository
-</pre>
-</blockquote>
-</li>
-</ol>
-You can then upload your document (&quot;<code>YourDocument.html</code>)
-using the &quot;<code>put</code>&quot; command:
-<blockquote>
-<pre>
-put YourDocument.html
-</pre>
-</blockquote>
-At this point, your document should be visible on the
-external web server, at one of the two following URLs:
-<blockquote>
-<pre>
-http://labs.systemsbiology.net/bolouri/privateRepository/YourDocument.html
-http://labs.systemsbiology.net/bolouri/publicRepository/YourDocument.html
-</pre>
-</blockquote>
-depending on whether you selected (1) or (2) above.
-As emphasized above, files within the public repository
-are visible to anyone on the Internet.  Files within
-the private repository are only accessible to hosts
-within the &mainAffiliation;.
-</p>
-<p>
-<a name="warning" />
-<blockquote>
-<b>WARNING:</b> Please do not upload your web content 
-directly into the default directory 
-&quot;<code>bolouri_group</code>&quot; on the FTP server.  
-Instead upload into either the
-&quot;<code>publicRepository</code>&quot; or the
-&quot;<code>privateRepository</code>&quot; directory,
-as described above.  Most importantly, please be careful 
-not to accidentally overwrite any of the web content that 
-is already on the web server, when you are uploading your 
-web content!
-</blockquote>
 </p>
 </isb:docsection>
 
@@ -544,48 +596,39 @@ Any model definition file placed in this directory will
 be publically visible on our external web server.
 </p>
 <p>
-To &quot;publish&quot; a model in this repository, 
+To &quot;publish&quot; a model definition file
+&quot;myModel.txt&quot; in this repository, 
 the following steps should be used:
 <ol>
-<li>check out the &quot;<code>bolouri</code>&quot;
-CVS archive using the 
-<a href="#managing">checkuot directions</a> above.</li>
-<li>copy your model definition file (for the sake
-of discussion, we will assume it is named 
-&quot;<code>myModel.dizzy</code>&quot;), to the
-subdirectory &quot;<code>bolouri/docs/models</code>&quot;
-in the CVS &quot;enlistment&quot; that was created in step (1)</li>
-<li>edit the <code>index.xml</code> file in the
-aforementioned directory using a text editor, 
-and add a new list element and hyperlink to your
-file.  The link will look something like this:
+<li>copy the file &quot;myModel.txt&quot; to
+the directory
 <blockquote>
 <pre>
-&lt;li&gt;&lt;a href="myModel.dizzy"&gt;my really interesting model&lt;/a&gt;&lt;/li&gt;
+BOLOURI_GROUP_WEB_PAGES/models/myModel.txt
 </pre>
 </blockquote>
-where you will substitute your own description in place of
-the text &quot;my really interesting model&quot; above.
+(where the prefix before BOLOURI_GROUP_WEB_PAGES
+is defined in the <a href="#main">main web pages section</a>
+above.  
 </li>
-<li>save your edits to <code>index.xml</code>
-and execute the following command from within
-the top-level directory &quot;<code>bolouri</code>&quot; 
-of your enlistment:
+<li>edit the file
 <blockquote>
 <pre>
-cvs add docs/models/myModel.dizzy
-cvs commit -m 'my new model' docs/models/myModel.dizzy
+BOLOURI_GROUP_WEB_PAGES/models/index.html
+</pre>
+</blockquote>
+to add a hyperlink to your new model definition file.
+You may use any HTML editor you like, to do this.
+The &quot;address&quot; used in the hyperlink should be:
+<blockquote>
+<pre>
+&baseURL;/models/myModel.txt
 </pre>
 </blockquote>
 </li>
-<li>from that same directory, run the command:
-<blockquote>
-<pre>
-ant buildHTML
-</pre>
-</blockquote>
-This should publish your new model definition file
-to the Biomolecular Model Repository on the public web site.
+<li>run the &quot;<code>updateWeb</code>&quot; script
+(see instructions in the <a href="#main">main web pages
+section</a> above) in order to publish it to the web server.
 </li>
 </ol>
 </p>
@@ -596,39 +639,118 @@ to the Biomolecular Model Repository on the public web site.
 This section presents specific instructions to publish 
 your personal web page on the lab intranet.  To begin, 
 simply write (or export) the web page as a HTML document.
-For example, my personal home page is <code>sramsey.html</code>.
-Next, use the FTP program to transfer the document to
-the FTP server <code>labs.systemsbiology.net</code>,
-as shown here:
+For your personal home page might be <code>joe.html</code>.
+Save the web page in the web content directory described in
+the <a href="#main">main web pages section</a> above.
+Then follow the directions in that section above, to publish
+your web page on the web server.  Your web page (assuming
+the file name is <code>joe.html</code>) will be
+available at the URL:
 <blockquote>
 <pre>
-ftp labs.systemsbiology.net
-username:  bolouri_group
-password:  XXXXXXX
-cd publicRepository
-put sramsey.html
+&baseURL;/joe.html
 </pre>
 </blockquote>
-<b>IMPORTANT NOTE:</b>  make sure you store the file in the "publicRepository"
-directory on the FTP server.  
-The HTML file uploaded in the previous example will be visible as the
-following URL:
-<blockquote>
-<pre>
-<a href="../publicRepository/sramsey.html">http://labs.systemsbiology.net/bolouri/publicRepository/sramsey.html</a>
-</pre>
-</blockquote>
-At this point, your home page is visible to the outside world.  If you wish
-to have your home page only visible within the Institute, you should store
-the home page in the directory &quot;<code>privateRepository</code>&quot;,
-rather than &quot;<code>publicRepository</code>&quot; as shown above.
 </p>
 <p>
-You can then e-mail Tatiana Gill (<code>tgill at systemsbiology.net</code>) \
-and ask her to add a hyperlink to your personal home page, on the external-facing
+You can then e-mail IT Services (<code>&mainHelpEmailSafe;</code>) \
+and ask them to add a hyperlink to your personal home page, on the external-facing
 Bolouri Group home page.
 </p>
 
 </isb:docsection>
+
+<isb:docsection name="Direct Method to Publish New Pages" label="simpler">
+<p>
+If you wish to rapidly publish a <b>new</b> web page, and the above
+instructions are too burdensome, there is a more direct method
+to publish a new web page, and bypass CVS and the aforementioned
+&quot;stylesheet&quot; framework.  You may use one of the two
+&quot;repositories&quot; established for unmanaged web content,
+which is web content that is not auto-generated using the methods 
+described in the above sections of this document.  These two
+repositories are just subdirectories on the FTP server.  
+To use the simple web publishing method, write a HTML document
+using your favorite HTML editor, and FTP the document to either 
+the &quot;<code>privateRepository</code>&quot; or the
+&quot;<code>publicRepository</code>&quot; directory on the 
+following FTP server:
+<blockquote>
+<pre>
+labs.systemsbiology.net
+</pre>
+</blockquote>
+The two directories differ in that the public directory
+is intended for web content that is visible to the outside,
+and the private directory is intended for web content that
+is visible only to the &mainAffiliation;
+You should log into the FTP server using username
+&quot;<code>bolouri_group</code>&quot;.  The password
+can be obtained by asking one of the permanent staff
+in the &mainGroup;.  Once your FTP connection is established,
+you select the aforementioned directory using the 
+&quot;<code>cd</code>&quot; command:
+<ol>
+<li>If you do want the document
+to be accessible from outside, do the following:
+<blockquote>
+<pre>
+cd publicRepository
+</pre>
+</blockquote> 
+</li>
+<li>If you do <em>not</em> want the
+document to be accessible from outside, do the following:
+<blockquote>
+<pre>
+cd privateRepository
+</pre>
+</blockquote>
+</li>
+</ol>
+You can then upload your document (&quot;<code>YourDocument.html</code>)
+using the &quot;<code>put</code>&quot; command:
+<blockquote>
+<pre>
+put YourDocument.html
+</pre>
+</blockquote>
+At this point, your document should be visible on the
+external web server, at one of the two following URLs:
+<blockquote>
+<pre>
+&baseURL;/privateRepository/YourDocument.html
+&baseURL;/publicRepository/YourDocument.html
+</pre>
+</blockquote>
+depending on whether you selected (1) or (2) above.
+As emphasized above, files within the public repository
+are visible to anyone on the Internet.  Files within
+the private repository are only accessible to hosts
+within the &mainAffiliation;.
+</p>
+<p>
+<a name="warning" />
+<blockquote>
+<b>WARNING:</b> Please do not upload your web content 
+directly into the default directory 
+&quot;<code>bolouri_group</code>&quot; on the FTP server.  
+Instead upload into either the
+&quot;<code>publicRepository</code>&quot; or the
+&quot;<code>privateRepository</code>&quot; directory,
+as described above.  Most importantly, please be careful 
+not to accidentally overwrite any of the web content that 
+is already on the web server, when you are uploading your 
+web content!
+</blockquote>
+</p>
+<p>
+Please note that most of the software packages mentioned
+in this document are available in the &mainGroup; shared
+directory, under the &quot;<code>software</code>&quot;
+subdirectory.
+</p>
+</isb:docsection>
+
 
 </isb:document>
