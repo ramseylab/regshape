@@ -28,11 +28,22 @@ public class EvidenceWeightedInfererParams
 {
     private Integer mNumBins;
     private Double mInitialSignificanceCutoff;
-    private Double mCombinedSignificanceCutoff;
+    private Double mCombinedSignificanceQuantileCutoff;
     private Double mFractionToRemove;
     private Double mMinFractionalCostChange;
     private Double mSmoothingLength;
+    private Integer mMaxIterations;
     private EvidenceWeightType mEvidenceWeightType;
+    
+    public void setMaxIterations(Integer pMaxIterations)
+    {
+        mMaxIterations = pMaxIterations;
+    }
+    
+    public Integer getMaxIterations()
+    {
+        return mMaxIterations;
+    }
     
     public void setNumBins(Integer pNumBins)
     {
@@ -54,14 +65,14 @@ public class EvidenceWeightedInfererParams
         return mInitialSignificanceCutoff;
     }
     
-    public void setCombinedSignificanceCutoff(Double pCombinedSignificanceCutoff)
+    public void setCombinedSignificanceCutoff(Double pCombinedSignificanceQuantileCutoff)
     {
-        mCombinedSignificanceCutoff = pCombinedSignificanceCutoff;
+        mCombinedSignificanceQuantileCutoff = pCombinedSignificanceQuantileCutoff;
     }
     
     public Double getCombinedSignificanceCutoff()
     {
-        return mCombinedSignificanceCutoff;
+        return mCombinedSignificanceQuantileCutoff;
     }
     
     public void setFractionToRemove(Double pFractionToRemove)

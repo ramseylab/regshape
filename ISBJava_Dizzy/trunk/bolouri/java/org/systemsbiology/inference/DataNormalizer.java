@@ -436,7 +436,7 @@ public class DataNormalizer
                     else
                     {
                         guessedValue = mColumnMedians.get(j);
-                        System.out.println("value[" + i + "," + j + "] = " + guessedValue);
+//                        System.out.println("value[" + i + "," + j + "] = " + guessedValue);
                     }
                     mRawObservationsFilledIn.set(i, j, guessedValue);
                 }
@@ -559,7 +559,7 @@ public class DataNormalizer
                 }
             }
         }
-        System.out.println("fixNonpositiveValues: " + pFixNonpositiveValues + "; minValue: " + minValue);
+//        System.out.println("fixNonpositiveValues: " + pFixNonpositiveValues + "; minValue: " + minValue);
         if(pFixNonpositiveValues && minValue <= 0.0)
         {
             double addTo = 0.0;

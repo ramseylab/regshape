@@ -24,7 +24,7 @@ import org.systemsbiology.math.*;
  * which allows for computing the significances of a set of observations
  * in the absence of separate "negative control" measurements.  The
  * method used for computing the significance depends on the
- * {@link SignificanceCalculationFormula} passed as a parameter.
+ * {@link SignificanceCalculationMethod} passed as a parameter.
  * The algorithms used in this class are based on the ideas and designs of
  * Daehee Hwang at Institute for Systems Biology.
  * 
@@ -40,8 +40,7 @@ public class SignificanceCalculator
     private DoubleMatrix1D mHistogram;
     private int mNumBins;
     
-    private double []mPDFs;
-    private double []mCDFs;
+    private double []mSigs;
     private double []mXs;
     
     public SignificanceCalculator()
@@ -56,11 +55,10 @@ public class SignificanceCalculator
         if(mNumBins != pNumBins)
         {
             mNumBins = pNumBins;
-            mHistogram = DoubleFactory1D.dense.make(mNumBins);
+            mHistogram = DoubleFactory1D.dense.make(mNumBins + 1);
             
-            mPDFs = new double[pNumBins];
-            mCDFs = new double[pNumBins];
-            mXs = new double[pNumBins];
+            mSigs = new double[pNumBins + 1];
+            mXs = new double[pNumBins + 1];
         }
     }
     
@@ -336,13 +334,37 @@ public class SignificanceCalculator
         pRetResults.mBestProbDist = bestProbDist;
     }
 
+        
     
-    public void calculateSignificancesCDF(Double []pObservations, 
-                                          Double []pControlData,
-                                          int pNumBins, 
-                                          boolean pSingleTailed,
-                                          double pSmoothingLength,
-                                          SignificanceCalculationResults pRetResults) 
+    public static double computeSignificanceNonParametric(int pNonParametricMethod,
+                                                          double pMean,
+                                                          double pVariance,
+                                                          double x)
+    {
+        double sig = 0.0;
+        switch(pNonParametricMethod)
+        {
+        case SignificanceCalculationMethod.CODE_CDF_NONPARAMETRIC:
+            sig = Normal.cdf(pMean, pVariance, x);
+            break;
+            
+        case SignificanceCalculationMethod.CODE_PDF_NONPARAMETRIC:
+            sig = Normal.pdf(pMean, pVariance, x);
+            break;
+            
+        default:
+            throw new IllegalArgumentException("unknown nonparametric significance method: " + pNonParametricMethod);
+        }
+        return sig;
+    }
+    
+    public void calculateSignificancesNonParametric(Double []pObservations, 
+                                                   Double []pControlData,
+                                                   int pNumBins, 
+                                                   boolean pSingleTailed,
+                                                   double pSmoothingLength,
+                                                   int pNonParametricMethodCode,
+                                                   SignificanceCalculationResults pRetResults) 
     {
         int numObservations = pObservations.length;
         if(numObservations == 0)
@@ -365,10 +387,16 @@ public class SignificanceCalculator
         {
             throw new IllegalArgumentException("improper array length");
         }
-                
+        
         if(pSmoothingLength <= 0.0)
         {
             throw new IllegalArgumentException("improper smoothing length");
+        }
+        
+        if(pNonParametricMethodCode != SignificanceCalculationMethod.CODE_CDF_NONPARAMETRIC &&
+           pNonParametricMethodCode != SignificanceCalculationMethod.CODE_PDF_NONPARAMETRIC)
+        {
+            throw new IllegalArgumentException("unrecognized nonparametric method code: " + pNonParametricMethodCode);
         }
         
         initialize(pNumBins);
@@ -387,7 +415,10 @@ public class SignificanceCalculator
         controlsList.sort();
         double controlMax = Descriptive.max(controlsList);
         double controlMin = Descriptive.min(controlsList);
-//        System.out.println("control min: " + controlMin + "; control max: " + controlMax);
+        //System.out.println("control min: " + controlMin + "; control max: " + controlMax);
+        
+        double []controls = controlsList.elements();
+
         
         double obsMax = 0.0;
         double obsMin = Double.MAX_VALUE;
@@ -410,36 +441,31 @@ public class SignificanceCalculator
             }
         }
         
-        double []controls = controlsList.elements();
-        double []pdfs = mPDFs;
-
+        double []sigs = mSigs;
+        
         double numBinsDouble = (double) pNumBins;
         double binSize = (obsMax - obsMin)/numBinsDouble;
         double x = 0.0;
-        double pdfx = 0.0;
+        double sigx = 0.0;
         
         double variance = pSmoothingLength*pSmoothingLength;
-        numControlValues = controls.length;
+        numControlValues = controlsList.size();
         double numControlsDouble = (double) numControlValues;
-        double pdfInt = 0.0;
-        
         double []xs = mXs;
-        
-        double pdfLeft = 0.0;
-        double pdfRight = 0.0;
         double controlVal = 0.0;
         double lastControlVal = 0.0;
-        double lastPDFVal = 0.0;
+        double lastSigVal = 0.0;
         
         // build the probability distribution
-        for(int k = 0; k < pNumBins; ++k)
+        for(int k = 0; k <= pNumBins; ++k)
         {
-            x = obsMin + binSize*(((double) k) + 0.5);
+            x = Math.min(obsMin + binSize*((double) k), obsMax);
             xs[k] = x;
-            pdfx = 0.0;
+            sigx = 0.0;
             
             lastControlVal = controls[0];
-            lastPDFVal = Normal.pdf(lastControlVal, variance, x);
+            
+            lastSigVal = computeSignificanceNonParametric(pNonParametricMethodCode, lastControlVal, variance, x);
             
             for(int i = 0; i < numControlValues; ++i)
             {
@@ -447,62 +473,29 @@ public class SignificanceCalculator
                 // only recompute the Normal.pdf() if it is necessary (i.e., we are at a new "control" value)
                 if((lastControlVal - controlVal) != 0.0)
                 {
-                    lastPDFVal = Normal.pdf(controlVal, variance, x);
+                    lastSigVal = computeSignificanceNonParametric(pNonParametricMethodCode, controlVal, variance, x);
                     lastControlVal = controlVal;
                 }
-                pdfx += lastPDFVal;
+                sigx += lastSigVal;
             }
             
-            pdfx /= numControlsDouble;
+            sigx /= numControlsDouble;
             
-            pdfs[k] = pdfx;
-            pdfInt += pdfx*binSize;
-        }
-        if(! pSingleTailed)
-        {
-            x = obsMin - 0.5*binSize;
-            for(int i = 0; i < numControlValues; ++i)
+            if(SignificanceCalculationMethod.CODE_CDF_NONPARAMETRIC == pNonParametricMethodCode)
             {
-                pdfLeft += Normal.pdf(controls[i], variance, x);
+                sigx = Math.min(sigx, 1.0);
             }
-            pdfLeft /= numControlsDouble;
+            
+            sigs[k] = sigx;
         }
-        x = obsMax + 0.5*binSize;
-        for(int i = 0; i < numControlValues; ++i)
-        {
-            pdfRight += Normal.pdf(controls[i], variance, x);
-        }
-        pdfRight /= numControlsDouble;
-        pdfInt += pdfLeft*binSize;
-        pdfInt += pdfRight*binSize;
-
-        // need to rescale the probability distribution function to ensure it has unit integral
-        for(int k = 0; k < pNumBins; ++k)
-        {
-            pdfs[k] /= pdfInt;
-//            System.out.println("pdf[" + k + "] = " + pdfs[k]);
-        }
-        pdfLeft /= pdfInt;
-        pdfRight /= pdfInt;
-        
-        pdfInt = pdfLeft*binSize;
-        double []cdfs = mCDFs;
-        for(int k = 0; k < pNumBins; ++k)
-        {
-            x = obsMin + binSize*(((double) k) + 0.5);
-            pdfInt += pdfs[k]*binSize;
-            cdfs[k] = Math.min(pdfInt, 1.0);
-        }            
         
         Double obsValObj = null;
         int k = 0;
         double kdouble = 0.0;
-        double yLeft = 0.0;
-        double yRight = 0.0;
         double xLeft = 0.0;
-        double slope = 0.0;
-        double cdf = 0.0;
         double sig = 0.0;
+        double sigLeft = 0.0;
+        double sigRight = 0.0;
         
         for(int i = 0; i < numObservations; ++i)
         {
@@ -511,42 +504,43 @@ public class SignificanceCalculator
             {
                 obsVal = obsValObj.doubleValue();
                 kdouble = (obsVal - obsMin)/binSize;
-                
-                if(kdouble > 0.5 && kdouble < numBinsDouble - 0.5)
+                k = (int) kdouble;
+                if(k == pNumBins)
                 {
-                    k = (int) (kdouble - 0.5);
-                    yLeft = cdfs[k];
-                    yRight = cdfs[k+1];
-                    xLeft = xs[k];
+                    --k;
                 }
-                else if(kdouble <= 0.5)
+                sigLeft = sigs[k];
+                if(kdouble - ((double) k) > 0)
                 {
-                    yLeft = pdfLeft*binSize;
-                    yRight = cdfs[0];
-                    //xLeft = xs[0] - binSize;
-                    xLeft = obsMin - 0.5*binSize;
+                    sigRight = sigs[k + 1];
                 }
                 else
                 {
-                    yLeft = cdfs[pNumBins - 1];
-                    yRight = yLeft + pdfRight*binSize;
-                    xLeft = xs[pNumBins - 1];
+                    sigRight = sigLeft;
                 }
-                
-                slope = (yRight - yLeft)/binSize;
-                
-                cdf = Math.min(1.0, yLeft + slope*(obsVal - xLeft));                
-                sig = 0.0;
-                
-                if(! pSingleTailed)
-                {
-                    sig = 2.0 * Math.min(cdf, 1.0 - cdf);
-                }
-                else
-                {
-                    sig = 1.0 - cdf;
-                }
+                xLeft = xs[k];
+                sig = sigLeft + (sigRight-sigLeft)*(obsVal - xLeft)/binSize;
 
+                switch(pNonParametricMethodCode)
+                {
+                case SignificanceCalculationMethod.CODE_CDF_NONPARAMETRIC:
+                    sig = Math.min(1.0, sig);
+                    if(! pSingleTailed)
+                    {
+                        sig = 2.0 * Math.min(sig, 1.0 - sig);
+                    }
+                    else
+                    {
+                        sig = 1.0 - sig;
+                    }
+                    break;
+                case SignificanceCalculationMethod.CODE_PDF_NONPARAMETRIC:
+                    // do nothing
+                    break;
+                    
+                default:
+                    throw new IllegalArgumentException("unknown nonparametric method code");
+                }
             }
             else
             {
@@ -556,12 +550,13 @@ public class SignificanceCalculator
         }
     }
     
-    public void calculateSignificancesPDF(Double []pObservations, 
-                                          Double []pControlData,
-                                          int pNumBins, 
-                                          boolean pSingleTailed,
-                                          double pMaxChiSquare, 
-                                          SignificanceCalculationResults pRetResults) throws AccuracyException
+    public void calculateSignificancesParametric(Double []pObservations, 
+                                                    Double []pControlData,
+                                                    int pNumBins, 
+                                                    boolean pSingleTailed,
+                                                    double pMaxChiSquare, 
+                                                    int pParametricMethodCode,
+                                                    SignificanceCalculationResults pRetResults) throws AccuracyException
     {
         int numObservations = pObservations.length;
         if(numObservations == 0)
@@ -672,7 +667,28 @@ public class SignificanceCalculator
                     throw new IllegalArgumentException("observation out of range, for element number: " + i + "; value is: " + obs);
                 }
                 
-                sig = bestProbDist.pdf(obs);
+                switch(pParametricMethodCode)
+                {
+                case SignificanceCalculationMethod.CODE_CDF_PARAMETRIC:
+                    sig = bestProbDist.cdf(obs);
+                    if(! pSingleTailed)
+                    {
+                        sig = 2.0 * Math.min(sig, 1.0 - sig);
+                    }
+                    else
+                    {
+                        sig = 1.0 - sig;
+                    }
+                    break;
+                
+                case SignificanceCalculationMethod.CODE_PDF_PARAMETRIC:
+                    sig = bestProbDist.pdf(obs);
+                    break;
+                    
+                default:
+                    throw new IllegalArgumentException("unknown parametric significance calculation method code");    
+                    
+                }
             }
             else
             {
@@ -690,8 +706,8 @@ public class SignificanceCalculator
                                        SignificanceCalculatorParams pParams,
                                        SignificanceCalculationResults pResults) throws AccuracyException
     {
-        SignificanceCalculationFormula formula = pParams.getSignificanceCalculationFormula();
-        if(null == formula)
+        SignificanceCalculationMethod method = pParams.getSignificanceCalculationMethod();
+        if(null == method)
         {
             throw new IllegalArgumentException("missing required parameter:  significance calculation formula");
         }
@@ -714,7 +730,10 @@ public class SignificanceCalculator
         }
         boolean singleTailed = singleTailedObj.booleanValue();
         
-        if(formula.equals(SignificanceCalculationFormula.CDF))
+        int code = method.getCode();
+        
+        if(method.equals(SignificanceCalculationMethod.CDF_NONPARAMETRIC) ||
+           method.equals(SignificanceCalculationMethod.PDF_NONPARAMETRIC))
         {
             Double smoothingLengthObj = pParams.getSmoothingLength();
             if(null == smoothingLengthObj)
@@ -725,16 +744,18 @@ public class SignificanceCalculator
             if(smoothingLength <= 0.0)
             {
                 throw new IllegalArgumentException("illegal smoothing length: " + smoothingLength);
-            }
+            } 
             
-            calculateSignificancesCDF(pObservations,
-                                      pControlData,
-                                      numBins,
-                                      singleTailed,
-                                      smoothingLength,
-                                      pResults);
+            calculateSignificancesNonParametric(pObservations,
+                                                pControlData,
+                                                numBins,
+                                                singleTailed,
+                                                smoothingLength,
+                                                code,
+                                                pResults);
         }
-        else if(formula.equals(SignificanceCalculationFormula.PDF))
+        else if(method.equals(SignificanceCalculationMethod.PDF_PARAMETRIC) ||
+                method.equals(SignificanceCalculationMethod.CDF_PARAMETRIC))
         {
             Double maxReducedChiSquareObj = pParams.getMaxReducedChiSquare();
             if(null == maxReducedChiSquareObj)
@@ -747,16 +768,17 @@ public class SignificanceCalculator
                 throw new IllegalArgumentException("illegal max reduced chi square: " + maxReducedChiSquare);
             }
             
-            calculateSignificancesPDF(pObservations,
-                                      pControlData,
-                                      numBins,
-                                      singleTailed,
-                                      maxReducedChiSquare,
-                                      pResults);
+            calculateSignificancesParametric(pObservations,
+                                             pControlData,
+                                             numBins,
+                                             singleTailed,
+                                             maxReducedChiSquare,
+                                             code,
+                                             pResults);
         }
         else
         {
-            throw new IllegalArgumentException("unknown significance calculation formula: " + formula.getName());
+            throw new IllegalArgumentException("unknown significance calculation formula: " + method.getName());
         }
     }
     

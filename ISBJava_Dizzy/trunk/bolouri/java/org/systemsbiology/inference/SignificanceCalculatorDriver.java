@@ -25,6 +25,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import cern.jet.stat.Descriptive;
 import cern.colt.list.DoubleArrayList;
@@ -38,6 +40,7 @@ import org.systemsbiology.math.ScientificNumberFormat;
 import org.systemsbiology.math.SignificantDigitsCalculator;
 import org.systemsbiology.data.MatrixString;
 import java.util.ArrayList;
+import java.util.prefs.BackingStoreException;
 
 /**
  * Graphical user interface for calling the {@link SignificanceCalculator}
@@ -58,7 +61,7 @@ public class SignificanceCalculatorDriver
     private static final String TOOL_TIP_OBSERVATIONS_TABLE = "This is the table of observations that you loaded from the data file.";
     private static final String TOOL_TIP_SET_NEGATIVE_CONTROL_DATA = "Select the file containing the negative control data for this evidence type.";
     private static final String TOOL_TIP_CLEAR_NEGATIVE_CONTROL_DATA = "Clear the negative control data for this evidence type.";
-    private static final String TOOL_TIP_FORMULAS_BOX = "Specify the method (formula) used to compute the significance values";
+    private static final String TOOL_TIP_METHODS_BOX = "Specify the method used to compute the significance values";
     private static final String TOOL_TIP_NUM_BINS = "Specify the number of bins to be sued for computing the distribution of observations.";
     private static final String TOOL_TIP_MAX_CHI_SQUARE = "Specify the maximum allowed reduced chi-square for the best-fit distribution to the observations.";
     private static final String TOOL_TIP_CALCULATE_SIGNIFICANCES_BUTTON = "Calculate the significance values for all observations.  This is only enabled if at least one evidence has the \"calculate significances\" field set.";
@@ -71,18 +74,19 @@ public class SignificanceCalculatorDriver
     private static final double DEFAULT_MAX_CHI_SQUARE = 1.0;
     private static final int MIN_NUM_BINS = 10;
     private static final int NUM_COLUMNS_TEXT_FIELD_NUMERIC = 15;
-    private static final SignificanceCalculationFormula DEFAULT_SIGNIFICANCE_CALCULATION_FORMULA = SignificanceCalculationFormula.CDF;    
+    private static final SignificanceCalculationMethod DEFAULT_SIGNIFICANCE_CALCULATION_METHOD = SignificanceCalculationMethod.CDF_NONPARAMETRIC;    
     private static final DataFileDelimiter DEFAULT_DATA_FILE_DELIMITER = DataFileDelimiter.COMMA;
     private static final double DEFAULT_SMOOTHING_LENGTH = 1.0;
     private static final String FRAME_NAME = "Significance Calculator";
     
+    private SignificanceCalculationMethod mSignificanceCalculationMethod;
     private Component mParent;
     private Container mContentPane;
     private HelpBrowser mHelpBrowser;
     private String mProgramName;
     private ScientificNumberFormat mNumberFormat;
-    private JLabel mFormulaLabel;
-    private JComboBox mFormulasBox;
+    private JLabel mMethodLabel;
+    private JComboBox mMethodsBox;
     private JButton mCalcSigsButton;
     private JButton mResetFormButton;
     private JButton mSaveResultsButton;
@@ -104,6 +108,7 @@ public class SignificanceCalculatorDriver
     private TableColumn mColumnMaxChiSquare;
     private TableColumn mColumnNegControls;
     private AppConfig mAppConfig;
+    private PreferencesHandler mPreferencesHandler;
     
     class NegativeControlData
     {
@@ -158,7 +163,7 @@ public class SignificanceCalculatorDriver
                 "Compute significances for this evidence type; at least one evidence type must have this field enabled, in order to proceed.",
                 "Specify (optionally) the negative control observations for this evidence.  Use the delete key to clear this field.  Double-click to set."};
 
-        public static final String TOOL_TIP_NO_EDITING_SINGLE_TAILED_FIELD = "The single-tailed field cannot be edited for this evidence type, because this evidence has at least one negative observation and you have specified the PDF formula.";
+        public static final String TOOL_TIP_NO_EDITING_SINGLE_TAILED_FIELD = "The single-tailed field cannot be edited for this evidence type, because this evidence has at least one negative observation and you have specified a parametric significance calculation method.";
         
         private ObservationsData mObservations;
         private NegativeControlData []mNegativeControlData;
@@ -169,14 +174,14 @@ public class SignificanceCalculatorDriver
         private Component mParent;
         private Double []mMaxChiSquare;
         private Double []mSmoothingLength;
-        private SignificanceCalculationFormula mFormula;
+        private SignificanceCalculationMethod mMethod;
         private double []mObsMins;
         private double []mObsMaxs;
         
         public EvidenceChoicesTableModel(ObservationsData pObservations, Component pParent)
         {
             mParent = pParent;
-            mFormula = DEFAULT_SIGNIFICANCE_CALCULATION_FORMULA;
+            mMethod = DEFAULT_SIGNIFICANCE_CALCULATION_METHOD;
             mObservations = pObservations;
             int numEvidences = pObservations.getNumEvidences();
             mNegativeControlData = new NegativeControlData[numEvidences];
@@ -205,9 +210,9 @@ public class SignificanceCalculatorDriver
         
 
         
-        public void setSignificanceCalculationFormula(SignificanceCalculationFormula pFormula)
+        public void setSignificanceCalculationMethod(SignificanceCalculationMethod pMethod)
         {
-            mFormula = pFormula;
+            mMethod = pMethod;
         }
         
         public EvidenceChoices []getEvidenceChoices()
@@ -227,7 +232,7 @@ public class SignificanceCalculatorDriver
                     params.setNumBins(mNumBins[j]);
                     params.setSingleTailed(mSingleTailed[j]);
                     params.setSmoothingLength(mSmoothingLength[j]);
-                    params.setSignificanceCalculationFormula(mFormula);
+                    params.setSignificanceCalculationMethod(mMethod);
                     evidenceChoices.mParams = params;
                     evidenceChoices.mObservationsData = mObservations.getColumn(j);
                     negativeControlData = mNegativeControlData[j];
@@ -386,7 +391,8 @@ public class SignificanceCalculatorDriver
             switch(pColumn)
             {
             case COLUMN_SINGLE_TAILED:
-                return (mObsMins[pRow] >= 0.0 || !(mFormula.equals(SignificanceCalculationFormula.PDF)));
+                return (mObsMins[pRow] >= 0.0 || !(mMethod.equals(SignificanceCalculationMethod.PDF_PARAMETRIC)||
+                                                   mMethod.equals(SignificanceCalculationMethod.CDF_PARAMETRIC)));
                 
             default:
                 return IS_CELL_EDITABLE[pColumn];
@@ -461,7 +467,8 @@ public class SignificanceCalculatorDriver
                 switch(pColumn)
                 {                    
                 case COLUMN_SINGLE_TAILED:
-                    if(mObsMins[pRow] < 0.0 && mFormula.equals(SignificanceCalculationFormula.PDF))
+                    if(mObsMins[pRow] < 0.0 && (mMethod.equals(SignificanceCalculationMethod.PDF_PARAMETRIC) ||
+                                                mMethod.equals(SignificanceCalculationMethod.CDF_PARAMETRIC)))
                     {
                         tip = TOOL_TIP_NO_EDITING_SINGLE_TAILED_FIELD;
                     }
@@ -499,7 +506,7 @@ public class SignificanceCalculatorDriver
         mEmptyTableModel = new EmptyTableModel();
         mWorkingDirectory = null;
         mObservationsData = null;
-        
+        mSignificanceCalculationMethod = null;
         initializeContentPane();
     }
     
@@ -510,8 +517,8 @@ public class SignificanceCalculatorDriver
             mFileLoadButton.setToolTipText(null);
             mFileClearButton.setToolTipText(TOOL_TIP_FILE_CLEAR_BUTTON);
             mObservationsTable.setToolTipText(TOOL_TIP_OBSERVATIONS_TABLE);
-            mFormulaLabel.setToolTipText(TOOL_TIP_FORMULAS_BOX);
-            mFormulasBox.setToolTipText(TOOL_TIP_FORMULAS_BOX);
+            mMethodLabel.setToolTipText(TOOL_TIP_METHODS_BOX);
+            mMethodsBox.setToolTipText(TOOL_TIP_METHODS_BOX);
             mCalcSigsButton.setToolTipText(TOOL_TIP_CALCULATE_SIGNIFICANCES_BUTTON);
             mResetFormButton.setToolTipText(TOOL_TIP_RESET_FORM_BUTTON);
         }
@@ -520,8 +527,8 @@ public class SignificanceCalculatorDriver
             mFileLoadButton.setToolTipText(TOOL_TIP_FILE_LOAD_BUTTON);
             mFileClearButton.setToolTipText(null);
             mObservationsTable.setToolTipText(null);
-            mFormulaLabel.setToolTipText(null);
-            mFormulasBox.setToolTipText(null);
+            mMethodLabel.setToolTipText(null);
+            mMethodsBox.setToolTipText(null);
             mCalcSigsButton.setToolTipText(null);
             mResetFormButton.setToolTipText(null);
         }
@@ -541,8 +548,8 @@ public class SignificanceCalculatorDriver
     {
         mFileLoadButton.setEnabled(! pFileLoaded);
         mFileClearButton.setEnabled(pFileLoaded);
-        mFormulaLabel.setEnabled(pFileLoaded);
-        mFormulasBox.setEnabled(pFileLoaded);
+        mMethodLabel.setEnabled(pFileLoaded);
+        mMethodsBox.setEnabled(pFileLoaded);
         mCalcSigsButton.setEnabled(pFileLoaded && ((EvidenceChoicesTableModel) mEvidenceChoicesTable.getModel()).atLeastOneEvidenceSelected());
         mClearResultsButton.setEnabled(pResultsObtained);
         mSaveResultsButton.setEnabled(pResultsObtained);
@@ -558,7 +565,7 @@ public class SignificanceCalculatorDriver
     private void setDefaults()
     {
         clearResults();
-        mFormulasBox.setSelectedItem(DEFAULT_SIGNIFICANCE_CALCULATION_FORMULA.getName());
+        mMethodsBox.setSelectedItem(DEFAULT_SIGNIFICANCE_CALCULATION_METHOD.getName());
         TableModel tableModel = mEvidenceChoicesTable.getModel();
         if(tableModel instanceof EvidenceChoicesTableModel)
         {
@@ -581,19 +588,19 @@ public class SignificanceCalculatorDriver
         mColumnNegControls = columnModel.getColumn(EvidenceChoicesTableModel.COLUMN_NEGATIVE_CONTROLS);
         columnModel.removeColumn(mColumnMaxChiSquare);
         columnModel.removeColumn(mColumnSmoothingLength);
-        setSignificanceCalculationFormula(DEFAULT_SIGNIFICANCE_CALCULATION_FORMULA);
+        setSignificanceCalculationMethod(DEFAULT_SIGNIFICANCE_CALCULATION_METHOD);
     }
     
-    private SignificanceCalculationFormula getSignificanceCalculationFormula()
+    private SignificanceCalculationMethod getSignificanceCalculationMethod()
     {
-        SignificanceCalculationFormula formula = null;
-        String formulaName = (String) mFormulasBox.getSelectedItem();
-        formula = SignificanceCalculationFormula.get(formulaName);
-        if(null == formula)
+        SignificanceCalculationMethod method = null;
+        String methodName = (String) mMethodsBox.getSelectedItem();
+        method = SignificanceCalculationMethod.get(methodName);
+        if(null == method)
         {
-            throw new IllegalStateException("unrecognized significance calculation formula name: " + formulaName);
+            throw new IllegalStateException("unrecognized significance calculation method name: " + methodName);
         }
-        return formula;
+        return method;
     }
     
     private void openFile(File pFile, DataFileDelimiter pDelimiter)
@@ -635,7 +642,7 @@ public class SignificanceCalculatorDriver
         }
     }
     
-    private DataFileDelimiter getDelimiter()
+    private DataFileDelimiter getSelectedDataFileDelimiter()
     {
         if(null == mDelimiterBox)
         {
@@ -654,7 +661,7 @@ public class SignificanceCalculatorDriver
     {
         FileChooser fileChooser = new FileChooser(mWorkingDirectory);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        DataFileDelimiter delimiter = getDelimiter();
+        DataFileDelimiter delimiter = getSelectedDataFileDelimiter();
         RegexFileFilter fileFilter = new RegexFileFilter(delimiter.getFilterRegex(), "data file in " + delimiter.getName() + "-delimited format");
         fileChooser.setFileFilter(fileFilter);
         int result = fileChooser.showOpenDialog(mParent);
@@ -677,26 +684,32 @@ public class SignificanceCalculatorDriver
         setToolTipsForFields(null != mObservationsData, false);
     }
     
-    private void setSignificanceCalculationFormula(SignificanceCalculationFormula pFormula)
+    private void setSignificanceCalculationMethod(SignificanceCalculationMethod pMethod)
     {
         TableColumnModel columnModel = mEvidenceChoicesTable.getColumnModel();
-        if(pFormula.equals(SignificanceCalculationFormula.PDF))
+        if((pMethod.equals(SignificanceCalculationMethod.PDF_PARAMETRIC) ||
+           pMethod.equals(SignificanceCalculationMethod.CDF_PARAMETRIC)) &&
+           (null == mSignificanceCalculationMethod ||
+           (mSignificanceCalculationMethod.equals(SignificanceCalculationMethod.PDF_NONPARAMETRIC) ||
+           mSignificanceCalculationMethod.equals(SignificanceCalculationMethod.CDF_NONPARAMETRIC))))
         {
             columnModel.removeColumn(mColumnSmoothingLength);
             columnModel.addColumn(mColumnMaxChiSquare);
+            columnModel.moveColumn(columnModel.getColumnCount() - 1, EvidenceChoicesTableModel.COLUMN_SWITCHABLE);
         }
-        else if(pFormula.equals(SignificanceCalculationFormula.CDF))
+        else if((pMethod.equals(SignificanceCalculationMethod.CDF_NONPARAMETRIC) ||
+                pMethod.equals(SignificanceCalculationMethod.PDF_NONPARAMETRIC)) &&
+                (null == mSignificanceCalculationMethod ||
+                (mSignificanceCalculationMethod.equals(SignificanceCalculationMethod.PDF_PARAMETRIC) ||
+                 mSignificanceCalculationMethod.equals(SignificanceCalculationMethod.CDF_PARAMETRIC))))
         {
             columnModel.removeColumn(mColumnMaxChiSquare);
             columnModel.addColumn(mColumnSmoothingLength);
+            columnModel.moveColumn(columnModel.getColumnCount() - 1, EvidenceChoicesTableModel.COLUMN_SWITCHABLE);
         }
-        else
-        {
-            throw new IllegalStateException("unknown significance calculation formula: " + pFormula.getName());
-        }
-        columnModel.moveColumn(columnModel.getColumnCount() - 1, EvidenceChoicesTableModel.COLUMN_SWITCHABLE);
         EvidenceChoicesTableModel tableModel = (EvidenceChoicesTableModel) mEvidenceChoicesTable.getModel();
-        tableModel.setSignificanceCalculationFormula(pFormula);
+        tableModel.setSignificanceCalculationMethod(pMethod);
+        mSignificanceCalculationMethod = pMethod;
     }
     
     private void handleHelp()
@@ -799,6 +812,7 @@ public class SignificanceCalculatorDriver
         gridLayout.setConstraints(delimitersPanel, constraints);
         
         JLabel fileNameLabel = new JLabel("");
+        fileNameLabel.setFont(fileNameLabel.getFont().deriveFont(Font.PLAIN));
         mFileNameLabel = fileNameLabel;
         fileNameLabel.setPreferredSize(new Dimension(400, 10));
         fileNameLabel.setMinimumSize(new Dimension(400, 10));
@@ -977,36 +991,36 @@ public class SignificanceCalculatorDriver
 
         JPanel choicesPanel = new JPanel();
         
-        JLabel formulaLabel = new JLabel("Calculate the significances using the formula: ");
-        choicesPanel.add(formulaLabel);
-        mFormulaLabel = formulaLabel;
-        SignificanceCalculationFormula []formulas = SignificanceCalculationFormula.getAll();
-        int numFormulas = formulas.length;
-        String []formulaNames = new String[numFormulas];
-        for(int i = 0; i < numFormulas; ++i)
+        JLabel methodLabel = new JLabel("Calculate the significances using the method: ");
+        choicesPanel.add(methodLabel);
+        mMethodLabel = methodLabel;
+        SignificanceCalculationMethod []methods = SignificanceCalculationMethod.getAll();
+        int numMethods = methods.length;
+        String []methodNames = new String[numMethods];
+        for(int i = 0; i < numMethods; ++i)
         {
-        	formulaNames[i] = formulas[i].getName();
+        	methodNames[i] = methods[i].getName();
         }
-        JComboBox formulasBox = new JComboBox(formulaNames);
-        formulasBox.addItemListener(
+        JComboBox methodsBox = new JComboBox(methodNames);
+        methodsBox.addItemListener(
                 new ItemListener()
                 {
                     public void itemStateChanged(ItemEvent e)
                     {
                         if(e.getStateChange() == ItemEvent.SELECTED)
                         {
-                            String formulaStr = (String) mFormulasBox.getSelectedItem();
-                            SignificanceCalculationFormula formula = SignificanceCalculationFormula.get(formulaStr);
-                            if(null == formula)
+                            String methodStr = (String) mMethodsBox.getSelectedItem();
+                            SignificanceCalculationMethod method = SignificanceCalculationMethod.get(methodStr);
+                            if(null == method)
                             {
-                                throw new IllegalStateException("unrecognized significance calculation formula name: " + formulaStr);
+                                throw new IllegalStateException("unrecognized significance calculation method name: " + methodStr);
                             }
-                            setSignificanceCalculationFormula(formula);
+                            setSignificanceCalculationMethod(method);
                         }
                     }
                 });
-        choicesPanel.add(formulasBox);
-        mFormulasBox = formulasBox;
+        choicesPanel.add(methodsBox);
+        mMethodsBox = methodsBox;
         
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -1155,7 +1169,7 @@ public class SignificanceCalculatorDriver
 
         EvidenceChoices evidenceChoices = null;
         int numEvidences = evidenceChoicesArray.length;
-        SignificanceCalculationFormula sigCalcFormula = getSignificanceCalculationFormula();
+        SignificanceCalculationMethod method = getSignificanceCalculationMethod();
 
         
         mResults = new SignificanceCalculationResults[numEvidences];
@@ -1182,9 +1196,8 @@ public class SignificanceCalculatorDriver
         {
             String evidenceName = mObservationsData.getEvidenceName(evidenceCtr);
             mResults = null;
-            handleMessage("Sorry, the significance calculation failed, for evidence \"" + evidenceName + "\"; the specific error message is: " + e.getMessage(),
-                          "Significance calculation failed",
-                          JOptionPane.ERROR_MESSAGE);
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, the significance calculation failed, for evidence \"" + evidenceName + "\"; the specific error message is: ");
+            optionPane.createDialog(mParent, "Significance calculation failed").show();
             return;
         }
     }
@@ -1304,7 +1317,7 @@ public class SignificanceCalculatorDriver
         }
         FileChooser fileChooser = new FileChooser(mWorkingDirectory);        
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        DataFileDelimiter delimiter = getDelimiter();
+        DataFileDelimiter delimiter = getSelectedDataFileDelimiter();
         RegexFileFilter fileFilter = new RegexFileFilter(delimiter.getFilterRegex(), "data file in " + delimiter.getName() + "-delimited format");
         fileChooser.setFileFilter(fileFilter);
         int response = fileChooser.showOpenDialog(mParent);
@@ -1386,9 +1399,8 @@ public class SignificanceCalculatorDriver
             }
             catch(InvalidInputException e)
             {
-                handleMessage("The file you specified, \"" + selectedFile.getAbsolutePath() + "\", does not conform to the " + delimiter.getName() + "-separated value format; the specific error message is: " + e.getMessage(),
-                        "Invalid file format",
-                        JOptionPane.ERROR_MESSAGE);
+                ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, the file you specified had an invalid file format, which caused an exception.  The specific error message is:");
+                optionPane.createDialog(mParent, "Invalid file format").show();
                 return;
             }
         }
@@ -1420,13 +1432,13 @@ public class SignificanceCalculatorDriver
         clearResults();
         setEnableStateForFields(false, false);
         setToolTipsForFields(false, false);
-        mDelimiterBox.setSelectedItem(DEFAULT_DATA_FILE_DELIMITER.getName());
+        mDelimiterBox.setSelectedItem(getDefaultDataFileDelimiter().getName());
         setDefaults();
     }
     
     private void saveResults()
     {
-        DataFileDelimiter delimiter = getDelimiter();
+        DataFileDelimiter delimiter = getSelectedDataFileDelimiter();
         FileChooser fileChooser = new FileChooser(mWorkingDirectory);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int result = fileChooser.showSaveDialog(mParent);
@@ -1539,6 +1551,40 @@ public class SignificanceCalculatorDriver
         return isSelected;
     }    
     
+    
+    private void setDefaultDataFileDelimiter(DataFileDelimiter pDelimiter)
+    {
+        mPreferencesHandler.setPreference(PreferencesHandler.KEY_DELIMITER, pDelimiter.getName());
+    }
+    
+    private DataFileDelimiter getDefaultDataFileDelimiter()
+    {
+        DataFileDelimiter defaultDelimiter = null;
+        
+        String defaultDelimiterName = mPreferencesHandler.getPreference(PreferencesHandler.KEY_DELIMITER, DEFAULT_DATA_FILE_DELIMITER.getName());
+        defaultDelimiter = DataFileDelimiter.get(defaultDelimiterName);
+        if(null == defaultDelimiter)
+        {
+            defaultDelimiter = DEFAULT_DATA_FILE_DELIMITER;
+        }
+        
+        return defaultDelimiter;
+    }
+    
+    public void savePreferences()
+    {
+        setDefaultDataFileDelimiter(getSelectedDataFileDelimiter());
+        try
+        {
+            mPreferencesHandler.flush();
+        }
+        catch(BackingStoreException e)
+        {
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error saving your preferences.  The specific error message is:");
+            optionPane.createDialog(mParent, "Unable to save preferences").show();
+        }
+    }        
+        
     private void run(String []pArgs)
     {
         String appDir = null;
@@ -1557,18 +1603,24 @@ public class SignificanceCalculatorDriver
                           JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }       
-        
         String frameName = mAppConfig.getAppName() + ": " + FRAME_NAME;
+        mPreferencesHandler = new PreferencesHandler();
         
         JFrame frame = new JFrame(frameName);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.addWindowListener(
+                new WindowAdapter()
+                {
+                    public void windowClosed(WindowEvent e)
+                    {
+                        savePreferences();
+                    }
+                });
         Container contentPane = frame.getContentPane();
         initialize(contentPane, frame, frameName);
         frame.pack();
         FramePlacer.placeInCenterOfScreen(frame);
 
- 
-        
         frame.setVisible(true);
     }
     

@@ -22,6 +22,7 @@ import org.systemsbiology.math.*;
 import java.io.*;
 import cern.colt.matrix.*;
 import java.util.*;
+import java.util.prefs.BackingStoreException;
 
 /**
  * Graphical user interface for the Pointillist algorithm for
@@ -38,7 +39,9 @@ import java.util.*;
  */
 public class EvidenceWeightedInfererDriver 
 {
-    public static final double ALPHA_VALUE_DEVIATION_WARNING_THRESHOLD = 0.1;    
+    public static final double ALPHA_VALUE_DEVIATION_WARNING_THRESHOLD = 0.5;    
+    private static final String COLUMN_NAME_ITERATION = "iteration";
+    private static final String COLUMN_NAME_FALSE_NEGS = "false negs";
     private static final String COLUMN_NAME_ELEMENT = "element";
     private static final String COLUMN_NAME_AFFECTED = "affected";
     private static final String COLUMN_NAME_OVERALL_SIGNIFICANCE = "overall significance";
@@ -51,7 +54,7 @@ public class EvidenceWeightedInfererDriver
     private static final String TOOL_TIP_SIGNIFICANCES = "The first column of this table should be the element names; the column headers should be the evidence names.";
     private static final String TOOL_TIP_DELIMITER = "Indicates the type of separator that is used in the data file you want to load.";
     private static final String TOOL_TIP_RESET_FORM = "Resets all fields in this form to their original default values";
-    private static final String TOOL_TIP_COMBINED_EFFECTIVE_SIGNIFICANCE_FIELD = "Set this to something less than 1e-N, where N is the number of evidences.";
+    private static final String TOOL_TIP_COMBINED_EFFECTIVE_SIGNIFICANCE_FIELD = "Set this a small value; zero means no false negative discovery step will be employed.";
     private static final String TOOL_TIP_INFER_BUTTON = "load the file of significances and infer the list of affected elements for this system";
     private static final String TOOL_TIP_WEIGHT_BOX = "set this to the weight type correponding to the method you used for computing the significances";
     private static final String TOOL_TIP_SEPARATION_FIELD = "set this to between 1.0e-5 and 1.0e-8; the smaller the value, the closer the final separation will be to 1.0";
@@ -65,13 +68,15 @@ public class EvidenceWeightedInfererDriver
     private static final String TOOL_TIP_SAVE_WEIGHTS = "Save the evidence weights to a file.";
     private static final String COLUMN_NAME_EVIDENCE = "evidence name";
     private static final String COLUMN_NAME_WEIGHT = "weight";
-    
+    private static final String TOOL_TIP_MAX_ITERATIONS = "The maximum number of allowed iterations of the inference algorithm.  You may set this field to empty, to have no maximum.";
+    private static final String TOOL_TIP_SAVE_ITERATION_SUMMARY = "Save the table containing the number of affected elements and the number of probable false negatives at each iteration.";
+            
     private Container mContentPane;
     
     private static final double DEFAULT_SMOOTHING_LENGTH = 0.05;
     
     private static final int MIN_NUM_BINS = 10;
-    private static final double MAX_COMBINED_SIGNIFICANCE_CUTOFF = 1.0e-8;
+    private static final double DEFAULT_COMBINED_SIGNIFICANCE_QUANTILE_CUTOFF = 0.05;
     private static final int NUM_COLUMNS_NUMERIC_FIELD = 10;
     public static final int DEFAULT_NUM_BINS = 100;
     public static final double DEFAULT_INITIAL_SIGNIFICANCE_CUTOFF = 0.05;
@@ -128,6 +133,82 @@ public class EvidenceWeightedInfererDriver
     private JLabel mNumAffectedLabel;
     private JLabel mNumAffectedField;
     private AppConfig mAppConfig;
+    private PreferencesHandler mPreferencesHandler;
+    private JLabel mMaxIterationsLabel;
+    private JTextField mMaxIterationsField;
+    private JTable mIterationSummaryTable;
+    private JButton mSaveIterationSummaryButton;
+    
+    class IterationSummaryTableModel extends AbstractTableModel
+    {
+        private int []mAffected;
+        private int mNumIterations;
+        private int []mFalseNegatives;
+        
+        public IterationSummaryTableModel(int []pAffected, int []pFalseNegatives)
+        {
+            mAffected = pAffected;
+            mFalseNegatives = pFalseNegatives;
+            mNumIterations = pAffected.length;
+            if(pFalseNegatives.length != mNumIterations)
+            {
+                throw new IllegalArgumentException("the pAffected and pFalseNegatives data arrays must be equal length");
+            }
+        }
+        
+        public int getColumnCount()
+        {
+            return 3;
+        }
+        public int getRowCount()
+        {
+            return mNumIterations;
+        }
+        public String getColumnName(int pColumn)
+        {
+            String name = null;
+            switch(pColumn)
+            {
+            case 0:
+                name = COLUMN_NAME_ITERATION;
+                break;
+                
+            case 1:
+                name = COLUMN_NAME_AFFECTED;
+                break;
+                
+            case 2:
+                name = COLUMN_NAME_FALSE_NEGS;
+                break;
+                
+            default:
+                throw new IllegalStateException("unknown column number: " + pColumn);                
+            }
+            return name;
+        }
+        public Object getValueAt(int pRow, int pColumn)
+        {
+            Object retObj = null;
+            switch(pColumn)
+            {
+            case 0:
+                retObj = Integer.toString(pRow + 1);
+                break;
+                
+            case 1:
+                retObj = Integer.toString(mAffected[pRow]);
+                break;
+                
+            case 2:
+                retObj = Integer.toString(mFalseNegatives[pRow]);
+                break;
+                
+            default:
+                throw new IllegalStateException("unknown column number: " + pColumn);    
+            }
+            return retObj;
+        }
+    }
     
     class WeightsTableModel extends AbstractTableModel
     {
@@ -469,7 +550,7 @@ public class EvidenceWeightedInfererDriver
         initializeContentPane();
     }
     
-    private DataFileDelimiter getDelimiter()
+    private DataFileDelimiter getSelectedDataFileDelimiter()
     {
         if(null == mDelimiterBox)
         {
@@ -487,13 +568,12 @@ public class EvidenceWeightedInfererDriver
     private void clearFile()
     {
         mFileNameLabel.setText("");
-        mDelimiterBox.setSelectedItem(DEFAULT_DATA_FILE_DELIMITER.getName());
+        mDelimiterBox.setSelectedItem(getDefaultDataFileDelimiter().getName());
 
         mSignificancesData = null;
         mSignificancesTable.setModel(mEmptyTableModel);
         setDefaults();
     }
-    
 
     private void setDefaults()
     {
@@ -502,7 +582,6 @@ public class EvidenceWeightedInfererDriver
         if(null == mSignificancesData)
         {
             mBinsField.setText(Integer.toString(DEFAULT_NUM_BINS));
-            mCombinedSignificanceField.setText(mNumberFormat.format(MAX_COMBINED_SIGNIFICANCE_CUTOFF));
         }
         else
         {
@@ -514,16 +593,14 @@ public class EvidenceWeightedInfererDriver
             int numEvidences = mSignificancesData.getNumEvidences();
             double missingDataRate = mSignificancesData.getMissingDataRate();
             int numEvidencesEffec = (int) Math.max(Math.rint((1.0 - missingDataRate) * ((double) numEvidences)), 1.0);
-            double defaultCombinedSignificance = Math.pow(DEFAULT_INITIAL_SIGNIFICANCE_CUTOFF, numEvidencesEffec);
-            defaultCombinedSignificance = Math.min(defaultCombinedSignificance, MAX_COMBINED_SIGNIFICANCE_CUTOFF);
-            mCombinedSignificanceField.setText(mNumberFormat.format(defaultCombinedSignificance));
         }
-        
+        mCombinedSignificanceField.setText(Double.toString(DEFAULT_COMBINED_SIGNIFICANCE_QUANTILE_CUTOFF));
         mSmoothingLengthField.setText(Double.toString(DEFAULT_SMOOTHING_LENGTH));
         mQuantileField.setText(Double.toString(DEFAULT_QUANTILE_THRESHOLD));
         mSeparationField.setText(Double.toString(DEFAULT_SEPARATION_THRESHOLD));
         mWeightBox.setSelectedItem(DEFAULT_EVIDENCE_WEIGHT_TYPE.toString());
-
+        mMaxIterationsField.setText("");
+        
         handleClearResults();
     }
 
@@ -593,11 +670,11 @@ public class EvidenceWeightedInfererDriver
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        if(combinedSignificance < 0.0)
+        if(combinedSignificance < 0.0 || combinedSignificance > 1.0)
         {
-            handleMessage("The combined significance cutoff must be greater than or equal to 0.0.",
+            handleMessage("The combined significance cutoff must be greater than or equal to 0.0 and less than or equal to 1.0",
                           "Invalid combined cutoff",
-                    JOptionPane.ERROR_MESSAGE);
+                          JOptionPane.ERROR_MESSAGE);
             return false;
         }
         pParams.setCombinedSignificanceCutoff(new Double(combinedSignificance));
@@ -677,6 +754,31 @@ public class EvidenceWeightedInfererDriver
         }
         pParams.setEvidenceWeightType(weightType);
         
+        String maxIterationsString = mMaxIterationsField.getText().trim();
+        Integer maxIterations = null;
+        if(maxIterationsString.length() > 0)
+        {
+            try
+            {
+                maxIterations = new Integer(maxIterationsString);
+            }
+            catch(NumberFormatException e)
+            {
+                handleMessage("The maximum number of iterations that you specified, \"" + maxIterationsString + "\", is not a valid integer",
+                        "Invalid maximum number of iterations",
+                        JOptionPane.ERROR_MESSAGE);
+          return false;
+            }            
+        }
+        if(null != maxIterations && maxIterations.intValue() <= 0)
+        {
+            handleMessage("The maximum number of iterations that you specified, \"" + maxIterations.toString() + "\", is not a positive integer",
+                    "Invalid maximum number of iterations",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        pParams.setMaxIterations(maxIterations);
+        
         return true;
     }
     
@@ -712,10 +814,8 @@ public class EvidenceWeightedInfererDriver
         catch(InvalidInputException e)
         {
             String errorMessage = e.getMessage();
-            handleMessage("The file you specified, \"" + pFile.getAbsolutePath() + "\", does not conform to the comma-separated value format; the specific error message is: " + errorMessage,
-                    "Invalid file format",
-                    JOptionPane.ERROR_MESSAGE);            
-            
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, the file you specified had an invalid file format, which caused an exception.  The specific error message is:");
+            optionPane.createDialog(mParent, "Invalid file format").show();
         }
     }
     
@@ -724,7 +824,7 @@ public class EvidenceWeightedInfererDriver
     {
         FileChooser fileChooser = new FileChooser(mWorkingDirectory);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        DataFileDelimiter delimiter = getDelimiter();
+        DataFileDelimiter delimiter = getSelectedDataFileDelimiter();
         RegexFileFilter fileFilter = new RegexFileFilter(delimiter.getFilterRegex(), "data file in " + delimiter.getName() + "-delimited format");
         fileChooser.setFileFilter(fileFilter);
         int result = fileChooser.showOpenDialog(mParent);
@@ -745,8 +845,8 @@ public class EvidenceWeightedInfererDriver
     private void setEnableStateForFields(boolean pFileLoaded, boolean pResultsObtained)
     {
         mLoadFileButton.setEnabled(! pFileLoaded);
-        mDelimiterLabel.setEnabled(! pFileLoaded);
-        mDelimiterBox.setEnabled(! pFileLoaded);
+        mDelimiterLabel.setEnabled(true);
+        mDelimiterBox.setEnabled(true);
         mResetFormButton.setEnabled(pFileLoaded);
         mBinsLabel.setEnabled(pFileLoaded);
         mBinsField.setEnabled(pFileLoaded);
@@ -763,6 +863,8 @@ public class EvidenceWeightedInfererDriver
         mWeightLabel.setEnabled(pFileLoaded);
         mWeightBox.setEnabled(pFileLoaded);
         mInferButton.setEnabled(pFileLoaded);
+        mMaxIterationsLabel.setEnabled(pFileLoaded);
+        mMaxIterationsField.setEnabled(pFileLoaded);
 
         if(pFileLoaded)
         {
@@ -778,6 +880,8 @@ public class EvidenceWeightedInfererDriver
             mSignificancesTable.setToolTipText(TOOL_TIP_SIGNIFICANCES);
             mSmoothingLengthField.setToolTipText(TOOL_TIP_SMOOTHING_LENGTH_FIELD);
             mResetFormButton.setToolTipText(TOOL_TIP_RESET_FORM);
+            mMaxIterationsLabel.setToolTipText(TOOL_TIP_MAX_ITERATIONS);
+            mMaxIterationsField.setToolTipText(TOOL_TIP_MAX_ITERATIONS);
         }
         else
         {
@@ -793,6 +897,8 @@ public class EvidenceWeightedInfererDriver
             mSignificancesTable.setToolTipText(null);
             mSmoothingLengthField.setToolTipText(null);
             mResetFormButton.setToolTipText(null);
+            mMaxIterationsLabel.setToolTipText(null);
+            mMaxIterationsField.setToolTipText(null);
         }
         
         if(pResultsObtained)
@@ -807,7 +913,8 @@ public class EvidenceWeightedInfererDriver
             mIterationsLabelData.setToolTipText(TOOL_TIP_ITERATIONS);
             mSaveWeightsButton.setToolTipText(TOOL_TIP_SAVE_WEIGHTS);
             mNumAffectedLabel.setToolTipText(TOOL_TIP_NUM_AFFECTED);
-            mNumAffectedField.setToolTipText(TOOL_TIP_NUM_AFFECTED);            
+            mNumAffectedField.setToolTipText(TOOL_TIP_NUM_AFFECTED);    
+            mSaveIterationSummaryButton.setToolTipText(TOOL_TIP_SAVE_ITERATION_SUMMARY);
         }
         else
         {
@@ -822,8 +929,10 @@ public class EvidenceWeightedInfererDriver
             mSaveWeightsButton.setToolTipText(null);
             mNumAffectedLabel.setToolTipText(null);
             mNumAffectedField.setToolTipText(null);            
+            mSaveIterationSummaryButton.setToolTipText(null);
         }
        
+        mSaveIterationSummaryButton.setEnabled(pResultsObtained);
         mNumAffectedLabel.setEnabled(pResultsObtained);
         mNumAffectedField.setEnabled(pResultsObtained);
         mIterationsLabel.setEnabled(pResultsObtained);
@@ -894,6 +1003,7 @@ public class EvidenceWeightedInfererDriver
         gridLayout.setConstraints(fileButtonPanel, constraints);
         
         JLabel fileNameLabel = new JLabel("");
+        fileNameLabel.setFont(fileNameLabel.getFont().deriveFont(Font.PLAIN));
         JPanel fileNameLabelPanel = new JPanel();
         fileNameLabel.setPreferredSize(new Dimension(400, 10));
         fileNameLabel.setMinimumSize(new Dimension(400, 10));
@@ -1019,7 +1129,7 @@ public class EvidenceWeightedInfererDriver
         topPanel.add(initialCutoffField);
         gridLayout.setConstraints(initialCutoffField, constraints);
         
-        JLabel combinedSignificanceLabel = new JLabel("Cutoff for combined significances: ");
+        JLabel combinedSignificanceLabel = new JLabel("Combined significances quantile cutoff: ");
         mCombinedSignificanceLabel = combinedSignificanceLabel;
         
         constraints.fill = GridBagConstraints.NONE;
@@ -1165,6 +1275,31 @@ public class EvidenceWeightedInfererDriver
         topPanel.add(weightBox);
         gridLayout.setConstraints(weightBox, constraints);
 
+        mMaxIterationsLabel = new JLabel("Maximum number of iterations: ");
+        mMaxIterationsField = new JTextField(NUM_COLUMNS_NUMERIC_FIELD);
+        
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        constraints.weightx = 1;
+        constraints.weighty = 0;
+        constraints.gridx = 2;
+        //constraints.gridy = 7;
+        
+        topPanel.add(mMaxIterationsLabel);
+        gridLayout.setConstraints(mMaxIterationsLabel, constraints);        
+        
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.gridheight = 1;
+        constraints.weightx = 1;
+        constraints.weighty = 0;
+        constraints.gridx = 3;
+        //constraints.gridy = 7;
+        
+        topPanel.add(mMaxIterationsField);
+        gridLayout.setConstraints(mMaxIterationsField, constraints);           
+        
         JPanel buttonPanel = new JPanel();
         
         JButton inferButton = new JButton("infer affected elements");
@@ -1199,6 +1334,17 @@ public class EvidenceWeightedInfererDriver
                     }
                 });
         buttonPanel.add(mSaveWeightsButton);
+        
+        mSaveIterationSummaryButton = new JButton("save iteration summary");
+        mSaveIterationSummaryButton.addActionListener(
+                new ActionListener()
+                {
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        handleSaveIterationSummary();
+                    }
+                });
+        buttonPanel.add(mSaveIterationSummaryButton);
         
         JButton saveResultsButton = new JButton("save results");
         mSaveResultsButton = saveResultsButton;
@@ -1258,6 +1404,7 @@ public class EvidenceWeightedInfererDriver
         iterationsPanel.add(iterationsDataPanel);
         numericResultsPanel.add(iterationsPanel);
         mIterationsLabelData = iterationsLabelData;
+        mIterationsLabelData.setFont(mIterationsLabelData.getFont().deriveFont(Font.PLAIN));
         
         JPanel finalSeparationPanel = new JPanel();
         JLabel finalSeparationLabel = new JLabel("final separation: ");
@@ -1267,6 +1414,7 @@ public class EvidenceWeightedInfererDriver
         finalSeparationLabelData.setPreferredSize(new Dimension(75, 10));
         finalSeparationLabelData.setPreferredSize(new Dimension(75, 10));
         mFinalSeparationLabelData = finalSeparationLabelData;
+        mFinalSeparationLabelData.setFont(mFinalSeparationLabelData.getFont().deriveFont(Font.PLAIN));
         JPanel finalSeparationDataPanel = new JPanel();
         finalSeparationDataPanel.setBorder(BorderFactory.createEtchedBorder());
         finalSeparationDataPanel.add(finalSeparationLabelData);
@@ -1283,6 +1431,7 @@ public class EvidenceWeightedInfererDriver
         alphaLabelData.setPreferredSize(new Dimension(75, 10));
         alphaLabelData.setMinimumSize(new Dimension(75, 10));
         mAlphaLabelData = alphaLabelData;
+        mAlphaLabelData.setFont(mAlphaLabelData.getFont().deriveFont(Font.PLAIN));
         alphaDataPanel.add(alphaLabelData);
         alphaPanel.add(alphaDataPanel);
         numericResultsPanel.add(alphaPanel);
@@ -1293,6 +1442,7 @@ public class EvidenceWeightedInfererDriver
         JPanel numAffectedFieldPanel = new JPanel();
         numAffectedFieldPanel.setBorder(BorderFactory.createEtchedBorder());
         mNumAffectedField = new JLabel();
+        mNumAffectedField.setFont(mNumAffectedField.getFont().deriveFont(Font.PLAIN));
         mNumAffectedField.setPreferredSize(new Dimension(75, 10));
         mNumAffectedField.setMinimumSize(new Dimension(75, 10));
         numAffectedFieldPanel.add(mNumAffectedField);
@@ -1303,7 +1453,7 @@ public class EvidenceWeightedInfererDriver
         
         constraints.fill = GridBagConstraints.NONE;
         constraints.gridwidth = 1;
-        constraints.gridheight = 1;
+        constraints.gridheight = 2;
         constraints.weightx = 0;
         constraints.weighty = 0;
         constraints.gridx = 0;
@@ -1315,28 +1465,34 @@ public class EvidenceWeightedInfererDriver
         JTable weightsTable = new JTable();
         mWeightsTable = weightsTable;
         JScrollPane weightsScrollPane = new JScrollPane(weightsTable);
-        weightsScrollPane.setPreferredSize(new Dimension(200, 100));
-        weightsScrollPane.setMinimumSize(new Dimension(200, 100));
+        weightsScrollPane.setPreferredSize(new Dimension(200, 50));
+        weightsScrollPane.setMinimumSize(new Dimension(200, 50));
         
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
         constraints.weightx = 1;
         constraints.weighty = 1;
-        constraints.gridx = 1;
-        //constraints.gridy++;        
+        constraints.gridx = 1;     
         
         topPanel.add(weightsScrollPane);
         gridLayout.setConstraints(weightsScrollPane, constraints);
-        
+      
+        mIterationSummaryTable = new JTable();
+        JScrollPane iterationSummaryScrollPane = new JScrollPane(mIterationSummaryTable);
+        iterationSummaryScrollPane.setPreferredSize(new Dimension(200, 50));
+        iterationSummaryScrollPane.setMinimumSize(new Dimension(200, 50));
         
         constraints.fill = GridBagConstraints.BOTH;
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.gridwidth = 1;
         constraints.gridheight = 1;
         constraints.weightx = 1;
         constraints.weighty = 1;
-        constraints.gridx = 2;
-//        constraints.gridy = 9;
+        constraints.gridx = 1;   
+        constraints.gridy++;
+        
+        topPanel.add(iterationSummaryScrollPane);
+        gridLayout.setConstraints(iterationSummaryScrollPane, constraints);
         
         // results table here
         
@@ -1345,6 +1501,14 @@ public class EvidenceWeightedInfererDriver
         JScrollPane resultsScrollPane = new JScrollPane(resultsTable);
         resultsScrollPane.setBorder(BorderFactory.createEtchedBorder());
         resultsScrollPane.setPreferredSize(new Dimension(400, 200));
+        
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.gridheight = 2;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
+        constraints.gridx = 2;
+        constraints.gridy--;
         
         topPanel.add(resultsScrollPane);
         gridLayout.setConstraints(resultsScrollPane, constraints);
@@ -1374,6 +1538,11 @@ public class EvidenceWeightedInfererDriver
         String []evidences = mSignificancesData.getEvidenceNames();
         WeightsTableModel weightsTableModel = new WeightsTableModel(evidences, weights);
         mWeightsTable.setModel(weightsTableModel);
+        int []iterationSummaryAffected = pResults.mIterationSummaryAffected;
+        int []iterationSummaryFalseNegatives = pResults.mIterationSummaryFalseNegatives;
+        IterationSummaryTableModel iterationSummaryTableModel = new IterationSummaryTableModel(iterationSummaryAffected,
+                iterationSummaryFalseNegatives);
+        mIterationSummaryTable.setModel(iterationSummaryTableModel);
         mNumAffectedField.setText(Integer.toString(pResults.mNumAffected));
         if(Math.abs(1.0 - alphaValue) > ALPHA_VALUE_DEVIATION_WARNING_THRESHOLD)
         {
@@ -1418,11 +1587,46 @@ public class EvidenceWeightedInfererDriver
     {
         mResultsTable.setModel(mEmptyTableModel);
         mWeightsTable.setModel(mEmptyTableModel);
+        mIterationSummaryTable.setModel(mEmptyTableModel);
         mEvidenceWeightedInfererResults = null;
         mAlphaLabelData.setText("");
         mIterationsLabelData.setText("");
         mFinalSeparationLabelData.setText("");
         setEnableStateForFields(null != mSignificancesData, false);
+    }
+    
+    private void writeIterationSummary(File pFile, DataFileDelimiter pDelimiter)
+    {
+        StringBuffer buf = new StringBuffer();
+        String delimiter = pDelimiter.getDelimiter();
+        buf.append(pDelimiter.scrubIdentifier(COLUMN_NAME_ITERATION) + delimiter + 
+                   pDelimiter.scrubIdentifier(COLUMN_NAME_AFFECTED) + delimiter + 
+                   pDelimiter.scrubIdentifier(COLUMN_NAME_FALSE_NEGS) + "\n");
+        int k = 0; 
+        int []affected = mEvidenceWeightedInfererResults.mIterationSummaryAffected;
+        int []falseNegs = mEvidenceWeightedInfererResults.mIterationSummaryFalseNegatives;
+        int numIterations = mEvidenceWeightedInfererResults.mNumIterations;
+
+        for(k = 0; k < numIterations; ++k)
+        {
+            buf.append(Integer.toString(k + 1) + delimiter + affected[k] + delimiter + falseNegs[k] + "\n");
+        }
+        
+        try
+        {
+            FileWriter fileWriter = new FileWriter(pFile);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            printWriter.print(buf.toString());
+            printWriter.flush();
+            JOptionPane.showMessageDialog(mParent, 
+                                          new SimpleTextArea("iteration summary was written to the file \"" + pFile.getAbsolutePath() + "\" successfully."), 
+                                          "iteration summary written successfully", JOptionPane.INFORMATION_MESSAGE);
+        }
+        catch(IOException e)
+        {
+            SimpleTextArea simpleTextArea = new SimpleTextArea("unable to write the iteration summary to the file you requested, \"" + pFile.getAbsolutePath() + "\"; specific error message is: " + e.getMessage());
+            JOptionPane.showMessageDialog(mParent, simpleTextArea, "unable to write iteration summary to file", JOptionPane.ERROR_MESSAGE);
+        }        
     }
     
     private void writeWeights(File pFile, DataFileDelimiter pDelimiter)
@@ -1501,7 +1705,7 @@ public class EvidenceWeightedInfererDriver
     
     private File selectOutputFile()
     {
-        DataFileDelimiter delimiter = getDelimiter();
+        DataFileDelimiter delimiter = getSelectedDataFileDelimiter();
         FileChooser fileChooser = new FileChooser(mWorkingDirectory);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int result = fileChooser.showSaveDialog(mParent);
@@ -1528,12 +1732,21 @@ public class EvidenceWeightedInfererDriver
         return outputFile;
     }
     
+    private void handleSaveIterationSummary()
+    {
+        File outputFile = selectOutputFile();
+        if(null != outputFile)
+        {
+            writeIterationSummary(outputFile, getSelectedDataFileDelimiter());
+        }        
+    }
+    
     private void handleSaveWeights()
     {
         File outputFile = selectOutputFile();
         if(null != outputFile)
         {
-            writeWeights(outputFile, getDelimiter());
+            writeWeights(outputFile, getSelectedDataFileDelimiter());
         }
     }
     
@@ -1542,7 +1755,7 @@ public class EvidenceWeightedInfererDriver
         File outputFile = selectOutputFile();
         if(null != outputFile)
         {
-            writeResults(outputFile, getDelimiter());
+            writeResults(outputFile, getSelectedDataFileDelimiter());
         }
     }
     
@@ -1564,16 +1777,48 @@ public class EvidenceWeightedInfererDriver
             catch(Exception e)
             {
                 String errorMessage = e.getMessage();
-                //e.printStackTrace(System.err); // for debugging only
-                handleMessage("Unable to infer the set of affected elements from the data and parameters you supplied.  The specific error message is: " + errorMessage,
-                              "Unable to infer affected elements",
-                              JOptionPane.ERROR_MESSAGE);            
+                ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, the inference operation has failed due to an exception.  The specific error message is:");
+                optionPane.createDialog(mParent, "Inference operation failed").show();
                 return;
             }
            
             handleResults(results);
         }
     }    
+    
+    
+    private void setDefaultDataFileDelimiter(DataFileDelimiter pDelimiter)
+    {
+        mPreferencesHandler.setPreference(PreferencesHandler.KEY_DELIMITER, pDelimiter.getName());
+    }
+    
+    private DataFileDelimiter getDefaultDataFileDelimiter()
+    {
+        DataFileDelimiter defaultDelimiter = null;
+        
+        String defaultDelimiterName = mPreferencesHandler.getPreference(PreferencesHandler.KEY_DELIMITER, DEFAULT_DATA_FILE_DELIMITER.getName());
+        defaultDelimiter = DataFileDelimiter.get(defaultDelimiterName);
+        if(null == defaultDelimiter)
+        {
+            defaultDelimiter = DEFAULT_DATA_FILE_DELIMITER;
+        }
+        
+        return defaultDelimiter;
+    }
+    
+    public void savePreferences()
+    {
+        setDefaultDataFileDelimiter(getSelectedDataFileDelimiter());
+        try
+        {
+            mPreferencesHandler.flush();
+        }
+        catch(BackingStoreException e)
+        {
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error saving your preferences.  The specific error message is:");
+            optionPane.createDialog(mParent, "Unable to save preferences").show();
+        }
+    }       
     
     private void run(String []pArgs)
     {
@@ -1594,9 +1839,19 @@ public class EvidenceWeightedInfererDriver
             System.exit(1);
         }        
         String frameName = mAppConfig.getAppName() + ": " + FRAME_NAME;
-
+        mPreferencesHandler = new PreferencesHandler();
+        
         JFrame frame = new JFrame(frameName);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.addWindowListener(
+                new WindowAdapter()
+                {
+                    public void windowClosed(WindowEvent e)
+                    {
+                        savePreferences();
+                    }
+                });
+                   
         Container contentPane = frame.getContentPane();
         initialize(contentPane, frame, frameName);
         frame.pack();

@@ -20,11 +20,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
@@ -48,6 +51,7 @@ import java.io.PrintWriter;
 import org.systemsbiology.data.DataFileDelimiter;
 import org.systemsbiology.gui.ComponentUtils;
 import org.systemsbiology.gui.EmptyTableModel;
+import org.systemsbiology.gui.ExceptionNotificationOptionPane;
 import org.systemsbiology.gui.FileChooser;
 import org.systemsbiology.gui.FramePlacer;
 import org.systemsbiology.gui.IconFactory;
@@ -61,6 +65,7 @@ import org.systemsbiology.util.AppConfig;
 import org.systemsbiology.util.FileUtils;
 import org.systemsbiology.util.InvalidInputException;
 import java.util.LinkedList;
+import java.util.prefs.BackingStoreException;
 import java.text.NumberFormat;
 import cern.colt.matrix.ObjectMatrix2D;
 import cern.colt.matrix.ObjectFactory2D;
@@ -106,6 +111,7 @@ public class DataManagerDriver
     private JLabel mEvidenceSortStatusLabel;
     private JCheckBox mAverageDuplicatesBox;
     private AppConfig mAppConfig;
+    private PreferencesHandler mPreferencesHandler;
     
     private static final boolean DEFAULT_ALLOW_DUPLICATES = true;
     private static final String TOOL_TIP_SAVE_SELECTED_COLUMNS = "Save only the columns that you have selected in the data table, to a file.";
@@ -259,6 +265,8 @@ public class DataManagerDriver
         
 
         mFileNameListBox = new JList();
+        mFileNameListBox.setFont(mFileNameListBox.getFont().deriveFont(Font.PLAIN));
+        
         mFileNameListBox.addKeyListener(
                 new KeyAdapter()
                 {
@@ -460,7 +468,7 @@ public class DataManagerDriver
             {
                 setToolTipsForFields(false);
                 setEnableStateForFields(false);
-                mDelimiterBox.setSelectedItem(DEFAULT_DATA_FILE_DELIMITER.getName());
+                mDelimiterBox.setSelectedItem(getDefaultDataFileDelimiter().getName());
                 setDefaultSortStatusOnControls();
             }            
         }
@@ -576,7 +584,7 @@ public class DataManagerDriver
     
     private void saveData(ObservationsData pData)
     {
-        DataFileDelimiter delimiter = getDelimiter();
+        DataFileDelimiter delimiter = getSelectedDataFileDelimiter();
         FileChooser fileChooser = new FileChooser(mWorkingDirectory);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int result = fileChooser.showSaveDialog(mParent);
@@ -700,6 +708,8 @@ public class DataManagerDriver
         }
     }
     
+
+       
     private void clearAllData()
     {
         mData = null;
@@ -711,7 +721,7 @@ public class DataManagerDriver
         
         setEnableStateForFields(false);
         setToolTipsForFields(false);
-        mDelimiterBox.setSelectedItem(DEFAULT_DATA_FILE_DELIMITER.getName());
+        mDelimiterBox.setSelectedItem(getDefaultDataFileDelimiter().getName());
         setDefaultSortStatusOnControls();
     }
           
@@ -871,11 +881,8 @@ public class DataManagerDriver
         }
         catch(InvalidInputException e)
         {
-            String errorMessage = e.getMessage();
-            handleMessage("The file you specified, \"" + pFile.getAbsolutePath() + "\", does not conform to the comma-separated value format; the specific error message is: " + errorMessage,
-                    "Invalid file format",
-                    JOptionPane.ERROR_MESSAGE);            
-            
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "The file you specified, \"" + pFile.getAbsolutePath() + "\", does not conform to the comma-separated value format; the specific error message is:");
+            optionPane.createDialog(mParent, "Invalid file format").show();
         }
     }    
     
@@ -913,7 +920,7 @@ public class DataManagerDriver
         JFileChooser fileChooser = new JFileChooser(mWorkingDirectory);
         ComponentUtils.disableDoubleMouseClick(fileChooser);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        DataFileDelimiter delimiter = getDelimiter();
+        DataFileDelimiter delimiter = getSelectedDataFileDelimiter();
         RegexFileFilter fileFilter = new RegexFileFilter(delimiter.getFilterRegex(), 
                                                         "data file in " + delimiter.getName() + "-delimited format");
         fileChooser.setFileFilter(fileFilter);
@@ -948,7 +955,7 @@ public class DataManagerDriver
         initializeContentPane();
     }
 
-    private DataFileDelimiter getDelimiter()
+    private DataFileDelimiter getSelectedDataFileDelimiter()
     {
         if(null == mDelimiterBox)
         {
@@ -991,6 +998,39 @@ public class DataManagerDriver
         }
     }      
     
+    private void setDefaultDataFileDelimiter(DataFileDelimiter pDelimiter)
+    {
+        mPreferencesHandler.setPreference(PreferencesHandler.KEY_DELIMITER, pDelimiter.getName());
+    }
+    
+    private DataFileDelimiter getDefaultDataFileDelimiter()
+    {
+        DataFileDelimiter defaultDelimiter = null;
+        
+        String defaultDelimiterName = mPreferencesHandler.getPreference(PreferencesHandler.KEY_DELIMITER, DEFAULT_DATA_FILE_DELIMITER.getName());
+        defaultDelimiter = DataFileDelimiter.get(defaultDelimiterName);
+        if(null == defaultDelimiter)
+        {
+            defaultDelimiter = DEFAULT_DATA_FILE_DELIMITER;
+        }
+        
+        return defaultDelimiter;
+    }
+    
+    public void savePreferences()
+    {
+        setDefaultDataFileDelimiter(getSelectedDataFileDelimiter());
+        try
+        {
+            mPreferencesHandler.flush();
+        }
+        catch(BackingStoreException e)
+        {
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error saving your preferences.  The specific error message is:");
+            optionPane.createDialog(mParent, "Unable to save preferences").show();
+        }
+    }     
+    
     private void run(String []pArgs)
     {
         String appDir = null;
@@ -1010,9 +1050,18 @@ public class DataManagerDriver
             System.exit(1);
         }        
         String frameName = mAppConfig.getAppName() + ": " + FRAME_NAME;
-
+        mPreferencesHandler = new PreferencesHandler();
+        
         JFrame frame = new JFrame(frameName);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.addWindowListener(
+                new WindowAdapter()
+                {
+                    public void windowClosed(WindowEvent e)
+                    {
+                        savePreferences();
+                    }
+                });
         Container contentPane = frame.getContentPane();
         initialize(contentPane, frame, frameName);
         frame.pack();

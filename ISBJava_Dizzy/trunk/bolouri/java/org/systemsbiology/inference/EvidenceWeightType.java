@@ -25,15 +25,21 @@ import java.util.Collections;
 public class EvidenceWeightType implements Comparable
 {
     private final String mName;
+    private int mCode;
     private static final HashMap sMap;
     static
     {
         sMap = new HashMap();
     }
-    private EvidenceWeightType(String pName)
+    private EvidenceWeightType(String pName, int pCode)
     {
         mName = pName;
+        mCode = pCode;
         sMap.put(pName, this);
+    }
+    public int getCode()
+    {
+        return mCode;
     }
     public String toString()
     {
@@ -57,6 +63,10 @@ public class EvidenceWeightType implements Comparable
         Collections.sort(linkedList);
         return (EvidenceWeightType []) linkedList.toArray(new EvidenceWeightType[0]);
     }
-    public static final EvidenceWeightType LINEAR = new EvidenceWeightType("linear");
-    public static final EvidenceWeightType POWER = new EvidenceWeightType("power"); 
+    public static final int CODE_LINEAR = 0;
+    public static final int CODE_POWER = 1;
+    public static final int CODE_UNIFORM = 2;
+    public static final EvidenceWeightType LINEAR = new EvidenceWeightType("linear", CODE_LINEAR);
+    public static final EvidenceWeightType POWER = new EvidenceWeightType("power", CODE_POWER); 
+    public static final EvidenceWeightType UNIFORM = new EvidenceWeightType("uniform", CODE_UNIFORM);
 }

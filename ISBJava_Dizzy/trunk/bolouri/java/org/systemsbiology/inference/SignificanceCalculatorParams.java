@@ -27,7 +27,7 @@ public class SignificanceCalculatorParams
     private Double mSmoothingLength;
     private Integer mNumBins;
     private Boolean mSingleTailed;
-    private SignificanceCalculationFormula mFormula;
+    private SignificanceCalculationMethod mFormula;
     
     public SignificanceCalculatorParams()
     {
@@ -38,12 +38,12 @@ public class SignificanceCalculatorParams
         mFormula = null;
     }
     
-    public void setSignificanceCalculationFormula(SignificanceCalculationFormula pFormula)
+    public void setSignificanceCalculationMethod(SignificanceCalculationMethod pFormula)
     {
         mFormula = pFormula;
     }
     
-    public SignificanceCalculationFormula getSignificanceCalculationFormula()
+    public SignificanceCalculationMethod getSignificanceCalculationMethod()
     {
         return mFormula;
     }

@@ -15,11 +15,12 @@ import java.awt.event.*;
 import java.io.*;
 import cern.colt.matrix.*;
 import javax.swing.*;
-
 import org.systemsbiology.data.DataFileDelimiter;
 import org.systemsbiology.gui.*;
 import org.systemsbiology.math.*;
 import java.text.NumberFormat;
+import java.util.prefs.BackingStoreException;
+
 import org.systemsbiology.util.FileUtils;
 import org.systemsbiology.util.AppConfig;
 import org.systemsbiology.util.InvalidInputException;
@@ -74,6 +75,7 @@ public class DataNormalizerDriver
     private JLabel mMethodsLabel;
     private JComboBox mMethodsBox;
     private AppConfig mAppConfig;
+    private PreferencesHandler mPreferencesHandler;
     
     private static final String TOOL_TIP_MAX_ITERATIONS = "Specify the maximum number of iterations that may be used to compute the normalized observations.";
     private static final int DEFAULT_MAX_ITERATIONS = 10;
@@ -174,6 +176,7 @@ public class DataNormalizerDriver
         gridLayout.setConstraints(delimitersPanel, constraints);
         
         JLabel fileNameLabel = new JLabel("");
+        fileNameLabel.setFont(fileNameLabel.getFont().deriveFont(Font.PLAIN));
         mFileNameLabel = fileNameLabel;
         fileNameLabel.setPreferredSize(new Dimension(400, 10));
         fileNameLabel.setMinimumSize(new Dimension(400, 10));
@@ -644,7 +647,7 @@ public class DataNormalizerDriver
         }
     }
     
-    private DataFileDelimiter getDelimiter()
+    private DataFileDelimiter getSelectedDataFileDelimiter()
     {
         if(null == mDelimiterBox)
         {
@@ -695,7 +698,7 @@ public class DataNormalizerDriver
         clearResults();
         setEnableStateForFields(false, false);
         setToolTipsForFields(false, false);
-        mDelimiterBox.setSelectedItem(DEFAULT_DATA_FILE_DELIMITER.getName()); 
+        mDelimiterBox.setSelectedItem(getDefaultDataFileDelimiter()); 
         setDefaults();
     }
 
@@ -705,7 +708,7 @@ public class DataNormalizerDriver
         JFileChooser fileChooser = new JFileChooser(mWorkingDirectory);
         ComponentUtils.disableDoubleMouseClick(fileChooser);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        DataFileDelimiter delimiter = getDelimiter();
+        DataFileDelimiter delimiter = getSelectedDataFileDelimiter();
         RegexFileFilter fileFilter = new RegexFileFilter(delimiter.getFilterRegex(), 
                                                         "data file in " + delimiter.getName() + "-delimited format");
         fileChooser.setFileFilter(fileFilter);
@@ -808,9 +811,8 @@ public class DataNormalizerDriver
         }
         catch(Exception e)
         {
-            handleMessage("The data normalization procedure failed.  The specific error message is: " + e.getMessage(),
-                          "Data normalization failed",
-                          JOptionPane.ERROR_MESSAGE);
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, the data normalization failed due to an exception.  The specific error message is:");
+            optionPane.createDialog(mParent, "Data normalization failed").show();
             return;
         }
         handleResults(results);
@@ -842,7 +844,7 @@ public class DataNormalizerDriver
     
     private void saveResults()
     {
-        DataFileDelimiter delimiter = getDelimiter();
+        DataFileDelimiter delimiter = getSelectedDataFileDelimiter();
         FileChooser fileChooser = new FileChooser(mWorkingDirectory);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int result = fileChooser.showSaveDialog(mParent);
@@ -888,6 +890,41 @@ public class DataNormalizerDriver
             JOptionPane.showMessageDialog(mParent, simpleTextArea, "unable to write results to file", JOptionPane.ERROR_MESSAGE);
         }        
     }    
+    
+    
+    private void setDefaultDataFileDelimiter(DataFileDelimiter pDelimiter)
+    {
+        mPreferencesHandler.setPreference(PreferencesHandler.KEY_DELIMITER, pDelimiter.getName());
+    }
+    
+    private DataFileDelimiter getDefaultDataFileDelimiter()
+    {
+        DataFileDelimiter defaultDelimiter = null;
+        
+        String defaultDelimiterName = mPreferencesHandler.getPreference(PreferencesHandler.KEY_DELIMITER, DEFAULT_DATA_FILE_DELIMITER.getName());
+        defaultDelimiter = DataFileDelimiter.get(defaultDelimiterName);
+        if(null == defaultDelimiter)
+        {
+            defaultDelimiter = DEFAULT_DATA_FILE_DELIMITER;
+        }
+        
+        return defaultDelimiter;
+    }
+    
+    public void savePreferences()
+    {
+        setDefaultDataFileDelimiter(getSelectedDataFileDelimiter());
+        try
+        {
+            mPreferencesHandler.flush();
+        }
+        catch(BackingStoreException e)
+        {
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error saving your preferences.  The specific error message is:");
+            optionPane.createDialog(mParent, "Unable to save preferences").show();
+        }
+    }     
+    
     private void run(String []pArgs)
     {
         String appDir = null;
@@ -907,9 +944,18 @@ public class DataNormalizerDriver
             System.exit(1);
         }        
         String frameName = mAppConfig.getAppName() + ": " + FRAME_NAME;
+        mPreferencesHandler = new PreferencesHandler();
         
         JFrame frame = new JFrame(frameName);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.addWindowListener(
+                new WindowAdapter()
+                {
+                    public void windowClosed(WindowEvent e)
+                    {
+                        savePreferences();
+                    }
+                });
         Container contentPane = frame.getContentPane();
         initialize(contentPane, frame, frameName);
         frame.pack();
