@@ -9,15 +9,10 @@ which can be found on the web at:
 
   http://labs.systemsbiology.net/bolouri/Dizzy
 
-Ant is used as the driver for application builds.  You *must*
-invoke Ant from the base directory of the CVS archive, 
-   CVSROOT/bolouri
-
-If you attempt to invoke Ant from the directory
-   CVSROOT/bolouri/apps/Dizzy
-
-you will get an error message.  Perhaps this will be changed in
-the future, but for now, we are set up only to perform "global" builds.
+Ant is used as the driver for application builds.  You can change to
+the CVSROOT/bolouri/apps/Dizzy directory and do an "ant build", but
+first you will need to do an "ant build" in the
+CVSROOT/bolouri/java directory, to build the ISBJava.jar file.
 
 InstallAnywhere is used to produce an executable "installer" program
 that contains the Dizzy application software.  The configuration metadata
@@ -60,19 +55,6 @@ Enterprise version of InstallAnywhere, and start using the
 "source path management" feature, and get rid of the cumbersome
 Ant filter tokens in the InstallAnywhere project file.
 
--------------------------------------------------------------------
-Note regarding the "config/fixMacOSXInstallerProblem.zip" file:
 
-there is a bug in Version 5.0.7 of the InstallAnywhere product,
-such that the Dizzy installer "insDizzy.zip" built for Mac OSX 
-installs incorrect settings in the Dizzy application bundle file
-"Info.plist", on the target Mac computer.  The aforementioned
-"zip" file contains a "Custom Code" extension for InstallAnywhere
-that implements a post-installation step to fix the incorrect
-configuration file on the target Mac computer.  When we upgrade
-to the new version of InstallAnywhere, the "fixMacOSXInstallerProblem.zip"
-file can be removed from the CVS archive, and any references to it
-can be removed from the InstallAnywhere project config file
-"project.iap_xml".
 
 
