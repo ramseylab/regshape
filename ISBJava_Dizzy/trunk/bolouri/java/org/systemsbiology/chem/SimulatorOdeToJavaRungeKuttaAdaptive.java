@@ -41,19 +41,41 @@ public class SimulatorOdeToJavaRungeKuttaAdaptive extends SimulatorOdeToJavaBase
             absoluteTolerance[i] = pMaxAllowedAbsoluteError;
         }
 
+        ErkTriple erkTriple = new ErkTriple(simulationModel,
+                                            pSimulationTimeSpan,
+                                            pInitialDynamicSymbolValues,
+                                            pInitialStepSize,
+                                            simulationButcherTableau,
+                                            highOrderArgument,
+                                            absoluteTolerance,
+                                            relativeTolerance,
+                                            pTempOutputFileName,
+                                            "StiffDetect_Off",
+                                            "EventLoc_Halt",
+                                            "Stats_Off");
+        erkTriple.setAppend(false);
+        erkTriple.setNPoints(1000);
+        erkTriple.setRecorder(this);
 
-        ErkTriple.erk_triple(simulationModel, 
-                             pSimulationTimeSpan, 
-                             pInitialDynamicSymbolValues, 
-                             pInitialStepSize,
-                             simulationButcherTableau,
-                             highOrderArgument,
-                             absoluteTolerance,
-                             relativeTolerance,
-                             pTempOutputFileName,
-                             "StiffDetect_Off",
-                             "EventLoc_Off",
-                             "Stats_Off");
+        erkTriple.routine();
+
+//         ErkTriple.erk_triple(simulationModel, 
+//                              pSimulationTimeSpan, 
+//                              pInitialDynamicSymbolValues, 
+//                              pInitialStepSize,
+//                              simulationButcherTableau,
+//                              highOrderArgument,
+//                              absoluteTolerance,
+//                              relativeTolerance,
+//                              pTempOutputFileName,
+//                              "StiffDetect_Off",
+//                              "EventLoc_Off",
+//                              "Stats_Off");
+    }
+
+    public boolean allowsInterrupt()
+    {
+        return(true);
     }
 
     

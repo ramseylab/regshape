@@ -16,22 +16,29 @@ import odeToJava.modules.*;
 import org.systemsbiology.util.*;
 import org.systemsbiology.math.*;
 
-public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE
+public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, ODERecorder
 {
     public static final int DEFAULT_MIN_NUM_STEPS = 10000;
     public static final double DEFAULT_MAX_ALLOWED_RELATIVE_ERROR = 0.0001;
-    public static final double DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR = 0.01;
+    public static final double DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR = 0.0001;
 
     private double []mDerivative;
     private double []mScratch;
+    private boolean mHasDelayedReactionSolvers;
+    private boolean mSimulationCancelled;
+    boolean mSimulationCancelledEventNegReturnFlag;
 
     public void initialize(Model pModel, SimulationController pSimulationController) throws DataNotFoundException
     {
         initializeSimulator(pModel, pSimulationController);
+        System.out.println("simulation controller is cancelled: " + pSimulationController.checkIfCancelled());
         initializeDynamicSymbolAdjustmentVectors(mDynamicSymbols);
         int numSpecies = mDynamicSymbolValues.length;
         mDerivative = new double[numSpecies];
         mScratch = new double[numSpecies];
+        mHasDelayedReactionSolvers = (mDelayedReactionSolvers.length > 0);
+        mSimulationCancelled = false;
+        mSimulationCancelledEventNegReturnFlag = false;
     }
 
     public SimulatorParameters getDefaultSimulatorParameters()
@@ -43,11 +50,6 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE
     }
 
     public boolean isStochasticSimulator()
-    {
-        return(false);
-    }
-
-    public boolean allowsInterrupt()
     {
         return(false);
     }
@@ -99,7 +101,6 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE
             throw new IllegalArgumentException("invalid maximum allowed relative error was specified");
         }
 
-
         Double maxAllowedAbsoluteErrorObj = pSimulatorParameters.getMaxAllowedAbsoluteError();
         if(null == maxAllowedAbsoluteErrorObj)
         {
@@ -129,9 +130,11 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE
             throw new SimulationFailedException("unable to open temporary output file, error message is: " + e.toString());
         }
         String tempOutputFileName = tempOutputFile.getAbsolutePath();
-//        System.err.println("writing simulation results to file: " + tempOutputFileName);
 
         prepareForSimulation(pStartTime);
+
+        mSimulationCancelled = false;
+        mSimulationCancelledEventNegReturnFlag = false;
 
         runExternalSimulation(simulationTimeSpan,
                               mDynamicSymbolValues,
@@ -139,6 +142,11 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE
                               maxAllowedRelativeError,
                               maxAllowedAbsoluteError,
                               tempOutputFileName);
+
+        if(mSimulationCancelled)
+        {
+            return;
+        }
 
         try
         {
@@ -264,15 +272,66 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE
         }
         catch(DataNotFoundException e)
         {
-            throw new RuntimeException("data not found", e);
+            throw new RuntimeException("data not found: " + e.getMessage(), e);
         }
         
         return(mDerivative);
     }
 
+
     public double[] g(double t, double[] x)
     {   // empty implementation of g because there are no events associated
         double[] event = new double[1];   // with this function
+
+        if(mSimulationCancelled || incrementIterationCounterAndCheckForCancellation())
+        {
+            mSimulationCancelled = true;
+
+            // This nastiness is needed in order to tell the odeToJava simulator
+            // to quit, without having to throw an exception; it looks for a change
+            // of sign in subsequent invocations of this function ["g(t,x)"], as the
+            // signal to halt the integration routine.  The logic below ensures that
+            // subsequent calls will have a sign change, and thus trigger termination.
+            double retVal = 1.0;
+            if(mSimulationCancelledEventNegReturnFlag)
+            {
+                retVal = -1.0;
+                mSimulationCancelledEventNegReturnFlag = false;
+            }
+            else
+            {
+                mSimulationCancelledEventNegReturnFlag = true;
+            }
+            event[0] = retVal;
+        }
         return(event);
+    }
+
+    public void record(double t, double []x)
+    {
+        if(mHasDelayedReactionSolvers)
+        {
+            // copy the values in x to the array that is read by the "symbol evaluator"
+            System.arraycopy(x, 0, mDynamicSymbolValues, 0, mDynamicSymbolValues.length);
+            
+            SymbolEvaluatorChemSimulation symbolEvaluator = mSymbolEvaluator;
+            // set the time to t
+            symbolEvaluator.setTime(t);
+            
+            try
+            {
+                DelayedReactionSolver []solvers = mDelayedReactionSolvers;
+                int numDelayedReactionSolvers = solvers.length;
+                for(int ctr = numDelayedReactionSolvers; --ctr >= 0; )
+                {
+                    DelayedReactionSolver solver = solvers[ctr];
+                    solver.update(symbolEvaluator, t);
+                }
+            }
+            catch(DataNotFoundException e)
+            {
+                throw new RuntimeException("data not found: " + e.getMessage());
+            }
+        }
     }
 }
