@@ -150,7 +150,6 @@ public class SimulationLauncher
 
         private synchronized void setLastUpdateTimeMillis(long pLastUpdateTimeMillis)
         {
-            System.out.println("setting last update time millis to: " + pLastUpdateTimeMillis);
             mLastUpdateTimeMillis = pLastUpdateTimeMillis;
         }
 
@@ -199,7 +198,6 @@ public class SimulationLauncher
             {
                 synchronized(reporter)
                 {
-                    System.out.println("about to wait for update");
                     reporter.waitForUpdate();
                     if(getTerminate())
                     {
@@ -207,7 +205,6 @@ public class SimulationLauncher
                     }
                     boolean simulationFinished = reporter.getSimulationFinished();
                     boolean simulationCancelled = mSimulationController.getCancelled();
-                    System.out.println("just returned from update; finished: " + simulationFinished + "; cancelled: " + simulationCancelled);
                     if(! reporter.getSimulationFinished() && ! mSimulationController.getCancelled())
                     {
                         long updateTimeMillis = reporter.getTimeOfLastUpdateMillis();
@@ -218,13 +215,9 @@ public class SimulationLauncher
                         int percentComplete = (int) (100.0 * fractionComplete);
                         int lastPercentComplete = (int) (100.0 * mLastUpdateFractionComplete);
 
-                        System.out.println("last update time millis: " + lastUpdateTimeMillis);
-
                         if(NULL_TIME_UPDATE_MILLIS != lastUpdateTimeMillis)
                         {
                             double changeFraction = fractionComplete - mLastUpdateFractionComplete;
-
-                            System.out.println("change in completeness fraction: " + changeFraction);
 
                             if(changeFraction > 0.0)
                             {
@@ -254,7 +247,6 @@ public class SimulationLauncher
 
                         // record the "last update time"
                         setLastUpdateTimeMillis(updateTimeMillis);
-                        System.out.println("setting time completion string to: " + estimatedTimeToCompletionStr);
                         mSecondsRemainingNumber.setText(estimatedTimeToCompletionStr);
                         mLastUpdateFractionComplete = fractionComplete;
                     }
