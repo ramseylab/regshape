@@ -122,21 +122,16 @@ It is provided "as is" without expressed or implied warranty.
 
 <isb:docsubsection name="Acknowledgements" label="acknowledgements">
 <p>
+The &appName; software, in its current version, 
+was implemented by Stephen Ramsey.  Daehee
+Hwang was the architect of the statistical algorithms used within
+&appName;, and provided a reference implentation of the algorithms
+in MATLAB.  Hamid Bolouri is the Principal Investigator for this
+research project.  Larissa Kamenkovich implemented an early prototype 
+of the &appName; software program.  William Longabaugh provided 
+frequent advice on Java programming.
 The assistance, advice, and contributions of several individuals 
 to the &appName; project is gratefully acknowledged.
-</p>
-<p>
-Hamid Bolouri:  principal investigator 
-</p>
-<p>
-Daehee Hwang:  for developing the &appName; algorithms
-</p>
-<p>
-Larissa Kamenkovich:  for implementing an early version of the 
-&appName; program
-</p>
-<p>
-William Longabaugh:  for providing frequent advice on Java
 </p>
 <p>
 Many other individuals have contributed to the project, as well.

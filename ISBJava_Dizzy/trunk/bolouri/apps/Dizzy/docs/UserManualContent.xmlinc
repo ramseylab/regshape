@@ -125,33 +125,17 @@ are installed within the &appName; directory when you install
 
 <isb:docsubsection name="Acknowledgements" label="acknowledgements">
 <p>
-The assistance, advice, and contributions of several individuals 
-to the &appName; project is gratefully acknowledged.
-</p>
-<p>
-Hamid Bolouri: principal investigator and co-designer of the &appName; 
-system.
-</p>
-<p>
-David Orrell:  for serving as an early adopter of &appName; 
-and for contributing many ideas to the project
-</p>
-<p>
-William Longabaugh:  for providing frequent advice on Java
-</p>
-<p>
-Mike Hucka and Andrew Finney:  for providing much assistance
-with SBML and SBW
-</p>
-<p>
-Paul Shannon and the Cytoscape team: for
-helping to make the &appName;&lt;-&gt;Cytoscape bridge possible.
-</p>
-<p>
-Raymond Spiteri:  for kindly permitting the
-inclusion of the &quot;odeToJava&quot; library with &appName;.  
-Many thanks to Murray Patterson also, for developing the
-&quot;odeToJava&quot; library.
+The &appName; software program was implemented by Stephen Ramsey.
+Hamid Bolouri is the Principal Investigator for this research project.
+This research project was supported in part by grant #10830302 from
+the National Institute of Allergy and Infectious Diseases.  David
+Orrell provided helpful advice and was an early adopter of the 
+&appName; program.  William Longabaugh provided frequent advice on Java
+programming.  Mike Hucka and Andrew Finney provided much assistance with
+SBML and SBW.  Paul Shannon and the Cytoscape team helped to make the
+&appName;-&gt;Cytoscape bridge possible.  Raymond Spiteri kindly permitted
+the inclusion of the "odeToJava" library with &appName;, which was
+implemented by Murray Patterson and Raymond Spiteri.
 </p>
 <p>
 Many other individuals have contributed to the project, as well.
