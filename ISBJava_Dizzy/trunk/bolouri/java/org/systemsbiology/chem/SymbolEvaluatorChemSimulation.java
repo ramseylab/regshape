@@ -8,10 +8,8 @@ package org.systemsbiology.chem;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import org.systemsbiology.math.SymbolEvaluator;
-import org.systemsbiology.math.Symbol;
-import org.systemsbiology.math.Value;
-import org.systemsbiology.util.DataNotFoundException;
+import org.systemsbiology.math.*;
+import org.systemsbiology.util.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -121,6 +119,7 @@ public class SymbolEvaluatorChemSimulation extends SymbolEvaluator
                 Value []valueArray = pSymbol.getValueArray();
                 assert (null != valueArray) : "no value or double array defined for indexed symbol";
                 Value valueObj = valueArray[arrayIndex];
+                assert (null != valueObj) : "no value defined for indexed symbol: " + pSymbol.getName();
                 value = valueObj.getValue(this);
             }
         }
