@@ -125,8 +125,16 @@ If you are reading this document through a print-out, you can find
 the online version of this document (which may be a more recent version)
 at the following URL:
 <blockquote>
-<a href="UserManual.html">&appHomePage;/docs/UserManual.html</a>
+<a href="&appHomePage;/docs/UserManual.html">&appHomePage;/docs/UserManual.html</a>
 </blockquote>
+A PDF version of this manual is also available on-line at:
+<blockquote>
+<pre>
+<a href="&appHomePage;/docs/UserManual.pdf">&appHomePage;/docs/UserManual.pdf</a>
+</pre>
+</blockquote>
+The above hyperlinks for the User Manual are for the most recent
+version of the &appName; system.
 </p>
 
 </isb:docsection>
