@@ -79,6 +79,13 @@ of the running simulation via the <code>SimulationController</code> class.</li>
 <li>Modified the <code>SimulatorOdeToJavaBase</code> class to call the
 <code>DelayedReactionSolver.update()</code> method after each successful iteration
 of the integrator.</li>
+<li>Modified the <code>org.systemsbiology.math.Expression</code> class to add the
+<code>computePartialDerivative()</code> method, which computes the symbolic partial
+derivative of a given <code>Expression</code>, with respect to a given <code>Symbol</code>.</li>
+<li>Removed support for the functions <code>gammaln()</code> and <code>rand()</code> in 
+mathematical expressions.  The <code>rand()</code> function causes problems with
+the expression value cachying feature introduced in version 1.4.0, and the
+<code>gammaln()</code> code is likely encumbered with license issues.</li>
 </ul>
 </td>
 </tr>
