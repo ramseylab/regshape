@@ -13,8 +13,8 @@
 %CommonConfig;
 
 <!ENTITY appName "Dizzy">
-<!ENTITY appVersion "1.4.3">
-<!ENTITY appDate "2004/02/06">
+<!ENTITY appVersion "1.4.4">
+<!ENTITY appDate "2004/02/10">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
 <!ENTITY appIconURL "images/appLogoIcon.png">
 
@@ -30,4 +30,4 @@
 <!ENTITY appFileExtension ".dizzy">
 
 <!ENTITY sbmlURL "http://www.sbw-sbml.org">
-<!ENTITY appJavaRuntimeFlags "-Xmx500m">
+<!ENTITY appJavaMaxHeapSizeBytes "500000000">
