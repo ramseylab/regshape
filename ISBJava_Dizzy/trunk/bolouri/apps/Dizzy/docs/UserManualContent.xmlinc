@@ -1713,16 +1713,14 @@ understood to indicate a CMDL file.
 
 <isb:docsubsection name="Character Encoding" label="encoding">
 <p>
-All CMDL files are text files
-in ISO-8559-1 encoding.  Embedding non-ISO-8559-1 characters 
-(such as, UTF-8 characters) in a CMDL file,
-even within a <a href="#comments">comment</a>, will trigger an error within
-&appName;.  This is to ensure uniform behavior of the &appName;
+All CMDL files are required text files
+in UTF-8 encoding, which includes <a href="#comments">comments</a>.
+This is to ensure uniform behavior of the &appName;
 parser on all platforms, regardless of the default character encoding
 used in the particular locale.  In particular, Red Hat Linux
 distributions subsequent to version 8, employ UTF-8 encoding as
 the default character encoding; therefore, care must be used to avoid 
-embedding non-ISO-8559-1 characters within a CMDL file.
+embedding non-UTF-8 characters within a CMDL file.
 </p>
 </isb:docsubsection>
 
