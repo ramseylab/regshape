@@ -226,7 +226,7 @@ public abstract class SimulatorStochasticBase extends Simulator
                 double frac = speciesValue - floorSpeciesValue;
                 double randVal = pRandomNumberGenerator.raw();
                 double initialVal = floorSpeciesValue;
-                if(randVal > frac)
+                if(randVal < frac)
                 {
                     initialVal += 1.0;
                 }
