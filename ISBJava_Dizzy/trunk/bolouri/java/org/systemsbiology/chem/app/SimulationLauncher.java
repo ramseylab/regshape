@@ -1294,7 +1294,7 @@ public class SimulationLauncher
         if(outputType.equals(OutputType.FILE))
         {
             FileChooser outputFileChooser = new FileChooser(mLauncherFrame);
-            outputFileChooser.setDialogTitle("Please specify the file for the simulation output");
+            outputFileChooser.setDialogTitle("Please specify the output file; the extension \".csv\" is recommended");
             File currentDirectory = getCurrentDirectory();
             if(null != mOutputFile)
             {
