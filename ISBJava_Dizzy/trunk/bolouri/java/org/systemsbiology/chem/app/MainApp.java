@@ -82,12 +82,12 @@ public class MainApp
         return(mAppConfig);
     }
 
-    void setSimulator(SimulationLauncher pSimulationLauncher)
+    void setSimulationLauncher(SimulationLauncher pSimulationLauncher)
     {
         mSimulationLauncher = pSimulationLauncher;
     }
     
-    SimulationLauncher getSimulator()
+    SimulationLauncher getSimulationLauncher()
     {
         return(mSimulationLauncher);
     }
@@ -153,6 +153,48 @@ public class MainApp
         }
     }
 
+    private void loadModel()
+    {
+        Model model = mEditorPane.processModel();
+        SimulationLauncher simulationLauncher = getSimulationLauncher();
+        if(null == simulationLauncher)
+        {
+            throw new IllegalStateException("simulation launcher window does not exist; cannot reload model");
+        }
+        SimulationLauncher.SetModelResult result = simulationLauncher.setModel(model);
+        if(result == SimulationLauncher.SetModelResult.FAILED_RUNNING)
+        {
+            SimpleDialog dialog = new SimpleDialog(mMainFrame, "unable to reload model", 
+                                                   "Sorry, the model cannot be reloaded while a simulation is running.  Please wait for the simulation to complete and then try again.");
+            dialog.show();
+        }
+        else if(result == SimulationLauncher.SetModelResult.FAILED_CLOSED)
+        {
+            throw new IllegalStateException("unexpected condition:  setModel() called after the simulation launcher has closed");
+        }
+        else if(result == SimulationLauncher.SetModelResult.SUCCESS)
+        {
+            simulationLauncher.toFront();
+        }
+        else
+        {
+            throw new IllegalStateException("unexpected condition:  unknown result returned from setModel(); result is: " + result.toString());
+        }
+    }
+    
+    void handleReload()
+    {
+        try
+        {
+            loadModel();
+        }
+        catch(Exception e)
+        {
+            ExceptionDialogOperationCancelled errorDialog = new ExceptionDialogOperationCancelled(mMainFrame, "unable to reload the mode", e);
+            errorDialog.show();            
+        }
+    }
+
     void handleSimulate()
     {
         try
@@ -160,12 +202,23 @@ public class MainApp
             String appName = getName();
             Model model = mEditorPane.processModel();
             enableSimulateMenuItem(false);
-            SimulationLauncher simulator = new SimulationLauncher(appName, model, false);
-            simulator.addListener(new SimulationLauncher.Listener()
+            SimulationLauncher simulationLauncher = new SimulationLauncher(appName, model, false);
+            setSimulationLauncher(simulationLauncher);
+            enableReloadMenuItem(true);
+            simulationLauncher.addListener(new SimulationLauncher.Listener()
             {
                 public void simulationLauncherClosing()
                 {
                     enableSimulateMenuItem(true);
+                    enableReloadMenuItem(false);
+                }
+                public void simulationStarting()
+                {
+                    enableReloadMenuItem(false);
+                }
+                public void simulationEnding()
+                {
+                    enableReloadMenuItem(true);
                 }
             });
         }
@@ -177,14 +230,43 @@ public class MainApp
         }
     }
 
+    private void enableMenu(MainMenu.Menu pMenu, boolean pEnabled)
+    {
+        try
+        {
+            mMainMenu.setEnabledFlag(pMenu, pEnabled);
+        }
+        catch(DataNotFoundException e)
+        {
+            throw new IllegalStateException("could not find menu " + pMenu.toString());
+        }
+    }
+
+    private void enableMenuItem(MainMenu.MenuItem pMenuItem, boolean pEnabled)
+    {
+        try
+        {
+            mMainMenu.setEnabledFlag(pMenuItem, pEnabled);
+        }
+        catch(DataNotFoundException e)
+        {
+            throw new IllegalStateException("could not find menu item " + pMenuItem.toString());
+        }
+    }
+
+    void enableReloadMenuItem(boolean pEnabled)
+    {
+        enableMenuItem(MainMenu.MenuItem.TOOLS_RELOAD, pEnabled);
+    }
+
     void enableSaveMenuItem(boolean pEnabled)
     {
-        mMainMenu.getSaveMenuItem().setEnabled(pEnabled);
+        enableMenuItem(MainMenu.MenuItem.FILE_SAVE, pEnabled);
     }
 
     void enableCloseMenuItem(boolean pEnabled)
     {
-        mMainMenu.getCloseMenuItem().setEnabled(pEnabled);
+        enableMenuItem(MainMenu.MenuItem.FILE_CLOSE, pEnabled);
     }
     
     void enableSimulateMenuItem(boolean pEnabled)
@@ -197,10 +279,10 @@ public class MainApp
                 enabled = true;
             }
         }
-        mMainMenu.getSimulateMenuItem().setEnabled(enabled);
+        enableMenuItem(MainMenu.MenuItem.TOOLS_SIMULATE, enabled);
     }
 
-    void enableToolsMenu(boolean pEnabled)
+    void enableToolsMenu(boolean pEnabled) 
     {
         boolean enabled = false;
         if(pEnabled)
@@ -210,7 +292,7 @@ public class MainApp
                 enabled = true;
             }
         }
-        mMainMenu.getToolsMenu().setEnabled(enabled);
+        enableMenu(MainMenu.Menu.TOOLS, enabled);
     }
 
     private void initializeAppConfig(String pAppDir) throws DataNotFoundException, InvalidInputException, FileNotFoundException
@@ -254,13 +336,25 @@ public class MainApp
         return(mainPane);
     }
 
-    private void initializeMainFrame()
+    private void initializeMainMenu(JFrame pFrame) throws DataNotFoundException
+    {
+        MainMenu mainMenu = new MainMenu(this);
+        mMainMenu = mainMenu;
+        enableToolsMenu(false);
+        enableSimulateMenuItem(false);
+        enableReloadMenuItem(false);
+        enableSaveMenuItem(false);
+        enableCloseMenuItem(false);
+        pFrame.setJMenuBar(mainMenu);
+    }
+
+    private void initializeMainFrame() throws DataNotFoundException
     {
         JFrame frame = new JFrame(getName());
         setMainFrame(frame);
-        MainMenu mainMenu = new MainMenu(this);
-        frame.setJMenuBar(mainMenu);
-        mMainMenu = mainMenu;
+
+        initializeMainMenu(frame);
+
         Container mainPane = createComponents();
         frame.setContentPane(mainPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -325,6 +419,7 @@ public class MainApp
         ClassRegistry modelExporterRegistry = new ClassRegistry(org.systemsbiology.chem.scripting.IModelExporter.class);
         modelExporterRegistry.buildRegistry();
         setModelExporterRegistry(modelExporterRegistry);
+        setSimulationLauncher(null);
 
         initializeMainFrame();
     }

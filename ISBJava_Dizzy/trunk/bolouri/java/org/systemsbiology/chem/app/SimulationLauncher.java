@@ -53,7 +53,9 @@ public class SimulationLauncher
     private String mAppName;
     private boolean mExitOnClose;
     private JLabel mModelNameLabel;
+    private ArrayList mListeners;
 
+    
     /**
      * Enumerates the possible results of calling {@link #setModel(org.systemsbiology.chem.Model)}.
      */
@@ -73,6 +75,8 @@ public class SimulationLauncher
     public interface Listener
     {
         public void simulationLauncherClosing();
+        public void simulationStarting();
+        public void simulationEnding();
     }
 
     /**
@@ -91,6 +95,7 @@ public class SimulationLauncher
         {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         }
+        mListeners = new ArrayList();
         createLauncher(pAppName, pModel);
     }
 
@@ -333,10 +338,33 @@ public class SimulationLauncher
                 
         catch(Exception e)
         {
+            simulationEndCleanup();
             ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
                                                                                              "Failure running simulation",
                                                                                              e);
             dialog.show();
+        }
+
+        catch(Throwable e)
+        {
+            simulationEndCleanup();
+            ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(getLauncherFrame(),
+                                                                                             "Failure running simulation",
+                                                                                             new Exception(e));
+            dialog.show();
+            
+        }
+
+        simulationEndCleanup();
+    }
+
+    private void simulationEndCleanup()
+    {
+        Iterator listenerIter = mListeners.iterator();
+        while(listenerIter.hasNext())
+        {
+            Listener listener = (Listener) listenerIter.next();
+            listener.simulationEnding();
         }
 
         setSimulationRunParameters(null);
@@ -396,6 +424,13 @@ public class SimulationLauncher
 
             simulationController.setCancelled(false);
             simulationController.setStopped(false);
+            
+            Iterator listenerIter = mListeners.iterator();
+            while(listenerIter.hasNext())
+            {
+                Listener listener = (Listener) listenerIter.next();
+                listener.simulationStarting();
+            }
 
             SimulationRunParameters simulationRunParameters = createSimulationRunParameters();
             if(null != simulationRunParameters)
@@ -1175,6 +1210,7 @@ public class SimulationLauncher
         Container contentPane = null;
 
         setSimulationRunParameters(null);
+
         updateSimulationControlButtons();
         createSimulationRunnerThread();
 
@@ -1220,6 +1256,7 @@ public class SimulationLauncher
     {
         Component frame = getLauncherFrame();
         final Listener listener = pListener;
+        mListeners.add(pListener);
         if(frame instanceof JFrame)
         {
             JFrame launcherFrame = (JFrame) frame;
@@ -1277,6 +1314,23 @@ public class SimulationLauncher
         }
 
         return(result);
+    }
+
+    public void toFront()
+    {
+        Component launcherFrame = mLauncherFrame;
+        if(launcherFrame instanceof JFrame)
+        {
+            ((JFrame) launcherFrame).toFront();
+        }
+        else if(launcherFrame instanceof JInternalFrame)
+        {
+            ((JInternalFrame) launcherFrame).toFront();
+        }
+        else
+        {
+            assert false : "unknown internal frame type";
+        }
     }
 }
     
