@@ -21,4 +21,4 @@
 <!ENTITY appFileExtension ".dizzy">
 
 <!ENTITY sbmlURL "http://www.sbw-sbml.org">
-<!ENTITY appJavaRuntimeFlags "-Xmx500mb">
+<!ENTITY appJavaRuntimeFlags "-Xmx500m">
