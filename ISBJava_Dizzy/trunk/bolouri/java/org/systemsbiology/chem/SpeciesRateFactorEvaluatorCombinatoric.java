@@ -20,7 +20,15 @@ public class SpeciesRateFactorEvaluatorCombinatoric extends SpeciesRateFactorEva
             if(speciesValue < MIN_POPULATION_FOR_COMBINATORIC_EFFECTS &&
                speciesValue - Math.floor(speciesValue) == 0.0)
             {
-                numReactantCombinations *= MathFunctions.chooseFunction((long) speciesValue, pStoichiometry);
+                long longSpeciesValue = (long) speciesValue;
+                if(longSpeciesValue >= pStoichiometry)
+                {
+                    numReactantCombinations *= MathFunctions.chooseFunction((long) speciesValue, pStoichiometry);
+                }
+                else
+                {
+                    numReactantCombinations = 0.0;
+                }
             }
             else
             {

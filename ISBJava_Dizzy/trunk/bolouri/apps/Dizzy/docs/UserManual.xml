@@ -610,14 +610,13 @@ The final model definition file should look like this:
 <table border="1">
 <tr><td>
 <pre>
-enzyme_substrate_combine,    E + S -&gt; ES,      1.0;
-enzyme_substrate_separate,   ES    -&gt; E + S,   0.1;
-make_product,                ES    -&gt; E + P,   0.01;
-
 E = 100;
 S = 100;
 P = 0;
 ES = 0;
+enzyme_substrate_combine,    E + S -&gt; ES,      1.0;
+enzyme_substrate_separate,   ES    -&gt; E + S,   0.1;
+make_product,                ES    -&gt; E + P,   0.01;
 </pre>
 </td></tr>
 </table>
@@ -2776,19 +2775,15 @@ but their population values over time will not be included in the data
 resultant from running the simulation.  
 </p>
 <p>
-The optional &quot;ensemble size&quot; text box is used to define an integer
-number of repetitions for the simulation.  The results are then defined
+The &quot;number of ensembles / number of time steps&quot; text box is used to define an integer
+number of repetitions for the simulation (in the case of stochastic simulations)
+or the minimum number of time steps (for ODE-based deterministic simulations) for
+the simulation.  In the case of stochastic simulations, the results are then defined
 as the average of the time-series data (separately for each species and each
-time point) over the &quot;ensemble&quot; of simulations.  If you do not
-specify an ensemble size, a single simulation is conducted (no ensemble
-averaging).  It is usually best to run a simulation with no ensemble averaging
-first, before running with an ensemble average.  This allows for you to
-compute the expected &quot;run time&quot; of the ensemble averaged
-simulation, in advance.  Note that when doing an ensemble-averaged simulation,
-you may not select the &quot;store&quot; output type.  Please do not specify
-an ensemble when using the <a href="#odesim">ODE simulator</a>, because doing
-so will only prolong the computation without improving accuracy; when using
-the ODE simulator, just leave the &quot;ensemble size&quot; text box empty.
+time point) over the &quot;ensemble&quot; of simulations.  It is usually best to run a 
+simulation with an ensemble size of 1 first, before running with a larger ensemble size.  
+This allows for you to compute the expected &quot;run time&quot; of the ensemble averaged
+simulation, in advance. 
 </p>
 <p>
 The &quot;output type&quot; can 
@@ -2805,18 +2800,7 @@ you can export the data in comma-separated value format. This is done by
 selecting the &quot;file&quot; output type. With the data in a file in 
 comma-separated-value format, you may import the data into a program that
 has more sophisticated graphing capabilities, such as Gnuplot, Octave,
-Gnumeric, Excel, or Matlab.  The &quot;store&quot; output type is a special
-value that requests that the data resultant from running the simulation (i.e.,
-the final population values at the end of the simulation) be stored as a
-new <a href="#speciespopulations">species populations collection</a> object
-whose name you specify as a string.  This name must be a valid 
-<a href="#symbols">symbol name</a>.  After the simulation, the new species
-populations collection name should show up in the &quot;species populations
-sets&quot; list box in the main &appName; window.  You may then use the
-species population collection as the initial data for a subsequent simulation.
-Note that specifying the &quot;store&quot; output type is not allowed when
-you are specifying an &quot;ensemble size&quot; (ensemble-average over multiple
-simulations).
+Gnumeric, Excel, or Matlab.  
 </p>
 </isb:docsubsection>
 
