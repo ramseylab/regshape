@@ -40,6 +40,7 @@
 
 <isb:docsection name="Documents" label="documents">
 <ul>
+<li><a href="GroupMeetings.html">Bolouri Group Meetings schedule</a></li>
 <li><a href="WebPagesManagementManual.html">Web Pages Management Manual</a></li>
 <li><a href="SoftwareDevelopmentGuidelines.html">Software Development Guidelines</a></li>
 <li><a href="SampleDocument.xml.txt">Sample Web Page template document (xml)</a></li>
