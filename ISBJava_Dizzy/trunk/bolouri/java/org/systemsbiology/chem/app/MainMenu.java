@@ -37,6 +37,7 @@ public class MainMenu extends JMenuBar
     private static final String ACTION_COMMAND_TOOLS_SIMULATE = "Simulate...";
     private static final String ACTION_COMMAND_TOOLS_RELOAD = "Reload model";
     private static final String ACTION_COMMAND_TOOLS_CYTOSCAPE = "View in Cytoscape";
+    private static final String ACTION_COMMAND_TOOLS_HUMAN_READABLE = "View in human-readable format";
 
     public static class Menu
     {
@@ -106,6 +107,7 @@ public class MainMenu extends JMenuBar
         public static final MenuItem TOOLS_SIMULATE = new MenuItem(ACTION_COMMAND_TOOLS_SIMULATE);
         public static final MenuItem TOOLS_RELOAD = new MenuItem(ACTION_COMMAND_TOOLS_RELOAD);
         public static final MenuItem TOOLS_CYTOSCAPE = new MenuItem(ACTION_COMMAND_TOOLS_CYTOSCAPE);
+        public static final MenuItem TOOLS_HUMAN_READABLE = new MenuItem(ACTION_COMMAND_TOOLS_HUMAN_READABLE);
         public static final MenuItem HELP_ABOUT = new MenuItem(ACTION_COMMAND_HELP_ABOUT);
         public static final MenuItem HELP_BROWSER = new MenuItem(ACTION_COMMAND_HELP_BROWSER);
     }
@@ -171,6 +173,10 @@ public class MainMenu extends JMenuBar
             else if(actionCommand.equals(ACTION_COMMAND_EDIT_PASTE))
             {
                 mApp.getEditorPane().handlePaste();
+            }
+            else if(actionCommand.equals(ACTION_COMMAND_TOOLS_HUMAN_READABLE))
+            {
+                mApp.handleViewModelHumanReadable();
             }
         }
     }
@@ -243,8 +249,9 @@ public class MainMenu extends JMenuBar
         MenuItem []toolsItems = new MenuItem[] {MenuItem.TOOLS_EXPORT,
                                                 MenuItem.TOOLS_SIMULATE,
                                                 MenuItem.TOOLS_RELOAD,
-                                                MenuItem.TOOLS_CYTOSCAPE};
-        int []toolsShortcuts = {'E', 'S', 'R', 'C'};
+                                                MenuItem.TOOLS_CYTOSCAPE,
+                                                MenuItem.TOOLS_HUMAN_READABLE};
+        int []toolsShortcuts = {'E', 'S', 'R', 'C', 'H'};
 
         createSingleMenu(Menu.TOOLS, toolsItems, toolsShortcuts);
 

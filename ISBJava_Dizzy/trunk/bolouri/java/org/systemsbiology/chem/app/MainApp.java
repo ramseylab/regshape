@@ -224,6 +224,25 @@ public class MainApp
         }
     }
 
+    void handleViewModelHumanReadable()
+    {
+        try
+        {
+            Model model = mEditorPane.processModel();
+            if(null != model)
+            {
+                ModelViewerHumanReadable mv = new ModelViewerHumanReadable(mMainFrame);
+                mv.handleViewModelHumanReadable(model);
+            }
+        }
+        catch(Throwable e)
+        {
+            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable to view the model in human-readable format: " + e.getMessage());
+            e.printStackTrace(System.err);
+            errorDialog.show(); 
+        }
+    }
+
     private void loadModel()
     {
         Model model = mEditorPane.processModel();
@@ -462,6 +481,8 @@ public class MainApp
         initializeMainFrame();
     }
 
+
+
     public static MainApp getApp()
     {
         return(mApp);
@@ -480,4 +501,6 @@ public class MainApp
             e.printStackTrace(System.err);
         }
     }
+
+
 }

@@ -8,11 +8,7 @@ package org.systemsbiology.util;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
 
 public class DebugUtils
 {
@@ -73,9 +69,9 @@ public class DebugUtils
     {
         List objectList = new LinkedList(pObjectMap.values());
         Collections.sort(objectList);
-        Iterator iter = objectList.iterator();
+        ListIterator iter = objectList.listIterator();
         StringBuffer sb = pStringBuffer;
-        sb.append("{");
+        sb.append("{\n");
         while(iter.hasNext())
         {
             Object object = iter.next();
@@ -89,9 +85,16 @@ public class DebugUtils
             sb.append(object.toString());
             if(iter.hasNext())
             {
-                sb.append(pSeparatorString);
+                if(null == pClassTypeFilter || iter.next().getClass().isAssignableFrom(pClassTypeFilter))
+                {
+                    sb.append(pSeparatorString);
+                }
+                if(null != pClassTypeFilter)
+                {
+                    iter.previous();
+                }
             }
         }
-        sb.append("}");
+        sb.append("\n}");
     }
 }

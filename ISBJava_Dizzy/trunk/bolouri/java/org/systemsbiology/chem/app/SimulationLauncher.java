@@ -1337,11 +1337,9 @@ public class SimulationLauncher
 
         BoxLayout outputBox = new BoxLayout(outputPanel, BoxLayout.PAGE_AXIS);
         outputPanel.setLayout(outputBox);
-//        Box outputBox = new Box(BoxLayout.Y_AXIS);
         
         JLabel outputLabel = new JLabel("Output Type -- specify what do do with the simulation results:");
         outputLabel.setAlignmentX(Container.LEFT_ALIGNMENT);
-//        outputLabel.setMaximumSize(new Dimension(200, 50));
         outputPanel.add(outputLabel);
 
         ActionListener buttonListener = new ActionListener()

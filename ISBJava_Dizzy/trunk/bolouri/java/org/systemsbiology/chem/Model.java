@@ -270,13 +270,13 @@ public class Model
         sb.append(getName());
         sb.append("\n\n");
         sb.append("Parameters: \n");
-        DebugUtils.describeSortedObjectList(sb, mParametersMap);
+        String separatorString = ",\n";
+        DebugUtils.describeSortedObjectList(sb, mParametersMap, separatorString);
         sb.append("\n\n");
         sb.append("Compartments: \n");
-        DebugUtils.describeSortedObjectList(sb, mSymbolsMap, Compartment.class);
+        DebugUtils.describeSortedObjectList(sb, mSymbolsMap, Compartment.class, separatorString);
         sb.append("\n\n");
         sb.append("Reactions: \n");
-        String separatorString = ",\n\n";
         DebugUtils.describeSortedObjectList(sb, mReactionsMap, separatorString);
         return(sb.toString());
     }
