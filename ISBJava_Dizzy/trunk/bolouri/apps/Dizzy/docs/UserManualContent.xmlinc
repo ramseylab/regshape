@@ -1528,7 +1528,7 @@ using a single &quot;multistep&quot; composite
 reaction:
 <blockquote>
 <pre>
-S0 -&gt; S1, k, N;
+S0 -&gt; S1, k, steps: N;
 </pre>
 </blockquote>
 where <code>k</code> is the rate value for each
@@ -1552,6 +1552,46 @@ such as transcription and translation, in which a long
 sequence of individual reaction steps transforms the system
 from an initial state ("polymerization complex") to a final
 state ("completed transcript").  
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Delayed Reactions" label="delayed">
+<p>
+The &appName; system allows for defining a reaction
+process containing an intrinsic &quot;delay&quot;.  
+This can be useful for phenomenologically modelling 
+complex processes for which the detailed dynamics is 
+not known, but for which the overall rate is known and the 
+total time for the process to occur, is known.  A
+delayed reaction must have exactly one reactant and one product
+species. The delayed reaction takes up the reactant and produces
+the product molecule, at the specified rate.  However,
+the rate of production of the product species depends upon
+the number of reactant molecules at a time in the past equal
+to the &quot;delay&quot; time specified for the reaction. For
+reactant <code>S0</code> and product <code>S1</code> and delay
+<code>s</code> and rate <code>k</code>, the delayed reaction
+is equivalent to the following differential equations:
+<blockquote>
+<pre>
+dS0/dt = -k * S0(t)
+dS1/dt = k * S0(t - s)
+</pre>
+</blockquote>
+To define a delayed reaction equivalent to the above, the
+command language statement would be:
+<blockquote>
+<pre>
+S0 -&gt; S1, k, delay: s;
+</pre>
+</blockquote>
+where <code>k</code> is the rate value for each
+elementary reaction, and <code>s</code> is the delay. 
+The delay time is in the same units as the time scale
+used for all kinetic parameters in the model, and must
+be a nonnegative number.  Specifying a delay time of zero
+is equivalent to having no delay at all.
 </p>
 
 </isb:docsubsection>
@@ -3106,11 +3146,39 @@ species or parameters defined previously in the model.
 look different than the other simulators?</b>
 </p>
 <p>
+See the <a href="#odeToJavaInterpolation">known issue with
+interpolation in the implicit-explicit odeToJava solver</a>.
+</p>
+
+</isb:docsection>
+
+<isb:docsection name="Known Bugs and Limitations" label="knownbugs">
+<p>
+This section lists all known bugs and limitations of the &appName;
+system.
+</p>
+<p>
+<ol>
+<li>
+<a name="odeToJavaInterpolation" />
 The implicit/explicit Runge-Kutta simulator in the &quot;<code>odeToJava</code>&quot;
 package does not currently support interpolation, so the results from that simulation
 will appear to have discontinuous jumps between constant values, when the simulator is
 able to take large time-steps.  The data point at the start of every constant region 
 is the correct value at that time.
+</li>
+<li>
+The &quot;<code>odeToJava</code>&quot; simulators cannot be
+interrupted by using the &quot;stop&quot; and &quot;cancel&quot; buttons.
+Quitting the application is the only way to cancel a simulation if
+one of the &quot;<code>odeToJava</code>&quot; simulators is being used.
+</li>
+<li>
+The &quot;copy to clipboard&quot; feature is not supported on
+Unix/Linux.  It is currently only available on Windows.  This 
+is due to limitations in the XFree86 clipboard feature.
+</li>
+</ol>
 </p>
 
 </isb:docsection>
