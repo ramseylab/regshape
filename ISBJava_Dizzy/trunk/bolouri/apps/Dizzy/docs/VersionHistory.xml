@@ -22,7 +22,9 @@
 <dt><b>0.0.5 (2003/10/20)</b></dt>
 <dd>Fixed a bug in the Gibson-Bruck simulator, for the case of a boundary
 reactant species.  Fixed a bug in the command-language parser, it can
-now accept tabs as valid whitespace in the model definition file.</dd>
+now accept tabs as valid whitespace in the model definition file.  The
+SBML import feature can now process model definition files that conform to the
+SBML Level 1, Version 2 specification.</dd>
 <dt><b>0.0.4 (2003/08/28)</b></dt>
 <dd>Modified the Cytoscape bridge to use JNLP, so Cytoscape does not have to be bundled with Dizzy</dd>
 <dt><b>0.0.3 (2003/08/26)</b></dt>
