@@ -221,6 +221,9 @@
                     IAProjectFile="${app.buildDir}/project.iap_xml"
                     failonerror="true" 
                     BuildOutputLocation="${app.installerDir}" />
+  	
+  	<!-- clean up after InstallAnywhere Ant task, which uses the "iabuild.properties" file to pass options to the "build" script -->
+  	<delete file="${user.dir}/iabuild.properties" quiet="yes" />
   </target>
 
   <target name="buildPDF" depends="tidyHTML, convertHtmlToPDF" />
