@@ -9,3 +9,7 @@ dhwang@systemsbiology.org
 Alistair Rust
 Institute for Systems Biology
 arust@systemsbiology.org
+
+James Taylor
+Institute for Systemsb Biology
+jtaylor@systemsbiology.org
