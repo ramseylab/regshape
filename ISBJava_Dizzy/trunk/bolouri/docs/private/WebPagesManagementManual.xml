@@ -266,7 +266,25 @@ java org.apache.xalan.xslt.Process -v
 </blockquote>
 from the command prompt.
 </li>
-
+<li><b>JavaHelp</b><br />
+The JavaHelp system provides the <code>jhindexer</code> program that
+is used to index web pages for full-text search.  This software is
+available for free download from Sun Microsystems at:
+<blockquote>
+<pre>
+http://java.sun.com/products/javahelp
+</pre>
+</blockquote>
+and is also available in the shared drive, under the directory:
+<blockquote>
+<pre>
+/proj/bolrilab/software/javahelp-1_1_3.zip
+</pre>
+</blockquote>
+You will need to unpack the software using &quot;<code>unzip</code>&quot;,
+and to install the software so that the &quot;<code>jhindexer</code>&quot;
+program is available in the <code>PATH</code> defined for your command shell.
+</li>
 </ol>
 All of the above software programs are free (open source), and easy to
 build and install on your computer.  Building Ant, and installing Ant 
