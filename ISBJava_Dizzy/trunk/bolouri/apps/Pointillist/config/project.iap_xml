@@ -2334,7 +2334,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[QuantileNormalizerDriver]]></string>
+												<string><![CDATA[QuantileNormalizer]]></string>
 											</property>
 											<property name="executableIcon">
 												<object class="com.zerog.ia.installer.util.BindingWin32" objectID="17852792848f">
