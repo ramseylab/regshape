@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 import java.text.*;
 
 /**
- * Class for printing time-series data to a file.
+ * Class for printing time-series data to a PrintWriter.
  */
 public class TimeSeriesSymbolValuesReporter
 {
