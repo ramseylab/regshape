@@ -33,6 +33,12 @@ public class Parameter extends SymbolValue
         mName = pName;
     }
 
+    public Parameter(String pName)
+    {
+        super(pName);
+        mName = pName;
+    }
+
     public Parameter(String pName, double pValue)
     {
         super(pName);
@@ -44,6 +50,16 @@ public class Parameter extends SymbolValue
     {
         super(pSymbolValue);
         mName = pSymbolValue.getSymbol().getName();
+    }
+
+    public void setValue(Expression pValue)
+    {
+        setValue(new Value(pValue));
+    }
+
+    public void setValue(double pValue)
+    {
+        setValue(new Value(pValue));
     }
 
     public String toString()
