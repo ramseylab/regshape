@@ -33,7 +33,7 @@
   <property name="app.webDir"                   location="${projWebDir}/${ant.project.name}" />
   <property name="app.downloadDir"              location="${app.webDir}/&appVersion;" />
   <property name="app.installerDir"             location="${app.downloadDir}/installer" />
-  <property name="app.resourcesFile"            location="${app.webDir}/AppResources.jar" />
+  <property name="app.resourcesFile"            location="${app.buildDir}/AppResources.jar" />
 
   <target name="setFilters">
     <filter token="VERSION" value="&appVersion;" />
@@ -171,7 +171,7 @@
 
   <target name="buildResourcesFile" depends="checkBuildResourcesFile" unless="app.doNotNeedToBuildResourcesFile">
     
-    <mkdir dir="${app.webDir}" />
+    <mkdir dir="${app.styleDir}" />
     <copy todir="${app.styleDir}" file="${app.configDir}/AppHelp.hs" />
     <exec executable="${binJavaHelpIndexer}" dir="${app.styleDir}" failonerror="true">
       <arg value="AppHelp.html" />
@@ -190,6 +190,10 @@
         <include name="images/logo-isb.png" />
       </fileset>
     </jar>
+
+    <mkdir dir="${app.webDir}" />
+    <copy todir="${app.webDir}" file="${app.resourcesFile}" />
+    
   </target>
 
   <target name="copyImages">

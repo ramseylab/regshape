@@ -44,7 +44,7 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
-<td><a href="../1.7.1/&installerDownloadRelURL;">1.7.1</a></td>
+<td><a href="../1.8.0/&installerDownloadRelURL;">1.8.0</a></td>
 <td>???</td>
 <td>
 <ul>
@@ -70,12 +70,72 @@ causing the initial species populations to be interpreted in terms
 of moles (the default), rather than molecules.
 </li>
 <li>
-From this release forward, release builds of &appName; will be 
-compiled with optimization enabled.
+From this release forward, &appName; will be compiled with 
+optimization enabled, before a new version is released.
+</li>
+<li>
+Modified the CMDL (chemical model definition language) so that the
+<code>log()</code> command has been changed to the <code>ln()</code>
+command.  This was done for consistency with standard computer science 
+notation, in which <code>ln()</code> represents the natural logarithm, 
+and <code>log()</code> represents the logarithm base 10.
+</li>
+<li>
+Added a new text field &quot;number of history bins&quot; to the
+simulation launcher. This allows the user to control the number of
+bins for storing the past values of a species that participates in a
+delayed or multi-step reaction.  This field is only displayed if
+the model contains a multi-step or delayed reaction.
+</li>
+<li>
+Added a new command-line option &quot;<code>-numHistoryBins</code>&quot; 
+to the command-line simulation runner, &quot;<code>runmodel</code>&quot;.
+This option enables the specification of the number of bins that are to 
+be used to store the past values of a species that participates in a delayed 
+or multi-step reaction.  This value, if specified, is only used by the
+simulation launcher if the model actually contains a delayed or multi-step
+reaction.
+</li>
+<li>
+Removed the parameter &quot;min num steps&quot; from the simulation
+launcher; it has been replaced with the &quot;(step size
+fractional)&quot; parameter.  This parameter specifies the initial
+step size (as a fraction of the total time of the simulation) in the
+case of a deterministic/ODE simulator, and it specifies the minimum
+number ratio of the reaction time to the leap time, in the case of the
+Tau-Leap simulators.
+</li>
+<li>
+Added the option <code>testOnly</code> to the simulation launcher
+program <code>runmodel</code>.  This option instructs the simulation
+launcher to process the model definition file, validate the simulation 
+parameters, and then exit.  It can be used to test a model and 
+simulation parameters for correctness, without having to execute a
+simulation.
+</li>
+<li>
+Improved the efficiency of the delayed reaction solver, by halving
+the amount of history information that needed to be stored regarding
+each delayed reaction channel.
+</li>
+<li>
+Modified the command-line simulation launcher program
+<code>runmodel</code> to print out the average number of iterations
+per second, during the last status statistics-collecting interval.
+</li>
+<li>
+Fixed a serious inefficiency in the simulation engine, for the
+case of models containing custom kinetic rate law expressions.  The
+inefficiency was in the part of the engine that clears the cache
+of previously computed expression values.  The cache was cleared for
+all non-dynamic symbols, including those symbols (usually a majority)
+that are not custom expressions (i.e., symbols that are bare numbers).
+Modified the simulation engine so that only non-dynamic symbols 
+which are in fact, expressions, have their value caches cleared.
 </li>
 </ul>
 </td>
-<td><a href="&javaURL;/1.7.1/download.html">1.7.1</a></td>
+<td><a href="&javaURL;/1.8.0/download.html">1.8.0</a></td>
 </tr>
 
 <tr valign="top">

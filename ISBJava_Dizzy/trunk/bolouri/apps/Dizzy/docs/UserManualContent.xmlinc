@@ -145,7 +145,7 @@ with SBML and SBW
 </p>
 <p>
 Paul Shannon and the Cytoscape team: for
-helping to make the Dizzy&lt;-&gt;Cytoscape bridge possible.
+helping to make the &appName;&lt;-&gt;Cytoscape bridge possible.
 </p>
 <p>
 Raymond Spiteri:  for kindly permitting the
@@ -950,7 +950,7 @@ functions available for use in mathematical expressions are:
 <code>e</code>, raised to the power of the (floating-point) 
 argument.</dd>
 
-<dt><b>log</b></dt>
+<dt><b>ln</b></dt>
 <dd>Computes the natual logarithm of the argument, which
 must be in the range <code>(0, infinity)</code>.</dd>
 
@@ -1544,15 +1544,21 @@ reaction event during the simulation of the model.
 <isb:docsubsection name="Multistep Reactions" label="multistep">
 <p>
 The &appName; system allows for defining an N-step
-process as a single composite &quot;reaction&quot;.  
-The process is assumed to consist of N elementary 
-reactions that are chained together, as shown here:
+process as a single composite &quot;reaction&quot;.  This is
+an <em>experimental</em> feature that still needs further
+testing before it can be considered reliable.  As a more
+reliable and better-tested alternative, consider using the
+<a href="#delayed">delayed reaction</a> construct.
+</p>
+<p>
+A multistep reaction assumed to consist of N irreversible 
+elementary reactions that are chained together, as shown here:
 <blockquote>
 <pre>
 S0 -&gt; S1 -&gt; S2 -&gt; S3 -&gt; S4 -&gt; ... -&gt; SN
 </pre>
 </blockquote>
-One should not that it is possible to define each of
+One should note that it is possible to define each of
 these reaction steps separately, as shown here:
 <blockquote>
 S0 -&gt; S1, k;
@@ -2087,7 +2093,7 @@ The text inside the quotes is parsed as a
 that typically involves species name symbols, numeric literals,
 and arithmetic operators.  In addition, a mathematical
 expression may involve built-in functions (e.g., 
-<code>log()</code> or <code>sin()</code>) and
+<code>ln()</code> or <code>sin()</code>) and
 special symbols such as &quot;<code>time</code>&quot;.
 In the above example, the reaction rate will be computed
 as the product of the number <code>2.0</code> times the
@@ -2903,7 +2909,8 @@ Python command-line, without needing to use the SBW API.
 To have the full capabilities of &appName; available, it is recommended
 that you use the <a href="#gui">&appName; Graphical User Interface</a>,
 the <a href="#commandline">&appName; Command-Line Interface</a>, or the
-<a href="#api">&appName; Programmatic Interface</a>.
+<a href="#api">&appName; Programmatic Interface</a>, instead of
+accessing &appName; via the Systems Biology Workbench.
 </p>
 </isb:docsection>
 
@@ -2936,7 +2943,7 @@ same file system.
 that the <code>runmodel</code> program is being used.  
 </p>
 <p>
-The usage synopsis for the <code>runmodel</code> is as follows:
+The usage synopsis for the <code>runmodel</code> program is as follows:
 <blockquote>
 <pre>
 runmodel [-debug] [-parser &lt;parserAlias&gt;] 
@@ -2946,25 +2953,104 @@ runmodel [-debug] [-parser &lt;parserAlias&gt;]
                   [-ensembleSize &lt;ensembleSize_long&gt;] 
                   [-relativeTolerance &lt;tolerance_float&gt;] 
                   [-absoluteTolerance &lt;tolerance_float&gt;] 
-                  [-minTimeSteps &lt;steps_long&gt;] 
+                  [-stepSizeFraction &lt;step_size_fraction_float&gt;]
                   -simulator &lt;simulatorAlias&gt; 
                   -modelFile &lt;modelFile&gt; 
                   [-outputFile &lt;outputFile&gt;] 
                   [-outputFormat &lt;formatAlias&gt;]
                   [-computeFluctuations]
+                  [-testOnly]
+                  [-printParameters]
+</pre>
+</blockquote>
+The explanation of the command-line options are as follows:
+<dl>
+<dt><b><code>debug</code></b></dt>
+<dd>Enables debug mode, in which the simulator will run normally,
+except it will print debugging information to the standard error
+stream (which you may capture to a file using shell redirection).
+The values of all simulator parameters are printed before the
+simulation commences. By default, debug mode is not enabled.</dd>
 
-  &lt;parserAlias&gt;:   the alias of the class implementing the interface
-                   org.systemsbiology.chem.scripting.IModelBuilder (default is determined
-                   by file extension
+<dt><b><code>parser</code></b></dt> <dd> This option specifies the
+alias of the parser that is to be used to parse your model definition
+file (see the <code>modelFile</code> option below).  If you do not
+specify this option, the simulation launcher program attempts to guess
+the appropriate parser to use, based on the extension of the model
+definition file's name.  The allowed parser aliases are: <blockquote>
+<dl> <dt><code><b>command-language</b></code></dt> <dd><a
+href="#cmdl">Chemical Model Definition Language</a> (CMDL).  File
+extensions: <code>.cmdl</code>, <code>.dizzy</code>.</dd>
+<dt><code><b>markup-language</b></code></dt> <dd><a
+href="#sbml">Systems Biology Markup Language</a> (SBML).  File
+extensions: <code>.xml</code>, <code>.sbml</code>.</dd> </dl>
+</blockquote> If you do not specify a parser alias and if the file
+suffix does not match any of the above, the CMDL parser is assumed.
+The parser alias must be typed exactly as shown above; it is
+case-sensitive.  </dd>
 
-  &lt;modelFile&gt;:     the full filename of the model definition file to be loaded
+<dt><b><code>startTime</code></b></dt>
+<dd>The (absolute) start time of the simulation.  It is a floating-point parameter.
+The default is 0.0.</dd>
 
-The list of allowed values for the "-parser" argument is:
-  command-language
-  markup-language
-(If you do not specify a parser, the file suffix is used to select one)
+<dt><b><code>stopTime</code></b></dt>
+<dd>The (absolute) stop time of the simulation.  It is a floating-point parameter.
+This parameter is required.  It must be greater than the value of the 
+<code>startTime</code> parameter.</dd>
 
-The list of allowed values for the "-simulator" argument is:
+<dt><b><code>numSamples</code></b></dt>
+<dd>The number of requested results time points.  It is an integer parameter.
+The default value is 100.  Your results will be a NxM matrix of values, 
+where N is the <code>numSamples</code> parameter, and M is the number of species
+in the model.</dd>
+
+<dt><b><code>ensembleSize</code></b></dt> <dd>The size of the
+ensemble.  It is an integer parameter.  This parameter is only used if
+you specify a stochastic simulator (see the <code>simulator</code>
+command-line argument below).  The default value is 1.  The minimum
+value is 1 (unless you specify <code>computeFluctuations</code>, in
+which case the minimum value is 2). The results of the simulation will
+be an average over <code>ensembleSize</code> separate realizations of the 
+stochastic process.</dd>
+
+<dt><b><code>relativeTolerance</code></b></dt><dd>The relative error tolerance.
+It is a floating-point parameter.  The minimum value is 0.0 (must be strictly greater
+than 0.0).  This parameter is only used with ODE simulators and the Tau-Leap
+simulators.  The maximum allowed error in the value of a given species S 
+is equal to the product of the value of S, and the value of the error tolerance,
+at any given time.  The default value depends on the simulator.</dd>
+
+<dt><b><code>absoluteTolerance</code></b></dt><dd>The absolute error tolerance.
+It is a floating-point parameter.  The minimum value is 0.0 (must be strictly greater
+than 0.0).  This parameter is only used with ODE simulators.  No species may have
+an error greater than the value of this parameter.  This parameter should not
+be made too small, in cases where a given species will take on a very large
+value.  The default value depends on the simulator.</dd>
+
+<dt><b><code>stepSizeFraction</code></b></dt> <dd>The step size, as a
+fraction of the time interval for the simulation
+(<code>stopTime</code> - <code>startTime</code>).  It is a
+floating-point parameter.  The default value depends on the simulator.
+The minimum value is 0.0 (must be strictly greater than 0.0).  If the
+simulator is a deterministic ODE simulator with fixed step-size, the
+step size that you specify is used as the uniform step size for the
+entire simulation.  If the simulator is a deterministic ODE simulator,
+the step size that you specify is used for the first step only;
+subsequent step sizes are controlled by the error tolerance parameters
+you specified (see <code>relativeTolerance</code> and
+<code>absoluteTolerance</code> above).  If you are using a stochastic
+<a href="#tauleap">Tau-Leap</a> simulator, the value you specify for
+this parameter specifies the maximum the ratio of the reaction time
+scale to the &quot;leap&quot; time scale. (If the &quot;leap&quot;
+time scale gets too small, the simulator will revert to stepping with
+the Gibson-Bruck algorithm).</dd>
+
+<dt><b><code>simulator</code></b></dt>
+<dd>This option specifies the alias of the simulator that is
+to be used for the simulation.  It is required.  The choices 
+of simulator aliases are:
+<blockquote>
+<pre>
   ODE-RK5-adaptive
   ODE-RK5-fixed
   ODEtoJava-dopr54-adaptive
@@ -2973,43 +3059,116 @@ The list of allowed values for the "-simulator" argument is:
   gillespie-direct
   tauleap-complex
   tauleap-simple
+</pre>
+</blockquote>
+The simulator alias is a case-sensitive option.  It must be
+typed exactly as shown above.  The listing of simulator
+aliases may be printed at any time by running
+&quot;<code>runmodel.sh -help</code>&quot;.
+</dd>
 
-The list of allowed values for the "-outputFormat" argument is:
+<dt><b><code>modelFile</code></b></dt>
+<dd>This option specifies the model definition file.
+It is a required option.</dd>
+
+<dt><b><code>outputFile</code></b></dt>
+<dd>This option specifies the file to which the output
+should be saved.  If this option is not specified, the
+simulation results are printed to the standard output stream.
+</dd>
+
+<dt><b><code>outputFormat</code></b></dt>
+<dd>This option specifies the output format in which the simulation
+results should be printed, using an output format alias.  The
+list of allowed output format aliases are:
+<blockquote>
+<pre>
   CSV-excel
   CSV-gnuplot
   CSV-matlab
-(the default is: CSV-excel)
-
-Arguments can be in any order.
-If the argument "-outputFile" is not specified, the
-simulation results are printed to standard output.
 </pre>
 </blockquote>
-The symbols above are defined as follows:
-<dl>
-<dt>&lt;<code>parserAlias</code>&gt;</dt>
-<dd>The alias of the parser plug-in to use.  This should correspond to the type
-of file being processed.  The alias identifies a class implementing the interface
-<code>org.systemsbiology.chem.scripting.IModelBuilder</code>.  By default, the parser
-is selected based on the file extension of the file <code>&lt;scriptFile&gt;</code>.
-If the file extension is &quot;<code>&cmdlFileExtension;</code>&quot; or
-&quot;<code>&appFileExtension;</code>&quot;, the <a href="#cmdl">CMDL</a>
-parser will be used.  If the file extension is 
-&quot;&sbmlFileExtension;&quot;, the <a href="#sbml">SBML</a> parser will be used.
-If the file suffix does not match any of the above, the CMDL parser is assumed.
-To specify a parser rather than using the default parser for the file extension,
-use of the following parser aliases:
-    <dl>
-    <dt><code>command-language</code></dt>
-    <dd>Chemical Model Definition Language input (CMDL)</dd>
-    <dt><code>markup-language</code></dt>
-    <dd>Systems Biology Markup Language (SBML)</dd>
-    </dl>
+Here, &quot;CSV&quot; means comma-separated values.  The different
+programs refer to the comment character (i.e., Matlab uses the percent
+symbol as a comment character, whereas Gnuplot uses the pound symbol
+as the comment character).  The default output format alias is 
+<code>CSV-excel</code>.  Note that the output format alias must
+be typed exactly as shown above; it is case-sensitive.</dd>
+
+<dt><b><code>computeFluctuations</code></b></dt>
+<dd>
+<p>
+The <code>computeFluctuations</code> option is used to specify that
+the simulator should attempt to compute the steady-state fluctuations
+in the dynamical species in the model.  These fluctuations come from
+stochastic effects, i.e., from the non-continuum copy numbers of the
+dynamical species in the model.  The fluctuations will be written
+to the output file as specified with the <code>-outputFile</code> 
+command-line option (or standard output, if no <code>-outputFile</code>
+option was specified).  To use the <code>-computeFluctuations</code> option,
+it is necessary that the stop time specified with the <code>-stopTime</code>
+command-line option be sufficiently large that the model will have reached
+steady-state, defined as the condition whereby the rates of change of the
+concentrations of the dynamical species in the model are approximately zero.
+If the <code>-stopTime</code> specified is too small, the system will not
+have reached steady state at the end of the simulation, and the simulator
+will not be able to estimate the steady-state fluctuations of the dynamical
+species in the model.  
+</p>
+<p>
+The method of calculating the steady-state fluctuations
+depends on the type of simulator used.  If a deterministic (ODE) simulator
+is used, the fluctuations are estimated using a linear-algebraic approach,
+based on a theory developed by David Orrell,
+involving the Jacobian of the ODE model.  In this case, the calculations 
+of the steady-state fluctuations are estimates; the accuracy of the
+estimates will depend on how accurately the system can be characterized in
+terms of linear perturbations around the steady-state.  If the Jacobian
+of the model is ill-conditioned or the model is unstable around this steady-state, 
+the estimates of the steady-state fluctuations of the species will not 
+be very accurate.  If a stochastic simulator is used, the steady-state
+fluctuations are computed in terms of a standard deviation of the species
+values with respect to the ensemble-averaged mean, at the end time point
+of the simulation.  This requires an <code>-ensembleSize</code> that is
+greater than one.  The larger the ensemble size, the more accurate the
+calculation of the steady-state fluctuations will be.
+</p>
 </dd>
-<dt>&lt;<code>scriptFile</code>&gt;</dt>
-<dd>specifies the model definition file to be processed by the scripting 
-engine</dd>
+
+<dt><b><code>testOnly</code></b></dt>
+<dd>This option specifies that the <code>runmodel</code> program
+should stop just before commencing the simulation.  The command-line
+and simulation parameters are still parsed and validated.  This feature
+is useful for checking your command-line parameters before running the
+simulation through a batch processing system.</dd>
+
+<dt><b><code>printParameters</code></b></dt>
+<dd>This option instructs the <code>runmodel</code> program to
+print a list of the parameters you selected (or the default values,
+for the parameters you did not specify) for the simulator you
+specified with the <code>-simulator</code> option.  The program
+then exits, without validating your simulation parameters or starting
+the simulation.  The <code>modelFile</code> option is not required if
+you specify the <code>printParameters</code> option.  This feature is
+useful if you want to know what the default values are for a given 
+simulator parameter, for a given simulator.</dd>
+
 </dl>
+Command-line options may be specified in any order.
+</p>
+<p>
+To see the default values for a given simulator <code>mysim</code>, try running the
+following command:
+<blockquote>
+<pre>
+runmodel.sh -simulator mysim -printParameters
+</pre>
+</blockquote>
+This will print all default values for the simulator parameters to 
+the standard error stream.  Parameters that are not used by the simulator
+will be printed as <code>null</code>.
+</p>
+<p>
 When you invoke the command-line interface to &appName;, the model definition
 file that you specify will be automatically loaded into the Simulator. A simulation
 will be run based on the parameters you specified on the command-line.  The
@@ -3063,42 +3222,13 @@ program can be found within the <code>PATH</code>, in order to use the
 command-line interface to &appName;.
 </p>
 <p>
-<a name="steadystatefluc" />
 <b>Estimating the steady-state fluctuations:</b><br />
-The <code>-computeFluctuations</code> option is used to specify that
-the simulator should attempt to compute the steady-state fluctuations
-in the dynamical species in the model.  These fluctuations come from
-stochastic effects, i.e., from the non-continuum copy numbers of the
-dynamical species in the model.  The fluctuations will be written
-to the output file as specified with the <code>-outputFile</code> 
-command-line option (or standard output, if no <code>-outputFile</code>
-option was specified).  To use the <code>-computeFluctuations</code> option,
-it is necessary that the stop time specified with the <code>-stopTime</code>
-command-line option be sufficiently large that the model will have reached
-steady-state, defined as the condition whereby the rates of change of the
-concentrations of the dynamical species in the model are approximately zero.
-If the <code>-stopTime</code> specified is too small, the system will not
-have reached steady state at the end of the simulation, and the simulator
-will not be able to estimate the steady-state fluctuations of the dynamical
-species in the model.  
-</p>
-<p>
-The method of calculating the steady-state fluctuations
-depends on the type of simulator used.  If a deterministic (ODE) simulator
-is used, the fluctuations are estimated using a linear-algebraic approach,
-based on a theory developed by David Orrell,
-involving the Jacobian of the ODE model.  In this case, the calculations 
-of the steady-state fluctuations are estimates; the accuracy of the
-estimates will depend on how accurately the system can be characterized in
-terms of linear perturbations around the steady-state.  If the Jacobian
-of the model is ill-conditioned or the model is unstable around this steady-state, 
-the estimates of the steady-state fluctuations of the species will not 
-be very accurate.  If a stochastic simulator is used, the steady-state
-fluctuations are computed in terms of a standard deviation of the species
-values with respect to the ensemble-averaged mean, at the end time point
-of the simulation.  This requires an <code>-ensembleSize</code> that is
-greater than one.  The larger the ensemble size, the more accurate the
-calculation of the steady-state fluctuations will be.
+<a name="steadystatefluc" />
+The command-line interface to &appName; has a feature
+(not available in the <a href="#gui">graphical user interface</a>)
+for computing the steady-state fluctuations in a model.
+For more information, please refer to the documentation for
+the <code>-computeFluctuations</code> option above.
 </p>
 <p>
 </p>
@@ -3315,68 +3445,110 @@ but their population values over time will not be included in the data
 resultant from running the simulation.  
 </p>
 <p>
-The &quot;number of ensembles&quot; text box is enabled only for stochastic
-simulations (Gillespie or Gibson-Bruck simulator).  This text-box is an integer
-that specifies the number of separate realizations of the stochastic process 
-that should be conducted.  The &quot;results&quot; of the simulation are
-an average over the values of each species at each point in time, over the
-ensemble of realizations of the stochastic process.  The default value is 1.
-Exercise care in specifying a large value for this parameter, because it can
-make the simulation run-time prohibitively long.  It is best to start with a
-value of 1, and to note how long the simulation runs.  If the simulation takes
-N seconds to run with an ensemble size of 1, then with an ensemble size of E,
-it will take N*E seconds to complete.
+The &quot;number of results points&quot; text box is used to input the
+number of time points you wish to have, as the results of your
+simulation.  If you specify 100 points, the results of your simulation
+will be values for the species that you selected, at 100 time points
+uniformly distributed throughout the time interval of the simulation.
+The minimum value for this parameter is 2.  A sensible starting value
+is 100.  Note that if you select more than a few hundred points, the
+plotting software may have difficulties plotting all the results
+points (if you requested the results to be saved to a data file, this
+is not an issue).
 </p>
 <p>
-The &quot;number of time steps&quot; text box is used to define an integer specifying
-or the minimum number of time steps.  It is only enabled for ODE-based deterministic simulations.
-The simulator may actually take more time steps than the number you specify,
-but it will not take fewer time steps than the number you specify.  If you
-specify too few timesteps with the &quot;fixed-stepsize&quot; ODE simulator,
-the ODE simulator may exceed its error threshold, in which case the simulation
-will halt with an exception (and it will suggest that you re-run the simulation
-with a large minimum number of time steps).
+The &quot;stochastic ensemble size&quot; text box is enabled only for
+stochastic simulators such as the Gillespie, Gibson-Bruck, or Tau-Leap
+simulators.  This text-box is an integer that specifies the number of
+separate realizations of the stochastic process that should be
+conducted.  The &quot;results&quot; of the simulation are an average
+over the values of each species at each point in time, over the
+ensemble of realizations of the stochastic process.  The default value
+is 1.  Exercise care in specifying a large value for this parameter,
+because it can make the simulation run-time prohibitively long.  It is
+best to start with a value of 1, and to note how long the simulation
+runs.  If the simulation takes N seconds to run with an ensemble size
+of 1, then with an ensemble size of E, it will take N*E seconds to
+complete.  The minimum allowed value of the &quot;stochastic ensemble
+size&quot; parameter is 1.  The maximum value is, practically
+speaking, limited by the complexity of your model, how long you are
+willing to wait for a solution, and the CPU power of your computer.
 </p>
 <p>
-The &quot;max allowed relative error&quot; text box is used to define a floating
-point number (greater than 0.0 and less than 1.0) that specifies the maximum
-allowed aggregate fractional relative simulation error.  This is only used by the
-deterministic (ODE) simulators.  A good starting value for this parameter is about
-0.0001.
+The &quot;step size fraction&quot; text box is used to enter a
+floating-point number specifying the step size, as a fraction of the
+total time range for the simulation.  The total time range of the
+simulation is entered in the &quot;start&quot; and &quot;stop&quot;
+text boxes, as described above.  The &quot;step size fraction&quot;
+text box is only enabled for ODE-based deterministic simulators.  If
+you are using a simulator with a fixed step-size, the simulator will
+use your step size as the fixed step size for the entire time
+interval.  If you are using a simulator with an adaptive step-size,
+the simulator will use this step size for the initial time-step; it
+will change the step size for time steps after the initial time step,
+depending on the error control parameters you specify (see below).
+For fixed step-size simulators, if you specify a step size fraction
+that is too large, the simulator may exceed its error threshold, in
+which case the simulation will halt with an exception (and it will
+suggest that you re-run the simulation with a large minimum number of
+time steps).  If you are using a stochastic <a href="#tauleap">Tau-Leap</a> simulator, the
+step-size fraction specifies the maximum the ratio of the reaction
+time scale to the &quot;leap&quot; time scale. (If the
+&quot;leap&quot; time scale gets too small, the simulator will revert
+to stepping with the Gibson-Bruck algorithm).
 </p>
 <p>
-The &quot;max allowed absolute error&quot; text box is used to define a floating
-point number (greater than 0.0 and less than 1.0) that specifies the maximum
-allowed aggregate absolute simulation error.  This is only used by the
-deterministic (ODE) simulators.  Care should be exercised before setting
-this parameter to too small a value.  A good starting value would be 0.01.
+The &quot;max allowed relative error&quot; text box is used to define
+a floating point number (greater than 0.0 and less than 1.0) that
+specifies the maximum allowed aggregate fractional relative simulation
+error.  This is only used by the deterministic (ODE) simulators.  A
+good starting value for this parameter is about 0.0001.
 </p>
 <p>
-The &quot;output type&quot; can 
-be &quot;print&quot; (the default), which just prints the values for the
-species populations, over time, in a simple comma-separated-value format,
-in the &quot;runtime output log&quot; text box.  The &quot;plot&quot;
-output type will cause a graphical plot to be generated.  
-You may optionally define a textual label in the field &quot;label:&quot;,
-which will be added a subtitle to the simulation results plot. Note that when
-plotting the output, all species selected are displayed on the same graph.
-This means that one species with values that are much greater than the other
-species, will cause Y-axis scaling that will render the other species
-data points all at the bottom of the graph window.  To avoid this problem,
-you can display a graph without the species with large population values, or
-you can export the data in comma-separated value format. This is done by
-selecting the &quot;file&quot; output type. With the data in a file in 
-comma-separated-value format, you may import the data into a program that
-has more sophisticated graphing capabilities, such as Gnuplot, Octave,
-Gnumeric, Excel, or Matlab.  Make sure to select the appropriate
-output file format depending on the application into which you wish
-to import the results.  This is necessary because Matlab has a different
-comment character (&quot;%&quot;) than Gnuplot and Excel (&quot;#&quot;).
-By default, selecting the &quot;file&quot;
-output type will generate a file for writing.  If the file selected already
-exists, you will be asked to confirm your choice.  To instead append to
-the selected file (rather than overwrite), click on the &quot;append&quot;
-check-box.
+The &quot;max allowed absolute error&quot; text box is used to define
+a floating point number (greater than 0.0 and less than 1.0) that
+specifies the maximum allowed aggregate absolute simulation error.
+This is only used by the deterministic (ODE) simulators.  Care should
+be exercised before setting this parameter to too small a value.  A
+good starting value would be 0.01.
+</p>
+<p>
+The &quot;number of history bins&quot; text box is only enabled for
+models that contain <a href="#delayed">delayed</a> or
+<a href="#multistep">multistep</a> reactions.  In this text box,
+you may specify the granularity with which the delayed reaction
+solver should retain the history of species values, for species
+that participate in delayed reactions.  The default value is 400.
+The minimum value is 10.  If you are having trouble with 
+mass conservation in an ODE simulation of a model with a
+delayed reaction, try increasing this parameter.
+</p>
+<p>
+The &quot;output type&quot; can be &quot;print&quot; (the default),
+which just prints the values for the species populations, over time,
+in a simple comma-separated-value format, in the &quot;runtime output
+log&quot; text box.  The &quot;plot&quot; output type will cause a
+graphical plot to be generated.  You may optionally define a textual
+label in the field &quot;label:&quot;, which will be added a subtitle
+to the simulation results plot. Note that when plotting the output,
+all species selected are displayed on the same graph.  This means that
+one species with values that are much greater than the other species,
+will cause Y-axis scaling that will render the other species data
+points all at the bottom of the graph window.  To avoid this problem,
+you can display a graph without the species with large population
+values, or you can export the data in comma-separated value
+format. This is done by selecting the &quot;file&quot; output
+type. With the data in a file in comma-separated-value format, you may
+import the data into a program that has more sophisticated graphing
+capabilities, such as Gnuplot, Octave, Gnumeric, Excel, or Matlab.
+Make sure to select the appropriate output file format depending on
+the application into which you wish to import the results.  This is
+necessary because Matlab has a different comment character
+(&quot;%&quot;) than Gnuplot and Excel (&quot;#&quot;).  By default,
+selecting the &quot;file&quot; output type will generate a file for
+writing.  If the file selected already exists, you will be asked to
+confirm your choice.  To instead append to the selected file (rather
+than overwrite), click on the &quot;append&quot; check-box.
 </p>
 <p>
 At the bottom of the &quot;&appName;: simulator&quot; frame, you will 
