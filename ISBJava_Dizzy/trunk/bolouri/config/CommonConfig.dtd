@@ -19,8 +19,8 @@
 <!ENTITY mainHelpEmailSafe    "help at systemsbiology.org">
 
 <!ENTITY localJavaLibraryName "ISBJava">
-<!ENTITY privateRepositoryURL "&webBaseURL;/privateRepository">
-<!ENTITY publicRepositoryURL  "&webBaseURL;/publicRepository">
+<!ENTITY privateRepositoryURL "http://labs.systemsbiology.net/bolouri/privateRepository">
+<!ENTITY publicRepositoryURL  "http://labs.systemsbiology.net/bolouri/publicRepository">
 
 <!ENTITY groupLogoRelURL "images/logo-bolourilab.png">
 
