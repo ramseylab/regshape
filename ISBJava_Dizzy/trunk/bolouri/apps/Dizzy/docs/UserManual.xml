@@ -968,7 +968,8 @@ model definition file is tokenized and parsed by the parser, and
 turned into an ordered collection of statements that are executed
 by the scripting engine.  In this way, there is a logical decoupling
 between parsing of model definition files and the execution of the
-statements defining the model.
+statements defining the model.  Statements are processed in the order
+in which they appear in a model definition file. 
 </p>
 <p>
 There are two types of statements, known as <b>statement categories</b>.
@@ -1000,6 +1001,8 @@ than the scripting language.
 <a href="#statements">Statements</a> may contain
 zero or more <b>elements</b>, that can be thought of
 as modifiers that specify information about the statement.  
+Elements may occur in any order within a statement; the
+order in which the elements appear in a statement is not important.
 For the case of a chemical <a href="#reactions">reaction</a>
 statement, the reaction rate is a required element, that
 specifies the rate of the reaction being defined.
