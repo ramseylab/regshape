@@ -36,8 +36,10 @@ public class SimulationLauncher
     private JLabel mEnsembleFieldLabel;
     private JTextField mNumStepsField;
     private JLabel mNumStepsFieldLabel;
-    private JTextField mAllowedErrorField;
-    private JLabel mAllowedErrorFieldLabel;
+    private JTextField mAllowedRelativeErrorField;
+    private JLabel mAllowedRelativeErrorFieldLabel;
+    private JTextField mAllowedAbsoluteErrorField;
+    private JLabel mAllowedAbsoluteErrorFieldLabel;
     private String mOutputType;
     private JButton mStartButton;
     private JButton mStopButton;
@@ -437,6 +439,7 @@ public class SimulationLauncher
                     mEnsembleField.setEnabled(false);
                     mEnsembleFieldLabel.setEnabled(false);
                 }
+
                 Integer minNumSteps = simParams.getMinNumSteps();
                 if(null != minNumSteps)
                 {
@@ -450,18 +453,35 @@ public class SimulationLauncher
                     mNumStepsField.setEnabled(false);
                     mNumStepsFieldLabel.setEnabled(false);
                 }
-                Double maxAllowedError = simParams.getMaxAllowedError();
-                if(null != maxAllowedError)
+
+
+
+                Double maxAllowedRelativeError = simParams.getMaxAllowedRelativeError();
+                if(null != maxAllowedRelativeError)
                 {
-                    mAllowedErrorField.setText(maxAllowedError.toString());
-                    mAllowedErrorField.setEnabled(true);
-                    mAllowedErrorFieldLabel.setEnabled(true);
+                    mAllowedRelativeErrorField.setText(maxAllowedRelativeError.toString());
+                    mAllowedRelativeErrorField.setEnabled(true);
+                    mAllowedRelativeErrorFieldLabel.setEnabled(true);
                 }
                 else
                 {
-                    mAllowedErrorField.setText("");
-                    mAllowedErrorField.setEnabled(false);
-                    mAllowedErrorFieldLabel.setEnabled(false);
+                    mAllowedRelativeErrorField.setText("");
+                    mAllowedRelativeErrorField.setEnabled(false);
+                    mAllowedRelativeErrorFieldLabel.setEnabled(false);
+                }
+
+                Double maxAllowedAbsoluteError = simParams.getMaxAllowedAbsoluteError();
+                if(null != maxAllowedAbsoluteError)
+                {
+                    mAllowedAbsoluteErrorField.setText(maxAllowedAbsoluteError.toString());
+                    mAllowedAbsoluteErrorField.setEnabled(true);
+                    mAllowedAbsoluteErrorFieldLabel.setEnabled(true);
+                }
+                else
+                {
+                    mAllowedAbsoluteErrorField.setText("");
+                    mAllowedAbsoluteErrorField.setEnabled(false);
+                    mAllowedAbsoluteErrorFieldLabel.setEnabled(false);
                 }
             }
             catch(Exception e)
@@ -638,18 +658,31 @@ public class SimulationLauncher
         numStepsPanel.add(numStepsField);
         box.add(numStepsPanel);
 
-        JPanel allowedErrorPanel = new JPanel();
-        JPanel allowedErrorLabelPanel = new JPanel();
-        Box allowedErrorLabelBox = new Box(BoxLayout.Y_AXIS);
-        JLabel allowedErrorLabel = new JLabel("max allowed fractional error:");
-        allowedErrorLabelBox.add(allowedErrorLabel);
-        allowedErrorLabelPanel.add(allowedErrorLabelBox);
-        allowedErrorPanel.add(allowedErrorLabelPanel);
-        JTextField allowedErrorField = new JTextField(NUM_COLUMNS_TIME_FIELD);
-        mAllowedErrorField = allowedErrorField;
-        mAllowedErrorFieldLabel = allowedErrorLabel;
-        allowedErrorPanel.add(allowedErrorField);
-        box.add(allowedErrorPanel);
+        JPanel allowedRelativeErrorPanel = new JPanel();
+        JPanel allowedRelativeErrorLabelPanel = new JPanel();
+        Box allowedRelativeErrorLabelBox = new Box(BoxLayout.Y_AXIS);
+        JLabel allowedRelativeErrorLabel = new JLabel("max allowed relative error:");
+        allowedRelativeErrorLabelBox.add(allowedRelativeErrorLabel);
+        allowedRelativeErrorLabelPanel.add(allowedRelativeErrorLabelBox);
+        allowedRelativeErrorPanel.add(allowedRelativeErrorLabelPanel);
+        JTextField allowedRelativeErrorField = new JTextField(NUM_COLUMNS_TIME_FIELD);
+        mAllowedRelativeErrorField = allowedRelativeErrorField;
+        mAllowedRelativeErrorFieldLabel = allowedRelativeErrorLabel;
+        allowedRelativeErrorPanel.add(allowedRelativeErrorField);
+        box.add(allowedRelativeErrorPanel);
+
+        JPanel allowedAbsoluteErrorPanel = new JPanel();
+        JPanel allowedAbsoluteErrorLabelPanel = new JPanel();
+        Box allowedAbsoluteErrorLabelBox = new Box(BoxLayout.Y_AXIS);
+        JLabel allowedAbsoluteErrorLabel = new JLabel("max allowed absolute error:");
+        allowedAbsoluteErrorLabelBox.add(allowedAbsoluteErrorLabel);
+        allowedAbsoluteErrorLabelPanel.add(allowedAbsoluteErrorLabelBox);
+        allowedAbsoluteErrorPanel.add(allowedAbsoluteErrorLabelPanel);
+        JTextField allowedAbsoluteErrorField = new JTextField(NUM_COLUMNS_TIME_FIELD);
+        mAllowedAbsoluteErrorField = allowedAbsoluteErrorField;
+        mAllowedAbsoluteErrorFieldLabel = allowedAbsoluteErrorLabel;
+        allowedAbsoluteErrorPanel.add(allowedAbsoluteErrorField);
+        box.add(allowedAbsoluteErrorPanel);
 
         panel.add(box);
         panel.setBorder(BorderFactory.createEtchedBorder());
@@ -763,6 +796,11 @@ public class SimulationLauncher
             return(retVal);
         }
         int numTimePoints = numPoints.intValue();
+        if(numTimePoints < Simulator.MIN_NUM_TIME_POINTS)
+        {
+            handleBadInput("invalid number of samples", "The number of samples specified must be greater than or equal to " + Integer.toString(Simulator.MIN_NUM_TIME_POINTS));
+            return(retVal);
+        }
 
         srp.mNumTimePoints = numTimePoints;
  
@@ -847,13 +885,13 @@ public class SimulationLauncher
             simulatorParameters.setMinNumSteps(numSteps.intValue());
         }
 
-        String allowedErrorStr = mAllowedErrorField.getText();
-        Double allowedError = null;
-        if(null != allowedErrorStr && allowedErrorStr.trim().length() > 0)
+        String allowedRelativeErrorStr = mAllowedRelativeErrorField.getText();
+        Double allowedRelativeError = null;
+        if(null != allowedRelativeErrorStr && allowedRelativeErrorStr.trim().length() > 0)
         {
             try
             {
-                allowedError = new Double(allowedErrorStr);
+                allowedRelativeError = new Double(allowedRelativeErrorStr);
             }
             catch(NumberFormatException e)
             {
@@ -861,9 +899,28 @@ public class SimulationLauncher
                 return(retVal);
             }
         }
-        if(null != allowedError)
+        if(null != allowedRelativeError)
         {
-            simulatorParameters.setMaxAllowedError(allowedError.doubleValue());
+            simulatorParameters.setMaxAllowedRelativeError(allowedRelativeError.doubleValue());
+        }
+
+        String allowedAbsoluteErrorStr = mAllowedAbsoluteErrorField.getText();
+        Double allowedAbsoluteError = null;
+        if(null != allowedAbsoluteErrorStr && allowedAbsoluteErrorStr.trim().length() > 0)
+        {
+            try
+            {
+                allowedAbsoluteError = new Double(allowedAbsoluteErrorStr);
+            }
+            catch(NumberFormatException e)
+            {
+                handleBadInput("invalid allowed fractional error", "The allowed fractional error you specified is invalid");
+                return(retVal);
+            }
+        }
+        if(null != allowedAbsoluteError)
+        {
+            simulatorParameters.setMaxAllowedAbsoluteError(allowedAbsoluteError.doubleValue());
         }
 
         Object []speciesSelected = mSpeciesList.getSelectedValues();
