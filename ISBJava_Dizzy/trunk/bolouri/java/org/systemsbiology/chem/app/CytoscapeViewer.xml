@@ -1,0 +1,22 @@
+<jnlp spec="1.0+"
+  codebase="http://db.systemsbiology.net:8080/cytoscape/projects/static/sbmlReader/v1">
+  <information>
+    <title>SBML Reader</title>
+    <vendor>ISB</vendor>
+    <homepage href="docs/help.html"/>
+    <offline-allowed/>
+  </information>
+  <security>
+    <all-permissions />
+  </security>
+  <resources>
+    <j2se version="1.4+" max-heap-size="1024M"/>
+    <jar href="cytoscape.jar"/>
+    <jar href="config.jar"/>
+  </resources>
+  <application-desc main-class="cytoscape.cytoscape">
+    <argument>-p</argument>
+    <argument>jar://project</argument>
+    <argument>--sbml</argument>
+  </application-desc>
+</jnlp>

@@ -126,7 +126,7 @@ public class MainApp
         }
         catch(Exception e)
         {
-            UnexpectedErrorDialog errorDialog = new UnexpectedErrorDialog(mMainFrame, "unable export model to Cytoscape");
+            ExceptionDialogOperationCancelled errorDialog = new ExceptionDialogOperationCancelled(mMainFrame, "unable export model to Cytoscape", e);
             errorDialog.show();            
         }
     }
