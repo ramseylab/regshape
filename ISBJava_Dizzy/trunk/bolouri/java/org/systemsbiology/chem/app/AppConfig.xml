@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE AppConfig [
-  <!ENTITY % AppConfig SYSTEM "AppConfig.dtd">
-  %AppConfig;
-]>
 
 <!--
   Copyright (C) 2003 by Institute for Systems Biology,
@@ -14,11 +10,11 @@
  -->
 
 <app>
-  <appName>&appName;</appName>
-  <appVersion>&appVersion;</appVersion>
-  <appDate>&appDate;</appDate>
-  <appHomePage>&appHomePage;</appHomePage>
-  <appIconURL>&appIconURL;</appIconURL>
-  <appHelpSetName>&appHelpSetName;</appHelpSetName>
+  <appName>ISBChem</appName>
+  <appVersion>[version unknown]</appVersion>
+  <appDate>[date unknown]</appDate>
+  <appHomePage>[home page unknown]</appHomePage>
+  <appIconURL></appIconURL>
+  <appHelpSetName></appHelpSetName>
 </app>
 
