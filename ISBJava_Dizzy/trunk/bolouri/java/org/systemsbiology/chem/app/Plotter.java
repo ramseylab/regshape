@@ -209,7 +209,7 @@ public class Plotter
         private void handleSaveButton()
         {
             FileChooser fileChooser = new FileChooser(this);
-            fileChooser.setDialogTitle("please choose the file for saving the imsage:");
+            fileChooser.setDialogTitle("please choose the file for saving the image:");
             fileChooser.setApproveButtonText("save");
             fileChooser.show();
             if(null != mSaveDirectory)
