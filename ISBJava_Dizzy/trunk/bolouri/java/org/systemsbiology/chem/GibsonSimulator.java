@@ -108,7 +108,8 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
         for(int ctr = 0; ctr < numReactions; ++ctr)
         {
             Reaction reaction = reactions[ctr];
-            if(reaction.getRate().isExpression())
+            if(reaction.getRate().isExpression() || reaction.getReactantsMap().size() == 0
+                || reaction.getNumSteps() > 1)
             {
                 customReactions.add(new Integer(ctr));
             }
@@ -198,7 +199,8 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
                                         double []pDynamicSymbolValues,
                                         MutableInteger pLastReactionIndex,
                                         IndexedPriorityQueue pPutativeTimeToNextReactions,
-                                        Object []pReactionDependencies) throws DataNotFoundException, IllegalStateException
+                                        Object []pReactionDependencies,
+                                        MultistepReactionSolver []pMultistepReactionSolvers) throws DataNotFoundException, IllegalStateException
     {
 
         double time = pSymbolEvaluator.getTime();
@@ -210,7 +212,9 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
 
             updateSymbolValuesForReaction(pSymbolEvaluator,
                                           lastReaction,
-                                          pDynamicSymbolValues);
+                                          pDynamicSymbolValues,
+                                          time,
+                                          pMultistepReactionSolvers);
                                           
 
             Integer []dependentReactions = (Integer []) pReactionDependencies[lastReactionIndex];
@@ -358,6 +362,8 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
 
         MutableInteger lastReactionIndex = new MutableInteger(NULL_REACTION);
 
+        MultistepReactionSolver []multistepReactionSolvers = mMultistepReactionSolvers;
+
         for(int simCtr = pNumSteps; --simCtr >= 0; )
         {
             timeCtr = 0;
@@ -389,7 +395,8 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
                                dynamicSymbolValues,
                                lastReactionIndex,
                                putativeTimeToNextReactions,
-                               reactionDependencies);
+                               reactionDependencies,
+                               multistepReactionSolvers);
                 
 //                ++numIterations;
 

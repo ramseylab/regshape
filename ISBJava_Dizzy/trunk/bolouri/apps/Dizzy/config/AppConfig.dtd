@@ -4,8 +4,8 @@
 %CommonConfig;
 
 <!ENTITY appName "Dizzy">
-<!ENTITY appVersion "0.0.2">
-<!ENTITY appDate "2003/08/06">
+<!ENTITY appVersion "0.0.3">
+<!ENTITY appDate "2003/08/19">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
 <!ENTITY appIconURL "images/appLogoIcon.png">
 
@@ -21,5 +21,4 @@
 <!ENTITY appFileExtension ".dizzy">
 
 <!ENTITY sbmlURL "http://www.sbw-sbml.org">
-<!ENTITY cytoscapeURL "http://www.cytoscape.org">
 <!ENTITY appJavaRuntimeFlags "-Xmx500mb">

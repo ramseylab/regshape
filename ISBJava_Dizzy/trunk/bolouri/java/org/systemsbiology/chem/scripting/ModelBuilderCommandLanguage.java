@@ -263,7 +263,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         return(pInputString);
     }
 
-    private String obtainSymbol(Iterator pTokenIter, HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
+    private String obtainSymbol(ListIterator pTokenIter, HashMap pSymbolMap) throws InvalidInputException, DataNotFoundException
     {
         assert (pTokenIter.hasNext()) : "expected token";
         Token token = (Token) pTokenIter.next();
@@ -276,12 +276,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         {
             if(token.mCode.equals(Token.Code.QUOTE))
             {
-                if(! pTokenIter.hasNext())
-                {
-                    throw new InvalidInputException("expected token after quote");
-                }
-
-                token = (Token) pTokenIter.next();
+                token = getNextToken(pTokenIter);
                 if(! token.mCode.equals(Token.Code.SYMBOL))
                 {
                     throw new InvalidInputException("expected symbol token after quote");
@@ -289,17 +284,11 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
                 symbolName = translateMathExpressionsInString(token.mSymbol, pSymbolMap);
 
-                if(! pTokenIter.hasNext())
-                {
-                    throw new InvalidInputException("expected token after symbol token, in quotation context");
-                }
-                
-                token = (Token) pTokenIter.next();
+                token = getNextToken(pTokenIter);
                 if(! token.mCode.equals(Token.Code.QUOTE))
                 {
                     throw new InvalidInputException("expected end quote token");
                 }
-
             }
             else
             {
@@ -334,6 +323,16 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                 if(firstToken)
                 {
                     throw new InvalidInputException("semicolon encountered where expression expected");
+                }
+
+                pTokenIter.previous();
+                break;
+            }
+            else if(token.mCode.equals(Token.Code.COMMA))
+            {
+                if(firstToken)
+                {
+                    throw new InvalidInputException("comma encountered where expression expected");
                 }
 
                 pTokenIter.previous();
@@ -409,8 +408,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         String symbolName = obtainSymbol(pTokenIter, pSymbolMap);
         assert (null != symbolName) : "null symbol string for symbol token";
 
-        assert (pTokenIter.hasNext()) : "missing at-sign token";
-        Token token = (Token) pTokenIter.next();
+        Token token = getNextToken(pTokenIter);
         if(! token.mCode.equals(Token.Code.ATSIGN))
         {
             if(token.mCode.equals(Token.Code.BRACKET_BEGIN))
@@ -481,8 +479,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
         assert (null != symbolName) : "null symbol string for symbol token";
 
-        assert (pTokenIter.hasNext()) : "missing equals token";
-        Token token = (Token) pTokenIter.next();
+        Token token = getNextToken(pTokenIter);
         if(! token.mCode.equals(Token.Code.EQUALS))
         {
             if(token.mCode.equals(Token.Code.BRACKET_BEGIN))
@@ -559,13 +556,11 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                 pSpeciesDynamicMap.put(speciesName, speciesDynamic);
             }
 
-            assert (pTokenIter.hasNext()) : "expected another token";
-            Token token = (Token) pTokenIter.next();
+            Token token = getNextToken(pTokenIter);
             if(pParticipantType.equals(Reaction.ParticipantType.REACTANT) &&
                token.mCode.equals(Token.Code.HYPHEN))
             {
-                assert (pTokenIter.hasNext()) : "expected another token";
-                token = (Token) pTokenIter.next();
+                token = getNextToken(pTokenIter);
                 assert (token.mCode.equals(Token.Code.GREATER_THAN)) : "expected greater-than symbol";
                 break;
             }
@@ -705,12 +700,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             pTokenIter.next();
         }
 
-        if(! pTokenIter.hasNext())
-        {
-            throw new InvalidInputException("incomplete reaction definition; expected to find reaction rate specifier");
-        }
-
-        token = (Token) pTokenIter.next();
+        token = getNextToken(pTokenIter);
         boolean hasProducts = false;
         if(token.mCode.equals(Token.Code.SYMBOL) ||
            token.mCode.equals(Token.Code.QUOTE))
@@ -759,17 +749,50 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         pSymbolMap.put(reactionName, reaction);
         pModel.addReaction(reaction);
 
+        Token nextToken = getNextToken(pTokenIter);
+        if(nextToken.mCode.equals(Token.Code.COMMA))
+        {
+            Value stepsValue = obtainValue(pTokenIter, pSymbolMap);
+            if(stepsValue.isExpression())
+            {
+                throw new InvalidInputException("number of reaction steps must be specified as a number, not a deferred-evaluation expression");
+            }
+            int numSteps = (int) stepsValue.getValue();
+            if(numSteps <= 0)
+            {
+                throw new InvalidInputException("invalid number of steps specified");
+            }
+            else if(numSteps > 1)
+            {
+                reaction.setNumSteps(numSteps);
+            }
+            else
+            {
+                // number of steps is exactly one; so there is nothing to do
+            }
+        }
+        else
+        {
+            pTokenIter.previous();
+        }
+        
         getEndOfStatement(pTokenIter);
+    }
+
+    private Token getNextToken(ListIterator pTokenIter) throws InvalidInputException
+    {
+        if(! pTokenIter.hasNext())
+        {
+            throw new InvalidInputException("expected a token, but no token was found");
+        }
+
+        Token token = (Token) pTokenIter.next();
+        return(token);
     }
 
     private void getEndOfStatement(ListIterator pTokenIter) throws InvalidInputException
     {
-        if(! pTokenIter.hasNext())
-        {
-            throw new InvalidInputException("expected statement-ending token, but no such token was found");
-        }
-
-        Token token = (Token) pTokenIter.next();
+        Token token = getNextToken(pTokenIter);
         if(! token.mCode.equals(Token.Code.SEMICOLON))
         {
             throw new InvalidInputException("expected statement-ending semicolon; instead encountered token \"" + token + "\"");
@@ -778,23 +801,13 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
     private String getQuotedString(ListIterator pTokenIter) throws InvalidInputException
     {
-        if(! pTokenIter.hasNext())
-        {
-            throw new InvalidInputException("expected quote symbol");
-        }
-
-        Token token = (Token) pTokenIter.next();
+        Token token = getNextToken(pTokenIter);
         if(! token.mCode.equals(Token.Code.QUOTE))
         {
             throw new InvalidInputException("expected quote symbol");
         }
 
-        if(! pTokenIter.hasNext())
-        {
-            throw new InvalidInputException("expected quoted string");
-        }
-
-        token = (Token) pTokenIter.next();
+        token = getNextToken(pTokenIter);
         if(! token.mCode.equals(Token.Code.SYMBOL))
         {
             throw new InvalidInputException("expected quoted string");
@@ -802,9 +815,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 
         String string = token.mSymbol;
         
-        assert (pTokenIter.hasNext()) : "missing terminating quote token";
-            
-        token = (Token) pTokenIter.next();
+        token = getNextToken(pTokenIter);
 
         assert (token.mCode.equals(Token.Code.QUOTE)) : "missing terminating quote";
         
@@ -942,12 +953,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                                      HashMap pSymbolMap,
                                      MutableInteger pNumReactions) throws InvalidInputException, DataNotFoundException
     {
-        if(! pTokenIter.hasNext())
-        {
-            throw new InvalidInputException("missing loop index symbol");
-        }
-
-        Token token = (Token) pTokenIter.next();
+        Token token = getNextToken(pTokenIter);
         if(! token.mCode.equals(Token.Code.SYMBOL))
         {
             throw new InvalidInputException("invalid token found when expected loop index symbol");
@@ -960,18 +966,12 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
             throw new InvalidInputException("cannot use a reserved symbol as a loop index: " + loopIndexSymbolName);
         }
 
-        if(! pTokenIter.hasNext())
-        {
-            throw new InvalidInputException("missing loop starting value");
-        }
-
-        token = (Token) pTokenIter.next();
+        token =  getNextToken(pTokenIter);
 
         if(! token.mCode.equals(Token.Code.COMMA))
         {
             throw new InvalidInputException("invalid token found when expected comma separator");
         }
-
 
         if(! pTokenIter.hasNext())
         {

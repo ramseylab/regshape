@@ -122,6 +122,7 @@ public class Reaction extends SymbolValue
     private HashMap mLocalSymbolsMap;
     private Value []mLocalSymbolsValues;
     private boolean mRateIsExpression;
+    private int mNumSteps;
 
     public Object clone()
     {
@@ -139,12 +140,14 @@ public class Reaction extends SymbolValue
         reaction.mLocalSymbolsMap = mLocalSymbolsMap;
         reaction.mLocalSymbolsValues = mLocalSymbolsValues;
         reaction.mRateIsExpression = mRateIsExpression;
+        reaction.mNumSteps = mNumSteps;
         return(reaction);
     }
 
     public Reaction(String pName)
     {
         super(pName);
+        mNumSteps = 1;
         mName = pName;
         mReactantsMap = new HashMap();
         mProductsMap = new HashMap();
@@ -205,6 +208,21 @@ public class Reaction extends SymbolValue
         SymbolValueChemSimulation.addSymbolValueToMap(mLocalSymbolsValuesMap, pParameter.getSymbolName(), pParameter);
     }
 
+    public void setNumSteps(int pNumSteps)
+    {
+        if(pNumSteps < 1)
+        {
+            throw new IllegalArgumentException("the number of steps for a reaction must be greater than or equal to one");
+        }
+
+        mNumSteps = pNumSteps;
+    }
+
+    public int getNumSteps()
+    {
+        return(mNumSteps);
+    }
+
     public int getNumParticipants(ParticipantType pParticipantType)
     {
         int numParticipants = 0;
@@ -218,6 +236,31 @@ public class Reaction extends SymbolValue
         }
         return(numParticipants);
     }
+
+    static Species getIndexedSpecies(Species pSpecies,
+                                     HashMap pSymbolMap,
+                                     Species []pDynamicSymbolValues,
+                                     SymbolValue []pNonDynamicSymbolValues) throws IllegalStateException
+    {
+        String speciesName = pSpecies.getName();
+        Symbol extSymbol = (Symbol) pSymbolMap.get(speciesName);
+        int extSpeciesIndex = extSymbol.getArrayIndex();
+        if(Symbol.NULL_ARRAY_INDEX == extSpeciesIndex)
+        {
+            throw new IllegalStateException("invalid array index for species: " + speciesName);
+        }
+        Species species = null;
+        if(null != extSymbol.getDoubleArray())
+        {
+            species = pDynamicSymbolValues[extSpeciesIndex];
+        }
+        else
+        {
+            species = (Species) pNonDynamicSymbolValues[extSpeciesIndex];
+        }
+        return(species);
+    }
+                
 
     public void constructSpeciesArrays(Species []pSpeciesArray,    // this is the array of species that we are constructing
                                        int []pStoichiometryArray,  // this is the array of stoichiometries that we are constructing
@@ -254,21 +297,26 @@ public class Reaction extends SymbolValue
             Species species = element.mSpecies;
             if(null != pSymbolMap)
             {
-                String speciesName = species.getName();
-                Symbol extSymbol = (Symbol) pSymbolMap.get(speciesName);
-                int extSpeciesIndex = extSymbol.getArrayIndex();
-                if(Symbol.NULL_ARRAY_INDEX == extSpeciesIndex)
-                {
-                    throw new IllegalStateException("invalid array index for species: " + speciesName);
-                }
-                if(null != extSymbol.getDoubleArray())
-                {
-                    species = pDynamicSymbolValues[extSpeciesIndex];
-                }
-                else
-                {
-                    species = (Species) pNonDynamicSymbolValues[extSpeciesIndex];
-                }
+                species = getIndexedSpecies(species,
+                                            pSymbolMap,
+                                            pDynamicSymbolValues,
+                                            pNonDynamicSymbolValues);
+
+//                 String speciesName = species.getName();
+//                 Symbol extSymbol = (Symbol) pSymbolMap.get(speciesName);
+//                 int extSpeciesIndex = extSymbol.getArrayIndex();
+//                 if(Symbol.NULL_ARRAY_INDEX == extSpeciesIndex)
+//                 {
+//                     throw new IllegalStateException("invalid array index for species: " + speciesName);
+//                 }
+//                 if(null != extSymbol.getDoubleArray())
+//                 {
+//                     species = pDynamicSymbolValues[extSpeciesIndex];
+//                 }
+//                 else
+//                 {
+//                     species = (Species) pNonDynamicSymbolValues[extSpeciesIndex];
+//                 }
             }
             else
             {

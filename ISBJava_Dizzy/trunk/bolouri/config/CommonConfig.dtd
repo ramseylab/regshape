@@ -11,6 +11,8 @@
 <!ENTITY privateRepositoryURL "&webBaseURL;/privateRepository">
 <!ENTITY publicRepositoryURL  "&webBaseURL;/publicRepository">
 
+<!ENTITY cytoscapeURL "http://www.cytoscape.org">
+
 <!-- these definitions are used in styled XHTML files: -->
 <!ENTITY eacute "&#x00E9;">
 <!ENTITY nbsp "&#160;">

@@ -23,12 +23,14 @@ This document contains the version history for the
 
 <p>
 <dl>
+<dt><b>0.0.3 (2003/08/19)</b></dt>
+<dd>Added the ability to simulate a multistep chemical reaction as a single composite reaction</dd>
+<dt><b>0.0.2 (2003/08/06)</b></dt>
+<dd>Added the ability to display a model in a <a href="&cytoscapeURL;">Cytoscape</a> window.</dd>
 <dt><b>0.0.1 (2003/08/04)</b></dt>
 <dd>First version of the library.  
 It is an alpha version, intended only for internal use at
 &mainAffiliation;.</dd>
-<dt><b>0.0.2 (2003/08/06)</b></dt>
-<dd>Added the ability to display a model in Cytoscape</dd>
 </dl>
 </p>
 

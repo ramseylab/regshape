@@ -89,7 +89,7 @@ public class Value
      * Returns true if the object has an {@link Expression} object
      * stored within it, or false otherwise.
      */
-    public final boolean isExpression()
+    public boolean isExpression()
     {
         return(null != mExpressionValue);
     }
@@ -101,7 +101,7 @@ public class Value
      * floating-point value stored in the internal 
      * MutableDouble object within this object.
      */
-    public final double getValue(SymbolEvaluator pSymbolValueMap) throws DataNotFoundException
+    public double getValue(SymbolEvaluator pSymbolValueMap) throws DataNotFoundException
     {
         double value = 0.0;
         if(null != mExpressionValue)

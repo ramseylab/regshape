@@ -1458,6 +1458,70 @@ reaction event during the simulation of the model.
 </p>
 </isb:docsubsection>
 
+<isb:docsubsection name="Multistep Reactions" label="multistep">
+<p>
+The &appName; system allows for defining an N-step
+process as a single composite &quot;reaction&quot;.  
+The process is assumed to consist of N elementary 
+reactions that are chained together, as shown here:
+<blockquote>
+<pre>
+S0 -&gt; S1 -&gt; S2 -&gt; S3 -&gt; S4 -&gt; ... -&gt; SN
+</pre>
+</blockquote>
+One should not that it is possible to define each of
+these reaction steps separately, as shown here:
+<blockquote>
+S0 -&gt; S1, k;
+S1 -&gt; S2, k;
+...
+</blockquote>
+The <a href="#loops">loop</a> construct can make
+the above definition easier.  However, if the
+following conditions are met:
+<ol>
+<li>each
+reaction step has precisely one reaction and
+one product</li>
+<li>all the reactions have the same
+elementary rate value (which may not be a custom
+<a href="#expressions">expression</a>)</li>
+<li>the
+reactions are chained together as shown above</li>
+</ol>
+it is possible to simplify the reaction definitions
+using a single &quot;multistep&quot; composite
+reaction:
+<blockquote>
+<pre>
+S0 -&gt; S1, k, N;
+</pre>
+</blockquote>
+where <code>k</code> is the rate value for each
+elementary reaction, and <code>N</code> is the
+number of reaction steps in the composite multistep
+reaction.  If the value specified for <code>N</code>
+is less than or equal to 15, the &appName; simulator 
+will just insert the <code>N</code> separate reactions into
+the <a href="#models">model</a>.  If the value
+<code>N</code> is greater than 15, the &appName; simulator
+will treat the cascade of reactions as a single
+&quot;multistep&quot; reaction, using a history-dependent
+mechanism for evaluating the probability density of producing
+a molecule <code>SN</code> at any given time.  This method
+is described in the paper of <a href="#gibsonbruck">Gibson
+and Bruck</a>.
+</p>
+<p>
+Multistep reactions are useful for simulating processes
+such as transcription and translation, in which a long
+sequence of individual reaction steps transforms the system
+from an initial state ("polymerization complex") to a final
+state ("completed transcript").  
+</p>
+
+</isb:docsubsection>
+
 <!-- ========== MODELS ========== -->
 
 <isb:docsubsection name="Models" label="models">

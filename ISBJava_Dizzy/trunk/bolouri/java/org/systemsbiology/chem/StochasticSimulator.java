@@ -41,10 +41,34 @@ public abstract class StochasticSimulator extends Simulator
         }
     }
 
+
+    private static final void updateMultistepReactionSolvers(MultistepReactionSolver []pMultistepReactionSolvers,
+                                                             SymbolEvaluator pSymbolEvaluator,
+                                                             double pCurrentTime) throws DataNotFoundException
+    {
+        int numMultistepReactions = pMultistepReactionSolvers.length;
+        for(int ctr = numMultistepReactions; --ctr >= 0; )
+        {
+            MultistepReactionSolver solver = pMultistepReactionSolvers[ctr];
+            solver.update(pSymbolEvaluator, pCurrentTime);
+        }
+    }
+
     protected static final void updateSymbolValuesForReaction(SymbolEvaluatorChemSimulation pSymbolEvaluator,
                                                               Reaction pReaction,
-                                                              double []pSymbolValues)
+                                                              double []pSymbolValues,
+                                                              double pCurrentTime,
+                                                              MultistepReactionSolver []pMultistepReactionSolvers) throws DataNotFoundException
     {
+        int numMultistepReactions = pMultistepReactionSolvers.length;
+
+        if(numMultistepReactions > 0)
+        {
+            updateMultistepReactionSolvers(pMultistepReactionSolvers,
+                                           pSymbolEvaluator,
+                                           pCurrentTime);
+        }
+
         Species []reactantsSpecies = pReaction.getReactantsSpeciesArray();
         boolean []reactantsDynamic = pReaction.getReactantsDynamicArray();
         int []reactantsStoichiometry = pReaction.getReactantsStoichiometryArray();

@@ -65,6 +65,21 @@ public class Model
         return(mDynamicSymbolsMap);
     }
 
+    ArrayList constructReactionsList()
+    {
+        Reaction []sampleArray = new Reaction[0];
+        Reaction []intArray = (Reaction []) getReactionsMap().values().toArray(sampleArray);
+        int numReactions = intArray.length;
+        ArrayList reactionsList = new ArrayList();
+        
+        for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
+        {
+            reactionsList.add((Reaction) intArray[reactionCtr].clone());
+        }
+
+        return(reactionsList);
+    }
+
     Reaction []constructReactionsArray()
     {
         Reaction []sampleArray = new Reaction[0];
@@ -76,6 +91,19 @@ public class Model
             retArray[reactionCtr] = (Reaction) intArray[reactionCtr].clone();
         }
         return( retArray );
+    }
+
+    ArrayList constructDynamicSymbolsList()
+    {
+        Species []sampleArray = new Species[0];
+        Species []intArray = (Species []) getDynamicSymbolsMap().values().toArray(sampleArray);
+        int numSpecies = intArray.length;
+        ArrayList symbolsList = new ArrayList();
+        for(int speciesCtr = 0; speciesCtr < numSpecies; ++speciesCtr)
+        {
+            symbolsList.add((Species) intArray[speciesCtr].clone());
+        }
+        return(symbolsList);
     }
 
     Species []constructDynamicSymbolsArray()

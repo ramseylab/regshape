@@ -67,46 +67,91 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
                                         double []pReactionProbabilities,
                                         Random pRandomNumberGenerator,
                                         double []pDynamicSymbolValues,
-                                        MutableInteger pLastReactionIndex) throws DataNotFoundException, IllegalStateException
+                                        MutableInteger pLastReactionIndex,
+                                        MultistepReactionSolver []pMultistepReactionSolvers) throws DataNotFoundException, IllegalStateException
     {
         double time = pSymbolEvaluator.getTime();
 
         int lastReactionIndex = pLastReactionIndex.getValue();
         if(lastReactionIndex >= 0)
         {
+
             Reaction lastReaction = pReactions[lastReactionIndex];
 
             updateSymbolValuesForReaction(pSymbolEvaluator,
                                           lastReaction,
-                                          pDynamicSymbolValues);
+                                          pDynamicSymbolValues,
+                                          time,
+                                          pMultistepReactionSolvers);
         }
 
-        // loop through all reactions, and for each reaction, compute the reaction probability
-        int numReactions = pReactions.length;
-        
+
         double aggregateReactionProbability = computeReactionProbabilities(pSpeciesRateFactorEvaluator,
                                                                            pSymbolEvaluator,
                                                                            pReactionProbabilities,
                                                                            pReactions);
+
+//        double aggregateReactionProbability = 0.0;
+//         boolean acceptableReactionProbability = true;
+//         do
+//         {
+//             aggregateReactionProbability = computeReactionProbabilities(pSpeciesRateFactorEvaluator,
+//                                                                         pSymbolEvaluator,
+//                                                                         pReactionProbabilities,
+//                                                                         pReactions);
+//             // if the aggregate reaction probability is 0.0, no more reactions can happen
+//             double multistepCompositeRate = 10.0 * getMultistepReactionMaxCompositeRate(pSymbolEvaluator,
+//                                                                                         pMultistepReactionSolvers,
+//                                                                                         pMultistepCompositeRates);
+//             System.out.println("computing reaction probabilities at time: " + time + "; multistep rate: " + multistepCompositeRate + "; aggreate rate: " + aggregateReactionProbability);
+//             if(multistepCompositeRate  <= aggregateReactionProbability)
+//             {
+//                 acceptableReactionProbability = true;
+//             }
+//             else
+//             {
+//                 assert (multistepCompositeRate > 0.0) : "invalid multistep composite rate";
+//                 // multistepCompositeRate must be nonzero, in this case
+//                 time += 1.0/multistepCompositeRate;
+//                 if(time >= pEndTime)
+//                 {
+//                     aggregateReactionProbability = 0.0;
+//                     acceptableReactionProbability = true;
+//                 }
+//                 else
+//                 {
+                
+//                     // adjust time and recompute reaction probabilities (which will update the internal state
+//                     // of the multistep reaction solvers)
+                    
+//                     // do not exit the loop
+//                     acceptableReactionProbability = false;
+//                 }
+
+//                 pSymbolEvaluator.setTime(time);
+//             }
+//         }
+//         while(! acceptableReactionProbability);
+
         // if the aggregate reaction probability is 0.0, no more reactions can happen
         if(aggregateReactionProbability > 0.0)
         {
-
             // choose time of next reaction
             double deltaTimeToNextReaction = chooseDeltaTimeToNextReaction(pRandomNumberGenerator, 
                                                                            aggregateReactionProbability);
 
-            
             int reactionIndex = chooseIndexOfNextReaction(pRandomNumberGenerator,
-                                                         aggregateReactionProbability,
-                                                         pReactions,
-                                                         pReactionProbabilities);
+                                                          aggregateReactionProbability,
+                                                          pReactions,
+                                                          pReactionProbabilities);
             // choose type of next reaction
             Reaction reaction = pReactions[reactionIndex];
-            
+
             pLastReactionIndex.setValue(reactionIndex);
 
             time += deltaTimeToNextReaction;
+            
+//            System.out.println("at time: " + time + "; reaction occurred: " + reaction);
         }
         else
         {
@@ -172,6 +217,7 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
         double []dynamicSymbolValues = mDynamicSymbolValues;        
         int numDynamicSymbolValues = dynamicSymbolValues.length;
         HashMap symbolMap = mSymbolMap;
+        MultistepReactionSolver []multistepReactionSolvers = mMultistepReactionSolvers;
 
         double []timesArray = new double[pNumTimePoints];
 
@@ -210,8 +256,9 @@ public class GillespieSimulator extends StochasticSimulator implements IAliasabl
                                reactionProbabilities,
                                randomNumberGenerator,
                                dynamicSymbolValues,
-                               lastReactionIndex);
-                
+                               lastReactionIndex,
+                               multistepReactionSolvers);
+
 //                ++numIterations;
 
                 if(time > timesArray[timeCtr])

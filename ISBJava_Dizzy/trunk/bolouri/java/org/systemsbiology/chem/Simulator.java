@@ -1,21 +1,18 @@
 package org.systemsbiology.chem;
 
-import org.systemsbiology.math.SymbolValue;
-import org.systemsbiology.math.Value;
-import org.systemsbiology.math.Symbol;
-import org.systemsbiology.math.SymbolEvaluator;
-import org.systemsbiology.math.MathFunctions;
-import org.systemsbiology.util.DataNotFoundException;
-import org.systemsbiology.util.DebugUtils;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Random;
+import org.systemsbiology.math.*;
+import org.systemsbiology.util.*;
+
+import java.util.*;
 
 public abstract class Simulator 
 {
+    private static final int DEFAULT_MULTISTEP_TIME_POINTS = 1000;
+    private static final int NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION = 15;
+
     protected String []mDynamicSymbolNames;
-    protected double []mDynamicSymbolValues;         
+    protected double []mDynamicSymbolValues;
     protected double []mInitialDynamicSymbolValues;  // saves a copy of the initial data
     protected Value []mNonDynamicSymbolValues;
     protected SymbolEvaluatorChemSimulation mSymbolEvaluator;
@@ -27,7 +24,11 @@ public abstract class Simulator
     protected boolean mInitialized;
     protected Species []mDynamicSymbols;
 
+    protected MultistepReactionSolver []mMultistepReactionSolvers;
+
     public static final int NULL_REACTION = -1;
+
+
 
     static void indexSymbolArray(SymbolValue []pSymbolArray, 
                                  HashMap pSymbolMap, 
@@ -67,29 +68,170 @@ public abstract class Simulator
         return(mInitialized);
     }
 
+    private void clearMultistepReactionSolvers()
+    {
+        int numMultistepReactionSolvers = mMultistepReactionSolvers.length;
+        for(int ctr = 0; ctr < numMultistepReactionSolvers; ++ctr)
+        {
+            MultistepReactionSolver solver = mMultistepReactionSolvers[ctr];
+            solver.clear();
+        }
+    }
+
     protected void prepareForSimulation(double pStartTime) 
     {
         // set initial values for dynamic symbols 
         System.arraycopy(mInitialDynamicSymbolValues, 0, mDynamicSymbolValues, 0, mDynamicSymbolValues.length);
         MathFunctions.vectorZeroElements(mReactionProbabilities);
+        clearMultistepReactionSolvers();
         mSymbolEvaluator.setTime(pStartTime);
     }
+
+    private void handleMultistepReaction(Reaction pReaction,
+                                         ArrayList pReactions,
+                                         int pReactionIndex,
+                                         ArrayList pDynamicSpecies,
+                                         ArrayList pMultistepReactionSolvers,
+                                         MutableInteger pRecursionDepth)
+    {
+        String reactionName = pReaction.getName();
+
+        HashMap reactantsMap = pReaction.getReactantsMap();
+        if(reactantsMap.size() != 1)
+        {
+            throw new IllegalStateException("a multi-step reaction must have excactly one reactant species; reaction is: " + reactionName);
+        }
+
+        HashMap productsMap = pReaction.getProductsMap();
+        if(productsMap.size() != 1)
+        {
+            throw new IllegalStateException("a multi-step reaction must have exactly one product species; reaction is: " + reactionName);
+        }
+
+        int numSteps = pReaction.getNumSteps();
+        if(numSteps < 2)
+        {
+            throw new IllegalStateException("a multi-step reaction must have at least two steps");
+        }
+        
+        Species reactant = (Species) ((Reaction.ReactionElement) reactantsMap.values().iterator().next()).getSpecies();
+        Species product = (Species) ((Reaction.ReactionElement) productsMap.values().iterator().next()).getSpecies();
+
+        if(! reactant.getCompartment().equals(product.getCompartment()))
+        {
+            throw new IllegalStateException("the reactant and product for a multi-step reaction must be the same compartment");
+        }
+
+        Value rateValue = pReaction.getRate();
+        if(rateValue.isExpression())
+        {
+            throw new IllegalStateException("a multi-step reaction must have a numeric reaction rate, not a custom rate expression");
+        }
+        double rate = rateValue.getValue();
+
+        Reaction firstReaction = new Reaction(reactionName);
+        firstReaction.setRate(rate);
+        firstReaction.addReactant(reactant, 1);
+        String intermedSpeciesName = new String("multistep_species_" + product.getName() + "_" + pRecursionDepth);
+        Compartment reactantCompartment = reactant.getCompartment();
+        Species intermedSpecies = new Species(intermedSpeciesName, reactantCompartment);
+        intermedSpecies.setSpeciesPopulation(0.0);
+        firstReaction.addProduct(intermedSpecies, 1);
+        pReactions.set(pReactionIndex, firstReaction);
+
+        numSteps--;
+
+        Reaction secondReaction = new Reaction("multistep_reaction_" + product.getName() + "_" + pRecursionDepth);
+        secondReaction.setRate(rate);
+        secondReaction.addReactant(intermedSpecies, 1);
+        secondReaction.addProduct(product, 1);
+        secondReaction.setNumSteps(numSteps);
+        pReactions.add(secondReaction);
+        pDynamicSpecies.add(intermedSpecies);
+
+        if(numSteps > 1)
+        {
+            if(numSteps < NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION)
+            {
+                int recursionDepth = pRecursionDepth.getValue();
+                pRecursionDepth.setValue(recursionDepth + 1);
+
+                // expand into multiple reactions, for computational speed
+                handleMultistepReaction(secondReaction, 
+                                        pReactions, 
+                                        pReactions.size()-1, 
+                                        pDynamicSpecies, 
+                                        pMultistepReactionSolvers,
+                                        pRecursionDepth);
+            }
+            else
+            {
+                // need to use gamma distribution approximation; leave as multi-step reaction;
+                // create a "multistep reaction solver" to store the time-series data for the reactant species
+                MultistepReactionSolver solver = new MultistepReactionSolver(reactant,
+                                                                             intermedSpecies,
+                                                                             DEFAULT_MULTISTEP_TIME_POINTS,
+                                                                             numSteps,
+                                                                             rate);
+                pMultistepReactionSolvers.add(solver);
+                secondReaction.setRate(solver);
+            }
+        }
+        else
+        {
+            // this is a standard reaction; leave as single-step reaction
+        }
+    }
+
+             
 
     protected void initializeSimulator(Model pModel, SimulationController pSimulationController) throws DataNotFoundException
     {
         clearSimulatorState();
 
         // obtain and save an array of all reactions in the model
-        Reaction []reactions = pModel.constructReactionsArray();
-        mReactions = reactions;
-
-        // create an array of doubles to hold the reaction probabilities
-        mReactionProbabilities = new double[reactions.length];
+        ArrayList reactionsList = pModel.constructReactionsList();
+        int numReactions = reactionsList.size();
 
         // get an array of all dynamical SymbolValues in the model
-        Species []dynamicSymbols = pModel.constructDynamicSymbolsArray();
+        ArrayList dynamicSymbolsList = pModel.constructDynamicSymbolsList();
+
+        // get an array of all symbols in the model
+        SymbolValue []nonDynamicSymbols = pModel.constructGlobalNonDynamicSymbolsArray();
+        int numNonDynamicSymbols = nonDynamicSymbols.length;
+
+        ArrayList multistepReactionSolvers = new ArrayList();
+
+        // for each multi-step reaction, split the reaction into two separate reactions
+        for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
+        {
+            Reaction reaction = (Reaction) reactionsList.get(reactionCtr);
+            int numSteps = reaction.getNumSteps();
+            if(numSteps == 1)
+            {
+                continue;
+            }
+
+            MutableInteger recursionDepth = new MutableInteger(1);
+
+            handleMultistepReaction(reaction, 
+                                    reactionsList, 
+                                    reactionCtr, 
+                                    dynamicSymbolsList,
+                                    multistepReactionSolvers,
+                                    recursionDepth);
+        }
+
+        mMultistepReactionSolvers = (MultistepReactionSolver []) multistepReactionSolvers.toArray(new MultistepReactionSolver[0]);
+        int numMultistepReactions = mMultistepReactionSolvers.length;
+
+        Species []dynamicSymbols = (Species []) dynamicSymbolsList.toArray(new Species[0]);;
         mDynamicSymbols = dynamicSymbols;
         int numDynamicSymbols = dynamicSymbols.length;
+
+        Reaction []reactions = (Reaction []) reactionsList.toArray(new Reaction[0]);
+        mReactions = reactions;
+        numReactions = reactions.length;
 
         // create an array of doubles to hold the dynamical symbols' values
         double []dynamicSymbolValues = new double[numDynamicSymbols];
@@ -124,12 +266,9 @@ public abstract class Simulator
                          null);
 
 
-        // get an array of all symbols in the model
-        SymbolValue []nonDynamicSymbols = pModel.constructGlobalNonDynamicSymbolsArray();
-
         // build a map between symbol names and array indices
 
-        Value []nonDynamicSymbolValues = new Value[nonDynamicSymbols.length];
+        Value []nonDynamicSymbolValues = new Value[numNonDynamicSymbols];
         mNonDynamicSymbolValues = nonDynamicSymbolValues;
 
         indexSymbolArray(nonDynamicSymbols,
@@ -137,12 +276,20 @@ public abstract class Simulator
                          null,
                          nonDynamicSymbolValues);
 
+        for(int ctr = 0; ctr < numMultistepReactions; ++ctr)
+        {
+            MultistepReactionSolver solver = mMultistepReactionSolvers[ctr];
+            solver.initializeSpeciesSymbols(symbolMap,
+                                            dynamicSymbols,
+                                            nonDynamicSymbols);
+                                            
+        }
+
         SymbolEvaluatorChemSimulation evaluator = new SymbolEvaluatorChemSimulation(symbolMap, 0.0);
         mSymbolEvaluator = evaluator;
 
         checkSymbolsValues();
         
-        int numReactions = reactions.length;
         for(int reactionCtr = 0; reactionCtr < numReactions; ++reactionCtr)
         {
             Reaction reaction = reactions[reactionCtr];
@@ -150,6 +297,9 @@ public abstract class Simulator
         }
 
         mSpeciesRateFactorEvaluator = pModel.getSpeciesRateFactorEvaluator();
+
+        // create an array of doubles to hold the reaction probabilities
+        mReactionProbabilities = new double[numReactions];
 
         checkReactionRates();
 
@@ -192,6 +342,7 @@ public abstract class Simulator
         mSpeciesRateFactorEvaluator = null;
         mSymbolMap = null;
         mSimulationController = null;
+        mMultistepReactionSolvers = null;
     }
 
     public Simulator()
@@ -259,10 +410,10 @@ public abstract class Simulator
         return(timeCtr);
     }
 
-    protected void prepareTimesArray(double pStartTime,
-                                   double pEndTime,
-                                   int pNumTimePoints,
-                                   double []pRetTimesArray)
+    protected static void prepareTimesArray(double pStartTime,
+                                            double pEndTime,
+                                            int pNumTimePoints,
+                                            double []pRetTimesArray)
     {
         assert (pNumTimePoints > 0) : " invalid number of time points";
 
@@ -305,6 +456,7 @@ public abstract class Simulator
 
 
 
+
     protected static final double computeReactionProbabilities(SpeciesRateFactorEvaluator pSpeciesRateFactorEvaluator,
                                                                SymbolEvaluatorChemSimulation pSymbolEvaluator,
                                                                double []pReactionProbabilities,
@@ -324,6 +476,7 @@ public abstract class Simulator
 
             reactionProbability = reaction.computeRate(pSpeciesRateFactorEvaluator, pSymbolEvaluator);
 
+//            System.out.println("reaction: " + reaction + "; rate: " + reactionProbability);
             // store reaction probability
             pReactionProbabilities[reactionCtr] = reactionProbability;
 
