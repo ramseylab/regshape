@@ -11,8 +11,7 @@
               xmlns="http://www.w3.org/TR/xhtml1">
 
 <isb:doctitle>Software Tools</isb:doctitle>
-<isb:docdate>&docLastUpdated;</isb:docdate>
-<isb:docversion>Version: 0.3, Date: &docLastUpdated;</isb:docversion>
+<isb:docdate>$Date $</isb:docdate>
 
 <isb:doccontents />
 
