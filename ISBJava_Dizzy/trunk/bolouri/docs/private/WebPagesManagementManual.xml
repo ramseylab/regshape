@@ -19,6 +19,14 @@ the &mainGroup; web pages.  The goals of this framework are
 automation of the build/upload processes, ease of style
 modifications, and integration with our Java code base.
 </p>
+<p>
+If you are in a hurry, you might want to skip ahead to
+the <a href="#simpler">simpler method of publishing
+web content</a> described below.  Please note the 
+<a href="#warning">warning about not uploading web 
+content into the default directory on the FTP server</a>
+in that section.
+</p>
 </isb:docsection>
 
 <isb:docsection name="Web Pages Format" label="format">
@@ -272,13 +280,21 @@ web site maintainer at: <code>&mainGroupEmailSafe;</code>.
 The above instructions describe how to publish a web page
 that will be externally (publically) visible.  To publish
 a new web page that is only accessible within the 
+&mainAffiliation;, follow the directions in this section.
+Note that there is as yet no mechanism for publishing
+web content that is only visible to the &mainGroup;;
+for that purpose, you should use the group&apos;s shared
+network drive.  
+</p>
+To publish a web page that is visible only within the 
 &mainAffiliation;, create your new web page within the
 <blockquote>
 <pre>
 bolouri/docs/private
 </pre>
 </blockquote>
-directory.  Be sure to use a web page <em>within</em>
+directory of your CVS enlistment.  
+Be sure to use a web page <em>within</em>
 that directory as your template, because the 
 funny-looking &quot;DOCTYPE&quot; statement at the
 top of the file is different for files in the
@@ -293,46 +309,76 @@ subdirectory than it is for files in the
 If you wish to rapidly publish a <b>new</b> web page, and the above
 instructions are too burdensome, there is a more direct method
 to publish a new web page, and bypass CVS and the aforementioned
-&quot;stylesheet&quot; framework.  Simply write a HTML document
-using your favorite HTML editor, and FTP the document to the
-FTP server:
+&quot;stylesheet&quot; framework.  You may use one of the two
+&quot;repositories&quot; established for unmanaged web content,
+which is web content that is not auto-generated using the methods 
+described in the above sections of this document.  These two
+repositories are just subdirectories on the FTP server.  
+To use the simple web publishing method, write a HTML document
+using your favorite HTML editor, and FTP the document to either 
+the &quot;<code>privateRepository</code>&quot; or the
+&quot;<code>publicRepository</code>&quot; directory on the 
+following FTP server:
 <blockquote>
 <pre>
 projects.systemsbiology.net
 </pre>
 </blockquote>
+The two directories differ in that the public directory
+is intended for web content that is visible to the outside,
+and the private directory is intended for web content that
+is visible only to the &mainAffiliation;
 You should log into the FTP server using username
 &quot;<code>bolouri_group</code>&quot;.  The password
 can be obtained by asking one of the permanent staff
 in the &mainGroup;.  Once your FTP connection is established,
-your next step depends on whether you want the HTML 
-document to be publically visible (outside of the
-&mainAffiliation;) or not:
+you select the aforementioned directory using the 
+&quot;<code>cd</code>&quot; command:
 <ol>
 <li>If you do want the document
-to be accessible from outside, simply upload the file
-to the main directory in the FTP account. 
+to be accessible from outside, do the following:
+<blockquote>
+<pre>
+cd publicRepository
+</pre>
+</blockquote> 
 </li>
 <li>If you do <em>not</em> want the
-document to be accessible from outside, you will need to
-&quot;change directory&quot; to the &quot;<code>private</code>&quot;
-subdirectory, using the &quot;<code>cd</code>&quot; command.
-Then upload the HTML document.
+document to be accessible from outside, do the following:
+<blockquote>
+<pre>
+cd privateRepository
+</pre>
+</blockquote>
 </li>
 </ol>
+You can then upload your document (&quot;<code>YourDocument.html</code>)
+using the &quot;<code>put</code>&quot; command:
+<blockquote>
+<pre>
+put YourDocument.html
+</pre>
+</blockquote>
 At this point, your document should be visible on the
 external web server, at one of the two following URLs:
 <blockquote>
 <pre>
-http://projects.systemsbiology.net/bolouri_group
-http://projects.systemsbiology.net/bolouri_group/private
+http://projects.systemsbiology.net/bolouri_group/privateRepository/YourDocument.html
+http://projects.systemsbiology.net/bolouri_group/publicRepository/YourDocument.html
 </pre>
 </blockquote>
 depending on whether you selected (1) or (2) above.
+As emphasized above, files within the public repository
+are visible to anyone on the Internet.  Files within
+the private repository are only accessible to hosts
+within the &mainAffiliation;.
 </p>
 <p>
+<a name="warning" />
 <blockquote>
-<b>WARNING:</b> please be careful not to accidentally
+<b>WARNING:</b> Please do not upload your file into the
+default directory &quot;<code>bolouri_group</code>&quot;
+on the FTP server.  Also, please be careful not to accidentally
 overwrite any of the web content that is already on the
 web server, when you are uploading your HTML file!
 </blockquote>

@@ -8,8 +8,8 @@
 <isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
 
 <isb:doctitle>Software Development Guidelines</isb:doctitle>
-<isb:docdate>$Date: 2003/04/16 17:24:43 $</isb:docdate>
-<isb:docversion>$Revision: 1.1 $, $Date: 2003/04/16 17:24:43 $</isb:docversion>
+<isb:docdate>$Date: 2003/04/16 21:38:04 $</isb:docdate>
+<isb:docversion>$Revision: 1.2 $, $Date: 2003/04/16 21:38:04 $</isb:docversion>
 
 <isb:doccontents />
 
@@ -114,7 +114,7 @@ install a Windows CVS client.  There are many CVS clients available for
 Windows, in particular, <a href="http://www.tortoisecvs.org">TortoiseCVS</a>
 has been recommended.  For more information on how to use the
 Unix (command-line) CVS program, please refer to the 
-<a href="CVSManual.pdf">CVS User Manual</a>. 
+<a href="&privateRepositoryURL;/CVSManual.pdf">CVS User Manual</a>. 
 </isb:docsubsection>
 
 <isb:docsubsection name="CVS Rules of the Road" label="cvsrules">
@@ -339,6 +339,9 @@ RCS keywords (see the CVS manual for an explanation of their purpose)
 can be useful for embedding version information of a source file,
 into the source file.  However, the use of the specific RCS keyword 
 &quot;$Log: SoftwareDevelopmentGuidelines.xml,v $
+&quot;Revision 1.2  2003/04/16 21:38:04  sramsey
+&quot;added links to user manuals for CVS and InstallAnywhere
+&quot;
 &quot;Revision 1.1  2003/04/16 17:24:43  sramsey
 &quot;initial import
 &quot;&quot; is strongly discouraged.  It tends (over time) to
@@ -624,7 +627,7 @@ ssh -X -C oahu-lx.systemsbiology.net
 This should run the InstallAnywhere program remotely, in a window
 on your desktop computer.  For instructions on how to use the
 InstallAnywhere program, please refer to the
-<a href="InstallAnywhere5_UserManual.pdf">InstallAnywhere
+<a href="&privateRepositoryURL;/InstallAnywhere5_UserManual.pdf">InstallAnywhere
 User Manual</a>.
 </p>
 

@@ -38,8 +38,8 @@
 
 <isb:docsection name="Software Manuals" label="softwaremanuals">
 <ul>
-<li><a href="InstallAnywhere5_UserManual.pdf">InstallAnywhere User Manual (PDF)</a></li>
-<li><a href="CVSManual.pdf">CVS User Manual (PDF)</a></li>
+<li><a href="&privateRepositoryURL;/InstallAnywhere5_UserManual.pdf">InstallAnywhere User Manual (PDF)</a></li>
+<li><a href="&privateRepositoryURL;/CVSManual.pdf">CVS User Manual (PDF)</a></li>
 </ul>
 </isb:docsection>
 

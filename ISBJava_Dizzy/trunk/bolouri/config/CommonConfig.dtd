@@ -1,13 +1,15 @@
-<!ENTITY webBaseURL         "http://projects.systemsbiology.net/bolouri_group">
-<!ENTITY mainLogoURL        "&webBaseURL;/images/logo-isb.png">
-<!ENTITY mainPublicURL      "http://www.systemsbiology.org">
+<!ENTITY webBaseURL           "http://projects.systemsbiology.net/bolouri_group">
+<!ENTITY mainLogoURL          "&webBaseURL;/images/logo-isb.png">
+<!ENTITY mainPublicURL        "http://www.systemsbiology.org">
 
-<!ENTITY mainGroup          "Bolouri Group">
-<!ENTITY mainGroupURL       "http://projects.systemsbiology.net/bolouri_group/Resources.html">
-<!ENTITY mainAffiliation    "Institute for Systems Biology">
-<!ENTITY mainGroupEmailSafe "bolourilab at systemsbiology.org">
+<!ENTITY mainGroup            "Bolouri Group">
+<!ENTITY mainGroupURL         "&webBaseURL;/Resources.html">
+<!ENTITY mainAffiliation      "Institute for Systems Biology">
+<!ENTITY mainGroupEmailSafe   "bolourilab at systemsbiology.org">
 
 <!ENTITY localJavaLibraryName "ISBJava">
+<!ENTITY privateRepositoryURL "&webBaseURL;/privateRepository">
+<!ENTITY publicRepositoryURL  "&webBaseURL;/publicRepository">
 
 <!-- these definitions are used in styled XHTML files: -->
 <!ENTITY eacute "&#x00E9;">
