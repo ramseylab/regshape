@@ -1017,6 +1017,14 @@ The argument must be nonnegative.</dd>
 <dd>Returns 0.0 if the argument is negative, or 1.0 if
 the argument is nonnegative (i.e., zero or positive)</dd>
 
+<dt><b>min(X,Y)</b></dt>
+<dd>Returns the smaller of expressions <code>X</code> and 
+  <code>Y</code>.  This is a two-argument function.</dd>
+
+<dt><b>max(X,Y)</b></dt>
+<dd>Returns the larger of expressions <code>X</code> and
+  <code>Y</code>.  This is a two-argument function.</dd>
+  
 </dl>
 </blockquote>
 New built-in mathematical functions may be added in 
