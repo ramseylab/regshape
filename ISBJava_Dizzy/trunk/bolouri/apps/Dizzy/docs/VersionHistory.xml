@@ -52,14 +52,22 @@ reaction rates for dimerization reactions, for model interchangability with the 
 <tr valign="top">
 <td>0.0.5</td>
 <td>2003/10/20</td>
-<td>Fixed a bug in the Gibson-Bruck simulator, for the case of a boundary
-reactant species.  Fixed a bug in the command-language parser, it can
-now accept tabs as valid whitespace in the model definition file.  The
+<td>
+<ul>
+<li>Fixed a bug in the Gibson-Bruck simulator, for the case of a boundary
+reactant species.</li>
+<li>Fixed a bug in the command-language parser, it can
+now accept tabs as valid whitespace in the model definition file.</li>  
+<li>The
 SBML import feature can now process model definition files that conform to the
-SBML Level 1, Version 2 specification.  Fixed a bug in which &appName; would
+SBML Level 1, Version 2 specification.</li>  
+<li>Fixed a bug in which &appName; would
 fail to start, in the case where &appName; was installed in the top-level
-directory of a Windows (or DOS) drive. Redefined how the stochastic simulators compute
-reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</td>
+directory of a Windows (or DOS) drive.</li> 
+<li>Redefined how the stochastic simulators compute
+reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</li>
+</ul>
+</td>
 <td>0.0.5</td>
 </tr>
 

@@ -47,12 +47,18 @@ reaction rates for dimerization reactions, for model interchangability with the 
 <tr valign="top">
 <td>0.0.5</td>
 <td>2003/10/20</td>
-<td>Fixed a bug in the <code>GibsonSimulator</code> initialization code, for the case of a boundary
-reactant species.  Fixed a bug in the <code>ModelBuilderCommandLanguage</code> tokenizer, so that
-it can now accept a tab character as valid whitespace in a model definition file.  Modified the
-<code>SBMLValidate</code> package so that it can process SBML Level 1, Version 2 model definition files.
-Modified <code>org.systemsbiology.chem.app.MainApp</code> class, to work around a limitation of
-DOS shell command-line argument processing.  </td>
+<td>
+<ul>
+<li>Fixed a bug in the <code>GibsonSimulator</code> initialization code, for the case of a boundary
+reactant species.</li>
+<li>Fixed a bug in the <code>ModelBuilderCommandLanguage</code> tokenizer, so that
+it can now accept a tab character as valid whitespace in a model definition file.</li>  
+<li>Modified the
+<code>SBMLValidate</code> package so that it can process SBML Level 1, Version 2 model definition files.</li>
+<li>Modified <code>org.systemsbiology.chem.app.MainApp</code> class, to work around a limitation of
+DOS shell command-line argument processing.</li>
+</ul>
+</td>
 </tr>
 
 <tr valign="top">
