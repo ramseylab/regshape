@@ -139,7 +139,9 @@ public class Model
             if(null == dynamicSpeciesMap.get(symbolName))
             {
                 SymbolValue symbolValue = (SymbolValue) symbolsMap.get(symbolName);
-                retList.add((SymbolValue) symbolValue.clone());
+                assert (null != symbolValue.getValue()) : "null value for symbol: " + symbolName;
+                SymbolValue newSymbolValue = (SymbolValue) symbolValue.clone();
+                retList.add(newSymbolValue);
             }
         }
         SymbolValue []sampleArray = new SymbolValue[0];
@@ -164,7 +166,7 @@ public class Model
 
     public void addSpecies(Species pSpecies)
     {
-        SymbolValueChemSimulation.addSymbolValueToMap(mSymbolsMap, pSpecies.getName(), pSpecies);
+        pSpecies.addSymbolsToGlobalSymbolMap(mSymbolsMap);
     }
 
     public Collection getDynamicSymbols()
