@@ -35,7 +35,9 @@ This document contains the version history for the
 <td>Fixed a bug in the <code>GibsonSimulator</code> initialization code, for the case of a boundary
 reactant species.  Fixed a bug in the <code>ModelBuilderCommandLanguage</code> tokenizer, so that
 it can now accept a tab character as valid whitespace in a model definition file.  Modified the
-<code>SBMLValidate</code> package so that it can process SBML Level 1, Version 2 model definition files.</td>
+<code>SBMLValidate</code> package so that it can process SBML Level 1, Version 2 model definition files.
+Modified <code>org.systemsbiology.chem.app.MainApp</code> class, to work around a limitation of
+DOS shell command-line argument processing.</td>
 </tr>
 
 <tr valign="top">
