@@ -22,6 +22,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
     public static final int DEFAULT_MIN_NUM_STEPS = 10000;
     public static final double DEFAULT_MAX_ALLOWED_RELATIVE_ERROR = 0.0001;
     public static final double DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR = 0.0001;
+    public static final boolean DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS = false;
 
     private long mIterationCounter;
     private double []mDerivative;
@@ -41,21 +42,19 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
                                                   double pMaxAllowedAbsoluteError,
                                                   String pTempOutputFileName);
 
-    public void simulate(double pStartTime, 
-                         double pEndTime,
-                         SimulatorParameters pSimulatorParameters,
-                         int pNumResultsTimePoints,
-                         String []pResultsSymbolNames,
-                         double []pRetResultsTimeValues,
-                         Object []pRetResultsSymbolValues) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException, SimulationFailedException
+    public SimulationResults simulate(double pStartTime, 
+                                      double pEndTime,
+                                      SimulatorParameters pSimulatorParameters,
+                                      int pNumResultsTimePoints,
+                                      String []pRequestedSymbolNames) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException, SimulationFailedException
     {
         conductPreSimulationCheck(pStartTime,
                                   pEndTime,
                                   pSimulatorParameters,
-                                  pNumResultsTimePoints,
-                                  pResultsSymbolNames,
-                                  pRetResultsTimeValues,
-                                  pRetResultsSymbolValues);
+                                  pNumResultsTimePoints);
+
+        double []retTimeValues = new double[pNumResultsTimePoints];
+        Object []retSymbolValues = new Object[pNumResultsTimePoints];
 
         SimulationProgressReporter simulationProgressReporter = mSimulationProgressReporter;
         mDoUpdates = (null != mSimulationController || null != simulationProgressReporter);
@@ -79,10 +78,9 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
                                                pEndTime,
                                                pNumResultsTimePoints);
         int numTimePoints = timesArray.length;
-        System.arraycopy(timesArray, 0, pRetResultsTimeValues, 0, numTimePoints);
         
         Symbol []requestedSymbols = createRequestedSymbolArray(mSymbolMap,
-                                                               pResultsSymbolNames);
+                                                               pRequestedSymbolNames);
 
         double initialStepSize = (pEndTime - pStartTime)/((double) DEFAULT_MIN_NUM_STEPS);
 
@@ -153,38 +151,77 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
             simulationProgressReporter.updateProgressStatistics(true, mFractionComplete, mIterationCounter);
         }
 
-        if(mSimulationCancelled)
+        SimulationResults simulationResults = null;
+        if(! mSimulationCancelled)
         {
-            return;
-        }
+            try
+            {
+                readSimulationOutput(tempOutputFile,
+                                     mSymbolEvaluator,
+                                     mDynamicSymbolValues,
+                                     pStartTime,
+                                     pEndTime,
+                                     pNumResultsTimePoints,
+                                     requestedSymbols,
+                                     timesArray,
+                                     retSymbolValues);
+            }
+            catch(InvalidInputException e)
+            {
+                tempOutputFile.delete();
+                throw new SimulationFailedException("unable to parse the output from the simulator; error message is: " + e.toString());
+            }
+            catch(FileNotFoundException e)
+            {
+                tempOutputFile.delete();
+                throw new SimulationFailedException("unable to parse the output from the simulator; error message is: " + e.toString());
+            }
+            catch(IOException e)
+            {
+                throw new SimulationFailedException("unable to read the temporary simulation output file; error message is: " + e.toString());
+            }
 
-        try
-        {
-            readSimulationOutput(tempOutputFile,
-                                 mSymbolEvaluator,
-                                 mDynamicSymbolValues,
-                                 pStartTime,
-                                 pEndTime,
-                                 pNumResultsTimePoints,
-                                 requestedSymbols,
-                                 pRetResultsTimeValues,
-                                 pRetResultsSymbolValues);
-        }
-        catch(InvalidInputException e)
-        {
-            throw new SimulationFailedException("unable to parse the output from the simulator; error message is: " + e.toString());
-        }
-        catch(FileNotFoundException e)
-        {
-            throw new SimulationFailedException("unable to parse the output from the simulator; error message is: " + e.toString());
-        }
-        catch(IOException e)
-        {
-            throw new SimulationFailedException("unable to read the temporary simulation output file; error message is: " + e.toString());
-        }
+            tempOutputFile.delete();
 
-        tempOutputFile.delete();
+            boolean estimateFinalSpeciesFluctuations = DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS;
+            Boolean flagGetFinalSymbolFluctuations = pSimulatorParameters.getFlagGetFinalSymbolFluctuations();
+            double []finalSpeciesFluctuations = null;
+            if(null != flagGetFinalSymbolFluctuations)
+            {
+                estimateFinalSpeciesFluctuations = flagGetFinalSymbolFluctuations.booleanValue();
+            }
+            if(estimateFinalSpeciesFluctuations)
+            {
+                double []allFinalSpeciesFluctuations = SteadyStateAnalyzer.estimateSpeciesFluctuations(mReactions,
+                                                                                                 mDynamicSymbols,
+                                                                                                 mDynamicSymbolAdjustmentVectors,
+                                                                                                 mSymbolEvaluator);
+                int numRequestedSymbols = pRequestedSymbolNames.length;
+                finalSpeciesFluctuations = new double[numRequestedSymbols];
+                for(int i = 0; i < numRequestedSymbols; ++i)
+                {
+                    Symbol requestedSymbol = requestedSymbols[i];
+                    int arrayIndex = requestedSymbol.getArrayIndex();
+                    finalSpeciesFluctuations[i] = 0.0;
+                    if(Symbol.NULL_ARRAY_INDEX != arrayIndex)
+                    {
+                        if(null != requestedSymbol.getDoubleArray())
+                        {
+                            finalSpeciesFluctuations[i] = allFinalSpeciesFluctuations[arrayIndex];
+                        }
+                    }
+                }
+            }
 
+            simulationResults = createSimulationResults(pStartTime,
+                                                        pEndTime,
+                                                        pSimulatorParameters,
+                                                        pRequestedSymbolNames,
+                                                        timesArray,
+                                                        retSymbolValues,
+                                                        finalSpeciesFluctuations);
+        }
+        return(simulationResults);
     }
 
     protected void readSimulationOutput(File pSimulationResultsFile, 
@@ -264,7 +301,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
         }
     }
 
-    public double[] f(double t, double[] x)
+    public final double[] f(double t, double[] x)
     {
         // copy the values in x to the array that is read by the "symbol evaluator"
         System.arraycopy(x, 0, mDynamicSymbolValues, 0, mDynamicSymbolValues.length);
@@ -291,7 +328,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
     }
 
 
-    public double[] g(double t, double[] x)
+    public final double[] g(double t, double[] x)
     {   // empty implementation of g because there are no events associated
         double[] event = new double[1];   // with this function
 
@@ -317,7 +354,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
         return(event);
     }
 
-    public void record(double t, double []x)
+    public final void record(double t, double []x)
     {
         ++mIterationCounter;
 
@@ -367,7 +404,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
         }
     }
 
-    public boolean usesExpressionValueCaching()
+    public final boolean usesExpressionValueCaching()
     {
         return(false);
     }
