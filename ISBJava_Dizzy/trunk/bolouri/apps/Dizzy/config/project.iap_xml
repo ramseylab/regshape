@@ -168,7 +168,7 @@ it will search for ones in this list]]></string>
 							<method name="addElement">
 								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="371a27d69365">
 									<property name="propertyValue">
-										<string><![CDATA[isb.chem.sbw.SimulationModule]]></string>
+										<string><![CDATA[org.systemsbiology.chem.sbw.SimulationModule]]></string>
 									</property>
 									<property name="propertyName">
 										<string><![CDATA[lax.main.class]]></string>
@@ -217,7 +217,7 @@ and any path to a file to read from that file]]></string>
 						</object>
 					</property>
 					<property name="mainClass">
-						<string><![CDATA[isb.chem.sbw.SimulationModule]]></string>
+						<string><![CDATA[org.systemsbiology.chem.sbw.SimulationModule]]></string>
 					</property>
 				</object>
 			</property>
@@ -1674,7 +1674,7 @@ it will search for ones in this list]]></string>
 													<method name="addElement">
 														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="371a284c936d">
 															<property name="propertyValue">
-																<string><![CDATA[isb.chem.app.MainApp]]></string>
+																<string><![CDATA[org.systemsbiology.chem.app.MainApp]]></string>
 															</property>
 															<property name="propertyName">
 																<string><![CDATA[lax.main.class]]></string>
@@ -1723,7 +1723,7 @@ and any path to a file to read from that file]]></string>
 												</object>
 											</property>
 											<property name="mainClass">
-												<string><![CDATA[isb.chem.app.MainApp]]></string>
+												<string><![CDATA[org.systemsbiology.chem.app.MainApp]]></string>
 											</property>
 										</object>
 										<object class="com.zerog.ia.installer.actions.CreateShortcut" objectID="4a0bf6129afa">
@@ -1796,7 +1796,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[664]]></string>
 											</property>
 											<property name="sourceName">
-												<string><![CDATA[repressilator.isbchem]]></string>
+												<string><![CDATA[repressilator.xml]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
 												<boolean>true</boolean>
@@ -1808,7 +1808,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[repressilator.isbchem]]></string>
+												<string><![CDATA[repressilator.xml]]></string>
 											</property>
 											<property name="fileSize">
 												<long>3152</long>

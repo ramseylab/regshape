@@ -4,8 +4,7 @@
   <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
   %AppConfig;
 
-<!ENTITY ccmdlExtension ".dizzy">
-<!ENTITY cmdlExtension ".isbchem">
+<!ENTITY cmdlExtension ".dizzy">
 <!ENTITY sbmlExtension ".xml">
 <!ENTITY sbmlURL "http://www.sbw-sbml.org">
 <!ENTITY appNameCommandLine "dizzycmd">
@@ -75,26 +74,13 @@ The file extension of the SBML language is: &quot;.xml&quot;
 <p />
 The Chemical Model Definition Language (CMDL) 
 is the language understood "natively" by the
-&appName; scripting engine; the engine translates models from other languages 
-into its native language, before processing them.  
+&appName; scripting engine.  
 <p />
 The file extension of the CMDL command language is: &quot;<code>&cmdlExtension;</code>&quot;
 <p />
 </li>
-<li><a href="#ccmdl">Condensed Chemical Model Definition Language (CCMDL)</a>
-<p />
-The condensed command language is a simplified, condensed notation
-that is translated into the aforementioned CMDL command language
-by the scripting engine.  The CMDL command language is more powerful
-and flexible, but also a bit more tedious to type in manually.
-Note that the &appName; system can export into file types (1) and (2) 
-mentioned above, but not into the CCMDL scripting language.
-<p />
-The file extension of the CCMDL scripting language is &quot;<code>&ccmdlExtension;</code>&quot;
-<p />
-</li>
 </ol>
-For all three of the above languages, 
+For both of the above languages, 
 <a href="#samplefiles">example model definition files</a> are provided with
 the &appName; installation.
 <p />
@@ -260,7 +246,7 @@ directory in which you installed &appName;.  Then navigate into the
 <img src="../images/screenshot4.png" alt="&appName; screenshot 4" />
 </p>
 <p>
-For starters, try selecting the &quot;<code>GAL&ccmdlExtension;</code>&quot; 
+For starters, try selecting the &quot;<code>GAL&cmdlExtension;</code>&quot; 
 file, by double-clicking on that file name in the dialog box. 
 The &appName; window should now look like this:
 </p>
@@ -271,48 +257,13 @@ The &appName; window should now look like this:
 Note that the model description has appeared in the editor window.
 In this window, you can edit a model description, after which you
 may save your changes.  You probably will not want to modify the 
-<code>GAL&ccmdlExtension;</code> model definition file just yet.
+<code>GAL&cmdlExtension;</code> model definition file just yet.
 Note that the file name appears after the &quot;<b>file:</b>&quot; label.
 There is also a label &quot;<b>parser:</b>&quot; label, whose function
 will be described later.
-Now, from the &quot;Tools&quot; menu, select &quot;Process model&quot;,
+Now, from the &quot;Tools&quot; menu, select &quot;Simulate...&quot;,
 which essentially processes the model definition and loads the relevant
-information into the &appName; runtime.  The application should now
-look like this:
-</p>
-<p>
-<img src="../images/screenshot13.png" alt="&appName; screenshot 13" />
-</p>
-<p>
-Note that the <a href="#models">model name</a> 
-&quot;myModel&quot; has appeared in the 
-&quot;models:&quot; list box, and the 
-<a href="#speciespopulations">species populations collection</a>
-name &quot;sp&quot; has appeared in the &quot;species populations sets:&quot; 
-list box.  Note also that the phrase &quot;<b>condensed-command-language</b>&quot;
-has appeared after the &quot;<b>parser:</b>&quot; label.  This means that
-the <a href="#cmdl">CCMDL</a> parser will be used to interpret the model
-definition.  In other words, this model definition is in the &quot;CCMDL&quot;
-language.
-</p>
-<p>
-Now, select the model &quot;<code>myModel</code>&quot;, and the species
-populations collection &quot;<code>sp</code>&quot; by single-clicking
-on each of them in their respective list boxes.  Now double-click on 
-the model &quot;<code>myModel</code>&quot;, to list the contents of 
-the model.  The &appName; window should now look like this:
-</p>
-<p> 
-<img src="../images/screenshot6.png" alt="&appName; screenshot 6" />
-</p>
- <p>
-You can use the scroll bar in the &quot;runtime output log&quot; text
-box to view all of the text describing the &quot;<code>GAL&ccmdlExtension;</code>&quot;
-model.  
-</p>
-<p>
-To try simulating the kinetics of this model, select the
-&quot;Simulate...&quot; menu item from the &quot;Tools&quot; menu.
+information into the &appName; simulation engine.
 This should create a &quot;&appName;: simulator&quot; 
 dialog box, that looks like this:
 </p>
@@ -375,7 +326,7 @@ the problem.
 <p>
 Now that you have become acquainted with the simulation driver screen, 
 the next step is to become acquainted with the 
-<a href="#ccmdl">CCMDL model definition language</a>, which permits 
+<a href="#cmdl">CMDL model definition language</a>, which permits 
 rapid development of new models. 
 To begin, let&apos;s define a simple model of a chemical system.
 This system will consist of the enzyme-substrate reaction:
@@ -398,7 +349,10 @@ ES    ---&gt; E + P
 </blockquote>
 where the &quot;<code>ES</code>&quot; species is the enzyme-substrate
 complex. We will now investigate the stochastic kinetics of this
-very simple model using the &appName; simulator.  You may use the 
+very simple model using the &appName; simulator.  
+</p>
+<p>
+A few notes about editing models:  You may use the 
 editor window in &appName;, which is marked with the "model definition:"
 label, to enter the model description as described below.  Once you
 have entered the model description into the editor window, you may
@@ -407,28 +361,45 @@ from the &quot;File&quot; menu.  Alternatively, you use your own
 text editor program (e.g., Notepad on Windows) to create the model
 definition file.  In that case, you would use the &quot;open&quot;
 menu item under the &quot;File&quot; menu, to load the model definition
-file into &appName;.   Either way, we will assume that the model definition
-file you are creating will be called &quot;Model&ccmdlExtension;&quot;. 
+file into &appName;.   
+</p>
+<p>
+We will assume that the model definition
+file you are creating will be called &quot;Model&cmdlExtension;&quot;. 
 This file will define the species
 and chemical reactions that make up the model, as well as the kinetic
 parameters that will be used to simulate the reaction kinetics.  The 
-&quot;&ccmdlExtension;&quot; file extension is important, so please
+&quot;&cmdlExtension;&quot; file extension is important, so please
 type the file name exactly as shown.  This helps the &appName; program
 to recognize the file as an official &quot;&appName; model definition file&quot;,
 and to select the proper interpreter to load the file.
 The file should start out completely empty.  Let&apos;s begin by defining
 the first of the three elementary reactions that make up the above model.
 We will be defining this model in the 
-<a href="#ccmdl">&quot;condensed&quot; language for entering a model definition file</a>,
-which is syntactically very close to the Jarnac language. At the top of
-the file, please enter the following line, exactly as shown here:
+<a href="#cmdl">CMDL language for entering a model definition file</a>,
+which is syntactically very close to the &quot;Jarnac&quot; language. At the top of
+the file, please enter the following lines of text, exactly as shown here:
 <blockquote>
 <pre>
+E = 100.0;
+S = 100.0;
+ES = 0.0;
 r1, E + S -&gt; ES, 1.0;
 </pre>
 </blockquote>
-This line is an example of a <em>statement</em> called a <em>reaction definition</em>.  
-You will notice that the line ends with a semicolon.  In the &appName; language,
+These lines are examples of <em>statements</em>.  The first three statements
+define symbols &quot;E&quot;, &quot;S&quot;, and &quot;ES&quot;, 
+and assign them the values 100.0, 100.0, and 0.0, respectively. The
+fourth statement is called a <em>reaction definition</em>.  These symbols represent
+initial species populations for the chemical species appearing in the model.
+It is important that the reaction definition statement occurs after the statements
+defining the species symbols that appear in the reaction.  Since statements are
+processed sequentially by the &appName; parser, if the &quot;ES = 0.0&quot; statement
+did not occur before the reaction definition statement, the parser would generate
+an error message because it would not recognize the &quot;ES&quot; symbol occurring
+in the reaction definition statement.  [At this point, processing of the model would 
+cease because of the syntax error.]  You will notice that in the above example,
+each line ends with a semicolon.  In the &appName; language,
 semicolons divide the model definition file into a sequence of statements.
 Each statement ends with a semicolon.  A statement can in principle extend
 over one line, as shown here:
@@ -442,7 +413,7 @@ This definition is logically equivalent to the one-line reaction definition
 above it.  
 </p>
 <p>
-The commas in the statement divide the statement into
+The commas in the reaction definition statement divide the statement into
 <em>elements</em>.  We will explain each element in turn.  In a reaction
 definition statement, the first element is optional, and defines the
 &quot;name&quot; of the reaction.  This is just a symbolic name for the
@@ -476,11 +447,12 @@ for example:
 enzyme_substrate_separate, ES -&gt; E + S, 0.1;
 </pre>
 </blockquote>
-The third element is a reaction rate.  This can be specified as a bare
-number (as shown above), or as a double-quoted string.  When you specify the
-reaction rate as a bare number, you are instructing the &appName; simulator
-to compute the reaction rate using its built-in combinatoric method.  This
-means that the reaction probability density (usually designated with the
+The third element is a reaction rate.  This can be specified as a bare number,
+a mathematical expression, or as a bracketed mathematical expression.  When you specify the
+reaction rate as a bare number or as an (unbracketed) mathematical expression, 
+you are instructing the &appName; simulator to compute the reaction rate 
+using its built-in combinatoric method.  This means that the reaction probability 
+density (usually designated with the
 symbol &quot;<code>a</code>&quot;) per unit time is computed as
 the product of the number of district combinations of reactant species,
 times the reaction rate parameter you specified in the reaction definition.
@@ -509,7 +481,63 @@ of the infinitesimal time interval, and the reaction probability density per
 unit time.  
 </p>
 <p>
-Getting back to our model-building, we see that the forward reaction for
+An example of a reaction definition with a mathematical expression for the
+reaction rate is shown here:
+<blockquote>
+<pre>
+A = 100.0;
+B = 100.0;
+C = 0.0;
+D = 0.0;
+F = 10.0;
+G = 10.0;
+r1, A + B -&gt; C + D, F * G;
+</pre>
+</blockquote>
+In the above example, the parser will attempt to immediately evaluate the
+expression &quot;F * G&quot;.  This evaluation will yield the result 
+&quot;100.0&quot;.  Therefore, the above is functionally equivalent to:
+<blockquote>
+<pre>
+A = 100.0;
+B = 100.0;
+C = 0.0;
+D = 0.0;
+r1, A + B -&gt; C + D, 100.0;
+</pre>
+</blockquote>
+In either case, the built-in combinatoric method for computing the reaction
+rate is used, with a reaction parameter of 100.0.  For some cases, it may
+be desirable to specify a custom reaction rate, in which you specify a 
+mathematical expression that is to be re-evaluated for each reaction event,
+to give the reaction rate.  This might be useful for simulating cooperativity,
+or enzyme reactions, or inhibition.  An example of a reaction defintion with
+a custom reaction rate expression is shown here:
+<blockquote>
+<pre>
+A = 100.0;
+B = 100.0;
+C = 0.0;
+D = 0.0;
+k = 0.1;
+r1, A + B -&gt; C + D, [k * (time + 1.0) * A * B];
+</pre>
+</blockquote>
+The symbol &quot;time&quot; is a special reserved symbol indicating the elapsed
+time of the simulation.
+</p>
+<p>
+Getting back to our previous model-building exercise, we have:
+<blockquote>
+<pre>
+E = 100.0;
+S = 100.0;
+ES = 0.0;
+enzyme_substrate_combine, E + S -&gt; ES, 1.0;
+enzyme_substrate_separate, ES -&gt; E + S, 0.1;
+</pre>
+</blockquote>
+we see that the forward reaction for
 the enzyme and substrate combining, was given a reaction rate parameter of
 1.0, and the reverse of that reaction (enzyme-substrate complex separating)
 was given the rate of 0.1.  
@@ -535,10 +563,23 @@ complex to the enzyme plus product,
 make_product, ES -&gt; E + P, 0.01;
 </pre>
 </blockquote>
+We will also need to define the initial population of the &quot;P&quot;
+species, using the statement:
+<blockquote>
+<pre>
+P = 0.0;
+</pre>
+</blockquote>
+(note that this statement must occur before the &quot;make_product&quot;
+reaction definition statement occurs in the model definition file).
 Putting the three reaction definition statements together, your model
 definition file should look like this:
 <blockquote>
 <pre>
+E = 100.0;
+S = 100.0;
+P = 0.0;
+ES = 0.0;
 enzyme_substrate_combine, E + S -&gt; ES, 1.0;
 enzyme_substrate_separate, ES -&gt; E + S, 0.1;
 make_product, ES -&gt; E + P, 0.01;
@@ -549,32 +590,19 @@ so you may reformat your model definition file using spaces, so that
 it is more tabular:
 <blockquote>
 <pre>
+E = 100.0;
+S = 100.0;
+P = 0.0;
+ES = 0.0;
 enzyme_substrate_combine,    E + S -&gt; ES,      1.0;
 enzyme_substrate_separate,   ES    -&gt; E + S,   0.1;
 make_product,                ES    -&gt; E + P,   0.01;
 </pre>
 </blockquote>
-The above statements define the reactions and (implicitly) the chemical
-species involved in the reactions.  But they do not define the initial
-conditions for a simulation.  In order to simulate this model, we will
-need to supply initial values for the number of molecules of each species
-in the model.  To do this, add the following statements to your model,
-<em>after the reaction definition statements</em>:
-<blockquote>
-<pre>
-E = 100;
-S = 100;
-P = 0;
-ES = 0;
-</pre>
-</blockquote>
-Note that it is very important that these statements appear after the
+Note that it is very important that the  statements defining the initial
+species populations appear before the
 reaction definition statements.  Otherwise, the &appName; interpreter will
-not understand that the symbols refer to species, and will assume that 
-they are <em>macro definitions</em> (a useful and powerful feature defined
-in the reference section of the user manual below).  Note that you must
-specify the initial population of each and every species appearing in the
-model.  They are not implicitly initialized to zero.
+not understand the species symbols appearing in the reaction definition.
 </p>
 <p>
 The final model definition file should look like this:
@@ -598,11 +626,7 @@ ES = 0;
 <p>
 Remember, whitespace is ignored by the &appName; interpreter, so your spacing
 does not need to look exactly like the example shown above.
-Now, let&apos;s save this model definition file in your text editor.  Next,
-let&apos;s clear the &appName; of any model definitions by clicking on the
-&quot;clear runtime variables&quot; button on the main window.  This will
-delete any model definitions that have been loaded into &appName; (but don&apos;t
-worry, the model definition files will not be deleted!).  Now, let&apos;s
+Now, let&apos;s save this model definition file in your text editor.  Now, let&apos;s
 open the model definition file in &appName;, as shown above.  Finally, let&apos;s
 select the &quot;Simulate...&quot; menu item from the &quot;Tools&quot; menu,
 and run a simulation.  Select a stop time of 400.0, and specify an output type
@@ -652,9 +676,9 @@ subdirectory of the directory in which you install the &appName; software.
 sample model definition files in the &quot;samples&quot; subdirectory.
 Please use a different editor, such as WordPad or Emacs, in order to 
 ensure that the files appear properly formatted, in the editor.  <b>You
-may wish to associate &quot;<code>&ccmdlExtension;</code>&quot; files 
+may wish to associate &quot;<code>&cmdlExtension;</code>&quot; files 
 with the WordPad program, so that you can double-click on a
-&quot;<code>&ccmdlExtension;</code>&quot; file and have it open
+&quot;<code>&cmdlExtension;</code>&quot; file and have it open
 (properly formatted) in WordPad.</b>
 </blockquote>
 In addition, there is a <a href="&webBaseURL;/models">repository of
@@ -725,7 +749,8 @@ rules:
 and the underscore character.</li>
 <li>A symbol name must not parsed as a numeric literal (i.e., it cannot
 be a number, such as <code>1.0</code></li>
-<li>the symbols <code>time</code> and <code>N</code> are reserved,
+<li>A symbol name may not start with the first character being a numeric character (0-9)</li>
+<li>the symbols <code>time</code> and <code>Navo</code> are reserved,
 because they represent clock time and Avogadro&apos;s constant, respectively</li>
 </ol>
 Note that Rule #1 above implies that a symbol name cannot contain 
@@ -803,7 +828,7 @@ reaction rate expression for the reaction.  This can be summarized by
 saying that a parameter defined locally supersedes a parameter defined
 globally, of the same name.  The local namespace concept applies only
 to parameters.  Note that defining parameters within the local
-namespace is not possible in the <a href="#ccmdl">Condensed Chemical
+namespace is not possible in the <a href="#cmdl">Chemical
 Model Definition Language</a>.
 </p>
 
@@ -1018,6 +1043,40 @@ k * (A/(N*V)) * (B/(N*V))
 Note that the symbols <code>time</code> and <code>N</code>
 are special symbols, defined <a href="#symbols">above</a>.
 </p>
+
+<p>
+When specifying a mathematical expression, it is important
+to understand the distinction between <b>immediate evaluation</b>
+and <b>deferred evaluation</b>.  An example of immediate evaluation
+is shown here:
+<blockquote>
+<pre>
+A = 1.0;
+B = A * 5.0;
+</pre>
+</blockquote>
+The value for the symbol B is set to 5.0.  The mathematical expression
+appearing in the definition of symbol B is immediately evaluated by the
+parser, so any symbols appearing in that expression (namely, A) must have
+been previously defined as symbols in the model.  The special symbols
+&quot;time&quot; and &quot;Navo&quot; may not be used in immediate-evaluation
+expressions.
+</p>
+<p>
+An example of deferred evaluation is shown her:
+<blockquote>
+<pre>
+A = 1.0;
+B = [A * 5.0];
+</pre>
+</blockquote>
+The square brackets define the expression as a deferred-evaluation expression.
+This means that the parser stores the <em>expression</em> and associates it
+with the symbol B, rather than a value.  The expression will be evaluated by
+the simulation engine only when a value for the symbol "B" is needed.
+The special symbols &quot;time&quot; and &quot;Navo&quot; may be used in
+deferred-evaluation expressions.
+</p>
 </isb:docsubsection>
 
 <isb:docsubsection name="Gillespie Stochastic Algorithm" label="gillespie">
@@ -1104,17 +1163,40 @@ number of molecules (population) of the species in the
 compartment.  
 </p>
 <p>
-Users of the <a href="#ccmdl">Condensed
-Chemical Model Definition Language</a> typically use the
-built-in (default) compartment &quot;<code>univ</code>&quot;,
-eliminating the need to explicitly define a compartment.
-In the <a href="#cmdl">Chemical Model Definition Language</a>,
-it is always necessary to explicitly define at least one
-compartment, with which species can be associated.  It is
-permissible to define more than one compartment; this is
-sometimes done in order to separately model the populations
-of chemical species in two distinct volumes, for example,
-&quot;nucleus&quot; and &quot;cytoplasm&quot;.
+By default, species defined in the <a href="#cmdl">Chemical 
+Model Definition Language</a> are associated with a default
+compartment &quot;<code>univ</code>&quot;  This compartment
+has unit volume.  
+</p>
+<p>
+A non-default compartment can be defined by a symbol definition
+as shown here:
+<blockquote>
+<pre>
+c1 = 1.0;
+</pre>
+</blockquote>
+A species &quot;S&quot; can be associated with this 
+compartment by the statement:
+<blockquote>
+<pre>
+S @ c1;
+</pre>
+</blockquote>
+The special symbol &quot;@&quot; is used to associate a
+species with a compartment.  Note that the species symbol
+&quot;S&quot; and the compartment symbol &quot;c1&quot; must
+have been previously defined, as shown here:
+<blockquote>
+<pre>
+c1 = 1.0;
+S = 100.0;
+S @ c1;
+</pre>
+</blockquote>
+The above statement would tell the parser to define the two
+symbols "S" and "c1" with values 100 and 1, respectively, and
+that "S" is a species associated with the compartment "c1".
 </p>
 
 </isb:docsubsection>
@@ -1126,7 +1208,7 @@ of chemical species in two distinct volumes, for example,
 A species is an abstraction representing a type of molecule or
 molecular state.  A species has a name, which must be unique;
 in addition, a species must be assigned to one (and only one)
-compartment.  A species can also be assigned a population value, 
+compartment.  A species must also be assigned a population value, 
 which is a double-precision floating point number.
 There are two types of species in the &appName; system, <b>floating</b>
 species and <b>boundary</b> species.  
@@ -1148,7 +1230,7 @@ The population of a boundary species is not affected by
 the occurrence of reactions in which the species participates.
 In this sense, a boundary species is not &quot;dynamical&quot;.
 The population of a boundary species can be set to a constant,
-or a more complex tim-dependent function.  The details of
+or a more complex time-dependent function.  The details of
 how to define the population of a boundary species will
 be discussed further below.
 </p>
@@ -1165,9 +1247,6 @@ the instances of chemical species &quot;X&quot; in the
 cytoplasm and nucleus, respectively.
 </p>
 </isb:docsubsection>
-
-
-
 
 <!-- ========== REACTIONS ========== -->
 
@@ -1221,11 +1300,11 @@ In such a reaction, a single molecules of species
 <code>A</code> is used in the reaction, but also
 produced, so the net change in the population of 
 species <code>A</code> from this reaction is zero.
-Note that such a reaction is not a good model of catalysis.
-A simple model of catalysis in which species <code>A</code>
+Note that the above reaction definition is not a good model of 
+catalysis.  A simple model of catalysis in which species <code>A</code>
 catalyzes the transformation of species <code>B</code> into
-species <code>C</code> would involve at least
-three reactions, as shown here:
+species <code>C</code> would involve three separate 
+reactions, as shown here:
 <blockquote>
 <pre>
 A + B -&gt; AB
@@ -1255,8 +1334,8 @@ of this reaction.  This is mostly useful for defining
 a species whose role in a system is as an externally
 applied &quot;signal&quot; or &quot;input&quot;.
 Note that special notation is used to describe a
-boundary species in the Condensed Chemical Model Definition 
-Languae (CCMDL), as described <a href="#ccmdl">below</a>.
+boundary species in the Chemical Model Definition 
+Language (CMDL), as described <a href="#cmdl">below</a>.
 </p>
 
 </isb:docsubsection>
@@ -1339,18 +1418,8 @@ involved in the reactions, and any
 <a href="#parameters">parameters</a>
 defined for the model or the reactions.  In addition,
 a model contains all of the <a href="#compartments">compartments</a>
-with which the species are associated.  Note that
-a model does not incorporate the initial species populations.
-Initial species populations are supplementary information
-that, together with a model, form the basis for initiating
-a simulation.
-</p>
-<p>
-In the <a href="#cmdl">CMDL</a> language, a model
-is defined by default, and does not need to be explicitly
-defined in a model definition file.  In the 
-<a href="#ccmdl">CCMDL</a> language, a model always
-needs to be explicitly defined.
+with which the species are associated.  A model
+also incorporates the initial species populations.
 </p>
 <p>
 <a name="reactionratespeciesmode" />
@@ -1367,114 +1436,96 @@ rate is always computed using the number of molecules
 of the species.  In the case of the 
 <a href="#reactionratebuiltin">default method of
 computing the reaction rate</a>, this means that
-the reaction rate is computed as the number of
-distinct 
-</p>
-
-</isb:docsubsection>
-
-
-
-<!-- ========== SPECIES POPULATIONS ========== -->
-
-<isb:docsubsection name="Species Populations Collections" label="speciespopulations">
-<p>
-In order to simulate the kinetics of a set of chemical reactions,
-it is necessary to define initial conditions.  This means defining
-the initial species populations for all species in the model.  In
-addition, the time series results of a simulation consist of
-&quot;snapshots&quot; of the species population values at different times.
-Species populations are stored in &quot;species populations collection&quot;
-data structures.  Such a structure maps a species name to a
-&quot;population value&quot;.  Floating species must have a floating-point 
-(double-precision) population value.  Bounday species may have a fixed 
-population defined (which must be a floating-point value), or they may 
-have their population defined as a mathematical expression involving the 
-symbol &quot;time&quot;, which represents the amount of time elapsed in the 
-simulation.
+the reaction rate is computed as the product of the 
+number of distinct combinations of reactant molecules,
+and the reaction parameter.  The <b>molecules</b>
+reaction rate species mode is the default.
 </p>
 <p>
-At this time, the stochastic simulator in the &appName; system
-does not permit defining an arbitrary probability distribution 
-of initial conditions.  Instead, precise initial species populations 
-for all species must be defined; these initial populations do 
-not vary across different realizations in the ensemble.
+In the <b>concentration</b> reaction rate species mode,
+the contribution of a given species to a reaction rate
+is computed using the molar concentration of the species
+(number of moles of the species, divided by the volume
+of the compartment).  
 </p>
-</isb:docsubsection>
 
-<!-- ========== MODEL INSTANCE ========== -->
-
-<isb:docsubsection name="Model Instances" label="modelinstance">
-<p>
-A <a href="#models">model</a> together with initial data consisting
-of <a href="#speciespopulations">species populations</a> for all
-chemical species at the initial time for the simulation, are known
-collectively as a <b>model instance</b>.  A model instance is the
-starting point for running a simulation.  A model instance may be
-defined by taking any model and any collection of initial species
-populations, provided that every species in the model has a corresponding
-population value in the species populations collection.  
-</p>
 </isb:docsubsection>
 
 </isb:docsection>
-
 
 <!-- ========== CMDL COMMON CONCEPTS ========== -->
 <isb:docsection name="Chemical Model Definition Language Common Concepts" label="commonconcepts">
 
 <p>
-A <a href="#modelinstances">model instance</a> can be defined 
-using one or more text files, known as <b>model definition</b> 
-files.  These files can (subject to certain restrictions) be 
-in any of three languages:
-<ul>
-<li>Chemical Model Definition Language (CMDL)</li>
-<li>Condensed Chemical Model Definition Language (CCMDL)</li>
-<li><a href="&sbmlURL;">Systems Biology Markup Language</a> (SBML)</li>
-</ul>
-Each language has different strengths and limitations.  The
-model definition file specifies one or more <a href="#models">models</a>
-and <a href="#speciespopulations">species populations collections</a>.
-Once the model definition file has been loaded into &appName;,
-the models and species populations collections are available for
-simulation.  One can select a model and a species populations
-collection (known collectively as a &quot;model instance&quot;),
-and simulate the dyamics of the model with the given species
-populations collection as the initial conditions.
+This section describes some basic concepts that are used in the
+Chemical Model Definition Language (CMDL).
 </p>
 
 
-<!-- ========== Numeric Macros ========== -->
-<isb:docsubsection name="Numeric Macros" label="numericmacros">
+<!-- ========== Symbol Values ========== -->
+<isb:docsubsection name="Symbol Values" label="symbolvalues">
 <p>
-Both the CMDL and the CCMDL support a <b>numeric macro</b>
-construct.  This is a name-value pair in which the name
-is required to be a valid <a href="#symbols">symbol name</a>,
-and the value is required to be a number.   Numeric macros
-are referenced using a square bracket notation, as shown in the
-sections describing the <a href="#cmdl">CMDL</a> and
-the <a href="#ccmdl">CCMDL</a> languages below.
+A fundamental concept in the CMDL language is the 
+<b>symbol value</b>.  A symbol value is an assocation between
+a <a href="#symbols">symbol name</a> and a <b>value</b>.  A
+<b>value</b> may be defined as a
+<a href="#expressions">mathematical expression</a>, in which
+case it is immediately evaluated and the resulting floating
+point value is associated with the symbol.  Or, the value may be
+defined as a bracketed mathematical expression (enclosed in
+square brackets), in which case the expression itself is stored
+and associated with the symbol name.  The former type of value
+(immediately evaluated expression) is akin to a numeric macro.
+The latter type of value (expression with deferred evaluation)
+is similar to a symbolic function definition in <em>Mathematica</em>.
 </p>
 <p>
-Although they are superficially similar, numeric macros
-differ from <a href="#parameters">parameters</a> in that
-parameters are associated with a <a href="#models">model</a>
-or <a href="#reactions">reaction</a>, and are exported 
-along with a <a href="#modelinstances">model instance</a>.
-Parameters, when referenced in a rate expression or elsewhere,
-are not evaluated by the parser.  Instead, they are evaluated
-by the underlying scripting engine, when the mathematical
-expression (e.g., rate expression) is evaluated in the
-course of running a simulation.  In contrast, numeric
-macros are evaluated by the parser, and the parser substites
-values for macro references as it parses the model definition
-file.  Parameters are supported mostly for compatibility
-with SBML.  In the CMDL and CCMDL, it is often more convenient
-to use numeric macros.  This avoids needless parameter lookups
-during the execution of a simulation, because the parser
-translates macro references to numeric literals before
-the parsed model definition is passed to the scripting engine.
+As mentioned previously, symbol names must be unique.  This means
+that you cannot use the same symbol name for two different purposes.
+For example, it is illegal to define both a species "S" and a 
+compartment "S".  All elements of the &appName; system (reaction names,
+species names, compartment names, and parameter names) live in the 
+same "namespace", and so each element must have a globally unique name.
+</p>
+<p>
+In the CMDL, compartments, species, and parameters all start out as symbol
+value definitions like this:
+<blockquote>
+<pre>
+S = 1.0;
+</pre>
+</blockquote>
+In this example, "S" is the symbol name, and the value is 1.0.
+The &appName; parser determines that a given symbol name is 
+a species, compartment, or parameter based on how the symbol
+is subsequently used.  For example, if the symbol "S" appears 
+as a reactant in a subsequent reaction definition,
+<blockquote>
+<pre>
+r1, A + S -&gt; C + D, 1.0;
+</pre>
+</blockquote>
+the symbol "S" is automatically promoted to be a species.
+It cannot be subsequently used as a compartment or other
+type of symbol.  For the case of a compartment, suppose that 
+a symbol "comp" is defined as shown here:
+<blockquote>
+<pre>
+comp = 2.0;
+</pre>
+</blockquote>
+If this is later followed by a statement such as:
+<blockquote>
+<pre>
+S @ comp;
+</pre>
+</blockquote>
+the parser will automatically promote the symbol "comp" to
+be a compartment (and "S" will be promoted to be a species,
+if this has not already happened).  If at the end of processing
+all statements in the model definition file, there are symbols
+left that are neither species nor compartments, these symbols
+are added to the model as global <a href="#parameters">parameters</a>.
 </p>
 
 </isb:docsubsection>
@@ -1483,11 +1534,11 @@ the parsed model definition is passed to the scripting engine.
 
 <isb:docsubsection name="Statements" label="statements">
 <p>
-Both the CMDL and CCMDL languages are centered around the concept
+The CMDL langauge is centered around the concept
 of a <b>statement</b>.  Model definition files are broken into
 statements by use of the reserved symbol &quot;<code>;</code>&quot;,
 the semicolon.  Each statement must terminate with a semicolon, even
-if there is only one statement in the file.  The CMDL or CCMDL
+if there is only one statement in the file.  The CMDL 
 model definition file is tokenized and parsed by the parser, and
 turned into an ordered collection of statements that are executed
 by the scripting engine.  In this way, there is a logical decoupling
@@ -1515,177 +1566,6 @@ category.  This is because in the graphical user interface, various
 graphical elements (menu items, dialog boxes, and other controls)
 are used to instruct the application to perform actions, rather
 than the scripting language.
-</p>
-
-</isb:docsubsection>
-
-<!-- ========== Elements ========== -->
-<isb:docsubsection name="Elements" label="elements">
-<p>
-<a href="#statements">Statements</a> may contain
-zero or more <b>elements</b>, that can be thought of
-as modifiers that specify information about the statement.  
-Elements may occur in any order within a statement; the
-order in which the elements appear in a statement is not important.
-For the case of a chemical <a href="#reactions">reaction</a>
-statement, the reaction rate is a required element, that
-specifies the rate of the reaction being defined.
-</p>
-<p>
-An element can be one of several possible data types.  
-</p>
-<p>
-<b>Numeric</b> elements are evaluated by the parser
-and stored as a double-precision floating-point value.
-A mathematical expression may be used to define
-a numeric element; in this case, the mathematical
-expression is evaluated by the parser, and the result
-is the value of the numeric element. A mathematical
-expression used to define a numeric element is
-represented using square brackets, as shown in the
-following example:
-<blockquote>
-<pre>
-[A + B / 2.0]
-</pre>
-</blockquote>
-In an expression used to define a numeric element,
-all symbols must be previously defined 
-<a href="#numericmacros">numeric macros</a>.
-</p>
-<p>
-<a name="stringelements" />
-<b>String</b> elements are evaluated by the parser 
-and stored as a variable-length text string.  A
-mathematical expression may be embedded in a string
-element.  In this case, the parser evaluates the
-expression and embeds a formatted representation
-of the value of the expression, into the string,
-at the point where the expression was located.
-A mathematical expression embedded in a text string is
-represented using a dollar-sign-square-bracket construct, 
-as shown in the following example:
-<blockquote>
-<pre>
-"the value of my expression is: $[A + B / 2.0]"
-</pre>
-</blockquote>
-In the above example, the parser would attempt to
-evaluate the mathematical expression 
-<blockquote>
-<pre>
-A + B / 2.0
-</pre>
-</blockquote>
-In which the symbols <code>A</code> and <code>B</code>
-are previously defined 
-<a href="#numericmacros">numeric macros</a>.  Assuming 
-that <code>A</code> was previously defined with a value
-of 1.0, and that <code>B</code> was previously defined
-with a value of 2.0, the parser would evaluate the
-mathematical expression and get a result of 2.0.
-In this case, the above string element would be equivalent to:
-<blockquote>
-<pre>
-"the value of my expression is: 2.0"
-</pre>
-</blockquote>
-</p>
-<p>
-It should be noted that in some cases in the 
-<a href="#ccmdl">CCMDL</a> language, string elements are
-<em>implied</em>, even though no double quotes are used.
-For example, in defining a <a href="#reactions">reaction</a>
-in the CCMDL, the reaction name is specified without 
-double quotes.  Despite this, the reaction name is implicitly
-a string element, which has certain implications for
-embedding mathematical expressions within the string,
-as described <a href="#numericmacrosexpressions">below</a>.
-</p>
-<p>
-The details of how <b>elements</b> make up statements
-will be described in the sections defining the
-<a href="#ccmdl">CCMDL</a> and the <a href="#cmdl">CMDL</a>
-languages below.
-</p>
-<p>
-An important point about quoted strings is that they may not
-be continued across lines of input.  The &appName; parser will
-signal an error if a quoted string is not terminated on the
-same line of input where it is initiated.  Thus the following
-input statement would be a syntax error:
-<blockquote>
-<table>
-<tr>
-<td>
-<b>ILLEGAL:</b>&nbsp;&nbsp;&nbsp;&nbsp;
-</td>
-<td>
-<pre>
-printModel "my
-           model";
-</pre>
-</td>
-</tr>
-</table>
-</blockquote>
-because the string that begins with &quot;my&quot; ends on a
-different line than the line where the string begins.
-</p>
-<p>
-<b>Data list</b> elements are elements that contain
-one or more subelement.  Data lists are indicated
-with parentheses.  An example data list element containing
-string elements is shown here:
-<blockquote>
-<pre>
-("A" "B" "C")
-</pre>
-</blockquote>
-An example data list element containing numeric elements 
-is shown here:
-<blockquote>
-<pre>
-(1.0 3.0 1.0)
-</pre>
-</blockquote>
-It is even possible to mix subelement data types in
-a data list element, as shown here:
-<blockquote>
-<pre>
-(1.0 "A" 2.0)
-</pre>
-</blockquote>
-Note that not all types of data lists are permitted 
-to be used in every <a href="#statements">statement</a>
-context.  
-</p>
-<p>
-It is allowed to define a data list with zero elements,
-as shown here:
-<blockquote>
-<pre>
-( )
-</pre>
-</blockquote>
-</p>
-<p>
-<b>Modifier</b> elements are analogous to keywords.
-A modifier element is represented by a single
-bareword, such as &quot;<code>on</code>&quot; or
-&quot;<code>off</code>&quot;.  Modifiers are typically 
-used to describe an aspect of a statement that has
-a finite, discrete set of possible values.  For example,
-in the <a href="#cmdl">CMDL</a> language, 
-the statement that defines a <a href="#species">species</a>, 
-allows for a species to be &quot;floating&quot; or
-a &quot;boundary&quot; species.  Therefore two modifiers
-are permitted, only one of which can be specified for
-a given species definition statement:  
-&quot;<code>floating</code>&quot;
-and &quot;<code>boundary</code>&quot;.  Note that in a
-statement context, only certain modifiers are
-allowed.
 </p>
 
 </isb:docsubsection>
@@ -1718,12 +1598,12 @@ The specific syntax for including a model definition file
 within another model definition file, is shown here:
 <blockquote>
 <pre>
-include "myFile&ccmdlExtension;";
+#include "myFile&cmdlExtension;";
 </pre>
 </blockquote>
-where &quot;<code>myFile&ccmdlExtension;</code>&quot; is the name of the file 
+where &quot;<code>myFile&cmdlExtension;</code>&quot; is the name of the file 
 that is to be &quot;included&quot;.  The contents of 
-&quot;<code>myFile&ccmdlExtension;</code>&quot; are parsed at exactly the
+&quot;<code>myFile&cmdlExtension;</code>&quot; are parsed at exactly the
 point where the include statement is encountered in the file,
 after all statements in the <em>including</em> file preceding
 the <code>include</code> statement have been parsed.  
@@ -1735,40 +1615,32 @@ in order to load a separate file containing &quot;boilerplate&quot;
 macro definitions and reaction definitions that are shared
 between different models.
 </p>
-<p>
-Please take note of the following rules (which are admittedly
-a bit jabberwockeyan):  A CCMDL file may include other CCMDL or 
-<a href="#cmdl">CMDL</a> files.  However, a CMDL file may not include
-a <a href="#ccmdl">CCMDL</a> file, because the parser will not 
-have the proper CCMDL translator initialized to translate the included
-CCMDL file into the CMDL language.
-</p>
 
 </isb:docsubsection>
 
 <isb:docsubsection name="Comments" label="comments">
 <p>
-Both the CMDL and the CCMDL provide a mechanism for
+The CMDL provides a mechanism for
 embedding explanatory comments in a model definition file.
-A comment is a fragment of text beginning with a pound sign
-character (&quot;<code>#</code>&quot;).  All text from the
-pound sign character, to the end of the line, are considered
+A comment is a fragment of text beginning with a double-slash
+(&quot;<code>//</code>&quot;).  All text from the
+double-slash, to the end of the line, are considered
 by the parser to be a comment, and are ignored.  The following
 example shows an example of a comment:
 <blockquote>
 <pre>
-        # this is a comment
+        // this is a comment
 </pre>
 </blockquote>
 It is acceptable to include a comment on the same line as an
 actual statement, as shown here:
 <blockquote>
 <pre>
-&lt;some statement&gt;;    # this is a comment
+&lt;some statement&gt;;    // this is a comment
 </pre>
 </blockquote>
 In the above example, the statement would be parsed, but everything
-after (and including)  the pound sign would be ignored.
+after (and including)  the double-slash would be ignored.
 </p>
 <p>
 The &appName; system also supports <em>multi-line comments</em>.
@@ -1791,21 +1663,21 @@ as shown here:
 <pre>
 /*
  commented out temporarily for testing purposes (sramsey 2003/05/09)
-G4_dimer_binding_at_DNA4,     G4D_free + DNA4 -&gt; G4D_DNA4,     [kf];
-G4_dimer_debinding_at_DNA4,   G4D_DNA4 -&gt; G4D_free + DNA4,     [kr];
+G4_dimer_binding_at_DNA4,     G4D_free + DNA4 -&gt; G4D_DNA4,     kf;
+G4_dimer_debinding_at_DNA4,   G4D_DNA4 -&gt; G4D_free + DNA4,     kr;
  */
 </pre>
 </blockquote>
 Using the multiline comment syntax for this case is easier beacause
-you do not have to add a pound symbol &quot;<code>#</code>&quot; to each
+you do not have to add a pound symbol &quot;<code>//</code>&quot; to each
 line that you are commenting out.
 </p>
 </isb:docsubsection>
 
 <isb:docsubsection name="Exporter Plug-ins" label="exporterplugins">
 <p>
-The &appName; system has two different plug-ins for exporting
-a <a href="#modelinstances">model instance</a> to different formats.
+The &appName; system has a framework of plug-ins for exporting
+an &appName; <a href="#model">model</a> to different file formats.
 Each exporter plug-in has an <b>exporter alias</b> defined.  The
 default exporter is the exporter for <a href="#sbml">Systems Biology
 Markup Language</a> (SBML).  The SBML exporter has the exporter
@@ -1817,17 +1689,10 @@ The full list of exporters is defined here:
 <dd>exports a model instance to <a href="#sbml">SBML</a>
 <p />
 </dd>
-<dt><code>command-language</code></dt>
-<dd>exports a model instance to <a href="#cmdl">CMDL</a>
-<p />
-</dd>
 </dl>
 </blockquote>
 Currently there is no exporter plug-in for the 
-<a href="#ccmdl">CCMDL</a> language.  This is because
-the CCMDL language is not sufficiently expressive to
-describe the full range of possible models that can 
-be defined in the &appName; system.
+<a href="#cmdl">CMDL</a> language. 
 Additional exporter plug-ins may be defined in the future.
 </p>
 </isb:docsubsection>
@@ -1860,98 +1725,75 @@ the simulator alias for the Gillespie algorithm is &quot;<code>gillespie</code>&
 </isb:docsection>
 
 
-<!-- ========== CCMDL ========== -->
+<!-- ========== CMDL ========== -->
 
-<isb:docsection name="Condensed Chemical Model Definition Language (CCMDL)" label="ccmdl">
+<isb:docsection name="Chemical Model Definition Language (CMDL)" label="cmdl">
 
 <p>
-The Condensed Chemical Model Definition Language (CCMDL) is a simplified
+The Condensed Chemical Model Definition Language (CMDL) is a simplified
 model definition language designed to minimize the amount of repetitive
-typing required to define a model.  It lacks some of the power and flexibility 
-of the <a href="#cmdl">Chemical Model Definition Language</a> (CMDL), but it is
-significantly easier to read and write.  The default file extension of model
-definition files in the CCMDL language is the &quot;<code>&ccmdlExtension;</code>&quot;
+typing required to define a model.   The default file extension of model
+definition files in the CMDL language is the &quot;<code>&cmdlExtension;</code>&quot;
 suffix.
-</p>
-<p>
-The CCMDL is implemented as 
-a preprocessor that translates CCMDL statements appearing within 
-the model definition file into the equivalent CMDL statements.  The resulting
-CMDL statements are then passed to the &appName; scripting engine. In general
-it is permissible to include CMDL statements within a CCMDL file; the 
-preprocessor should pass them through unmodified.  This might potentially be useful for
-circumventing certain limitations of the CCMDL model definition language.
 </p>
 
 <isb:docsubsection name="Default Model Elements" label="defaultmodelelements">
 <p>
-One of the distinguishing aspects of the CCMDL is that several core
+One of the distinguishing aspects of the CMDL is that several core
 elements are created by default:
 <ul>
 <li>A <a href="#models">model</a> is created, with model name 
-&quot;<code>myModel</code>&quot;.</li>
-<li>A <a href="#speciespopulations">species populations collection</a> 
-is created, with species populations collection name &quot;<code>sp</code>&quot;.</li>
+&quot;<code>model</code>&quot;.</li>
 <li>A <a href="#compartments">compartment</a> is created, with 
 name &quot;<code>univ</code>&quot; and volume of 1.0 liters</li>
 </ul>
 This provides a built-in &quot;context&quot; for reaction and species
-definitions, without having to manually declare the model, compartment, and
-species populations collection.  Furthermore, species are defined implicitly
-through reaction definitions.  Defining a reaction implicitly defines
-all of the reactant and product species that are declared to participate
-in the reaction.  All species definitions thus implicitly defined are
-automatically associated with the default (&quot;<code>univ</code>&quot;)
+definitions.    All species that are defined are automatically 
+associated with the default (&quot;<code>univ</code>&quot;)
 compartment.  All reactions are automatically associated with the 
 default model (&quot;<code>myModel</code>&quot;).
 </p>
 <p>
-The default &quot;model&quot; in the CCMDL language has a 
+The default &quot;model&quot; in the CMDL language has a 
 <a href="#reactionratespeciesmode">reaction rate species mode</a>
 of &quot;molecules&quot;.  In order to use a reaction rate
-species mode of &quot;concentration&quot;, it is necessary to
-use the <a href="#cmdl">CMDL language</a> instead of the CCMDL 
-language.
-</p>
-<p>
-A special note is in order about <a href="#fileinclusion">file
-inclusion</a> in the CCMDL.  When a file is included within another
-model definition file, all reaction definitions in the included file are
-made for the context of the default model for the including file.
-The included file does <em>not</em> get is &quot;own&quot; default
-model context.  Similarly, the included file does not get its own
-default species populations context; it simply inherits the context
-from the including file. 
+species mode of &quot;concentration&quot;, it is presently necessary to
+use the <a href="#api">programmatic interface</a> to &appName;.
 </p>
 
 </isb:docsubsection>
 
 <isb:docsubsection name="Reaction Statements" label="reactionstatements">
 <p>
-A CCMDL model definition (usually, but not always, a single file) consists
+A CMDL model definition (usually, but not always, a single file) consists
 of a series of <b>statements</b> which are text strings separated by
-semicolons.  Whitespace and newlines are ignored by the CCMDL parser.
+semicolons.  Whitespace and newlines are ignored by the CMDL parser, except
+in a quoted string environment, where whitespace is interpreted literally
+and newlines are illegal.
 </p>
 <p>
-The centerpiece of the condensed model definition
+The centerpiece of the chemical model definition
 language is the reaction statement.  A reaction statement
 defines a one-way chemical reaction in which zero or
 more chemical species participate as reactants, and zero
-or more chemical species participate as products.  The 
-reaction statement implicitly defines the chemical species,
-if they have not been defined by a previous reaction 
-statement.  Reaction statements have three <em>elements</em>
+or more chemical species participate as products.  The species
+appearing in the reaction definition must be previously defined 
+symbols.  Reaction statements have three <em>elements</em>
 separated by commas.  The first element is the reaction name,
 and it is an optional element.  The second element defines
 the reactants and products.  The third element defines the
 reaction rate.  The following example shows a reaction 
-statement in the condensed model definition language:
+statement, along with the preceding species symbol definitions:
 <blockquote>
 <pre>
+A = 100.0;
+B = 100.0;
+C = 0.0;
+D = 0.0;
 creation_of_c_d,  A + B -&gt; C + D,  1.0;
 </pre>
 </blockquote>
-As explained above, the statement ends with the semicolon 
+As explained above, each statement ends with the semicolon 
 character  &quot;<code>;</code>&quot;.
 Note the use of the comma character &quot;<code>,</code>&quot;
 to separate different <em>elements</em> of the statement.
@@ -1987,17 +1829,16 @@ rather than using the built-in method of
 computing the reaction rate.   To specify a custom
 reaction rate, the reaction rate element should be
 defined as a string data type.  This is accomplished
-by substituting a quoted string containing a 
-mathematical expression, in lieu of the literal
-numeric reaction parameter.  For the example of
-the above reaction, one might write:
+by substituting a bracketed mathematical expression.
+In the example of the above reaction, one might write:
 <blockquote>
 <pre>
-creation_of_c_d,  A + B -&gt; C + D,  "2.0 * A * B";
+creation_of_c_d,  A + B -&gt; C + D,  [2.0 * A * B];
 </pre>
 </blockquote>
-The double quotes are required in order to tell the
-parser that the reaction rate is a custom reaction rate.
+The square brackets are required in order to tell the
+parser that the reaction rate is a custom reaction rate, for
+deferred (rather than immediate) evaluation.
 The text inside the quotes is parsed as a
 <a href="#expressions">mathematical expression</a>
 that typically involves species name symbols, numeric literals,
@@ -2008,177 +1849,126 @@ special symbols such as &quot;<code>time</code>&quot;.
 In the above example, the reaction rate will be computed
 as the product of the number <code>2.0</code> times the
 product of the populations of species <code>A</code> and 
-<code>B</code>, in molecules.  Note that this is in contrast 
-to the <a href="#cmdl">CMDL</a>, in which a species symbol
-appearing in a reaction rate expression can potentially
-refer to the <em>concentration</em> of the chemical
-species, or to the populations of the species (in molecules).
+<code>B</code>, in molecules. 
 </p>
 <p>
-It should be emphasized that the CCMDL parser determines
+It should be emphasized that the CMDL parser determines
 which type of reaction rate computation method to use, based
-on the <em>data type</em> of the third element (the text 
-that appears after the second comma) of the reaction
-definition.  As shown above, if the data type is numeric, the
+on whether or not the reaction rate is specified using square
+brackets.  As explained above, if the rate expression is not
+bounded by square brackets, the
 parser will use the built-in reaction rate computation method.
-If the data type is a quoted string, the parser will assume
-that the reaction rate computation method is a custom rate
-whose expression is contained in the string.  This is why
-it is essential to include the double-quotes when defining
-a chemical reaction with a custom reaction rate expression.
+If the rate expression is bounded by square brackets, 
+the parser will assume
+that the reaction rate computation method is a custom rate. 
 </p>
 <p>
 Note that specifying a custom reaction rate using a
-mathematical exprssion in a quoted string has a significant
+mathematical expression (in square brackets) has a significant
 drawback, relative to using the built-in method of computing
-the reaction rate.  The custom reaction rate method increases
-the computational complexity of the simulation, therefore
-making the simulation of the model slower.  Therefore,
-reaction rates should be specified using quoted strings
-containing mathematical expressions, only in those cases
-where it is truly necessary to do so. 
+the reaction rate.  The custom reaction rate is more expensive
+to compute, in terms of the number of CPU instructions per reaction
+event in the simulation. 
 </p>
 
 </isb:docsubsection>
 
-<isb:docsubsection name="Numeric Macros and Expressions" label="numericmacrosexpressions">
+<isb:docsubsection name="Symbol Values and Expressions" label="numericmacrosexpressions">
 <p>
-Often, a single numeric value will be used frequently
+Often, a single value will be used frequently
 throughout a model definition file.  For example, a reaction
 rate parameter of <code>1.0</code> may be used for many reactions
 in a given model definition file.  This can make it tedious
 to modify the parameter once the model definition file has
-been written.  The <a href="#numericmacros">numeric macro</a>
+been written.  The <a href="#symbolvalues">symbol value</a>
 construct makes it easier to centralize definition of numeric
-values or parameters, in the model definition file.  In defining
-a numeric macro in a CCMDL model definition file, it is required
-that the macro name not conflict with any species names previously
-defined.  Here, &quot;previously&quot; means at a point higher
-up in the model definition file that is being parsed.
-When the CCMDL parser encounters a statement such as this:
+values in the model definition file. One can define a symbol
+such as this:
 <blockquote>
 <pre>
 k = 1.0;
 </pre>
 </blockquote>
-If no species &quot;<code>k</code>&quot; has been previously
-(implicitly) declared by listing &quot;<code>k</code>&quot; as
-a participating species in a chemical reaction, then 
-&quot;<code>k</code>&quot; is declared as a numeric macro with
-the value <code>1.0</code>.  If the symbol &quot;<code>k</code>&quot;
-has been previously declared as a reactant or product in a chemical
-reaction, the statement is taken to mean that the initial
-species population of species &quot;<code>k</code>&quot; is
-the value <code>1.0</code>.
+This declares a symbol "k" and associates it with
+the value <code>1.0</code>. 
 </p>
 <p>
-To refer to a macro, square brackets are used.  For example,
-to define a reaction in which the reaction rate is the
-built-in reaction rate method, with a reaction rate parameter
-given by the value of the macro &quot;<code>k</code>&quot;,
-one would write a statement such as this:
+This symbol may be referenced in any subsequent
+mathematical expression in the model definition file.
+For example, we may define a reaction whose rate is "2.0 * k":
 <blockquote>
 <pre>
-creation_of_c_d,  A + B -&gt; C + D,  [k];
+creation_of_c_d,  A + B -&gt; C + D,  2.0 * k;
 </pre>
 </blockquote>
-The square brackets instruct the parser that the symbol
-within the square brackets is a numeric macro whose value
-should be substituted in place of the token 
-&quot;<code>[k]</code>&quot; as the model definition
-file is being parsed.  The parser would then automatically
-(and transparently) translate the above statement into:
-<blockquote>
-<pre>
-creation_of_c_d,  A + B -&gt; C + D,  1.0;
-</pre>
-</blockquote>
-provided that the numeric macro &quot;<code>k</code>&quot;
-had been previously defined as described above.
+The absence of square brackets around the "2.0 * k" expression 
+instructs the parser to immediately evaluate this expression,
+and to use the resultant value as the rate for the reaction.
 </p>
 <p>
-It is also possible to embed a macro reference in
-a quoted string element, such as in a custom reaction
-rate expression:
+In addition, the "k" symbol may be referenced in a 
+deferred-evaluation mathematical expression, in which
+case "k" is evaluated as a model parameter (this works
+because the "k" symbol will be added to the model as
+a parameter, if it is not used as a species or compartment
+anywhere in the model):
 <blockquote>
 <pre>
-creation_of_c_d,  A + B -&gt; C + D,  "$[k] * A * B";
+creation_of_c_d,  A + B -&gt; C + D,  [2.0 * k * A * B];
 </pre>
 </blockquote>
-Note the dollar sign preceding the &quot;<code>[k]</code>&quot;.
-The dollar sign is required when a macro reference is embedded
-in a quoted string (i.e., in a fragment of text between
-double-quote characters).  
 </p>
 <p>
-A macro definition may reference another macro, as shown
-here:
+In the above example, the rate of reaction 
+"creation_of_c_d" is defined as the expression "2.0 * k * A * B",
+as a <em>deferred evaluation expression</em>.  This means
+that each time the rate needs to be computed, this expression
+is used.  This is sometimes referred to as a "custom rate
+expression", to distinguish it from the built-in (combinatoric)
+method of computing the reaction rate based on a floating-point
+reaction parameter.
+</p>
+<p>
+A mathematical expression may also be embedded within a 
+symbol name using a double-quote syntax, as shown here:
 <blockquote>
 <pre>
 k1 = 1.0;
-k2 = [k1];
+"my_reaction[2.0 * k1]", A + B -&gt; C + D, 1.0;
 </pre>
 </blockquote>
-The above definition is equivalent to:
+In the above, the parser detects the square brackets 
+within the quoted string, and attempts to immediately
+evaluate the expression within the square brackets. The
+result of the evaluation is converted to an integer, and
+interpolated into the quoted string. This example would
+therefore be equivalent to the reaction definition:
+<blockquote>
+<pre>
+k1 = 1.0;
+"my_reaction2", A + B -&gt; C + D, 1.0;
+</pre>
+</blockquote>
+The decimal point does not appear in "my_reaction2" because
+the numeric value within the string has been converted
+to an integer.  This is occasionally useful in combination
+with the <a href="#loops">loop</a> construct defined below.
+This technique can also be used in defining a symbol value,
+as shown here:
+<blockquote>
+<pre>
+k1 = 1.0;
+"k[ 2.0 * k1 ]" = 1.0;
+</pre>
+</blockquote>
+The above example is equivalent to:
 <blockquote>
 <pre>
 k1 = 1.0;
 k2 = 1.0;
 </pre>
 </blockquote>
-In this case, the parser immediately
-substitutes <code>1.0</code> when the
-token &quot;<code>[k1]</code>&quot; is
-encountered.
-</p>
-<p>
-Beyond being useful for macro references, the square
-brackets actually instruct the parser to evaluate
-a mathematical expression, in which symbols are understood
-to be macro references.  The following example containing
-two macro definitions illustrates:
-<blockquote>
-<pre>
-k1 = 1.0;
-k2 = [k1 + 1.0];
-</pre>
-</blockquote>
-The above definitions are equivalent to:
-<blockquote>
-<pre>
-k1 = 1.0;
-k2 = 2.0;
-</pre>
-</blockquote>
-The parser, upon encountering the square brackets,
-translates everything inside the square brackets as
-a mathematical expression.  Any symbols appearing
-in that expression must be previously defined numeric
-macros; the values of the macros are used in evaluating
-the expression.
-</p>
-<p>
-Note that the dollar-sign-square-bracket construct
-used in quoted strings, also evaluates everything
-inside the square brackets as a mathematical expression.
-This permits constructions as shown here:
-<blockquote>
-<pre>
-k1 = 1.0;
-my_reaction, A + B -&gt; C + D, "$[k1 + 1.0] * A * B";
-</pre>
-</blockquote>
-The parser will attempt to evaluate the text in between
-the square brackets as a mathematical expression in which
-symbols are numeric macros that must have been previously
-defined.  In this case, after the expression is evaluated,
-the above statements would be equivalent to:
-<blockquote>
-<pre>
-k1 = 1.0;
-my_reaction, A + B -&gt; C + D, "2.0 * A * B";
-</pre>
-</blockquote>
+after translation by the parser.
 </p>
 <p>
 The mathematical expression facility allows
@@ -2187,7 +1977,7 @@ to include simulation time.  As an illustration,
 consider the following exmple reaction definition:
 <blockquote>
 <pre>
-my_reaction, A + B -&gt; C + D, "2.0 * A * B * time^0.5";
+my_reaction, A + B -&gt; C + D, [2.0 * A * B * time^0.5];
 </pre>
 </blockquote>
 The above defines a reaction in which the reaction
@@ -2196,95 +1986,36 @@ time.
 </p>
 <p>
 In addition to the <code>time</code> symbol,
-there is a special symbol <code>N</code> that
+there is a special symbol <code>Navo</code> that
 defines the Avogadro constant.  This is occasionally
 useful if you have a numeric macro that you wish
 to specify in terms of moles.  For example:
 <blockquote>
 <pre>
-k = [3.6 * 10^(-45)];
-my_reaction, A + B -&gt; C + D, "k * N * A * N * B";
+k = 3.6 * 10^(-45);
+my_reaction, A + B -&gt; C + D, [k * N * A * N * B];
 </pre>
 </blockquote>
-In the above definition, the macro <code>k</code>
+In the above definition, the symbol <code>k</code>
 is defined in terms of inverse moles squared.
 So to regain the correct units in the reaction
-rate expression, the factor <code>N</code>
+rate expression, the factor <code>Navo</code>
 is multiplied by each species symbol appearing
 in the reaction rate expression.
-</p>
-<p>
-In addition to using mathematical expressions and
-macros to define the reaction rate, one can also
-use mathematical expressions and macros in defining
-the reaction name, and even the reactant/product
-species.  In this case, it is important to remember
-that the reaction name, and the name of any species
-participating in a reaction, are <em>implicit string
-elements</em>.  This means that they are evaluated
-by the parser as if they are string elements, even
-though no double quotes are required.  Furthermore,
-this means that in order to embed a mathematical
-expression in the reaction name, a dollar-sign-square-bracket
-construct is required.  For example, consider
-the following:
-<blockquote>
-<pre>
-k = 1;
-my_reaction_$[k+1], A -&gt; B, 1.0;
-</pre>
-</blockquote>
-Again, the dollar sign is required because
-the &quot;<code>my_reaction_$[k]</code>&quot;
-is parsed <em>as if it were enclosed in double quotes</em>.
-In a string context, a dollar-sign-square-bracket 
-is required in order to embed a mathematical expression.
-The above example, after the parser translates the
-mathematical expresion, would be equivalent to
-the following:
-<blockquote>
-<pre>
-k = 1;
-my_reaction_2, A -&gt; B, 1.0;
-</pre>
-</blockquote>
-Similarly, a mathematical expression can be used in
-defining a species name.  The following example
-illustrates this:
-<blockquote>
-<pre>
-k = 1;
-my_reaction, A$[k+1] -&gt; B, 1.0;
-</pre>
-</blockquote>
-The above example, after the parser translates the
-mathematical expression, is equivalent to
-the following:
-<blockquote>
-<pre>
-k = 1;
-my_reaction, A2 -&gt; B, 1.0;
-</pre>
-</blockquote>
-The above-described feature of embedding mathematical
-expressions in the definition of string elements such 
-as species names or the reaction name, is primarily
-useful in conjunction with the <a href="#loops">loop</a>
-construct, to be described below.
 </p>
 
 </isb:docsubsection>
 
 <isb:docsubsection name="Specifying Species Populations" label="specifyingspeciespopulations">
 <p>
-In the CCMDL, the initial populations of species
+In the CMDL, the initial populations of species
 are specified using a numeric element, as shown
 here:
 <blockquote>
 <pre>
-my_reaction, A -&gt; B, 1.0;
 A = 100;
 B = 100;
+my_reaction, A -&gt; B, 1.0;
 </pre>
 </blockquote>
 In the above example, species <code>A</code> and
@@ -2303,9 +2034,9 @@ to use a mathematical expression, as shown here:
 <blockquote>
 <pre>
 N = 10.0;
+A = N * 10.0;
+B = N * 10.0;
 my_reaction, A -&gt; B, 1.0;
-A = [N * 10.0];
-B = [N * 10.0];
 </pre>
 </blockquote>
 In this case, the symbol <code>N</code> is 
@@ -2373,9 +2104,9 @@ expression that is parsed immediately by the parser:
 <blockquote>
 <pre>
 num = 10;
-my_reaction, $A -&gt; B, 2.0;
-A = [num * 10];
+A = num * 10;
 B = 100;
+my_reaction, $A -&gt; B, 2.0;
 </pre>
 </blockquote>
 The right-hand side of the statement defining the
@@ -2396,9 +2127,9 @@ boundary species population. One can define a boundary
 species with a non-integer population value, as shown here:
 <blockquote>
 <pre>
-my_reaction, $A -&gt; B, 2.0;
 A = 0.5;
 B = 100;
+my_reaction, $A -&gt; B, 2.0;
 </pre>
 </blockquote>
 This use of a boundary species is not necessary in this case, 
@@ -2413,9 +2144,9 @@ is governed by a mathematical expression involving the
 special symbol <code>time</code>, as in the following example:
 <blockquote>
 <pre>
-my_reaction, $A -&gt; B, 2.0;
 A = "10 * time";
-B = 100;
+B = 100;m
+y_reaction, $A -&gt; B, 2.0;
 </pre>
 </blockquote>
 In this case, the boundary species <code>A</code>
@@ -2448,7 +2179,7 @@ population is externally controlled.
 
 <isb:docsubsection name="Loops" label="loops">
 <p>
-The CCMDL language contains a looping construct that
+The CMDL language contains a looping construct that
 permits defining a family of model elements where
 a single counter is incremented for each member of the
 family.  For example, one might wish to generate a family
@@ -2468,9 +2199,9 @@ This can be accomplished with the &quot;<code>loop</code>&quot;
 keyword, as shown here:
 <blockquote>
 <pre>
-loop "i": start 1, stop 4
+loop (i, 1, 4)
 {
-  reaction_$[i],   A$[i] -&gt; B$[i], 1.0;
+  "reaction_[i]",   "A[i]" -&gt; "B[i]", 1.0;
 }
 </pre>
 </blockquote>
@@ -2479,7 +2210,7 @@ the loop index, and it is incremented from 1 to 4 in steps
 of one.  For each iteration of the loop, all statements between
 the curly braces are executed.  More than one statement can occur
 between the curly braces, although only one statement is shown here.
-The <code>$[i]</code> tokens represent evaluating a mathematical
+The <code>[i]</code> tokens represent evaluating a mathematical
 expression, in which <code>i</code> appears as a symbol.  The
 <code>i</code> symbol is essentially a numeric macro whose value
 is incremented for each iteration of the loop.  It is important
@@ -2505,7 +2236,7 @@ be to define a cascade of reactions, as shown here:
 <pre>
 loop "i": start 1, stop 4
 {
-  reaction_$[i], A$[i] -&gt; A$[i+1], 1.0;
+  "reaction_[i]", "A[i]" -&gt; "A[i+1]", 1.0;
 }
 </pre>
 </blockquote>
@@ -2523,14 +2254,14 @@ reaction_4, A4 -&gt; A5, 1.0;
 </blockquote>
 In both of the above examples, it is usually the case
 that a loop is used to define the initial species populations.
-For example, one might define (after the reaction definition
+For example, one might define (before the reaction definition
 loop):
 <blockquote>
 <pre>
 A1 = 100;
-loop "i": start 1, stop 5
+loop (i, 1, 5)
 {
-  A$[i] = 0;
+  "A[i]" = 0;
 }
 </pre>
 </blockquote>
@@ -2539,16 +2270,15 @@ to 100, and the initial population of species <code>A2</code>
 through <code>A5</code> to zero.
 </p>
 <p>
-In defining a loop, note that the &quot;<code>start</code>&quot; and
-&quot;<code>stop</code>&quot; keywords are followed by numeric elements.
-This means that they can be simple numeric literals (as shown above),
-or mathematical expressions, as shown here:
+In defining a loop, note that the start and stop values are 
+numeric elements.  This means that they can be simple numeric 
+literals (as shown above), or mathematical expressions, as shown here:
 <blockquote>
 <pre>
 k = 10;
-loop "i": start 1, stop [k + 2]
+loop (i, 1, k + 2)
 {
-  reaction_$[i], A$[i] -&gt; A$[i+1], 1.0;
+  "reaction_[i]", "A[i]" -&gt; "A[i+1]", 1.0;
 }
 </pre>
 </blockquote>
@@ -2558,80 +2288,103 @@ over the range of integer values from 1 to 12, inclusive.
 
 </isb:docsubsection>
 
-<isb:docsubsection name="Example CCMDL model definition file" label="examplefile">
+<isb:docsubsection name="Example CMDL model definition file" label="examplefile">
 <p>
-The following example illustrates a complete CCMDL model definition file:
+The following example illustrates a complete CMDL model definition file:
 <blockquote>
 <pre>
+//
+// singlegene.dizzy
+//
+// This document contains a model description of a
+// simple stochastic model of the transcription of
+// a single gene, with two transcription factors
+// TFA and TFB. The length of the coding region is
+// a parameter that is defined at the top of the 
+// file.  
+//
+// The rate constants and initial populations are
+// not taken from any experiments; the purpose of
+// this model is just to explore the effects of
+// stochasticity in comparsion to deterministic 
+// dynamics.
+//
+// The model description is in the CMDL
+// (Chemical Model Definition Language)
+// language, and is meant to be parsed by the
+// "Dizzy" software system.  For more information,
+// please refer to the home page for the Dizzy
+// software system,
+// 
+// http://labs.systemsbiology.net/bolouri/Dizzy
+//
+//
+// Author:  Stephen Ramsey
+// Date:    2003/04/09 (revised 2003/07/17)
+//
+
 minBases                 = 45;
 codingRegionLengthBases  = 1000.0;
 transcriptionRate        = 1.0;
 abortProbPerBase         = 0.005;
 
-# polymerization complex moving one base along the template
-loop "i": start 1, stop [minBases-1]
-{
-PCOM_moves_one_base_at_base_$[i], PCOM_plus_DNA_at_base_$[i] -&gt; 
-                                  PCOM_plus_DNA_at_base_$[i+1],  [transcriptionRate];
-}
-
-# polymerization complex moving past the "minBases" threshold
-PCOM_passing_threshold, PCOM_plus_DNA_at_base_$[minBases] -&gt; 
-                        DNA_plus_TFC + PCOM_plus_DNA_past_base_$[minBases],  [transcriptionRate];
-
-# recruitment of PolII
-PolII_recruitment,    DNA_plus_TFC + PolII -&gt; PCOM_plus_DNA_at_base_1,   1.0;
-PolII_derecruitment,  PCOM_plus_DNA_at_base_1 -&gt; DNA_plus_TFC + PolII,   0.1;
-
-# completion of transcription process
-transcription_completed,   PCOM_plus_DNA_past_base_$[minBases] -&gt; 
-                           PolII + mRNA_product_complete, 
-                           [transcriptionRate/codingRegionLengthBases];
-
-# aborting of transcription within the first "minBases" bases
-loop "i": start 2, stop [minBases]
-{
-abort_at_base_$[i],   PCOM_plus_DNA_at_base_$[i] -&gt; 
-                      DNA_plus_TFC + PolII + mRNA_product_fragment, [abortProbPerBase];
-}
-
-# aborting of late-state transcription
-aborting_past_threshold,  PCOM_plus_DNA_past_base_$[minBases] -&gt; 
-                      PolII + mRNA_product_fragment, 
-                      [transcriptionRate * abortProbPerBase / codingRegionLengthBases];
-
-# transcription factor A binding to empty DNA template
-TFA_binding_DNA,            DNA + TFA -&gt; DNA_plus_TFA,                  1.0;
-TFA_debinding_DNA,          DNA_plus_TFA -&gt; DNA + TFA,                  0.1;
-
-# transcription factor B binding to empty DNA template
-TFB_binding_DNA,            DNA + TFB -&gt; DNA_plus_TFB,                  1.0;
-TFB_debinding_DNA,          DNA_plus_TFB -&gt; DNA + TFB,                  0.1;
-
-# transcription factor A binding to DNA template (where B is already bound)
-TFA_binding_DNA_plus_TFB,   DNA_plus_TFB + TFA -&gt; DNA_plus_TFC,         1.0;
-TFA_debinding_DNA_plus_TFB, DNA_plus_TFC -&gt; DNA_plus_TFB + TFA,         0.1;
-
-# transcription factor B binding to DNA template (where A is already bound)
-TFB_binding_DNA_plus_TFA,   DNA_plus_TFA + TFB -&gt; DNA_plus_TFC,         1.0;
-TFB_debinding_DNA_plus_TFA, DNA_plus_TFC -&gt; DNA_plus_TFA + TFB,         0.1;
-
-# setting the initial populations for the chemical species in the model:
+// setting the initial populations for the chemical species in the model:
 TFA                                   = 5;
 TFB                                   = 5;
 DNA_plus_TFA                          = 0;
 DNA_plus_TFB                          = 0;
 DNA_plus_TFC                          = 0;
 DNA                                   = 1;
-PCOM_plus_DNA_past_base_$[minBases]   = 0;
+"PCOM_plus_DNA_past_base_[minBases]"  = 0;
 mRNA_product_complete                 = 0;
 mRNA_product_fragment                 = 0;
 PolII                                 = 5;
 
-loop "i": start 1, stop [minBases]
+loop (i, 1, minBases)
 {
-        PCOM_plus_DNA_at_base_$[i]    = 0;
+        "PCOM_plus_DNA_at_base_[i]"    = 0;
 }
+
+// polymerization complex moving one base along the template
+loop (i, 1, minBases-1)
+{
+"PCOM_moves_one_base_at_base_[i]", "PCOM_plus_DNA_at_base_[i]" -&gt; "PCOM_plus_DNA_at_base_[i+1]",  transcriptionRate;
+}
+
+// polymerization complex moving past the "minBases" threshold
+PCOM_passing_threshold, "PCOM_plus_DNA_at_base_[minBases]" -&gt; DNA_plus_TFC + "PCOM_plus_DNA_past_base_[minBases]",  transcriptionRate;
+
+// recruitment of PolII
+PolII_recruitment,    DNA_plus_TFC + PolII -&gt; PCOM_plus_DNA_at_base_1,   1.0;
+PolII_derecruitment,  PCOM_plus_DNA_at_base_1 -&gt; DNA_plus_TFC + PolII,   0.1;
+
+// completion of transcription process
+transcription_completed,   "PCOM_plus_DNA_past_base_[minBases]" -&gt; PolII + mRNA_product_complete, transcriptionRate/codingRegionLengthBases;
+
+// aborting of transcription within the first "minBases" bases
+loop (i, 2, minBases)
+{
+"abort_at_base_[i]",   "PCOM_plus_DNA_at_base_[i]" -&gt; DNA_plus_TFC + PolII + mRNA_product_fragment, abortProbPerBase;
+}
+
+// aborting of late-state transcription
+aborting_past_threshold,  "PCOM_plus_DNA_past_base_[minBases]" -&gt; PolII + mRNA_product_fragment, transcriptionRate * abortProbPerBase / codingRegionLengthBases;
+
+// transcription factor A binding to empty DNA template
+TFA_binding_DNA,            DNA + TFA -&gt; DNA_plus_TFA,                  1.0;
+TFA_debinding_DNA,          DNA_plus_TFA -&gt; DNA + TFA,                  0.1;
+
+// transcription factor B binding to empty DNA template
+TFB_binding_DNA,            DNA + TFB -&gt; DNA_plus_TFB,                  1.0;
+TFB_debinding_DNA,          DNA_plus_TFB -&gt; DNA + TFB,                  0.1;
+
+// transcription factor A binding to DNA template (where B is already bound)
+TFA_binding_DNA_plus_TFB,   DNA_plus_TFB + TFA -&gt; DNA_plus_TFC,         1.0;
+TFA_debinding_DNA_plus_TFB, DNA_plus_TFC -&gt; DNA_plus_TFB + TFA,         0.1;
+
+// transcription factor B binding to DNA template (where A is already bound)
+TFB_binding_DNA_plus_TFA,   DNA_plus_TFA + TFB -&gt; DNA_plus_TFC,         1.0;
+TFB_debinding_DNA_plus_TFA, DNA_plus_TFC -&gt; DNA_plus_TFA + TFB,         0.1;
 </pre>
 </blockquote>
 This model definition file defines a very simple model of transcription.
@@ -2640,1168 +2393,6 @@ The model contains two transcription factors, <code>TFA</code> and
 </p>
 </isb:docsubsection>
 
-<isb:docsubsection name="Action Performing Statements" label="actionperformingstatements">
-
-<p>
-In the CCMDL, a number of action-performing statements are
-permitted in a model definition file.  These statements are 
-intended for use with the command-line &appName; program, in
-order to run simulations, export to different file formats, etc.  
-The graphical &appName; program actually ignores any of the 
-action-performing statements that appear in a model definition
-file.  Most users will probably use the graphical user interface,
-rather than the action-performing statements described herein.  
-The action-performing statements are documented here for 
-completeness, and to facilitate use of the &appName; system
-in a command-line mode of operation.
-</p>
-<p>
-This section documents the various action-performing
-statements available in the CCMDL language.  In a model
-definition file, the action-performing statement should be
-put after all of the model-definition statements.  Typically
-the action-performing statement(s) are put at the end of the
-model definition file.  The list of allowed action-performing
-statements in the CCMDL are:
-</p>
-<p>
-<dl>
-<dt><code>print: model;</code></dt>
-<dd>prints out a string (human-readable) representation of the
-default model, to standard output (the console)
-<p />
-</dd>
-<dt><code>print: speciesPopulations;</code></dt>
-<dd>prints out a string (human-readable) representation of the
-default species populations collection, to standard output
-(the console)
-<p />
-</dd>
-<dt><code>export: modelInstance;</code></dt>
-<dd>exports the default model and species populations collection
-to the <a href="#sbml">Systems Biology Markup Language</a>,
-to standard output (the console).
-Optionally, one may add an element to specify an output file,
-as shown here:
-<blockquote>
-<pre>
-export: modelInstance, outputFile "myFile-sbml.xml";
-</pre>
-</blockquote>
-where the quotes are mandatory, and the text inside the
-quotes is the name of the file to which the model should
-be exported.  Optionally, one may add an element to specify
-an <a href="#exporterplugins">exporter alias</a>, as shown here:
-<blockquote>
-<pre>
-export: modelInstance, outputFile "myFile&cmdlExtension;", exporter "command-language";
-</pre>
-</blockquote>
-The above example instructs the &appName; system to export
-the model instance in the <a href="#cmdl">CMDL</a> language.
-<p />
-</dd>
-<dt><code>simulate:</code></dt>
-<dd>
-<p>
-Runs a simulation of the reaction kinetics of the default 
-<a href="#modelinstances">model instance</a>.  This default
-model instance contains the default <a href="#models">model</a>
-and the default <a href="#speciespopulations">species populations
-collection</a>, the latter specifying the initial species populations
-for the simulation.  Required parameters are:
-     <dl>
-     <dt><code>stopTime <em>nnnnn</em></code></dt>
-     <dd>The stop time of the simulation, where <code>nnnnn</code>
-is a floating-point number.  The units of the stop time are the
-same as the units of the reciprocal of the reaction parameters
-defined for the chemical reactions in the model,
-which is normally seconds.</dd>
-     <dt><code>viewSpecies ("s1" "s2" ...)</code></dt>
-     <dd>Specifies the species whose populations are to be 
-taken as the output of the simulation.  Double-quotes
-are required around each species name.  Note that the
-list of species is delimited with whitespace, not commas.
-The list of species is initiated and terminated with
-parentheses.</dd>
-     </dl>
-</p>
-<p>
-There are a number of optional parameters for the 
-<code>simulate</code> statement:
-     <dl>
-     <dt><code>startTime <em>nnnnn</em></code></dt>
-     <dd>Specifies the starting time of the simulation, where
-<code>nnnnn</code> is a floating-point number.  The units of
-the start time are the same as the units of the reciprocal
-of the reaction parameters defined for the chemical reactions
-in the model, which is normally seconds.  The default value
-for this starting time is zero.  It is rarely necessary to
-specify this parameter; the only case where it might be needed
-is with reaction rate expressions or species population
-expressions that explicitly involve the <code>time</code> symbol.
-     </dd>
-     <dt><code>numTimePoints <em>nnnnn</em></code></dt>
-     <dd>This important parameter specifies the number of
-&quot;snapshots&quot; of the species populations are to
-be recorded over the course of the simulation.  The total
-duration of the simulation (<code>stopTime</code> minus
-<code>startTime</code>) is divided into <code>numTimePoints</code>
-sub-intervals.  After each time subinterval has elapsed during
-the course of the simulation, a &quot;snapshot&quot;
-of the species populations (for those species specified with the
-<code>viewSpecies</code> parameter defined above) is recorded.
-The default value for this parameter is 100.  The parameter value
-must be an integer greater than zero.</dd>
-     <dt><code>output [print|store]</code></dt>
-     <dd>This parameter defines what should be done with the
-&quot;snapshots&quot; of the species populations, that are
-the &quot;output&quot; of the simulation.  The allowed
-values are &quot;<code>store</code>&quot; and
-&quot;<code>print</code>&quot;.  
-         <dl>
-         <dt><code>print</code></dt>
-         <dd>this
-value is the default, and means that the output should be
-printed to &quot;standard output&quot;, in comma-separated
-value format (a format suitable for loading into Microsoft 
-Excel or a similar spreadsheet application).</dd>
-         <dt><code>store</code></dt>
-         <dd>The value
-&quot;<code>store</code>&quot; means that the output
-should be stored as a variable.  This is mostly useful
-when chaining together multiple simulations with 
-different reaction kinetics or simulators.  The output
-from one simulation can be stored, and subsequently
-used as the input to another simulation.  When you specify
-&quot;<code>store</code>&quot; as the <code>output</code>
-type of the <code>simulate</code> command, it is required that
-you also specify the &quot;<code>storeName</code>&quot;
-parameter, which is defined below.</dd>
-         </dl></dd>
-     <dt><code>storeName &quot;myName&quot;</code></dt>
-     <dd>
-This parameter is required only when specifying an
-output type of &quot;<code>store</code>&quot; (defined
-above).  It specifies the variable name under which the
-output species populations should be stored.  This is
-useful for chaining together multiple simulations, 
-in which the output of one simulation becomes the
-input for a subsequent simulation, within the invocation
-of a single model definition script.
-     </dd>
-     <dt><code>ensembleSize <em>nnnnn</em></code></dt>
-     <dd>
-This parameter specifies that <em>nnnnn</em> separate
-simulations should be run with the same parameters, and
-the resulting &quot;snapshot&quot; values for species
-populations over time, should be averaged for each time
-point and species, over the &quot;ensemble&quot; of
-realizations of the simulation.  This essentially implements
-an ensemble average of time-series species populations.
-The parameter <code>nnnnn</code> is required to be an
-integer greater than zero.  The species population
-values that are printed will be floating-point numbers,
-even for floating species (which can only have integer
-population values within a given realization of the ensemble),
-due to the averaging process.  The &quot;<code>ensembleSize</code>&quot;
-parameter may <em>not</em> be specified with the
-&quot;<code>output store</code>&quot; parameter, because
-floating-point values may not be stored in a 
-<a href="#speciespopulations">species populations collection</a>
-object, for floating species.  It is
-not necessary to specify an ensemble size, when using the
-deterministic (ODE) simulator; doing so will simply slow
-down the computation without improving the accuracy.
-    </dd>
-    <dt><code>outputFile &quot;myFile.csv&quot;</code></dt>
-    <dd>Species the file name to which the simulation output
-should be saved.  The &quot;<code>output print</code>&quot;
-output type should be specified, if this parameter is specified.
-The output is saved in comma-separated-value (CSV) format.  If
-you specify the file extension (&quot;<code>.csv</code>&quot;),
-it should enable the output file to be opened in the default
-spreadsheet application for your desktop computer's graphical
-windowing system (e.g., GNOME or Windows).</dd>
-    <dt><code>debug <em>nnnnn</em></code></dt>
-    <dd>Specifies an integer &quot;debug level&quot; for the
-simulator.  The higher the debug level specified, the more
-verbose the debugging information that will be displayed
-by the simulator.  This is useful for &quot;debugging&quot;
-simulations that appear to be malfunctioning or giving 
-unexpected reaction kinetics.  Possible values are:
-      <ol start="0">
-        <li><code>NONE</code>: no debugging output</li>
-        <li><code>LOW</code>: minimal debugging output (number of iterations, start and stop of simulation)</li>
-        <li><code>MEDIUM</code>: medium level of debugging output</li>
-        <li><code>HIGH</code>: high level of debugging output (each reaction step is printed)</li>
-        <li><code>EXTREME</code>:  extreme level of debugging output</li>
-      </ol>
-The amount and type of debugging information that will 
-be printed will vary with the type of 
-<a href="#simplugins">simulator plug-in</a> that
-is being used.  This option should be used carefully, as it
-can severely degrade the efficiency of the simulation engine,
-and it can generate voluminous output that must be buffered
-and printed to the &quot;standard error&quot; stream (console).
-The default value of this parameter is 0 (no debugging output),
-which is (by far) the most efficient in terms of performance.
-    </dd>
-    <dt><code>simulator &quot;gillespie&quot;</code></dt>
-    <dd>Specifies the <a href="simplugins">simulator plug-in</a> 
-to use for the simulation.
-The default is &quot;<code>gillespie</code>&quot;, the Gillespie
-simulator plug-in.</dd>
-    </dl>
-    </p>
-    <p>
-The &quot;<code>simulate</code>&quot; statement is usually
-placed at the end of a model definition file, after all of the
-reaction definitions.  The following is an example of a simulate 
-statement:  
-<blockquote>
-<pre>
-simulate:  startTime 0, stopTime 500.0, numTimePoints 100, debug 1,
-           viewSpecies ("G3D_G80D" "G4_RNA" "G80_RNA" "G3_RNA" "G4D_free" "G80D_free" "G3D_free"),
-           output store, storeName "final", simulator "gillespie";
-</pre>
-</blockquote>
-The above example runs a simulation for <code>500</code> seconds, and
-stores the output under variable name &quot;<code>final</code>&quot;.
-    </p>
-    <p>
-In order to run a simulation with a species populations collection
-other than the default species populations collection, you must use
-the form of the simulate statement from the CMDL, in which the
-model name and species populations collection name are explicitly
-specified.  An example is shown here:
-<blockquote>
-<pre>
-simulate "myModel": speciesPopulations "final", stopTime 500,
-                    viewSpecies ("G3D_G80D" "G4_RNA");
-</pre>
-</blockquote>
-Note that &quot;<code>myModel</code>&quot; is the special name 
-of the default model in the CCMDL.  In the CMDL, all models
-are explicitly named, and the model name of the model to be
-simulated is always specified after the &quot;<code>simulate</code>&quot;
-statement.
-    </p>
-</dd>       
-</dl>
-</p>
-</isb:docsubsection>
-
-</isb:docsection>
-
-
-
-<!-- ========== CMDL ========== -->
-
-<isb:docsection name="Chemical Model Definition Language (CMDL)" label="cmdl">
-
-This section describes the Chemical Model Definition Language.
-
-<isb:docsubsection name="Preliminaries" label="cmdl-preliminaries">
-The CMDL is a scripting language designed for defining models of
-systems of interacting chemical species.  A <a href="#modelinstances">model instance</a>
-is defined using one (or possibly more) <b>model definition files</b>.  A single
-model definition file is loaded, and may <a href="#fileinclusion">include</a>
-other model definition files.  The model definition file contains a sequence of
-<a href="#statements">statements</a>, each of which has the following structure:
-<blockquote>
-<pre>
-keyword "statement-name": element1, element2, ... elementN;
-</pre>
-</blockquote>
-where <code>keyword</code> is a keyword that defines the type
-of statement, <code>statement-name</code> is a string that
-gives a name or operand for the statement, and there are zero
-or more <a href="#elements">elements</a> that define various
-attributes of the statement.  An example statement is shown here:
-<blockquote>
-<pre>
-species "s1": compartment "c1";
-</pre>
-</blockquote>
-In the above statement, the keyword is <code>species</code>, the
-statement name is &quot;<code>s1</code>&quot;, and there is a single
-element <code>compartment "c1"</code>.  The colon always separates
-the statement from any elements.  In a statement with no elements, the colon
-is omitted.  The statement always ends with a semicolon.  Note the use of
-double-quotation marks.  In the CMDL, quotation marks are used to 
-delimit <a href="#stringelements">string elements</a>.  
-<p />
-Here is an example statement that does not contain any elements:
-<blockquote>
-<pre>
-printModel "m1";
-</pre>
-</blockquote>
-In this case, the keyword is <code>printModel</code> and the operand
-is &quot;<code>m1</code>&quot;.  This statement causes the model
-&quot;<code>m1</code>&quot; to be printed to standard output (the console).
-<p />
-Please note that all statements in the CMDL are strictly
-<a href="#casesensitive">case-sensitive</a>.
-This means that using the keyword <code>printmodel</code> instead of the
-correct form <code>printModel</code> would be a syntax error.
-<p />
-In the CMDL, there are two <b>classes</b> of statements: 
-<a href="#cmdl-definitionstatements"><b>definition statements</b></a> and 
-<a href="#cmdl-actionperforming"><b>action-performing statements</b></a>.
-The definition statements are declarative in nature, and cause objects to
-be created within the scripting runtime (scripting engine).  The
-action-performing statements cause actions to be executed on the
-objects previously defined with definition statements.  Both types
-of statements follow the above-described statement format (keyword, name/operand,
-colon, elements, semicolon).  Of the above two examples, the 
-<code>species</code> statement is an example of a definition statement, and
-the <code>printModel</code> statement is an example of an action-performing
-statement.  The action-performing statements are intended only for use with
-the command-line interface to the scripting engine.
-</isb:docsubsection>
-
-<isb:docsubsection name="Definition Statements" label="cmdl-definitionstatements">
-This section defines all definition statements in the CMDL.  
-The statement types appear in roughly the order in which they
-might appear in a typical model definition file:
-<dl>
-
-<dt><b><code>compartment</code></b></dt>
-<dd>
-The <code>compartment</code> keyword defines a <a href="#compartments">compartment</a>.
-Unlike the <a href="#ccmdl">CCMDL</a>, in the CMDL a compartment must be explicitly 
-defined.  There is no &quot;default&quot; compartment automatically defined by the
-scripting engine.  The elements for this keyword are:
-  <p />
-  <dl>
-    <dt><code>[name]</code></dt>
-    <dd>The name of the compartment is supplied as a string, immediately after the 
-<code>compartment</code> keyword.  Must be a valid 
-<a href="#symbols">symbol name</a>. [required]<p /></dd>
-
-    <dt><code>volume</code></dt>
-    <dd>Numeric element that specifies the volume of the compartment, in liters.  The
-default value is 1.0.  [optional].<p /></dd>
-  </dl>
-The following example shows a sample compartment definition statement:
-<blockquote>
-<pre>
-compartment "c1": volume 1.0;
-</pre>
-</blockquote>
-Because the default compartment volume is 1.0, the above statement could
-also be written as:
-<blockquote>
-<pre>
-compartment "c1";
-</pre>
-</blockquote>
-<p /></dd>
-
-<dt><b><code>species</code></b></dt>
-<dd>
-The <code>species</code> keyword defines a chemical <a href="#species">species</a>.
-Unlike the <a href="#ccmdl">CCMDL</a>, in the CMDL each species must be explicitly
-defined by a separate <code>species</code> statement.  Species are not implicitly
-defined by their participation in one or more chemical reactions, in the CMDL.
-The elements for this keyword are:
-  <p />
-  <dl>
-
-    <dt><code>[name]</code></dt>
-    <dd>The name of the species is supplied as a string, immediately after the
-<code>species</code> keyword.  Must be a valid 
-<a href="#symbols">symbol name</a>. [required]<p /></dd>
-
-    <dt><code>compartment</code></dt>
-    <dd>String element that specifies the name of the <a href="#compartments">compartment</a>
-with which the species is associated.  The compartment must have been previously defined.
- [required]<p /></dd>
-
-    <dt><code>speciesType</code></dt>
-    <dd>Modifier element that specifies whether the species is of type &quot;<code>floating</code>&quot;
-or &quot;<code>boundary</code>&quot;.  The default is &quot;<code>floating</code>&quot;.  [optional].
-    <p /></dd>
-
-  </dl>
-An example species definition is shown here:
-<blockquote>
-<pre>
-species "s1": compartment "c1";
-</pre>
-</blockquote>
-defining species <code>s1</code> as a floating species in the compartment <code>c1</code>.
-Note that the above could also have been written:
-<blockquote>
-<pre>
-species "s1": compartment "c1", speciesType floating;
-</pre>
-</blockquote>
-The two above statements are equivalent because &quot;<code>floating</code>&quot;
-is the default for the <code>speciesType</code> element.
-The following example shows a boundary species definition:
-<blockquote>
-<pre>
-species "s2": compartment "c1", speciesType boundary;
-</pre>
-</blockquote>
-<p /></dd>
-
-<dt><b><code>parameter</code></b></dt>
-<dd>
-The <code>parameter</code> keyword defines a <a href="#parameters">parameter</a>.  
-The elements for this keyword are:
-  <p />
-  <dl>
-    <dt><code>[name]</code></dt>
-    <dd>The name of the parameter is supplied as a string, immediately after the
-<code>parameter</code> keyword.  Must be a valid 
-<a href="#symbols">symbol name</a>. [required]<p /></dd>
-
-    <dt><code>value</code></dt>
-    <dd>Numeric element that specifies the value of the parameter.  [required]<p /></dd>
-
-    <dt><code>reactions</code></dt>
-    <dd>List element that specifies the names of one or more reactions for which this
-parameter is to be defined in the <b>local namespace</b>.  By default, a parameter
-is defined in the <b>global namespace</b>, if this element is omitted. Each item
-in the list must be the string name of a reaction that has been previously defined. [optional]<p /></dd>
-  </dl>
-<p /></dd>
-
-<dt><b><code>reaction</code></b></dt>
-<dd>
-The <code>reaction</code> keyword defines a chemical <a href="#reactions">reaction</a>.
-The elements for this keyword are:
-  <p />
-  <dl>
-    <dt><code>[name]</code></dt>
-    <dd>The name of the reaction is supplied as a string, immediately after the
-<code>reaction</code> keyword..  Must be a valid <a href="#symbols">symbol name</a>. [required]
-    <p /></dd>
-
-    <dt><code>rate</code></dt>
-    <dd>A string or numeric element that defines the <a href="#reactionrates">reaction rate</a>.  
-If the reaction rate is
-specified as a numeric element, the reaction rate is computed with the built-in method,
-with the value of this element being used as the reaction rate parameter.  If the reaction
-rate is specified as a string element, the string is interpreted as a
-<a href="#expressions">mathematical expression</a> representing the formula to
-compute the reaction rate. [required]<p /></dd>
-
-    <dt><code>reactants</code></dt>
-    <dd>A list element that specifies the list of reactant species participating
-in the reaction.  This list may have zero elements, if there are no reactant species
-for the reaction (i.e., you wish to model spontaneous generation of product species).
-[required]<p /></dd>
-
-    <dt><code>products</code></dt>
-    <dd>A list element that specifies the list of product species participating
-in the reaction.  This list may have zero elements, if there are no product species
-for the reaction (i.e., you wish to model the decay of reactant species into nothing).
-[required]<p /></dd>
-
-  </dl>
-The following example shows a sample reaction definition statement:
-<blockquote>
-<pre>
-reaction "r1": reactants ("s1" "s2"), products ("s3" "s4"), rate 1.0;
-</pre>
-</blockquote>
-This defines a chemical reaction <code>r1</code> with reactant species
-<code>s1</code> and <code>s2</code>, and product species <code>s3</code>
-and <code>s4</code>.  The reaction rate method is the built-in (default)
-rate computation method, with a reaction rate parameter of 1.0.  An example
-of a reaction definition with a custom reaction rate expression is shown here:
-<blockquote>
-<pre>
-reaction "r1": reactants ("s1" "s2"), products ("s3" "s4"), rate "7.0 * s1 * s2";
-</pre>
-</blockquote>
-In the above definition, the reaction rate is defined to be the mathematical
-expression &quot;<code>7.0 * s1 * s2</code>&quot;, which will be evaluated 
-by the simulation engine each time the reaction rate needs to be computed.
-<p /></dd>
-
-<dt><b><code>model</code></b></dt>
-<dd>
-The <code>model</code> keyword defines a <a href="#models">model</a> of a system
-of chemical species, compartment, and reactions.  Not all reactions for a model
-need to be specified in the initial model definition.  Reactions may be added later
-using the <code>addReactionToModel</code> keyword. 
-Not all parameters for a model
-need to be specified in the initial model definition.  Parameters may be added later
-using the <code>addParameterToModel</code> keyword.  The elements for this keyword are:
-  <p />
-  <dl>
-    <dt><code>[name]</code></dt>
-    <dd>The name of the model is supplied as a string, immediately after the
-<code>model</code> keyword.  Must be a valid <a href="#symbols">symbol name</a>. [required]
-    <p /></dd>
-    
-    <dt><code>reactions</code></dt>
-    <dd>A list element that specifies the list of 
-<a href="#reactions">reactions</a> to be included in this model.  Each item in the list
-is a string specifying a reaction name.  Each reaction must have been previously defined.
-Models get their list of species and compartments
-through the reactions specified with this element. [optional]<p /></dd>
-
-    <dt><code>speciesMode</code></dt>
-    <dd>A modifier element that specifies the <a href="#reactionratespeciesmode">
-reaction rate species mode</a> of the model.  The possible values are 
-&quot;<code>molecules</code>&quot; and 
-&quot;<code>concentration</code>&quot;.  The default is &quot;<code>molecules</code>&quot;,
-if this element is not specified. [optional]<p /></dd>
-
-    <dt><code>submodels</code></dt>
-    <dd>EXPERIMENTAL feature.  A list element that defines a list of models that
-should be subsumed into the model being defined.  All reactions from a sub model are
-included in the parent model.  Each item on the list is a string specifying a name
-of a model to be included as a submodel.  Each submodel must have been previously
-defined.  The default is no submodel inclusion, this element is not specified.  
-[optional]<p /></dd>
-
-    <dt><code>parameters</code></dt>
-    <dd>A list element that specifies the list of <a href="#parameters">parameters</a> 
-that are to be associated with this model.  Each item in the list is a string
-specifying the name of a parameter.  The parameter must have been previously defined.
-This list may have zero elements.  Parameters specified using this element are
-in the &quot;global namespace&quot;, and can be referenced in any reaction rate
-or species population expression within the context of the model. [optional]<p /></dd>
-  </dl>
-The following example shows a sample model definition:
-<blockquote>
-<pre>
-model "m1": reactions ("r1" "r2"), parameters ("p1" "p2");
-</pre>
-</blockquote>
-which defines model <code>m1</code> to contain reactions 
-<code>r1</code> and <code>r2</code>, and parameter
-<code>p1</code> and <code>p2</code>.  The reaction rate
-species mode of the model is &quot;<code>molecules</code>&quot;.
-Therefore the above definition is equivalent to:
-<blockquote>
-<pre>
-model "m1": reactions ("r1" "r2"), parameters ("p1" "p2"), speciesMode molecules;
-</pre>
-</blockquote>
-To define the same model with a reaction rate species mode of &quot;<code>concentration</code>&quot;,
-one would write:
-<blockquote>
-<pre>
-model "m1": reactions ("r1" "r2"), parameters ("p1" "p2"), speciesMode concentration;
-</pre>
-</blockquote>
-<p /></dd>
-
-<dt><b><code>speciesPopulations</code></b></dt>
-<dd>
-The <code>speciesPopulations</code> keyword defines a 
-<a href="#speciespopulations">species populations collection</a>, which
-is used to specify initial conditions for a simulation.  Once a species population
-collection has been defined, additional species may be subsequently added to 
-the collection using the <code>addToSpeciesPopulations</code> keyword.
-The elements for this keyword are:
-  <p />
-  <dl>
-    <dt><code>[name]</code></dt>
-    <dd>The name of the species population collection is supplied as a string, immediately after the
-<code>speciesPopulations</code> keyword.  Must be a valid <a href="#symbols">symbol name</a>. 
-[required]<p /></dd>
-
-    <dt><code>speciesList</code></dt>
-    <dd>A list element that defines the list of species to be included in the
-collection.  This should include all species in the model for which this
-species population collection is to serve as the initial data specification.
-Each item in the list is a string specifying a species name.  Each species must
-have been previously defined.  It is permissible for this list to have zero elements. 
-[required]<p /></dd>
-
-    <dt><code>populations</code></dt>
-    <dd>A list element that defines the population values (or expressions) for
-all species in the collection.  The number of items in this list must be
-identical to the number of elements in the <code>speciesList</code> list element.
-Each item in the list is either a numeric element specifying a floating-point (or integer) 
-population value, or a string specifying an expression that will be used to compute the population
-value by the simulation engine.  The <em>i</em>th item in this list specifies the
-population value for the <em>i</em>th species in the <code>speciesList</code> list. 
-[required]<p /></dd>
-  </dl>
-Some examples of using this keyword are:
-  <blockquote>
-  <pre>
-speciesPopulation "initialData1": speciesList ("s1" "s2" "s3"), populations (250 100 175);
-  </pre>
-  </blockquote>
-defining a collection for the three species <code>s1</code>, <code>s2</code>, and
-<code>s3</code>, and the following example:
-  <blockquote>
-  <pre>
-speciesPopulation "initialData2": speciesList ("s1" "s2" "s3"), populations (250 100 "3.0 * time");
-  </pre>
-  </blockquote>
-defining the same collection, but with a custom expression for the population
-of species <code>s3</code>.
-<p /></dd>
-
-<dt><b><code>addToSpeciesPopulations</code></b></dt>
-<dd>
-The <code>addToSpeciesPopulations</code> keyword adds a previously defined 
-<a href="#species">species</a> to
-a previously defined 
-<a href="#speciespopulations">species populations collection</a>, 
-with a specified population value.  
-If the species already exists in the species populations collection, the previous
-population value is replaced with the new population value.  This keyword is useful 
-within loops, to define the initial species population of a vector of species, such
-as species S1 through SN (where N is an integer).  The elements for this keyword are:
-  <p />
-  <dl>
-    <dt><code>[speciesPopulations]</code></dt>
-    <dd>
-The species populations collection name must be specified immediately after the
-<code>addToSpeciesPopulations</code> keyword.  This is a string element that 
-must refer to a previously defined species populations collection. [required]
-    <p />
-    </dd>
-
-    <dt><code>species</code></dt>
-    <dd>A string element that specifies the name of the species to be added to the
-species population collection.  The species must have been previously defined. [required]
-    <p />
-    </dd>
-
-    <dt><code>population</code></dt>
-    <dd>A string or numeric element that specifies the population of the species to be
-added to the species population collection.  If the element is a number, it can be a floating-point
-value or an integer; it specifies the population value directly.  If the element is a string,
-the string is interpreted as a mathematical expression that will be used by the simulation
-engine to compute the species population, each time the species population value is needed.
-[required].
-    <p />
-    </dd>
-  </dl>
-The following example shows a sample use of the <code>addToSpeciesPopulations</code> keyword:
-<blockquote>
-<pre>
-addToSpeciesPopulations "sp1": species "s1", value 100;
-</pre>
-</blockquote>
-The following example uses a population expression instead of a numeric value:
-<blockquote>
-<pre>
-addToSpeciesPopulations "sp1": species "s1", value "100 + 10 * time";
-</pre>
-</blockquote>
-<p />
-</dd>
-
-<dt><b><code>addReactionToModel</code></b></dt>
-
-<dd>
-The <code>addReactionToModel</code> keyword is used to add a 
-<a href="#reactions">reaction</a> to a <a href="#models">model</a>.
-Both the reaction and the model must have been previously defined.
-If the reaction has been previously added to the model, this statement
-will have no effect. This keyword is useful within loops, to add
-all reactions within a vector of reactions R1 through RN (where N is
-an integer) to a model.  The elements for this keyword are:
-  <p />
-  <dl>
-    <dt><code>[model]</code></dt>
-    <dd>
-The model name must be specified immediately after the
-<code>addReactionToModel</code> keyword.  This is a string element that 
-must refer to a previously defined model. [required]
-    <p />
-    </dd>
-
-    <dt><code>reaction</code></dt>
-    <dd>
-This is a string element that specifies the name of the reaction to
-add to the model.  The reaction must have been previously defined. [required]
-    <p />
-    </dd>
-  </dl>
-An example statement using the <code>addReactionToModel</code> is shown here:
-<blockquote>
-<pre>
-addReactionToModel "m1": reaction "r1";
-</pre>
-</blockquote>
-which adds reaction <code>r1</code> to model <code>m1</code>.
-<p />
-</dd>
-
-<dt><b><code>addParameterToModel</code></b></dt>
-
-<dd>
-The <code>addParameterToModel</code> keyword is used to add a 
-<a href="#parameters">parameter</a> to a <a href="#models">model</a>.
-Both the parameter and the model must have been previously defined.
-If the parameter has been previously added to the model, this statement
-will have no effect. This keyword is useful within loops, to add
-all parameters within a vector of parameters R1 through RN (where N is
-an integer) to a model.  The elements for this keyword are:
-  <p />
-  <dl>
-    <dt><code>[model]</code></dt>
-    <dd>
-The model name must be specified immediately after the
-<code>addParameterToModel</code> keyword.  This is a string element that 
-must refer to a previously defined model. [required]
-    <p />
-    </dd>
-
-    <dt><code>parameter</code></dt>
-    <dd>
-This is a string element that specifies the name of the parameter to
-add to the model.  The parameter must have been previously defined. [required]
-    <p />
-    </dd>
-  </dl>
-An example statement using the <code>addParameterToModel</code> is shown here:
-<blockquote>
-<pre>
-addParameterToModel "m1": parameter "r1";
-</pre>
-</blockquote>
-which adds parameter <code>r1</code> to model <code>m1</code>.
-<p />
-</dd>
-</dl>
-
-</isb:docsubsection>
-
-<isb:docsubsection name="Example CMDL model definition file" label="cmdl-samplefile">
-The following is a sample model definition file in the CMDL language.
-<blockquote>
-<pre>
-compartment "univ": volume 1.0;
-species "DNA3": compartment "univ", speciesType floating;
-species "DNA4": compartment "univ", speciesType floating;
-species "DNA80": compartment "univ", speciesType floating;
-species "G3D_G80D": compartment "univ", speciesType floating;
-species "G3D_free": compartment "univ", speciesType floating;
-species "G3_RNA": compartment "univ", speciesType floating;
-species "G3_protein": compartment "univ", speciesType floating;
-species "G4D_DNA3": compartment "univ", speciesType floating;
-species "G4D_DNA4": compartment "univ", speciesType floating;
-species "G4D_DNA80": compartment "univ", speciesType floating;
-species "G4D_free": compartment "univ", speciesType floating;
-species "G4_RNA": compartment "univ", speciesType floating;
-species "G4_protein": compartment "univ", speciesType floating;
-species "G80D_G4D_DNA3": compartment "univ", speciesType floating;
-species "G80D_G4D_DNA4": compartment "univ", speciesType floating;
-species "G80D_G4D_DNA80": compartment "univ", speciesType floating;
-species "G80D_free": compartment "univ", speciesType floating;
-species "G80_RNA": compartment "univ", speciesType floating;
-species "G80_protein": compartment "univ", speciesType floating;
-species "galactose": compartment "univ", speciesType boundary;
-reaction "G4_dimer_binding_at_DNA4": products ("G4D_DNA4"), rate 1.0, reactants ("G4D_free" "DNA4");
-reaction "G4_dimer_debinding_at_DNA4": products ("G4D_free" "DNA4"), rate 0.1, reactants ("G4D_DNA4");
-reaction "G80_dimer_binding_at_DNA4": products ("G80D_G4D_DNA4"), rate 1.0, reactants ("G80D_free" "G4D_DNA4");
-reaction "G80_dimer_debinding_at_DNA4": products ("G80D_free" "G4D_DNA4"), rate 0.1, reactants ("G80D_G4D_DNA4");
-reaction "G4_dimer_binding_at_DNA80": products ("G4D_DNA80"), rate 1.0, reactants ("G4D_free" "DNA80");
-reaction "G4_dimer_debinding_at_DNA80": products ("G4D_free" "DNA80"), rate 0.1, reactants ("G4D_DNA80");
-reaction "G80_dimer_binding_at_DNA80": products ("G80D_G4D_DNA80"), rate 1.0, reactants ("G80D_free" "G4D_DNA80");
-reaction "G80_dimer_debinding_at_DNA80": products ("G80D_free" "G4D_DNA80"), rate 0.1, reactants ("G80D_G4D_DNA80");
-reaction "G4_dimer_binding_at_DNA3": products ("G4D_DNA3"), rate 1.0, reactants ("DNA3" "G4D_free");
-reaction "G4_dimer_debinding_at_DNA3": products ("DNA3" "G4D_free"), rate 0.1, reactants ("G4D_DNA3");
-reaction "G80_dimer_binding_at_DNA3": products ("G80D_G4D_DNA3"), rate 1.0, reactants ("G4D_DNA3" "G80D_free");
-reaction "G80_dimer_debinding_at_DNA3": products ("G4D_DNA3" "G80D_free"), rate 0.1, reactants ("G80D_G4D_DNA3");
-reaction "G3D_G80D_complexing": products ("G3D_G80D"), rate 1.0, reactants ("G80D_free" "G3D_free");
-reaction "G3D_G80D_decomplexing": products ("G80D_free" "G3D_free"), rate 0.1, reactants ("G3D_G80D");
-reaction "G4_transcription": products ("G4_RNA" "G4D_DNA4"), rate 1.0, reactants ("G4D_DNA4");
-reaction "G80_transcription": products ("G80_RNA" "G4D_DNA80"), rate 1.0, reactants ("G4D_DNA80");
-reaction "G3_transcription": products ("G4D_DNA3" "G3_RNA" "galactose"), rate 1.0, reactants ("G4D_DNA3" "galactose");
-reaction "G4_translation": products ("G4_protein"), rate 0.1, reactants ("G4_RNA");
-reaction "G80_translation": products ("G80_protein"), rate 0.05, reactants ("G80_RNA");
-reaction "G3_translation": products ("G3_protein"), rate 0.05, reactants ("G3_RNA");
-reaction "G4_dimerization": products ("G4D_free"), rate 1.0, reactants ("G4_protein" "G4_protein");
-reaction "G4_dedimerization": products ("G4_protein" "G4_protein"), rate 0.1, reactants ("G4D_free");
-reaction "G80_dimerization": products ("G80D_free"), rate 1.0, reactants ("G80_protein" "G80_protein");
-reaction "G80_dedimerization": products ("G80_protein" "G80_protein"), rate 0.1, reactants ("G80D_free");
-reaction "G3_dimerization": products ("G3D_free"), rate 1.0, reactants ("G3_protein" "G3_protein");
-reaction "G3_dedimerization": products ("G3_protein" "G3_protein"), rate 0.1, reactants ("G3D_free");
-model "myModel": reactions ("G4_dimer_binding_at_DNA4" "G4_dimer_debinding_at_DNA4" 
-                 "G80_dimer_binding_at_DNA4" "G80_dimer_debinding_at_DNA4" 
-                 "G4_dimer_binding_at_DNA80" "G4_dimer_debinding_at_DNA80" 
-                 "G80_dimer_binding_at_DNA80" "G80_dimer_debinding_at_DNA80" 
-                 "G4_dimer_binding_at_DNA3" "G4_dimer_debinding_at_DNA3" 
-                 "G80_dimer_binding_at_DNA3" "G80_dimer_debinding_at_DNA3" 
-                 "G3D_G80D_complexing" "G3D_G80D_decomplexing" "G4_transcription" 
-                 "G80_transcription" "G3_transcription" "G4_translation" 
-                 "G80_translation" "G3_translation" "G4_dimerization" 
-                 "G4_dedimerization" "G80_dimerization" "G80_dedimerization" 
-                 "G3_dimerization" "G3_dedimerization"), speciesMode molecules;
-speciesPopulations "sp": populations (1.0 1.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 
-                                      10.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0), 
-                         speciesList ("DNA3" "DNA4" "DNA80" "G3D_G80D" "G3D_free" "G3_RNA" 
-                                      "G3_protein" "G4D_DNA3" "G4D_DNA4" "G4D_DNA80" "G4D_free" 
-                                      "G4_RNA" "G4_protein" "G80D_G4D_DNA3" "G80D_G4D_DNA4" 
-                                      "G80D_G4D_DNA80" "G80D_free" "G80_RNA" "G80_protein" "galactose");
-</pre>
-</blockquote>
-</isb:docsubsection>
-
-<isb:docsubsection name="Action Performing Statements" label="cmdl-actionperforming">
-This section defines all action-performing statements in the CMDL.  Note
-that the action-performing statements available in the CMDL are intended
-only for use with the command-line interface to the scripting engine.
-When a model definition file is loaded by the GUI application, action-performing 
-statements appearing in the file are ignored.  The statements available are as
-follows:
-<dl>
-
-<dt><b><code>exportModelInstance</code></b></dt>
-<dd>
-The <code>exportModelInstance</code> keyword exports the specified
-model and species population collection (which together make up a model instance),
-to the specified file format.  
-
-  <dl>
-    <dt><code>[model]</code></dt>
-    <dd>
-A string specifying the name of the model to be exported is required
-immediately after the <code>exportModelInstance</code> keyword.  The
-model must have been previously defined. [required]
-    <p />
-    </dd>
-
-    <dt><code>speciesPopulations</code></dt>
-    <dd>
-A string element specifying the name of the species populations collection
-to be exported along with the model.  The species populations collection
-must have been previously defined.  [required]
-    <p />
-    </dd>
-
-    <dt><code>outputFile</code></dt>
-    <dd>
-A string element specifying the file name to which the model instance
-should be exported.  If not specified, the default is standard output
-(printing to the console).  [optional]
-    <p />
-    </dd>
-
-    <dt><code>exporter</code></dt>
-    <dd>
-A string element specifying the <a href="#exporterplugins">exporter plug-in</a>
-to use for exporting the model instance.  The string must specify the alias of a valid
-exporter plug-in.  The default (if this element is not specified) is the 
-<a href="#sbml">Systems Biology Markup Language</a> exporter plug-in. [optional]
-    <p />
-    </dd>
-  </dl>
-An example use of the <code>exportModelInstance</code> keyword is shown here:
-<blockquote>
-<pre>
-exportModelInstance "m1": speciesPopulations "sp1", outputFile "model-sbml.xml";
-</pre>
-</blockquote>
-which will export the model <code>m1</code> and the species populations collection
-<code>sp1</code> to the file <code>model-sbml.xml</code>, in SBML format.
-Another example use of the <code>exportModelInstance</code> keyword is shown here:
-<blockquote>
-<pre>
-exportModelInstance "m1": speciesPopulations "sp1", outputFile "model.isbchem", 
-                          exporter "command-language";
-</pre>
-</blockquote>
-which will export the same model and species populations data, to the file
-<code>model.isbchem</code>, in CMDL format.
-<p />
-</dd>
-
-<dt><b><code>printModel</code></b></dt>
-<dd>
-The <code>printModel</code> statement is used to print a human-readable 
-representation of a model, to standard output (the console).  The only
-required element is the model name.  An example use of this statement is
-shown here:
-<blockquote>
-<pre>
-printModel "m1";
-</pre>
-</blockquote>
-which prints the model <code>m1</code>.
-<p />
-</dd>
-
-<dt><b><code>printSpeciesPopulations</code></b></dt>
-<dd>
-The <code>printSpeciesPopulations</code> statement is used to print a human-readable 
-representation of a species populations collection, to standard output (the console).  The only
-required element is the species populations collection name.  An example use of this statement is
-shown here:
-<blockquote>
-<pre>
-printSpeciesPopulations "sp1";
-</pre>
-</blockquote>
-which prints the species populations collection <code>sp1</code>.
-<p />
-</dd>
-
-<dt><b><code>include</code></b></dt>
-<dd>
-The <a href="#fileinclusion"><code>include</code> statement</a> includes the contents
-a specified file, into the input stream of the model definition file being parsed, at the 
-point where the include statement is encountered. 
-<p />
-</dd>
-
-<dt><b><code>loop</code></b></dt>
-<dd>
-The <a href="#loops"><code>loop</code> statement</a> is an iteration
-construct that causes one or more statements (bracketed with curly 
-braces) to be executed one or more times.  The loop statement in the CMDL
-has the same syntax as the <a href="#loops">loop statement in the CCMDL</a>.
-<p />
-</dd>
-
-<dt><b><code>simulate</code></b></dt>
-<dd>
-The <code>simulate</code> statement runs a simulation of the reaction 
-kinetics of the specified model, with the specified species populations 
-collection as initial data.  The elements for this keyword are:
-     <p />
-     <dl>
-     <dt><code>[model]</code></dt>
-     <dd>
-A string specifying the name of the model to be simulated, is required
-immediately after the <code>simulate</code> keyword.  The model must have
-been previously defined. [required]
-     <p />
-     </dd>
-
-     <dt><code>speciesPopulations</code></dt>
-     <dd>
-A string element specifying the name of the species populations collection
-that provides the initial data (initial species population values) for the
-simulation.  The species population collection must have been previously
-defined.  [required]
-     <p />
-     </dd>
-
-     <dt><code>startTime</code></dt>
-     <dd>
-A numeric element specifying the starting time of the simulation. 
-The value is a floating-point number.  The units of
-the start time are the same as the units of the reciprocal
-of the reaction parameters defined for the chemical reactions
-in the model, which is normally seconds.  The default value
-for this starting time is zero.  It is rarely necessary to
-specify this parameter; the only case where it might be needed
-is with reaction rate expressions or species population
-expressions that explicitly involve the <code>time</code> symbol.
-[optional]
-     <p />
-     </dd>
-
-     <dt><code>stopTime <em>nnnnn</em></code></dt>
-     <dd>
-A numeric element specifying the stop time of the simulation.  The
-value is a floating-point number.  The units of the stop time are the
-same as the units of the reciprocal of the reaction parameters
-defined for the chemical reactions in the model,
-which is normally seconds. [required]
-     <p />
-     </dd>
-
-     <dt><code>viewSpecies</code></dt>
-     <dd>
-A list element specifying the species whose populations are to be 
-taken as the output of the simulation.  Each item in the list is
-a string specifying a species name.  Each species must have been
-previously defined, and must exist within the model.  This list may
-contain zero elements.  [required]
-     <p />
-     </dd>
-
-     <dt><code>numTimePoints</code></dt>
-     <dd>
-A numeric element specifying the number of
-&quot;snapshots&quot; of the species populations that are to
-be recorded over the course of the simulation.  The total
-duration of the simulation (<code>stopTime</code> minus
-<code>startTime</code>) is divided into <code>numTimePoints</code>
-sub-intervals.  After each time subinterval has elapsed during
-the course of the simulation, a &quot;snapshot&quot;
-of the species populations (for those species specified with the
-<code>viewSpecies</code> parameter defined above) is recorded.
-The default value for this parameter is 100.  The parameter value
-must be an integer greater than zero. [optional]
-     <p />
-     </dd>
-     <dt><code>output</code></dt>
-     <dd>
-A modifier element specifying what should be done with the
-&quot;snapshots&quot; of the species populations, that are
-the &quot;output&quot; of the simulation.  The allowed
-values are &quot;<code>store</code>&quot; and
-&quot;<code>print</code>&quot;.  
-         <p />
-         <dl>
-         <dt><code>print</code></dt>
-         <dd>this
-value is the default, and means that the output should be
-printed to &quot;standard output&quot;, in comma-separated
-value format (a format suitable for loading into Microsoft 
-Excel or a similar spreadsheet application).
-         <p />
-         </dd>
-         <dt><code>store</code></dt>
-         <dd>The value
-&quot;<code>store</code>&quot; means that the output
-should be stored as a variable.  This is mostly useful
-when chaining together multiple simulations with 
-different reaction kinetics or simulators.  The output
-from one simulation can be stored, and subsequently
-used as the input to another simulation.  When you specify
-&quot;<code>store</code>&quot; as the <code>output</code>
-type of the <code>simulate</code> command, it is required that
-you also specify the &quot;<code>storeName</code>&quot;
-parameter, which is defined below.
-         <p />
-         </dd>
-         </dl>
-     <p />
-     </dd>
-     <dt><code>storeName</code></dt>
-     <dd>
-A string element specifying the variable name under which the
-output species populations data should be stored.  This element
-should only be used in conjunction with an <code>outputType</code>
-of <code>store</code>; with that output type, it is required.
-The &quot;store&quot; output feature is useful for chaining together 
-multiple simulations, in which the output of one simulation becomes the
-input for a subsequent simulation, within the invocation
-of a single model definition script. If this element is specified
-and the output type is not set to &quot;store&quot;, the element is
-ignored.  [required if <code>outputType</code> 
-is set to &quot;<code>store</code>&quot;]
-     <p />
-     </dd>
-     <dt><code>ensembleSize</code></dt>
-     <dd>
-A numeric element specifying the number of separate
-simulations should be run with the same parameters.
-The resulting &quot;snapshot&quot; values for species
-populations over time will be averaged for each time
-point and species, over the &quot;ensemble&quot; of
-realizations of the simulation.  This essentially implements
-an ensemble average of time-series species populations.
-The numeric element value is required to be an
-integer greater than zero.  This feature is useful when using
-a stochastic simulator, in order to average the results of
-multiple realizations of the stochastic process.  It is
-not necessary to specify an ensemble size, when using the
-deterministic (ODE) simulator; doing so will simply slow down
-the calculation without improving accuracy. 
-The &quot;<code>ensembleSize</code>&quot;
-parameter may <em>not</em> be specified with the
-&quot;<code>output store</code>&quot; parameter, because
-floating-point values may not be stored in a 
-<a href="#speciespopulations">species populations collection</a>
-object, for floating species. If this element is not specified,
-no ensemble averaging is performed.  [optional]
-    <p />
-    </dd>
-    <dt><code>outputFile</code></dt>
-    <dd>
-A string element that species the file name to which the simulation output
-should be saved.  The string value is the file name.
-The &quot;<code>output print</code>&quot;
-output type should be specified, if this parameter is specified.
-The output is saved in comma-separated-value (CSV) format.  If
-you specify the file extension (&quot;<code>.csv</code>&quot;),
-it should enable the output file to be opened in the default
-spreadsheet application for your desktop computer's graphical
-windowing system (e.g., GNOME or Windows). If the <code>outputType</code>
-is not set to &quot;<code>print</code>&quot;, this element is ignored.
-[optional]
-    <p />
-    </dd>
-    <dt><code>debug</code></dt>
-    <dd>
-A numeric element that specifies an integer &quot;debug level&quot; for the
-simulator.  The higher the debug level specified, the more
-verbose the debugging information that will be displayed
-by the simulator.  This is useful for &quot;debugging&quot;
-simulations that appear to be malfunctioning or giving 
-unexpected reaction kinetics.  Possible values are:
-      <ol start="0">
-        <li><code>NONE</code>: no debugging output</li>
-        <li><code>LOW</code>: minimal debugging output (number of iterations, start and stop of simulation)</li>
-        <li><code>MEDIUM</code>: medium level of debugging output</li>
-        <li><code>HIGH</code>: high level of debugging output (each reaction step is printed)</li>
-        <li><code>EXTREME</code>:  extreme level of debugging output</li>
-      </ol>
-The amount and type of debugging information that will 
-be printed will vary with the type of 
-<a href="#simplugins">simulator plug-in</a> that
-is being used.  This option should be used carefully, as it
-can severely degrade the efficiency of the simulation engine,
-and it can generate voluminous output that must be buffered
-and printed to the &quot;standard error&quot; stream (console).
-The default value of this parameter is 0 (no debugging output),
-which is (by far) the most efficient in terms of performance.
-[optional]
-    <p />
-    </dd>
-    <dt><code>simulator</code></dt>
-    <dd>
-A string element that specifies the <a href="simplugins">simulator plug-in</a> 
-to use for the simulation.
-The default is &quot;<code>gillespie</code>&quot;, the Gillespie
-simulator plug-in. [optional]
-    <p />
-    </dd>
-    </dl>
-    <p />
-The &quot;<code>simulate</code>&quot; statement is usually
-placed at the end of a model definition file, after all of the
-reaction definitions.  The following is an example of a simulate 
-statement:  
-<blockquote>
-<pre>
-simulate "m1": speciesPopulations "sp1", startTime 0, stopTime 500.0, numTimePoints 100, debug 1,
-           viewSpecies ("G3D_G80D" "G4_RNA" "G80_RNA" "G3_RNA" "G4D_free" "G80D_free" "G3D_free"),
-           output store, storeName "final", simulator "gillespie";
-</pre>
-</blockquote>
-The above example runs a simulation for <code>500</code> seconds, and
-stores the output under variable name &quot;<code>final</code>&quot;.
-The following is another example of a simulate statement:
-<blockquote>
-<pre>
-simulate "m1": speciesPopulations "sp1", startTime 0, stopTime 500.0, numTimePoints 100, debug 1,
-           viewSpecies ("G3D_G80D" "G4_RNA" "G80_RNA" "G3_RNA" "G4D_free" "G80D_free" "G3D_free"),
-           output print, outputFile "myFile.csv", simulator "gillespie", ensembleSize 10;
-</pre>
-</blockquote>
-The above example runs 10 simulations and averages over the results,
-and stores the output of the simulation in the file 
-&quot;<code>myFile.csv</code>&quot;.
-    <p />
-Note that &quot;<code>myModel</code>&quot; is the special name 
-of the default model in the CCMDL.  In the CMDL, all models
-are explicitly named, and the model name of the model to be
-simulated is always specified after the &quot;<code>simulate</code>&quot;
-statement.
-    <p />
-</dd>       
-
-
-</dl>
-
-
-
-</isb:docsubsection>
 
 <isb:docsubsection name="Symbol Names" label="cmdl-symbolnames">
 In the CMDL, all <a href="#symbols">symbol names</a> defined 
@@ -3824,10 +2415,6 @@ For a reaction rate species mode of &quot;concentration&quot;,
 the symbols <code>A</code> and <code>B</code> in the reaction 
 rate mathematical expression refer to the molar concentrations
 of species <code>A</code> and <code>B</code>, respectively.
-In the CCMDL, the only reaction rate species mode is 
-&quot;molecules&quot;, so species symbols appearing in
-a rate expression always denote species populations in
-molecules.
 </isb:docsubsection>
 
 
@@ -3893,9 +2480,9 @@ The symbols above are defined as follows:
 <dt>&lt;<code>parserAlias</code>&gt;</dt>
 <dd>The alias of the parser plug-in to use.  This should correspond to the type
 of file being processed.  The alias identifies a class implementing the interface
-<code>isb.chem.scripting.IScriptBuildingParser</code>.  By default, the parser
+<code>org.systemsbiology.chem.scripting.IModelBuilder</code>.  By default, the parser
 is selected based on the file extension of the file <code>&lt;scriptFile&gt;</code>.
-If the file extension is &quot;&ccmdlExtension;&quot;, the <a href="#ccmdl">CCMDL</a>
+If the file extension is &quot;&cmdlExtension;&quot;, the <a href="#cmdl">CMDL</a>
 parser will be used.  If the file extension is &quot;&cmdlExtension;&quot;, the
 <a href="#cmdl">CMDL</a> parser will be used.  If the file extension is 
 &quot;&sbmlExtension;&quot;, the <a href="#sbml">SBML</a> parser will be used.
@@ -3903,8 +2490,6 @@ If the file suffix does not match any of the above, the CMDL parser is assumed.
 To specify a parser rather than using the default parser for the file extension,
 use of the following parser aliases:
     <dl>
-    <dt><code>condensed-command-language</code></dt>
-    <dd>Condensed Chemical Model Definition Language (CCMDL)</dd>
     <dt><code>command-language</code></dt>
     <dd>Chemical Model Definition Language input (CMDL)</dd>
     <dt><code>markup-language</code></dt>
@@ -4000,80 +2585,63 @@ interface to the &appName; system, to run a stochastic simulation of
 a simple system of chemical species and reactions:
 <blockquote>
 <pre>
-package isb.chem.tp;
+package org.systemsbiology.chem.tp;
 
-import isb.chem.*;
-import java.util.Date;
+import org.systemsbiology.chem.*;
+import java.io.PrintWriter;
 
-/**
- * Sample program that uses the GillespieSimulator algorithm to simulate
- * the dynamics of an ion channel system (two species representing a switch
- * being in the &quot;open&quot; or &quot;closed&quot; states, respectively.
- * For more information, refer to Chapter 11 of: 
- * Computational cell biology, by C. P. Fall, E. S. Marland,
- * J. M. Wagner, and J. J. Tyson. Springer-Verlag, New York, 2002.
- * This book defines the model system being simulated in this test program,
- * and shows what output (in terms of steady-state species populations) is 
- * expected.
- */
-public class IonChannel
+public class TestSimulator
 {
-    public static final int NUMBER_TIME_POINTS = 10;
+    private static final int NUM_TIME_POINTS = 100;
 
-    public static void main(String []pArgs)
+    public static final void main(String []pArgs)
     {
         try
         {
-            Compartment universal = new Compartment("universal");
-            Species s1 = new Species("s1", universal);
-            Species s2 = new Species("s2", universal);
-
-            Reaction r1 = new Reaction("r1");
-            r1.addReactant(s1);
-            r1.addProduct(s2);
-            r1.setRate(1.0);
-
-            Reaction r2 = new Reaction("r2");
-            r2.addReactant(s2);
-            r2.addProduct(s1);
-            r2.setRate(3.0);
-
-            SpeciesPopulations initialData = new SpeciesPopulations();
-            initialData.setSpeciesPopulation(s1, 500);
-            initialData.setSpeciesPopulation(s2, 500);
-
-            Model model = new Model("IonChannel");
-            model.addReaction(r1);
-            model.addReaction(r2);
-
+            Compartment compartment = new Compartment("univ");
+            Species speciesA = new Species("A", compartment);
+            speciesA.setSpeciesPopulation(100.0);
+            Species speciesB = new Species("B", compartment);
+            speciesB.setSpeciesPopulation(500.0);
+            Reaction reactionX = new Reaction("X");
+            reactionX.addReactant(speciesA, 1);
+            reactionX.addProduct(speciesB, 1);
+            Reaction reactionY = new Reaction("Y");
+            reactionY.addReactant(speciesB, 1);
+            reactionY.addProduct(speciesA, 1);
+            reactionX.setRate(1.0);
+            reactionY.setRate(1.0);
+            Model model = new Model("model");
+            model.addReaction(reactionX);
+            model.addReaction(reactionY);
             System.out.println(model.toString());
+            GillespieSimulator simulator = new GillespieSimulator(model);
+            String []requestedSymbolNames = { "A", "B" };
+            double []timeValues = new double[NUM_TIME_POINTS];
+            Object []symbolValues = new Object[NUM_TIME_POINTS];
+            
+            long curTime = System.currentTimeMillis();
 
-            GillespieSimulator gillespie = new GillespieSimulator();
+            simulator.simulate(0.0, 
+                               1000.0, 
+                               NUM_TIME_POINTS,
+                               requestedSymbolNames,
+                               timeValues,
+                               symbolValues,
+                               40);
 
-            System.out.println("date: " + new Date(System.currentTimeMillis()));
+            long finalTime = System.currentTimeMillis();
+            double elapsedTimeSec = (double) (finalTime - curTime) / 1000.0;
+            System.out.println("elapsed time: " + elapsedTimeSec);
 
-            SpeciesPopulations speciesPops = new SpeciesPopulations();
+            int numSymbols = requestedSymbolNames.length;
 
-            double startTime = 0.0;
-
-            for(int simCtr = 0; simCtr &lt; 500; ++simCtr)
-            {
-  
-                double timeConstant = gillespie.computeInitialAggregateTimeConstant(model, initialData, 0.0);
-                gillespie.evolve(model, 
-                                 initialData, 
-                                 startTime,
-                                 5000,
-                                 speciesPops);
-
-                long s1pop = speciesPops.getSpeciesPopulation(s1);
-                long s2pop = speciesPops.getSpeciesPopulation(s2);
-                System.out.println(s1pop + "," + s2pop);
-            }
-
-            System.out.println("date: " + new Date(System.currentTimeMillis()));
-            System.out.println("model: " + model.toString());
+            TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(new PrintWriter(System.out),
+                                                                        requestedSymbolNames,
+                                                                        timeValues,
+                                                                        symbolValues);
         }
+
         catch(Exception e)
         {
             e.printStackTrace(System.err);
@@ -4098,7 +2666,7 @@ User Manual</a>.
 <p>
 The &appName; system has a graphical user interface (GUI) application 
 that is layered on top of the previously described 
-<a href="#ccmdl">scripting engine</a>.  This GUI is a work in progress.
+<a href="#cmdl">scripting engine</a>.  This GUI is a work in progress.
 This section presumes that you have already installed the &appName;
 application using the 
 <a href="&appHomePage;/&appVersion;/installer/Web_Installers/install.htm">downloadable, self-extracting 
@@ -4252,25 +2820,19 @@ simulations).
 </p>
 </isb:docsubsection>
 
-<isb:docsubsection name="Export model instance" label="gui-export">
+<isb:docsubsection name="Export model" label="gui-export">
 <p>
 A <a href="#modelinstance">model instance</a> may be exported to one of two
 different formats:  <a href="#sbml">SBML</a> and <a href="#cmdl">CMDL</a>.
 Both of those formats may be subsequently loaded into the &appName; system.
-Note that you must select <em>both</em> a model and a set of initial species
-population data (which together constitute a &quot;model instance&quot;), 
-in order to use the &quot;export&quot; feature.  The export feature
-is used by first selecting a model and a species population collection in
-the list boxes named &quot;models&quot; and &quot;species population sets&quot;
-in the main &appName; window, and then selecting &quot;Export...&quot; menu
+The export feature
+is used by selecting the &quot;Export...&quot; menu
 item from the &quot;Tools&quot; menu.  You will be presented with a dialog 
 box in which you must specify the file format for exporting the model instance.
 You will then be prompted to specify the file name and location for the file
 to which the model instance should be exported.  This feature is useful for
-converting, say, an SBML model instance into a CMDL model instance, which
-one might then further customize and modify.  Similarly, this feature can
-be used to export a model instance defined in either CMDL or CCMDL, into
-SBML format.  The model instance thus exported can then be imported into a
+converting, say, a CMDL model instance into a SBML model instance.   
+The model instance thus exported can then be imported into a
 variety of modeling and visualization tools that support the SBML format for
 model interchange.
 </p>
