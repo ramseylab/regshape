@@ -21,7 +21,7 @@ import org.systemsbiology.gui.*;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class StatisticalTestsAction
+public class StatisticalTestsAction implements IAction
 {
     private App mApp;
     private static final String MATLAB_FUNCTION_NAME = "pcomp";
@@ -90,14 +90,23 @@ public class StatisticalTestsAction
     
     public void doAction()
     {
-        mApp.checkIfConnectedToMatlab();
+        boolean connected = mApp.checkIfConnectedToMatlab();
+        if(! connected)
+        {
+            return;
+        }
         
         File inputFile = mApp.handleInputFileSelection();
         if(null == inputFile)
         {
             return;
         }
+        
         File outputFile = mApp.handleOutputFileSelection(inputFile, TESTED_FILE_SUFFIX);
+        if(null == outputFile)
+        {
+            return;
+        }
         
         DataType []dataTypes = DataType.getAll();
         int numDataTypes = dataTypes.length;

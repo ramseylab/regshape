@@ -21,7 +21,7 @@ import org.systemsbiology.util.*;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class NetworkIntegrationAction
+public class NetworkIntegrationAction implements IAction
 {
     private static final String INTEGRATED_FILE_SUFFIX = "_point.txt";
     private static final String MATLAB_FUNCTION_NAME = "mainpointillist";
@@ -57,7 +57,11 @@ public class NetworkIntegrationAction
     
     public void doAction()
     {
-        mApp.checkIfConnectedToMatlab();
+        boolean connected = mApp.checkIfConnectedToMatlab();
+        if(! connected)
+        {
+            return;
+        }
         
         String pvalueCutoff = mApp.getPreferences().get(App.PREFERENCES_KEY_PVALUE_CUTOFF, "");
         double cutoff = 0.0;
@@ -77,6 +81,10 @@ public class NetworkIntegrationAction
         }
         
         File outputFile = mApp.handleOutputFileSelection(inputFile, INTEGRATED_FILE_SUFFIX);
+        if(null == outputFile)
+        {
+            return;
+        }
         
         String inputFileName = inputFile.getAbsolutePath();
         
