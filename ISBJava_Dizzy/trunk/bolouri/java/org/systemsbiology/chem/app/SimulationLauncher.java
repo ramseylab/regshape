@@ -71,6 +71,7 @@ public class SimulationLauncher
     private JCheckBox mOutputFileAppendCheckBox;
     private JLabel mOutputFileAppendLabel;
     private Plotter mPlotter;
+    private File mCurrentDirectory;
 
     /**
      * Enumerates the possible results of calling {@link #setModel(org.systemsbiology.chem.Model)}.
@@ -119,6 +120,7 @@ public class SimulationLauncher
         mAppName = pAppName;
         mHandleOutputInternally = pHandleOutputInternally;
         mListeners = new ArrayList();
+        setCurrentDirectory(null);
         if(mHandleOutputInternally)
         {
             mResultsQueue = null;
@@ -1241,12 +1243,27 @@ public class SimulationLauncher
         }
     }
 
+    private void setCurrentDirectory(File pCurrentDirectory)
+    {
+        mCurrentDirectory = pCurrentDirectory;
+    }
+
+    private File getCurrentDirectory()
+    {
+        return(mCurrentDirectory);
+    }
+
     private void handleOutputFileMouseClick()
     {
         OutputType outputType = mOutputType;
         if(outputType.equals(OutputType.FILE))
         {
             FileChooser outputFileChooser = new FileChooser(mLauncherFrame);
+            File currentDirectory = getCurrentDirectory();
+            if(null != currentDirectory)
+            {
+                outputFileChooser.setCurrentDirectory(currentDirectory);
+            }
             outputFileChooser.setDialogTitle("Please specify the file for the simulation output");
             if(null != mOutputFile)
             {
@@ -1257,6 +1274,11 @@ public class SimulationLauncher
             File outputFile = outputFileChooser.getSelectedFile();
             if(null != outputFile)
             {
+                File parentFile = outputFile.getParentFile();
+                if(parentFile.isDirectory())
+                {
+                    setCurrentDirectory(parentFile);
+                }
                 String outputFileName = outputFile.getAbsolutePath(); 
                 boolean doUpdate = true;
                 if(outputFile.exists() && 
