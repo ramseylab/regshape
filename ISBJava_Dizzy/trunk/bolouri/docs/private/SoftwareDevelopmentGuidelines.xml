@@ -581,7 +581,7 @@ An example of API documentation extracted from source file header
 comments is the <a href="../ISBJava/javadoc">ISBJava API documentation</a>.
 <p /></dd>
 
-<dt><b>ReleaseNotes or README file</b>:</dt>
+<dt><b>Release Notes or README file</b>:</dt>
 <dd>
 The project&apos;s deliverable should be distributed 
 with an overall <code>README</code>-type
@@ -592,7 +592,7 @@ document can include a set of release notes, or reference
 the project home page where this information can be accessed.
 This document should be distributed with your application.
 An example of a release notes document is the
-<a href="../Dizzy/docs/ReleaseNotes.html">Dizzy Release Notes</a>
+<a href="../Dizzy/docs/ReadMe.html">Dizzy ReadMe</a>
 document.  
 <p /></dd>
 

@@ -94,10 +94,10 @@ release version:   &appVersion;
 release date:      &appDate;
 </pre>
 </blockquote>
-The release notes for this version of the program can be found
+The README file for this version of the program can be found
 at the following URL:
 <blockquote>
-<a href="&appHomePage;/docs/ReleaseNotes.html">&appHomePage;/docs/ReleaseNotes.html</a>
+<a href="&appHomePage;/docs/ReadMe.html">&appHomePage;/docs/ReadMe.html</a>
 </blockquote>
 The home page for this program is:
 <blockquote>

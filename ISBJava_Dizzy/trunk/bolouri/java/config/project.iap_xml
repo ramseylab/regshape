@@ -369,7 +369,7 @@ Press ""Done"" to quit the installer.]]></string>
 								<string><![CDATA[@PROJROOT@/java/html/]]></string>
 							</property>
 							<property name="resourceName">
-								<string><![CDATA[ReleaseNotes.html]]></string>
+								<string><![CDATA[ReadMe.html]]></string>
 							</property>
 							<property name="sourceFileType">
 								<int>0</int>
@@ -857,7 +857,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 												<string><![CDATA[664]]></string>
 											</property>
 											<property name="sourceName">
-												<string><![CDATA[ReleaseNotes.html]]></string>
+												<string><![CDATA[ReadMe.html]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
 												<boolean>true</boolean>
@@ -869,7 +869,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[ReleaseNotes.html]]></string>
+												<string><![CDATA[ReadMe.html]]></string>
 											</property>
 											<property name="fileSize">
 												<long>5300</long>

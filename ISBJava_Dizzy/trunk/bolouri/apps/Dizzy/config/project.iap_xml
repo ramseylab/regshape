@@ -757,7 +757,7 @@ You may cancel this installation at any time by clicking the 'Cancel' button.]]>
 								<string><![CDATA[@PROJROOT@/apps/@APPNAME@/html/]]></string>
 							</property>
 							<property name="resourceName">
-								<string><![CDATA[ReleaseNotes.html]]></string>
+								<string><![CDATA[ReadMe.html]]></string>
 							</property>
 							<property name="sourceFileType">
 								<int>0</int>
@@ -1824,7 +1824,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[664]]></string>
 											</property>
 											<property name="sourceName">
-												<string><![CDATA[ReleaseNotes.html]]></string>
+												<string><![CDATA[ReadMe.html]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
 												<boolean>true</boolean>
@@ -1836,7 +1836,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[ReleaseNotes.html]]></string>
+												<string><![CDATA[ReadMe.html]]></string>
 											</property>
 											<property name="fileSize">
 												<long>3201</long>
