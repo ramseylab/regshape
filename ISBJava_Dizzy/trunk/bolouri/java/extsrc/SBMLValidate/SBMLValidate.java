@@ -292,6 +292,11 @@ class TJXML implements ErrorHandler {
              node = nodelist.item(i);
              if (node.getNodeType() != node.TEXT_NODE) {
                 String Name = GetAttribute (node, "specie", "");
+                if(0 == Name.length())
+                {
+                    Name = GetAttribute (node, "species", "");
+                }
+                
                 int stoich = GetStoichiometry (node);
                 Species = Network.FindMetabolite (Name);
                 if (Species != null) {
@@ -315,6 +320,10 @@ class TJXML implements ErrorHandler {
              node = nodelist.item(i);
              if (node.getNodeType() != node.TEXT_NODE) {
                 String Name = GetAttribute (node, "specie", "");
+                if(0 == Name.length())
+                {
+                    Name = GetAttribute(node, "species", "");
+                }
                 int stoich = GetStoichiometry (node);
                 Species = Network.FindMetabolite (Name);
                 if (Species != null) {
@@ -414,7 +423,8 @@ class TJXML implements ErrorHandler {
             for (int i=0; i<nodelist.getLength(); i++) {
                 node = nodelist.item(i);
                 if (node.getNodeType() != node.TEXT_NODE) {
-                   if (!node.getNodeName().equals("specie"))
+                   if (!node.getNodeName().equals("specie") &&
+                       !node.getNodeName().equals("species"))
                       throw new Exception ("Syntax error: expecting 'specie' tag in list of species");
 
                    int defined ;
