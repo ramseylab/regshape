@@ -109,8 +109,7 @@ public class GibsonSimulator extends StochasticSimulator implements IAliasableCl
         for(int ctr = 0; ctr < numReactions; ++ctr)
         {
             Reaction reaction = reactions[ctr];
-            if(reaction.getRate().isExpression() || reaction.getReactantsMap().size() == 0
-                || reaction.getNumSteps() > 1)
+            if(reaction.getRate().isExpression() || reaction.getReactantsMap().size() == 0)
             {
                 customReactions.add(new Integer(ctr));
             }
