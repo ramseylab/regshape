@@ -8,65 +8,13 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
                 xmlns:isb="http://www.systemsbiology.org/xmlns"
                 xmlns:html="http://www.w3.org/TR/xhtml1"
+                xmlns="http://www.w3.org/TR/xhtml1"
                 >              
 
-<!-- <xsl:output method="html" encoding="ISO-8859-1" /> -->  
 
-  <xsl:template match="html:a">
-    <xsl:element name="a">
-      <xsl:if test="@name != ''">
-        <xsl:attribute name="name"><xsl:value-of select="@name" /></xsl:attribute>
-        <xsl:apply-templates/>
-      </xsl:if>
-      <xsl:if test="@href != ''">
-        <xsl:attribute name="href"><xsl:value-of select="@href" /></xsl:attribute>
-        <xsl:apply-templates/>
-      </xsl:if>
-    </xsl:element>
-  </xsl:template>
-
-  <xsl:template match="html:img">
-    <xsl:element name="img">
-      <xsl:if test="@src != ''">
-        <xsl:attribute name="src"><xsl:value-of select="@src" /></xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@alt != ''">
-        <xsl:attribute name="alt"><xsl:value-of select="@alt" /></xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@border != ''">
-        <xsl:attribute name="border"><xsl:value-of select="@border" /></xsl:attribute>
-      </xsl:if>
-      <xsl:apply-templates/>
-    </xsl:element>
-  </xsl:template>
-
-  <xsl:template match="html:a">
-    <xsl:element name="a">
-      <xsl:if test="@name != ''">
-        <xsl:attribute name="name"><xsl:value-of select="@name" /></xsl:attribute>
-        <xsl:apply-templates/>
-      </xsl:if>
-      <xsl:if test="@href != ''">
-        <xsl:attribute name="href"><xsl:value-of select="@href" /></xsl:attribute>
-        <xsl:apply-templates/>
-      </xsl:if>
-    </xsl:element>
-  </xsl:template>
-
-  <xsl:template match="html:table">
-    <xsl:element name="table">
-      <xsl:if test="@border != ''">
-        <xsl:attribute name="border">
-          <xsl:value-of select="@border" />
-        </xsl:attribute>
-      </xsl:if>
-      <xsl:apply-templates/>
-    </xsl:element>
-  </xsl:template>
-
-  <xsl:template match="html:*">
+  <xsl:template match="html:*|html:*/@*">
     <xsl:copy>
-      <xsl:apply-templates />
+      <xsl:apply-templates select="@* | node()" />
     </xsl:copy>
   </xsl:template>
 
