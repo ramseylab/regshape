@@ -24,7 +24,6 @@ public class FileUtils
         if(-1 != lastIndex)
         {
             retExtension = pFileName.substring(lastIndex, pFileName.length());
-            System.out.println("found extension: " + retExtension);
         }
         return(retExtension);
     }
