@@ -40,8 +40,8 @@ having to run the build system.
 
 <ul>
 <li><a href="&appVersion;/download.html">Download &appName;</a></li>
-<li><a href="docs/UserManual.html">&appName; User Manual</a></li>
-<li><a href="docs/ReadMe.html">&appName; ReadMe</a></li>
+<li><a href="docs/ReadMe.html">&appName; Overview</a></li>
+  <li><a href="docs/UserManual.html">&appName; User Manual</a></li>
 <li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
 <li><a href="../License.html">License Agreement</a></li>
 <li><a href="javadoc/">Javadoc API documentation</a> (a <a href="docs/APIDocumentation.pdf">PDF version</a> is available)</li>
