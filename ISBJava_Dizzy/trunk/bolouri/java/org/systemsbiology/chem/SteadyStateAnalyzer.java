@@ -49,7 +49,14 @@ public final class SteadyStateAnalyzer
 
         Object []jac = new Object[numSpecies];
         Object []partials = new Object[numSpecies];
-        
+
+        HashMap []localSymbolsMaps = new HashMap[numReactions];
+
+        for(int j = 0; j < numReactions; ++j)
+        {           
+            localSymbolsMaps[j] = Simulator.createLocalSymbolsMap(pReactions[j]);
+        }
+
         for(int i = 0; i < numSpecies; ++i)
         {
             Species species = pSpecies[i];
@@ -60,9 +67,10 @@ public final class SteadyStateAnalyzer
             {
                 Reaction reaction = pReactions[j];
                 Expression reactionRateExpression = pReactionRateExpressions[j];
-                partialsi[j] = reaction.computeRatePartialDerivativeExpression(reactionRateExpression,
-                                                                               species,
-                                                                               pSymbolEvaluator).computeValue(pSymbolEvaluator);
+                partialsi[j] = Simulator.computeRatePartialDerivativeExpression(reactionRateExpression,
+                                                                                species,
+                                                                                pSymbolEvaluator,
+                                                                                localSymbolsMaps[j]).computeValue(pSymbolEvaluator);
             }
         }
 
@@ -188,12 +196,36 @@ public final class SteadyStateAnalyzer
 
         for(int j = 0; j < numReactions; ++j)
         {
-            Expression reactionRateExpression = a[j];
-            Reaction reaction = pReactions[j];
-//            double rate = reaction.computeRate(pSymbolEvaluator);
-//            s.set(j, rate);
             s.set(j, pReactionProbabilities[j]);
         }
+
+//---------------------------------------------------------
+// added for David Orrell's testing purposes: (need to find a way to
+// make this a debugging option)
+//         for(int j = 0; j < numReactions; ++j)
+//         {
+//             System.out.println("reaction[" + j + "] = \"" + pReactions[j].toString() + "\"");
+//         }
+//         for(int i = 0; i < numSpecies; ++i)
+//         {
+//             System.out.println("species[" + i + "] = \"" + pSpecies[i].toString() + "\"");
+//         }
+//         StringBuffer sb = new StringBuffer("");
+//         for(int i = 0; i < numSpecies; ++i)
+//         {
+//             for(int j = 0; j < numReactions; ++j)
+//             {
+//                 double val = w.get(i, j) * s.get(j);
+//                 sb.append(val);
+//                 if(j < numReactions - 1)
+//                 {
+//                     sb.append(", ");
+//                 }
+//             }
+//             sb.append("\n");
+//         }
+//         System.out.println(sb.toString());
+//---------------------------------------------------------
 
         DoubleMatrix1D var = algebra.mult(w, s);
 
