@@ -189,19 +189,20 @@ public abstract class Simulator
             double delay = 0.0;
             if(numSteps > 0)
             {
-                delayedReaction.setNumSteps(numSteps);
+//                delayedReaction.setNumSteps(numSteps);
                 delay = (numSteps - 1) / rate;
             }
             else
             {
                 delay = pReaction.getDelay();
-                if(delay / rate > 1.0)
-                {
-                    delayedReaction.setNumSteps( (int) (delay / rate) );
-                }
+//                if(delay / rate > 1.0)
+//                {
+//                    // :BUGBUG: why are we setting number of steps here?
+//                    delayedReaction.setNumSteps( (int) (delay / rate) );
+//                }
             }
-            // need to use gamma distribution approximation; leave as multi-step reaction;
-            // create a "delayed reaction solver" to store the time-series data for the reactant species
+//            delayedReaction.setDelay(delay);
+
             DelayedReactionSolver solver = new DelayedReactionSolver(reactant,
                                                                      intermedSpecies,
                                                                      delay,
