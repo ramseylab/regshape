@@ -29,7 +29,6 @@
   <property name="app.configDir"                location="${basedir}/config" />
   <property name="app.docsDir"                  location="${basedir}/docs" />
   <property name="app.imagesDir"                location="${basedir}/images" />
-  <property name="app.samplesDir"               location="${basedir}/samples" />
   <property name="app.binDir"                   location="${basedir}/bin" />
   <property name="app.webDir"                   location="${projWebDir}/${ant.project.name}" />
   <property name="app.downloadDir"              location="${app.webDir}/&appVersion;" />
@@ -57,25 +56,6 @@
 
   <target name="copyCommonConfig">
     <copy file="${projConfigDir}/CommonConfig.dtd" todir="${app.configDir}" />
-  </target>
-
-  <target name="copySamples" depends="setFilters">
-    <mkdir dir="${app.buildDir}/samples" />
-    <copy todir="${app.buildDir}/samples" filtering="true">
-      <fileset dir="${app.samplesDir}">
-        <include name="*.cmdl" />
-        <include name="*.xml" />
-      </fileset>
-    </copy>
-  </target>
-
-  <target name="copyScripts" depends="setFilters">
-    <mkdir dir="${app.buildDir}/bin" />
-    <copy todir="${app.buildDir}/bin" filtering="true">
-      <fileset dir="${app.binDir}">
-        <include name="runmodel.sh" />
-      </fileset>
-    </copy>
   </target>
 
   <target name="style" depends="copyCommonConfig">
@@ -216,7 +196,7 @@
     </copy>
   </target>
 
-  <target name="buildInstallers" depends="setFilters, copySamples, copyScripts">
+  <target name="buildInstallers" depends="setFilters">
     <!-- make the build directory -->
     <mkdir dir="${app.buildDir}" />
 
