@@ -550,7 +550,7 @@ should contain a summary file (e.g., <code>README</code> or
 <code>package.html</code> file) that describes the purpose and
 function of the package or library contained in that subdirectory.
 An example is the <a href="../ISBJava/javadoc/isb/chem/package-summary.html">
-package summary for the <code>isb.chem</code> Java package</a>.
+package summary for the <code>org.systemsbiology.chem</code> Java package</a>.
 <p />
 </dd>
 
@@ -759,7 +759,7 @@ affiliation of the maintainer/author of the package.
 In Java, you should try to
 leverage the package namespace construct to convey important 
 contextual information about your classes.  For example, if 
-your package namespace is <code>isb.chem</code>, there is
+your package namespace is <code>org.systemsbiology.chem</code>, there is
 no need to name a class within that package <code>ChemSpecies</code>,
 because the &quot;chem&quot; is obvious from the package context.
 It would be better to name the class <code>Species</code>.
@@ -770,8 +770,8 @@ be avoided, because it just causes confusion when people familiar
 with the Java language try to read your code.  It is better to
 group package names by function rather than by project or
 organizational group.  For example, a package name
-<code>isb.chem.scripting</code> would be far better than
-the package name <code>isb.chem.dizzy</code>.  In five years,
+<code>org.systemsbiology.chem.scripting</code> would be far better than
+the package name <code>org.systemsbiology.chem.dizzy</code>.  In five years,
 the &quot;<code>dizzy</code>&quot; moniker may convey no meaning
 to future readers of the code, but it is a certainty that
 &quot;<code>scripting</code>&quot; will convey some meaning.
