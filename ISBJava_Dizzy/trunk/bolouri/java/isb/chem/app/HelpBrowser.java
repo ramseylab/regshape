@@ -5,19 +5,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
 import java.io.File;
-import javax.swing.event.*;
-import javax.swing.text.html.*;
 import isb.util.*;
 import javax.help.*;
 
 public class HelpBrowser
 {
-    private static final int WIDTH = 630;
-    private static final int HEIGHT = 480;
     private static final String TOP_MAP_ID = "top";
 
     JFrame mMainFrame;
-    private static final String HELP_PACKAGE_FILE_NAME = "html/AppHelp.jar";
 
     public HelpBrowser(JFrame pMainFrame)
     {
