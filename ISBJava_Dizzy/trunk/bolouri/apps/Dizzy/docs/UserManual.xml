@@ -228,7 +228,7 @@ directory in which you installed &appName;.  Then navigate into the
 <img src="../images/screenshot4.png" alt="&appName; screenshot 4" />
 </p>
 <p>
-For starters, try selecting the &quot;<code>GAL.dizzy</code>&quot; 
+For starters, try selecting the &quot;<code>GAL&ccmdlExtension;</code>&quot; 
 file, by double-clicking on that file name in the dialog box. 
 The &appName; window should now look like this:
 <p>
@@ -583,7 +583,11 @@ subdirectory of the directory in which you install the &appName; software.
 <b>Note to Windows users:</b> please do not use Notepad to open the
 sample model definition files in the &quot;samples&quot; subdirectory.
 Please use a different editor, such as WordPad or Emacs, in order to 
-ensure that the files appear properly formatted, in the editor.
+ensure that the files appear properly formatted, in the editor.  You
+may wish to associate &quot;<code>&ccmdlExtension;</code>&quot; files 
+with the WordPad program, so that you can double-click on a
+&quot;<code>&ccmdlExtension;</code>&quot; file and have it open
+(properly formatted) in WordPad.
 </blockquote>
 In addition, there is a <a href="&webBaseURL;/models">repository of
 biomolecular models</a> maintained by the &mainGroup;, that
@@ -3772,9 +3776,14 @@ simulations or the like.
 </p>
 <p>
 In order to be able to use the command-line interface to the &appName;
-system, you will need to set up your Java <code>CLASSPATH</code>
+system, you may need to set up your Java <code>CLASSPATH</code>
 variable properly.  On most operating systems, this is an environment
-variable.  You will need to modify the <code>CLASSPATH</code> and add
+variable.  If you installed &appName; in the default directory (just
+clicked &quot;next&quot; when prompted to specify the installation directory),
+you should not need to specify the <code>CLASSPATH</code> when running
+the <code>&appNameCommandLine;</code> program.  However, if you selected a directory
+other than the default directory for &appName; as the installation directory,
+you will need to modify the <code>CLASSPATH</code> environment variable to add
 the <code>&localJavaLibraryName;.jar</code> file to the path.  This file
 is installed in the &quot;<code>lib</code>&quot; subdirectory of the
 directory in which you installed the &appName; system.  In addition,
@@ -3782,6 +3791,26 @@ if you wish to be able to import or export SBML, you will need to add
 the <code>SBMLValidate.jar</code> file and the <code>SBWCore.jar</code>
 file to your <code>CLASSPATH</code>.  Both of these JAR files are in
 the &quot;<code>lib</code>&quot; subdirectory where you installed &appName;.
+For example, if you installed &appName; in the &quot;<code>/usr/opt/&appName;</code>&quot;
+directory, your <code>CLASSPATH</code> variable might me modified to look
+like this:
+<blockquote>
+<pre>
+CLASSPATH=/usr/opt/&appName;/lib/&localJavaLibraryName;:/usr/opt/&appName;/lib/SBWCore.jar
+</pre>
+</blockquote>
+on Linux.  On Windows, if you installed &appName; in the
+&quot;<code>U:\&appName;</code>&quot; directory, your 
+<code>CLASSPATH</code> variable might be modified to look like
+this:
+<blockquote>
+<pre>
+CLASSPATH=U:\&appName;\lib\&localJavaLibraryName;;U:\&appName;\lib\SBWCore.jar
+</pre>
+</blockquote>
+Again, manually setting the <code>CLASSPATH</code> environment variable
+is only necessary if you selected an installation directory other than
+the default directory suggested by the &appName; installer program.
 </p>
 <p>
 In addition to setting your <code>CLASSPATH</code> variable, your
