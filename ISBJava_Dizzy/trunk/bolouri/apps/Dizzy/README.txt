@@ -7,7 +7,7 @@ file is archived in the "docs" subdirectory.  If you are interested
 in *using* Dizzy, you should probably start reading that document,
 which can be found on the web at:
 
-  http://labs.systemsbiology.net/bolouri/Dizzy
+  http://labs.systemsbiology.net/bolouri/software/Dizzy
 
 Ant is used as the driver for application builds.  You can change to
 the CVSROOT/bolouri/apps/Dizzy directory and do an "ant build", but
@@ -40,7 +40,7 @@ mechanism to substitute the path of the builder (user's) CVS enlistment
 (sandbod) into the project_iap.xml file.  So the following string in the
 InstallAnywhere project file,
 
-    @PROJROOT@/java/extlib
+    @GLOBAL_ROOT@/java/extlib
 
 would get translated (by the Ant filter token mechanism) to:
 
