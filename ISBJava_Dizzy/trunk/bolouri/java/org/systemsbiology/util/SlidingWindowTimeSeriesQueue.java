@@ -34,6 +34,7 @@ public class SlidingWindowTimeSeriesQueue
 
     private double mTimeLastNonzeroValue;
     private boolean mHasNonzeroValue;
+    private int mCounterForRecomputeAverage;
 
     public SlidingWindowTimeSeriesQueue(int pNumTimePoints)
     {
@@ -59,6 +60,7 @@ public class SlidingWindowTimeSeriesQueue
         mLastTime = 0.0;
         mNumStoredPoints = 0;
         mAverageValue = 0.0;
+        mCounterForRecomputeAverage = 0;
         MathFunctions.vectorZeroElements(mTimePoints);
         MathFunctions.vectorZeroElements(mValues);
     }
@@ -96,6 +98,18 @@ public class SlidingWindowTimeSeriesQueue
     public double getAverageValue()
     {
         return(mAverageValue);
+    }
+
+    private double getExactAverageValue()
+    {
+        int numPoints = mNumStoredPoints;
+        double avg = 0.0;
+        for(int ctr = 0; ctr < numPoints; ++ctr)
+        {
+            avg += getValue(ctr);
+        }
+        avg /= ((double) numPoints);
+        return(avg);
     }
 
     public void insertPoint(double pTime, double pValue)
@@ -161,8 +175,17 @@ public class SlidingWindowTimeSeriesQueue
             }
         }
 
-        newAverage = (Math.abs(newAverage - lastValue) + pValue)/mNumStoredPoints;
-        mAverageValue = newAverage;
+        ++mCounterForRecomputeAverage;
+        if(mCounterForRecomputeAverage <= mNumTimePoints)
+        {
+            newAverage = (Math.abs(newAverage - lastValue) + pValue)/mNumStoredPoints;
+            mAverageValue = newAverage;
+        }
+        else
+        {
+            mAverageValue = getExactAverageValue();
+            mCounterForRecomputeAverage = 0;
+        }
         assert (newAverage >= 0.0) : "invalid average value (negative); lastValue: " + lastValue + "; numStoredPoints: " + mNumStoredPoints + "; newAverage: " + newAverage + "; pValue: " + pValue;
     }
 
