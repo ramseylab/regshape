@@ -146,6 +146,7 @@
     <copy todir="${app.buildDir}/&appName;/lib">
       <fileset dir="${basedir}/extlib">
         <include name="*.jar" />
+      	<exclude name="cytoscape.jar" />
       </fileset>
     </copy>
 
