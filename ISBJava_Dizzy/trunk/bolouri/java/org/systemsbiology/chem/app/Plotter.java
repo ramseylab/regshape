@@ -147,6 +147,7 @@ public class Plotter
                 public void componentResized(ComponentEvent e) 
                 {
                     handleResize();
+                    pack();
                 }
             });
         }
