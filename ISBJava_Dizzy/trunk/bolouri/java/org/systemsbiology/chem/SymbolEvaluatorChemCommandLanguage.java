@@ -13,7 +13,7 @@ import org.systemsbiology.util.*;
 
 import java.util.*;
 
-public class SymbolEvaluatorChemCommandLanguage extends SymbolEvaluatorChem
+public final class SymbolEvaluatorChemCommandLanguage extends SymbolEvaluatorChem
 {
     public static final String SYMBOL_TIME = "time";
     public static final String SYMBOL_AVOGADRO = "Navo";
@@ -37,7 +37,7 @@ public class SymbolEvaluatorChemCommandLanguage extends SymbolEvaluatorChem
         // do nothing
     }
 
-    public final double getUnindexedValue(Symbol pSymbol) throws DataNotFoundException, IllegalStateException
+    public double getUnindexedValue(Symbol pSymbol) throws DataNotFoundException, IllegalStateException
     {
         if(NULL_ARRAY_INDEX != pSymbol.getArrayIndex())
         {
@@ -63,9 +63,9 @@ public class SymbolEvaluatorChemCommandLanguage extends SymbolEvaluatorChem
         {
             Symbol indexedSymbol = null;
             if(null != mLocalSymbolsMap)
-                {
-                    indexedSymbol = (Symbol) mLocalSymbolsMap.get(symbolName);
-                }
+            {
+                indexedSymbol = (Symbol) mLocalSymbolsMap.get(symbolName);
+            }
             if(null == indexedSymbol)
             {
                 indexedSymbol = (Symbol) mSymbolsMap.get(symbolName);
@@ -85,11 +85,20 @@ public class SymbolEvaluatorChemCommandLanguage extends SymbolEvaluatorChem
         return(sReservedSymbolNames.contains(pSymbolName));
     }
 
-    public final boolean hasValue(Symbol pSymbol) 
+    public boolean hasValue(Symbol pSymbol) 
     {
         String symbolName = pSymbol.getName();
         return(null != mSymbolsMap.get(symbolName) ||
                isReservedSymbol(symbolName));
     }
 
-}
+    public Expression getExpressionValue(Symbol pSymbol) throws DataNotFoundException
+    {
+        Expression retVal = null;
+        if(! isReservedSymbol(pSymbol.getName()))
+        {
+            retVal = super.getExpressionValue(pSymbol);
+        }
+        return(retVal);
+    }
+ }
