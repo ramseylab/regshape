@@ -48,7 +48,7 @@
 **
 ** Contributor(s):
 **
-** Modified by Stephen Ramsey to remove dependence on Xerxes library, 
+** Modified by Stephen Ramsey to remove dependence on Xerces library, 
 ** 2003/08/28
 */
 package SBMLValidate;
