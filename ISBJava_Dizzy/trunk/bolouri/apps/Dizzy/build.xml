@@ -76,18 +76,25 @@
            destdir="${app.styleDir}" 
            includes="*.xml" 
            style="${docsStyleSheet}"
-           excludes="AppConfig.xml" />
+           excludes="AppConfig.xml,AppHelp.xml" />
 
-    <style in="${app.docsDir}/UserManual.xml"
+    <style basedir="${app.docsDir}" 
+           destdir="${app.styleDir}" 
+           includes="AppHelp.xml" 
+           style="${docsStyleSheet}">
+         <param name="altWebBaseURL" expression=".." />
+    </style>
+ 
+    <style in="${app.docsDir}/AppHelp.xml"
            out="${app.styleDir}/AppHelp.jhm"
            style="${helpMapStyleSheet}">
-      <param name="${helpContentFileParamName}" expression="UserManual.html" />
+         <param name="${helpContentFileParamName}" expression="AppHelp.html" />
     </style>
 
-    <style in="${app.docsDir}/UserManual.xml"
+    <style in="${app.docsDir}/AppHelp.xml"
            out="${app.styleDir}/AppHelpTOC.xml"
            style="${helpTOCStyleSheet}">
-      <param name="${helpContentFileParamName}" expression="UserManual.html" />
+        <param name="${helpContentFileParamName}" expression="AppHelp.html" />
     </style >
 
  </target>
@@ -96,6 +103,7 @@
     <apply executable="${binHtmlTidy}" failonerror="true">
       <fileset dir="${app.webDir}/docs">
         <include name="UserManual.html" />
+        <include name="AppHelp.html" />
       </fileset>
       <arg value="-modify" />
       <arg value="-quiet" />
@@ -150,11 +158,15 @@
       <fileset dir="${basedir}">
         <include name="html/AppHelp.jhm" />
         <include name="html/AppHelpTOC.xml" />
-        <include name="html/UserManual.html" />
+        <include name="html/AppHelp.html" />
         <include name="html/AppHelp.hs" />
       </fileset>
       <fileset dir="${basedir}">
         <include name="images/*.png" />
+      </fileset>
+      <fileset dir="${projRoot}">
+        <include name="images/logo-bolourilab.png" />
+        <include name="images/logo-isb.png" />
       </fileset>
     </jar>
   </target>
