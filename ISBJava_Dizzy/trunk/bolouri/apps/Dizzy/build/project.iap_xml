@@ -219,7 +219,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../lib/]]></string>
+								<string><![CDATA[/users/sramsey/cvs/bolouri/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -275,7 +275,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../lib/]]></string>
+								<string><![CDATA[/users/sramsey/cvs/bolouri/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -303,7 +303,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../lib/]]></string>
+								<string><![CDATA[/users/sramsey/cvs/bolouri/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>
@@ -331,7 +331,7 @@ and any path to a file to read from that file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/build/../lib/]]></string>
+								<string><![CDATA[/users/sramsey/cvs/bolouri/java/extlib/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>

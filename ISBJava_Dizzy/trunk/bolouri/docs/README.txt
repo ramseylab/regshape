@@ -1,6 +1,7 @@
-This CVS archive contains the ISB Java class library
-developed by the Bolouri group at the Institute
-for Systems Biology.  The software contained in
-this archive is available under the GNU Public
-License (GPL), the text of which can be found 
-in this directory in the file "LICENSE.txt".
+This directory contains documentation of the Bolouri
+group that is not specific to a particular application,
+and that is not specific to the ISBJava source tree.
+
+The documentation in this directory is in XML format,
+which is turned into HTML by a mechanism called "XSL".
+
