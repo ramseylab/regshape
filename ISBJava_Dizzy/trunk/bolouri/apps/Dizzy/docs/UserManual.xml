@@ -9,7 +9,6 @@
 <!ENTITY sbmlExtension ".xml">
 <!ENTITY sbmlURL "http://www.sbw-sbml.org">
 <!ENTITY appNameCommandLine "dizzycmd">
-
    ]>
 
 <!-- ========== PREAMBLE ========== -->
@@ -695,6 +694,12 @@ P1
 </blockquote>
 The following shows some examples of <em>illegal</em> symbol names:
 <blockquote>
+<table>
+<tr valign="top">
+<td>
+<b>ILLEGAL:</b>&nbsp;&nbsp;&nbsp;&nbsp;
+</td>
+<td>
 <pre>
 A + B
 DNA plus TFA
@@ -703,6 +708,9 @@ C-D
 1e+6
 B!
 </pre>
+</td>
+</tr>
+</table>
 </blockquote>
 The underscore can be used as a convenient separator
 when defining a symbol name with multiple words.
@@ -1468,6 +1476,7 @@ all symbols must be previously defined
 <a href="#numericmacros">numeric macros</a>.
 </p>
 <p>
+<a name="stringelements" />
 <b>String</b> elements are evaluated by the parser 
 and stored as a variable-length text string.  A
 mathematical expression may be embedded in a string
@@ -1520,6 +1529,30 @@ The details of how <b>elements</b> make up statements
 will be described in the sections defining the
 <a href="#ccmdl">CCMDL</a> and the <a href="#cmdl">CMDL</a>
 languages below.
+</p>
+<p>
+An important point about quoted strings is that they may not
+be continued across lines of input.  The &appName; parser will
+signal an error if a quoted string is not terminated on the
+same line of input where it is initiated.  Thus the following
+input statement would be a syntax error:
+<blockquote>
+<table>
+<tr>
+<td>
+<b>ILLEGAL:</b>&nbsp;&nbsp;&nbsp;&nbsp;
+</td>
+<td>
+<pre>
+printModel "my
+           model";
+</pre>
+</td>
+</tr>
+</table>
+</blockquote>
+because the string that begins with &quot;my&quot; ends on a
+different line than the line where the string begins.
 </p>
 <p>
 <b>Data list</b> elements are elements that contain
@@ -1658,6 +1691,36 @@ actual statement, as shown here:
 </blockquote>
 In the above example, the statement would be parsed, but everything
 after (and including)  the pound sign would be ignored.
+</p>
+<p>
+The &appName; system also supports <em>multi-line comments</em>.
+The syntax for a multi-line comment is identical to a comment in
+the C programming language:
+<blockquote>
+<pre>
+/*
+  this is a comment
+  
+  this is also a comment
+ */
+</pre>
+</blockquote>
+The parser will ignore anything between the &quot;<code>/*</code>&quot;
+and the &quot;<code>*/</code>&quot; symbols.  This can be  useful for
+temporarily commenting out multiple lines of your model definition file,
+as shown here:
+<blockquote>
+<pre>
+/*
+ commented out temporarily for testing purposes (sramsey 2003/05/09)
+G4_dimer_binding_at_DNA4,     G4D_free + DNA4 -&gt; G4D_DNA4,     [kf];
+G4_dimer_debinding_at_DNA4,   G4D_DNA4 -&gt; G4D_free + DNA4,     [kr];
+ */
+</pre>
+</blockquote>
+Using the multiline comment syntax for this case is easier beacause
+you do not have to add a pound symbol &quot;<code>#</code>&quot; to each
+line that you are commenting out.
 </p>
 </isb:docsubsection>
 
@@ -2782,8 +2845,11 @@ In the above statement, the keyword is <code>species</code>, the
 statement name is &quot;<code>s1</code>&quot;, and there is a single
 element <code>compartment "c1"</code>.  The colon always separates
 the statement from any elements.  In a statement with no elements, the colon
-is omitted.  The statement always ends with a semicolon.  Here is an example
-statement with zero elements:
+is omitted.  The statement always ends with a semicolon.  Note the use of
+double-quotation marks.  In the CMDL, quotation marks are used to 
+delimit <a href="#stringelements">string elements</a>.  
+<p />
+Here is an example statement that does not contain any elements:
 <blockquote>
 <pre>
 printModel "m1";

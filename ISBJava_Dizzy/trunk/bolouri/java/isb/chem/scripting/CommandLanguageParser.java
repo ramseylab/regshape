@@ -54,7 +54,7 @@ public class CommandLanguageParser implements IScriptBuildingParser, IAliasableC
      * constants
      *========================================*/
     public static final String CLASS_ALIAS = "command-language";
-    private static final String DELIMITERS = ":, \t\"();#{}[]";
+    private static final String DELIMITERS = ":, \t\"();#{}[]/*";
     static final String KEYWORD_INCLUDE = "include";
     static final String KEYWORD_LOOP = "loop";
     static final String KEYWORD_DEFINE = "define";
@@ -987,7 +987,10 @@ public class CommandLanguageParser implements IScriptBuildingParser, IAliasableC
         }
     }
 
-    private static void tokenizeLine(String pLine, int pLineNumber, List pLineTokens) throws InvalidInputException
+    private static void tokenizeLine(String pLine, 
+                                     int pLineNumber, 
+                                     List pLineTokens, 
+                                     MutableBoolean pWithinMultilineComment) throws InvalidInputException
     {
         // a model description is a sequence of *statements* terminated by ";" characters. Statements
         // are made up of a sequence of *elements*; the first element is always followed by either a ":"
@@ -999,13 +1002,26 @@ public class CommandLanguageParser implements IScriptBuildingParser, IAliasableC
 
         StringBuffer quotedString = null;
 
+        String lastToken = null;
+        String tokenStr = null;
+
         while(tokenizer.hasMoreTokens())
         {
-            String tokenStr = tokenizer.nextToken();
+            lastToken = tokenStr;
+            tokenStr = tokenizer.nextToken();
             String trimTokenStr = tokenStr.trim();
             if(0 == trimTokenStr.length())
             {
                 // ignore any zero-length tokens after trimming, as these are whitespace
+                continue;
+            }
+
+            if(pWithinMultilineComment.getValue())
+            {
+                if(tokenStr.equals("/") && null != lastToken && lastToken.equals("*"))
+                {
+                    pWithinMultilineComment.setValue(false);
+                }
                 continue;
             }
 
@@ -1045,6 +1061,12 @@ public class CommandLanguageParser implements IScriptBuildingParser, IAliasableC
                     {
                         // discard the rest of the line of input
                         break;
+                    }
+                    else if(tokenStr.equals("*") && null != lastToken && lastToken.equals("/"))
+                    {
+                        pLineTokens.remove(pLineTokens.size() - 1);
+                        pWithinMultilineComment.setValue(true);
+                        continue;
                     }
                     else if(tokenStr.equals("("))
                     {
@@ -1530,10 +1552,15 @@ public class CommandLanguageParser implements IScriptBuildingParser, IAliasableC
         try
         {
             String line = null;
+            MutableBoolean withinMultilineComment = new MutableBoolean(false);
             while((line = pBufferedReader.readLine()) != null)
             {
                 ++lineCounter;
-                tokenizeLine(line, lineCounter, tokenList);
+                tokenizeLine(line, lineCounter, tokenList, withinMultilineComment);
+            }
+            if(withinMultilineComment.getValue())
+            {
+                throw new InvalidInputException("command language input ended within a comment context; the close-comment symbol is probably missing");
             }
         }
 

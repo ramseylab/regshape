@@ -65,7 +65,7 @@ public class CondensedCommandLanguagePreprocessor implements ITranslator
      * constants
      *========================================*/
 
-    private static final String DELIMITERS = "=#->+ \t\",;{}[]:";
+    private static final String DELIMITERS = "=#->+ \t\",;{}[]:/*";
 
     // special string tokens that are meant to be interpreted by the front-end:
     private static final String KEYWORD_SIMULATE = "simulate";
@@ -1015,18 +1015,33 @@ public class CondensedCommandLanguagePreprocessor implements ITranslator
         pStatement.append(";\n");
     }
 
-    private void tokenizeLine(String pLine, int pLineNumber, List pLineTokens) throws InvalidInputException
+    private void tokenizeLine(String pLine, 
+                              int pLineNumber, 
+                              List pLineTokens, 
+                              MutableBoolean pWithinMultilineComment) throws InvalidInputException
     {
         boolean includeDelimiters = true;
         StringTokenizer tokenizer = new StringTokenizer(pLine, DELIMITERS, includeDelimiters);
         StringBuffer quotedString = null;
 
+        String lastToken = null;
+        String tokenStr = null;
+
         while(tokenizer.hasMoreTokens())
         {
-            String tokenStr = tokenizer.nextToken();
+            lastToken = tokenStr;
+            tokenStr = tokenizer.nextToken();
 
             String trimTokenStr = tokenStr.trim();
 
+            if(pWithinMultilineComment.getValue())
+            {
+                if(tokenStr.equals("/") && null != lastToken && lastToken.equals("*"))
+                {
+                    pWithinMultilineComment.setValue(false);
+                }
+                continue;
+            }
 
             if(quotedString != null)
             {
@@ -1052,6 +1067,12 @@ public class CondensedCommandLanguagePreprocessor implements ITranslator
                 else if(tokenStr.equals("#"))
                 {
                     break;
+                }
+                else if(tokenStr.equals("*") && null != lastToken && lastToken.equals("/"))
+                {
+                    pLineTokens.remove(pLineTokens.size() - 1);
+                    pWithinMultilineComment.setValue(true);
+                    continue;
                 }
                 else if(tokenStr.equals("="))
                 {
@@ -1126,10 +1147,15 @@ public class CondensedCommandLanguagePreprocessor implements ITranslator
         try
         {
             String line = null;
+            MutableBoolean withinMultilineComment = new MutableBoolean(false);
             while((line = pBufferedReader.readLine()) != null)
             {
                 ++lineCounter;
-                tokenizeLine(line, lineCounter, tokenList);
+                tokenizeLine(line, lineCounter, tokenList, withinMultilineComment);
+            }
+            if(withinMultilineComment.getValue())
+            {
+                throw new InvalidInputException("command language input ended within a comment context; the close-comment symbol is probably missing");
             }
         }
 
