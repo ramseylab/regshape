@@ -80,6 +80,9 @@ written to the <code>kineticLaw</code> field using the "<code>delay(species,time
 construct.</li>
 <li>Modified the <code>org.systemsbiology.chem.scripting.ModelExporterMarkupLanguage</code>
 so that it can properly export a model containing a reaction with an intrinsic time delay.</li>
+<li>Fixed a potential <code>NullPointerException</code> in the 
+<code>org.systemsbiology.math.SymbolEvaluatorHashMap</code> class, in the case where a 
+<code>SymbolValue</code> object does not have a <code>Value</code> object defined.</li>
 </ul>
 </td>
 </tr>
