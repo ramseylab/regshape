@@ -22,7 +22,7 @@ public class MarkupLanguageScriptBuildingUtility
     /*========================================*
      * constants
      *========================================*/
-    private static final double MAX_INITIAL_SPECIES_POPULATION = Math.sqrt( (double) Long.MAX_VALUE );
+    private static final double MAX_INITIAL_SPECIES_POPULATION = Double.MAX_VALUE;
     static final String INITIAL_SPECIES_POPULATIONS_NAME = "initialSpeciesPopulations";
     private static final String DEFAULT_MODEL_NAME = "sbmlModel";
 
