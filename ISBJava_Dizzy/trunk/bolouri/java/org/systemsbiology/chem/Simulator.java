@@ -8,7 +8,6 @@ import java.util.*;
 
 public abstract class Simulator 
 {
-    private static final int DEFAULT_MULTISTEP_TIME_POINTS = 10000;
     private static final int NUM_REACTION_STEPS_USE_GAMMA_APPROXIMATION = 15;
 
     protected String []mDynamicSymbolNames;
@@ -184,7 +183,6 @@ public abstract class Simulator
             // create a "multistep reaction solver" to store the time-series data for the reactant species
             MultistepReactionSolver solver = new MultistepReactionSolver(reactant,
                                                                          intermedSpecies,
-                                                                         DEFAULT_MULTISTEP_TIME_POINTS,
                                                                          numSteps,
                                                                          rate);
             pMultistepReactionSolvers.add(solver);

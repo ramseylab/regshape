@@ -19,6 +19,7 @@ import org.systemsbiology.util.*;
 public class MultistepReactionSolver extends Expression
 {
     private static final double LAMBDA_MAX = 2.0;
+    private static final int MIN_NUM_TIME_POINTS = 500;
 
     private Species mReactant;
     private Species mIntermedSpecies;
@@ -37,26 +38,33 @@ public class MultistepReactionSolver extends Expression
 
     public MultistepReactionSolver(Species pReactant,
                                    Species pIntermedSpecies, 
-                                   int pNumTimePoints, 
                                    int pNumSteps, 
                                    double pRate)
     {
         assert (pNumSteps > 2) : "invalid number of steps: " + pNumSteps;
         assert (pRate > 0.0) : "invalid rate: " + pRate;
-        assert (pNumTimePoints > 0) : "invalid number of time points";
 
         mNumSteps = pNumSteps;
         System.out.println("number of steps: " + mNumSteps);
 
+
+        int numTimePoints = (int) (((double) mNumSteps) * LAMBDA_MAX);
+        if(numTimePoints < MIN_NUM_TIME_POINTS)
+        {
+            numTimePoints = MIN_NUM_TIME_POINTS;
+        }
+        mNumTimePoints = numTimePoints;
+        assert (numTimePoints > 0) : "invalid number of time points";
+
         mReactant = pReactant;
         mIntermedSpecies = pIntermedSpecies;
 
-        mReactantHistory = new SlidingWindowTimeSeriesQueue(pNumTimePoints);
-        mIntermedSpeciesHistory = new SlidingWindowTimeSeriesQueue(pNumTimePoints);
+        mReactantHistory = new SlidingWindowTimeSeriesQueue(numTimePoints);
+        mIntermedSpeciesHistory = new SlidingWindowTimeSeriesQueue(numTimePoints);
         mRate = pRate;
         System.out.println("base rate: " + mRate);
         
-        mNumTimePoints = pNumTimePoints;
+        mNumTimePoints = numTimePoints;
         mFirstTimePoint = true;
 
         double numStepsCorrected = ((double) mNumSteps - 1);
@@ -65,7 +73,7 @@ public class MultistepReactionSolver extends Expression
         mPeakTimeRel = numStepsCorrected/mRate;
         System.out.println("peak time relative: " + mPeakTimeRel);
 
-        mTimeResolution = LAMBDA_MAX * mPeakTimeRel / ((double) pNumTimePoints);
+        mTimeResolution = LAMBDA_MAX * mPeakTimeRel / ((double) numTimePoints);
         System.out.println("time resolution for history: " + mTimeResolution);
 
         mRateSquared = mRate * mRate;
