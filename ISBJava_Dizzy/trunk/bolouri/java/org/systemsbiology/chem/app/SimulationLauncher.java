@@ -257,11 +257,7 @@ public class SimulationLauncher
         try
         {
             ISimulator simulator = pSimulationRunParameters.mSimulator;
-            if(! simulator.isInitialized())
-            {
-                simulator.initialize(mModel,
-                                     mSimulationController);
-            }
+
             simulator.simulate(pSimulationRunParameters.mStartTime,
                                pSimulationRunParameters.mEndTime,
                                pSimulationRunParameters.mNumTimePoints,
@@ -665,8 +661,13 @@ public class SimulationLauncher
         try
         {
             simulator = (ISimulator) getSimulatorRegistry().getInstance(simulatorAlias);
+            if(! simulator.isInitialized())
+            {
+                simulator.initialize(mModel,
+                                     mSimulationController);
+            }
         }
-        catch(DataNotFoundException e)
+        catch(Exception e)
         {
             ExceptionDialogOperationCancelled dialog = new ExceptionDialogOperationCancelled(mMainFrame,
                                                                                              "Failed to instantiate simulator",
