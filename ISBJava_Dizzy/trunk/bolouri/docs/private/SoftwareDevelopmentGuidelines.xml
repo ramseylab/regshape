@@ -111,7 +111,15 @@ all Unix-like operating systems, including most standard Linux distributions.
 To confirm that CVS is installed correctly, you
 should be able to execute the "<code>cvs</code>" command
 from your command shell prompt.  This should be already installed on
-your computer if you are using a modern Linux distribution
+your computer if you are using a modern Linux distribution.
+<p />
+There is also a graphical CVS client for the Linux operating system,
+called &quot;Cervisia&quot;.  It should be installed by default on
+a full installation of a standard desktop Linux distribution. 
+To run it, just type &quot;cervisia&quot; at the command (shell) prompt.
+The Cervisia program is open source, and is available at 
+<a href="http://cervisia.sourceforge.net"><code>cervisia.sourceforge.net</code></a>.
+<p />
 To access CVS from a Windows computer, you will likely need to download and 
 install a Windows CVS client.  There are many CVS clients available for 
 Windows, in particular, <a href="http://www.tortoisecvs.org">TortoiseCVS</a>
