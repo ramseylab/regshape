@@ -6,6 +6,5 @@ some reactions are performed at all."  (Axel Kowald, 2004/10/26)
 
 (3) Modify SimulationResultsPlot to use the latest version of JFreeChart
 
-(4) Add "min(a,b)" and "max(a,b)" to Expression.java class (requested by Stephen Gilmore / Adam Duguid,
-2004/12/13)
-
+(4) Remove CommonConfig.dtd from the Dizzy installation fileset, and use filter tokens for AppConfig.dtd
+so that it doesn't depend on CommonConfig.dtd.
