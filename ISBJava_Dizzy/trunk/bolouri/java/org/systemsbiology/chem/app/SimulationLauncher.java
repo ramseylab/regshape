@@ -244,6 +244,7 @@ public class SimulationLauncher
         }
         else
         {
+            printWriter.flush();
             JOptionPane optionPane = new JOptionPane("output saved to file:\n" + pOutputFileName);
             JDialog dialog = optionPane.createDialog(mMainFrame, "output saved");
             dialog.show();
@@ -729,8 +730,7 @@ public class SimulationLauncher
         assert (null != outputType) : "null output type";
             
         srp.mOutputType = outputType;
-        
-        if(mOutputType.equals(OutputType.FILE))
+        if(srp.mOutputType.equals(OutputType.FILE))
         {
             String fileName = mFileNameField.getText();
             if(null == fileName || fileName.trim().length() == 0)
