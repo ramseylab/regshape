@@ -78,7 +78,7 @@
            style="${globalConfig}/${docsStyleSheet}" />
   	<style basedir="${app.docsDir}"
   	       destdir="${app.styleDir}"
-  	       includes="JavadocTitlePageSimpmle.xml"
+  	       includes="JavadocTitlePageSimple.xml"
   	       style="${globalConfig}/${appConfigStyleSheet}" />
   </target>
 
