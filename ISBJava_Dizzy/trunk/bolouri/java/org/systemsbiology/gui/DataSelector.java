@@ -250,7 +250,7 @@ public class DataSelector extends JFrame
             {
                 if(selectedFile.exists())
                 {
-                    boolean proceed = fileChooser.handleOutputFileAlreadyExists(this, selectedFile.getName());
+                    boolean proceed = FileChooser.handleOutputFileAlreadyExists(this, selectedFile.getName());
                     if(! proceed)
                     {
                         selectedFile = null;
