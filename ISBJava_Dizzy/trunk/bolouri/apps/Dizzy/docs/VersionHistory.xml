@@ -44,6 +44,30 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.6.0/&installerDownloadRelURL;">1.6.0</a></td>
+<td>2004/03/08</td>
+<td>
+<ul>
+<li>Added a new stochastic simulator &quot;<code>gillespie-tauleap</code>&quot;,
+that can obtain an approximate solution of the chemical master equation,
+according to an accuracy parameter that is specified by the user.  This
+simulator is potentially faster than the &quot;<code>gillespie-direct</code>&quot;
+simulator, because it can take large jumps in time, that will involve many
+reaction steps, in one iteration of the simulator.</li>
+<li>Added a feature whereby the &quot;<code>runmodel</code>&quot; program
+is capable of computing the steady-state fluctuations of any of the
+dynamical species in the model, as an optional post-simulation computation. 
+This feature is activated using the optional 
+&quot;<code>-computeFluctuations</code>&quot; command-line argument.</li>
+<li>Made some speed improvements to the delayed reaction solver, for the
+case of stochastic simulations.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.6.0/&installerDownloadRelURL;">1.6.0</a></td>
+</tr>
+
+
+<tr valign="top">
 <td><a href="../1.5.2/&installerDownloadRelURL;">1.5.2</a></td>
 <td>2004/02/25</td>
 <td>
