@@ -81,9 +81,8 @@
     <copy todir="${projWebDir}">
       <fileset dir="${projDocsDir}">
         <exclude name="models/index.xml" />
-        <include name="models/*.dizzy" />
+        <include name="models/*.cmdl" />
         <include name="models/*.xml" />
-        <include name="models/*.isbchem" />
       </fileset>
     </copy>
   </target>
