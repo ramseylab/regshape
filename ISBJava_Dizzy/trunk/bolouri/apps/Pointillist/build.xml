@@ -101,7 +101,7 @@
 
 
   <target name="tidyHTML"> 
-    <apply executable="${binHtmlTidy}" failonerror="true">
+    <apply executable="${binHtmlTidy}" failonerror="false">
       <fileset dir="${app.webDir}/docs">
         <include name="UserManual.html" />
         <include name="AppHelp.html" />
