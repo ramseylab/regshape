@@ -5,11 +5,13 @@
   <target name="compile">
     <ant dir="${basedir}/Dizzy" target="compile" />
     <ant dir="${basedir}/BioTapestry" target="compile" />
+    <ant dir="${basedir}/Pointillist" target="compile" />
   </target>
 
   <target name="clean">
     <ant dir="${basedir}/Dizzy" target="clean" />
     <ant dir="${basedir}/BioTapestry" target="clean" />
+    <ant dir="${basedir}/Pointillist" target="clean" />
   </target>
 
   <target name="buildHTML">
