@@ -58,6 +58,11 @@ public final class DelayedReactionSolver extends Expression
         return(mRate);
     }
 
+    public double getDelay()
+    {
+        return(mDelay);
+    }
+
     public Species getIntermedSpecies()
     {
         return(mIntermedSpecies);
