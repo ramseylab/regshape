@@ -26,6 +26,7 @@ public abstract class SimulatorStochasticBase extends Simulator
 
     protected RandomElement mRandomNumberGenerator;
     protected Poisson mPoissonEventGenerator;
+    protected DelayedReactionSolver []mDynamicSymbolDelayedReactionAssociations;
 
     protected abstract void modifyDefaultSimulatorParameters(SimulatorParameters pSimulatorParameters);
 
@@ -97,56 +98,48 @@ public abstract class SimulatorStochasticBase extends Simulator
         return(nextReactionSolver);
     }
 
-    protected static final void updateSymbolValuesForReaction(SymbolEvaluatorChem pSymbolEvaluator,
-                                                              Reaction pReaction,
-                                                              double []pSymbolValues,
-                                                              DelayedReactionSolver []pDelayedReactionSolvers,
-                                                              long pNumberFirings) throws DataNotFoundException
+    protected final void updateSymbolValuesForReaction(int pReactionCtr,
+                                                       double []pDynamicSymbolValues,
+                                                       DelayedReactionSolver []pDynamicSymbolDelayedReactionAssociations,
+                                                       long pNumberFirings) throws DataNotFoundException
     {
-        int numDelayedReactions = 0;
-        if(null != pDelayedReactionSolvers)
-        {
-            numDelayedReactions = pDelayedReactionSolvers.length;
-        }
-
-        Species []speciesArray = pReaction.getReactantsSpeciesArray();
-        boolean []speciesDynamicFlagArray = pReaction.getReactantsDynamicArray();
-        int []speciesStoichiometryArray = pReaction.getReactantsStoichiometryArray();
+        Symbol []speciesArray = (Symbol []) mReactionsReactantsSpecies[pReactionCtr];
+        boolean []speciesDynamicFlagArray = (boolean []) mReactionsReactantsDynamic[pReactionCtr];
+        int []speciesStoichiometryArray = (int []) mReactionsReactantsStoichiometries[pReactionCtr];
         int numSpecies = speciesArray.length;
-
-        Species species = null;
-        int speciesIndex = -1;
 
         for(int ctr = numSpecies; --ctr >= 0; )
         {
             if(speciesDynamicFlagArray[ctr])
             {
-                species = speciesArray[ctr];
-                speciesIndex = species.getSymbol().getArrayIndex();
-                pSymbolValues[speciesIndex] -= ((double) (pNumberFirings*speciesStoichiometryArray[ctr]));
+                pDynamicSymbolValues[speciesArray[ctr].getArrayIndex()] -= ((double) (pNumberFirings*speciesStoichiometryArray[ctr]));
             }
         }
 
-        speciesArray = pReaction.getProductsSpeciesArray();
-        speciesDynamicFlagArray = pReaction.getProductsDynamicArray();
-        speciesStoichiometryArray = pReaction.getProductsStoichiometryArray();
+        speciesArray = (Symbol []) mReactionsProductsSpecies[pReactionCtr];
+        speciesDynamicFlagArray = (boolean []) mReactionsProductsDynamic[pReactionCtr];
+        speciesStoichiometryArray = (int []) mReactionsProductsStoichiometries[pReactionCtr];
         numSpecies = speciesArray.length;
 
+        int speciesIndex;
         for(int ctr = numSpecies; --ctr >= 0; )
         {
             if(speciesDynamicFlagArray[ctr])
             {
-                species = speciesArray[ctr];
-                speciesIndex = species.getSymbol().getArrayIndex();
-                pSymbolValues[speciesIndex] += ((double) (pNumberFirings*speciesStoichiometryArray[ctr]));
-                for(int i = numDelayedReactions; --i >= 0; )
+                speciesIndex = speciesArray[ctr].getArrayIndex();
+
+                pDynamicSymbolValues[speciesIndex] += ((double) (pNumberFirings*speciesStoichiometryArray[ctr]));
+
+                if(null != pDynamicSymbolDelayedReactionAssociations)
                 {
-                    DelayedReactionSolver solver = pDelayedReactionSolvers[i];
-                    if(solver.hasIntermedSpecies(species))
+                    if(null != pDynamicSymbolDelayedReactionAssociations[speciesIndex])
                     {
+                        DelayedReactionSolver solver = pDynamicSymbolDelayedReactionAssociations[speciesIndex];
+
                         for(long j = pNumberFirings; --j >= 0; )
                         {
-                            solver.addReactant(pSymbolEvaluator);
+//                            System.out.println("adding reactant \"" + mDynamicSymbols[speciesIndex].getName() + "\" for delayed reaction: " + mReactions[solver.getReactionIndex()].getName() + "\"");
+                            solver.addReactant(mSymbolEvaluator);
                         }
                     }
                 }
@@ -154,10 +147,9 @@ public abstract class SimulatorStochasticBase extends Simulator
         }
     }
 
-    protected static final double chooseDeltaTimeToNextReaction(RandomElement pRandomNumberGenerator,
-                                                                double pReactionProbability)
+    protected final double chooseDeltaTimeToNextReaction(double pReactionProbability)
     {
-        double randomNumberUniformInterval = getRandomNumberUniformInterval(pRandomNumberGenerator);
+        double randomNumberUniformInterval = getRandomNumberUniformInterval(mRandomNumberGenerator);
         double inverseRandomNumberUniformInterval = 1.0 / randomNumberUniformInterval;
         double logInverseRandomNumberUniformInterval = Math.log(inverseRandomNumberUniformInterval);
         double timeConstant = 1.0 / pReactionProbability;
@@ -171,22 +163,9 @@ public abstract class SimulatorStochasticBase extends Simulator
         return(true);
     }
 
-    protected abstract double iterate(SymbolEvaluatorChem pSymbolEvaluator,
-                                      double pEndTime,
-                                      Reaction []pReactions,
-                                      double []pReactionProbabilities,
-                                      RandomElement pRandomNumberGenerator,
-                                      double []pDynamicSymbolValues,
-                                      MutableInteger pLastReactionIndex,
-                                      DelayedReactionSolver []pDelayedReactionSolvers,
-                                      boolean pHasExpressionValues,
-                                      Value []pNonDynamicSymbolValues) throws DataNotFoundException, IllegalStateException, SimulationAccuracyException;
+    protected abstract double iterate(MutableInteger pLastReactionIndex) throws DataNotFoundException, IllegalStateException, SimulationAccuracyException;
 
-    protected abstract void prepareForStochasticSimulation(SymbolEvaluatorChem pSymbolEvaluator,
-                                                           double pStartTime,
-                                                           RandomElement pRandomNumberGenerator,
-                                                           Reaction []pReactions,
-                                                           double []pReactionProbabilities,
+    protected abstract void prepareForStochasticSimulation(double pStartTime,
                                                            SimulatorParameters pSimulatorParameters) throws DataNotFoundException, IllegalArgumentException;
     
 
@@ -237,20 +216,42 @@ public abstract class SimulatorStochasticBase extends Simulator
         }
     }
 
-
     protected final void initializeSimulatorStochastic(Model pModel) throws InvalidInputException
     {
         checkDynamicalSymbolsInitialValues();
         initializeRandomNumberGenerator();
         initializePoissonEventGenerator();
+
+        if(null != mDelayedReactionSolvers)
+        {
+            int numDynamicSymbols = mDynamicSymbols.length;
+
+            mDynamicSymbolDelayedReactionAssociations = new DelayedReactionSolver[numDynamicSymbols];
+            for(int ctr = 0; ctr < numDynamicSymbols; ++ctr)
+            {
+                mDynamicSymbolDelayedReactionAssociations[ctr] = null;
+            }
+            
+            int numDelayedReactions = mDelayedReactionSolvers.length;
+            for(int ctr = 0; ctr < numDelayedReactions; ++ctr)
+            {
+                DelayedReactionSolver solver = mDelayedReactionSolvers[ctr];
+                Species intermedSpecies = solver.getIntermedSpecies();
+                String intermedSpeciesName = intermedSpecies.getName();
+                Symbol intermedSpeciesSymbol = (Symbol) mSymbolMap.get(intermedSpeciesName);
+                int intermedSpeciesIndex = intermedSpeciesSymbol.getArrayIndex();
+                mDynamicSymbolDelayedReactionAssociations[intermedSpeciesIndex] = solver;
+            }
+        }
+        else
+        {
+            mDynamicSymbolDelayedReactionAssociations = null;
+        }
     }
 
-    protected static final int chooseIndexOfNextReaction(RandomElement pRandomNumberGenerator,
-                                                         double pAggregateReactionProbabilityDensity, 
-                                                         Reaction []pReactions,
-                                                         double []pReactionProbabilities) throws IllegalArgumentException
+    protected final int chooseIndexOfNextReaction(double pAggregateReactionProbabilityDensity) throws IllegalArgumentException
     {
-        double randomNumberUniformInterval = getRandomNumberUniformInterval(pRandomNumberGenerator);
+        double randomNumberUniformInterval = getRandomNumberUniformInterval(mRandomNumberGenerator);
 
         double cumulativeReactionProbabilityDensity = 0.0;
 
@@ -261,13 +262,11 @@ public abstract class SimulatorStochasticBase extends Simulator
             throw new IllegalArgumentException("invalid aggregate reaction probability density: " + pAggregateReactionProbabilityDensity);
         }
 
-        int numReactions = pReactions.length;
+        int numReactions = mReactions.length;
         int reactionIndex = -1;
-        Reaction reaction = null;
         for(int reactionCtr = numReactions - 1; reactionCtr >= 0; --reactionCtr)
         {
-            double reactionProbability = pReactionProbabilities[reactionCtr];
-            reaction = pReactions[reactionCtr];
+            double reactionProbability = mReactionProbabilities[reactionCtr];
             cumulativeReactionProbabilityDensity += reactionProbability;
             if(cumulativeReactionProbabilityDensity >= fractionOfAggregateReactionProbabilityDensity)
             {
@@ -285,7 +284,6 @@ public abstract class SimulatorStochasticBase extends Simulator
                                             int pNumResultsTimePoints,
                                             String []pRequestedSymbolNames) throws DataNotFoundException, IllegalStateException, IllegalArgumentException, SimulationAccuracyException
     {
-        System.err.println("starting stochastic simulation");
         conductPreSimulationCheck(pStartTime,
                                   pEndTime,
                                   pSimulatorParameters,
@@ -388,7 +386,7 @@ public abstract class SimulatorStochasticBase extends Simulator
 
             time = pStartTime;
 
-            prepareForSimulation(time);
+            prepareForSimulation(pStartTime);
 
             lastReactionIndex.setValue(NULL_REACTION);
 
@@ -396,27 +394,19 @@ public abstract class SimulatorStochasticBase extends Simulator
                                   dynamicSymbols,
                                   randomNumberGenerator);
 
-            prepareForStochasticSimulation(symbolEvaluator,
-                                           pStartTime,
-                                           randomNumberGenerator,
-                                           reactions,
-                                           reactionProbabilities,
+            prepareForStochasticSimulation(pStartTime,
                                            pSimulatorParameters);
 
             while(pNumResultsTimePoints - timePointIndex > 0)
             {
 //                System.out.println("calling iterate");
-                time = iterate(symbolEvaluator,
-                               pEndTime,
-                               reactions,
-                               reactionProbabilities,
-                               randomNumberGenerator,
-                               dynamicSymbolValues,
-                               lastReactionIndex,
-                               delayedReactionSolvers,
-                               hasExpressionValues,
-                               nonDynamicSymbolValues);
+                time = iterate(lastReactionIndex);
 //                System.out.println("returne from iterate, time is: " + time);
+                if(time > pEndTime)
+                {
+                    time = pEndTime;
+                    symbolEvaluator.setTime(pEndTime);
+                }
 
                 ++iterationCounter;
                 
@@ -449,11 +439,8 @@ public abstract class SimulatorStochasticBase extends Simulator
                     timePointIndex = addRequestedSymbolValues(time,
                                                               timePointIndex,
                                                               requestedSymbols,
-                                                              symbolEvaluator,
                                                               timesArray,
-                                                              retSymbolValues,
-                                                              hasExpressionValues,
-                                                              nonDynamicSymbolValues);
+                                                              retSymbolValues);
 //                    System.out.println("time point index after iteration is: " + timePointIndex + "; time is: " + time);
                 }
 
