@@ -180,7 +180,6 @@
              packageList="${app.configDir}/packageList.txt"
              docletpathref="app.docletclasspath"
              doclet="com.tarsec.javadoc.pdfdoclet.PDFDoclet"
-             link="${javadocLink}"
              additionalparam="-pdf ${app.webDir}/docs/APIDocumentation.pdf -config ${app.configDir}/PDFDoclet.properties">
       <classpath refid="app.classpath" />
     </javadoc>                 
