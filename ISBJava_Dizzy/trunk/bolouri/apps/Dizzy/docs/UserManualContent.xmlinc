@@ -141,6 +141,10 @@ hyperlinks shown below:
 <td>Netx JNLP client</td><td><code>netx.jar</code></td>
 <td><a href="http://jnlp.sourceforge.net/netx"><code>jnlp.sourceforge.net/netx</code></a></td><td>LGPL</td>
 </tr>
+<tr>
+<td>odeToJava</td><td><code>odeToJava.jar</code></td>
+<td><a href="http://www.netlib.org/ode"><code>www.netlib.org/ode</code></a> (Murray Patterson and Raymond Spiteri)</td><td>???</td>
+</tr>
 </table>
 </blockquote>
 </p>
@@ -148,14 +152,41 @@ hyperlinks shown below:
 <isb:docsubsection name="Acknowledgements" label="acknowledgements">
 <p>
 The assistance, advice, and contributions of several individuals 
-to the &appName; project is gratefully acknowledged:  William Longabaugh, 
-David Orrell, Andrew Finney, 
-Mike Hucka, and Robert Hubley.  A particular note of thanks is 
-expressed to Paul Shannon and the Cytoscape team, for
-helping to make the Dizzy&lt;-&gt;Cytoscape bridge possible;
-and to Hamid Bolouri, principal investigator and co-designer
-of the &appName; system.
+to the &appName; project is gratefully acknowledged.
 </p>
+<p>
+Hamid Bolouri: principal investigator and co-designer of the &appName; 
+system.
+</p>
+<p>
+David Orrell:  for serving as an early adopter of &appName; 
+and for contributing many ideas to the project
+</p>
+<p>
+William Longabaugh:  for providing frequent advice on Java
+</p>
+<p>
+Mike Hucka and Andrew Finney:  for providing much assistance
+with SBML and SBW
+</p>
+<p>
+Paul Shannon and the Cytoscape team: for
+helping to make the Dizzy&lt;-&gt;Cytoscape bridge possible.
+</p>
+<p>
+Raymond Spiteri:  for kindly permitting the
+inclusion of the The &quot;odeToJava&quot; with &appName;.  
+Many thanks to Murray Patterson also, for developing the
+&quot;odeToJava&quot; library.
+</p>
+<p>
+Many other individuals have contributed to the project, as well.
+In particular it should be noted that &appName; makes extensive use of 
+<a href="#extlib">external libraries</a>. The &appName; system would 
+not have been possible without the hard work and contributions of the 
+authors of these libraries.
+</p>
+
 </isb:docsubsection>
 </isb:docsection>
 
