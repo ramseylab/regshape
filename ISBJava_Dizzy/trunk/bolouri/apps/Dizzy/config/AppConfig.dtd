@@ -34,3 +34,5 @@
 
 <!ENTITY appJavaMaxHeapSizeBytes "500000000">
 <!ENTITY appInstallerName "insDizzy">
+
+<!ENTITY appPublicationURL "http://www.speakeasy.net/~sramsey/JBCB_2005.pdf">
