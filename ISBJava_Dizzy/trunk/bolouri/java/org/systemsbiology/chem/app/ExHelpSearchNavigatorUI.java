@@ -11,6 +11,7 @@ package org.systemsbiology.chem.app;
 import javax.help.plaf.basic.*;
 import javax.help.plaf.*;
 import javax.help.*;
+import javax.help.search.SearchEvent;
 import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
@@ -24,6 +25,7 @@ public class ExHelpSearchNavigatorUI extends BasicSearchNavigatorUI
     private JEditorPane mHelpContentEditorPane;
     private JScrollPane mHelpContentScrollPane;
     private boolean mLookedForHelpContentViewer;
+    private JTextArea mDoubleClickReminderArea;
 
     public ExHelpSearchNavigatorUI(JHelpSearchNavigator b)
     {
@@ -159,8 +161,25 @@ public class ExHelpSearchNavigatorUI extends BasicSearchNavigatorUI
         }
     }
 
+    public synchronized void searchStarted(SearchEvent e)
+    {
+        mSearchHitIndex = 0;
+        super.searchStarted(e);
+        mDoubleClickReminderArea.replaceRange(null, 0, mDoubleClickReminderArea.getText().length());
+        mDoubleClickReminderArea.append("double-click on a search hit above, to advance to the next instance of your search string \"" + searchparams.getText() + "\" in the file");
+        mDoubleClickReminderArea.setVisible(true);
+    }
+
     public void installUI(JComponent c) {
         super.installUI(c);
+        JHelpSearchNavigator searchNav = (JHelpSearchNavigator) c;
+        JTextArea doubleClickReminderArea = new JTextArea(4, 20);
+        doubleClickReminderArea.setEditable(false);
+        doubleClickReminderArea.setWrapStyleWord(true);
+        doubleClickReminderArea.setLineWrap(true);
+        mDoubleClickReminderArea = doubleClickReminderArea;
+        doubleClickReminderArea.setVisible(false);
+        searchNav.add("South", doubleClickReminderArea);
         ToolTipManager toolTipManager = ToolTipManager.sharedInstance();
         toolTipManager.setEnabled(true);
         toolTipManager.registerComponent(tree);        
