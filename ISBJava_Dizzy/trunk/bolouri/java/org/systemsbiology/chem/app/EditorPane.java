@@ -9,7 +9,6 @@ package org.systemsbiology.chem.app;
  */
 
 import org.systemsbiology.chem.*;
-import org.systemsbiology.chem.scripting.*;
 import org.systemsbiology.util.*;
 import java.awt.*;
 import java.awt.event.*;

@@ -9,7 +9,7 @@ package org.systemsbiology.chem.app;
  */
 
 import org.systemsbiology.chem.*;
-import org.systemsbiology.chem.scripting.*;
+import org.systemsbiology.chem.sbml.*;
 import org.systemsbiology.util.*;
 import java.io.*;
 import java.net.*;

@@ -9,12 +9,12 @@ package org.systemsbiology.chem.app;
  */
 
 import java.io.File;
-import org.systemsbiology.chem.scripting.*;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import org.systemsbiology.util.*;
+import org.systemsbiology.chem.*;
 
 public class ParserPicker
 {

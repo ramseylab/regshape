@@ -8,19 +8,12 @@ package org.systemsbiology.chem.app;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import org.systemsbiology.chem.scripting.*;
 import org.systemsbiology.chem.*;
 import org.systemsbiology.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.PrintWriter;
+import java.io.*;
 
 public class ModelProcessor
 {
