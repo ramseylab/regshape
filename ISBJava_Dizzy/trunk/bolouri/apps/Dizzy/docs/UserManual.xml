@@ -2926,6 +2926,16 @@ as a directed graph, with species and reactions being represented as
 nodes in the graph.  An example of such a graph is shown here:
 <img src="../images/screenshot6.png" alt="&appName; screenshot 6" />
 </p>
+<p>
+The Cytoscape bridge uses the Java Network Launching Protocol (JNLP) to
+invoke Cytoscape.  This requires a working network connection in order for
+the bridge to function properly, the first time you run Cytoscape.  
+If you do not have a working network connection, you may still use the 
+other features in &appName;; however, you will get an error message if 
+you select the &quot;display in Cytoscape&quot; menu item.  For subsequent
+invocations of this feature, a network connection is not needed, as the
+Cytoscape program will be stored in a local cache on your computer.
+</p>
 </isb:docsubsection>
 
 </isb:docsection>
