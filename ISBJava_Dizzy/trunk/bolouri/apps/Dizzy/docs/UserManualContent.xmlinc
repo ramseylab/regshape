@@ -2869,6 +2869,7 @@ runmodel [-debug] [-parser &lt;parserAlias&gt;]
                   -modelFile &lt;modelFile&gt; 
                   [-outputFile &lt;outputFile&gt;] 
                   [-outputFormat &lt;formatAlias&gt;]
+                  [-computeFluctuations]
 
   &lt;parserAlias&gt;:   the alias of the class implementing the interface
                    org.systemsbiology.chem.scripting.IModelBuilder (default is determined
@@ -2976,6 +2977,44 @@ In addition to setting your <code>CLASSPATH</code> variable, your
 shell <code>PATH</code> variable must be set so that the &quot;<code>java</code>&quot;
 program can be found within the <code>PATH</code>, in order to use the
 command-line interface to &appName;.
+</p>
+<p>
+The <code>-computeFluctuations</code> option is used to specify that
+the simulator should attempt to compute the steady-state fluctuations
+in the dynamical species in the model.  These fluctuations come from
+stochastic effects, i.e., from the non-continuum copy numbers of the
+dynamical species in the model.  The fluctuations will be written
+to the output file as specified with the <code>-outputFile</code> 
+command-line option (or standard output, if no <code>-outputFile</code>
+option was specified).  To use the <code>-computeFluctuations</code> option,
+it is necessary that the stop time specified with the <code>-stopTime</code>
+command-line option be sufficiently large that the model will have reached
+steady-state, defined as the condition whereby the rates of change of the
+concentrations of the dynamical species in the model are approximately zero.
+If the <code>-stopTime</code> specified is too small, the system will not
+have reached steady state at the end of the simulation, and the simulator
+will not be able to estimate the steady-state fluctuations of the dynamical
+species in the model.  
+</p>
+<p>
+The method of calculating the steady-state fluctuations
+depends on the type of simulator used.  If a deterministic (ODE) simulator
+is used, the fluctuations are estimated using a linear-algebraic approach,
+based on a theory developed by David Orrell,
+involving the Jacobian of the ODE model.  In this case, the calculations 
+of the steady-state fluctuations are estimates; the accuracy of the
+estimates will depend on how accurately the system can be characterized in
+terms of linear perturbations around the steady-state.  If the Jacobian
+of the model is ill-conditioned or the model is unstable around this steady-state, 
+the estimates of the steady-state fluctuations of the species will not 
+be very accurate.  If a stochastic simulator is used, the steady-state
+fluctuations are computed in terms of a standard deviation of the species
+values with respect to the ensemble-averaged mean, at the end time point
+of the simulation.  This requires an <code>-ensembleSize</code> that is
+greater than one.  The larger the ensemble size, the more accurate the
+calculation of the steady-state fluctuations will be.
+</p>
+<p>
 </p>
 
 </isb:docsection>
