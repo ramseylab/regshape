@@ -216,9 +216,9 @@ public abstract class SimulatorDeterministicBase extends Simulator
         mRKScratchPad = new RKScratchPad(numDynamicSymbols);
     }
 
-    public void initialize(Model pModel, SimulationController pSimulationController) throws DataNotFoundException
+    public void initialize(Model pModel) throws DataNotFoundException
     {
-        initializeSimulator(pModel, pSimulationController);
+        initializeSimulator(pModel);
         initializeDynamicSymbolAdjustmentVectors(mDynamicSymbols);
         resetScratchpad();
     }
@@ -378,6 +378,27 @@ public abstract class SimulatorDeterministicBase extends Simulator
                                   pRetTimeValues,
                                   pRetSymbolValues);
 
+        SimulationProgressReporter simulationProgressReporter = mSimulationProgressReporter;
+        SimulationController simulationController = mSimulationController;
+
+        boolean doUpdates = (null != simulationController || null != simulationProgressReporter);
+            
+        long minNumMillisecondsForUpdate = 0;
+
+        long timeOfLastUpdateMilliseconds = 0;
+        if(doUpdates)
+        {
+            minNumMillisecondsForUpdate = mMinNumMillisecondsForUpdate;
+            timeOfLastUpdateMilliseconds = System.currentTimeMillis();
+        }
+
+        long iterationCounter = 0;
+
+        if(null != simulationProgressReporter)
+        {
+            simulationProgressReporter.updateProgressStatistics(0.0, iterationCounter);
+        }
+
         double []timesArray = createTimesArray(pStartTime, 
                                                pEndTime,
                                                pNumResultsTimePoints);        
@@ -395,6 +416,8 @@ public abstract class SimulatorDeterministicBase extends Simulator
         Object []dynamicSymbolAdjustmentVectors = mDynamicSymbolAdjustmentVectors;
 
         double time = pStartTime;        
+
+        double timeRangeMult = 1.0 / (pEndTime - pStartTime);
 
         prepareForSimulation(time);
 
@@ -446,6 +469,11 @@ public abstract class SimulatorDeterministicBase extends Simulator
                         pSimulatorParameters,
                         scratchPad);
 
+        boolean isCancelled = false;
+
+        long currentTimeMilliseconds = 0;
+        double fractionComplete = 0.0;
+
         while(pNumResultsTimePoints - timeCtr > 0)
         {
             time = iterate(speciesRateFactorEvaluator,
@@ -480,14 +508,39 @@ public abstract class SimulatorDeterministicBase extends Simulator
                 solver.update(symbolEvaluator, time);
             }
 
-            if(incrementIterationCounterAndCheckForCancellation())
+            ++iterationCounter;
+
+            if(doUpdates)
             {
-                break;
+                currentTimeMilliseconds = System.currentTimeMillis();
+                if(currentTimeMilliseconds - timeOfLastUpdateMilliseconds >= minNumMillisecondsForUpdate)
+                {
+                    timeOfLastUpdateMilliseconds = currentTimeMilliseconds;
+                    if(null != simulationProgressReporter)
+                    {
+                        fractionComplete = time*timeRangeMult;
+                        simulationProgressReporter.updateProgressStatistics(fractionComplete, iterationCounter);
+                    }
+                    
+                    if(null != simulationController)
+                    {
+                        isCancelled = simulationController.handlePauseOrCancel();
+                        if(isCancelled)
+                        {
+                            break;
+                        }
+                    }
+                }
             }
         }
 
         // copy array of time points 
         System.arraycopy(timesArray, 0, pRetTimeValues, 0, timeCtr);     
+
+        if(null != simulationProgressReporter)
+        {
+            simulationProgressReporter.updateProgressStatistics(1.0, iterationCounter);
+        }
     }
 
 
@@ -509,4 +562,10 @@ public abstract class SimulatorDeterministicBase extends Simulator
     {
         return(true);
     }
+
+    public boolean usesExpressionValueCaching()
+    {
+        return(false);
+    }
+
 }

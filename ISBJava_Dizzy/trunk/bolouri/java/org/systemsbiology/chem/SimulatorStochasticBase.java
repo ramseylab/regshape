@@ -80,7 +80,6 @@ public abstract class SimulatorStochasticBase extends Simulator
     protected static final void updateSymbolValuesForReaction(SymbolEvaluatorChemSimulation pSymbolEvaluator,
                                                               Reaction pReaction,
                                                               double []pSymbolValues,
-                                                              double pCurrentTime,
                                                               DelayedReactionSolver []pDelayedReactionSolvers) throws DataNotFoundException
     {
         int numDelayedReactions = pDelayedReactionSolvers.length;
@@ -185,6 +184,28 @@ public abstract class SimulatorStochasticBase extends Simulator
                                   pRetTimeValues,
                                   pRetSymbolValues);
 
+        SimulationProgressReporter simulationProgressReporter = mSimulationProgressReporter;
+        SimulationController simulationController = mSimulationController;
+
+        boolean doUpdates = (null != simulationController || null != simulationProgressReporter);
+            
+        long minNumMillisecondsForUpdate = 0;
+
+        long timeOfLastUpdateMilliseconds = 0;
+        if(doUpdates)
+        {
+            minNumMillisecondsForUpdate = mMinNumMillisecondsForUpdate;
+            timeOfLastUpdateMilliseconds = System.currentTimeMillis();
+        }
+
+        long iterationCounter = 0;
+
+        if(null != simulationProgressReporter)
+        {
+            simulationProgressReporter.updateProgressStatistics(0.0, iterationCounter);
+        }
+
+
         double []timesArray = createTimesArray(pStartTime, 
                                                pEndTime,
                                                pNumResultsTimePoints);
@@ -216,22 +237,25 @@ public abstract class SimulatorStochasticBase extends Simulator
 
         boolean isCancelled = false;
 
-        int timeCtr = 0;
+        int timePointIndex = 0;
 
         MutableInteger lastReactionIndex = new MutableInteger(NULL_REACTION);
 
-        setIterationCounter(0);
+        double ensembleMult = 1.0 / ((double) ensembleSize);
+        double timeRangeMult = 1.0 / (pEndTime - pStartTime);
+        double fractionComplete = 0.0;
+
+        double time = 0.0;
+        long currentTimeMilliseconds = 0;
 
         for(long simCtr = ensembleSize; --simCtr >= 0; )
         {
-            timeCtr = 0;
+            // time point index must be re-set to zero
+            timePointIndex = 0;
 
-            double time = pStartTime;
-            // save the iteration counter from the previous simulation
-            long lastIterationCtr = getIterationCounter();
+            time = pStartTime;
+
             prepareForSimulation(time);
-            // re-set the iteration counter to the results of the previous simulation
-            setIterationCounter(lastIterationCtr);
 
             lastReactionIndex.setValue(NULL_REACTION);
 
@@ -242,7 +266,7 @@ public abstract class SimulatorStochasticBase extends Simulator
                                            reactions,
                                            reactionProbabilities);
 
-            while(pNumResultsTimePoints - timeCtr > 0)
+            while(pNumResultsTimePoints - timePointIndex > 0)
             {
                 time = iterate(speciesRateFactorEvaluator,
                                symbolEvaluator,
@@ -254,20 +278,42 @@ public abstract class SimulatorStochasticBase extends Simulator
                                lastReactionIndex,
                                delayedReactionSolvers);
 
-                if(incrementIterationCounterAndCheckForCancellation())
+                ++iterationCounter;
+                
+                if(doUpdates)
                 {
-                    isCancelled = true;
-                    break;
+                    currentTimeMilliseconds = System.currentTimeMillis();
+                    if(currentTimeMilliseconds - timeOfLastUpdateMilliseconds >= minNumMillisecondsForUpdate)
+                    {
+                        timeOfLastUpdateMilliseconds = currentTimeMilliseconds;
+                        if(null != simulationProgressReporter)
+                        {
+                            fractionComplete = (((double) (ensembleSize - simCtr - 1)) + time*timeRangeMult)*ensembleMult;
+                            simulationProgressReporter.updateProgressStatistics(fractionComplete, iterationCounter);
+                        }
+
+                        if(null != simulationController)
+                        {
+                            isCancelled = simulationController.handlePauseOrCancel();
+                            if(isCancelled)
+                            {
+                                break;
+                            }
+                        }
+                    }
                 }
 
-                if(time >= timesArray[timeCtr])
+                if(time >= timesArray[timePointIndex])
                 {
-                    timeCtr = addRequestedSymbolValues(time,
-                                                       timeCtr,
-                                                       requestedSymbols,
-                                                       symbolEvaluator,
-                                                       timesArray,
-                                                       pRetSymbolValues);
+                    // at this point, the expression value caches may be stale; clear them
+                    clearExpressionValueCaches();
+
+                    timePointIndex = addRequestedSymbolValues(time,
+                                                              timePointIndex,
+                                                              requestedSymbols,
+                                                              symbolEvaluator,
+                                                              timesArray,
+                                                              pRetSymbolValues);
                 }
             }
             
@@ -277,9 +323,8 @@ public abstract class SimulatorStochasticBase extends Simulator
             }
         }
 
-        double ensembleMult = 1.0 / ((double) ensembleSize);
 
-        for(int timePointCtr = timeCtr; --timePointCtr >= 0; )
+        for(int timePointCtr = timePointIndex; --timePointCtr >= 0; )
         {
             for(int symbolCtr = numRequestedSymbols; --symbolCtr >= 0; )
             {
@@ -289,8 +334,12 @@ public abstract class SimulatorStochasticBase extends Simulator
         }
 
         // copy array of time points 
-        System.arraycopy(timesArray, 0, pRetTimeValues, 0, timeCtr);
-        
+        System.arraycopy(timesArray, 0, pRetTimeValues, 0, timePointIndex);
+
+        if(null != simulationProgressReporter)
+        {
+            simulationProgressReporter.updateProgressStatistics(1.0, iterationCounter);
+        }
     }
 
     public boolean allowsInterrupt()
@@ -298,9 +347,13 @@ public abstract class SimulatorStochasticBase extends Simulator
         return(true);
     }
 
-    protected void initializeSimulatorStochastic(Model pModel, SimulationController pSimulationController) throws InvalidInputException
+    public boolean usesExpressionValueCaching()
     {
-        mSymbolEvaluator.setUseExpressionValueCaching(mHasExpressionValues);
+        return(true);
+    }
+
+    protected void initializeSimulatorStochastic(Model pModel) throws InvalidInputException
+    {
         checkDynamicalSymbolsInitialValues();
         initializeRandomNumberGenerator();
     }
