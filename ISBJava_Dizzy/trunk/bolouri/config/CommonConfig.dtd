@@ -16,6 +16,8 @@
 <!ENTITY mainGroupURL         "&mainPublicURL;/Default.aspx?pagename=bolourilab">
 <!ENTITY mainAffiliation      "Institute for Systems Biology">
 <!ENTITY mainGroupEmailSafe   "bolourilab at systemsbiology.org">
+<!ENTITY mainGroupEmail       "bolourilab@systemsbiology.org">
+
 <!ENTITY mainHelpEmailSafe    "help at systemsbiology.org">
 
 <!ENTITY localJavaLibraryName "ISBJava">
