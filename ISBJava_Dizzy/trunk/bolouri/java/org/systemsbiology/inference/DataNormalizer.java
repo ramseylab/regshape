@@ -61,6 +61,7 @@ public class DataNormalizer
     private DoubleMatrix2D mRawObservationsFilledIn;
     private DoubleMatrix2D mRescaledRawObservations;
     private DoubleArrayList mRowObservations;
+    private DoubleArrayList mColumnObservations;
     private IntArrayList mColumnMissingObservationsIndices;
     private DoubleMatrix1D mAverageObservations;
     private int mNumColumns;
@@ -69,6 +70,7 @@ public class DataNormalizer
     private ElementComparator mElementComparator;
     private DoubleMatrix2D mNormalizedObservations;
     private DoubleMatrix1D mRowMedians;
+    private DoubleMatrix1D mColumnMedians;
     
     static class ElementComparator implements IntComparator
     {
@@ -110,6 +112,8 @@ public class DataNormalizer
         mRawObservationsFixedForScaling = null;
         mElementComparator = new ElementComparator();
         mRowMedians = null;
+        mColumnObservations = null;
+        mColumnMedians = null;
     }
 
     private void initializeIfNecessary(ObjectMatrix2D pRawObservations, ObjectMatrix2D pNormalizedObservations)
@@ -146,7 +150,9 @@ public class DataNormalizer
         mNumColumns = pNumColumns;
         mRawObservationsFilledIn = DoubleFactory2D.dense.make(pNumRows, pNumColumns);
         mRescaledRawObservations = DoubleFactory2D.dense.make(pNumRows, pNumColumns);
+        mColumnMedians = DoubleFactory1D.dense.make(pNumColumns);
         mRowObservations = new DoubleArrayList();
+        mColumnObservations = new DoubleArrayList();
         mColumnMissingObservationsIndices = new IntArrayList();
         mAverageObservations = DoubleFactory1D.dense.make(pNumRows);
         mRawObservationsFixedForScaling = DoubleFactory2D.dense.make(pNumRows, pNumColumns);
@@ -190,6 +196,40 @@ public class DataNormalizer
                 unscaledVal = value;
             }
             rawRowMedians.set(i, unscaledVal);
+        }
+    }
+    
+    private void unscaleRawColumnMedians(DataNormalizationScale pScale)
+    {
+        DoubleMatrix1D rawColumnMedians = mColumnMedians;
+        int numColumns = rawColumnMedians.size();
+        double value = 0.0;
+        boolean doExp = false;
+        if(pScale.equals(DataNormalizationScale.LOGARITHM))
+        {
+            doExp = true;
+        }
+        else if(pScale.equals(DataNormalizationScale.NORM_ONLY))
+        {
+            // do nothing
+        }
+        else
+        {
+            throw new IllegalArgumentException("unknown quantile normalization scale: " + pScale.getName());
+        }
+        double unscaledVal = 0.0;
+        for(int j = numColumns; --j >= 0; )
+        {
+            value = rawColumnMedians.get(j);
+            if(doExp)
+            {
+                unscaledVal = Math.pow(2.0, value);
+            }
+            else
+            {
+                unscaledVal = value;
+            }
+            rawColumnMedians.set(j, unscaledVal);
         }
     }
     
@@ -364,6 +404,7 @@ public class DataNormalizer
         double oldVal = 0.0;
         double avgVal = 0.0;
         Double rawObs = null;
+        double guessedValue = 0.0;
         for(i = numRows; --i >= 0; )
         {
             median = mRowMedians.get(i);
@@ -388,7 +429,16 @@ public class DataNormalizer
                             errSum += errFrac;
                         }
                     }
-                    mRawObservationsFilledIn.set(i, j, median);
+                    if(! Double.isNaN(median))
+                    {
+                        guessedValue = median;
+                    }
+                    else
+                    {
+                        guessedValue = mColumnMedians.get(j);
+                        System.out.println("value[" + i + "," + j + "] = " + guessedValue);
+                    }
+                    mRawObservationsFilledIn.set(i, j, guessedValue);
                 }
             }
         }
@@ -408,6 +458,38 @@ public class DataNormalizer
         else
         {
             return 0.0;
+        }
+    }
+    
+    private void computeColumnMediansForRawObservationsFixedForScaling(DoubleMatrix2D pObs)
+    {
+        int numColumns = pObs.columns();
+        int numRows = pObs.rows();
+        int j = 0;
+        int i = 0;
+        DoubleArrayList columnObservations = mColumnObservations;
+        double obs = 0.0;
+        Double rawObs = null;
+        ObjectMatrix2D rawObservations = mRawObservations;
+        DoubleMatrix1D columnMedians = mColumnMedians;
+        double median = 0.0;
+        for(j = numColumns; --j >= 0; )
+        {
+            columnObservations.clear();
+            for(i = numRows; --i >= 0; )
+            {
+                rawObs = (Double) rawObservations.get(i, j);
+                if(null != rawObs)
+                {
+                    columnObservations.add(pObs.get(i, j));
+                }
+            }
+            if(0 == columnObservations.size()) 
+            {
+                throw new IllegalArgumentException("column " + j + " has no raw observations; the data cannot be normalized");
+            }
+            median = Descriptive.median(columnObservations);
+            columnMedians.set(j, median);
         }
     }
     
@@ -432,7 +514,15 @@ public class DataNormalizer
                     rowObs.add(pObs.get(i, j));
                 }
             }
-            median = Descriptive.median(rowObs);
+            if(rowObs.size() > 0)
+            {
+                median = Descriptive.median(rowObs);
+                mColumnObservations.add(median);
+            }
+            else
+            {
+                median = Double.NaN;
+            }
             mRowMedians.set(i, median);
         }
     }
@@ -469,6 +559,7 @@ public class DataNormalizer
                 }
             }
         }
+        System.out.println("fixNonpositiveValues: " + pFixNonpositiveValues + "; minValue: " + minValue);
         if(pFixNonpositiveValues && minValue <= 0.0)
         {
             double addTo = 0.0;
@@ -535,7 +626,9 @@ public class DataNormalizer
 
         fixRawObservationsForScaling(fixNonpositiveValues, scale);
         
+        computeColumnMediansForRawObservationsFixedForScaling(mRawObservationsFixedForScaling);
         computeRowMediansForRawObservationsFixedForScaling(mRawObservationsFixedForScaling);
+        
         fillInMissingObservations(false);
         
         boolean computeErrors = false;
@@ -564,6 +657,8 @@ public class DataNormalizer
 //            System.out.println("sorted log obs:\n" + mLogRawObservations.toString());
             getRowAverages();
             normalizeObservations();
+            computeColumnMediansForRawObservationsFixedForScaling(mNormalizedObservations);
+            unscaleRawColumnMedians(scale);
             computeRowMediansForRawObservationsFixedForScaling(mNormalizedObservations);
             unscaleRawRowMedians(scale);
             errSum = fillInMissingObservations(computeErrors);
