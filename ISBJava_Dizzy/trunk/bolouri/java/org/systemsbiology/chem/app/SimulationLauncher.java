@@ -57,7 +57,7 @@ public class SimulationLauncher
     private JTextField mAllowedAbsoluteErrorField;
     private JLabel mAllowedAbsoluteErrorFieldLabel;
     private JButton mStartButton;
-    private JButton mStopButton;
+    private JButton mPauseButton;
     private JButton mResumeButton;
     private JButton mCancelButton;
     private String mAppName;
@@ -352,28 +352,30 @@ public class SimulationLauncher
         return(mSimulationController);
     }
 
-    private void updateSimulationControlButtons(boolean pAllowsInterrupt)
+    private synchronized void updateSimulationControlButtons(boolean pAllowsInterrupt)
     {
         if(! getSimulationInProgress())
         {
             mStartButton.setEnabled(true);
-            mStopButton.setEnabled(false);
+            mPauseButton.setEnabled(false);
             mCancelButton.setEnabled(false);
             mResumeButton.setEnabled(false);
+            mSimulatorsList.setEnabled(true);
         }
         else
         {
+            mSimulatorsList.setEnabled(false);
             if(getSimulationController().getStopped())
             {
                 mStartButton.setEnabled(false);
-                mStopButton.setEnabled(false);
+                mPauseButton.setEnabled(false);
                 mCancelButton.setEnabled(pAllowsInterrupt);
                 mResumeButton.setEnabled(pAllowsInterrupt);
             }
             else
             {
                 mStartButton.setEnabled(false);
-                mStopButton.setEnabled(pAllowsInterrupt);
+                mPauseButton.setEnabled(pAllowsInterrupt);
                 mCancelButton.setEnabled(pAllowsInterrupt);
                 mResumeButton.setEnabled(false);
             }
@@ -394,7 +396,7 @@ public class SimulationLauncher
         }
     }
 
-    private void handleStopButton()
+    private void handlePauseButton()
     {
         if(getSimulationInProgress())
         {
@@ -483,9 +485,16 @@ public class SimulationLauncher
     private void runSimulation(SimulationRunParameters pSimulationRunParameters)
     {
         ISimulator simulator = pSimulationRunParameters.mSimulator;
-
+        
         try
         {
+            // initializing the simulator might take a while,
+            updateSimulationControlButtons(false);
+            if(! simulator.isInitialized())
+            {
+                simulator.initialize(mModel,
+                                     mSimulationController);
+            }
             updateSimulationControlButtons(simulator.allowsInterrupt());
 
             long startTime = System.currentTimeMillis(); 
@@ -620,17 +629,17 @@ public class SimulationLauncher
         return(startButton);
     }
 
-    private JButton createStopButton()
+    private JButton createPauseButton()
     {
-        JButton stopButton = new JButton("stop");
-        stopButton.addActionListener( new ActionListener()
+        JButton pauseButton = new JButton("pause");
+        pauseButton.addActionListener( new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                handleStopButton();
+                handlePauseButton();
             }
         } );
-        return(stopButton);
+        return(pauseButton);
     }    
 
     private void handleSimulatorSelection(int pSimulatorIndex)
@@ -796,9 +805,9 @@ public class SimulationLauncher
         JPanel padding3 = new JPanel();
         padding3.setBorder(BorderFactory.createEmptyBorder(2, 1, 2, 1));
         box.add(padding3);
-        JButton stopButton = createStopButton();
-        padding3.add(stopButton);
-        mStopButton = stopButton;
+        JButton pauseButton = createPauseButton();
+        padding3.add(pauseButton);
+        mPauseButton = pauseButton;
 
         JPanel padding4 = new JPanel();
         padding4.setBorder(BorderFactory.createEmptyBorder(2, 1, 2, 1));
@@ -1059,8 +1068,6 @@ public class SimulationLauncher
             simulator = (ISimulator) getSimulatorRegistry().getInstance(simulatorAlias);
             if(! simulator.isInitialized())
             {
-                simulator.initialize(mModel,
-                                     mSimulationController);
             }
         }
         catch(Exception e)
@@ -1467,7 +1474,6 @@ public class SimulationLauncher
         filePanel.setMaximumSize(new Dimension(600, 50));
         outputPanel.add(filePanel);
 
-//        outputPanel.add(outputBox);
         return(outputPanel);
     }
 
