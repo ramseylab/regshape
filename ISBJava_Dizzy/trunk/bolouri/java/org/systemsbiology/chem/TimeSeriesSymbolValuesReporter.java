@@ -22,7 +22,10 @@ public class TimeSeriesSymbolValuesReporter
                                                           Object []pSymbolValues,
                                                           TimeSeriesOutputFormat pTimeSeriesOutputFormat) throws IllegalArgumentException
     {
-        NumberFormat nf = new DecimalFormat("0.######E0");
+        DecimalFormat nf = new DecimalFormat("0.######E0");
+        DecimalFormatSymbols decimalFormatSymbols = nf.getDecimalFormatSymbols();
+        pTimeSeriesOutputFormat.updateDecimalFormatSymbols(decimalFormatSymbols);
+        nf.setDecimalFormatSymbols(decimalFormatSymbols);
         nf.setGroupingUsed(false);
         reportTimeSeriesSymbolValues(pPrintWriter,
                                      pRequestedSymbolNames,
@@ -31,7 +34,7 @@ public class TimeSeriesSymbolValuesReporter
                                      nf,
                                      pTimeSeriesOutputFormat);
     }
-
+    
     public static final void reportTimeSeriesSymbolValues(PrintWriter pPrintWriter, 
                                                           String []pRequestedSymbolNames, 
                                                           double []pTimeValues,
