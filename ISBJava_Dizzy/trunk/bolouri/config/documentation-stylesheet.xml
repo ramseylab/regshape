@@ -118,7 +118,7 @@
       </xsl:if>
  
       <p>
-      <b>Please e-mail comments or corrections regarding this web page to: 
+      <b>Please e-mail comments or corrections regarding this document to: 
         <code>
           <xsl:if test="/isb:document/isb:docowneremail != ''">
             <xsl:value-of select="isb:docowneremail" />
