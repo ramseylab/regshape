@@ -40,12 +40,6 @@ library. For more information about the &appName; system, please consult the
 <a href="docs/UserManual.html">User Manual</a>.
 </p>
 <p>
-<font color="red"><b>NOTE:</b></font>
-This is alpha (experimental) software.  Please be patient while we fix 
-bugs, add new features, and add (much needed) documentation.  Your 
-patience is appreciated.
-</p>
-<p>
 This software is made available under the GNU Lesser General Public License (LGPL), 
 which is a standard &quot;free software&quot;
 and &quot;open source&quot; license.  A copy of the 
