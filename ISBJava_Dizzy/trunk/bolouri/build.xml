@@ -21,7 +21,7 @@
   <property name="webServerUsername"  value="bolouri_group" />
   <property name="webServerPassword"  value="b2G4cIc" />  <!-- icky: find some way to MIME-encode this -->
   <property name="webServerHostname"  value="labs.systemsbiology.net" />
-  <property name="webServerRemoteDir" value="." />
+  <property name="webServerRemoteDir" value="software" />
 
   <!-- THESE PROPERTIES ARE USED THROUGHOUT THE BUILD SYSTEM: -->
   <property name="docsStyleSheet" value="${projConfigDir}/documentation-stylesheet.xml" />
@@ -56,12 +56,6 @@
     <mkdir dir="${projStyleDir}/private" />
     <style basedir="${projDocsDir}/private" 
            destdir="${projStyleDir}/private" 
-           includes="*.xml" 
-           style="${docsStyleSheet}" />
-
-    <mkdir dir="${projStyleDir}/models" />
-    <style basedir="${projDocsDir}/models" 
-           destdir="${projStyleDir}/models" 
            includes="*.xml" 
            style="${docsStyleSheet}" />
   </target>
