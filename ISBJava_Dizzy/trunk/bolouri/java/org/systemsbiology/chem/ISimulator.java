@@ -13,22 +13,23 @@ import org.systemsbiology.util.InvalidInputException;
 
 public interface ISimulator
 {
+    public static final int MIN_NUM_RESULTS_TIME_POINTS = 2;
+
     public boolean isInitialized();
 
-    public void initialize(Model pModel, 
-                           SimulationController pSimulationController) throws DataNotFoundException, InvalidInputException;
+    public void initialize(Model pModel) throws DataNotFoundException, InvalidInputException;
+    public void setProgressReporter(SimulationProgressReporter pSimulationProgressReporter);
+    public void setController(SimulationController pSimulationController);
 
     public SimulatorParameters getDefaultSimulatorParameters();
 
-    public boolean isStochasticSimulator();
+    public void setMinNumMillisecondsForUpdate(long pMinNumMillisecondsForUpdate);
 
     public boolean allowsInterrupt();
 
-    public long getIterationCounter();
-
     /**
      * Conduct a simulation of the dynamics of the {@link Model} passed to the
-     * {@link #initialize(Model,SimulationController)} method.  The end time
+     * {@link #initialize(Model)} method.  The end time
      * must be greater than the start time.  The integer <code>pNumResultsTimePoints</code>
      * must be greater than zero.  The size of the results arrays must be equal to
      * one plus <code>pNumResultsTimePoints</code> (the extra element in the arrays is to
