@@ -391,7 +391,7 @@ public abstract class SimulatorStochasticTauLeapBase extends SimulatorStochastic
             throw new IllegalArgumentException("missing max allowed relative error");
         }
         double maxAllowedRelativeError = maxAllowedRelativeErrorObj.doubleValue();
-        if(maxAllowedRelativeError <= 0.0)
+        if(maxAllowedRelativeError <= 0.0 || maxAllowedRelativeError >= 1.0)
         {
             throw new IllegalArgumentException("invalid max allowed relative error: " + maxAllowedRelativeError);
         }
