@@ -44,6 +44,22 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.9.1/download.html">1.9.1</a></td>
+<td>2005/02/??</td>
+<td>
+<ul>
+<li>
+Speeded up the initialization of the help browser, for subsequent invocations
+of the help browser (after the first).
+</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.1.1/download.html">2.1.1</a></td>
+</tr>
+</tr>
+
+
+<tr valign="top">
 <td><a href="../1.9.0/download.html">1.9.0</a></td>
 <td>2005/02/04</td>
 <td>
