@@ -41,7 +41,7 @@ The software is available for download within a self-extracting installer
 to the terms of the <a href="../License.html">software license agreement</a>.
 The license agreement is the GNU Lesser General Public License (LGPL), 
 which is a standard &quot;free software&quot; and &quot;open source&quot; license.  
-&appName; requires the Java Runtime Environment (JRE) version 1.4 or newer,
+&appName; requires the Java 2 Runtime Environment (JRE) version 1.4 or newer,
 or an equivalent JRE.
 For more information about the &appName; system, please consult the 
 <a href="docs/UserManual.html">&appName; User Manual</a>.
