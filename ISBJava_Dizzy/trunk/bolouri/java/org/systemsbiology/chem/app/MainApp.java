@@ -182,7 +182,7 @@ public class MainApp
         }
         catch(Throwable e)
         {
-            ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e);
+            ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error loading the simulation launcher window.  The specific error message is:");
             setTimestampModelLastLoaded(null);
             setSimulationLauncher(null);
             updateMenus();
@@ -205,7 +205,7 @@ public class MainApp
 
         catch(Throwable e)
         {
-            ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e);
+            ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error message exporting the model.  The specific error message is:");
             errorOptionPane.createDialog(mMainFrame, "unable to export the model: " + e.getMessage()).show();
         }
     }
@@ -223,7 +223,7 @@ public class MainApp
         }
         catch(Throwable e)
         {
-            ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e);
+            ExceptionNotificationOptionPane errorOptionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error viewing the model.  The specific error message is:");
             errorOptionPane.createDialog(mMainFrame, "unable to view the model: " + e.getMessage()).show();
         }
     }
@@ -274,7 +274,7 @@ public class MainApp
         }
         catch(Exception e)
         {
-            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error reloading the model.  The specific error message is:");
             optionPane.createDialog(mMainFrame, "unable to reload the model").show();
         }
     }

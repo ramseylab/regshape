@@ -547,14 +547,14 @@ public class EditorPane
         
         catch(InvalidInputException e)
         {
-            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error processing the model.  The specific error message is:");
             optionPane.createDialog(mMainFrame, "error in model definition").show();
             return(model);
         }
 
         catch(IOException e)
         {
-            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error processing the model.  The specific error message is:");
             optionPane.createDialog(mMainFrame,
                                     "I/O error in processing model definition").show();
             return(model);
@@ -599,7 +599,7 @@ public class EditorPane
 
         catch(Exception e)
         {
-            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error saving the model.  The specific error message is:");
             optionPane.createDialog(mMainFrame, "error saving file: " + shortFileName).show();
             return;
         }
@@ -649,7 +649,7 @@ public class EditorPane
 
         catch(Exception e)
         {
-            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error loading the model.  The specific error message is:");
             optionPane.createDialog(mMainFrame, "error loading file: " + shortFileName).show();
             return;
         }

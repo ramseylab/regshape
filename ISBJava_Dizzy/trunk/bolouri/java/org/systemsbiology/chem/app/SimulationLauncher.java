@@ -682,7 +682,7 @@ public class SimulationLauncher
         }
         catch(Exception e)
         {
-            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error processing the simulation results.  The specific error message is:");
             optionPane.createDialog(getLauncherFrame(),
                                     "Failure processing simulation results").show();
         }
@@ -719,19 +719,10 @@ public class SimulationLauncher
 
         }
 
-        catch(Exception e)
-        {
-            simulationEndCleanup(simulator);
-            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
-            optionPane.createDialog(getLauncherFrame(),
-                                    "Failure running simulation").show();
-            return;
-        }
-
         catch(Throwable e)
         {
             simulationEndCleanup(simulator);
-            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, the simulation failed.  The specific error message is:");
             optionPane.createDialog(getLauncherFrame(),
                                     "Failure running simulation").show();
             return;
@@ -854,6 +845,23 @@ public class SimulationLauncher
         updateSimulatorParametersPanel(mSimulatorsList.getSelectedIndex());
     }
 
+    private ISimulator getSimulatorInstance(String pSimulatorAlias)
+    {
+        ISimulator simulator = null;
+        try
+        {
+            simulator = (ISimulator) getSimulatorRegistry().getInstance(pSimulatorAlias);
+        }
+        catch(Exception e)
+        {
+            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e, "Sorry, there was an error creating an instance of the simulator \"" + pSimulatorAlias + "\".  The specific error message is:");
+            optionPane.createDialog(getLauncherFrame(),
+                                    "Failed to instantiate simulator").show();
+        }
+        
+        return simulator;
+    }
+    
     private void updateSimulatorParametersPanel(int pSimulatorIndex)
     {
         String simulatorAlias = (String) mSimulatorsList.getModel().getElementAt(pSimulatorIndex);
@@ -863,101 +871,94 @@ public class SimulationLauncher
         }
         else
         {
-            ISimulator simulator = null;
-
-            try
+            ISimulator simulator = getSimulatorInstance(simulatorAlias);
+            if(null == simulator)
             {
-                simulator = (ISimulator) getSimulatorRegistry().getInstance(simulatorAlias);
-                SimulatorParameters simParams = simulator.getDefaultSimulatorParameters();
-                Integer ensembleSize = simParams.getEnsembleSize();
-                if(null != ensembleSize)
+                return;
+            }
+            SimulatorParameters simParams = simulator.getDefaultSimulatorParameters();
+            Integer ensembleSize = simParams.getEnsembleSize();
+            if(null != ensembleSize)
+            {
+                mEnsembleField.setText(ensembleSize.toString());
+                mEnsembleField.setEnabled(true);
+                mEnsembleFieldLabel.setEnabled(true);
+            }
+            else
+            {
+                mEnsembleField.setText("");
+                mEnsembleField.setEnabled(false);
+                mEnsembleFieldLabel.setEnabled(false);
+            }
+            
+            Double stepSizeFraction = simParams.getStepSizeFraction();
+            if(null != stepSizeFraction)
+            {
+                mStepSizeFractionField.setText(stepSizeFraction.toString());
+                mStepSizeFractionField.setEnabled(true);
+                mStepSizeFractionFieldLabel.setEnabled(true);
+            }
+            else
+            {
+                mStepSizeFractionField.setText("");
+                mStepSizeFractionField.setEnabled(false);
+                mStepSizeFractionFieldLabel.setEnabled(false);
+            }
+            
+            
+            
+            Double maxAllowedRelativeError = simParams.getMaxAllowedRelativeError();
+            if(null != maxAllowedRelativeError)
+            {
+                mAllowedRelativeErrorField.setText(maxAllowedRelativeError.toString());
+                mAllowedRelativeErrorField.setEnabled(true);
+                mAllowedRelativeErrorFieldLabel.setEnabled(true);
+            }
+            else
+            {
+                mAllowedRelativeErrorField.setText("");
+                mAllowedRelativeErrorField.setEnabled(false);
+                mAllowedRelativeErrorFieldLabel.setEnabled(false);
+            }
+            
+            Double maxAllowedAbsoluteError = simParams.getMaxAllowedAbsoluteError();
+            if(null != maxAllowedAbsoluteError)
+            {
+                mAllowedAbsoluteErrorField.setText(maxAllowedAbsoluteError.toString());
+                mAllowedAbsoluteErrorField.setEnabled(true);
+                mAllowedAbsoluteErrorFieldLabel.setEnabled(true);
+            }
+            else
+            {
+                mAllowedAbsoluteErrorField.setText("");
+                mAllowedAbsoluteErrorField.setEnabled(false);
+                mAllowedAbsoluteErrorFieldLabel.setEnabled(false);
+            }
+            
+            Integer numHistoryBins = simParams.getNumHistoryBins();
+            if(null != numHistoryBins)
+            {
+                mNumHistoryBinsField.setText(numHistoryBins.toString());
+                if(null != mModel && (mModel.containsDelayedOrMultistepReaction()))
                 {
-                    mEnsembleField.setText(ensembleSize.toString());
-                    mEnsembleField.setEnabled(true);
-                    mEnsembleFieldLabel.setEnabled(true);
+                    mNumHistoryBinsField.setEnabled(true);
+                    mNumHistoryBinsFieldLabel.setEnabled(true);
                 }
                 else
                 {
-                    mEnsembleField.setText("");
-                    mEnsembleField.setEnabled(false);
-                    mEnsembleFieldLabel.setEnabled(false);
-                }
-                
-                Double stepSizeFraction = simParams.getStepSizeFraction();
-                if(null != stepSizeFraction)
-                {
-                    mStepSizeFractionField.setText(stepSizeFraction.toString());
-                    mStepSizeFractionField.setEnabled(true);
-                    mStepSizeFractionFieldLabel.setEnabled(true);
-                }
-                else
-                {
-                    mStepSizeFractionField.setText("");
-                    mStepSizeFractionField.setEnabled(false);
-                    mStepSizeFractionFieldLabel.setEnabled(false);
-                }
-
-
-
-                Double maxAllowedRelativeError = simParams.getMaxAllowedRelativeError();
-                if(null != maxAllowedRelativeError)
-                {
-                    mAllowedRelativeErrorField.setText(maxAllowedRelativeError.toString());
-                    mAllowedRelativeErrorField.setEnabled(true);
-                    mAllowedRelativeErrorFieldLabel.setEnabled(true);
-                }
-                else
-                {
-                    mAllowedRelativeErrorField.setText("");
-                    mAllowedRelativeErrorField.setEnabled(false);
-                    mAllowedRelativeErrorFieldLabel.setEnabled(false);
-                }
-
-                Double maxAllowedAbsoluteError = simParams.getMaxAllowedAbsoluteError();
-                if(null != maxAllowedAbsoluteError)
-                {
-                    mAllowedAbsoluteErrorField.setText(maxAllowedAbsoluteError.toString());
-                    mAllowedAbsoluteErrorField.setEnabled(true);
-                    mAllowedAbsoluteErrorFieldLabel.setEnabled(true);
-                }
-                else
-                {
-                    mAllowedAbsoluteErrorField.setText("");
-                    mAllowedAbsoluteErrorField.setEnabled(false);
-                    mAllowedAbsoluteErrorFieldLabel.setEnabled(false);
-                }
-
-                Integer numHistoryBins = simParams.getNumHistoryBins();
-                if(null != numHistoryBins)
-                {
-                    mNumHistoryBinsField.setText(numHistoryBins.toString());
-                    if(null != mModel && (mModel.containsDelayedOrMultistepReaction()))
-                    {
-                        mNumHistoryBinsField.setEnabled(true);
-                        mNumHistoryBinsFieldLabel.setEnabled(true);
-                    }
-                    else
-                    {
-                        mNumHistoryBinsField.setEnabled(false);
-                        mNumHistoryBinsFieldLabel.setEnabled(false);
-                    }
-                }
-                else
-                {
-                    mNumHistoryBinsField.setText("");
                     mNumHistoryBinsField.setEnabled(false);
                     mNumHistoryBinsFieldLabel.setEnabled(false);
                 }
-
-                boolean allowsInterrupt = simulator.allowsInterrupt();
-                updateSimulationControlButtons(allowsInterrupt);
             }
-            catch(Exception e)
+            else
             {
-                ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
-                optionPane.createDialog(getLauncherFrame(),
-                                        "Failed to instantiate simulator").show();
+                mNumHistoryBinsField.setText("");
+                mNumHistoryBinsField.setEnabled(false);
+                mNumHistoryBinsFieldLabel.setEnabled(false);
             }
+            
+            boolean allowsInterrupt = simulator.allowsInterrupt();
+            updateSimulationControlButtons(allowsInterrupt);
         }
     }
 
@@ -1393,18 +1394,10 @@ public class SimulationLauncher
             return(retVal);
         }
 
-        ISimulator simulator = null;
-
-        try
+        ISimulator simulator = getSimulatorInstance(simulatorAlias);
+        if(null == simulator)
         {
-            simulator = (ISimulator) getSimulatorRegistry().getInstance(simulatorAlias);
-        }
-        catch(Exception e)
-        {
-            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
-            optionPane.createDialog(getLauncherFrame(),
-                                    "Failed to instantiate simulator").show();
-            return(retVal);
+            return retVal;
         }
 
         srp.mSimulator = simulator;
@@ -1669,26 +1662,17 @@ public class SimulationLauncher
 
     private void handleProcessSimulationResultsButton() 
     {
-        try
+        int selectedIndex = mSimulationResultsList.getSelectedIndex();
+        if(selectedIndex >= 0)
         {
-            int selectedIndex = mSimulationResultsList.getSelectedIndex();
-            if(selectedIndex >= 0)
-            {
-                SimulationResults simulationResults = (SimulationResults) mResultsList.get(selectedIndex);
-                OutputDescriptor outputDescriptor = createOutputDescriptor();
-                String []selectedSymbols = simulationResults.getResultsSymbolNames();
-                
-                processSimulationResults(outputDescriptor,
-                                         selectedSymbols,
-                                         simulationResults);
-                
-            }
-        }
-        catch(Exception e)
-        {
-            ExceptionNotificationOptionPane optionPane = new ExceptionNotificationOptionPane(e);
-            optionPane.createDialog(getLauncherFrame(),
-                                    "Failed to process simulation output").show();
+            SimulationResults simulationResults = (SimulationResults) mResultsList.get(selectedIndex);
+            OutputDescriptor outputDescriptor = createOutputDescriptor();
+            String []selectedSymbols = simulationResults.getResultsSymbolNames();
+            
+            processSimulationResults(outputDescriptor,
+                    selectedSymbols,
+                    simulationResults);
+            
         }
     }
 
