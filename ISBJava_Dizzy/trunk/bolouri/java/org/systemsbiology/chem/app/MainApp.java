@@ -33,6 +33,8 @@ public class MainApp
     private Long mTimestampModelLastLoaded;
     private static final String DEFAULT_HELP_SET_VIEW = "TOC";  // this string must correspond to
                                                                 // a <view> block in AppHelp.hs
+    private HelpBrowser mHelpBrowser;
+    
     static final String UNEXPECTED_ERROR_MESSAGE = "an unexpected error has occurred";
     private File mCurrentDirectory;
 
@@ -145,11 +147,14 @@ public class MainApp
 
     void handleHelpBrowser()
     {
-        String helpSetName = mAppConfig.getAppHelpSetName();        
-        String appName = mAppConfig.getAppName();
-        HelpBrowser helpBrowser = new HelpBrowser(getMainFrame(), helpSetName, appName);
-        helpBrowser.displayHelpBrowser(null,
-                                       DEFAULT_HELP_SET_VIEW);
+        if(null == mHelpBrowser)
+        {
+            String helpSetName = mAppConfig.getAppHelpSetName();        
+            String appName = mAppConfig.getAppName();
+            mHelpBrowser = new HelpBrowser(getMainFrame(), helpSetName, appName);
+        }
+        mHelpBrowser.displayHelpBrowser(null,
+                                        DEFAULT_HELP_SET_VIEW);
     }
 
     void handleSimulate()
@@ -425,8 +430,6 @@ public class MainApp
         frame.setVisible(true);
     }
 
-
-
     public MainApp(String []pArgs) throws IllegalStateException, ClassNotFoundException, IOException, DataNotFoundException, InvalidInputException
     {
         if(null != mApp)
@@ -434,6 +437,7 @@ public class MainApp
             throw new IllegalStateException("only one instance of MainApp can exist at a time");
         }
         mApp = this;
+        mHelpBrowser = null;
         
         String appDir = null;
         if(pArgs.length > 0)
