@@ -197,6 +197,18 @@
 
 		</body>
 	</notes>
+<listOfUnitDefinitions>
+<unitDefinition name="volume">
+<listOfUnits>
+<unit kind="dimensionless"/>
+</listOfUnits>
+</unitDefinition>
+<unitDefinition name="substance">
+<listOfUnits>
+<unit kind="item"/>
+</listOfUnits>
+</unitDefinition>
+</listOfUnitDefinitions>
 	<listOfCompartments>
 		<compartment name="cell"/>
 	</listOfCompartments>
