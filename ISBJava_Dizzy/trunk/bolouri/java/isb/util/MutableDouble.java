@@ -16,7 +16,7 @@ package isb.util;
  */
 public class MutableDouble
 {
-    double mDouble;
+    private double mDouble;
 
     private double getDouble()
     {

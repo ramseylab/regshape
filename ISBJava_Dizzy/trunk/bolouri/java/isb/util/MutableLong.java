@@ -16,7 +16,7 @@ package isb.util;
  */
 public class MutableLong
 {
-    long mLong;
+    private long mLong;
 
     private long getLong()
     {

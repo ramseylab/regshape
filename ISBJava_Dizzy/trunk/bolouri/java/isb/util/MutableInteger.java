@@ -16,7 +16,7 @@ package isb.util;
  */
 public class MutableInteger
 {
-    int mInteger;
+    private int mInteger;
 
     private int getInteger()
     {
