@@ -1,4 +1,4 @@
-<!ENTITY webBaseURL           "http://labs.systemsbiology.net/bolouri">
+<!ENTITY webBaseURL           "http://labs.systemsbiology.net/bolouri/software">
 <!ENTITY mainLogoURL          "&webBaseURL;/images/logo-isb.png">
 <!ENTITY mainPublicURL        "http://www.systemsbiology.org">
 
@@ -6,6 +6,7 @@
 <!ENTITY mainGroupURL         "&mainPublicURL;/Default.aspx?pagename=bolourilab">
 <!ENTITY mainAffiliation      "Institute for Systems Biology">
 <!ENTITY mainGroupEmailSafe   "bolourilab at systemsbiology.org">
+<!ENTITY mainHelpEmailSafe    "help at systemsbiology.org">
 
 <!ENTITY localJavaLibraryName "ISBJava">
 <!ENTITY privateRepositoryURL "&webBaseURL;/privateRepository">
