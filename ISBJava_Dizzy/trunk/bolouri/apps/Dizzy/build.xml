@@ -214,17 +214,13 @@
     <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
     <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />
 
-    <buildinstaller IALocation="${dirInstallAnywhere}"
-                    IAProjectFile="${app.buildDir}/project.iap_xml"
-                    failonerror="true" />
-
     <!-- make the installer directory -->
     <mkdir dir="${app.installerDir}" />
 
-    <!-- copy the InstallAnywhere web installer stuff to the web directory -->
-    <copy todir="${app.installerDir}">
-      <fileset dir="${app.buildDir}/project_Build_Output" />
-    </copy>
+    <buildinstaller IALocation="${dirInstallAnywhere}"
+                    IAProjectFile="${app.buildDir}/project.iap_xml"
+                    failonerror="true" 
+                    BuildOutputLocation="${app.installerDir}" />
   </target>
 
   <target name="buildPDF" depends="tidyHTML, convertHtmlToPDF" />
