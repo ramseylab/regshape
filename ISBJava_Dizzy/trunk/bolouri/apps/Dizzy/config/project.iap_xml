@@ -1422,7 +1422,7 @@ Please see the installation log for details.  Press ""Done"" to quit the install
 						<string><![CDATA[@MAINPUBLICURL@]]></string>
 					</property>
 					<property name="email">
-						<string><![CDATA[bolourilab@systemsbiology.org]]></string>
+						<string><![CDATA[@MAINGROUPEMAIL@]]></string>
 					</property>
 					<property name="copyright">
 						<string><![CDATA[2004]]></string>

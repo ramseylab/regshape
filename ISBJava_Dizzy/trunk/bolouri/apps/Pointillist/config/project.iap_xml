@@ -939,7 +939,7 @@ Press "Done" to quit the installer.]]></string>
 						<string><![CDATA[@MAINPUBLICURL@]]></string>
 					</property>
 					<property name="email">
-						<string><![CDATA[bolourilab@systemsbiology.org]]></string>
+						<string><![CDATA[@MAINGROUPEMAIL@]]></string>
 					</property>
 					<property name="copyright">
 						<string><![CDATA[2005]]></string>
