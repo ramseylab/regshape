@@ -94,16 +94,17 @@ public class SimulationResultsTable extends JFrame
         mSimulationResultsTableModel = new SimulationResultsTableModel(pSimulationResults,
                                                                        pNumberFormat);
 
-        JPanel panel = new JPanel();        
-        Box box = new Box(BoxLayout.Y_AXIS);
-        panel.add(box);
+        JPanel panel = new JPanel(); 
+        LayoutManager layoutManager = new BoxLayout(panel, BoxLayout.Y_AXIS);
+        panel.setLayout(layoutManager);
 
-        JLabel tableLabel = new JLabel(mLabel);
-        box.add(tableLabel);
+        JLabel tableLabel = new JLabel(pLabel);
+        tableLabel.setAlignmentX(Container.CENTER_ALIGNMENT);
+        panel.add(tableLabel);
 
         JTable table = new JTable(mSimulationResultsTableModel);
         JScrollPane scrollPane = new JScrollPane(table);
-        box.add(scrollPane);
+        panel.add(scrollPane);
         setContentPane(panel);
         pack();
     }
