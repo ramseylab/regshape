@@ -37,9 +37,11 @@ public abstract class Simulator
         for(int symbolCtr = 0; symbolCtr < numSymbols; ++symbolCtr)
         {
             SymbolValue symbolValue = pSymbolArray[symbolCtr];
-            Symbol symbol = symbolValue.getSymbol();
+            Symbol symbol = (Symbol) symbolValue.getSymbol().clone();
             String symbolName = symbol.getName();
             Value value = symbolValue.getValue();
+
+            pSymbolMap.put(symbolName, symbol);
 
             if(null != pDoubleArray)
             {
@@ -53,15 +55,6 @@ public abstract class Simulator
             }
 
             symbol.setArrayIndex(symbolCtr);
-            Symbol foundSymbol = (Symbol) pSymbolMap.get(symbolName);
-            if(null != foundSymbol)
-            {
-                assert (foundSymbol.equals(symbol)) : "expected to find an identical symbol object";
-            }
-            else
-            {
-                pSymbolMap.put(symbolName, symbol);
-            }
         }
     }
 
@@ -75,7 +68,6 @@ public abstract class Simulator
         // set initial values for dynamic symbols 
         System.arraycopy(mInitialDynamicSymbolValues, 0, mDynamicSymbolValues, 0, mDynamicSymbolValues.length);
         MathFunctions.vectorZeroElements(mReactionProbabilities);
-
         mSymbolEvaluator.setTime(pStartTime);
     }
 
