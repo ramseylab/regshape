@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This script was automatically generated using Zero G's InstallAnywhere 5.0.7 Standard, Build 1680
      STATUS: Fully Functional LICENSED Edition
-     DATE:   Tue Apr 29 13:23:55 PDT 2003 -->
+     DATE:   Tue Apr 29 14:29:52 PDT 2003 -->
 <InstallAnywhere_Deployment_Project increments="1732">
 	<!-- ** DO NOT EDIT ** Essential authorization and configuration data ** DO NOT EDIT ** -->
 	<essentialScriptInfo>
@@ -10,7 +10,7 @@
 		<scriptID>12,42,11,90,80,49,55,54,52,57,88,55,86,67,77,68</scriptID>
 		<buildID>3,13,71,76,105,110,117,120,44,32,50,46,52,46,49,56,45,49,52,44,32,105,51,56,54,59,32,74,97,118,97,32,49,46,51,46,49,95,48,52,44,32,83,117,110,32,77,105,99,114,111,115,121,115,116,101,109,115,32,73,110,99,46,44,32,104,116,116,112,58,47,47,106,97,118,97,46,115,117,110,46,99,111,109,47,59,32,101,110,44,32,85,83,59,32,85,84,70,45,56</buildID>
 		<!-- The authorizationID may change between project saves and builds.  This does not effect the integrity of the project, nor do changes in this value represent changes in the actual InstallAnywhere project. -->
-		<authorizationID>1,0,0,-16,-45,23,112,0,80,112,114,103,83,98,113,97,113,49,51,67,58,65,70,68,86,69,64,69,66,69,48,63,87,5,2,4,14,40,123,4,0,0,0</authorizationID>
+		<authorizationID>1,0,0,-16,-45,87,-48,80,80,112,114,103,83,98,113,97,113,49,51,67,58,65,70,68,86,69,64,69,66,69,48,63,87,5,2,2,13,36,123,4,0,0,0</authorizationID>
 	</essentialScriptInfo>
 	<installationObjects uniqueObjects="95">
 		<object class="com.zerog.ia.installer.Installer" objectID="4a0be70e9aea">
@@ -166,7 +166,7 @@ it will search for ones in this list]]></string>
 								</object>
 							</method>
 							<method name="addElement">
-								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="ee994e469369">
+								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="eed208019367">
 									<property name="propertyValue">
 										<string><![CDATA[isb.chem.sbw.SimulationModule]]></string>
 									</property>
@@ -791,7 +791,7 @@ Press ""Done"" to quit the installer.]]></string>
 				<object class="java.util.Properties">
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.project.save.last.date]]></string>
-						<string><![CDATA[Tue Apr 29 13:23:55 PDT 2003]]></string>
+						<string><![CDATA[Tue Apr 29 14:29:51 PDT 2003]]></string>
 					</method>
 					<method name="put">
 						<string><![CDATA[com.zerog.ia.build.options.optimization.platform.merge]]></string>
@@ -1506,7 +1506,7 @@ it will search for ones in this list]]></string>
 														</object>
 													</method>
 													<method name="addElement">
-														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="ee994eb59371">
+														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="eed2085d9371">
 															<property name="propertyValue">
 																<string><![CDATA[isb.chem.app.MainApp]]></string>
 															</property>
@@ -1913,32 +1913,6 @@ and any path to a file to read from that file]]></string>
 												<object refID="58f9b51d9afd"/>
 											</visualChildren>
 										</object>
-										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="6eb1c31a9b00">
-											<property name="unixPermissions">
-												<string><![CDATA[664]]></string>
-											</property>
-											<property name="sourceName">
-												<string><![CDATA[UserManual.html]]></string>
-											</property>
-											<property name="overrideUnixPermissions">
-												<boolean>true</boolean>
-											</property>
-											<property name="sourcePath">
-												<string><![CDATA[/users/sramsey/cvs/bolouri/apps/Dizzy/html/]]></string>
-											</property>
-											<property name="shouldUninstall">
-												<boolean>true</boolean>
-											</property>
-											<property name="destinationName">
-												<string><![CDATA[UserManual.html]]></string>
-											</property>
-											<property name="fileSize">
-												<long>81076</long>
-											</property>
-											<property name="macBinary">
-												<boolean>false</boolean>
-											</property>
-										</object>
 										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="86dab2c09b00">
 											<property name="unixPermissions">
 												<string><![CDATA[664]]></string>
@@ -2042,32 +2016,6 @@ and any path to a file to read from that file]]></string>
 												<boolean>false</boolean>
 											</property>
 										</object>
-										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="59b83c599afa">
-											<property name="unixPermissions">
-												<string><![CDATA[775]]></string>
-											</property>
-											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
-											</property>
-											<property name="shouldUninstall">
-												<boolean>true</boolean>
-											</property>
-											<property name="destinationName">
-												<string><![CDATA[docs]]></string>
-											</property>
-											<property name="removeRecursively">
-												<boolean>false</boolean>
-											</property>
-											<property name="macBinary">
-												<boolean>false</boolean>
-											</property>
-											<visualChildren>
-												<object refID="59cb76579afa"/>
-												<object refID="9227b8499aff"/>
-												<object refID="6eb1c31a9b00"/>
-												<object refID="a61db5e9bd12"/>
-											</visualChildren>
-										</object>
 										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="a5f39732bd0e">
 											<property name="unixPermissions">
 												<string><![CDATA[664]]></string>
@@ -2164,6 +2112,58 @@ and any path to a file to read from that file]]></string>
 												<object refID="6e0f74809afe"/>
 												<object refID="4aa15cd39b05"/>
 												<object refID="4aa1a7c49b0f"/>
+											</visualChildren>
+										</object>
+										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="eed304219377">
+											<property name="unixPermissions">
+												<string><![CDATA[664]]></string>
+											</property>
+											<property name="sourceName">
+												<string><![CDATA[UserManual.pdf]]></string>
+											</property>
+											<property name="overrideUnixPermissions">
+												<boolean>false</boolean>
+											</property>
+											<property name="sourcePath">
+												<string><![CDATA[/users/sramsey/cvs/bolouri/build/web/Dizzy/docs/]]></string>
+											</property>
+											<property name="shouldUninstall">
+												<boolean>true</boolean>
+											</property>
+											<property name="destinationName">
+												<string><![CDATA[UserManual.pdf]]></string>
+											</property>
+											<property name="fileSize">
+												<long>-1</long>
+											</property>
+											<property name="macBinary">
+												<boolean>false</boolean>
+											</property>
+										</object>
+										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="59b83c599afa">
+											<property name="unixPermissions">
+												<string><![CDATA[775]]></string>
+											</property>
+											<property name="overrideUnixPermissions">
+												<boolean>false</boolean>
+											</property>
+											<property name="shouldUninstall">
+												<boolean>true</boolean>
+											</property>
+											<property name="destinationName">
+												<string><![CDATA[docs]]></string>
+											</property>
+											<property name="removeRecursively">
+												<boolean>false</boolean>
+											</property>
+											<property name="macBinary">
+												<boolean>false</boolean>
+											</property>
+											<visualChildren>
+												<object refID="59cb76579afa"/>
+												<object refID="9227b8499aff"/>
+												<object refID="a61db5e9bd12"/>
+												<object refID="eed304219377"/>
 											</visualChildren>
 										</object>
 									</installChildren>

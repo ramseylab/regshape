@@ -75,8 +75,12 @@ For documentation on how to use the &appName; program,
 please consult the 
 <a href="&appHomePage;/docs/UserManual.html">&appName; User Manual</a>.
 For detailed documentation of the application programming
-interface (API) to the &appName; system, please consult the
+interface (API) to the &appName; library, please consult the
 <a href="&webBaseURL;/&localJavaLibraryName;">ISBJava</a> home page.
+A PDF version of the API documentation 
+&quot;<code>APIDocumentation.pdf</code>&quot; should have been installed
+in the &quot;<code>docs</code>&quot; subdirectory of the installation
+directory for this library.
 </p>
 </isb:docsection>
 

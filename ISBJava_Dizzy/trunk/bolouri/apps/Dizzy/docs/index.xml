@@ -31,10 +31,9 @@
 
 <p>
 <img src="images/appLogo.png" alt="&appName; logo" border="1" align="left"/>
-&appName; is a chemical kinetics simulation software package implemented in Java.
-This software can be used to define a system of interacting chemical species,
-and the reactions through which they interact.  The software can then be
-used to simulate the reaction kinetics of the system of interacting species.
+&appName; is a chemical kinetics stochastic simulation software package 
+written in Java.  It provides a model definition environment and an implementation of the 
+<a href="docs/UserManual.html#gillespie">Gillespie stochastic algorithm</a>.
 The software is based on the <a href="../&localJavaLibraryName;">&localJavaLibraryName;</a>
 library. 
 <br />

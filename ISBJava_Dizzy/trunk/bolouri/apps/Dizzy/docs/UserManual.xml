@@ -32,11 +32,11 @@
 <isb:docsection name="Introduction" label="introduction">
 <p>
 &appName; is a chemical kinetics simulation software 
-package implemented in Java.  This software can be 
-used to define a system of interacting chemical species,
-and the reactions through which they interact.  The 
-software can then be used to simulate the reaction 
-kinetics of the system of interacting species.
+package implemented in Java.  It provides a model definition environment and 
+an implementation of the <a href="#gillespie">Gillespie stochastic algorithm</a>. 
+This software can be used to define a system of interacting chemical species,
+and the reactions through which they interact.  The software can then be used 
+to simulate the reaction kinetics of the system of interacting species.
 The software consists of the following elements:
 <ol>
 <li>a set of Java packages or &quot;libraries&quot; that constitute a Java 
@@ -47,8 +47,8 @@ for the API for this software package.</li>
 a model and run simulations on the model, and to export a model to a different
 model definition language</li>
 <li>an implementation of the 
-<a href="&webBaseURL;/&localJavaLibraryName;/javadoc/isb/chem/GillespieSimulator.html">
-Gillespie stochastic algorithm</a> for simulating chemical reaction kinetics</li>
+<a href="#gillespie">Gillespie stochastic algorithm</a> 
+for simulating chemical reaction kinetics</li>
 <li>a graphical user interface ("GUI") application that can be used to run 
 simulations and export a model to a different model definition language</li>
 <li>a Systems Biology Workbench bridge that allows the simulator to be
@@ -185,6 +185,12 @@ to the JRE to ensure that the built-in heap size limit is set to
 at least 512 MB.  If you are using the Sun JRE, or the JRE that
 is pre-bundled with the &appName; installer, this issue does not 
 apply to you.
+</p>
+<p>
+This software has been tested on Windows XP and Red Hat Linux 8.0.
+It should function properly on most Windows and Linux distributions.
+It has not been tested on the Mac OSX operating system, but it is
+made available for Mac OSX operating system on an &quot;as-is&quot; basis.
 </p>
 </isb:docsubsection>
 
@@ -548,6 +554,32 @@ k * (A/(N*V)) * (B/(N*V))
 </blockquote>
 Note that the symbols <code>time</code> and <code>N</code>
 are special symbols, defined <a href="#symbols">above</a>.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Gillespie Stochastic Algorithm" label="gillespie">
+<p>
+The Gillespie stochastic algorithm is an algorithm for modeling the
+kinetics of a set of coupled chemical reactions, taking into account
+stochastic effects from low copy numbers of the chemical species.
+The algorithm is defined in the article:
+<blockquote>
+D. T. Gillespie, &quot;A General Method for Numerically Simulating the Stochastic
+Time Evolution of Coupled Chemical Species&quot;, <em>J. Comp.  Phys.</em>
+<b>22</b>, 403-434 (1976).
+</blockquote>
+In Gillespie&apos;s approach, chemical reaction kinetics are modeled
+as a markov process in which reactions occur at specific instants of time
+defining intervals that are Poisson-distributed, with a mean reaction 
+time interval that is recomputed after each chemical reaction occurs.
+For each chemical reaction interval, a specific chemical reaction occurs,
+randomly selected from the set of all possible reactions with a weight
+given by the individual reaction rates.  
+</p>
+<p>
+The &appName; system provides a Java implementation of the Gillespie
+algorithm, for which <a href="&webBaseURL;/javadocisb/chem/GillespieSimulator.html">more
+information is available in the Javadoc documentation</a>.
 </p>
 </isb:docsubsection>
 
@@ -1268,13 +1300,14 @@ Additional exporter plug-ins may be defined in the future.
 <p>
 The &appName; system has a framework for pluggable simulation
 modules.  Each simulator plug-in has a simulator &quot;alias&quot;.
-Currently the simulator plug-ins available are:
+The available simulator plug-ins are:
 <blockquote>
   <dl>
   <dt><code>gillespie</code></dt>
   <dd>An implementation of the 
-<a href="&webBaseURL;/javadoc/isb/chem/GillespieSimulator.html">Gillespie stochastic algorithm</a>
-for modeling the reaction kinetics.</dd>
+<a href="#gillespie">Gillespie stochastic algorithm</a>
+for modeling the reaction kinetics.  Ths algorithm is described in the article
+</dd>
   </dl>
 </blockquote>
 Each simulator above is identified by its &quot;simulator alias&quot;.

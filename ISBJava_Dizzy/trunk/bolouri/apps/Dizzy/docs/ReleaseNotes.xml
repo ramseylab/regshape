@@ -24,9 +24,9 @@
 <isb:docsection name="Introduction" label="introduction">
 &appName; is a chemical kinetics stochastic simulation software package 
 written in Java.  It provides a model definition environment and an implementation of the 
-<a href="UserManual.html#gillespie">Gillespie stochastic algorithm</a>.
-The software is based on the <a href="../../&localJavaLibraryName;">&localJavaLibraryName;</a>
-library. 
+<a href="&appHomePage;/docs/UserManual.html#gillespie">Gillespie stochastic algorithm</a>.
+The software is based on the 
+<a href="../../&localJavaLibraryName;">&localJavaLibraryName;</a> library. 
 </isb:docsection>
 
 <isb:docsection name="License Agreement" label="licenseagreement">
@@ -66,6 +66,10 @@ subdirectory of the installation directory for this program.
 For documentation on how to use the &appName; program,
 please consult the 
 <a href="&appHomePage;/docs/UserManual.html">&appName; User Manual</a>.
+A PDF version of this manual 
+&quot;<code>UserManual.pdf</code>&quot; should have been installed
+in the &quot;<code>docs</code>&quot; subdirectory of the installation
+directory for this program.
 For detailed documentation of the application programming
 interface (API) to the &appName; system, please consult the
 <a href="&webBaseURL;/&localJavaLibraryName;">ISBJava</a> home page.
