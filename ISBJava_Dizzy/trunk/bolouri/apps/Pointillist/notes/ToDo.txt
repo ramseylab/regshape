@@ -4,3 +4,9 @@ to each of the Pointillist GUI programs.
 (2) 2005/02/??:  Hamid Bolouri suggests that a Cytoscape conversion program should
 be created, that can take the output of EvidenceWeightedInferer, and convert the file
 to the format (SIF) read by Cytoscape.
+
+(3) 2005/02/23 (Alistair):  Remove the "suggested" from Pointillist user interface, and redo
+screenshots
+
+(4) 2005/02/24 (Daehee):  Add a feature to the Quantile Normalizer, for normalizing 
+time-series array data?
