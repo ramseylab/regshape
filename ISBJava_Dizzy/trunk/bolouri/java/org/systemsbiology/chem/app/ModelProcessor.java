@@ -43,8 +43,6 @@ public class ModelProcessor
         MainApp app = MainApp.getApp();
         ClassRegistry modelBuilderRegistry = app.getModelBuilderRegistry();
 
-        System.out.println("building model");
-
         try
         {
             IModelBuilder modelBuilder = (IModelBuilder) modelBuilderRegistry.getInstance(pParserAlias);
