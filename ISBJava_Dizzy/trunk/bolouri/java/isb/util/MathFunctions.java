@@ -270,10 +270,10 @@ public class MathFunctions
 
     /**
      * Returns 0 if the argument is negative, and 1 if the
-     * argument is nonnegative.
+     * argument is nonnegative, and 0 if the argument is 0.
      *
      * @return 0 if the argument is negative, and 1 if the
-     * argument is nonnegative.
+     * argument is nonnegative, and 0 if the argument is 0.
      */
     public static double thetaFunction(double pArg)
     {
