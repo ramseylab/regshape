@@ -197,6 +197,10 @@ Added new class <code>org.systemsbiology.util.MatlabInterface</code> for
 communicating with the Matlab console via a TCP/IP bridge.  This class is
 used by Pointillist for executing Matlab function calls..
 </li>
+<li>
+Modified <code>org.systemsbiology.gui.HelpBrowser</code> so that it
+initially sets the size of the frame to never more than 800x600.  
+</li>
 </ul>
 </td>
 </tr>
