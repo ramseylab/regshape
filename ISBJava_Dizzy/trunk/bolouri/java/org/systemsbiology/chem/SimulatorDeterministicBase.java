@@ -28,6 +28,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
     public static final int DEFAULT_MIN_NUM_STEPS = 10000;
     public static final double DEFAULT_MAX_ALLOWED_RELATIVE_ERROR = 0.0001;
     public static final double DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR = 0.01;
+    public static final boolean DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS = false;
 
     class RKScratchPad
     {
@@ -350,25 +351,23 @@ public abstract class SimulatorDeterministicBase extends Simulator
 
 
 
-    public void simulate(double pStartTime, 
-                         double pEndTime,
-                         SimulatorParameters pSimulatorParameters,
-                         int pNumResultsTimePoints,
-                         String []pRequestedSymbolNames,
-                         double []pRetTimeValues,
-                         Object []pRetSymbolValues) throws DataNotFoundException, IllegalStateException, SimulationAccuracyException
+    public SimulationResults simulate(double pStartTime, 
+                                      double pEndTime,
+                                      SimulatorParameters pSimulatorParameters,
+                                      int pNumResultsTimePoints,
+                                      String []pRequestedSymbolNames) throws DataNotFoundException, IllegalStateException, SimulationAccuracyException
     {
         conductPreSimulationCheck(pStartTime,
                                   pEndTime,
                                   pSimulatorParameters,
-                                  pNumResultsTimePoints,
-                                  pRequestedSymbolNames,
-                                  pRetTimeValues,
-                                  pRetSymbolValues);
+                                  pNumResultsTimePoints);
+
+        double []retTimeValues = new double[pNumResultsTimePoints];
+        Object []retSymbolValues = new Object[pNumResultsTimePoints];
 
         SimulationProgressReporter simulationProgressReporter = mSimulationProgressReporter;
         SimulationController simulationController = mSimulationController;
-
+        
         boolean doUpdates = (null != simulationController || null != simulationProgressReporter);
             
         long minNumMillisecondsForUpdate = 0;
@@ -447,7 +446,6 @@ public abstract class SimulatorDeterministicBase extends Simulator
             pSimulatorParameters.setMinNumSteps(minNumSteps);
         }
         
-
         RKScratchPad scratchPad = mRKScratchPad;
         scratchPad.clear();
 
@@ -480,7 +478,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
                                                    requestedSymbols,
                                                    symbolEvaluator,
                                                    timesArray,
-                                                   pRetSymbolValues);
+                                                   retSymbolValues);
             }
 
             System.arraycopy(newSimulationSymbolValues, 0, dynamicSymbolValues, 0, numDynamicSymbolValues);
@@ -521,14 +519,55 @@ public abstract class SimulatorDeterministicBase extends Simulator
             }
         }
 
-        // copy array of time points 
-        System.arraycopy(timesArray, 0, pRetTimeValues, 0, timeCtr);     
-
         if(null != simulationProgressReporter)
         {
             fractionComplete = time*timeRangeMult;
             simulationProgressReporter.updateProgressStatistics(true, fractionComplete, iterationCounter);
         }
+
+        SimulationResults simulationResults = null;
+
+        if(! isCancelled)
+        {
+            boolean estimateFinalSpeciesFluctuations = DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS;
+            Boolean flagGetFinalSymbolFluctuations = pSimulatorParameters.getFlagGetFinalSymbolFluctuations();
+            if(null != flagGetFinalSymbolFluctuations)
+            {
+                estimateFinalSpeciesFluctuations = flagGetFinalSymbolFluctuations.booleanValue();
+            }        
+            double []finalSpeciesFluctuations = null;
+            if(estimateFinalSpeciesFluctuations)
+            {
+                double []allFinalSpeciesFluctuations = SteadyStateAnalyzer.estimateSpeciesFluctuations(reactions,
+                                                                                                 mDynamicSymbols,
+                                                                                                 mDynamicSymbolAdjustmentVectors,
+                                                                                                 symbolEvaluator);
+                finalSpeciesFluctuations = new double[numRequestedSymbols];
+                for(int i = 0; i < numRequestedSymbols; ++i)
+                {
+                    Symbol requestedSymbol = requestedSymbols[i];
+                    int arrayIndex = requestedSymbol.getArrayIndex();
+                    finalSpeciesFluctuations[i] = 0.0;
+                    if(Symbol.NULL_ARRAY_INDEX != arrayIndex)
+                    {
+                        if(null != requestedSymbol.getDoubleArray())
+                        {
+                            finalSpeciesFluctuations[i] = allFinalSpeciesFluctuations[arrayIndex];
+                        }
+                    }
+                }
+            }
+
+            simulationResults = createSimulationResults(pStartTime,
+                                                        pEndTime,
+                                                        pSimulatorParameters,
+                                                        pRequestedSymbolNames,
+                                                        timesArray,
+                                                        retSymbolValues,
+                                                        finalSpeciesFluctuations);
+        }
+
+        return(simulationResults);
     }
 
 
@@ -538,6 +577,7 @@ public abstract class SimulatorDeterministicBase extends Simulator
         sp.setMinNumSteps(DEFAULT_MIN_NUM_STEPS);
         sp.setMaxAllowedRelativeError(DEFAULT_MAX_ALLOWED_RELATIVE_ERROR);
         sp.setMaxAllowedAbsoluteError(DEFAULT_MAX_ALLOWED_ABSOLUTE_ERROR);
+        sp.setFlagGetFinalSymbolFluctuations(DEFAULT_FLAG_GET_FINAL_SYMBOL_FLUCTUATIONS);
         return(sp);
     }
 
