@@ -2864,15 +2864,33 @@ but their population values over time will not be included in the data
 resultant from running the simulation.  
 </p>
 <p>
-The &quot;number of ensembles / number of time steps&quot; text box is used to define an integer
-number of repetitions for the simulation (in the case of stochastic simulations)
-or the minimum number of time steps (for ODE-based deterministic simulations) for
-the simulation.  In the case of stochastic simulations, the results are then defined
-as the average of the time-series data (separately for each species and each
-time point) over the &quot;ensemble&quot; of simulations.  It is usually best to run a 
-simulation with an ensemble size of 1 first, before running with a larger ensemble size.  
-This allows for you to compute the expected &quot;run time&quot; of the ensemble averaged
-simulation, in advance. 
+The &quot;number of ensembles&quot; text box is enabled only for stochastic
+simulations (Gillespie or Gibson-Bruck simulator).  This text-box is an integer
+that specifies the number of separate realizations of the stochastic process 
+that should be conducted.  The &quot;results&quot; of the simulation are
+an average over the values of each species at each point in time, over the
+ensemble of realizations of the stochastic process.  The default value is 1.
+Exercise care in specifying a large value for this parameter, because it can
+make the simulation run-time prohibitively long.  It is best to start with a
+value of 1, and to note how long the simulation runs.  If the simulation takes
+N seconds to run with an ensemble size of 1, then with an ensemble size of E,
+it will take N*E seconds to complete.
+</p>
+<p>
+The &quot;number of time steps&quot; text box is used to define an integer specifying
+or the minimum number of time steps.  It is only enabled for ODE-based deterministic simulations.
+The simulator may actually take more time steps than the number you specify,
+but it will not take fewer time steps than the number you specify.  If you
+specify too few timesteps with the &quot;fixed-stepsize&quot; ODE simulator,
+the ODE simulator may exceed its error threshold, in which case the simulation
+will halt with an exception (and it will suggest that you re-run the simulation
+with a large minimum number of time steps).
+</p>
+<p>
+The &quot;maximum allowed error&quot; text box is used to define a floating
+point number (greater than 0.0 and less than 1.0) that specifies the maximum
+allowed aggregate fractional simulation error.  This is only used by the
+deterministic (ODE) simulators.  
 </p>
 <p>
 The &quot;output type&quot; can 

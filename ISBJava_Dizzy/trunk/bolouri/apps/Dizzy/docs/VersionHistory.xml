@@ -42,6 +42,27 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td>0.0.8</td>
+<td>2003/11/20</td>
+<td>
+<ul>
+<li>Modified the fixed-stepsize deterministic simulator so that it can detect when the
+simulation error exceeds a certain threshold, and produce a human-comprehensible 
+error message (the message suggests that the step-size be decreased).</li>
+<li>Modified the &quot;simulation launcher&quot; pane so that it has text-box controls
+for specifying separate simulator-specific parameters, such as the ensemble size, the
+minimum number of steps, and the maximum allowed fractional error.  Default values
+are auto-filled in these new fields, depending on the type of simulator selected.  The
+&quot;ensemble size&quot; and &quot;number of steps&quot; are now separate fields.</li>
+<li>The &quot;plot&quot; output type no longer gives a strange error message when
+a &quot;NaN&quot; (not-a-number) appears in the simulation output.  It now gives a more
+human-comprehensible error message.</li>
+</ul>
+</td>
+<td>0.0.7</td>
+</tr>
+
+<tr valign="top">
 <td>0.0.7</td>
 <td>2003/11/07</td>
 <td>
