@@ -56,7 +56,7 @@
 
   <target name="tidyHTML"> 
     <apply executable="${binHtmlTidy}" failonerror="true">
-      <fileset dir="${app.styleDir}">
+      <fileset dir="${app.webDir}/docs">
         <include name="UserManual.html" />
       </fileset>
       <arg value="-modify" />
@@ -153,9 +153,9 @@
     </copy>
   </target>
 
-  <target name="buildPDF" depends="convertHtmlToPDF" />
+  <target name="buildPDF" depends="tidyHTML, convertHtmlToPDF" />
 
-  <target name="buildHTML" depends="style, copyImages, tidyHTML, copyHtml, buildHelp" />
+  <target name="buildHTML" depends="style, copyImages, copyHtml, buildHelp" />
 
   <target name="build">
     <!-- do nothing -->
