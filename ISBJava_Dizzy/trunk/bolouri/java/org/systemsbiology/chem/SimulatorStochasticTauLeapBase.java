@@ -371,8 +371,8 @@ public abstract class SimulatorStochasticTauLeapBase extends SimulatorStochastic
     protected void modifyDefaultSimulatorParameters(SimulatorParameters pSimulatorParameters)
     {
         SimulatorParameters sp = pSimulatorParameters;
-        sp.setMaxAllowedRelativeError(DEFAULT_MAX_ALLOWED_RELATIVE_ERROR);
-        sp.setStepSizeFraction(DEFAULT_STEP_SIZE_FRACTION);
+        sp.setMaxAllowedRelativeError(new Double(DEFAULT_MAX_ALLOWED_RELATIVE_ERROR));
+        sp.setStepSizeFraction(new Double(DEFAULT_STEP_SIZE_FRACTION));
     }
 
     protected void checkSimulationParametersImpl(SimulatorParameters pSimulatorParameters,
