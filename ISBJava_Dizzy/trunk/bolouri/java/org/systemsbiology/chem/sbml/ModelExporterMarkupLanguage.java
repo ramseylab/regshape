@@ -351,7 +351,8 @@ public class ModelExporterMarkupLanguage implements IModelExporter, IAliasableCl
             Element listOfRulesElement = document.createElement(ELEMENT_NAME_LIST_OF_RULES);
 
             ListIterator rulesListIter = null;
-            SymbolEvaluatorHashMap symbolEvaluator = new SymbolEvaluatorHashMap(globalSymbolValues);
+            SymbolEvaluatorHashMap symbolEvaluator = new SymbolEvaluatorHashMap();
+            symbolEvaluator.setSymbolsMap(globalSymbolValues);
             HashSet reservedSymbolNames = new HashSet();
             SymbolEvaluatorChemCommandLanguage.getReservedSymbolNames(reservedSymbolNames);
             Iterator reservedSymbolNamesIter = reservedSymbolNames.iterator();
