@@ -15,7 +15,6 @@ import java.util.*;
 public abstract class SimulatorStochasticBase extends Simulator
 {
     public static final int DEFAULT_ENSEMBLE_SIZE = 1;
-    private static final int NUM_ITERATIONS_CHECK_CANCELLED = 1000;
 
     protected Random mRandomNumberGenerator;
 
@@ -214,7 +213,6 @@ public abstract class SimulatorStochasticBase extends Simulator
             throw new IllegalArgumentException("illegal value for ensemble size");
         }
 
-
         boolean isCancelled = false;
 
         int timeCtr = 0;
@@ -229,8 +227,6 @@ public abstract class SimulatorStochasticBase extends Simulator
             prepareForSimulation(time);
 
             lastReactionIndex.setValue(NULL_REACTION);
-
-            int iterationCtr = 0;
 
             prepareForStochasticSimulation(speciesRateFactorEvaluator,
                                            symbolEvaluator,
@@ -251,14 +247,10 @@ public abstract class SimulatorStochasticBase extends Simulator
                                lastReactionIndex,
                                delayedReactionSolvers);
 
-                ++iterationCtr;
-                if(0 == (iterationCtr % NUM_ITERATIONS_CHECK_CANCELLED))
+                if(incrementIterationCounterAndCheckForCancellation())
                 {
-                    isCancelled = checkSimulationControllerStatus();
-                    if(isCancelled)
-                    {
-                        break;
-                    }
+                    isCancelled = true;
+                    break;
                 }
 
                 if(time >= timesArray[timeCtr])
@@ -276,9 +268,6 @@ public abstract class SimulatorStochasticBase extends Simulator
             {
                 break;
             }
-
-//            System.out.println("number of iterations: " + iterationCtr);
-
         }
 
         double ensembleMult = 1.0 / ((double) ensembleSize);
