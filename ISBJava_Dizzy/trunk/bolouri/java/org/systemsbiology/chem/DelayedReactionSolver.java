@@ -45,7 +45,6 @@ public class DelayedReactionSolver extends Expression
 
     private boolean mIsStochasticSimulator;
 
-    private double mRateSquared;
     private int mReactionIndex;
     private double mDelay;
 
@@ -58,7 +57,8 @@ public class DelayedReactionSolver extends Expression
                                  Species pIntermedSpecies, 
                                  double pDelay,
                                  double pRate,
-                                 int pReactionIndex)
+                                 int pReactionIndex,
+                                 boolean pIsStochasticSimulator)
     {
         assert (pDelay > 0.0) : "invalid delay";
         mDelay = pDelay;
@@ -82,14 +82,9 @@ public class DelayedReactionSolver extends Expression
 
         mTimeResolution = LAMBDA_MAX * mPeakTimeRel / ((double) numTimePoints);
 
-        mRateSquared = mRate * mRate;
-
         mReactionIndex = pReactionIndex;
-    }
 
-    public void initialize(ISimulator pSimulator)
-    {
-        mIsStochasticSimulator = pSimulator.isStochasticSimulator();
+        mIsStochasticSimulator = pIsStochasticSimulator;
 
         if(mIsStochasticSimulator)
         {
@@ -112,7 +107,6 @@ public class DelayedReactionSolver extends Expression
         }
         else
         {
-            int numTimePoints = mNumTimePoints;
             mReactantHistory = new SlidingWindowTimeSeriesQueue(numTimePoints);
             mIntermedSpeciesHistory = new SlidingWindowTimeSeriesQueue(numTimePoints);
 
@@ -225,7 +219,7 @@ public class DelayedReactionSolver extends Expression
                                                pNonDynamicSymbolValues);
     }
 
-    void update(SymbolEvaluator pSymbolEvaluator, double pTime) throws DataNotFoundException
+    public void update(SymbolEvaluator pSymbolEvaluator, double pTime) throws DataNotFoundException
     {
         SlidingWindowTimeSeriesQueue reactantHistory = mReactantHistory;
         SlidingWindowTimeSeriesQueue intermedSpeciesHistory = mIntermedSpeciesHistory;
@@ -343,7 +337,6 @@ public class DelayedReactionSolver extends Expression
                                                 double sqrtTwoPiNumStepsCorrected,
                                                 double numStepsCorrected,
                                                 double rate,
-                                                double rateSquared,
                                                 double currentTime)
     {
         double value = 0.0;
@@ -355,7 +348,7 @@ public class DelayedReactionSolver extends Expression
             value = h * computeIntegrandValue(history,
                                               ctr,
                                               rate,
-                                              rateSquared,
+                                              rate * rate,
                                               sqrtTwoPiNumStepsCorrected,
                                               numStepsCorrected,
                                               currentTime);
