@@ -220,9 +220,25 @@ public class ModelLoaderApp extends CommandLineApp
                 System.out.println("\n\nloading GUI...\n");
             }
 
+            boolean handleOutputInternally = true;
             SimulationLauncher simLauncher = new SimulationLauncher("Dizzy",
                                                                     model,
-                                                                    true);
+                                                                    handleOutputInternally);
+            simLauncher.addListener(new SimulationLauncher.Listener()
+            {
+                public void simulationLauncherClosing()
+                {
+                    System.exit(0);
+                }
+                public void simulationStarting()
+                {
+                    // do nothing
+                }
+                public void simulationEnding()
+                {
+                    // do nothing
+                }
+            });
 
         }
 

@@ -220,7 +220,8 @@ public class MainApp
             String appName = getName();
             Model model = mEditorPane.processModel();
             enableMenuItem(MainMenu.MenuItem.TOOLS_SIMULATE, false);
-            SimulationLauncher simulationLauncher = new SimulationLauncher(appName, model, false);
+            boolean handleOutputInternally = true;
+            SimulationLauncher simulationLauncher = new SimulationLauncher(appName, model, handleOutputInternally);
             setSimulationLauncher(simulationLauncher);
             setTimestampModelLastLoaded(new Long(System.currentTimeMillis()));
             simulationLauncher.addListener(new SimulationLauncher.Listener()
