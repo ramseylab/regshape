@@ -1,0 +1,11 @@
+org.systemsbiology.chem
+org.systemsbiology.chem.sbw
+org.systemsbiology.chem.sbml
+org.systemsbiology.chem.odetojava
+org.systemsbiology.chem.app
+org.systemsbiology.data
+org.systemsbiology.gui
+org.systemsbiology.math
+org.systemsbiology.pointillist
+org.systemsbiology.util
+
