@@ -10,6 +10,7 @@ package org.systemsbiology.chem.app;
 
 import org.systemsbiology.util.*;
 import org.systemsbiology.chem.*;
+import org.systemsbiology.math.*;
 import java.util.*;
 import java.io.*;
 import java.text.*;
@@ -52,6 +53,8 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     private static final String COMPUTE_FLUCTUATIONS_ARG = "-computeFluctuations";
     private static final String PRINT_PARAMETERS_ARG = "-printParameters";
 
+    private static final Double DEFAULT_ERROR_TOLERANCE_RELATIVE = new Double(1e-6);
+
     private boolean mDebug;
     private String mParserAlias;
     private File mModelFile;
@@ -76,8 +79,9 @@ public class SimulationLauncherCommandLine extends CommandLineApp
     private TimeSeriesOutputFormat mOutputFileFormat;
     private SimulationProgressReporter mSimulationProgressReporter;
     private boolean mComputeFluctuations;
+    private SignificantDigitsCalculator mSignificantDigitsCalculator;
+    private ScientificNumberFormat mScientificNumberFormat;
 
-    
     private boolean getDebug()
     {
         return(mDebug);
@@ -100,6 +104,9 @@ public class SimulationLauncherCommandLine extends CommandLineApp
 
     public SimulationLauncherCommandLine() throws ClassNotFoundException, IOException
     {
+        mSignificantDigitsCalculator = new SignificantDigitsCalculator();
+        mScientificNumberFormat = new ScientificNumberFormat(mSignificantDigitsCalculator);
+
         setDebug(false);
         setParserAlias(null);
         ClassRegistry modelBuilderRegistry = new ClassRegistry(org.systemsbiology.chem.IModelBuilder.class);
@@ -570,10 +577,19 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                 System.err.println("elapsed time to carry out the simulation: " + elapsedTimeSeconds + " seconds");
             }
 
+            Double relTol = mSimulatorParameters.getMaxAllowedRelativeError();
+            if(null == relTol)
+            {
+                relTol = DEFAULT_ERROR_TOLERANCE_RELATIVE;
+            }
+            mSignificantDigitsCalculator.setRelTol(relTol);
+            mSignificantDigitsCalculator.setAbsTol(mSimulatorParameters.getMaxAllowedAbsoluteError());
+
             TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(mOutputFilePrintWriter,
                                                                         globalSymbolsArray,
                                                                         resultsTimeValues,
                                                                         resultsSymbolValues,
+                                                                        mScientificNumberFormat,
                                                                         mOutputFileFormat);
 
             if(mComputeFluctuations)
