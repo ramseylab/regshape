@@ -31,9 +31,6 @@ public final class Reaction extends SymbolValue
 
     private static final boolean DEFAULT_REACTANT_DYNAMIC = true;
 
-    private HashMap mLocalSymbolsMap;
-    private boolean mRateIsExpression;
-
     public Object clone()
     {
         Reaction reaction = new Reaction(mName);
@@ -41,7 +38,6 @@ public final class Reaction extends SymbolValue
         reaction.mReactantsMap = mReactantsMap;
         reaction.mProductsMap = mProductsMap;
         reaction.mLocalSymbolsValuesMap = mLocalSymbolsValuesMap;
-        reaction.mRateIsExpression = mRateIsExpression;
         reaction.mNumSteps = mNumSteps;
         reaction.mDelay = mDelay;
         return(reaction);
@@ -54,7 +50,6 @@ public final class Reaction extends SymbolValue
         mReactantsMap = new HashMap();
         mProductsMap = new HashMap();
         mLocalSymbolsValuesMap = new HashMap();
-        mRateIsExpression = false;
         mNumSteps = 1;
         mDelay = 0.0;
     }
@@ -226,10 +221,17 @@ public final class Reaction extends SymbolValue
 
     SymbolValue []getLocalSymbolValues()
     {
+        int numSymbolValues = mLocalSymbolsValuesMap.size();
+        SymbolValue []retArray = new SymbolValue[numSymbolValues];
+        
         SymbolValue []dummyArray = new SymbolValue[0];
-        return((SymbolValue []) mLocalSymbolsValuesMap.values().toArray(dummyArray));
+        SymbolValue []origArray = (SymbolValue []) mLocalSymbolsValuesMap.values().toArray(dummyArray);
+        for(int j = 0; j < numSymbolValues; ++j)
+        {
+            retArray[j] = (SymbolValue) origArray[j].clone();
+        }
+        return(retArray);
     }
-
 
     private void addSymbolsToGlobalSymbolsMap(HashMap pReactionSpecies, HashMap pSymbols, ReservedSymbolMapper pReservedSymbolMapper)
     {
@@ -278,7 +280,6 @@ public final class Reaction extends SymbolValue
     public void setRate(Value pRate)
     {
         setValue(pRate);
-        mRateIsExpression = pRate.isExpression();
     }
 
     public void setRate(double pRate)
@@ -434,6 +435,7 @@ public final class Reaction extends SymbolValue
     void addSymbolsToGlobalSymbolMap(HashMap pSymbolMap, 
                                      ReservedSymbolMapper pReservedSymbolMapper)
     {
+        addSymbolToMap(pSymbolMap, mName, pReservedSymbolMapper);
         addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(getReactantsMap(), pSymbolMap, pReservedSymbolMapper);
         addSymbolsFromReactionSpeciesMapToGlobalSymbolMap(getProductsMap(), pSymbolMap, pReservedSymbolMapper);
     }
@@ -520,51 +522,7 @@ public final class Reaction extends SymbolValue
     }
 
 
-    Expression computeRatePartialDerivativeExpression(Expression pRateExpression,
-                                                      SymbolValue pSymbolValue,
-                                                      SymbolEvaluatorChem pSymbolEvaluator) throws DataNotFoundException
-    {
-        SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = pSymbolEvaluator.getSymbolEvaluationPostProcessor();
-        boolean speciesSymbolsRepresentConcentration = (null != symbolEvaluationPostProcessor && (symbolEvaluationPostProcessor instanceof SymbolEvaluationPostProcessorChemMarkupLanguage));
 
-        Symbol derivSymbol = pSymbolValue.getSymbol();
-        pSymbolEvaluator.setLocalSymbolsMap(mLocalSymbolsMap);
-        Expression retVal = pRateExpression.computePartialDerivative(derivSymbol, pSymbolEvaluator);
-        if(speciesSymbolsRepresentConcentration && (pSymbolValue instanceof Species))
-        {
-            Species species = (Species) pSymbolValue;
-            Compartment compartment = species.getCompartment();
-            Value compartmentVolumeValue = compartment.getValue();
-            if(compartmentVolumeValue.isExpression())
-            {
-                Expression compartmentVolumeExpression = compartmentVolumeValue.getExpressionValue();
-                Expression compartmentVolumeDeriv = compartmentVolumeExpression.computePartialDerivative(derivSymbol,
-                                                                                                         pSymbolEvaluator);
-                if(! compartmentVolumeDeriv.isSimpleNumber()  || compartmentVolumeDeriv.getSimpleNumberValue() != 0.0)
-                {
-                    Expression speciesExpression = new Expression(species.getName());
-                    Expression concExpression = Expression.divide(speciesExpression, compartmentVolumeExpression);
-                    Expression concDerivExpression = Expression.divide(compartmentVolumeDeriv, compartmentVolumeExpression);
-                    Expression prod = Expression.multiply(concExpression, concDerivExpression);
-                    Expression oneOverVolume = Expression.divide(Expression.ONE, compartmentVolumeExpression);
-                    Expression compartmentVolumeModifier = Expression.subtract(oneOverVolume, prod);
-                    retVal = Expression.multiply(retVal, compartmentVolumeModifier);
-                }
-                else
-                {
-                    retVal = Expression.divide(retVal, compartmentVolumeExpression);
-                }
-            }
-            else
-            {
-                Expression compartmentVolumeExpression = new Expression(compartmentVolumeValue.getValue());
-                retVal = Expression.divide(retVal, compartmentVolumeExpression);
-            }
-        }
-        pSymbolEvaluator.setLocalSymbolsMap(null);
-
-        return(retVal);
-    }
-
+  
 
 }
