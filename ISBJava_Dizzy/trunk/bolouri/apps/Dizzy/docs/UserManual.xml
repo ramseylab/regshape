@@ -1792,7 +1792,7 @@ invariant floating-point value.
 The population of a boundary species may also be
 defined as a <b>late-evaluation</b> mathematical
 expression.  This means that the actual <em>expression</em>
-is stored, rather than the value of the expression
+is stored by the parser, rather than the value of the expression
 evaluated initially.  This is accomplished
 by using a string element rather than a numeric element,
 on the right-hand side of the definition of the 
@@ -2358,6 +2358,140 @@ successful import of most of the SBML models available.
 </p>
 </isb:docsection>
 
+<isb:docsection name="&appName; Graphical User Interface" label="gui">
+<p>
+The &appName; system has a graphical user interface (GUI) application 
+that is layered on top of the previously described 
+<a href="#ccmdl">scripting engine</a>.  This GUI is a work in progress.
+It provides the following features:
+<ul>
+<li>load a model definition file</li>
+<li>run a simulation and store, plot, or print the results</li>
+<li>export a model instance to a file of a specified format</li>
+</ul>
+A sample screen shot of the &appName; graphical user interface follows:
+</p>
+<p>
+<a href="../images/screenshot1.png"><img src="../images/screenshot1-small.png" alt="screenshot" /></a>
+</p>
+<p>
+Each of the above features will be described in turn.
+</p>
+
+<isb:docsubsection name="Load a model definition file" label="gui-loadfile">
+<p>
+The first step in using the &appName; GUI application is usually to
+load a model definition file.  This is done by selecting the &quot;Open...&quot;
+option from the &quot;File&quot; menu.  You will be asked to specify a model
+definition file.  By default, only model definition files whose file extensions
+(file name suffixes) are of a recognized type, are displayed.  By selecting
+&quot;All files&quot; from the pull-down menu &quot;Files of Type&quot;, you
+can optionally choose from among any file, regardless of the file extension.
+When the file is selected, if you click on the &quot;open&quot; button, the
+model definition file that you selected will be processed by the scripting
+engine.  The names of the <a href="#models">model(s)</a> and 
+<a href="#speciespopulations">species population collections</a> defined
+by the file, will be displayed in the &quot;models:&quot; and
+the &quot;species population sets:&quot; list boxes in the main &appName;
+window.
+</p>
+<p> 
+You can view the details of any model or species population collection
+that has been loaded into &appName;, by double-clicking on the name of
+the model or species population collection in the aforementioned list boxes.
+When you do this, information about the model or species population collection
+will be printed in the large text box labeled &quot;runtime output log&quot;.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Run a simulation" label="gui-runsimulation">
+<p>
+Once a <a href="#models">model</a> and a <a href="#speciespopulations">species
+population collection</a> have been selected (with a single click on
+the name of each in their corresponding list boxes), the &quot;Simulate...&quot;
+menu option under the &quot;Tools&quot; menu becomes enabled (no longer
+greyed out).  Selecting the &quot;Simulate...&quot; menu option causes a
+dialog box entitled &quot;&appName;: simulator&quot; to be displayed.
+In this dialog box, you must specify the start and stop time for the 
+simulation, as well as the output type, the type of simulator, and the
+list of species to be included in the &quot;output&quot;.  The start 
+time defaults to 0.0, and it is rarely necessary to use a different value.
+The simulator defaults to the 
+<a href="&webBaseURL;/&localJavaLibraryName;/javadoc/isb/chem/GillespieSimulator.html">
+Gillespie Simulator</a>, which is presently the only simulator available.
+You must select at least one species to be included in the &quot;output&quot;.
+The other species not selected, may still participate in the simulation,
+but their population values over time will not be included in the data
+resultant from running the simulation.  
+</p>
+<p>
+The optional &quot;ensemble size&quot; text box is used to define an integer
+number of repetitions for the simulation.  The results are then defined
+as the average of the time-series data (separately for each species and each
+time point) over the &quot;ensemble&quot; of simulations.  If you do not
+specify an ensemble size, a single simulation is conducted (no ensemble
+averaging).  It is usually best to run a simulation with no ensemble averaging
+first, before running with an ensemble average.  This allows for you to
+compute the expected &quot;run time&quot; of the ensemble averaged
+simulation, in advance.  Note that when doing an ensemble-averaged simulation,
+you may not select the &quot;store&quot; output type.
+</p>
+<p>
+The &quot;output type&quot; can 
+be &quot;print&quot; (the default), which just prints the values for the
+species populations, over time, in a simple comma-separated-value format,
+in the &quot;runtime output log&quot; text box.  The &quot;plot&quot;
+output type will cause a graphical plot to be generated.  Note that when
+plotting the output, all species selected are displayed on the same graph.
+This means that one species with values that are much greater than the other
+species, will cause Y-axis scaling that will render the other species
+data points all at the bottom of the graph window.  To avoid this problem,
+you can display a graph without the species with large population values, or
+you can export the data in comma-separated value format. This is done by
+selecting the &quot;file&quot; output type. With the data in a file in 
+comma-separated-value format, you may import the data into a program that
+has more sophisticated graphing capabilities, such as Gnuplot, Octave,
+Gnumeric, Excel, or Matlab.  The &quot;store&quot; output type is a special
+value that requests that the data resultant from running the simulation (i.e.,
+the final population values at the end of the simulation) be stored as a
+new <a href="#speciespopulations">species populations collection</a> object
+whose name you specify as a string.  This name must be a valid 
+<a href="#symbols">symbol name</a>.  After the simulation, the new species
+populations collection name should show up in the &quot;species populations
+sets&quot; list box in the main &appName; window.  You may then use the
+species population collection as the initial data for a subsequent simulation.
+Note that specifying the &quot;store&quot; output type is not allowed when
+you are specifying an &quot;ensemble size&quot; (ensemble-average over multiple
+simulations).
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Export model instance" label="gui-export">
+<p>
+A <a href="#modelinstance">model instance</a> may be exported to one of two
+different formats:  <a href="#sbml">SBML</a> and <a href="#cmdl">CMDL</a>.
+Both of those formats may be subsequently loaded into the &appName; system.
+Note that you must select <em>both</em> a model and a set of initial species
+population data (which together constitute a &quot;model instance&quot;), 
+in order to use the &quot;export&quot; feature.  The export feature
+is used by first selecting a model and a species population collection in
+the list boxes named &quot;models&quot; and &quot;species population sets&quot;
+in the main &appName; window, and then selecting &quot;Export...&quot; menu
+item from the &quot;Tools&quot; menu.  You will be presented with a dialog 
+box in which you must specify the file format for exporting the model instance.
+You will then be prompted to specify the file name and location for the file
+to which the model instance should be exported.  This feature is useful for
+converting, say, an SBML model instance into a CMDL model instance, which
+one might then further customize and modify.  Similarly, this feature can
+be used to export a model instance defined in either CMDL or CCMDL, into
+SBML format.  The model instance thus exported can then be imported into a
+variety of modeling and visualization tools that support the SBML format for
+model interchange.
+</p>
+</isb:docsubsection>
+
+</isb:docsection>
+
 <isb:docsection name="Getting Help" label="gettinghelp">
 <p>
 If you find that the &appName; program does not function in accordance
@@ -2399,6 +2533,7 @@ the problem that you are encountering.
 </p>
 
 </isb:docsection>
+
 
 </isb:document>
 
