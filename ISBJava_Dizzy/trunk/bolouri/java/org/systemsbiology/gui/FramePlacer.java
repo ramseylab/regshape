@@ -26,7 +26,11 @@ public class FramePlacer
         sScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
     }
 
-
+    public static Dimension getScreenSize()
+    {
+        return sScreenSize;
+    }
+    
     public FramePlacer()
     {
         mFrameCtr = 0;
