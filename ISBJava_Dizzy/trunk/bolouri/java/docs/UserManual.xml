@@ -93,7 +93,7 @@ variable:
 </table>
 </blockquote>
 Note that the SBW/SBML libraries and packages are only required for
-compiling the code in the &quot;<code>isb.chem.sbw</code>&quot; 
+compiling the code in the &quot;<code>org.systemsbiology.chem.sbw</code>&quot; 
 directory.  By omitting this
 directory from the compilation (by adding a suitable 
 &quot;<code>exclude</code>&quot; to the
@@ -104,7 +104,7 @@ would not have any dependencies on
 the aforementioned SBW/SBML libraries.  
 <p />
 The <code>jfreechart</code> and <code>jcommon</code> libraries
-are needed in order to compile the <code>isb.chem.app</code>
+are needed in order to compile the <code>org.systemsbiology.chem.app</code>
 package.  They are not needed for any other packages in the &appName;
 library.
 <p />
