@@ -31,17 +31,18 @@ public class TestModelBuilderMarkupLanguage
                     Model model = builder.buildModel(bufferedReader, includeHandler);
                     System.out.println(model.toString());
                     System.exit(1);
-                    DeterministicSimulator simulator = new DeterministicSimulator(model);
+                    DeterministicSimulatorFixed simulator = new DeterministicSimulatorFixed();
+                    simulator.initialize(model, null);
                     String []requestedSymbolNames = {"PX", "PY", "PZ"};
                     double []timeValues = new double[NUM_TIME_POINTS];
                     Object []symbolValues = new Object[NUM_TIME_POINTS];
                     simulator.simulate(0.0,
                                        100.0,
                                        NUM_TIME_POINTS,
+                                       1000,
                                        requestedSymbolNames,
                                        timeValues,
-                                       symbolValues,
-                                       1000);
+                                       symbolValues);
 
                     TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(new PrintWriter(System.out),
                                                                                 requestedSymbolNames,

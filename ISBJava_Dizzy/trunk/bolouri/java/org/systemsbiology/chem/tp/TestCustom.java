@@ -30,7 +30,8 @@ public class TestCustom
             model.addReaction(reactionX);
             model.addReaction(reactionY);
             System.out.println(model.toString());
-            GillespieSimulator simulator = new GillespieSimulator(model);
+            GillespieSimulator simulator = new GillespieSimulator();
+            simulator.initialize(model, null);
             String []requestedSymbolNames = { "A", "B" };
             double []timeValues = new double[NUM_TIME_POINTS];
             Object []symbolValues = new Object[NUM_TIME_POINTS];
@@ -40,10 +41,10 @@ public class TestCustom
             simulator.simulate(0.0, 
                                1000.0, 
                                NUM_TIME_POINTS,
+                               1,
                                requestedSymbolNames,
                                timeValues,
-                               symbolValues,
-                               1);
+                               symbolValues);
 
             long finalTime = System.currentTimeMillis();
             double elapsedTimeSec = (double) (finalTime - curTime) / 1000.0;

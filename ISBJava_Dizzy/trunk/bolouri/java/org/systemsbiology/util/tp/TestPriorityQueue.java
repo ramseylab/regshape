@@ -9,7 +9,7 @@ public class TestPriorityQueue
     {
         try
         {
-            Comparator comp = new Comparator()
+            AbstractComparator comp = new AbstractComparator()
             {
                 public int compare(Object p1, Object p2)
                 {

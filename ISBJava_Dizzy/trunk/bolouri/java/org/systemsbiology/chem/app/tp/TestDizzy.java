@@ -36,8 +36,7 @@ public class TestDizzy
             }
             else if(fileName.endsWith(".xml"))
             {
-                MarkupLanguageImporter importer = new MarkupLanguageImporter();
-                modelBuilder = new ModelBuilderMarkupLanguage(importer);
+                modelBuilder = new ModelBuilderMarkupLanguage();
             }
             else
             {
@@ -51,7 +50,7 @@ public class TestDizzy
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             Model model = modelBuilder.buildModel(bufferedReader, includeHandler);
 
-            SimulationLauncher launcher = new SimulationLauncher("Dizzy", model);
+            SimulationLauncher launcher = new SimulationLauncher("Dizzy", model, null);
         }
 
         catch(Exception e)
