@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE xsl:stylesheet [
+  <!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
+  %CommonConfig;
+   ]>
+    
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This source code is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<xsl:stylesheet version="1.0"                 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  
+    <xsl:output method="xml" indent="yes" encoding="ISO-8859-1" />
+  
+  <xsl:template match="*">
+    <xsl:copy>
+      <xsl:apply-templates />
+    </xsl:copy>
+  </xsl:template>
+</xsl:stylesheet>

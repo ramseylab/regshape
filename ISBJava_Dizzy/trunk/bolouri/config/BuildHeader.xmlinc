@@ -12,7 +12,8 @@
   <property name="helpMapStyleSheet" value="${projConfigDir}/javahelp-map-stylesheet.xml" />
   <property name="helpTOCStyleSheet" value="${projConfigDir}/javahelp-toc-stylesheet.xml" />
   <property name="helpContentFileParamName" value="contentFile" />
-
+  <property name="appConfigStyleSheet" value="${projConfigDir}/appconfig-stylesheet.xml" />
+  
   <property name="dirInstallAnywhere" location="/local/InstallAnywhere_6_Enterprise" />
   <property name="binInstallAnywhere" value="${dirInstallAnywhere}/build" />
   <property name="binHtml2PS"         value="html2ps" />
