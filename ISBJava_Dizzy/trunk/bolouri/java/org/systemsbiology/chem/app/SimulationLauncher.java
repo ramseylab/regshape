@@ -148,6 +148,11 @@ public class SimulationLauncher
         private boolean mTerminate;
         private NumberFormat mNumberFormat;
 
+        public synchronized void clearLastUpdateTime()
+        {
+            mLastUpdateTimeMillis = NULL_TIME_UPDATE_MILLIS;
+        }
+
         public SimulationProgressReportHandler()
         {
             mLastUpdateTimeMillis = NULL_TIME_UPDATE_MILLIS;
@@ -548,6 +553,7 @@ public class SimulationLauncher
             SimulationController simulationController = getSimulationController();
             if(simulationController.getStopped())
             {
+                mSimulationProgressReportHandler.clearLastUpdateTime();
                 simulationController.setStopped(false);
                 updateSimulationControlButtons(true);
             }
@@ -563,6 +569,7 @@ public class SimulationLauncher
             {
                 simulationController.setStopped(true);
                 updateSimulationControlButtons(true);
+                mSimulationProgressReportHandler.clearLastUpdateTime();
             }
         }
     }
