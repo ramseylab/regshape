@@ -20,7 +20,7 @@
 <isb:docsection name="Tools" label="tools">
 <ul>
 <li><a href="../Dizzy">Dizzy (Gillespie stochastic simulator)</a></li>
-<li><a href="../&localJavaLibraryName;">&localJavaLibraryName;</a> (java class library)</li>
+<li><a href="../&localJavaLibraryName;">&localJavaLibraryName; (Java class library)</a></li>
 </ul>
 </isb:docsection>
 
