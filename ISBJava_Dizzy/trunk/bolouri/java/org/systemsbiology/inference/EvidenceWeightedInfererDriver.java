@@ -37,6 +37,7 @@ import java.util.*;
  */
 public class EvidenceWeightedInfererDriver 
 {
+    private static final String COLUMN_NAME_ELEMENT = "element";
     private static final String TOOL_TIP_LOAD_FILE = "Load the significances file.  The file must contain comma-separated values, with element names in the first column, and evidence type names in the first row";
     private static final String TOOL_TIP_CLEAR_FILE = "Clear the file of significances that was loaded into this form.";
     private static final String TOOL_TIP_SEPARATION = "The degree of separation of the distributions of signfificances for putative affected & unaffected elements; it should be very close to 1.0";
@@ -64,7 +65,7 @@ public class EvidenceWeightedInfererDriver
     private static final int MIN_NUM_BINS = 10;
     private static final double MAX_COMBINED_SIGNIFICANCE_CUTOFF = 1.0e-8;
     private static final int NUM_COLUMNS_TEXT_FIELD_FILE_NAME = 30;
-    private static final int NUM_COLUMNS_NUMERIC_FIELD = 15;
+    private static final int NUM_COLUMNS_NUMERIC_FIELD = 10;
     public static final int DEFAULT_NUM_BINS = 100;
     public static final double DEFAULT_INITIAL_SIGNIFICANCE_CUTOFF = 0.05;
     public static final double DEFAULT_QUANTILE_THRESHOLD = 0.05;
@@ -192,6 +193,7 @@ public class EvidenceWeightedInfererDriver
             }
         }
     }
+    
 
     class InferenceResultsTableModel extends AbstractTableModel
     {
@@ -206,7 +208,7 @@ public class EvidenceWeightedInfererDriver
         public static final int SORT_STATUS_ASCENDING = 1;
         public static final int SORT_STATUS_DESCENDING = -1;
         public static final int NUM_COLUMNS = 3;
-        private final String []COLUMN_NAMES = {"element", "affected", "overall significance"};
+        private final String []COLUMN_NAMES = {COLUMN_NAME_ELEMENT, "affected", "overall significance"};
         private Comparator []mSortingComparators;
         
         public void cancelSorting()
@@ -397,7 +399,7 @@ public class EvidenceWeightedInfererDriver
         {
             if(pColumn == 0)
             {
-                return "element";
+                return COLUMN_NAME_ELEMENT;
             }
             else
             {
@@ -451,7 +453,7 @@ public class EvidenceWeightedInfererDriver
             throw new IllegalStateException("delimiter combo box has not been initialized yet");
         }
         String delimiterName = (String) mDelimiterBox.getSelectedItem();
-        DataFileDelimiter delimiter = DataFileDelimiter.forName(delimiterName);
+        DataFileDelimiter delimiter = DataFileDelimiter.get(delimiterName);
         if(null == delimiter)
         {
             throw new IllegalStateException("unknown data file delimiter name: " + delimiterName); 
@@ -829,9 +831,9 @@ public class EvidenceWeightedInfererDriver
         constraints.gridy = 0;           
         
         JPanel fileButtonPanel = new JPanel();
-        JButton loadFileButton = new JButton("load significances data");
+        JButton loadFileButton = new JButton("load sigs");
         mLoadFileButton = loadFileButton;
-        JButton fileClear = new JButton("clear significances data");
+        JButton fileClear = new JButton("clear sigs");
         fileClear.setToolTipText(TOOL_TIP_CLEAR_FILE);
         fileClear.addActionListener(new ActionListener()
         {
@@ -871,8 +873,8 @@ public class EvidenceWeightedInfererDriver
         JLabel fileNameLabel = new JLabel("");
         fileNameLabel.setToolTipText(TOOL_TIP_LOAD_FILE);
         JPanel fileNameLabelPanel = new JPanel();
-        fileNameLabel.setPreferredSize(new Dimension(500, 10));
-        fileNameLabel.setMinimumSize(new Dimension(500, 10));
+        fileNameLabel.setPreferredSize(new Dimension(400, 10));
+        fileNameLabel.setMinimumSize(new Dimension(400, 10));
         mFileNameLabel = fileNameLabel;
         fileNameLabelPanel.add(fileNameLabel);
         fileNameLabelPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -1124,7 +1126,7 @@ public class EvidenceWeightedInfererDriver
         String []weightTypeNames = new String[numWeightTypes];
         for(int i = 0; i < numWeightTypes; ++i)
         {
-            weightTypeNames[i] = weightTypes[i].toString();
+            weightTypeNames[i] = weightTypes[i].getName();
         }
         JComboBox weightBox = new JComboBox(weightTypeNames);
         mWeightBox = weightBox;
@@ -1275,7 +1277,8 @@ public class EvidenceWeightedInfererDriver
         JTable weightsTable = new JTable();
         mWeightsTable = weightsTable;
         JScrollPane weightsScrollPane = new JScrollPane(weightsTable);
-        weightsScrollPane.setPreferredSize(new Dimension(75, 100));
+        weightsScrollPane.setPreferredSize(new Dimension(200, 100));
+        weightsScrollPane.setMinimumSize(new Dimension(200, 100));
         
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridwidth = 1;
@@ -1303,7 +1306,7 @@ public class EvidenceWeightedInfererDriver
         mResultsTable = resultsTable;
         JScrollPane resultsScrollPane = new JScrollPane(resultsTable);
         resultsScrollPane.setBorder(BorderFactory.createEtchedBorder());
-        resultsScrollPane.setPreferredSize(new Dimension(500, 200));
+        resultsScrollPane.setPreferredSize(new Dimension(400, 200));
         
         topPanel.add(resultsScrollPane);
         gridLayout.setConstraints(resultsScrollPane, constraints);
@@ -1361,9 +1364,15 @@ public class EvidenceWeightedInfererDriver
         StringBuffer resultsBuf = new StringBuffer();
         String delimiter = pDelimiter.getDelimiter();
         SignificancesData significancesData = mSignificancesData;
+        String elementName = null;
         for(int i = 0; i < numElements; ++i)
         {
-            resultsBuf.append(significancesData.getElementName(i) + delimiter);
+            elementName = significancesData.getElementName(i);
+            if(-1 != elementName.indexOf(delimiter))
+            {
+                elementName = elementName.replaceAll(delimiter, "_");
+            }
+            resultsBuf.append(elementName + delimiter);
             resultsBuf.append(affectedElements[i] + delimiter);
             resultsBuf.append(mNumberFormat.format(combinedEffectiveSignificances[i]) + "\n");
         }

@@ -32,6 +32,7 @@ public class ObservationsData
     private String []mEvidenceNames;
     private MatrixString mMatrixString;
     private double mMissingDataRate;
+    private int []mNumObservations;
     
     public int getNumElements()
     {
@@ -53,10 +54,73 @@ public class ObservationsData
         return mElementNames[pRow];
     }
     
+    public String []getElementNames()
+    {
+        int numElements = mElementNames.length;
+        String []elementNames = new String[numElements];
+        for(int i = 0; i < numElements; ++i)
+        {
+            elementNames[i] = mElementNames[i];
+        }
+        return elementNames;
+    }
+    
+    public String []getEvidenceNames()
+    {
+        int numEvidences = mEvidenceNames.length;
+        String []evidenceNames = new String[numEvidences];
+        for(int j = 0; j < numEvidences; ++j)
+        {
+            evidenceNames[j] = mEvidenceNames[j];
+        }
+        return evidenceNames;
+    }
+    
     public Double getValueAt(int pRow, int pColumn)
     {
         return (Double) mObservations.get(pRow, pColumn);
     }    
+    
+    public Double []getColumn(int pColumn)
+    {
+        int numElements = mElementNames.length;
+        Double []obsCol = new Double[numElements];
+        for(int i = 0; i < numElements; ++i)
+        {
+            obsCol[i] = getValueAt(i, pColumn);
+        }
+        return obsCol;
+    }
+    
+    public double columnMinimum(int pColumn)
+    {
+    	double min = Double.MAX_VALUE;
+    	int numElements = mElementNames.length;
+    	int numEvidences = mEvidenceNames.length;
+    	if(pColumn < 0 || pColumn >= numEvidences)
+    	{
+    		throw new IllegalArgumentException("invalid column number: " + pColumn);
+    	}
+    	Double obsObj = null;
+    	double obs = 0.0;
+    	for(int i = 0; i < numElements; ++i)
+    	{
+    		obsObj = (Double) mObservations.get(i, pColumn);
+    		if(null != obsObj)
+    		{
+    			obs = obsObj.doubleValue();
+    			if(obs < min)
+    			{
+    				min = obs;
+    			}
+    		}
+    	}
+    	if(min == Double.MAX_VALUE)
+    	{
+    		throw new IllegalStateException("could not find minimum value for column: " + pColumn);
+    	}
+    	return min;
+    }
     
     public void loadFromFile(File pFile, DataFileDelimiter pDelimiter) throws FileNotFoundException, IOException, InvalidInputException
     {
@@ -115,5 +179,23 @@ public class ObservationsData
             }
         }
         mMissingDataRate = ((double) missingCtr)/((double) numEvidences*numElements);
+        mNumObservations = new int[numEvidences];
+        for(int j = 0; j < numEvidences; ++j)
+        {
+        	int obsCtr = 0;
+        	for(int i = 0; i < numElements; ++i)
+        	{
+        		if(null != mObservations.get(i, j))
+        		{
+        			++obsCtr;
+        		}
+        	}
+        	mNumObservations[j] = obsCtr;
+        }
     }    
+
+    public int getNumObservations(int pEvidenceNum)
+    {
+    	return mNumObservations[pEvidenceNum];
+    }
 }

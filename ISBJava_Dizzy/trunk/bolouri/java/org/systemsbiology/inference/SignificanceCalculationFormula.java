@@ -10,21 +10,51 @@
  */
 package org.systemsbiology.inference;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+
 /**
  * @author sramsey
  *
  */
-public class SignificanceCalculationFormula
+public class SignificanceCalculationFormula implements Comparable
 {
     private final String mName;
+    private static final HashMap sMap;
+    static
+    {
+        sMap = new HashMap();
+    }
+    public static final SignificanceCalculationFormula CDF = new SignificanceCalculationFormula("cdf");
+    public static final SignificanceCalculationFormula PDF = new SignificanceCalculationFormula("pdf");
+       
     private SignificanceCalculationFormula(String pName)
     {
         mName = pName;
+        sMap.put(mName, this);
     }
     public String toString()
     {
         return mName;
     }
-    public static final SignificanceCalculationFormula CDF = new SignificanceCalculationFormula("cdf");
-    public static final SignificanceCalculationFormula PDF = new SignificanceCalculationFormula("pdf");
+    public int compareTo(Object pObject)
+    {
+        return mName.compareTo(((SignificanceCalculationFormula) pObject).mName); 
+    }
+    public static SignificanceCalculationFormula get(String pName)
+    {
+        return (SignificanceCalculationFormula) sMap.get(pName);
+    }
+
+    public static SignificanceCalculationFormula []getAll()
+    {
+        LinkedList linkedList = new LinkedList(sMap.values());
+        Collections.sort(linkedList);
+        return (SignificanceCalculationFormula []) linkedList.toArray(new SignificanceCalculationFormula[0]);
+    }
+    public String getName()
+    {
+    	return mName;
+    }
 }

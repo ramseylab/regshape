@@ -11,12 +11,20 @@
 package org.systemsbiology.inference;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 import java.io.*;
+
 import javax.swing.table.AbstractTableModel;
 import org.systemsbiology.data.DataFileDelimiter;
 import org.systemsbiology.gui.*;
@@ -24,6 +32,7 @@ import org.systemsbiology.util.InvalidInputException;
 import org.systemsbiology.math.ScientificNumberFormat;
 import org.systemsbiology.math.SignificantDigitsCalculator;
 import org.systemsbiology.data.MatrixString;
+import java.util.ArrayList;
 
 /**
  * @author sramsey
@@ -31,26 +40,54 @@ import org.systemsbiology.data.MatrixString;
  */
 public class SignificanceCalculatorDriver
 {
-    private Component mParent;
-    private Container mContentPane;
-    private ScientificNumberFormat mNumberFormat;
-    
     private static final String TOOL_TIP_FILE_LOAD_BUTTON = "Load the file of normalized observations.  The first column should be element names.  The column headers (first row) should be evidence names.";
     private static final String TOOL_TIP_FILE_CLEAR_BUTTON = "Clear the file of normalized observations that was loaded into this form.";
     private static final String TOOL_TIP_DELIMITER = "Indicates the type of separator that is used in the data file you want to load.";
     private static final String TOOL_TIP_HELP = "Display the help screen that explains how to use this program";
     private static final String RESOURCE_HELP_ICON = "Help24.gif";
-    private static final String TOOL_TIP_EVIDENCE_CHOICES_TABLE = "Select a row and click on the \"set file\" button to modify the negative control file";
     private static final String TOOL_TIP_OBSERVATIONS_TABLE = "This is the table of observations that you loaded from the data file.";
     private static final String TOOL_TIP_SET_NEGATIVE_CONTROL_DATA = "Select the file containing the negative control data for this evidence type.";
     private static final String TOOL_TIP_CLEAR_NEGATIVE_CONTROL_DATA = "Clear the negative control data for this evidence type.";
+    private static final String TOOL_TIP_FORMULAS_BOX = "Specify the method (formula) used to compute the significance values";
+    private static final String TOOL_TIP_NUM_BINS = "Specify the number of bins to be sued for computing the distribution of observations.";
+    private static final String TOOL_TIP_MAX_CHI_SQUARE = "Specify the maximum allowed reduced chi-square for the best-fit distribution to the observations.";
+    private static final String TOOL_TIP_CALCULATE_SIGNIFICANCES_BUTTON = "Calculate the significance values for all observations.  This is only enabled if at least one evidence has the \"calculate significances\" field set.";
+    private static final String TOOL_TIP_TEXT_CLEAR_RESULTS_BUTTON = "Clear the calculated significances from the form.";
+    private static final String TOOL_TIP_TEXT_SAVE_RESULTS_BUTTON = "Save the calculated significances to a file using the same delimiter type as the observations data file.";
+    private static final String TOOL_TIP_RESET_FORM_BUTTON = "Reset the form to the original default values.";
     
+    private static final double DEFAULT_MAX_CHI_SQUARE = 1.0;
+    private static final int MIN_NUM_BINS = 10;
     private static final int NUM_COLUMNS_TEXT_FIELD_NUMERIC = 15;
     private static final int NUM_COLUMNS_TEXT_FIELD_FILE_NAME = 30;
+    private static final SignificanceCalculationFormula DEFAULT_SIGNIFICANCE_CALCULATION_FORMULA = SignificanceCalculationFormula.CDF;    
+    private static final DataFileDelimiter DEFAULT_DATA_FILE_DELIMITER = DataFileDelimiter.COMMA;
+    private static final String COLUMN_NAME_ELEMENT = "element";
     
+    private Component mParent;
+    private Container mContentPane;
+    private ScientificNumberFormat mNumberFormat;
+    private JLabel mFormulaLabel;
+    private JComboBox mFormulasBox;
+    private JLabel mMaxChiSquareLabel;
+    private JTextField mMaxChiSquareField;
+    private JButton mCalcSigsButton;
+    private JButton mResetFormButton;
+    private JButton mSaveResultsButton;
+    private JButton mClearResultsButton; 
+    private ObservationsData mObservationsData;
+    private JTable mObservationsTable;
+    private JButton mFileLoadButton;
+    private JButton mFileClearButton;
+    private JLabel mDelimiterLabel;
+    private JComboBox mDelimiterBox;
+    private JLabel mFileNameLabel;
+    private EmptyTableModel mEmptyTableModel;
+    private File mWorkingDirectory;
+    private SignificanceCalculationResults []mResults;
     private JTable mEvidenceChoicesTable;
-    private JButton mSetNegativeControlFileButton;
-    private JButton mClearNegativeControlFileButton;
+    private SignificanceCalculator mSignificanceCalculator;
+    private JTable mResultsTable;
     
     class NegativeControlData
     {
@@ -66,23 +103,177 @@ public class SignificanceCalculatorDriver
         }
     }
     
-    class EvidenceChoicesTableModel extends AbstractTableModel
+    static class EvidenceChoices
     {
+        public boolean mSingleTailed;
+        public boolean mAllowEmpirical;
+        public Double []mObservationsData;
+        public Double []mControlData;
+        public int mNumBins;
+    }
+    
+    static class EvidenceChoicesTableModel extends AbstractTableModel
+    {
+    	public static final int COLUMN_EVIDENCE_NAME = 0;
+        public static final int COLUMN_NUM_OBSERVATIONS = 1;
+    	public static final int COLUMN_SINGLE_TAILED = 2;
+    	public static final int COLUMN_ALLOW_EMPIRICAL = 3;
+    	public static final int COLUMN_NUM_BINS = 4;
+    	public static final int COLUMN_COMPUTE_SIGNIFICANCES = 5;
+    	public static final int COLUMN_NEGATIVE_CONTROLS = 6;
+        
+        private static final boolean []IS_CELL_EDITABLE = {false, false, true, true, true, true, false};
+        private static final String []COLUMN_NAMES = {"evidence name",
+                "num observations",
+                "single-tailed",
+                "allow empirical",
+                "number of bins",
+                "compute significances",
+                "negative control observations" };
+
+        public static final String []TOOL_TIPS_EVIDENCE_CHOICES_TABLE = {"The evidence name",
+                "The number of observations recorded for this evidence type.",
+                "Specify whether the observations for this evidence are single-tailed (nonnegative) or two-tailed (positive and negative).",
+                "Specify whether the empirical probability distribution is to be allowed, for fitting a distribution to the observations.",
+                "Specify the number of bins to be used in generating the histogram of observations for this evidence type.",
+                "Compute significances for this evidence type; at least one evidence type must have this field enabled, in order to proceed.",
+                "Specify (optionally) the negative control observations for this evidence.  Use the delete key to clear this field.  Double-click to set."};
+
+        public static final String TOOL_TIP_NO_EDITING_EMPIRICAL_FIELD = "The empirical distribution is not allowed when you are using control data, as well as when you are using the PDF significance calculation formula.";
+        
         private ObservationsData mObservations;
         private NegativeControlData []mNegativeControlData;
         private Boolean []mSingleTailed;
+        private Boolean []mAllowEmpirical;
+        private Boolean []mComputeSignificances;
+        private Integer []mNumBins;
+        private Integer []mNumObservations;
+        private Component mParent;
+        private boolean mAllowEditingEmpiricalColumn;
         
-        public EvidenceChoicesTableModel(ObservationsData pObservations)
+        public EvidenceChoicesTableModel(ObservationsData pObservations, Component pParent)
         {
+            mParent = pParent;
             mObservations = pObservations;
             int numEvidences = pObservations.getNumEvidences();
             mNegativeControlData = new NegativeControlData[numEvidences];
             mSingleTailed = new Boolean[numEvidences];
+            mAllowEmpirical = new Boolean[numEvidences];
+            mComputeSignificances = new Boolean[numEvidences];
+            mNumBins = new Integer[numEvidences];
+            mNumObservations = new Integer[numEvidences];
+            mAllowEditingEmpiricalColumn = true;
+            
+            setDefaultTableValues();
+        }
+
+        public void setAllowEditingEmpiricalColumn(boolean pAllowEditingEmpiricalColumn)
+        {
+            if(! pAllowEditingEmpiricalColumn)
+            {
+                int numEvidences = mAllowEmpirical.length;
+                boolean showedMessage = false;
+                for(int j = 0; j < numEvidences; ++j)
+                {
+                    if(mAllowEmpirical[j].booleanValue() && !showedMessage)
+                    {
+                        JOptionPane.showMessageDialog(mParent,
+                                      "The significance calculation formula you specified does not permit using the empirical distribution; so, the \"allow empirical\" column is being cleared and disabled.",
+                                      "Clearing the empirical distribution column",
+                                      JOptionPane.INFORMATION_MESSAGE);
+                        showedMessage = true;
+                        mAllowEmpirical[j] = new Boolean(false);
+                    }
+                    
+                }
+                if(showedMessage)
+                {
+                    fireTableDataChanged();
+                }
+            }
+            mAllowEditingEmpiricalColumn = pAllowEditingEmpiricalColumn;
+        }
+        
+        public EvidenceChoices []getEvidenceChoices()
+        {
+            int numEvidences = mObservations.getNumEvidences();
+            EvidenceChoices []evidenceChoicesArray = new EvidenceChoices[numEvidences];
+            EvidenceChoices evidenceChoices = null;
+            NegativeControlData negativeControlData = null;
+            Double []controlData = null;
             for(int j = 0; j < numEvidences; ++j)
             {
-                mSingleTailed[j] = new Boolean(false);
+                if(mComputeSignificances[j].booleanValue())
+                {
+                    evidenceChoices = new EvidenceChoices();
+                    evidenceChoices.mAllowEmpirical = mAllowEmpirical[j].booleanValue();
+                    evidenceChoices.mSingleTailed = mSingleTailed[j].booleanValue();
+                    evidenceChoices.mNumBins = mNumBins[j].intValue();
+                    evidenceChoices.mObservationsData = mObservations.getColumn(j);
+                    negativeControlData = mNegativeControlData[j];
+                    if(null != negativeControlData)
+                    {
+                        controlData = negativeControlData.mValues;
+                    }
+                    else
+                    {
+                        controlData = evidenceChoices.mObservationsData;
+                    }
+                    evidenceChoices.mControlData = controlData;
+                }
+                else
+                {
+                    evidenceChoices = null;
+                }
+                evidenceChoicesArray[j] = evidenceChoices;
             }
+            return evidenceChoicesArray;
         }
+                
+        public boolean atLeastOneEvidenceSelected()
+        {
+            boolean atLeastOneEvidenceSelected = false;
+            int numEvidences = mObservations.getNumEvidences();
+            for(int j = 0; j < numEvidences; ++j)
+            {
+                if(mComputeSignificances[j].booleanValue())
+                {
+                    atLeastOneEvidenceSelected = true;
+                    break;
+                }
+            }
+            return atLeastOneEvidenceSelected;
+        }
+        
+        public void setDefaultTableValues()
+        {
+            int numEvidences = mObservations.getNumEvidences();
+            boolean hasNegatives = false;
+            double columnMin = 0.0;
+            for(int j = 0; j < numEvidences; ++j)
+            {
+                columnMin = mObservations.columnMinimum(j);
+                hasNegatives = (columnMin < 0.0);
+                mSingleTailed[j] = new Boolean(! hasNegatives);
+                mAllowEmpirical[j] = new Boolean(false);
+                mComputeSignificances[j] = new Boolean(true);
+                int numObs = mObservations.getNumObservations(j);
+                mNumObservations[j] = new Integer(numObs);
+                int numBins = (int) Math.max(((double) numObs)/10.0, MIN_NUM_BINS); 
+                mNumBins[j] = new Integer(numBins);
+            }            
+            fireTableDataChanged();
+        }
+        
+        public void setAllowEmpirical(int pEvidenceNumber, boolean pAllowEmpirical)
+        {
+        	if(pEvidenceNumber < 0 || pEvidenceNumber >= mAllowEmpirical.length)
+        	{
+        		throw new IllegalStateException("invalid evidence number: " + pEvidenceNumber);
+        	}
+        	mAllowEmpirical[pEvidenceNumber] = new Boolean(pAllowEmpirical);
+        }
+        
         
         public Class getColumnClass(int pColumn)
         {
@@ -101,7 +292,7 @@ public class SignificanceCalculatorDriver
         
         public int getColumnCount()
         {
-            return 3;
+            return IS_CELL_EDITABLE.length;
         }
         
         public int getRowCount()
@@ -111,50 +302,93 @@ public class SignificanceCalculatorDriver
         
         public void setValueAt(Object pValue, int pRow, int pColumn)
         {
-            if(pColumn == 2)
-            {
+        	switch(pColumn)
+			{
+        	case COLUMN_EVIDENCE_NAME:
+        		throw new IllegalStateException("cannot edit the evidence name");
+        	
+        	case COLUMN_NUM_OBSERVATIONS:
+                throw new IllegalStateException("cannot edit the number of observations");
+                
+            case COLUMN_SINGLE_TAILED:
                 mSingleTailed[pRow] = (Boolean) pValue;
-            }
+                fireTableCellUpdated(pRow, pColumn);
+                break;
+                
+            case COLUMN_ALLOW_EMPIRICAL:
+            	mAllowEmpirical[pRow] = (Boolean) pValue;
+                fireTableCellUpdated(pRow, pColumn);
+                break;
+            	
+            case COLUMN_NUM_BINS:
+                Integer value = (Integer) pValue;
+                if(value.intValue() <= 0)
+                {
+                    JOptionPane.showMessageDialog(mParent, 
+                                 "The number of bins must be a positive number", "Invalid number of bins",
+                                  JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            	mNumBins[pRow] = (Integer) pValue;
+            	fireTableCellUpdated(pRow, pColumn);
+            	break;
+            	
+            case COLUMN_COMPUTE_SIGNIFICANCES:
+            	mComputeSignificances[pRow] = (Boolean) pValue;
+                fireTableCellUpdated(pRow, pColumn);
+                break;
+
+            case COLUMN_NEGATIVE_CONTROLS:
+      			throw new IllegalStateException("cannot edit the negative control field");
+
+            
+            default:
+            	throw new IllegalStateException("cannot edit unknown column type: " + pColumn);
+            		
+			}
         }
         
-        public boolean isEditable(int pRow, int pColumn)
+        public boolean isCellEditable(int pRow, int pColumn)
         {
-            if(pColumn == 2)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+        	if(pColumn != COLUMN_ALLOW_EMPIRICAL)
+        	{
+        		return IS_CELL_EDITABLE[pColumn];
+        	}
+        	else
+        	{
+        		return (null == mNegativeControlData[pRow] &&
+                        mAllowEditingEmpiricalColumn);
+        	}
         }
         
         public String getColumnName(int pColumn)
         {
-            switch(pColumn)
-            {
-            case 0:
-                return "evidence name";
-                
-            case 1:
-                return "negative control data source";
-                
-            case 2:
-                return "single-tailed";
-                
-            default:
-                throw new IllegalStateException("unexpected column number: " + pColumn);
-            }
+        	return COLUMN_NAMES[pColumn];
         }
         
         public Object getValueAt(int pRow, int pColumn)
         {
             switch(pColumn)
             {
-            case 0:
+            case COLUMN_EVIDENCE_NAME:
                 return mObservations.getEvidenceName(pRow);
+            
+            case COLUMN_NUM_OBSERVATIONS:
+                return mNumObservations[pRow];
                 
-            case 1:
+            case COLUMN_SINGLE_TAILED:
+                return mSingleTailed[pRow];
+            
+            case COLUMN_ALLOW_EMPIRICAL:
+            	return mAllowEmpirical[pRow];
+            
+            case COLUMN_NUM_BINS:
+            	return mNumBins[pRow];
+            	
+            case COLUMN_COMPUTE_SIGNIFICANCES:
+            	return mComputeSignificances[pRow];
+            	
+            case COLUMN_NEGATIVE_CONTROLS:
                 NegativeControlData negativeControlData = mNegativeControlData[pRow];
                 String retVal = null;
                 if(null != negativeControlData)
@@ -169,13 +403,34 @@ public class SignificanceCalculatorDriver
                 }
                 return retVal;
                 
-            case 2:
-                return mSingleTailed[pRow];
-                
             default:
                 throw new IllegalStateException("unexpected column number: " + pColumn);
             }
         }
+        
+        
+        public String getToolTipText(int pRow, int pColumn)
+        {
+        	if(pRow >= mAllowEmpirical.length)
+        	{
+        		throw new IllegalStateException("invalid row: " + pRow);
+        	}
+        	if(pColumn == -1 || pColumn > COLUMN_NEGATIVE_CONTROLS)
+        	{
+        		throw new IllegalStateException("invalid column: " + pColumn);
+        	}
+        	String tip = null;
+        	if(pRow == -1 || pColumn != COLUMN_ALLOW_EMPIRICAL || (null == mNegativeControlData[pRow] &&
+               mAllowEditingEmpiricalColumn))
+        	{
+        		tip = TOOL_TIPS_EVIDENCE_CHOICES_TABLE[pColumn];
+        	}
+        	else
+        	{
+        		tip = TOOL_TIP_NO_EDITING_EMPIRICAL_FIELD;
+        	}
+        	return tip;
+        }        
     }
     
     class ObservationsTableModel extends AbstractTableModel
@@ -201,7 +456,7 @@ public class SignificanceCalculatorDriver
         {
             if(pColumn == 0)
             {
-                return "element";
+                return COLUMN_NAME_ELEMENT;
             }
             else
             {
@@ -231,45 +486,73 @@ public class SignificanceCalculatorDriver
             }
             return retObj;
         }
+
     }
     
+    public SignificanceCalculatorDriver()
+    {
+        mSignificanceCalculator = new SignificanceCalculator();
+        mNumberFormat = new ScientificNumberFormat(new SignificantDigitsCalculator());
+    }
     
     public void initialize(Container pContentPane, Component pParent)
     {
         mContentPane = pContentPane;
+        
         mParent = pParent;
         mEmptyTableModel = new EmptyTableModel();
         mWorkingDirectory = null;
         mObservationsData = null;
-        mNumberFormat = new ScientificNumberFormat(new SignificantDigitsCalculator());
+        
         initializeContentPane();
     }
     
-    private ObservationsData mObservationsData;
-    private JTable mObservationsTable;
-    private JButton mFileLoadButton;
-    private JButton mFileClearButton;
-    private JLabel mDelimiterLabel;
-    private JComboBox mDelimiterBox;
-    private JLabel mFileNameLabel;
-    private EmptyTableModel mEmptyTableModel;
-    private File mWorkingDirectory;
-    
-    private void setEnableStateForFields(boolean pFileLoaded, boolean pResultsObtained)
+    private void setToolTipsForFields(boolean pFileLoaded, boolean pResultsObtained)
     {
-        setEnableStateForNegativeControlButtons();
-        mFileLoadButton.setEnabled(! pFileLoaded);
-        mFileClearButton.setEnabled(pFileLoaded);
         if(pFileLoaded)
         {
-            mEvidenceChoicesTable.setToolTipText(TOOL_TIP_EVIDENCE_CHOICES_TABLE);
             mObservationsTable.setToolTipText(TOOL_TIP_OBSERVATIONS_TABLE);
+            mFormulaLabel.setToolTipText(TOOL_TIP_FORMULAS_BOX);
+            mFormulasBox.setToolTipText(TOOL_TIP_FORMULAS_BOX);
+            mMaxChiSquareLabel.setToolTipText(TOOL_TIP_MAX_CHI_SQUARE);
+            mMaxChiSquareField.setToolTipText(TOOL_TIP_MAX_CHI_SQUARE);
+            mCalcSigsButton.setToolTipText(TOOL_TIP_CALCULATE_SIGNIFICANCES_BUTTON);
+            mResetFormButton.setToolTipText(TOOL_TIP_RESET_FORM_BUTTON);
         }
         else
         {
-            mEvidenceChoicesTable.setToolTipText(null);
             mObservationsTable.setToolTipText(null);
+            mFormulaLabel.setToolTipText(null);
+            mFormulasBox.setToolTipText(null);
+            mMaxChiSquareLabel.setToolTipText(null);
+            mMaxChiSquareField.setToolTipText(null);
+            mCalcSigsButton.setToolTipText(null);
+            mResetFormButton.setToolTipText(null);
         }
+        if(pResultsObtained)
+        {
+            mClearResultsButton.setToolTipText(TOOL_TIP_TEXT_CLEAR_RESULTS_BUTTON);
+            mSaveResultsButton.setToolTipText(TOOL_TIP_TEXT_SAVE_RESULTS_BUTTON);
+        }
+        else
+        {
+            mClearResultsButton.setToolTipText(null);
+            mSaveResultsButton.setToolTipText(null);
+        }
+    }
+    
+    private void setEnableStateForFields(boolean pFileLoaded, boolean pResultsObtained)
+    {
+        mFileLoadButton.setEnabled(! pFileLoaded);
+        mFileClearButton.setEnabled(pFileLoaded);
+        mFormulaLabel.setEnabled(pFileLoaded);
+        mFormulasBox.setEnabled(pFileLoaded);
+        mMaxChiSquareLabel.setEnabled(pFileLoaded);
+        mMaxChiSquareField.setEnabled(pFileLoaded);
+        mCalcSigsButton.setEnabled(pFileLoaded && ((EvidenceChoicesTableModel) mEvidenceChoicesTable.getModel()).atLeastOneEvidenceSelected());
+        mClearResultsButton.setEnabled(pResultsObtained);
+        mSaveResultsButton.setEnabled(pResultsObtained);
+        mResetFormButton.setEnabled(pFileLoaded);
     }
     
     private void handleMessage(String pMessage, String pTitle, int pMessageType)
@@ -280,8 +563,38 @@ public class SignificanceCalculatorDriver
     
     private void setDefaults()
     {
-        
-        handleClearResults();
+        clearResults();
+        mFormulasBox.setSelectedItem(DEFAULT_SIGNIFICANCE_CALCULATION_FORMULA.getName());
+        mMaxChiSquareField.setText(mNumberFormat.format(DEFAULT_MAX_CHI_SQUARE));
+        TableModel tableModel = mEvidenceChoicesTable.getModel();
+        if(tableModel instanceof EvidenceChoicesTableModel)
+        {
+            ((EvidenceChoicesTableModel) tableModel).setDefaultTableValues();
+            TableCellEditor cellEditor = mEvidenceChoicesTable.getCellEditor();
+            if(null != cellEditor)
+            {
+                cellEditor.cancelCellEditing();
+            }
+        }
+        mDelimiterBox.setSelectedItem(DEFAULT_DATA_FILE_DELIMITER.getName());
+    }
+    
+    private void initializeEvidenceChoicesTable()
+    {
+        EvidenceChoicesTableModel evidenceChoicesTableModel = new EvidenceChoicesTableModel(mObservationsData, mParent);
+        mEvidenceChoicesTable.setModel(evidenceChoicesTableModel);
+    }
+    
+    private SignificanceCalculationFormula getSignificanceCalculationFormula()
+    {
+        SignificanceCalculationFormula formula = null;
+        String formulaName = (String) mFormulasBox.getSelectedItem();
+        formula = SignificanceCalculationFormula.get(formulaName);
+        if(null == formula)
+        {
+            throw new IllegalStateException("unrecognized significance calculation formula name: " + formulaName);
+        }
+        return formula;
     }
     
     private void openFile(File pFile, DataFileDelimiter pDelimiter)
@@ -294,8 +607,7 @@ public class SignificanceCalculatorDriver
             ObservationsTableModel observationsTableModel = new ObservationsTableModel(observationsData);
             mObservationsTable.setModel(observationsTableModel);
             mFileNameLabel.setText(pFile.getAbsolutePath());
-            EvidenceChoicesTableModel negativeControlsTableModel = new EvidenceChoicesTableModel(mObservationsData);
-            mEvidenceChoicesTable.setModel(negativeControlsTableModel);
+            initializeEvidenceChoicesTable();
             setDefaults();
         }
         catch(FileNotFoundException e)
@@ -329,7 +641,7 @@ public class SignificanceCalculatorDriver
             throw new IllegalStateException("delimiter combo box has not been initialized yet");
         }
         String delimiterName = (String) mDelimiterBox.getSelectedItem();
-        DataFileDelimiter delimiter = DataFileDelimiter.forName(delimiterName);
+        DataFileDelimiter delimiter = DataFileDelimiter.get(delimiterName);
         if(null == delimiter)
         {
             throw new IllegalStateException("unknown data file delimiter name: " + delimiterName); 
@@ -357,9 +669,11 @@ public class SignificanceCalculatorDriver
         }           
     }
         
-    private void handleClearResults()
+    private void clearResults()
     {
+        mResultsTable.setModel(mEmptyTableModel);
         setEnableStateForFields(null != mObservationsData, false);
+        setToolTipsForFields(null != mObservationsData, false);
     }
     
     private void handleHelp()
@@ -443,8 +757,8 @@ public class SignificanceCalculatorDriver
         
         JLabel fileNameLabel = new JLabel("");
         mFileNameLabel = fileNameLabel;
-        fileNameLabel.setPreferredSize(new Dimension(500, 10));
-        fileNameLabel.setMinimumSize(new Dimension(500, 10));
+        fileNameLabel.setPreferredSize(new Dimension(400, 10));
+        fileNameLabel.setMinimumSize(new Dimension(400, 10));
         JPanel fileNamePanel = new JPanel();
         fileNamePanel.setBorder(BorderFactory.createEtchedBorder());
         fileNamePanel.add(fileNameLabel);
@@ -496,8 +810,8 @@ public class SignificanceCalculatorDriver
         mObservationsTable = observationsTable;        
         JScrollPane observationsScrollPane = new JScrollPane(observationsTable);
         observationsScrollPane.setBorder(BorderFactory.createEtchedBorder());
-        observationsScrollPane.setPreferredSize(new Dimension(500, 250));
-        observationsScrollPane.setMaximumSize(new Dimension(500, 250));
+        observationsScrollPane.setPreferredSize(new Dimension(500, 200));
+        observationsScrollPane.setMaximumSize(new Dimension(500, 200));
         
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -510,81 +824,219 @@ public class SignificanceCalculatorDriver
         topPanel.add(observationsScrollPane);
         gridLayout.setConstraints(observationsScrollPane, constraints);
         
-        JPanel negativeControlsButtonsPanel = new JPanel();
-        negativeControlsButtonsPanel.setLayout(new BoxLayout(negativeControlsButtonsPanel, BoxLayout.Y_AXIS));
-        
-        JButton setNegativeControlFileButton = new JButton("load negative control data");
-        setNegativeControlFileButton.addActionListener(
-                new ActionListener()
-                {
-                    public void actionPerformed(ActionEvent e)
-                    {
-                        setNegativeControlFile();
-                    }
-                });
-        mSetNegativeControlFileButton = setNegativeControlFileButton;
-        negativeControlsButtonsPanel.add(setNegativeControlFileButton);
-        JButton clearNegativeControlFileButton = new JButton("clear negative control data");
-        mClearNegativeControlFileButton = clearNegativeControlFileButton;
-        clearNegativeControlFileButton.addActionListener(
-                new ActionListener()
-                {
-                    public void actionPerformed(ActionEvent e)
-                    {
-                        clearNegativeControlFile();
-                    }
-                });
-        negativeControlsButtonsPanel.add(clearNegativeControlFileButton);
-        
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.gridwidth = 1;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.gridheight = 1;
-        constraints.weightx = 0;
-        constraints.weighty = 0.2;
+        constraints.weightx = 1;
+        constraints.weighty = 0.3;
         constraints.gridx = 0;
         constraints.gridy++;
         
-        topPanel.add(negativeControlsButtonsPanel);
-        gridLayout.setConstraints(negativeControlsButtonsPanel, constraints);        
+        JTable evidenceChoicesTable = new JTable()
+		{
+        	public String getToolTipText(MouseEvent e)
+        	{
+        		TableModel model = getModel();
+        		if(model instanceof EvidenceChoicesTableModel)
+        		{
+                    java.awt.Point p = e.getPoint();
+                    int rowIndex = rowAtPoint(p);
+                    int colIndex = columnAtPoint(p);
+                    int realColumnIndex = convertColumnIndexToModel(colIndex);
+                    EvidenceChoicesTableModel evidenceChoicesTableModel = (EvidenceChoicesTableModel) model;
+                    return evidenceChoicesTableModel.getToolTipText(rowIndex, realColumnIndex);
+        		}
+        		else
+        		{
+        			return super.getToolTipText(e);
+        		}
+        	}
+        	
+        	protected JTableHeader createDefaultTableHeader()
+        	{
+        		TableModel tableModel = getModel();
+        		if(null == tableModel || tableModel instanceof EmptyTableModel)
+        		{
+        			return super.createDefaultTableHeader();
+        		}
+        		else
+        		{
+        			return new JTableHeader(columnModel)
+					{
+        	        	public String getToolTipText(MouseEvent e)
+        	        	{
+        	        		JTable table = getTable();
+        	        		TableModel tableModel = table.getModel();
+        	        		if(null == tableModel || tableModel instanceof EmptyTableModel)
+        	        		{
+        	        			return super.getToolTipText(e);
+        	        		}
+        	        		else
+        	        		{
+        	                    java.awt.Point p = e.getPoint();
+        	                    int index = columnModel.getColumnIndexAtX(p.x);
+        	                    int realIndex = 
+        	                            columnModel.getColumn(index).getModelIndex();
+        	                    return EvidenceChoicesTableModel.TOOL_TIPS_EVIDENCE_CHOICES_TABLE[realIndex];
+        	        		}
+        	        	}
+					};
+        		}
+        	}
+		};
+        mEvidenceChoicesTable = evidenceChoicesTable;
+        evidenceChoicesTable.setColumnSelectionAllowed(true);
+        evidenceChoicesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        JScrollPane evidenceChoicesScrollPane = new JScrollPane(evidenceChoicesTable);
+        evidenceChoicesScrollPane.setPreferredSize(new Dimension(350, 100));
+        evidenceChoicesScrollPane.setMinimumSize(new Dimension(350, 100));
+        evidenceChoicesTable.addMouseListener(
+                new MouseAdapter()
+	            {
+	                public void mouseClicked(MouseEvent e)
+	                {
+	                	if(e.getClickCount() == 2 &&
+	                	   mEvidenceChoicesTable.getSelectedColumn() == EvidenceChoicesTableModel.COLUMN_NEGATIVE_CONTROLS)
+	                	{
+	                		setNegativeControlFile();
+	                	}
+	                }
+	            });
+        evidenceChoicesTable.addKeyListener(
+        		new KeyAdapter()
+				{
+        			public void keyPressed(KeyEvent e)
+        			{
+        				if(e.getKeyCode() == KeyEvent.VK_DELETE ||
+        				   e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
+        				{
+        					if(mEvidenceChoicesTable.getSelectedColumn() == EvidenceChoicesTableModel.COLUMN_NEGATIVE_CONTROLS)
+        					{
+        						clearNegativeControlFile();
+        					}
+        				}
+        			}
+				});
+        topPanel.add(evidenceChoicesScrollPane);
+        gridLayout.setConstraints(evidenceChoicesScrollPane, constraints);
         
+
+        JPanel choicesPanel = new JPanel();
+        
+        JLabel formulaLabel = new JLabel("Calculate the significances using the formula: ");
+        choicesPanel.add(formulaLabel);
+        mFormulaLabel = formulaLabel;
+        SignificanceCalculationFormula []formulas = SignificanceCalculationFormula.getAll();
+        int numFormulas = formulas.length;
+        String []formulaNames = new String[numFormulas];
+        for(int i = 0; i < numFormulas; ++i)
+        {
+        	formulaNames[i] = formulas[i].getName();
+        }
+        JComboBox formulasBox = new JComboBox(formulaNames);
+        formulasBox.addItemListener(
+                new ItemListener()
+                {
+                    public void itemStateChanged(ItemEvent e)
+                    {
+                        boolean allowEditingEmpiricalColumn = ! (getSignificanceCalculationFormula().equals(SignificanceCalculationFormula.PDF));
+                        ((EvidenceChoicesTableModel) mEvidenceChoicesTable.getModel()).setAllowEditingEmpiricalColumn(allowEditingEmpiricalColumn);
+                    }
+                });
+        choicesPanel.add(formulasBox);
+        mFormulasBox = formulasBox;
+        
+        mMaxChiSquareLabel = new JLabel("Maximum reduced chi-square: ");
+        choicesPanel.add(mMaxChiSquareLabel);
+        mMaxChiSquareField = new JTextField(NUM_COLUMNS_TEXT_FIELD_NUMERIC);
+        choicesPanel.add(mMaxChiSquareField);
+        
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.gridheight = 1;
+        constraints.weightx = 1;
+        constraints.weighty = 0;
+        constraints.gridx = 0;
+        constraints.gridy++;
+        
+        topPanel.add(choicesPanel);
+        gridLayout.setConstraints(choicesPanel, constraints);
+        
+        JPanel controlsPanel = new JPanel();
+        mCalcSigsButton = new JButton("calculate significances");
+        mCalcSigsButton.addActionListener(
+                new ActionListener()
+                {
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        calculateSignificances();
+                    }
+                });
+        controlsPanel.add(mCalcSigsButton);
+        mResetFormButton = new JButton("reset form");
+        mResetFormButton.addActionListener(
+                new ActionListener()
+                {
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        setDefaults();
+                    }
+                });
+        controlsPanel.add(mResetFormButton);
+        mSaveResultsButton = new JButton("save results");
+        mSaveResultsButton.addActionListener(
+                new ActionListener()
+                {
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        saveResults();
+                    }
+                });
+        controlsPanel.add(mSaveResultsButton);
+        mClearResultsButton = new JButton("clear results");
+        controlsPanel.add(mClearResultsButton);
+        mClearResultsButton.addActionListener(
+                new ActionListener()
+                {
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        clearResults();
+                    }
+                });
+
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.gridheight = 1;
+        constraints.weightx = 1;
+        constraints.weighty = 0;
+        constraints.gridx = 0;
+        constraints.gridy++;
+        
+        topPanel.add(controlsPanel);
+        gridLayout.setConstraints(controlsPanel, constraints);
+        
+        mResultsTable = new JTable();
+        JScrollPane resultsScrollPane = new JScrollPane(mResultsTable);
+        resultsScrollPane.setPreferredSize(new Dimension(500, 200));
+        resultsScrollPane.setMinimumSize(new Dimension(500, 200));
+        resultsScrollPane.setBorder(BorderFactory.createEtchedBorder());
         
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.gridheight = 1;
         constraints.weightx = 1;
-        constraints.weighty = 0.2;
-        constraints.gridx = 1;
-        //constraints.gridy++;
-        
-        JTable evidenceChoicesTable = new JTable();
-        mEvidenceChoicesTable = evidenceChoicesTable;
-        JScrollPane evidenceChoicesScrollPane = new JScrollPane(evidenceChoicesTable);
-        evidenceChoicesScrollPane.setPreferredSize(new Dimension(500, 100));
-        evidenceChoicesScrollPane.setMinimumSize(new Dimension(500, 100));
-        evidenceChoicesTable.getSelectionModel().addListSelectionListener(
-                new ListSelectionListener()
-                {
-                    public void valueChanged(ListSelectionEvent e)
-                    {
-                        setEnableStateForNegativeControlButtons();
-                    }
-                });
-        topPanel.add(evidenceChoicesScrollPane);
-        gridLayout.setConstraints(evidenceChoicesScrollPane, constraints);
-        
-        
-//        JLabel numBinsLabel = new JLabel("number of bins for calculating distribution: ");
-//        mNumBinsLabel = numBinsLabel;
-//        JTextField numBinsField = new JTextField(NUM_COLUMNS_TEXT_FIELD_NUMERIC);
-//        mNumBinsField = numBinsField;
-//        
+        constraints.weighty = 1;
+        constraints.gridx = 0;
+        constraints.gridy++;
+
+        topPanel.add(resultsScrollPane);
+        gridLayout.setConstraints(resultsScrollPane, constraints);
         
         // add components to the topPanel
         
         mContentPane.add(topPanel);
 
         clearFile();
-        setEnableStateForFields(false, false);
     }
     
     class NegativeControlSelectionHandler
@@ -634,8 +1086,182 @@ public class SignificanceCalculatorDriver
             NegativeControlData negativeControlData = new NegativeControlData(mFile, pSelectedColumn, observations);
             EvidenceChoicesTableModel tableModel = (EvidenceChoicesTableModel) mEvidenceChoicesTable.getModel();
             tableModel.setNegativeControlData(mEvidenceNum, negativeControlData);
-            tableModel.fireTableDataChanged();
+            tableModel.setAllowEmpirical(mEvidenceNum, false);
+            tableModel.fireTableCellUpdated(mEvidenceNum, EvidenceChoicesTableModel.COLUMN_NEGATIVE_CONTROLS);
+            tableModel.fireTableCellUpdated(mEvidenceNum, EvidenceChoicesTableModel.COLUMN_ALLOW_EMPIRICAL);
         }
+    }
+    
+    private void calculateSignificances()
+    {
+        EvidenceChoicesTableModel tableModel = (EvidenceChoicesTableModel) mEvidenceChoicesTable.getModel();
+        EvidenceChoices []evidenceChoicesArray = tableModel.getEvidenceChoices();
+
+        String maxChiSquareText = mMaxChiSquareField.getText().trim();
+        double maxChiSquare;
+        try
+        {
+            maxChiSquare = Double.parseDouble(maxChiSquareText);
+        }
+        catch(NumberFormatException e)
+        {
+            handleMessage("The maximum reduced chi square you specified, \"" + maxChiSquareText + "\", is not a valid floating-point number.",
+                    "Invalid max chi square",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(maxChiSquare <= 0.0)
+        {
+            handleMessage("The maximum reduced chi square you specified, \"" + maxChiSquare + "\", is not a positive-definite number.",
+                    "Invalid max chi square",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        EvidenceChoices evidenceChoices = null;
+        int numEvidences = evidenceChoicesArray.length;
+        SignificanceCalculationFormula sigCalcFormula = getSignificanceCalculationFormula();
+
+        
+        mResults = new SignificanceCalculationResults[numEvidences];
+        int evidenceCtr = 0;
+        try
+        {
+            for(; evidenceCtr < numEvidences; ++evidenceCtr)
+            {
+                evidenceChoices = evidenceChoicesArray[evidenceCtr];
+                if(null != evidenceChoices)
+                {
+                    mResults[evidenceCtr] = mSignificanceCalculator.calculateSignificances(evidenceChoices.mObservationsData,
+                                                                                           evidenceChoices.mObservationsData,
+                                                                                           evidenceChoices.mNumBins,
+                                                                                           maxChiSquare,
+                                                                                           evidenceChoices.mSingleTailed,
+                                                                                           evidenceChoices.mAllowEmpirical,
+                                                                                           sigCalcFormula);
+                }
+                else
+                {
+                    mResults[evidenceCtr] = null;
+                }
+            }
+            handleResults();
+        }
+        catch(Exception e)
+        {
+            String evidenceName = mObservationsData.getEvidenceName(evidenceCtr);
+            mResults = null;
+            handleMessage("Sorry, the significance calculation failed, for evidence \"" + evidenceName + "\"; the specific error message is: " + e.getMessage(),
+                          "Significance calculation failed",
+                          JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+    }
+    
+    class ResultsTableModel extends AbstractTableModel
+    {
+        private SignificanceCalculationResults []mResultsArray;
+        private int mNumElements;
+        private String []mEvidenceNames;
+        private String []mElementNames;
+        
+        public ResultsTableModel(SignificanceCalculationResults []pResultsArray, 
+                                 ObservationsData pObservationsData)
+        {
+            mElementNames = pObservationsData.getElementNames();
+            int numResults = 0;
+            int numEvidences = pResultsArray.length;
+            ArrayList resultsList = new ArrayList();
+            ArrayList evidencesList = new ArrayList();
+            int numElements = 0;
+            for(int j = 0; j < numEvidences; ++j)
+            {
+                if(null != pResultsArray[j])
+                {
+                    resultsList.add(pResultsArray[j]);
+                    evidencesList.add(pObservationsData.getEvidenceName(j));
+                    numElements = pResultsArray[j].mSignificances.length;
+                    if(0 == mNumElements)
+                    {
+                        mNumElements = numElements;
+                    }
+                    else
+                    {
+                        if(numElements != mNumElements)
+                        {
+                            throw new IllegalStateException("inconsistent number of elements in significance results");
+                        }
+                    }
+                }
+            }
+            mResultsArray = (SignificanceCalculationResults []) resultsList.toArray(new SignificanceCalculationResults[0]);
+            mEvidenceNames = (String []) evidencesList.toArray(new String[0]);
+        }
+        
+        public SignificanceCalculationResults []getResults()
+        {
+            return mResultsArray;
+        }
+        
+        public String []getEvidenceNames()
+        {
+            return mEvidenceNames;
+        }
+        
+        public String []getElementNames()
+        {
+            return mElementNames;
+        }
+            
+        public Object getValueAt(int pRow, int pColumn)
+        {
+            if(0 == pColumn)
+            {
+                return mElementNames[pRow];
+            }
+            else
+            {
+                double value = mResultsArray[pColumn - 1].mSignificances[pRow];
+                if(value >= 0.0)
+                {
+                    return mNumberFormat.format(mResultsArray[pColumn - 1].mSignificances[pRow]);
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+        
+        public int getColumnCount()
+        {
+            return mResultsArray.length + 1;
+        }
+        
+        public int getRowCount()
+        {
+            return mNumElements;
+        }
+        
+        public String getColumnName(int pColumn)
+        {
+            if(0 == pColumn)
+            {
+                return COLUMN_NAME_ELEMENT;
+            }
+            else
+            {
+                return mEvidenceNames[pColumn - 1];
+            }
+        }
+    }
+    
+    private void handleResults()
+    {
+        ResultsTableModel tableModel = new ResultsTableModel(mResults, mObservationsData);
+        mResultsTable.setModel(tableModel);
+        setEnableStateForFields(true, true);
+        setToolTipsForFields(true, true);
     }
     
     private void setNegativeControlFile()
@@ -745,7 +1371,7 @@ public class SignificanceCalculatorDriver
         {
             EvidenceChoicesTableModel tableModel = (EvidenceChoicesTableModel) mEvidenceChoicesTable.getModel();
             tableModel.setNegativeControlData(selectedRow, null);
-            tableModel.fireTableDataChanged();
+            tableModel.fireTableCellUpdated(selectedRow, EvidenceChoicesTableModel.COLUMN_NEGATIVE_CONTROLS);
         }
         else
         {
@@ -760,43 +1386,113 @@ public class SignificanceCalculatorDriver
         mObservationsData = null;
         mObservationsTable.setModel(mEmptyTableModel);
         mEvidenceChoicesTable.setModel(mEmptyTableModel);
-        
+        clearResults();
         setEnableStateForFields(false, false);
+        setToolTipsForFields(false, false);
     }
     
-    private void setEnableStateForNegativeControlButtons()
+    private void saveResults()
     {
-        int selectedRow = mEvidenceChoicesTable.getSelectedRow();
-        boolean rowSelected = (-1 != selectedRow);
-        if(rowSelected)
+        DataFileDelimiter delimiter = getDelimiter();
+        FileChooser fileChooser = new FileChooser(mWorkingDirectory);
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int result = fileChooser.showSaveDialog(mParent);
+        if(result == JFileChooser.APPROVE_OPTION)
         {
-            mSetNegativeControlFileButton.setToolTipText(TOOL_TIP_SET_NEGATIVE_CONTROL_DATA);
-        }
-        else
-        {
-            mSetNegativeControlFileButton.setToolTipText(null);
-        }        
-        mSetNegativeControlFileButton.setEnabled(rowSelected);
-        boolean clearButtonEnableState = false;
-        if(rowSelected)
-        {
-            NegativeControlData data = ((EvidenceChoicesTableModel) mEvidenceChoicesTable.getModel()).getNegativeControlData(selectedRow);
-            if(null != data)
+            File selectedFile = fileChooser.getSelectedFile();
+            String selectedFileName = selectedFile.getAbsolutePath();
+            if(-1 == selectedFileName.indexOf('.'))
             {
-                clearButtonEnableState = true;
+                selectedFileName = selectedFileName + "." + delimiter.getDefaultExtension();
+                selectedFile = new File(selectedFileName);
+            }
+            boolean confirmProceed = true;
+            if(selectedFile.exists())
+            {
+                confirmProceed = FileChooser.handleOutputFileAlreadyExists(mParent, selectedFile.getAbsolutePath());
+            }
+            if(confirmProceed)
+            {
+                writeResults(selectedFile, delimiter);
             }
         }
-        if(clearButtonEnableState)
-        {
-            mClearNegativeControlFileButton.setToolTipText(TOOL_TIP_CLEAR_NEGATIVE_CONTROL_DATA);
-        }
-        else
-        {
-            mClearNegativeControlFileButton.setToolTipText(null);
-        }
-        mClearNegativeControlFileButton.setEnabled(clearButtonEnableState);
     }
-    
+        
+    private void writeResults(File pSelectedFile, DataFileDelimiter pDelimiter)
+    {
+        ResultsTableModel tableModel = (ResultsTableModel) mResultsTable.getModel();
+        String []evidences = tableModel.getEvidenceNames();
+        String []elements = tableModel.getElementNames();
+        SignificanceCalculationResults []results = tableModel.getResults();
+        
+        
+        StringBuffer sb = new StringBuffer();
+        String delimiter = pDelimiter.getDelimiter();
+        int numEvidences = evidences.length;
+        int numElements = elements.length;
+        sb.append(COLUMN_NAME_ELEMENT + delimiter);
+        for(int j = 0; j < numEvidences; ++j)
+        {
+            sb.append(evidences[j]);
+            if(j < numEvidences - 1)
+            {
+                sb.append(delimiter);
+            }
+        }
+        sb.append("\n");
+        double sig = 0.0;
+        String elementName = null;
+        for(int i = 0; i < numElements; ++i)
+        {
+            elementName = elements[i];
+            if(-1 != elementName.indexOf(delimiter)) 
+            {
+                elementName = elementName.replaceAll(delimiter, "_");
+            }
+            sb.append(elementName + delimiter);
+            for(int j = 0; j < numEvidences; ++j)
+            {
+                sig = results[j].mSignificances[i];
+                if(sig >= 0.0)
+                {
+                    sb.append(mNumberFormat.format(sig));
+                }
+                else
+                {
+                    if(! pDelimiter.getSingle())
+                    {
+                        sb.append("-1");
+                    }
+                    else
+                    {
+                        // do nothing; just skip this 
+                    }
+                }
+                if(j < numEvidences - 1)
+                {
+                    sb.append(delimiter);
+                }
+            }
+            sb.append("\n");
+        }
+        
+        try
+        {
+            FileWriter fileWriter = new FileWriter(pSelectedFile);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            printWriter.print(sb.toString());
+            printWriter.flush();
+            JOptionPane.showMessageDialog(mParent, 
+                                          new SimpleTextArea("results were written to the file \"" + pSelectedFile.getAbsolutePath() + "\" successfully."), 
+                                          "results written successfully", JOptionPane.INFORMATION_MESSAGE);
+        }
+        catch(IOException e)
+        {
+            SimpleTextArea simpleTextArea = new SimpleTextArea("unable to write the results to the file you requested, \"" + pSelectedFile.getAbsolutePath() + "\"; specific error message is: " + e.getMessage());
+            JOptionPane.showMessageDialog(mParent, simpleTextArea, "unable to write results to file", JOptionPane.ERROR_MESSAGE);
+        }        
+    }
+        
     private void run(String []pArgs)
     {
         String programName = "Significance Calculator";

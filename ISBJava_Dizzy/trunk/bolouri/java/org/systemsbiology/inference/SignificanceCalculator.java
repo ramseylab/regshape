@@ -452,6 +452,39 @@ public class SignificanceCalculator
             }
         }
         
+        if(pSignificanceType.equals(SignificanceCalculationFormula.PDF) &&
+           pAllowEmpirical)
+        {
+        	double obsMax = 0.0;
+        	double obsMin = Double.MAX_VALUE;
+        	Double obsObj = null;
+        	double obsVal = 0.0;
+        	for(int i = 0; i < numObservations; ++i)
+        	{
+        		obsObj = pObservations[i];
+        		if(null != obsObj)
+        		{
+        			obsVal = obsObj.doubleValue();
+        			if(obsVal > obsMax)
+        			{
+        				obsMax = obsVal;
+        			}
+        			if(obsVal < obsMin)
+        			{
+        				obsMin = obsVal;
+        			}
+        		}
+        	}
+        	// check to make sure that the observations are bounded by the 
+        	// negative 
+        	double controlMax = Descriptive.max(controlList);
+        	double controlMin = Descriptive.min(controlList);
+        	if(obsMax > controlMax || obsMin < controlMin)
+        	{
+        		throw new IllegalArgumentException("when allowing the empirical distribution and using the PDF method for calculating significances, observations must be within the data range of the control data");
+        	}
+        }
+        		
         DistributionFitResults distributionFitResults = new DistributionFitResults();
         fitDistribution(controlList,
                         pSingleTailed,

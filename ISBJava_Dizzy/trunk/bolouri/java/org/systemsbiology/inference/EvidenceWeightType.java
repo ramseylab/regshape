@@ -43,6 +43,10 @@ public class EvidenceWeightType implements Comparable
     {
         return mName.compareTo(((EvidenceWeightType) pObject).mName); 
     }
+    public String getName()
+    {
+    	return mName;
+    }
     public static EvidenceWeightType []getAll()
     {
         LinkedList linkedList = new LinkedList(sMap.values());
