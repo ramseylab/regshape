@@ -143,7 +143,7 @@ hyperlinks shown below:
 </tr>
 <tr>
 <td>odeToJava</td><td><code>odeToJava.jar</code></td>
-<td><a href="&localJavaLibraryURL;/libs/odeToJava.jar"><code>&localJavaLibraryURL;/libs/odeToJava.jar</code></a>  (slightly modified version of the <code>odeToJava</code> library written by 
+<td><a href="&localJavaLibraryURL;"><code>&localJavaLibraryURL;</code></a>  (slightly modified version of the <code>odeToJava</code> library written by 
 Murray Patterson and Raymond Spiteri and obtained from Netlib)</td><td>included with permission from Raymond Spiteri</td>
 </tr>
 <tr>
