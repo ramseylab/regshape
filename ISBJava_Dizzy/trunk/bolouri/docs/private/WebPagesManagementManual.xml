@@ -271,9 +271,7 @@ The JavaHelp system provides the <code>jhindexer</code> program that
 is used to index web pages for full-text search.  This software is
 available for free download from Sun Microsystems at:
 <blockquote>
-<pre>
-http://java.sun.com/products/javahelp
-</pre>
+<a href="http://java.sun.com/products/javahelp"><code>http://java.sun.com/products/javahelp</code></a>
 </blockquote>
 and is also available in the shared drive, under the directory:
 <blockquote>
