@@ -565,16 +565,16 @@ public class SimulationLauncherCommandLine extends CommandLineApp
 
             double elapsedTimeSeconds = ((double) (currentTimeEnd - currentTimeStart))/MILLISECONDS_PER_SECOND;
 
+            if(mPrintStatus || getDebug())
+            {
+                System.err.println("elapsed time to carry out the simulation: " + elapsedTimeSeconds + " seconds");
+            }
+
             TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(mOutputFilePrintWriter,
                                                                         globalSymbolsArray,
                                                                         resultsTimeValues,
                                                                         resultsSymbolValues,
                                                                         mOutputFileFormat);
-
-            if(mPrintStatus || getDebug())
-            {
-                System.err.println("elapsed time to carry out the simulation: " + elapsedTimeSeconds + " seconds");
-            }
 
             if(mComputeFluctuations)
             {
@@ -646,11 +646,13 @@ public class SimulationLauncherCommandLine extends CommandLineApp
         private final DateFormat mDateFormat = DateFormat.getDateTimeInstance();
         private long mLastUpdateTimeMillis;
         private double mLastUpdateFractionComplete;
+        private long mLastUpdateIterations;
 
         public SimulationProgressReportHandler(PrintWriter pOutputWriter)
         {
             mOutputWriter = pOutputWriter;
             mLastUpdateTimeMillis = NULL_TIME_UPDATE_MILLIS;
+            mLastUpdateIterations = 0;
         }
 
         public void run()
@@ -670,15 +672,21 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                         Date dateTimeOfUpdate = new Date(updateTimeMillis);
                         outputWriter.println("at: " + mDateFormat.format(dateTimeOfUpdate));
                         outputWriter.println("fraction complete: " + fractionComplete);
-                        outputWriter.println("iterations completed: " + reporter.getIterationCounter());
+                        long iterationsCompleted = reporter.getIterationCounter();
+                        outputWriter.println("iterations completed: " + iterationsCompleted);
+                        long changeTimeMillis = updateTimeMillis - mLastUpdateTimeMillis;
+                        long newIterations = iterationsCompleted - mLastUpdateIterations;
+                        mLastUpdateIterations = iterationsCompleted;
+                        double changeTimeSeconds = ((double) changeTimeMillis) / MILLISECONDS_PER_SECOND;
+                        double iterationsPerSecond = ((double) newIterations)/changeTimeSeconds;
+                        outputWriter.println("iterations/second: " + iterationsPerSecond);
+
                         String estimatedTimeToCompletionStr = null;
                         if(NULL_TIME_UPDATE_MILLIS != mLastUpdateTimeMillis)
                         {
                             double changeFraction = fractionComplete - mLastUpdateFractionComplete;
                             if(changeFraction > 0.0)
                             {
-                                long changeTimeMillis = updateTimeMillis - mLastUpdateTimeMillis;
-                                double changeTimeSeconds = ((double) changeTimeMillis) / MILLISECONDS_PER_SECOND;
                                 double timeToCompletion = (1.0 - fractionComplete) * changeTimeSeconds / changeFraction;
                                 estimatedTimeToCompletionStr = Double.toString(timeToCompletion);
                             }
