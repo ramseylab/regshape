@@ -24,6 +24,7 @@ import java.text.*;
  */
 public class SimulationLauncherCommandLine extends CommandLineApp
 {
+    private static final double MILLISECONDS_PER_SECOND = 1000.0;
     private static final String DEBUG_ARG = "-debug";
     private static final String PARSER_ARG = "-parser";
     private static final String SIMULATOR_ARG = "-simulator";
@@ -492,7 +493,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
 
             long currentTimeEnd = System.currentTimeMillis();
 
-            double elapsedTimeSeconds = ((double) (currentTimeEnd - currentTimeStart))/1000.0;
+            double elapsedTimeSeconds = ((double) (currentTimeEnd - currentTimeStart))/MILLISECONDS_PER_SECOND;
 
             TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(mOutputFilePrintWriter,
                                                                         globalSymbolsArray,
@@ -539,12 +540,17 @@ public class SimulationLauncherCommandLine extends CommandLineApp
 
     class SimulationProgressReportHandler implements Runnable
     {
+        private static final long NULL_TIME_UPDATE_MILLIS = 0;
+
         private PrintWriter mOutputWriter;
         private final DateFormat mDateFormat = DateFormat.getDateTimeInstance();
+        private long mLastUpdateTimeMillis;
+        private double mLastUpdateFractionComplete;
 
         public SimulationProgressReportHandler(PrintWriter pOutputWriter)
         {
             mOutputWriter = pOutputWriter;
+            mLastUpdateTimeMillis = NULL_TIME_UPDATE_MILLIS;
         }
 
         public void run()
@@ -557,12 +563,39 @@ public class SimulationLauncherCommandLine extends CommandLineApp
                     reporter.waitForUpdate();
                     if(! reporter.getSimulationFinished())
                     {
+                        long updateTimeMillis = reporter.getTimeOfLastUpdateMillis();
+                        double fractionComplete = reporter.getFractionComplete();
+
                         PrintWriter outputWriter = mOutputWriter;
-                        Date dateTimeOfUpdate = new Date(reporter.getTimeOfLastUpdateMillis());
+                        Date dateTimeOfUpdate = new Date(updateTimeMillis);
                         outputWriter.println("at: " + mDateFormat.format(dateTimeOfUpdate));
-                        outputWriter.println("fraction complete: " + reporter.getFractionComplete());
+                        outputWriter.println("fraction complete: " + fractionComplete);
                         outputWriter.println("iterations completed: " + reporter.getIterationCounter());
+                        String estimatedTimeToCompletionStr = null;
+                        if(NULL_TIME_UPDATE_MILLIS != mLastUpdateTimeMillis)
+                        {
+                            double changeFraction = fractionComplete - mLastUpdateFractionComplete;
+                            if(changeFraction > 0.0)
+                            {
+                                long changeTimeMillis = updateTimeMillis - mLastUpdateTimeMillis;
+                                double changeTimeSeconds = ((double) changeTimeMillis) / MILLISECONDS_PER_SECOND;
+                                double timeToCompletion = (1.0 - fractionComplete) * changeTimeSeconds / changeFraction;
+                                estimatedTimeToCompletionStr = Double.toString(timeToCompletion);
+                            }
+                            else
+                            {
+                                estimatedTimeToCompletionStr = "STALLED";
+                            }
+                        }
+                        else
+                        {
+                            estimatedTimeToCompletionStr = "UNKNOWN";
+                        }
+                        outputWriter.println("estimated time to completion: " + estimatedTimeToCompletionStr + " seconds");
+                        outputWriter.println("\n");
                         outputWriter.flush();
+                        mLastUpdateTimeMillis = updateTimeMillis;
+                        mLastUpdateFractionComplete = fractionComplete;
                     }
                 }
             }
