@@ -32,27 +32,20 @@ public class FramePlacer
         mFrameCtr = 0;
     }
 
-    public void placeInCascadeFormat(JFrame pFrame)
-    {
-        Dimension frameSize = pFrame.getSize();
-        Point location = placeInCascadeFormat(frameSize.width,
-                                              frameSize.height);
-        pFrame.setLocation(location);
-    }
-
     /**
      * Arranges subsequent frames in a diagonal cascade (down and to the right).
      */
-    public Point placeInCascadeFormat(int pFrameWidth, int pFrameHeight)
+    public void placeInCascadeFormat(JFrame pFrame)
     {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int screenWidth = screenSize.width;
-        int screenHeight = screenSize.height;
-        double aspectRatio = screenWidth / screenHeight;
+        Dimension frameSize = pFrame.getSize();
         int numPixelsStagger = INITIAL_STAGGER + (mFrameCtr * PLOT_POSITION_STAGGER_AMOUNT_PIXELS);
+        int screenWidth = sScreenSize.width;
+        int screenHeight = sScreenSize.height;
+        double aspectRatio = screenWidth / screenHeight;
         int placeY = numPixelsStagger;
         int placeX = (int) (numPixelsStagger * aspectRatio);
-        if(numPixelsStagger < (sScreenSize.height - pFrameHeight)/4)
+        int frameHeight = frameSize.height;
+        if(numPixelsStagger < (sScreenSize.height - frameHeight)/4)
         {
             ++mFrameCtr;
         }
@@ -60,25 +53,15 @@ public class FramePlacer
         {
             mFrameCtr = 0;
         }        
-        Point point = new Point(placeX, placeY);
-        return(point);
-    }
-
-    public void placeInCenterOfScreen(JFrame pFrame)
-    {
-        Dimension frameSize = pFrame.getSize();
-        Point location = placeInCenterOfScreen(frameSize.width,
-                                               frameSize.height);
+        Point location = new Point(placeX, placeY);
         pFrame.setLocation(location);
     }
-
-    /**
-     * Places a frame in the center of the screen
-     */
+    
     public static Point placeInCenterOfScreen(int pFrameWidth, int pFrameHeight)
     {
         int screenWidth = sScreenSize.width;
         int screenHeight = sScreenSize.height;
+
         int placeX = (screenWidth - pFrameWidth)/2;
         if(placeX < 0)
         {
@@ -89,7 +72,19 @@ public class FramePlacer
         {
             placeY = 0;
         }
-        Point point = new Point(placeX, placeY);
-        return(point);
+        Point location = new Point(placeX, placeY);
+        return(location);
+    }
+
+    /**
+     * Places a frame in the center of the screen
+     */
+    public static void placeInCenterOfScreen(JFrame pFrame)
+    {
+        Dimension frameSize = pFrame.getSize();
+        int frameWidth = frameSize.width;
+        int frameHeight = frameSize.height;
+        Point location = placeInCenterOfScreen(frameWidth, frameHeight);
+        pFrame.setLocation(location);
     }
 }
