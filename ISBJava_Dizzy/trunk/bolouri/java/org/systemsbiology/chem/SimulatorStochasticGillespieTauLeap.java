@@ -28,11 +28,13 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
     private static final double DEFAULT_MAX_ALLOWED_RELATIVE_ERROR = 0.005;
     private static final long DEFAULT_MIN_RATIO_OF_LEAP_TIME_TO_REACTION_TIME_SCALE = 10;
     private static final long MULTIPLIER_FOR_MIN_NUM_GILLESPIE_STEPS = 4;
+    private static final int MAX_LEAP_ATTEMPTS = 10;
 
     private Expression []mMu;
     private Expression []mSigma;
     private Object []mF;
     private double []mEstimatedSpeciesChange;
+//    private double []mMaxNumReactionFirings;
 
     private double mAllowedError;
     private Poisson mPoisson;
@@ -103,26 +105,26 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
 
         double aggregateReactionProbability = MathFunctions.vectorSumElements(pReactionProbabilities);
 
-        double maxAllowedJumpTime = 0.0;
+        double leapTime = 0.0;
         boolean doLeap = false;
         if(mLastIterationWasLeap || 
            mNumNonLeapIterationsSinceLastLeapCheck >= MULTIPLIER_FOR_MIN_NUM_GILLESPIE_STEPS * mMinRatioOfLeapTimeToReactionTimeScale)
         {
-//             getMaxNumberFiringsForReactions(pSymbolEvaluator,
-//                                             pReactions,
-//                                             pDynamicSymbolValues,
-//                                             mMaxNumReactionFiringsSpeciesLimited);
+//              getMaxNumberFiringsForReactions(pSymbolEvaluator,
+//                                              pReactions,
+//                                              pDynamicSymbolValues,
+//                                              mMaxNumReactionFirings);
 
-            maxAllowedJumpTime = getLargestJumpConsistentWithAllowedError(pSymbolEvaluator,
-                                                                          mAllowedError,
-                                                                          pReactionProbabilities,
-                                                                          aggregateReactionProbability,
-                                                                          mF,
-                                                                          pReactions,
-                                                                          pDynamicSymbolValues,
-                                                                          mEstimatedSpeciesChange);
+             leapTime = getLargestJumpConsistentWithAllowedError(pSymbolEvaluator,
+                                                                           mAllowedError,
+                                                                           pReactionProbabilities,
+                                                                           aggregateReactionProbability,
+                                                                           mF,
+                                                                           pReactions,
+                                                                           pDynamicSymbolValues,
+                                                                           mEstimatedSpeciesChange);
 
-            if(maxAllowedJumpTime >= (mMinRatioOfLeapTimeToReactionTimeScale / aggregateReactionProbability))
+            if(leapTime >= (mMinRatioOfLeapTimeToReactionTimeScale / aggregateReactionProbability))
             {
                 doLeap = true;
             }
@@ -130,9 +132,9 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
             mNumNonLeapIterationsSinceLastLeapCheck = 0;
         }
 
-//        System.out.println("max allowed jump time: " + maxAllowedJumpTime + "; avg reaction time: " + Double.toString(1.0/aggregateReactionProbability));
+//        System.out.println("max allowed jump time: " + leapTime + "; avg reaction time: " + Double.toString(1.0/aggregateReactionProbability));
 
-//        System.out.println("time: " + time + "; tau: " + maxAllowedJumpTime);
+//        System.out.println("time: " + time + "; tau: " + leapTime);
 
         mLastIterationWasLeap = doLeap;
 
@@ -203,19 +205,19 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         }
         else
         {
-//            System.out.println("LEAP TIME: " + maxAllowedJumpTime);
+//            System.out.println("LEAP TIME: " + leapTime);
             // leaping will help us
             double allowedError = mAllowedError;
 
-            if(time + maxAllowedJumpTime > pEndTime)
+            if(time + leapTime > pEndTime)
             {
-                maxAllowedJumpTime = pEndTime - time;
+                leapTime = pEndTime - time;
                 // don't leap past the end time
                 time = pEndTime;
             }
             else
             {
-                time += maxAllowedJumpTime;
+                time += leapTime;
             }
 
             pLastReactionIndex.setValue(NULL_REACTION);
@@ -225,57 +227,76 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
 
 //            System.out.println("tau-leap");
 
-            Reaction reaction = null;
-            double reactionProbability = 0.0;
-            double maxNumFirings = 0.0;
+//             Reaction reaction = null;
+//             double reactionProbability = 0.0;
+//             double maxNumFirings = 0.0;
 
-            for(int j = numReactions; --j >= 0; )
+//             for(int j = numReactions; --j >= 0; )
+//             {
+//                 reaction = pReactions[j];
+//                 reactionProbability = pReactionProbabilities[j];
+
+//                 if(reactionProbability > 0.0)
+//                 {
+//                     long numFirings = 0;
+//                     double lambda = reactionProbability * leapTime;
+
+//                     maxNumFirings = mMaxNumReactionFirings[j];
+
+//                     if(lambda <= 0.8 * maxNumFirings)
+//                     {
+//                         boolean gotSuccessfulNumFirings = false;
+
+//                         do
+//                         {
+//                             try
+//                             {
+//                                 numFirings = (long) mPoisson.nextInt(lambda);
+//                                 gotSuccessfulNumFirings = true;
+//                             }
+//                             catch(ArrayIndexOutOfBoundsException e)
+//                             {
+//                                 System.err.println("internal bug in cern.jet.random.Poisson tripped; this is being handled");
+//                             }
+//                         }
+//                         while(! gotSuccessfulNumFirings);
+//                     }
+//                     else
+//                     {
+//                         numFirings = (long) lambda;
+//                     }
+                        
+//                     updateSymbolValuesForReaction(pSymbolEvaluator,
+//                                                   pReactions[j],
+//                                                   pDynamicSymbolValues,
+//                                                   pDelayedReactionSolvers,
+//                                                   numFirings);
+//                 }
+//             }
+
+            boolean successfulLeap = false;
+            for(int failedLeaps = 0; failedLeaps < MAX_LEAP_ATTEMPTS; ++failedLeaps)
             {
-                reaction = pReactions[j];
-                reactionProbability = pReactionProbabilities[j];
-
-                if(reactionProbability > 0.0)
+                successfulLeap = attemptLeap(pSymbolEvaluator,
+                                             leapTime,
+                                             pReactionProbabilities,
+                                             pReactions,
+                                             pDynamicSymbolValues,
+                                             mEstimatedSpeciesChange,
+                                             mPoisson,
+                                             mAllowedError);
+                if(successfulLeap)
                 {
-                    long numFirings = 0;
-                    double lambda = reactionProbability * maxAllowedJumpTime;
-
-                    boolean gotSuccessfulNumFirings = false;
-
-                    do
-                    {
-                        try
-                        {
-                            numFirings = (long) mPoisson.nextInt(lambda);
-                            gotSuccessfulNumFirings = true;
-                        }
-                        catch(ArrayIndexOutOfBoundsException e)
-                        {
-                            System.err.println("internal bug in cern.jet.random.Poisson tripped; this is being handled");
-                        }
-                    }
-                    while(! gotSuccessfulNumFirings);
-
-                    if(numFirings > 0)
-                    {
-                        // get max number of firings
-
-                        maxNumFirings = getMaxNumberFiringsForReaction(pSymbolEvaluator,
-                                                                       pReactions[j],
-                                                                       pDynamicSymbolValues);
-                        if(numFirings > maxNumFirings)
-                        {
-                            numFirings = (long) maxNumFirings;
-                        }
-
-                        updateSymbolValuesForReaction(pSymbolEvaluator,
-                                                      pReactions[j],
-                                                      pDynamicSymbolValues,
-                                                      pDelayedReactionSolvers,
-                                                      numFirings);
-                    }
+                    break;
                 }
             }
 
+            if(! successfulLeap)
+            {
+                throw new SimulationAccuracyException("simulation became unstable; please re-run with a smaller value for the error control parameter");
+            }
+
+            MathFunctions.vectorAdd(mEstimatedSpeciesChange, pDynamicSymbolValues, pDynamicSymbolValues);
 
             if(pDelayedReactionSolvers.length > 0)
             {
@@ -306,17 +327,7 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
                         break;
                     }
                 }
-            }
-
-            int numSymbols = pDynamicSymbolValues.length;
-            for(int i = numSymbols; --i >= 0; )
-            {
-                if(pDynamicSymbolValues[i] < 0.0)
-                {
-                    System.err.println("species has a negative value: " + mDynamicSymbols[i].getName() + "; value: " + pDynamicSymbolValues[i] + "; at time: " + time + "; plese re-run the simulation with a smaller value for the error control parameter");
-                    pDynamicSymbolValues[i] = 0.0;
-                }
-            }
+            }            
 
             pSymbolEvaluator.setTime(time);
             clearExpressionValueCaches();
@@ -327,6 +338,70 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         return(time);
     }
 
+    private static boolean attemptLeap(SymbolEvaluatorChem pSymbolEvaluator,
+                                       double pLeapTime,
+                                       double []pReactionProbabilities,
+                                       Reaction []pReactions,
+                                       double []pSpeciesValues,
+                                       double []pEstimatedSpeciesChange,
+                                       Poisson pPoissonEventGenerator,
+                                       double pAllowedError) throws DataNotFoundException
+    {
+        MathFunctions.vectorZeroElements(pEstimatedSpeciesChange);
+
+        int numReactions = pReactions.length;
+
+        Reaction reaction = null;
+        double lambda = 0.0;
+        long numFirings = 0;
+        boolean gotSuccessfulNumFirings = false;
+        for(int j = numReactions; --j >= 0; )
+        {
+            reaction = pReactions[j];
+            lambda = pLeapTime * pReactionProbabilities[j];
+            if(lambda > 0.0)
+            {
+                if(1.0/Math.sqrt(lambda) > pAllowedError)
+                {
+                    gotSuccessfulNumFirings = false;
+                    do
+                    {
+                        try
+                        {
+                            numFirings = (long) pPoissonEventGenerator.nextInt(lambda);
+                            gotSuccessfulNumFirings = true;
+                        }
+                        catch(ArrayIndexOutOfBoundsException e)
+                        {
+                            System.err.println("internal bug in cern.jet.random.Poisson tripped; this is being handled");
+                        }
+                    }
+                    while(! gotSuccessfulNumFirings);
+                }
+                else
+                {
+                    numFirings = Math.round(lambda);
+                }
+                updateSymbolValuesForReaction(pSymbolEvaluator,
+                                              reaction,
+                                              pEstimatedSpeciesChange,
+                                              null,
+                                              numFirings);
+            }
+        }
+
+        boolean succeeded = true;
+        int numSpecies = pSpeciesValues.length;
+        for(int i = numSpecies; --i >= 0; )
+        {
+            if(pEstimatedSpeciesChange[i] + pSpeciesValues[i] < 0.0)
+            {
+                succeeded = false;
+            }
+        }
+
+        return(succeeded);
+    }
 
     private double computeMuTime(int j, double pAllowedError, double pAggregateReactionProbability) throws DataNotFoundException
     {
@@ -451,10 +526,7 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         double numFirings = 0.0;
         DelayedReactionSolver []delayedSolvers = null;
 
-        for(int i = numSpecies; --i >= 0; )
-        {
-            pEstimatedSpeciesChange[i] = 0.0;
-        }
+        MathFunctions.vectorZeroElements(pEstimatedSpeciesChange);
 
         for(int j = numReactions; --j >= 0; )
         {
@@ -542,7 +614,10 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
                 Species species = mDynamicSymbols[i];
                 Expression Jji = reaction.computeRatePartialDerivativeExpression(aj, species, pSymbolEvaluator);
                 Jj[i] = Jji;
-//                System.out.println("d(a[" + j + "])/d(x[" + i + "]) = " + Jji.toString());
+                if(! Jji.isSimpleNumber())
+                {
+//                    System.out.println("d(a[" + j + "])/d(x[" + i + "]) = " + Jji.toString());
+                }
             }
             J[j] = Jj;
         }
@@ -583,6 +658,7 @@ public final class SimulatorStochasticGillespieTauLeap extends SimulatorStochast
         initializeDynamicSymbolAdjustmentVectors(mDynamicSymbols);
         initializeF(mSymbolEvaluator);
         mEstimatedSpeciesChange = new double[mDynamicSymbolValues.length];
+//        mMaxNumReactionFirings = new double[mReactions.length];
         mMinNumMillisecondsForUpdate = 4000;
     }
 

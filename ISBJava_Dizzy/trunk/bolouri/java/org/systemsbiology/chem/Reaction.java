@@ -304,7 +304,14 @@ public final class Reaction extends SymbolValue
             }
             else
             {
-                numReactantCombinations *= Math.pow(speciesValue, pStoichiometry);
+                if(speciesValue >= pStoichiometry)
+                {
+                    numReactantCombinations *= Math.pow(speciesValue, pStoichiometry);
+                }
+                else
+                {
+                    numReactantCombinations = 0.0;
+                }
             }
 
             return(numReactantCombinations);
