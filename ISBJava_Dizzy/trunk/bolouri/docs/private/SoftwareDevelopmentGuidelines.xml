@@ -5,11 +5,13 @@
   %CommonConfig;
    ]>
 
-<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
 
 <isb:doctitle>Software Development Guidelines</isb:doctitle>
-<isb:docdate>$Date: 2003/04/17 16:41:19 $</isb:docdate>
-<isb:docversion>$Revision: 1.3 $, $Date: 2003/04/17 16:41:19 $</isb:docversion>
+<isb:docdate>$Date: 2003/04/17 17:59:52 $</isb:docdate>
+<isb:docversion>$Revision: 1.4 $, $Date: 2003/04/17 17:59:52 $</isb:docversion>
 
 <isb:doccontents />
 
@@ -400,6 +402,9 @@ RCS keywords (see the CVS manual for an explanation of their purpose)
 can be useful for embedding version information of a source file,
 into the source file.  However, the use of the specific RCS keyword 
 &quot;$Log: SoftwareDevelopmentGuidelines.xml,v $
+&quot;Revision 1.4  2003/04/17 17:59:52  sramsey
+&quot;Expanded and clarified
+&quot;
 &quot;Revision 1.3  2003/04/17 16:41:19  sramsey
 &quot;Changed directories for public/private
 &quot;unmanaged (unarchived) web content

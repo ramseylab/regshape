@@ -42,7 +42,7 @@ import isb.util.*;
  * <em>valid</em>.  If a model is not valid, an attempt to run a
  * {@link GillespieSimulator} simulation on it will result in an exception.
  * <p />
- * <a name="namespaces" />
+ * <a name="namespaces"></a>
  * The names of Compartments, Species, Reactions, and Parameters in a model 
  * all occupy the <b>global namespace</b>.  A namespace is defined as follows:
  * Two symbols or objects in the same namespace cannot have the same name.  

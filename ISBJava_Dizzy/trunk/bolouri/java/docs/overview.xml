@@ -5,7 +5,9 @@
   %AppConfig;
    ]>
 
-<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
 
 <isb:docpreamble>Javadoc documentation for &appName; classes.</isb:docpreamble>
 <isb:doctitle>&appName; API Documentation</isb:doctitle>

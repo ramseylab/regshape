@@ -28,16 +28,19 @@ import isb.util.*;
  * addToSpeciesPopulations &quot;sp&quot;: species &quot;TFA&quot;, population 5;
  * addToSpeciesPopulations &quot;sp&quot;: species &quot;DNA_plus_TFA&quot;, population 0;
  * addToSpeciesPopulations &quot;sp&quot;: species &quot;DNA&quot;, population 1;
- * reaction &quot;tfa&quot;: reactants (&quot;DNA&quot; &quot;TFA&quot;), products (&quot;DNA_plus_TFA&quot;), rate 1.0;
- * reaction &quot;tfa_rev&quot;: reactants (&quot;DNA_plus_TFA&quot;), products (&quot;DNA&quot; &quot;TFA&quot;), rate 0.1;
+ * reaction &quot;tfa&quot;: reactants (&quot;DNA&quot; &quot;TFA&quot;), 
+                             products (&quot;DNA_plus_TFA&quot;), rate 1.0;
+ * reaction &quot;tfa_rev&quot;: reactants (&quot;DNA_plus_TFA&quot;), 
+            products (&quot;DNA&quot; &quot;TFA&quot;), rate 0.1;
  * model &quot;myModel&quot;: speciesMode molecules, 
  *                  reactions (&quot;tfa&quot; &quot;tfa_rev&quot;); 
  * printModel &quot;myModel&quot;;
  * printSpeciesPopulations &quot;sp&quot;;
  * validateModel &quot;myModel&quot;: speciesPopulations &quot;sp&quot;;
- * simulate &quot;myModel&quot;: speciesPopulations &quot;sp&quot;, stopTime 10000.0, numTimePoints 500, viewSpecies (&quot;TFA&quot;);
- * </blockquote>
+ * simulate &quot;myModel&quot;: speciesPopulations &quot;sp&quot;, stopTime 10000.0, 
+                                 numTimePoints 500, viewSpecies (&quot;TFA&quot;);
  * </pre>
+ * </blockquote>
  *
  * @see ITranslator
  * @see Script

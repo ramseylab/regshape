@@ -5,7 +5,9 @@
   %CommonConfig;
    ]>
 
-<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
 
 <isb:doctitle>Web Pages Management Manual</isb:doctitle>
 <isb:docdate>$Date$</isb:docdate>

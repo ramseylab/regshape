@@ -6,7 +6,9 @@
   <!ENTITY internalWebServerURL "http://sun01.systemsbiology.net">
    ]>
 
-<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
 
 <isb:doctitle>Internal Home Page</isb:doctitle>
 <isb:docdate>$Date$</isb:docdate>

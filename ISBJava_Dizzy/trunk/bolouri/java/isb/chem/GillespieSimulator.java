@@ -11,7 +11,7 @@ import isb.util.*;
  * {@linkplain Species species}, using the Gillespie algorithm.  
  * A detailed description of the Gillespie stochastic algorithm can be found 
  * in the article
- * <a name="reference" />
+ * <a name="reference"></a>
  * <blockquote>
  * <table border="1">
  * <tr><td>
@@ -839,7 +839,7 @@ public class GillespieSimulator implements ISimulator, IAliasableClass
     }
 
     /**
-     * <a name="evolve" />
+     * <a name="evolve"></a>
      * Conducts a stochastic simulation of the specified {@link Model} with 
      * the specified {@linkplain SpeciesPopulations inital data}, for the
      * time range from 0 to <code>pStopTime</code>, in units of the inverse

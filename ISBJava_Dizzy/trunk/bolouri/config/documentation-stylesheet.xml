@@ -7,9 +7,16 @@
 <xsl:stylesheet version="1.0" 
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
                 xmlns:isb="http://www.systemsbiology.org/xmlns"
+                xmlns:html="http://www.w3.org/TR/xhtml1"
                 >              
 
 <!-- <xsl:output method="html" encoding="ISO-8859-1" /> -->  
+
+  <xsl:template match="html:*">
+    <xsl:copy>
+      <xsl:apply-templates />
+    </xsl:copy>
+  </xsl:template>
 
   <xsl:template match="/">
     <html>
@@ -107,7 +114,7 @@
         </h4>
       </xsl:if>
  
-      <h4>Please e-mail comments or corrections to: 
+      <h4>Please e-mail comments or corrections regarding this web page to: 
         <code>
           <xsl:if test="/isb:document/isb:docowneremail != ''">
             <xsl:value-of select="isb:docowneremail" />
@@ -188,139 +195,4 @@
     <xsl:apply-templates/>
   </xsl:template>
   
-  <xsl:template match="a">
-    <xsl:element name="a">
-      <xsl:if test="@name != ''">
-        <xsl:attribute name="name"><xsl:value-of select="@name" /></xsl:attribute>
-        <xsl:apply-templates/>
-      </xsl:if>
-      <xsl:if test="@href != ''">
-        <xsl:attribute name="href"><xsl:value-of select="@href" /></xsl:attribute>
-        <xsl:apply-templates/>
-      </xsl:if>
-    </xsl:element>
-  </xsl:template>
-
-  <xsl:template match="p">
-    <p>
-      <xsl:apply-templates/>
-    </p>
-  </xsl:template>
-
-  <xsl:template match="b">
-    <b>
-      <xsl:apply-templates/>
-    </b>
-  </xsl:template>
-
-  <xsl:template match="em">
-    <em>
-      <xsl:apply-templates/>
-    </em>
-  </xsl:template>
-
-  <xsl:template match="br">
-    <br>
-      <xsl:apply-templates/>
-    </br>
-  </xsl:template>
-
-  <xsl:template match="ul">
-    <ul>
-      <xsl:apply-templates/>
-    </ul>
-  </xsl:template>
-
-  <xsl:template match="hr">
-    <hr>
-      <xsl:apply-templates/>
-    </hr>
-  </xsl:template>
-
-  <xsl:template match="li">
-    <li>
-      <xsl:apply-templates/>
-    </li>
-  </xsl:template>
-
-  <xsl:template match="ol">
-    <ol>
-      <xsl:apply-templates/>
-    </ol>
-  </xsl:template>
-
-  <xsl:template match="dl">
-    <dl>
-      <xsl:apply-templates/>
-    </dl>
-  </xsl:template>
-
-  <xsl:template match="dt">
-    <dt>
-      <xsl:apply-templates/>
-    </dt>
-  </xsl:template>
-
-  <xsl:template match="dd">
-    <dd>
-      <xsl:apply-templates/>
-    </dd>
-  </xsl:template>
-
-  <xsl:template match="blockquote">
-    <blockquote>
-      <xsl:apply-templates/>
-    </blockquote>
-  </xsl:template>
-
-  <xsl:template match="pre">
-    <pre>
-      <xsl:apply-templates/>
-    </pre>
-  </xsl:template>
-
-  <xsl:template match="code">
-    <code>
-      <xsl:apply-templates/>
-    </code>
-  </xsl:template>
-
-  <xsl:template match="table">
-    <xsl:element name="table">
-      <xsl:if test="@border != ''">
-        <xsl:attribute name="border">
-          <xsl:value-of select="@border" />
-        </xsl:attribute>
-      </xsl:if>
-      <xsl:apply-templates/>
-    </xsl:element>
-  </xsl:template>
-
-  <xsl:template match="td">
-    <td>
-      <xsl:apply-templates/>
-    </td>
-  </xsl:template>
-
-  <xsl:template match="tr">
-    <tr>
-      <xsl:apply-templates/>
-    </tr>
-  </xsl:template>
-
-  <xsl:template match="img">
-    <xsl:element name="img">
-      <xsl:if test="@src != ''">
-        <xsl:attribute name="src"><xsl:value-of select="@src" /></xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@alt != ''">
-        <xsl:attribute name="alt"><xsl:value-of select="@alt" /></xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@border != ''">
-        <xsl:attribute name="border"><xsl:value-of select="@border" /></xsl:attribute>
-      </xsl:if>
-      <xsl:apply-templates/>
-    </xsl:element>
-  </xsl:template>
-
 </xsl:stylesheet>

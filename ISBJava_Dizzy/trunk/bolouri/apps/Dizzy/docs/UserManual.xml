@@ -12,7 +12,9 @@
 
 <!-- ========== PREAMBLE ========== -->
 
-<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
 
 <isb:doctitle>&appName; User Manual</isb:doctitle>
 <isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
@@ -2354,6 +2356,48 @@ specified using expressions in which species symbols represent number of molecul
 While this is a fairly significant limitation, the above two cases permit
 successful import of most of the SBML models available.
 </p>
+</isb:docsection>
+
+<isb:docsection name="Getting Help" label="gettinghelp">
+<p>
+If you find that the &appName; program does not function in accordance
+with the descriptions in this manual, or if there are sections of
+this manual that are incorrect or unclear, the authors would like to 
+hear about it, so that we can make improvements and fix bugs in the
+software.  Furthermore, the authors would appreciate feedback
+regarding new features or improvements that would be useful to
+users of this software.  Before e-mailing the authors, it is a good
+idea to check the <a href="&appHomePage;">&appName; application home page</a>
+to see if a new version has been released, in which your specific
+problem may have been corrected.  All releases are documented in
+the &quot;version history&quot; page accessible from the home page.
+The best way to contact the authors is to send e-mail to:
+<blockquote>
+<code>&appMaintainerEmailSafe;</code>.
+</blockquote>
+The authors will attempt to respond to your e-mail as quickly as
+possible.
+</p>
+<p>
+If you are reporting a bug, or something that you suspect is a bug,
+please provide as much information as you can about your specific
+installation of the &appName; program.  In particular, please provide
+us with the version number of the &appName; program that you are using,
+the type and version number of the Java Runtime Environment that you
+are using (e.g., Sun JRE version 1.4.1), and your operating system
+type and verion (e.g., Red Hat Linux 8.0).  Furthermore, if the
+problem is with a specific model definition file, please send us the
+model definition file, and any model definition files that it 
+<a href="#fileinclusion">includes</a>.  If the problem that you 
+encountered generated a &quot;stack backtrace&quot; on the console,
+please include the full stack backtrace text in your bug report.
+Please also send us the text of any error message that you may 
+have been reported by the application, in a dialog box or the like.
+Providing this information will dramatically increase the likelihood
+that the authors will be able to quickly and successfully resolve
+the problem that you are encountering.
+</p>
+
 </isb:docsection>
 
 </isb:document>
