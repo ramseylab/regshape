@@ -5,7 +5,6 @@
 %CommonConfig;
 <!ENTITY % AppConfig SYSTEM "config/AppConfig.dtd">
 %AppConfig;
-<!ENTITY BuildHeader SYSTEM "../../config/BuildHeader.xmlinc">
 ]>
 
 <!--
@@ -19,10 +18,11 @@
 
 <project name="&appName;" default="compile" basedir=".">
 
-  <property name="projRoot"                     location="../.." />
-
-  &BuildHeader;
-
+	  <property name="globalRoot"                     location="../.." />
+	  <property name="globalConfig"                   location="${globalRoot}/config" />
+		
+	  <property file="${globalConfig}/CommonConfig.properties" />
+	
   <property name="app.buildDir"                 location="${basedir}/build" />
   <property name="app.styleDir"                 location="${app.buildDir}/html" />
   <property name="app.styleConfDir"             location="${app.buildDir}/config" />
@@ -31,7 +31,7 @@
   <property name="app.imagesDir"                location="${basedir}/images" />
   <property name="app.samplesDir"               location="${basedir}/samples" />
   <property name="app.binDir"                   location="${basedir}/bin" />
-  <property name="app.webDir"                   location="${projWebDir}/${ant.project.name}" />
+  <property name="app.webDir"                   location="${globalRoot}/build/web/${ant.project.name}" />
   <property name="app.downloadDir"              location="${app.webDir}/&appVersion;" />
   <property name="app.installerDir"             location="${app.downloadDir}/installer" />
   <property name="app.resourcesFile"            location="${app.buildDir}/AppResources.jar" />
@@ -41,7 +41,7 @@
     <filter token="APPVERSIONMAJOR" value="&appVersionMajor;" />
     <filter token="APPVERSIONMINOR" value="&appVersionMinor;" />
     <filter token="APPVERSIONPATCH" value="&appVersionPatch;" />
-    <filter token="PROJROOT" value="${projRoot}" />
+    <filter token="PROJROOT" value="${globalRoot}" />
     <filter token="APPNAME" value="${ant.project.name}" />
     <filter token="APPJAVAMAXHEAPSIZEBYTES" value="&appJavaMaxHeapSizeBytes;" />
   	<filter token="WEBBASEURL" value="&webBaseURL;" />
@@ -59,7 +59,7 @@
   </target>
 
   <target name="copyCommonConfig">
-    <copy file="${projConfigDir}/CommonConfig.dtd" todir="${app.configDir}" />
+    <copy file="${globalConfig}/CommonConfig.dtd" todir="${app.configDir}" />
   </target>
 
   <target name="copySamples" depends="setFilters">
@@ -88,23 +88,23 @@
     <style basedir="${app.docsDir}" 
            destdir="${app.styleDir}" 
            includes="*.xml" 
-           style="${docsStyleSheet}"
+           style="${globalConfig}/${docsStyleSheet}"
            excludes="AppConfig.xml,AppHelp.xml" />
 
     <style basedir="${app.docsDir}" 
            destdir="${app.styleDir}" 
            includes="AppHelp.xml" 
-           style="${docsStyleSheet}">
+           style="${globalConfig}/${docsStyleSheet}">
          <param name="altWebBaseURL" expression=".." />
     </style>
   	 
   	<style in="${app.configDir}/AppConfig.xml"
   	   	   out="${app.styleConfDir}/AppConfig.xml"
-  	       style="${appConfigStyleSheet}" />
+  	       style="${globalConfig}/${appConfigStyleSheet}" />
   	
     <style in="${app.docsDir}/AppHelp.xml"
            out="${app.styleDir}/AppHelp.jhm"
-           style="${helpMapStyleSheet}">
+           style="${globalConfig}/${helpMapStyleSheet}">
          <param name="${helpContentFileParamName}" expression="AppHelp.html" />
     </style>
 
@@ -174,7 +174,7 @@
       <srcfiles dir="${app.styleDir}" includes="AppHelp*" />
       <srcfiles dir="${app.configDir}" includes="AppHelp.hs" />
       <srcfiles dir="${app.imagesDir}" includes="images/*.png" />
-      <srcfiles dir="${projImagesDir}" includes="images/*.png" />
+      <srcfiles dir="${globalRoot}" includes="images/*.png" />
       <srcfiles dir="${app.styleDir}/JavaHelpSearch" includes="*" />
     </uptodate>
   </target>
@@ -195,7 +195,7 @@
       <fileset dir="${basedir}">
         <include name="images/*.png" />
       </fileset>
-      <fileset dir="${projRoot}">
+      <fileset dir="${globalRoot}">
         <include name="images/logo-bolourilab.png" />
         <include name="images/logo-isb.png" />
       </fileset>
