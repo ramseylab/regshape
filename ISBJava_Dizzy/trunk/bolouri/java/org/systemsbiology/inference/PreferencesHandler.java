@@ -14,6 +14,10 @@ import java.util.prefs.Preferences;
 import java.util.prefs.BackingStoreException;
 
 /**
+ * Gets and sets user preferences for the 
+ * <code>org.systemsbiology.inference</code> package
+ * GUI programs.
+ * 
  * @author sramsey
  *
  */
