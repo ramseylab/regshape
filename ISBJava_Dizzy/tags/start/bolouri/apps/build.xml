@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<project name="ISBApps" default="compile" basedir=".">
+
+  <target name="compile">
+    <ant dir="${basedir}/Dizzy" target="compile" />
+  </target>
+
+  <target name="clean">
+    <ant dir="${basedir}/Dizzy" target="clean" />
+  </target>
+
+  <target name="install-web">
+    <ant dir="${basedir}/Dizzy" target="install-web" />
+  </target>
+
+  <target name="build">
+    <ant dir="${basedir}/Dizzy" target="build" />
+  </target>
+
+</project>

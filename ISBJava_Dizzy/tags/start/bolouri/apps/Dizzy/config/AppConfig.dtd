@@ -1,0 +1,16 @@
+<!-- these definitions are used both in the app and in the documentation: -->
+
+<!ENTITY % CommonConfig SYSTEM "CommonConfig.dtd">
+%CommonConfig;
+
+<!ENTITY appName "Dizzy">
+<!ENTITY appVersion "0.0.1">
+<!ENTITY appDate "2003/04/01">
+<!ENTITY appHomePage "&webBaseURL;/&appName;">
+
+<!-- these definitions are used only in documentation, not by the app itself: -->
+<!ENTITY appMaintainerFullName "Bolouri Group">
+<!ENTITY appMaintainerEmailSafe "bolourilab at systemsbiology.org"> 
+<!ENTITY appMaintainerAffiliation "Institute for Systems Biology">
+<!ENTITY appOriginalAuthorFullName "Stephen Ramsey">
+<!ENTITY appOriginalAuthorEmailSafe "sramsey at systemsbiology.org"> 

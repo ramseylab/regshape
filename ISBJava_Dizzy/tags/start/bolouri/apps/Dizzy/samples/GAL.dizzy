@@ -1,0 +1,85 @@
+kf = 1;
+kr = 0.1;
+kt = 1;
+ktrans = 0.1;
+
+stopTime = 200.0;
+startTime = 0.0;
+numViewPoints = 50;
+
+create_galactose,               -> galactose,                                      "10.0 * exp(-20.0*(time - $[startTime])/($[stopTime] - $[startTime]))";
+
+destroy_galactose,              galactose ->,                                      0.1;
+
+G4_dimer_binding_at_DNA4,       G4D_free + DNA4 -> G4D_DNA4,                       [kf];
+G4_dimer_debinding_at_DNA4,     G4D_DNA4 -> G4D_free + DNA4,                       [kr];
+
+G80_dimer_binding_at_DNA4,      G80D_free + G4D_DNA4 -> G80D_G4D_DNA4,             [kf];
+G80_dimer_debinding_at_DNA4,    G80D_G4D_DNA4 -> G80D_free + G4D_DNA4,             [kr];
+
+G4_dimer_binding_at_DNA80,      G4D_free + DNA80 -> G4D_DNA80,                     [kf];
+G4_dimer_debinding_at_DNA80,    G4D_DNA80 -> G4D_free + DNA80,                     [kr];
+
+G80_dimer_binding_at_DNA80,     G80D_free + G4D_DNA80 -> G80D_G4D_DNA80,           [kf];
+G80_dimer_debinding_at_DNA80,   G80D_G4D_DNA80 -> G80D_free + G4D_DNA80,           [kr];
+
+G4_dimer_binding_at_DNA3,       G4D_free + DNA3 -> G4D_DNA3,                       [kf];
+G4_dimer_debinding_at_DNA3,     G4D_DNA3 -> G4D_free + DNA3,                       [kr];
+
+G80_dimer_binding_at_DNA3,      G80D_free + G4D_DNA3 -> G80D_G4D_DNA3,             [kf];
+G80_dimer_debinding_at_DNA3,    G80D_G4D_DNA3 -> G80D_free + G4D_DNA3,             [kr];
+
+G3D_G80D_complexing,            G3D_free + G80D_free -> G3D_G80D,                  [kf];
+G3D_G80D_decomplexing,          G3D_G80D -> G3D_free + G80D_free,                  [kr];
+
+G4_transcription,               G4D_DNA4 -> G4_RNA + G4D_DNA4,                     [kt];
+# this is competitively inhibited by the "G80_dimer_binding_at_DNA4" reaction
+
+G80_transcription,              G4D_DNA80 -> G80_RNA + G4D_DNA80,                  [kt];
+# this is competitively inhibited by the "G4_dimer_binding_at_DNA80" reaction
+
+G3_transcription,               G4D_DNA3 + galactose -> G3_RNA + G4D_DNA3 + galactose, [kt];
+# this is competitively inhibited by the "G80_dimer_binding_at_DNA3" reaction
+
+# model RNA -> protein translation as a simple stochastic time delay:
+G4_translation,                 G4_RNA -> G4_protein,                              [ktrans];
+G80_translation,                G80_RNA -> G80_protein,                            [0.5 * ktrans];
+G3_translation,                 G3_RNA -> G3_protein,                              [0.5 * ktrans];
+
+G4_dimerization,                G4_protein + G4_protein -> G4D_free,               [kf];
+G4_dedimerization,              G4D_free -> G4_protein + G4_protein,               [kr];
+
+G80_dimerization,               G80_protein + G80_protein -> G80D_free,            [kf];
+G80_dedimerization,             G80D_free -> G80_protein + G80_protein,            [kr];
+
+G3_dimerization,                G3_protein + G3_protein -> G3D_free,               [kf];
+G3_dedimerization,              G3D_free -> G3_protein + G3_protein,               [kr];
+
+DNA4 = 1;
+DNA80 = 1;
+DNA3 = 1;
+
+G4_RNA = 0;
+G80_RNA = 0;
+G3_RNA = 0;
+
+G4_protein = 10;
+G80_protein = 0;
+G3_protein = 0;
+
+G4D_free = 0;
+G80D_free = 0;
+G3D_free = 0;
+
+G3D_G80D = 0;
+
+G4D_DNA4 = 0;
+G80D_G4D_DNA4 = 0;
+
+G4D_DNA80 = 0;
+G80D_G4D_DNA80 = 0;
+
+G4D_DNA3 = 0;
+G80D_G4D_DNA3 = 0;
+
+galactose = 1;

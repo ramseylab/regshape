@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../docs/documentation-stylesheet.xml"?>
+<!DOCTYPE Overview [
+   ]>
+
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+
+<isb:docpreamble>Javadoc documentation for ISB Java classes.</isb:docpreamble>
+<isb:doctitle>ISBJava Home Page</isb:doctitle>
+<isb:docauthor>Bolouri Group, Institute for Systems Biology</isb:docauthor>
+
+This is the home page for Java classes for the Bolouri
+Group at the Institute for Systems Biology.  Source code
+for these java classes is available by e-mailing 
+<a href="../index.html" target="_new">Stephen Ramsey</a>.
+You will need JDK v1.4 or newer in order to use these classes.
+<p />
+A few notes about conventions used these java packages.
+The &quot;.tp&quot; suffix at the end of a package name
+indicates that the &quot;.tp&quot; 
+subpackage contains test programs for
+the parent package.  Similarly, a suffix &quot;.t&quot;
+at the end of a package name indicates that the 
+&quot;.t&quot; subpackage contains unit tests for the
+parent package (in the JUnit framework).  
+<p />
+These classes are all in development, and are subject
+to change at any time, without notice.  All classes contained
+herein should be considered copyright of the Institute for
+Systems Biology, 2003.  These classes
+have been tested on the Sun JDK v1.4.1, on the Red Hat
+Linux 8.0 platform.  On other platforms, your mileage 
+may vary.  
+<p />
+Ant is required to use the "build.xml" file in this directory.
+You can download and install Ant from 
+<a href="http://ant.apache.org">the apache Ant project</a>.
+All builds must be initiated from inside the <code>java</code>
+directory (one level up from the <code>java/src</code> directory).
+The end products of the source code in this directory are:
+<ol>
+<li>Class files, stored in: <code>CVSARCHIVE/java/classes/isb/...</code></li>
+<li>A JAR file in: <code>CVSARCHIVE/java/build/isb.jar</code></li>
+<li>Javadoc documentation:  <code>&lt;WEBDIR&gt;/javadoc</code></li>
+</ol>
+Some of the packages in this source directory tree
+require external Java packages/libraries to be installed.
+In particular, in order to be able to compile the full
+source tree, you will need to have the following Java libraries
+installed and available within your <code>CLASSPATH</code> environment
+variable:
+<table>
+<tr>
+<td>Package name</td><td>JAR name</td><td>Source</td>
+</tr>
+<tr>
+<td>jfreechart</td><td><code>jfreechart-&lt;VERS&gt;.jar</code></td>
+<td><code>www.object-refinery.com/jfreechart/</code></td>
+</tr>
+<tr>
+<td>jcommon</td><td><code>jcommon-&lt;VERS&gt;.jar</code></td>
+<td><code>www.object-refinery.com/jcommon/</code></td>
+</tr>
+<tr>
+<td>SBW (core)</td><td><code>SBWCore.jar</code></td>
+<td><code>www.sbw-sbml.org/sbw/software/</code></td>
+</tr>
+<tr>
+<td>SBML Validator</td><td><code>SBMLValidate.jar</code></td>
+<td><code>www.sbw-sbml.org/sbw/software/</code></td>
+</tr>
+</table>
+Note that the SBW/SBML libraries and packages are only requied for
+compiling the code in the &quot;<code>isb.chem.sbw</code>&quot; 
+directory.  By omitting this
+directory from the compilation (by adding a suitable 
+&quot;<code>exclude</code>&quot; to the
+&quot;<code>javac</code>&quot; statements in the 
+<code>build.xml</code> file), in principle the resulting
+<code>isb.jar</code> file that would be built, 
+would not have any dependencies on 
+the aforementioned SBW/SBML libraries.  
+<p />
+Related links:
+<p />
+<a href="../bolourilab.html" target="_new">Bolouri Lab Home Page</a>
+<p />
+<a href="http://java.sun.com" target="_new"><img src="../java.png" alt="java" border="0" /></a><br />
+
+</isb:document>
+
