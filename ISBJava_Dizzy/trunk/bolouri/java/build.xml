@@ -259,6 +259,7 @@
 
   <target name="clean">
     <delete dir="${app.buildDir}" quiet="yes" />
+    <delete file="${app.configDir}/CommonConfig.dtd" quiet="yes" />
   </target>
 
 </project>
