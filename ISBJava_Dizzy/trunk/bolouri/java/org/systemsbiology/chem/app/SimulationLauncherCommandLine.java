@@ -207,6 +207,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
         pw.println("To see this help screen, run with the \"-help\" option.");
         pw.println("To print the default parameters for simulator \"mysim\" and then exit, run:");
         pw.println("this program with the options \"-simulator mysim -printParameters\"");
+        pw.println("The \"-relativeTolerance\" and \"-absoluteTolerance\" arguments may each be given a modifier of \"null\"; this disables error checking");
         pw.flush();
     }
 
@@ -387,18 +388,12 @@ public class SimulationLauncherCommandLine extends CommandLineApp
 
         if(null != mEnsembleSize)
         {
-            mSimulatorParameters.setEnsembleSize(mEnsembleSize.intValue());
+            mSimulatorParameters.setEnsembleSize(mEnsembleSize);
         }
 
-        if(null != mRelativeTolerance)
-        {
-            mSimulatorParameters.setMaxAllowedRelativeError(mRelativeTolerance.doubleValue());
-        }
+        mSimulatorParameters.setMaxAllowedRelativeError(mRelativeTolerance);
 
-        if(null != mAbsoluteTolerance)
-        {
-            mSimulatorParameters.setMaxAllowedAbsoluteError(mAbsoluteTolerance.doubleValue());
-        }
+        mSimulatorParameters.setMaxAllowedAbsoluteError(mAbsoluteTolerance);
 
         mSimulatorParameters.setComputeFluctuations(mComputeFluctuations);
         if(mComputeFluctuations && (mSimulator instanceof org.systemsbiology.chem.SimulatorStochasticBase)
@@ -410,7 +405,7 @@ public class SimulationLauncherCommandLine extends CommandLineApp
 
         if(null != mStepSizeFraction)
         {
-            mSimulatorParameters.setStepSizeFraction(mStepSizeFraction.doubleValue());
+            mSimulatorParameters.setStepSizeFraction(mStepSizeFraction);
         }
 
         if(null != mNumHistoryBins)
