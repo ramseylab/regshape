@@ -45,7 +45,7 @@ This document contains the version history for the
 
 <tr valign="top">
 <td><a href="../1.6.0/&installerDownloadRelURL;">1.6.0</a></td>
-<td>2004/03/08</td>
+<td>2004/03/10</td>
 <td>
 <ul>
 <li>Added a new stochastic simulator &quot;<code>gillespie-tauleap</code>&quot;,
