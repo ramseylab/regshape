@@ -1131,7 +1131,6 @@ public class Expression implements Cloneable
 
         int parenDepth = 0;
         boolean hasSep = false;
-        
         while(iter.hasNext() && !hasSep)
         {
             tok = (Token) iter.next();
@@ -1201,6 +1200,10 @@ public class Expression implements Cloneable
                    }
                    Element parsedSubExpression = parseTokenizedExpression(subExpression, false);
                    subExpression.clear();
+                   if(null != exp1)
+                   {
+                       throw new IllegalArgumentException("more than two arguments are not allowed");
+                   }
                    exp1 = parsedSubExpression;
                }
                if(! iter.hasNext())
