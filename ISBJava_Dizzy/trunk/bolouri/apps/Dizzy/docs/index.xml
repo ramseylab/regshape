@@ -32,8 +32,8 @@
 <li><a href="docs/UserManual.html">&appName; User Manual</a> (a <a href="docs/UserManual.pdf">PDF version</a> is available)</li>
 <li><a href="docs/ReadMe.html">&appName; ReadMe document</a></li>
 <li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
-<li><a href="../License.html">License Agreement</a></li>
-<li><a href="../ISBJava/javadoc">Javadoc API documentation</a></li>
+<li><a href="&webBaseURL;/License.html">License Agreement</a></li>
+<li><a href="&webBaseURL;/&localJavaLibraryName;/javadoc">Javadoc API documentation</a></li>
 </ul>
 </p>
 
@@ -47,7 +47,7 @@ written in Java.  It provides a model definition environment and an implementati
 <a href="&sbmlURL;">SBML model definition language</a>,
 as well as displaying models graphically using the <a href="&cytoscapeURL;">Cytoscape
 software system</a>.  The &appName; system is based on the 
-<a href="../&localJavaLibraryName;">&localJavaLibraryName; library</a>. 
+<a href="&webBaseURL;/&localJavaLibraryName;">&localJavaLibraryName; library</a>. 
 The software is available for download within a self-extracting installer 
 (see the &quot;Download &appName;&quot; link above), subject
 to the terms of the <a href="../License.html">software license agreement</a>.
