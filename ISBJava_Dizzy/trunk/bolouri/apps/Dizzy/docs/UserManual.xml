@@ -1729,7 +1729,7 @@ the simulator alias for the Gillespie algorithm is &quot;<code>gillespie</code>&
 <isb:docsection name="Chemical Model Definition Language (CMDL)" label="cmdl">
 
 <p>
-The Condensed Chemical Model Definition Language (CMDL) is a simplified
+The Chemical Model Definition Language (CMDL) is a simplified
 model definition language designed to minimize the amount of repetitive
 typing required to define a model.   The default file extension of model
 definition files in the CMDL language is the &quot;<code>&cmdlExtension;</code>&quot;
