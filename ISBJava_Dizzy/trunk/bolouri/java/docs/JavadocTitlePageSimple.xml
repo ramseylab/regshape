@@ -11,7 +11,7 @@
       xmlns:html="http://www.w3.org/TR/xhtml1"
       xmlns="http://www.w3.org/TR/xhtml1">
 <body>
-<h1>Javadoc docum&appName; API Documentation</h1>
+<h1>&appName; API Documentation</h1>
 <h3>&appMaintainerFullName;, &appMaintainerAffiliation;</h3>
 <h3>Version &appVersion;, Released &appDate;</h3>
 
