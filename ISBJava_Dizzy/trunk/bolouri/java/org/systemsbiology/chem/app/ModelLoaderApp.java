@@ -222,7 +222,7 @@ public class ModelLoaderApp extends CommandLineApp
 
             SimulationLauncher simLauncher = new SimulationLauncher("Dizzy",
                                                                     model,
-                                                                    null);
+                                                                    true);
 
         }
 

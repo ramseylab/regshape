@@ -51,6 +51,8 @@ public class SimulationLauncher
     private SimulationRunParameters mSimulationRunParameters;
     private String mAppName;
     private MainApp mMainApp;
+    private boolean mExitOnClose;
+
 
     public SimulationLauncher(String pAppName,
                               Model pModel,
@@ -58,8 +60,22 @@ public class SimulationLauncher
     {
         setMainApp(pApp);
         JFrame frame = new JFrame();
-        createLauncher(frame, pAppName, pModel);
-        frame.setVisible(true);
+        createLauncher(frame, pAppName, pModel, false);
+    }
+
+    /**
+     * Creates a simulation launcher window in a JFrame.
+     * The boolean <code>pExitOnClose</code> controls whether
+     * the event handler should call <code>System.exit()</code>
+     * when the window-close event is detected.
+     */
+    public SimulationLauncher(String pAppName,
+                              Model pModel,
+                              boolean pExitOnClose) throws ClassNotFoundException, IOException
+    {
+        setMainApp(null);
+        JFrame frame = new JFrame();
+        createLauncher(frame, pAppName, pModel, pExitOnClose);
     }
 
     public SimulationLauncher(String pAppName,
@@ -70,8 +86,7 @@ public class SimulationLauncher
         setMainApp(pApp);
         JInternalFrame internalFrame = new JInternalFrame();
         pContainingPane.add(internalFrame);
-        createLauncher(internalFrame, pAppName, pModel);
-        internalFrame.setVisible(true);
+        createLauncher(internalFrame, pAppName, pModel, false);
     }
 
     void setMainApp(MainApp pMainApp)
@@ -1077,17 +1092,23 @@ public class SimulationLauncher
         {
             app.enableSimulateMenuItem(true);
         }
-        else
-        {
-            System.exit(0);
-        }
+
         handleCancelButton();
+
+        if(mExitOnClose)
+        {
+             System.exit(0);
+        }
+ 
     }
 
     private void createLauncher(Component pMainFrame, 
                                 String pAppName,
-                                Model pModel) throws IOException, ClassNotFoundException
+                                Model pModel,
+                                boolean pExitOnClose) throws IOException, ClassNotFoundException
     {
+        mExitOnClose = pExitOnClose;
+
         Component frame = pMainFrame;
         mModel = pModel;
         mAppName = pAppName;
@@ -1172,6 +1193,8 @@ public class SimulationLauncher
         updateSimulationControlButtons();
 
         createSimulationRunnerThread();
+
+        pMainFrame.setVisible(true);
     }
 }
     
