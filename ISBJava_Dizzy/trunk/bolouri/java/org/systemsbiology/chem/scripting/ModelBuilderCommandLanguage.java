@@ -1880,12 +1880,12 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         int numExtSym = externalSymbolsList.size();
         for(int i = 0; i < numExtSym; ++i)
         {
-            String extSymDummy = (String) macro.mExternalSymbols.get(i);
-            assert (null != extSymDummy) : "unexpected null array element";
+            String dummySymbolName = (String) macro.mExternalSymbols.get(i);
+            assert (null != dummySymbolName) : "unexpected null array element";
 
             // add namespace to the dummy symbol
-            extSymDummy = addNamespaceToSymbol(extSymDummy, mNamespace);
-            assert (null == pSymbolMap.get(extSymDummy)) : "unexpectedly found dummy symbol in global symbol table: " + extSymDummy;
+            dummySymbolName = addNamespaceToSymbol(dummySymbolName, mNamespace);
+            assert (null == pSymbolMap.get(dummySymbolName)) : "unexpectedly found dummy symbol in global symbol table: " + dummySymbolName;
             
             Object extSymValueObj = externalSymbolsList.get(i);
             assert (null != extSymValueObj) : "unexpected null array element";
@@ -1899,8 +1899,8 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
 //                throw new InvalidInputException("unknown symbol referenced: " + extSymValue);
 //            }
 
-            DummySymbol dummySymbol = new DummySymbol(extSymDummy, extSymValueObj);
-            pSymbolMap.put(extSymDummy, dummySymbol);
+            DummySymbol dummySymbol = new DummySymbol(dummySymbolName, extSymValueObj);
+            pSymbolMap.put(dummySymbolName, dummySymbol);
         }
 
 
