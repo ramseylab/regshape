@@ -214,6 +214,7 @@ public class DataManagerDriver
                     {
                         setEnableStateForFields(null != mData);
                         setToolTipsForFields(null != mData);
+                        updateDataTable();
                     }
                 });
         averageDuplicatesPanel.add(mAverageDuplicatesBox);
@@ -670,20 +671,17 @@ public class DataManagerDriver
         }
         boolean newObservationsTableModel = (null == mData);
         boolean averageDuplicates = mAverageDuplicatesBox.isSelected();
-        if(! averageDuplicates)
+        
+        if(dataArray.length == 1 && ! averageDuplicates)
         {
-            if(dataArray.length > 1)
-            {
-                throw new IllegalStateException("average duplicates box is selected, and the number of data files is: " + dataArray.length);
-            }
             mData = dataArray[0];
         }
         else
         {
             mData = new ObservationsData();
-            mData.mergeDataArray(dataArray, mAverageDuplicatesBox.isSelected());
+            mData.mergeDataArray(dataArray, averageDuplicates);
         }
-
+        
         ObservationsTableModel tableModel = null;
         if(! newObservationsTableModel)
         {
@@ -721,16 +719,15 @@ public class DataManagerDriver
     {
         mFileClearButton.setEnabled(pFileLoaded);
         mSaveEntireTableButton.setEnabled(pFileLoaded);
+        mFileLoadButton.setEnabled(true);
         if(pFileLoaded)
         {
-            mFileLoadButton.setEnabled(mAverageDuplicatesBox.isSelected());
             int index = mFileNameListBox.getSelectedIndex();
             mClearSelectedFileButton.setEnabled(index != -1);
             mMoveFileUpButton.setEnabled(index > 0);
         }
         else
         {
-            mFileLoadButton.setEnabled(true);
             mClearSelectedFileButton.setEnabled(false);
             mMoveFileUpButton.setEnabled(false);
         }
@@ -746,6 +743,7 @@ public class DataManagerDriver
     
     private void setToolTipsForFields(boolean pFileLoaded)
     {
+        mFileLoadButton.setToolTipText(TOOL_TIP_FILE_LOAD_BUTTON);
         if(pFileLoaded)
         {
             mSaveEntireTableButton.setToolTipText(TOOL_TIP_SAVE_ENTIRE_TABLE);
@@ -781,14 +779,6 @@ public class DataManagerDriver
             mFileNameListBox.setToolTipText(TOOL_TIP_FILE_LIST);
             mSortStatusElement.setToolTipText(TOOL_TIP_SORT_STATUS_ELEMENT);
             mSortStatusEvidence.setToolTipText(TOOL_TIP_SORT_STATUS_EVIDENCE);
-            if(mAverageDuplicatesBox.isSelected())
-            {
-                mFileLoadButton.setToolTipText(TOOL_TIP_FILE_LOAD_BUTTON);
-            }
-            else
-            {
-                mFileLoadButton.setToolTipText(TOOL_TIP_FILE_LOAD_BUTTON);
-            }
         }
         else
         {
@@ -801,7 +791,6 @@ public class DataManagerDriver
             mFileNameListBox.setToolTipText(null);
             mSortStatusElement.setToolTipText(null);
             mSortStatusEvidence.setToolTipText(null);
-            mFileLoadButton.setToolTipText(TOOL_TIP_FILE_LOAD_BUTTON);
         }
     }    
     
