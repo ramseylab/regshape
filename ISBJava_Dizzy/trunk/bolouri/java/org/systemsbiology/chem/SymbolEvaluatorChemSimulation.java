@@ -29,8 +29,13 @@ public class SymbolEvaluatorChemSimulation extends SymbolEvaluator
     static
     {
         sReservedSymbolNames = new HashSet();
-        sReservedSymbolNames.add(SYMBOL_TIME);
-        sReservedSymbolNames.add(SYMBOL_AVOGADRO);
+        getReservedSymbolNames(sReservedSymbolNames);
+    }
+
+    public static void getReservedSymbolNames(HashSet pReservedSymbolNames)
+    {
+        pReservedSymbolNames.add(SYMBOL_TIME);
+        pReservedSymbolNames.add(SYMBOL_AVOGADRO);
     }
 
     public SymbolEvaluatorChemSimulation(HashMap pSymbolsMap, double pTime)
