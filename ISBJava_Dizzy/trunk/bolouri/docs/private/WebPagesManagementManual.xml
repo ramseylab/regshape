@@ -377,11 +377,16 @@ within the &mainAffiliation;.
 <p>
 <a name="warning" />
 <blockquote>
-<b>WARNING:</b> Please do not upload your file into the
-default directory &quot;<code>bolouri_group</code>&quot;
-on the FTP server.  Also, please be careful not to accidentally
-overwrite any of the web content that is already on the
-web server, when you are uploading your HTML file!
+<b>WARNING:</b> Please do not upload your web content 
+directly into the default directory 
+&quot;<code>bolouri_group</code>&quot; on the FTP server.  
+Instead upload into either the
+&quot;<code>publicRepository</code>&quot; or the
+&quot;<code>privateRepository</code>&quot; directory,
+as described above.  Most importantly, please be careful 
+not to accidentally overwrite any of the web content that 
+is already on the web server, when you are uploading your 
+web content!
 </blockquote>
 </p>
 </isb:docsection>
