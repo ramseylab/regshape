@@ -113,7 +113,7 @@ sample model definition files</a>.
 </isb:docsection>
 
 <isb:docsection name="Contact Information" label="contactinfo">
-The &appName; software system was implemented by Stephen Ramsey based
+The &appName; software system was implemented by Stephen Ramsey, based
 on a prototype developed by Daehee Hwang and Larissa Kamenkovich.   
 <a href="&appHomePage;/docs/UserManual.html#acknowledgements">Many people</a>
 helped with advice and resources.
