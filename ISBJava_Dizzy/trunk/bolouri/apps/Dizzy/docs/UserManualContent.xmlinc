@@ -1880,7 +1880,19 @@ The full list of exporters is defined here:
 <blockquote>
 <dl>
 <dt><code>markup-language</code></dt>
-<dd>exports a model instance to <a href="#sbml">SBML</a>
+<dd>Exports a model instance to <a href="#sbml">SBML</a>.
+<p />
+</dd>
+<dt><code>human-readable</code></dt>
+<dd>Exports a <a href="#viewhuman">human-readable textual representation</a> 
+of the model.
+<p />
+</dd>
+<dt><code>orrell-column-format</code></dt>
+<dd>Exports a model instance to a numeric-column-format used
+at Institute for Systems Biology for certain software tools.  
+Only models that do not contain any <a href="#expressions">expressions</a> may be
+exported to this format.
 <p />
 </dd>
 </dl>
@@ -3266,6 +3278,7 @@ Reaction: r2, C -&gt; D,  [Rate: "k2*C"]
 </pre>
 </blockquote>
 To save the human-readable version of a model to a file, use the
+<a href="#gui-export">export model</a> feature.  Select the
 &quot;Export&quot; item under the &quot;Tools&quot; menu.  Then
 select the &quot;human-readable&quot; exporter from the list of
 exporters available.
