@@ -33,8 +33,9 @@
 <isb:docsection name="Introduction" label="introduction">
 &appName; is a chemical kinetics stochastic simulation software package 
 written in Java.  It provides a model definition environment and an implementation of the 
-<a href="&appHomePage;/docs/UserManual.html#gillespie">Gillespie</a> and
-<a href="&appHomePage;/docs/UserManual.html#gibsonbruck">Gibson-Bruck</a> 
+<a href="&appHomePage;/docs/UserManual.html#gillespie">Gillespie,</a> 
+<a href="&appHomePage;/docs/UserManual.html#gibsonbruck">Gibson-Bruck,</a> and 
+<a href="&appHomePage;/docs/UserManual.html#tauleap">Tau-Leap</a>
 stochastic algorithms.  The software is based on the 
 <a href="../../&localJavaLibraryName;">&localJavaLibraryName;</a> library. 
 </isb:docsection>
