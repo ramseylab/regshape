@@ -20,7 +20,7 @@ import java.util.prefs.*;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class NormalizeAction
+public class NormalizeAction implements IAction
 {
     private App mApp;
     private static final String MATLAB_FUNCTION_NAME = "qnorm";
@@ -33,7 +33,11 @@ public class NormalizeAction
     
     public void doAction()
     {
-        mApp.checkIfConnectedToMatlab();
+        boolean connected = mApp.checkIfConnectedToMatlab();
+        if(! connected)
+        {
+            return;
+        }
         
         File inputFile = mApp.handleInputFileSelection();
         if(null == inputFile)
@@ -42,7 +46,11 @@ public class NormalizeAction
         }
         
         File outputFile = mApp.handleOutputFileSelection(inputFile, NORMALIZED_FILE_SUFFIX);
-
+        if(null == outputFile)
+        {
+            return;
+        }
+        
         Preferences prefs = mApp.getPreferences();
         String missingDataValueString = prefs.get(App.PREFERENCES_KEY_MISSING_DATA_VALUE, "");
 
