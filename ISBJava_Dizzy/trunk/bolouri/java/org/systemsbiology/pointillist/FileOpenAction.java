@@ -10,10 +10,10 @@
  */
 package org.systemsbiology.pointillist;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
-
-import javax.swing.JFileChooser;
-
+import javax.swing.*;
 import org.systemsbiology.gui.*;
 import org.systemsbiology.data.*;
 import java.util.prefs.*;
@@ -27,11 +27,12 @@ import java.util.prefs.*;
 public class FileOpenAction
 {
     private App mApp;
-    private File mDirectory;
+    private File mFile;
     
     public FileOpenAction(App pApp)
     {
         mApp = pApp;
+        mFile = null;
     }
     
     public void doAction()
@@ -49,35 +50,51 @@ public class FileOpenAction
             }
             if(null != selectedFile)
             {
-                workingDirectory = selectedFile.getParentFile();
-                mApp.setWorkingDirectory(workingDirectory);
-                
-                FileReader fileReader = new FileReader(selectedFile);
-                BufferedReader bufferedReader = new BufferedReader(fileReader);
-                MatrixString matrixString = new MatrixString();
-
-                Preferences prefs = mApp.getPreferences();
-                String delimiterName = prefs.get(App.PREFERENCES_KEY_DATA_FILE_DELIMITER, "");
-                if(delimiterName.length() == 0)
+                mFile = selectedFile;
+                String selectedFileName = selectedFile.getAbsolutePath();
+                JFrame dataFrame = mApp.getDataFrame(selectedFileName);
+                if(null != dataFrame)
                 {
-                    throw new IllegalStateException("no data file delimiter found");
+                    dataFrame.toFront();
                 }
-                DataFileDelimiter delimiter = DataFileDelimiter.forName(delimiterName);
-                if(null == delimiter)
+                else
                 {
-                    throw new IllegalStateException("unknown delimiter name: " + delimiterName);
-                }
-                String delimiterString = delimiter.getDelimiter();
-                matrixString.buildFromLineBasedStringDelimitedInput(bufferedReader,
-                                                                    delimiterString);
-                String appName = mApp.getAppConfig().getAppName();
-                DataColumnSelector dataColumnSelector = new DataColumnSelector(appName + " data", 
-                        matrixString);
-                dataColumnSelector.setDelimiter(delimiterString);
-
-                FramePlacer framePlacer = mApp.getFramePlacer();
-                framePlacer.placeInCascadeFormat(dataColumnSelector);
+                    workingDirectory = selectedFile.getParentFile();
+                    mApp.setWorkingDirectory(workingDirectory);
+                    
+                    FileReader fileReader = new FileReader(selectedFile);
+                    BufferedReader bufferedReader = new BufferedReader(fileReader);
+                    MatrixString matrixString = new MatrixString();
+                    
+                    Preferences prefs = mApp.getPreferences();
+                    String delimiterName = prefs.get(App.PREFERENCES_KEY_DATA_FILE_DELIMITER, "");
+                    if(delimiterName.length() == 0)
+                    {
+                        throw new IllegalStateException("no data file delimiter found");
+                    }
+                    DataFileDelimiter delimiter = DataFileDelimiter.forName(delimiterName);
+                    if(null == delimiter)
+                    {
+                        throw new IllegalStateException("unknown delimiter name: " + delimiterName);
+                    }
+                    String delimiterString = delimiter.getDelimiter();
+                    matrixString.buildFromLineBasedStringDelimitedInput(bufferedReader,
+                            delimiterString);
+                    String appName = mApp.getAppConfig().getAppName();
+                    DataColumnSelector dataColumnSelector = new DataColumnSelector(appName + ": " + selectedFile.getName(), 
+                            matrixString);
+                    dataColumnSelector.setDelimiter(delimiterString);
+                    
+                    FramePlacer framePlacer = mApp.getFramePlacer();
+                    framePlacer.placeInCascadeFormat(dataColumnSelector);
+                    
+                    mApp.addDataFrame(selectedFile.getAbsolutePath(), dataColumnSelector);
+                    dataColumnSelector.addWindowListener(new WindowAdapter() {
+                        public void windowClosing(WindowEvent e) {
+                        mApp.removeDataFrame(mFile.getAbsolutePath());
+                    }});
                 dataColumnSelector.setVisible(true);
+                }
             }
             
         }
