@@ -61,7 +61,58 @@ libraries.  These libraries are bundled with the &appName; program and
 are installed within the &appName; directory when you install
 &appName; on your system.   
 </p>
-&ExternalLibraries;
+
+<p>
+The following table documents the external library dependencies of
+the &appName; system.  The libraries are provided in a compiled
+format called a &quot;JAR archive&quot;.  Some of the libraries have
+software licenses that require making the source code available, namely,
+the GNU Lesser General Public License (LGPL).  For each of those licenses,
+a hyperlink is provided to a compressed archive file containing the
+source code for the version of the library that is included with &appName;.
+These hyperlinks are shown in the &quot;Source&quot; column below.
+<blockquote>
+<table border="1">
+<tr>
+<td>Package name</td><td>JAR name</td><td>Home Page / Documentation</td><td>License</td><td>Version</td><td>Source Code</td>
+</tr>
+
+<tr>
+<td>JavaHelp</td><td><code>jh.jar</code></td>
+<td><a href="http://java.sun.com/products/javahelp"><code>http://java.sun.com/products/javahelp</code></a></td>
+<td>Sun Binary Code License</td>
+<td>1.1.3</td>
+<td><a href="http://java.sun.com/products/javahelp">partial</a></td>
+</tr>
+
+<tr>
+<td>colt</td><td><code>colt.jar</code></td>
+<td><a href="http://hoschek.home.cern.ch/hoschek/colt"><code>http://hoscheck.home.cern.ch/hoscheck/colt</code></a></td>
+<td>open source (see below)</td>
+<td>1.0.3</td>
+<td><a href="&publicRepositoryURL;/src/colt1.0.3.zip">full</a></td>
+</tr>
+
+</table>
+</blockquote>
+</p>
+
+<p>
+The Colt library is provided under the following license terms:
+<blockquote>
+<pre>
+Copyright (c) 1999 CERN - European Organization for Nuclear Research.
+Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose
+is hereby granted without fee, provided that the above copyright notice appear in all copies and
+that both that copyright notice and this permission notice appear in supporting
+documentation.
+CERN makes no representations about the suitability of this software for any purpose.
+It is provided "as is" without expressed or implied warranty.
+</pre>
+</blockquote>
+</p>
+
+
 </isb:docsubsection>
 
 <isb:docsubsection name="Acknowledgements" label="acknowledgements">
