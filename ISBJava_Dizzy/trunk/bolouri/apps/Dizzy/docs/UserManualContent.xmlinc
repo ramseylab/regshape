@@ -391,9 +391,10 @@ very simple model using the &appName; simulator.
 </p>
 <p>
 A few notes about editing models:  You may use the 
-editor window in &appName;, which is marked with the "model definition:"
-label, to enter the model description as described below.  Once you
-have entered the model description into the editor window, you may
+editor window in &appName;, which is the white text box 
+below the &quot;file:&quot; and
+&quot;parser:&quot; labels, to enter the model description as described below.  
+Once you have entered the model description into the editor window, you may
 save the model description to a file by selecting &quot;save as&quot;
 from the &quot;File&quot; menu.  Alternatively, you use your own 
 text editor program (e.g., Notepad on Windows) to create the model
@@ -2901,7 +2902,7 @@ definition file.  By default, only model definition files whose file extensions
 can optionally choose from among any file, regardless of the file extension.
 When the file is selected, if you click on the &quot;open&quot; button, the
 model definition file will appear in the editor window.  The editor window
-has the label &quot;<b>model definition:</b>&quot; next to it, as shown here:
+is the white text box in the main &appName; window, as seen here:
 </p>
 <p>
 <img src="../images/screenshot14.png" alt="screenshot 14" />
