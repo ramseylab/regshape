@@ -51,6 +51,9 @@ public class CytoscapeViewer
             String tempFileName = tempFile.getAbsolutePath();
             FileWriter fileWriter = new FileWriter(tempFile);
             PrintWriter printWriter = new PrintWriter(fileWriter);
+            
+            // convert the model to SBML level 1, version 1 (eventually we will modify Cytoscape's SBML reader
+            // so that it can read SBML level 1, version 2-- then we will be able to export L1V2 to Cytoscape).
             exporterMarkupLanguage.export(pModel, printWriter, ModelExporterMarkupLanguage.Specification.LEVEL1_VERSION1);
             URL jnlpFileResource = this.getClass().getResource(JNLP_TEMPLATE_FILE_NAME);
             if(null == jnlpFileResource)
