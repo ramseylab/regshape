@@ -22,7 +22,8 @@ public class SimulationController
     private boolean mStopped;
     private boolean mCancelled;
 
-    public synchronized void setCancelled(boolean pCancelled)
+
+    public final synchronized void setCancelled(boolean pCancelled)
     {
         mCancelled = pCancelled;
         if(pCancelled == true)
@@ -32,12 +33,12 @@ public class SimulationController
         }
     }
 
-    public synchronized boolean getCancelled()
+    public final synchronized boolean getCancelled()
     {
         return(mCancelled);
     }
 
-    public synchronized void setStopped(boolean pStopped)
+    public final synchronized void setStopped(boolean pStopped)
     {
         mStopped = pStopped;
         if(! mStopped)
@@ -46,12 +47,12 @@ public class SimulationController
         }
     }
 
-    public synchronized boolean getStopped()
+    public final synchronized boolean getStopped()
     {
         return(mStopped);
     }
 
-    public synchronized boolean checkIfCancelled()
+    public final synchronized boolean handlePauseOrCancel()
     {
         boolean stop = false;
         try
