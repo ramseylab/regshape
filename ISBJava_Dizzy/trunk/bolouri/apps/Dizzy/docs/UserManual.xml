@@ -21,7 +21,7 @@
 <isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
 <isb:docdate>$Date$</isb:docdate>
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
-<isb:docauthor>&appOriginalAuthorFullName; (<code>&appMaintainerEmailSafe;</code>)</isb:docauthor>
+<isb:docauthor>&appOriginalAuthorFullName; (<code>&mainGroupEmailSafe;</code>)</isb:docauthor>
 
 <isb:doccontents />
 
@@ -1107,6 +1107,15 @@ a data list element, as shown here:
 Note that not all types of data lists are permitted 
 to be used in every <a href="#statements">statement</a>
 context.  
+</p>
+<p>
+It is allowed to define a data list with zero elements,
+as shown here:
+<blockquote>
+<pre>
+( )
+</pre>
+</blockquote>
 </p>
 <p>
 <b>Modifier</b> elements are analogous to keywords.
@@ -2302,10 +2311,903 @@ statement.
 <!-- ========== CMDL ========== -->
 
 <isb:docsection name="Chemical Model Definition Language (CMDL)" label="cmdl">
-<p>
+
 This section describes the Chemical Model Definition Language.
-</p>
-<p>
+
+<isb:docsubsection name="Preliminaries" label="cmdl-preliminaries">
+The CMDL is a scripting language designed for defining models of
+systems of interacting chemical species.  A <a href="#modelinstances">model instance</a>
+is defined using one (or possibly more) <b>model definition files</b>.  A single
+model definition file is loaded, and may <a href="#fileinclusion">include</a>
+other model definition files.  The model definition file contains a sequence of
+<a href="#statements">statements</a>, each of which has the following structure:
+<blockquote>
+<pre>
+keyword "statement-name": element1, element2, ... elementN;
+</pre>
+</blockquote>
+where <code>keyword</code> is a keyword that defines the type
+of statement, <code>statement-name</code> is a string that
+gives a name or operand for the statement, and there are zero
+or more <a href="#elements">elements</a> that define various
+attributes of the statement.  An example statement is shown here:
+<blockquote>
+<pre>
+species "s1": compartment "c1";
+</pre>
+</blockquote>
+In the above statement, the keyword is <code>species</code>, the
+statement name is &quot;<code>s1</code>&quot;, and there is a single
+element <code>compartment "c1"</code>.  The colon always separates
+the statement from any elements.  In a statement with no elements, the colon
+is omitted.  The statement always ends with a semicolon.  Here is an example
+statement with zero elements:
+<blockquote>
+<pre>
+printModel "m1";
+</pre>
+</blockquote>
+In this case, the keyword is <code>printModel</code> and the operand
+is &quot;<code>m1</code>&quot;.  This statement causes the model
+&quot;<code>m1</code>&quot; to be printed to standard output (the console).
+<p />
+Please note that all statements in the CMDL are strictly
+<a href="#casesensitive">case-sensitive</a>.
+This means that using the keyword <code>printmodel</code> instead of the
+correct form <code>printModel</code> would be a syntax error.
+<p />
+In the CMDL, there are two <b>classes</b> of statements: 
+<a href="#cmdl-definitionstatements"><b>definition statements</b></a> and 
+<a href="#cmdl-actionperforming"><b>action-performing statements</b></a>.
+The definition statements are declarative in nature, and cause objects to
+be created within the scripting runtime (scripting engine).  The
+action-performing statements cause actions to be executed on the
+objects previously defined with definition statements.  Both types
+of statements follow the above-described statement format (keyword, name/operand,
+colon, elements, semicolon).  Of the above two examples, the 
+<code>species</code> statement is an example of a definition statement, and
+the <code>printModel</code> statement is an example of an action-performing
+statement.  The action-performing statements are intended only for use with
+the command-line interface to the scripting engine.
+</isb:docsubsection>
+
+<isb:docsubsection name="Definition Statements" label="cmdl-definitionstatements">
+This section defines all definition statements in the CMDL.  
+The statement types appear in roughly the order in which they
+might appear in a typical model definition file:
+<dl>
+
+<dt><b><code>compartment</code></b></dt>
+<dd>
+The <code>compartment</code> keyword defines a <a href="#compartments">compartment</a>.
+Unlike the <a href="#ccmdl">CCMDL</a>, in the CMDL a compartment must be explicitly 
+defined.  There is no &quot;default&quot; compartment automatically defined by the
+scripting engine.  The elements for this keyword are:
+  <p />
+  <dl>
+    <dt><code>[name]</code></dt>
+    <dd>The name of the compartment is supplied as a string, immediately after the 
+<code>compartment</code> keyword.  Must be a valid 
+<a href="#symbols">symbol name</a>. [required]<p /></dd>
+
+    <dt><code>volume</code></dt>
+    <dd>Numeric element that specifies the volume of the compartment, in liters.  The
+default value is 1.0.  [optional].<p /></dd>
+  </dl>
+The following example shows a sample compartment definition statement:
+<blockquote>
+<pre>
+compartment "c1": volume 1.0;
+</pre>
+</blockquote>
+Because the default compartment volume is 1.0, the above statement could
+also be written as:
+<blockquote>
+<pre>
+compartment "c1";
+</pre>
+</blockquote>
+<p /></dd>
+
+<dt><b><code>species</code></b></dt>
+<dd>
+The <code>species</code> keyword defines a chemical <a href="#species">species</a>.
+Unlike the <a href="#ccmdl">CCMDL</a>, in the CMDL each species must be explicitly
+defined by a separate <code>species</code> statement.  Species are not implicitly
+defined by their participation in one or more chemical reactions, in the CMDL.
+The elements for this keyword are:
+  <p />
+  <dl>
+
+    <dt><code>[name]</code></dt>
+    <dd>The name of the species is supplied as a string, immediately after the
+<code>species</code> keyword.  Must be a valid 
+<a href="#symbols">symbol name</a>. [required]<p /></dd>
+
+    <dt><code>compartment</code></dt>
+    <dd>String element that specifies the name of the <a href="#compartments">compartment</a>
+with which the species is associated.  The compartment must have been previously defined.
+ [required]<p /></dd>
+
+    <dt><code>speciesType</code></dt>
+    <dd>Modifier element that specifies whether the species is of type &quot;<code>floating</code>&quot;
+or &quot;<code>boundary</code>&quot;.  The default is &quot;<code>floating</code>&quot;.  [optional].
+    <p /></dd>
+
+  </dl>
+An example species definition is shown here:
+<blockquote>
+<pre>
+species "s1": compartment "c1";
+</pre>
+</blockquote>
+defining species <code>s1</code> as a floating species in the compartment <code>c1</code>.
+Note that the above could also have been written:
+<blockquote>
+<pre>
+species "s1": compartment "c1", speciesType floating;
+</pre>
+</blockquote>
+The two above statements are equivalent because &quot;<code>floating</code>&quot;
+is the default for the <code>speciesType</code> element.
+The following example shows a boundary species definition:
+<blockquote>
+<pre>
+species "s2": compartment "c1", speciesType boundary;
+</pre>
+</blockquote>
+<p /></dd>
+
+<dt><b><code>parameter</code></b></dt>
+<dd>
+The <code>parameter</code> keyword defines a <a href="#parameters">parameter</a>.  
+The elements for this keyword are:
+  <p />
+  <dl>
+    <dt><code>[name]</code></dt>
+    <dd>The name of the parameter is supplied as a string, immediately after the
+<code>parameter</code> keyword.  Must be a valid 
+<a href="#symbols">symbol name</a>. [required]<p /></dd>
+
+    <dt><code>value</code></dt>
+    <dd>Numeric element that specifies the value of the parameter.  [required]<p /></dd>
+
+    <dt><code>reactions</code></dt>
+    <dd>List element that specifies the names of one or more reactions for which this
+parameter is to be defined in the <b>local namespace</b>.  By default, a parameter
+is defined in the <b>global namespace</b>, if this element is omitted. Each item
+in the list must be the string name of a reaction that has been previously defined. [optional]<p /></dd>
+  </dl>
+<p /></dd>
+
+<dt><b><code>reaction</code></b></dt>
+<dd>
+The <code>reaction</code> keyword defines a chemical <a href="#reactions">reaction</a>.
+The elements for this keyword are:
+  <p />
+  <dl>
+    <dt><code>[name]</code></dt>
+    <dd>The name of the reaction is supplied as a string, immediately after the
+<code>reaction</code> keyword..  Must be a valid <a href="#symbols">symbol name</a>. [required]
+    <p /></dd>
+
+    <dt><code>rate</code></dt>
+    <dd>A string or numeric element that defines the <a href="#reactionrates">reaction rate</a>.  
+If the reaction rate is
+specified as a numeric element, the reaction rate is computed with the built-in method,
+with the value of this element being used as the reaction rate parameter.  If the reaction
+rate is specified as a string element, the string is interpreted as a
+<a href="#expressions">mathematical expression</a> representing the formula to
+compute the reaction rate. [required]<p /></dd>
+
+    <dt><code>reactants</code></dt>
+    <dd>A list element that specifies the list of reactant species participating
+in the reaction.  This list may have zero elements, if there are no reactant species
+for the reaction (i.e., you wish to model spontaneous generation of product species).
+[required]<p /></dd>
+
+    <dt><code>products</code></dt>
+    <dd>A list element that specifies the list of product species participating
+in the reaction.  This list may have zero elements, if there are no product species
+for the reaction (i.e., you wish to model the decay of reactant species into nothing).
+[required]<p /></dd>
+
+  </dl>
+The following example shows a sample reaction definition statement:
+<blockquote>
+<pre>
+reaction "r1": reactants ("s1" "s2"), products ("s3" "s4"), rate 1.0;
+</pre>
+</blockquote>
+This defines a chemical reaction <code>r1</code> with reactant species
+<code>s1</code> and <code>s2</code>, and product species <code>s3</code>
+and <code>s4</code>.  The reaction rate method is the built-in (default)
+rate computation method, with a reaction rate parameter of 1.0.  An example
+of a reaction definition with a custom reaction rate expression is shown here:
+<blockquote>
+<pre>
+reaction "r1": reactants ("s1" "s2"), products ("s3" "s4"), rate "7.0 * s1 * s2";
+</pre>
+</blockquote>
+In the above definition, the reaction rate is defined to be the mathematical
+expression &quot;<code>7.0 * s1 * s2</code>&quot;, which will be evaluated 
+by the simulation engine each time the reaction rate needs to be computed.
+<p /></dd>
+
+<dt><b><code>model</code></b></dt>
+<dd>
+The <code>model</code> keyword defines a <a href="#models">model</a> of a system
+of chemical species, compartment, and reactions.  Not all reactions for a model
+need to be specified in the initial model definition.  Reactions may be added later
+using the <code>addReactionToModel</code> keyword. 
+Not all parameters for a model
+need to be specified in the initial model definition.  Parameters may be added later
+using the <code>addParameterToModel</code> keyword.  The elements for this keyword are:
+  <p />
+  <dl>
+    <dt><code>[name]</code></dt>
+    <dd>The name of the model is supplied as a string, immediately after the
+<code>model</code> keyword.  Must be a valid <a href="#symbols">symbol name</a>. [required]
+    <p /></dd>
+    
+    <dt><code>reactions</code></dt>
+    <dd>A list element that specifies the list of 
+<a href="#reactions">reactions</a> to be included in this model.  Each item in the list
+is a string specifying a reaction name.  Each reaction must have been previously defined.
+Models get their list of species and compartments
+through the reactions specified with this element. [optional]<p /></dd>
+
+    <dt><code>speciesMode</code></dt>
+    <dd>A modifier element that specifies the <a href="#reactionratespeciesmode">
+reaction rate species mode</a> of the model.  The possible values are 
+&quot;<code>molecules</code>&quot; and 
+&quot;<code>concentration</code>&quot;.  The default is &quot;<code>molecules</code>&quot;,
+if this element is not specified. [optional]<p /></dd>
+
+    <dt><code>submodels</code></dt>
+    <dd>EXPERIMENTAL feature.  A list element that defines a list of models that
+should be subsumed into the model being defined.  All reactions from a sub model are
+included in the parent model.  Each item on the list is a string specifying a name
+of a model to be included as a submodel.  Each submodel must have been previously
+defined.  The default is no submodel inclusion, this element is not specified.  
+[optional]<p /></dd>
+
+    <dt><code>parameters</code></dt>
+    <dd>A list element that specifies the list of <a href="#parameters">parameters</a> 
+that are to be associated with this model.  Each item in the list is a string
+specifying the name of a parameter.  The parameter must have been previously defined.
+This list may have zero elements.  Parameters specified using this element are
+in the &quot;global namespace&quot;, and can be referenced in any reaction rate
+or species population expression within the context of the model. [optional]<p /></dd>
+  </dl>
+The following example shows a sample model definition:
+<blockquote>
+<pre>
+model "m1": reactions ("r1" "r2"), parameters ("p1" "p2");
+</pre>
+</blockquote>
+which defines model <code>m1</code> to contain reactions 
+<code>r1</code> and <code>r2</code>, and parameter
+<code>p1</code> and <code>p2</code>.  The reaction rate
+species mode of the model is &quot;<code>molecules</code>&quot;.
+Therefore the above definition is equivalent to:
+<blockquote>
+<pre>
+model "m1": reactions ("r1" "r2"), parameters ("p1" "p2"), speciesMode molecules;
+</pre>
+</blockquote>
+To define the same model with a reaction rate species mode of &quot;<code>concentration</code>&quot;,
+one would write:
+<blockquote>
+<pre>
+model "m1": reactions ("r1" "r2"), parameters ("p1" "p2"), speciesMode concentration;
+</pre>
+</blockquote>
+<p /></dd>
+
+<dt><b><code>speciesPopulations</code></b></dt>
+<dd>
+The <code>speciesPopulations</code> keyword defines a 
+<a href="#speciespopulations">species populations collection</a>, which
+is used to specify initial conditions for a simulation.  Once a species population
+collection has been defined, additional species may be subsequently added to 
+the collection using the <code>addToSpeciesPopulations</code> keyword.
+The elements for this keyword are:
+  <p />
+  <dl>
+    <dt><code>[name]</code></dt>
+    <dd>The name of the species population collection is supplied as a string, immediately after the
+<code>speciesPopulations</code> keyword.  Must be a valid <a href="#symbols">symbol name</a>. 
+[required]<p /></dd>
+
+    <dt><code>speciesList</code></dt>
+    <dd>A list element that defines the list of species to be included in the
+collection.  This should include all species in the model for which this
+species population collection is to serve as the initial data specification.
+Each item in the list is a string specifying a species name.  Each species must
+have been previously defined.  It is permissible for this list to have zero elements. 
+[required]<p /></dd>
+
+    <dt><code>populations</code></dt>
+    <dd>A list element that defines the population values (or expressions) for
+all species in the collection.  The number of items in this list must be
+identical to the number of elements in the <code>speciesList</code> list element.
+Each item in the list is either a numeric element specifying an integer population
+value, or a string specifying an expression that will be used to compute the population
+value by the simulation engine.  The <em>i</em>th item in this list specifies the
+population value for the <em>i</em>th species in the <code>speciesList</code> list. 
+[required]<p /></dd>
+  </dl>
+Some examples of using this keyword are:
+  <blockquote>
+  <pre>
+speciesPopulation "initialData1": speciesList ("s1" "s2" "s3"), populations (250 100 175);
+  </pre>
+  </blockquote>
+defining a collection for the three species <code>s1</code>, <code>s2</code>, and
+<code>s3</code>, and the following example:
+  <blockquote>
+  <pre>
+speciesPopulation "initialData2": speciesList ("s1" "s2" "s3"), populations (250 100 "3.0 * time");
+  </pre>
+  </blockquote>
+defining the same collection, but with a custom expression for the population
+of species <code>s3</code>.
+<p /></dd>
+
+<dt><b><code>addToSpeciesPopulations</code></b></dt>
+<dd>
+The <code>addToSpeciesPopulations</code> keyword adds a previously defined 
+<a href="#species">species</a> to
+a previously defined 
+<a href="#speciespopulations">species populations collection</a>, 
+with a specified population value.  
+If the species already exists in the species populations collection, the previous
+population value is replaced with the new population value.  This keyword is useful 
+within loops, to define the initial species population of a vector of species, such
+as species S1 through SN (where N is an integer).  The elements for this keyword are:
+  <p />
+  <dl>
+    <dt><code>[speciesPopulations]</code></dt>
+    <dd>
+The species populations collection name must be specified immediately after the
+<code>addToSpeciesPopulations</code> keyword.  This is a string element that 
+must refer to a previously defined species populations collection. [required]
+    <p />
+    </dd>
+
+    <dt><code>species</code></dt>
+    <dd>A string element that specifies the name of the species to be added to the
+species population collection.  The species must have been previously defined. [required]
+    <p />
+    </dd>
+
+    <dt><code>population</code></dt>
+    <dd>A string or numeric element that specifies the population of the species to be
+added to the species population collection.  If the element is a number, it must be
+an integer; it specifies the population value directly.  If the element is a string,
+the string is interpreted as a mathematical expression that will be used by the simulation
+engine to compute the species population, each time the species population value is needed.
+[required].
+    <p />
+    </dd>
+  </dl>
+The following example shows a sample use of the <code>addToSpeciesPopulations</code> keyword:
+<blockquote>
+<pre>
+addToSpeciesPopulations "sp1": species "s1", value 100;
+</pre>
+</blockquote>
+The following example uses a population expression instead of a numeric value:
+<blockquote>
+<pre>
+addToSpeciesPopulations "sp1": species "s1", value "100 + 10 * time";
+</pre>
+</blockquote>
+<p />
+</dd>
+
+<dt><b><code>addReactionToModel</code></b></dt>
+
+<dd>
+The <code>addReactionToModel</code> keyword is used to add a 
+<a href="#reactions">reaction</a> to a <a href="#models">model</a>.
+Both the reaction and the model must have been previously defined.
+If the reaction has been previously added to the model, this statement
+will have no effect. This keyword is useful within loops, to add
+all reactions within a vector of reactions R1 through RN (where N is
+an integer) to a model.  The elements for this keyword are:
+  <p />
+  <dl>
+    <dt><code>[model]</code></dt>
+    <dd>
+The model name must be specified immediately after the
+<code>addReactionToModel</code> keyword.  This is a string element that 
+must refer to a previously defined model. [required]
+    <p />
+    </dd>
+
+    <dt><code>reaction</code></dt>
+    <dd>
+This is a string element that specifies the name of the reaction to
+add to the model.  The reaction must have been previously defined. [required]
+    <p />
+    </dd>
+  </dl>
+An example statement using the <code>addReactionToModel</code> is shown here:
+<blockquote>
+<pre>
+addReactionToModel "m1": reaction "r1";
+</pre>
+</blockquote>
+which adds reaction <code>r1</code> to model <code>m1</code>.
+<p />
+</dd>
+
+<dt><b><code>addParameterToModel</code></b></dt>
+
+<dd>
+The <code>addParameterToModel</code> keyword is used to add a 
+<a href="#parameters">parameter</a> to a <a href="#models">model</a>.
+Both the parameter and the model must have been previously defined.
+If the parameter has been previously added to the model, this statement
+will have no effect. This keyword is useful within loops, to add
+all parameters within a vector of parameters R1 through RN (where N is
+an integer) to a model.  The elements for this keyword are:
+  <p />
+  <dl>
+    <dt><code>[model]</code></dt>
+    <dd>
+The model name must be specified immediately after the
+<code>addParameterToModel</code> keyword.  This is a string element that 
+must refer to a previously defined model. [required]
+    <p />
+    </dd>
+
+    <dt><code>parameter</code></dt>
+    <dd>
+This is a string element that specifies the name of the parameter to
+add to the model.  The parameter must have been previously defined. [required]
+    <p />
+    </dd>
+  </dl>
+An example statement using the <code>addParameterToModel</code> is shown here:
+<blockquote>
+<pre>
+addParameterToModel "m1": parameter "r1";
+</pre>
+</blockquote>
+which adds parameter <code>r1</code> to model <code>m1</code>.
+<p />
+</dd>
+</dl>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Example CMDL model definition file" label="cmdl-samplefile">
+The following is a sample model definition file in the CMDL language.
+
+
+<blockquote>
+<pre>
+compartment "univ": volume 1.0;
+species "DNA3": compartment "univ", speciesType floating;
+species "DNA4": compartment "univ", speciesType floating;
+species "DNA80": compartment "univ", speciesType floating;
+species "G3D_G80D": compartment "univ", speciesType floating;
+species "G3D_free": compartment "univ", speciesType floating;
+species "G3_RNA": compartment "univ", speciesType floating;
+species "G3_protein": compartment "univ", speciesType floating;
+species "G4D_DNA3": compartment "univ", speciesType floating;
+species "G4D_DNA4": compartment "univ", speciesType floating;
+species "G4D_DNA80": compartment "univ", speciesType floating;
+species "G4D_free": compartment "univ", speciesType floating;
+species "G4_RNA": compartment "univ", speciesType floating;
+species "G4_protein": compartment "univ", speciesType floating;
+species "G80D_G4D_DNA3": compartment "univ", speciesType floating;
+species "G80D_G4D_DNA4": compartment "univ", speciesType floating;
+species "G80D_G4D_DNA80": compartment "univ", speciesType floating;
+species "G80D_free": compartment "univ", speciesType floating;
+species "G80_RNA": compartment "univ", speciesType floating;
+species "G80_protein": compartment "univ", speciesType floating;
+species "galactose": compartment "univ", speciesType boundary;
+reaction "G4_dimer_binding_at_DNA4": products ("G4D_DNA4"), rate 1.0, reactants ("G4D_free" "DNA4");
+reaction "G4_dimer_debinding_at_DNA4": products ("G4D_free" "DNA4"), rate 0.1, reactants ("G4D_DNA4");
+reaction "G80_dimer_binding_at_DNA4": products ("G80D_G4D_DNA4"), rate 1.0, reactants ("G80D_free" "G4D_DNA4");
+reaction "G80_dimer_debinding_at_DNA4": products ("G80D_free" "G4D_DNA4"), rate 0.1, reactants ("G80D_G4D_DNA4");
+reaction "G4_dimer_binding_at_DNA80": products ("G4D_DNA80"), rate 1.0, reactants ("G4D_free" "DNA80");
+reaction "G4_dimer_debinding_at_DNA80": products ("G4D_free" "DNA80"), rate 0.1, reactants ("G4D_DNA80");
+reaction "G80_dimer_binding_at_DNA80": products ("G80D_G4D_DNA80"), rate 1.0, reactants ("G80D_free" "G4D_DNA80");
+reaction "G80_dimer_debinding_at_DNA80": products ("G80D_free" "G4D_DNA80"), rate 0.1, reactants ("G80D_G4D_DNA80");
+reaction "G4_dimer_binding_at_DNA3": products ("G4D_DNA3"), rate 1.0, reactants ("DNA3" "G4D_free");
+reaction "G4_dimer_debinding_at_DNA3": products ("DNA3" "G4D_free"), rate 0.1, reactants ("G4D_DNA3");
+reaction "G80_dimer_binding_at_DNA3": products ("G80D_G4D_DNA3"), rate 1.0, reactants ("G4D_DNA3" "G80D_free");
+reaction "G80_dimer_debinding_at_DNA3": products ("G4D_DNA3" "G80D_free"), rate 0.1, reactants ("G80D_G4D_DNA3");
+reaction "G3D_G80D_complexing": products ("G3D_G80D"), rate 1.0, reactants ("G80D_free" "G3D_free");
+reaction "G3D_G80D_decomplexing": products ("G80D_free" "G3D_free"), rate 0.1, reactants ("G3D_G80D");
+reaction "G4_transcription": products ("G4_RNA" "G4D_DNA4"), rate 1.0, reactants ("G4D_DNA4");
+reaction "G80_transcription": products ("G80_RNA" "G4D_DNA80"), rate 1.0, reactants ("G4D_DNA80");
+reaction "G3_transcription": products ("G4D_DNA3" "G3_RNA" "galactose"), rate 1.0, reactants ("G4D_DNA3" "galactose");
+reaction "G4_translation": products ("G4_protein"), rate 0.1, reactants ("G4_RNA");
+reaction "G80_translation": products ("G80_protein"), rate 0.05, reactants ("G80_RNA");
+reaction "G3_translation": products ("G3_protein"), rate 0.05, reactants ("G3_RNA");
+reaction "G4_dimerization": products ("G4D_free"), rate 1.0, reactants ("G4_protein" "G4_protein");
+reaction "G4_dedimerization": products ("G4_protein" "G4_protein"), rate 0.1, reactants ("G4D_free");
+reaction "G80_dimerization": products ("G80D_free"), rate 1.0, reactants ("G80_protein" "G80_protein");
+reaction "G80_dedimerization": products ("G80_protein" "G80_protein"), rate 0.1, reactants ("G80D_free");
+reaction "G3_dimerization": products ("G3D_free"), rate 1.0, reactants ("G3_protein" "G3_protein");
+reaction "G3_dedimerization": products ("G3_protein" "G3_protein"), rate 0.1, reactants ("G3D_free");
+model "myModel": reactions ("G4_dimer_binding_at_DNA4" "G4_dimer_debinding_at_DNA4" "G80_dimer_binding_at_DNA4" "G80_dimer_debinding_at_DNA4" "G4_dimer_binding_at_DNA80" "G4_dimer_debinding_at_DNA80" "G80_dimer_binding_at_DNA80" "G80_dimer_debinding_at_DNA80" "G4_dimer_binding_at_DNA3" "G4_dimer_debinding_at_DNA3" "G80_dimer_binding_at_DNA3" "G80_dimer_debinding_at_DNA3" "G3D_G80D_complexing" "G3D_G80D_decomplexing" "G4_transcription" "G80_transcription" "G3_transcription" "G4_translation" "G80_translation" "G3_translation" "G4_dimerization" "G4_dedimerization" "G80_dimerization" "G80_dedimerization" "G3_dimerization" "G3_dedimerization"), speciesMode molecules;
+speciesPopulations "sp": populations (1.0 1.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 10.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0), speciesList ("DNA3" "DNA4" "DNA80" "G3D_G80D" "G3D_free" "G3_RNA" "G3_protein" "G4D_DNA3" "G4D_DNA4" "G4D_DNA80" "G4D_free" "G4_RNA" "G4_protein" "G80D_G4D_DNA3" "G80D_G4D_DNA4" "G80D_G4D_DNA80" "G80D_free" "G80_RNA" "G80_protein" "galactose");
+</pre>
+</blockquote>
+</isb:docsubsection>
+
+<isb:docsubsection name="Action Performing Statements" label="cmdl-actionperforming">
+This section defines all action-performing statements in the CMDL.  Note
+that the action-performing statements available in the CMDL are intended
+only for use with the command-line interface to the scripting engine.
+When a model definition file is loaded by the GUI application, action-performing 
+statements appearing in the file are ignored.  The statements available are as
+follows:
+<dl>
+
+<dt><b><code>exportModelInstance</code></b></dt>
+<dd>
+The <code>exportModelInstance</code> keyword exports the specified
+model and species population collection (which together make up a model instance),
+to the specified file format.  
+
+  <dl>
+    <dt><code>[model]</code></dt>
+    <dd>
+A string specifying the name of the model to be exported is required
+immediately after the <code>exportModelInstance</code> keyword.  The
+model must have been previously defined. [required]
+    <p />
+    </dd>
+
+    <dt><code>speciesPopulations</code></dt>
+    <dd>
+A string element specifying the name of the species populations collection
+to be exported along with the model.  The species populations collection
+must have been previously defined.  [required]
+    <p />
+    </dd>
+
+    <dt><code>outputFile</code></dt>
+    <dd>
+A string element specifying the file name to which the model instance
+should be exported.  If not specified, the default is standard output
+(printing to the console).  [optional]
+    <p />
+    </dd>
+
+    <dt><code>exporter</code></dt>
+    <dd>
+A string element specifying the <a href="#exporterplugins">exporter plug-in</a>
+to use for exporting the model instance.  The string must specify the alias of a valid
+exporter plug-in.  The default (if this element is not specified) is the 
+<a href="#sbml">Systems Biology Markup Language</a> exporter plug-in. [optional]
+    <p />
+    </dd>
+An example use of the <code>exportModelInstance</code> keyword is shown here:
+<blockquote>
+<pre>
+exportModelInstance "m1": speciesPopulations "sp1", outputFile "model-sbml.xml";
+</pre>
+</blockquote>
+which will export the model <code>m1</code> and the species populations collection
+<code>sp1</code> to the file <code>model-sbml.xml</code>, in SBML format.
+Another example use of the <code>exportModelInstance</code> keyword is shown here:
+<blockquote>
+<pre>
+exportModelInstance "m1": speciesPopulations "sp1", outputFile "model.isbchem", 
+                          exporter "command-language";
+</pre>
+</blockquote>
+which will export the same model and species populations data, to the file
+<code>model.isbchem</code>, in CMDL format.
+  </dl>
+
+<p />
+</dd>
+
+<dt><b><code>printModel</code></b></dt>
+<dd>
+The <code>printModel</code> statement is used to print a human-readable 
+representation of a model, to standard output (the console).  The only
+required element is the model name.  An example use of this statement is
+shown here:
+<blockquote>
+<pre>
+printModel "m1";
+</pre>
+</blockquote>
+which prints the model <code>m1</code>.
+<p />
+</dd>
+
+<dt><b><code>printSpeciesPopulations</code></b></dt>
+<dd>
+The <code>printSpeciesPopulations</code> statement is used to print a human-readable 
+representation of a species populations collection, to standard output (the console).  The only
+required element is the species populations collection name.  An example use of this statement is
+shown here:
+<blockquote>
+<pre>
+printSpeciesPopulations "sp1";
+</pre>
+</blockquote>
+which prints the species populations collection <code>sp1</code>.
+<p />
+</dd>
+
+<dt><b><code>include</code></b></dt>
+<dd>
+The <a href="#fileinclusion"><code>include</code> statement</a> includes the contents
+a specified file, into the input stream of the model definition file being parsed, at the 
+point where the include statement is encountered. 
+<p />
+</dd>
+
+<dt><b><code>loop</code></b></dt>
+<dd>
+The <a href="#loops"><code>loop</code> statement</a> is an iteration
+construct that causes one or more statements (bracketed with curly 
+braces) to be executed one or more times.  The loop statement in the CMDL
+has the same syntax as the <a href="#loops">loop statement in the CCMDL</a>.
+<p />
+</dd>
+
+<dt><b><code>simulate</code></b></dt>
+<dd>
+The <code>simulate</code> statement runs a simulation of the reaction 
+kinetics of the specified model, with the specified species populations 
+collection as initial data.  The elements for this keyword are:
+     <p />
+     <dl>
+     <dt><code>[model]</code></dt>
+     <dd>
+A string specifying the name of the model to be simulated, is required
+immediately after the <code>simulate</code> keyword.  The model must have
+been previously defined. [required]
+     <p />
+     </dd>
+
+     <dt><code>speciesPopulations</code></dt>
+     <dd>
+A string element specifying the name of the species populations collection
+that provides the initial data (initial species population values) for the
+simulation.  The species population collection must have been previously
+defined.  [required]
+     <p />
+     </dd>
+
+     <dt><code>startTime</code></dt>
+     <dd>
+A numeric element specifying the starting time of the simulation. 
+The value is a floating-point number.  The units of
+the start time are the same as the units of the reciprocal
+of the reaction parameters defined for the chemical reactions
+in the model, which is normally seconds.  The default value
+for this starting time is zero.  It is rarely necessary to
+specify this parameter; the only case where it might be needed
+is with reaction rate expressions or species population
+expressions that explicitly involve the <code>time</code> symbol.
+[optional]
+     <p />
+     </dd>
+
+     <dt><code>stopTime <em>nnnnn</em></code></dt>
+     <dd>
+A numeric element specifying the stop time of the simulation.  The
+value is a floating-point number.  The units of the stop time are the
+same as the units of the reciprocal of the reaction parameters
+defined for the chemical reactions in the model,
+which is normally seconds. [required]
+     <p />
+     </dd>
+
+     <dt><code>viewSpecies</code></dt>
+     <dd>
+A list element specifying the species whose populations are to be 
+taken as the output of the simulation.  Each item in the list is
+a string specifying a species name.  Each species must have been
+previously defined, and must exist within the model.  This list may
+contain zero elements.  [required]
+     <p />
+     </dd>
+
+     <dt><code>numTimePoints</code></dt>
+     <dd>
+A numeric element specifying the number of
+&quot;snapshots&quot; of the species populations that are to
+be recorded over the course of the simulation.  The total
+duration of the simulation (<code>stopTime</code> minus
+<code>startTime</code>) is divided into <code>numTimePoints</code>
+sub-intervals.  After each time subinterval has elapsed during
+the course of the simulation, a &quot;snapshot&quot;
+of the species populations (for those species specified with the
+<code>viewSpecies</code> parameter defined above) is recorded.
+The default value for this parameter is 100.  The parameter value
+must be an integer greater than zero. [optional]
+     <p />
+     </dd>
+     <dt><code>output</code></dt>
+     <dd>
+A modifier element specifying what should be done with the
+&quot;snapshots&quot; of the species populations, that are
+the &quot;output&quot; of the simulation.  The allowed
+values are &quot;<code>store</code>&quot; and
+&quot;<code>print</code>&quot;.  
+         <p />
+         <dl>
+         <dt><code>print</code></dt>
+         <dd>this
+value is the default, and means that the output should be
+printed to &quot;standard output&quot;, in comma-separated
+value format (a format suitable for loading into Microsoft 
+Excel or a similar spreadsheet application).
+         <p />
+         </dd>
+         <dt><code>store</code></dt>
+         <dd>The value
+&quot;<code>store</code>&quot; means that the output
+should be stored as a variable.  This is mostly useful
+when chaining together multiple simulations with 
+different reaction kinetics or simulators.  The output
+from one simulation can be stored, and subsequently
+used as the input to another simulation.  When you specify
+&quot;<code>store</code>&quot; as the <code>output</code>
+type of the <code>simulate</code> command, it is required that
+you also specify the &quot;<code>storeName</code>&quot;
+parameter, which is defined below.
+         <p />
+         </dd>
+         </dl>
+     <p />
+     </dd>
+     <dt><code>storeName</code></dt>
+     <dd>
+A string element specifying the variable name under which the
+output species populations data should be stored.  This element
+should only be used in conjunction with an <code>outputType</code>
+of <code>store</code>; with that output type, it is required.
+The &quot;store&quot; output feature is useful for chaining together 
+multiple simulations, in which the output of one simulation becomes the
+input for a subsequent simulation, within the invocation
+of a single model definition script. If this element is specified
+and the output type is not set to &quot;store&quot;, the element is
+ignored.  [required if <code>outputType</code> 
+is set to &quot;<code>store</code>&quot;]
+     <p />
+     </dd>
+     <dt><code>ensembleSize</code></dt>
+     <dd>
+A numeric element specifying the number of separate
+simulations should be run with the same parameters.
+The resulting &quot;snapshot&quot; values for species
+populations over time will be averaged for each time
+point and species, over the &quot;ensemble&quot; of
+realizations of the simulation.  This essentially implements
+an ensemble average of time-series species populations.
+The numeric element value is required to be an
+integer greater than zero.  This feature is useful when using
+a stochastic simulator, in order to 
+The species population
+values that are printed will be floating-point numbers,
+even for floating species (which can only have integer
+population values within a given realization of the ensemble),
+due to the averaging process.  The &quot;<code>ensembleSize</code>&quot;
+parameter may <em>not</em> be specified with the
+&quot;<code>output store</code>&quot; parameter, because
+floating-point values may not be stored in a 
+<a href="#speciespopulations">species populations collection</a>
+object, for floating species. If this element is not specified,
+no ensemble averaging is performed.  [optional]
+    <p />
+    </dd>
+    <dt><code>outputFile</code></dt>
+    <dd>
+A string element that species the file name to which the simulation output
+should be saved.  The string value is the file name.
+The &quot;<code>output print</code>&quot;
+output type should be specified, if this parameter is specified.
+The output is saved in comma-separated-value (CSV) format.  If
+you specify the file extension (&quot;<code>.csv</code>&quot;),
+it should enable the output file to be opened in the default
+spreadsheet application for your desktop computer's graphical
+windowing system (e.g., GNOME or Windows). If the <code>outputType</code>
+is not set to &quot;<code>print</code>&quot;, this element is ignored.
+[optional]
+    <p />
+    </dd>
+    <dt><code>debug</code></dt>
+    <dd>
+A numeric element that specifies an integer &quot;debug level&quot; for the
+simulator.  The higher the debug level specified, the more
+verbose the debugging information that will be displayed
+by the simulator.  This is useful for &quot;debugging&quot;
+simulations that appear to be malfunctioning or giving 
+unexpected reaction kinetics.  Possible values are:
+      <ol start="0">
+        <li><code>NONE</code>: no debugging output</li>
+        <li><code>LOW</code>: minimal debugging output (number of iterations, start and stop of simulation)</li>
+        <li><code>MEDIUM</code>: medium level of debugging output</li>
+        <li><code>HIGH</code>: high level of debugging output (each reaction step is printed)</li>
+        <li><code>EXTREME</code>:  extreme level of debugging output</li>
+      </ol>
+The amount and type of debugging information that will 
+be printed will vary with the type of 
+<a href="#simplugins">simulator plug-in</a> that
+is being used.  This option should be used carefully, as it
+can severely degrade the efficiency of the simulation engine,
+and it can generate voluminous output that must be buffered
+and printed to the &quot;standard error&quot; stream (console).
+The default value of this parameter is 0 (no debugging output),
+which is (by far) the most efficient in terms of performance.
+[optional]
+    <p />
+    </dd>
+    <dt><code>simulator</code></dt>
+    <dd>
+A string element that specifies the <a href="simplugins">simulator plug-in</a> 
+to use for the simulation.
+The default is &quot;<code>gillespie</code>&quot;, the Gillespie
+simulator plug-in. [optional]
+    <p />
+    </dd>
+    </dl>
+    <p />
+The &quot;<code>simulate</code>&quot; statement is usually
+placed at the end of a model definition file, after all of the
+reaction definitions.  The following is an example of a simulate 
+statement:  
+<blockquote>
+<pre>
+simulate "m1": speciesPopulations "sp1", startTime 0, stopTime 500.0, numTimePoints 100, debug 1,
+           viewSpecies ("G3D_G80D" "G4_RNA" "G80_RNA" "G3_RNA" "G4D_free" "G80D_free" "G3D_free"),
+           output store, storeName "final", simulator "gillespie";
+</pre>
+</blockquote>
+The above example runs a simulation for <code>500</code> seconds, and
+stores the output under variable name &quot;<code>final</code>&quot;.
+The following is another example of a simulate statement:
+<blockquote>
+<pre>
+simulate "m1": speciesPopulations "sp1", startTime 0, stopTime 500.0, numTimePoints 100, debug 1,
+           viewSpecies ("G3D_G80D" "G4_RNA" "G80_RNA" "G3_RNA" "G4D_free" "G80D_free" "G3D_free"),
+           output print, outputFile "myFile.csv", simulator "gillespie", ensembleSize 10;
+</pre>
+</blockquote>
+The above example runs 10 simulations and averages over the results,
+and stores the output of the simulation in the file 
+&quot;<code>myFile.csv</code>&quot;.
+    <p />
+Note that &quot;<code>myModel</code>&quot; is the special name 
+of the default model in the CCMDL.  In the CMDL, all models
+are explicitly named, and the model name of the model to be
+simulated is always specified after the &quot;<code>simulate</code>&quot;
+statement.
+    <p />
+</dd>       
+
+
+</dl>
+
+
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Symbol Names" label="cmdl-symbolnames">
+In the CMDL, all <a href="#symbols">symbol names</a> defined 
+(except for parameters that are defined in a reaction namespace) 
+reside within the global
+namespace.  This means that, for example, a compartment and
+a species cannot have the same name.  Each symbol that is
+defined must have a unique name.
+<p />
 Note that in the CMDL, a species symbol appearing in a
 reaction rate expression can mean one of two things, 
 depending on the <a href="#reactionratespeciesmode">
@@ -2323,8 +3225,11 @@ In the CCMDL, the only reaction rate species mode is
 &quot;molecules&quot;, so species symbols appearing in
 a rate expression always denote species populations in
 molecules.
-</p>
+</isb:docsubsection>
+
+
 </isb:docsection>
+
 
 <!-- ========== SBML ========== -->
 
@@ -2390,7 +3295,19 @@ definition file.  By default, only model definition files whose file extensions
 can optionally choose from among any file, regardless of the file extension.
 When the file is selected, if you click on the &quot;open&quot; button, the
 model definition file that you selected will be processed by the scripting
-engine.  The names of the <a href="#models">model(s)</a> and 
+engine.  
+</p>
+<p>
+<b>NOTE:</b> only definition statements appearing in the model definition file
+will be processed.  If the model definition file contains 
+<a href="#actionperformingstatements">action-performing statements</a>,
+they will be ignored by the scripting engine in the GUI application.  This is
+the case because the GUI application provides all of the same functionality
+of the action-performing statements; the action-performing statements are intended
+only for use in the command-line scripting environment.
+</p>
+<p>
+The names of the <a href="#models">model(s)</a> and 
 <a href="#speciespopulations">species population collections</a> defined
 by the file, will be displayed in the &quot;models:&quot; and
 the &quot;species population sets:&quot; list boxes in the main &appName;
