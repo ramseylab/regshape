@@ -8,6 +8,8 @@ package org.systemsbiology.math;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
+import org.systemsbiology.util.*;
+
 /**
  * Contains a string identifier and an (optional)
  * array index.  Used by the {@link ISymbolDoubleMap} class.
@@ -31,7 +33,7 @@ public class Symbol
         clearIndexInfo();
     }
 
-    public boolean hasArrayIndex()
+    public final boolean hasArrayIndex()
     {
         return(NULL_ARRAY_INDEX != mArrayIndex);
     }
@@ -46,7 +48,7 @@ public class Symbol
         mArrayIndex = pArrayIndex;
     }
 
-    public int getArrayIndex()
+    public final int getArrayIndex()
     {
         return(mArrayIndex);
     }
@@ -63,12 +65,12 @@ public class Symbol
         mValueArray = pArray;
     }
 
-    public double []getDoubleArray()
+    public final double []getDoubleArray()
     {
         return(mDoubleArray);
     }
 
-    public Value []getValueArray()
+    public final Value []getValueArray()
     {
         return(mValueArray);
     }
@@ -105,5 +107,31 @@ public class Symbol
         StringBuffer sb = new StringBuffer();
         sb.append(getName() + "; index: " + mArrayIndex + "; array: " + mDoubleArray);
         return(sb.toString());
+    }
+
+    public final double getIndexedValue(SymbolEvaluator pSymbolEvaluator) throws IllegalStateException, DataNotFoundException
+    {
+        double []doubleArray = mDoubleArray;
+        if(null != doubleArray)
+        {
+            return(doubleArray[mArrayIndex]);
+        }
+        else
+        {
+            return(mValueArray[mArrayIndex].getValue(pSymbolEvaluator));
+        }
+    }
+
+    public final double getIndexedValueWithCaching(SymbolEvaluator pSymbolEvaluator) throws IllegalStateException, DataNotFoundException
+    {
+        double []doubleArray = mDoubleArray;
+        if(null != doubleArray)
+        {
+            return(doubleArray[mArrayIndex]);
+        }
+        else
+        {
+            return(mValueArray[mArrayIndex].getValueWithCaching(pSymbolEvaluator));
+        }
     }
 }
