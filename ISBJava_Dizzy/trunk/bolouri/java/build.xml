@@ -254,11 +254,11 @@
     </tar>
   </target>
 
-  <target name="build" depends="jar" />
+  <target name="build" depends="buildJar, buildHTML, buildPDF, buildInstallers" />
 
   <target name="test" depends="compileTests" />
   
-  <target name="jar" depends="compile, copyResources">
+  <target name="buildJar" depends="compile, copyResources">
     <mkdir dir="${app.buildDir}" />
     <jar destfile="${app.jarFile}">
       <fileset dir="${app.classesDir}">
