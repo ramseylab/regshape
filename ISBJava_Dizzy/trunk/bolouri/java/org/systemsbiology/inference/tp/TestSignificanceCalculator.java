@@ -23,9 +23,9 @@ import org.systemsbiology.math.*;
 public class TestSignificanceCalculator
 {
     public static final int NUM_BINS = 100;
-    public static final int NUM_ELEMENTS = 6000;
-    public static final double MAX_CHI_SQUARE = 0.75;
-        
+    public static final int NUM_ELEMENTS = 600;
+    public static final double MAX_SMOOTHING_LENGTH = 1.0;
+        public static final double MAX_CHI_SQUARE = 1.0;
     
     public static void testMultipleEvidences()
     {
@@ -84,33 +84,32 @@ public class TestSignificanceCalculator
 
             boolean allowEmpirical = true;
             
-            SignificanceCalculationResults results = null;
             ObjectMatrix1D obsCol = null;
+            
+            SignificanceCalculationResults results = new SignificanceCalculationResults(NUM_ELEMENTS);
             
             Double []obsColDbl = new Double[NUM_ELEMENTS];
             for(int j = 0; j < 3; ++j)
             {
                 obsCol = obsMatrix.viewColumn(j);
                 obsCol.toArray(obsColDbl);
-                results = sigCalc.calculateSignificances(obsColDbl, 
-                                                         obsColDbl,
-                                                         NUM_BINS, 
-                                                         MAX_CHI_SQUARE, 
-                                                         singleTailed[j], 
-                                                         allowEmpirical,
-                                                         SignificanceCalculationFormula.CDF);
+                sigCalc.calculateSignificancesCDF(obsColDbl, 
+                                                  obsColDbl,
+                                                  NUM_BINS, 
+                                                  singleTailed[j],
+                                                  MAX_SMOOTHING_LENGTH, 
+                                                  results);
                 
                 sigsCDF.viewColumn(j).assign(results.mSignificances);
             
                 allowEmpirical = false;
                 
-                results = sigCalc.calculateSignificances(obsColDbl, 
-                                                         obsColDbl,
-                                                         NUM_BINS, 
-                                                         MAX_CHI_SQUARE, 
-                                                         singleTailed[j], 
-                                                         allowEmpirical,
-                                                         SignificanceCalculationFormula.PDF);
+                sigCalc.calculateSignificancesPDF(obsColDbl, 
+                                                  obsColDbl,
+                                                  NUM_BINS, 
+                                                  singleTailed[j],
+                                                  MAX_CHI_SQUARE, 
+                                                  results);
                 
                 sigsPDF.viewColumn(j).assign(results.mSignificances);
             }

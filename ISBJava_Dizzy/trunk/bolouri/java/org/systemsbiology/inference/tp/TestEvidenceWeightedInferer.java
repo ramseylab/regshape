@@ -27,7 +27,7 @@ import edu.cornell.lassp.houle.RngPack.Ranmar;
 public class TestEvidenceWeightedInferer
 {
     public static final SignificanceCalculationFormula USE_CDF = SignificanceCalculationFormula.CDF;
-    public static final double MAX_CHI_SQUARE = 1.0;
+    public static final double SMOOTHING_LENGTH = 0.05;
     public static final int NUM_BINS = 100;
     public static final double MIN_BIN_SIZE_SIG = 1.0e-8;
     public static final double AVERAGE_STD_DEV_FOLD_CHANGE_UNAFFECTED = 0.5;
@@ -73,8 +73,7 @@ public class TestEvidenceWeightedInferer
                                             double pInitialCutoff,
                                             double pJointSignificanceCutoff,
                                             double pConfusion,
-                                            SignificanceCalculationFormula pMethod,
-                                            double pMaxChiSquare,
+                                            double pSmoothingLength,
                                             EvidenceWeightedInferer pAffectedElementFinder,
                                             SignificanceCalculator pSignificancesCalculator)
     {
@@ -215,8 +214,6 @@ public class TestEvidenceWeightedInferer
 
             DoubleMatrix2D sig = fac2d.make(pNumElements, pNumEvidences);
 
-            boolean []singleTailed = new boolean[pNumEvidences];
-            SignificanceCalculationResults sigResults = null;
             DoubleMatrix1D sigCol = null;
             ObjectMatrix1D obsCol = null;
             Double []obsColDbl = new Double[pNumElements];
@@ -253,19 +250,22 @@ public class TestEvidenceWeightedInferer
 //            pw.print(sb.toString());
 //            pw.flush();
             
+            SignificanceCalculationResults sigResults = null;
+            SignificanceCalculatorParams sigParams = new SignificanceCalculatorParams();
+            
             for(int j = 0; j < pNumEvidences; ++j)
             {
-                singleTailed[j] = false;
+                sigParams.setNumBins(new Integer(NUM_BINS));
+                sigParams.setSignificanceCalculationFormula(SignificanceCalculationFormula.CDF);
+                sigParams.setSingleTailed(new Boolean(false));
+                sigParams.setSmoothingLength(new Double(pSmoothingLength));
+                
                 obsCol = obs.viewColumn(j);
                 obsCol.toArray(obsColDbl);
                 
                 sigResults = pSignificancesCalculator.calculateSignificances(obsColDbl,
                                                                              obsColDbl,
-                                                                             NUM_BINS, 
-                                                                             pMaxChiSquare,
-                                                                             false, 
-                                                                             true,
-                                                                             pMethod);
+                                                                             sigParams);
                 sigCol = sig.viewColumn(j);
                 sigCol.assign(sigResults.mSignificances);
             }
@@ -290,14 +290,16 @@ public class TestEvidenceWeightedInferer
 
             long startTime = System.currentTimeMillis();
 
-            affectedElementsResults = pAffectedElementFinder.findAffectedElements(sig, 
-                                                                                  NUM_BINS,
-                                                                                  pInitialCutoff, 
-                                                                                  pJointSignificanceCutoff,
-                                                                                  FRACTION_TO_REMOVE,
-                                                                                  MIN_FRACTIONAL_COST_CHANGE,
-                                                                                  MAX_CHI_SQUARE,
-                                                                                  EvidenceWeightType.POWER);
+            EvidenceWeightedInfererParams params = new EvidenceWeightedInfererParams();
+            params.setNumBins(new Integer(NUM_BINS));
+            params.setInitialSignificanceCutoff(new Double(pInitialCutoff));
+            params.setCombinedSignificanceCutoff(new Double(pJointSignificanceCutoff));
+            params.setFractionToRemove(new Double(FRACTION_TO_REMOVE));
+            params.setMinFractionalCostChange(new Double(MIN_FRACTIONAL_COST_CHANGE));
+            params.setSmoothingLength(new Double(SMOOTHING_LENGTH));
+            params.setEvidenceWeightType(EvidenceWeightType.POWER);
+            
+            affectedElementsResults = pAffectedElementFinder.findAffectedElements(sig, params);
                                 
             long stopTime = System.currentTimeMillis();
             double elapsedTimeSeconds = ((double) (stopTime - startTime))/1000.0;
@@ -419,8 +421,7 @@ public class TestEvidenceWeightedInferer
 //            System.out.println("iteration: " + (i+1));
             results = runTestTrial(pNumElements, pFractionAffected, pNumEvidences, pMeanFoldChangeAffected,
                                    pFractionDataMissing, pInitialCutoff, pJointSignificanceCutoff, pConfusion, 
-                                   USE_CDF,
-                                   MAX_CHI_SQUARE, 
+                                   SMOOTHING_LENGTH, 
                                    finder, sigCalc);
             
             alpha[i] = results.mAlphaParameter;
@@ -485,7 +486,7 @@ public class TestEvidenceWeightedInferer
             double defaultInitialCutoff = 0.05; // 0.05
             double defaultFoldChangeAffected = 1.5; // 1.5
             int defaultNumEvidences = 6; // 6
-            double defaultJointSignificanceCutoff = 1.0e-7;
+            double defaultJointSignificanceCutoff = 1.0e-6;
             double defaultPriorFracAffected = 0.05;//0.05
             
             // baseline run, all defaults
