@@ -8,17 +8,9 @@ package org.systemsbiology.chem;
  *   http://www.gnu.org/copyleft/lesser.html
  */
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-
-import org.systemsbiology.math.SymbolValue;
-import org.systemsbiology.util.DebugUtils;
-import org.systemsbiology.util.DataNotFoundException;
+import java.util.*;
+import org.systemsbiology.math.*;
+import org.systemsbiology.util.*;
 
 /**
  * A named collection of {@link Reaction} and
@@ -250,13 +242,17 @@ public class Model
         return((String []) speciesNamesList.toArray(new String[0]));
     }
 
-    public String []getOrderedNonConstantSymbolNamesArray()
+    public String []getOrderedNonConstantSymbolNamesArray() throws IllegalStateException
     {
         List symbolNamesList = new LinkedList();
         Iterator symbolValuesIter = mSymbolsMap.values().iterator();
         while(symbolValuesIter.hasNext())
         {
             SymbolValue symbolValue = (SymbolValue) symbolValuesIter.next();
+            if(null == symbolValue.getValue())
+            {
+                throw new IllegalStateException("symbol has no value associated with it: " + symbolValue.getSymbol().getName());
+            }
             if(symbolValue.getValue().isExpression() ||
                symbolValue instanceof Species)
             {
