@@ -126,8 +126,6 @@ version of the &appName; system.
 </isb:docsubsection>
 <isb:docsubsection name="External Libraries" label="extlib">
 <p>
-<a name="extlib" />
-<b>Externl libraries:</b><br />
 The &appName; system relies upon a number of external open-source
 libraries.  These libraries are bundled with the &appName; program and
 are installed within the &appName; directory when you install
