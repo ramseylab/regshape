@@ -18,18 +18,30 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Displays a data file in tabular format, and allows the
+ * user to select columns of data to save to a new file.
+ * 
+ * @author sramsey
+ */
 public class DataColumnSelector extends JFrame
 {
     private MatrixStringTableModel mMatrixStringTableModel;
     private MatrixString mMatrixString;
     private static final String DEFAULT_DELIMITER = "\t";
     private File mDirectory;
+    private String mDelimiter;
+    
+    public void setDelimiter(String pDelimiter)
+    {
+        mDelimiter = pDelimiter;
+    }
     
     static class MatrixStringTableCellRenderer implements TableCellRenderer
     {
         private TableCellRenderer mDefaultTableCellRenderer;
         private MatrixStringTableModel mTableModel;
-
+        
         public MatrixStringTableCellRenderer(TableCellRenderer pDefaultTableCellRenderer,
                                              MatrixStringTableModel pTableModel )
         {
@@ -172,6 +184,7 @@ public class DataColumnSelector extends JFrame
         }
         mMatrixStringTableModel = new MatrixStringTableModel(pMatrixString);
         initialize();
+        setDelimiter(DEFAULT_DELIMITER);
     }
 
         
@@ -226,7 +239,7 @@ public class DataColumnSelector extends JFrame
         pack();
     }
 
-    private static DataColumnSelector constructDataSelector(File pFile, String pDelimiter) throws IOException, InvalidInputException
+    public static DataColumnSelector constructDataSelector(File pFile, String pDelimiter) throws IOException, InvalidInputException
     {
         FileReader fileReader = new FileReader(pFile);
         BufferedReader bufReader = new BufferedReader(fileReader);
@@ -322,7 +335,7 @@ public class DataColumnSelector extends JFrame
         {
             try
             {
-                handleSaveFile(outputFile, DEFAULT_DELIMITER);
+                handleSaveFile(outputFile, mDelimiter);
             }
             catch(Exception e)
             {
