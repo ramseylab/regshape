@@ -29,9 +29,13 @@ public class SpeciesRateFactorEvaluatorCombinatoric extends SpeciesRateFactorEva
                speciesValue - Math.floor(speciesValue) == 0.0)
             {
                 long longSpeciesValue = (long) speciesValue;
+  
                 if(longSpeciesValue >= pStoichiometry)
                 {
-                    numReactantCombinations *= MathFunctions.chooseFunction((long) speciesValue, pStoichiometry);
+                    for(int ctr = pStoichiometry; --ctr >= 0; )
+                    {
+                        numReactantCombinations *= (longSpeciesValue - ctr);
+                    }
                 }
                 else
                 {
