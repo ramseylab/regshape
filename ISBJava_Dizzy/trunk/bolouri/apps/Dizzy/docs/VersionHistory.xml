@@ -52,6 +52,64 @@ This document contains the version history for the
 Fixed a bug in the simulation results table window,
 which was causing the table window to not be resizable.
 </li>
+<li>
+Modified the simulation engine to better handle formatting
+of not-a-number (<code>NaN</code>) and infinity values, in
+simulation results.
+</li>
+<li>
+Modified the <code>runmodel</code> program so that it will
+notify the user if the simulator is not capable of computing
+steady-state fluctuations, if the 
+<code>-computeFluctuations</code> flag is passed on the
+command-line.
+</li>
+<li>
+Fixed a bug in the CMDL parser which caused an exception
+when one attempts to simulate a model containing a macro
+reference embedded within another macro definition.
+</li>
+<li>
+Fixed a bug in the editor pane.  When the user would close
+the file loaded in the editor pane and then attempt to open
+a new file, the user would be needlessly prompted as to whether
+to save the changes in the editor buffer, to a file.  
+</li>
+<li>
+Modified the CMDL to enable the parsing of floating-point
+numeric literals expressed in scientific notation, such as
+<code>1.0e-7</code> and <code>2.7e+14</code>.
+</li>
+<li>
+Fixed a bug where ISO-8859-1 characters greater than 127 in the CMDL 
+model definition file were causing exceptions when the model was 
+processed, on Red Hat Linux.  This will ensure that CMDL model processing
+is consistent across different locales.  Files opened using the "include" 
+directive will be processed in the same character set as the parent file.
+</li>
+<li>
+Fixed a potential bug 
+where SBML files were being read in the default
+locale encoding for text files, and not in the encoding specified in the
+XML file header.
+</li>
+<li>
+Added a new class 
+<code>org.systemsbiology.util.MatlabInterface</code>, that provides
+a TCP/IP bridge for communicating with the Matlab console, from Java.
+</li>
+<li>
+Fixed a bug (reported by Alex Kowald) in the 
+<code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>
+in which an exception is thrown, if a
+quoted string is embedded within a deferred-evaluation mathematical
+expression.  This prevents referencing a symbol name that contains
+an integer (e.g., an index) obtained from a mathematical expression,
+within the context of a deferred-evaluation mathematical expression.
+This bug potentially affects models in which the loop construct is used,
+in conjunction with reaction definitions with complex (deferred-evaluation)
+kinetic rate expressions.
+</li>
 </ul>
 </td>
 <td><a href="&javaURL;/1.8.1/download.html">1.8.1</a></td>

@@ -885,12 +885,14 @@ the expression.
 <p>
 In the context of a mathematical expression, numeric literals 
 are simply numbers, either floating point or integer.  Note that
-within a mathematical expression, scientific notation 
-(e.g., <code>1.2e-7</code> or <code>1.2e+7</code>) is not
-permitted in the specification of bare numbers.  However,
-this does not pose a problem because constructions such
-as <code>1.2*10^7</code> and <code>1.2*10^(-7)</code>
-are permitted.
+within a mathematical expression one may use scientific notation 
+(e.g., <code>1.2e-7</code> or <code>1.2e+7</code>) to specify
+floating-point numeric literals.  Alternatively,
+one may use constructions such as <code>1.2*10^7</code> 
+and <code>1.2*10^(-7)</code> to represent floating-point
+numeric literals (but in deferred-evaluation expressions,
+the latter method is less efficient than scientific notation 
+using the &quot;<code>e</code>&quot; character shown above).
 </p>
 <p>
 In the &appName; system, mathematical 
@@ -1706,9 +1708,23 @@ model definition language designed to minimize the amount of repetitive
 typing required to define a model.   The default file extension of model
 definition files in the CMDL language is the &quot;<code>&cmdlFileExtension;</code>&quot;
 suffix.  The alternative extension &quot;<code>&appFileExtension;</code>&quot; is also
-understood to indicate a CMDL file.
+understood to indicate a CMDL file.  
 </p>
 
+<isb:docsubsection name="Character Encoding" label="encoding">
+<p>
+All CMDL files are text files
+in ISO-8559-1 encoding.  Embedding non-ISO-8559-1 characters 
+(such as, UTF-8 characters) in a CMDL file,
+even within a <a href="#comments">comment</a>, will trigger an error within
+&appName;.  This is to ensure uniform behavior of the &appName;
+parser on all platforms, regardless of the default character encoding
+used in the particular locale.  In particular, Red Hat Linux
+distributions subsequent to version 8, employ UTF-8 encoding as
+the default character encoding; therefore, care must be used to avoid 
+embedding non-ISO-8559-1 characters within a CMDL file.
+</p>
+</isb:docsubsection>
 
 <!-- ========== Symbol Values ========== -->
 <isb:docsubsection name="Symbol Values" label="symbolvalues">

@@ -185,6 +185,9 @@ This bug potentially affects models in which the loop construct is used,
 in conjunction with reaction definitions with complex (deferred-evaluation)
 kinetic rate expressions.
 </li>
+<li>
+Renamed the Ant target <code>compiletests</code> to <code>compileTests</code>.
+</li>
 </ul>
 </td>
 </tr>
