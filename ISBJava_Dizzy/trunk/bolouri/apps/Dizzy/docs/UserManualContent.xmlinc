@@ -1386,16 +1386,16 @@ molecular state.  A species has a name, which must be unique;
 in addition, a species must be assigned to one (and only one)
 compartment.  A species must also be assigned a population value, 
 which is a double-precision floating point number.
-There are two types of species in the &appName; system, <b>floating</b>
+There are two types of species in the &appName; system, <b>dynamical</b>
 species and <b>boundary</b> species.  
 </p>
 <p>
-A floating species
+A dynamical species (called a "floating" species in <a href="#sbml">SBML</a>)
 is a species whose population is affected by reactions
 in which it participates.  For example, if a reaction takes
 species X as a reactant, and does not produce species X as
 a product, then when this reaction occurs, the population
-of species X is decremented by one.  The floating species
+of species X is decremented by one.  The dynamical species
 is the most commonly used species type, and it is the 
 default species type for species in the &appName; system.
 </p>
@@ -1421,6 +1421,12 @@ named &quot;<code>SpeciesX_cytoplasm</code>&quot; and
 &quot;<code>SpeciesX_nucleus</code>&quot;, representing
 the instances of chemical species &quot;X&quot; in the
 cytoplasm and nucleus, respectively.
+</p>
+<p>
+Please note that there is a 
+<a href="#numericprecision">restriction on the initial
+population that can be specified for <b>dynamical</b> species.</a>
+This particular limitation only affects stochastic simulations.
 </p>
 </isb:docsubsection>
 
@@ -1495,7 +1501,7 @@ enzyme-substrate complex.
 </p>
 <p>
 The above discussion assumes that species participating
-in reactions are &quot;floating&quot; (dynamical) species.
+in reactions are dynamical species.
 As described above in the <a href="#species">species</a>
 section, a species can also be defined as a &quot;boundary&quot;
 species.  In this case, the population of the species is
@@ -2125,10 +2131,10 @@ Note the use of the comma character &quot;<code>,</code>&quot;
 to separate different <em>elements</em> of the statement.
 The statement causes the following definitions to be made:
 <ul>
-<li>a floating species <code>A</code>, in the default compartment</li>
-<li>a floating species <code>B</code>, in the default compartment</li>
-<li>a floating species <code>C</code>, in the default compartment</li>
-<li>a floating species <code>D</code>, in the default compartment</li>
+<li>a dynamical species <code>A</code>, in the default compartment</li>
+<li>a dynamical species <code>B</code>, in the default compartment</li>
+<li>a dynamical species <code>C</code>, in the default compartment</li>
+<li>a dynamical species <code>D</code>, in the default compartment</li>
 <li>a reaction <code>creation_of_c_d</code>, in which 
 species <code>A</code> and <code>B</code> participate
 as reactants, and in which species <code>C</code> and
@@ -2375,7 +2381,7 @@ are set to 100.
 <p>
 The above discussion has assumed that species
 defined in chemical reactions are always
-floating species.  In order to define a boundary
+dynamical species.  In order to define a boundary
 species that participates in a chemical reaction, 
 the dollar sign is used, as shown in the following
 example:
@@ -2395,7 +2401,7 @@ of a boundary species is unaffected by the
 occurrence of a chemical reaction involving
 that species.  Therefore, defining the population
 of a boundary species differs from that of a
-floating species, in that the population definition
+dynamical species, in that the population definition
 of a boundary species is not just for the inital
 time, but for all times during the simulation.
 Given that the above definition
@@ -2416,7 +2422,7 @@ a species in the reaction that produces species
 by a factor of the value of <code>A</code>.
 </p>
 <p>
-As with floating species, the population definition
+As with dynamical species, the population definition
 for a boundary species may invole a mathematical
 expression that is parsed immediately by the parser:
 <blockquote>
@@ -2483,7 +2489,7 @@ externally controlled.
 </p>
 <p>
 Note that it is illegal to attempt to define the 
-initial population of a <em>floating</em> species as a
+initial population of a <em>dynamical</em> species as a
 string element containing a mathematical expression.
 </p>
 <p>
