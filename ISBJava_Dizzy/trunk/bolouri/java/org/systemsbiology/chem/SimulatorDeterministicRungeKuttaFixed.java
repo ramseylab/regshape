@@ -34,7 +34,9 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
                              double []pReactionProbabilities,
                              RKScratchPad pRKScratchPad,
                              double []pDynamicSymbolValues,
-                             double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
+                             double []pNewDynamicSymbolValues,
+                             boolean pHasExpressionValues,
+                             Value []pNonDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
     {
         double stepSize = pRKScratchPad.stepSize;
 
@@ -49,7 +51,9 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
                     pRKScratchPad,
                     stepSize,  
                     pDynamicSymbolValues,
-                    pNewDynamicSymbolValues);
+                    pNewDynamicSymbolValues,
+                    pHasExpressionValues,
+                    pNonDynamicSymbolValues);
         }
         else
         {
@@ -62,7 +66,9 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
                          pRKScratchPad,
                          stepSize,
                          pDynamicSymbolValues,
-                         yscale);
+                         yscale,
+                         pHasExpressionValues,
+                         pNonDynamicSymbolValues);
 
             MutableDouble relativeErrorObj = pRKScratchPad.relativeError;
             MutableDouble absoluteErrorObj = pRKScratchPad.absoluteError;
@@ -77,7 +83,9 @@ public final class SimulatorDeterministicRungeKuttaFixed extends SimulatorDeterm
                  pDynamicSymbolValues,
                  pNewDynamicSymbolValues,
                  relativeErrorObj,
-                 absoluteErrorObj);
+                 absoluteErrorObj,
+                 pHasExpressionValues,
+                 pNonDynamicSymbolValues);
 
             double maxRelativeError = pRKScratchPad.maxRelativeError;
             double relativeError = relativeErrorObj.getValue();

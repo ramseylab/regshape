@@ -203,10 +203,21 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
             }
             if(estimateFinalSpeciesFluctuations)
             {
+                if(mHasExpressionValues)
+                {
+                    clearExpressionValueCaches(mNonDynamicSymbolValues);
+                }
+                computeReactionProbabilities(mSymbolEvaluator,
+                                             mReactionProbabilities,
+                                             mReactions,
+                                             mHasExpressionValues,
+                                             mNonDynamicSymbolValues,
+                                             false);
                 double []allFinalSpeciesFluctuations = SteadyStateAnalyzer.estimateSpeciesFluctuations(mReactions,
-                                                                                                 mDynamicSymbols,
-                                                                                                 mDynamicSymbolAdjustmentVectors,
-                                                                                                 mSymbolEvaluator);
+                                                                                                       mDynamicSymbols,
+                                                                                                       mDynamicSymbolAdjustmentVectors,
+                                                                                                       mReactionProbabilities,
+                                                                                                       mSymbolEvaluator);
                 if(null != allFinalSpeciesFluctuations)
                 {
                     int numRequestedSymbols = pRequestedSymbolNames.length;
@@ -300,13 +311,15 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
             {
                 throw new InvalidInputException("failed to parse expected number of values from simulation output file at line: " + line);
             }
-            
+
             timeIndex = addRequestedSymbolValues(curTime, 
                                                  timeIndex, 
                                                  pRequestedSymbols,
                                                  symbolEvaluator,
                                                  pRetResultsTimeValues,
-                                                 pRetResultsSymbolValues);
+                                                 pRetResultsSymbolValues,
+                                                 mHasExpressionValues,
+                                                 mNonDynamicSymbolValues);
         }
 
         if(timeIndex != pNumResultsTimePoints)
@@ -326,12 +339,19 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
 
         try
         {
+            if(mHasExpressionValues)
+            {
+                clearExpressionValueCaches(mNonDynamicSymbolValues);
+            }
             computeDerivative(mSymbolEvaluator,
                               mReactions,
                               mDynamicSymbolAdjustmentVectors,
                               mReactionProbabilities,
                               mScratch,
-                              mDerivative);
+                              mDerivative,
+                              mHasExpressionValues,
+                              mNonDynamicSymbolValues,
+                              false);
         }
         catch(DataNotFoundException e)
         {
@@ -400,7 +420,7 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
             SymbolEvaluatorChem symbolEvaluator = mSymbolEvaluator;
             // set the time to t
             symbolEvaluator.setTime(t);
-            
+
             try
             {
                 DelayedReactionSolver []solvers = mDelayedReactionSolvers;
@@ -416,11 +436,6 @@ public abstract class SimulatorOdeToJavaBase extends Simulator implements ODE, O
                 throw new RuntimeException("data not found: " + e.getMessage());
             }
         }
-    }
-
-    public final boolean usesExpressionValueCaching()
-    {
-        return(false);
     }
 
     public void initialize(Model pModel) throws DataNotFoundException

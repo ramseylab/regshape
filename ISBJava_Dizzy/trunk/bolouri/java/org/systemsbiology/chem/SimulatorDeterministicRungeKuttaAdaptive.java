@@ -39,7 +39,9 @@ public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDet
                              double []pReactionProbabilities,
                              RKScratchPad pRKScratchPad,
                              double []pDynamicSymbolValues,
-                             double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
+                             double []pNewDynamicSymbolValues,
+                             boolean pHasExpressionValues,
+                             Value []pNonDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
     {
         double stepSize = pRKScratchPad.stepSize;
 
@@ -50,7 +52,9 @@ public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDet
                                            pRKScratchPad,
                                            stepSize,
                                            pDynamicSymbolValues,
-                                           pNewDynamicSymbolValues);
+                                           pNewDynamicSymbolValues,
+                                           pHasExpressionValues,
+                                           pNonDynamicSymbolValues);
 
         pRKScratchPad.stepSize = nextStepSize;
 
@@ -64,7 +68,9 @@ public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDet
                                        RKScratchPad pRKScratchPad,
                                        double pTimeStepSize,
                                        double []pDynamicSymbolValues,
-                                       double []pNewDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
+                                       double []pNewDynamicSymbolValues,
+                                       boolean pHasExpressionValues,
+                                       Value []pNonDynamicSymbolValues) throws DataNotFoundException, SimulationAccuracyException
     {
         double stepSize = pTimeStepSize;
         double []yscale = pRKScratchPad.yscale;
@@ -76,7 +82,9 @@ public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDet
                      pRKScratchPad,
                      stepSize,
                      pDynamicSymbolValues,
-                     yscale);
+                     yscale,
+                     pHasExpressionValues,
+                     pNonDynamicSymbolValues);
 
         double aggregateError = 0.0;
         double errRatio = 0.0;
@@ -103,7 +111,9 @@ public final class SimulatorDeterministicRungeKuttaAdaptive extends SimulatorDet
                  pDynamicSymbolValues,
                  pNewDynamicSymbolValues,
                  relativeErrorObj,
-                 absoluteErrorObj);
+                 absoluteErrorObj,
+                 pHasExpressionValues,
+                 pNonDynamicSymbolValues);
 
             double relativeError = relativeErrorObj.getValue();
             double absoluteError = absoluteErrorObj.getValue();
