@@ -116,7 +116,7 @@
     <ant dir="${projAppsDir}" target="buildInstallers" />
   </target>
 
-  <target name="build">
+  <target name="build" depends="buildLocalHTML">
     <ant dir="${projJavaDir}" target="build" />
     <ant dir="${projAppsDir}" target="build" />
   </target>
