@@ -5,7 +5,7 @@
 
 <!ENTITY appName "&localJavaLibraryName;">
 <!ENTITY appVersion "0.0.1">
-<!ENTITY appDate "2003/05/28">
+<!ENTITY appDate "2003/07/25">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
 <!ENTITY appIconURL "">
 
