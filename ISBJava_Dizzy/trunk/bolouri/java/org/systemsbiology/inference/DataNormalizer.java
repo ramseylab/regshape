@@ -24,7 +24,7 @@ import org.systemsbiology.data.*;
  * Performs a normalization of a matrix of raw observations, so that each
  * column of the matrix is consistent, based on the {@link DataNormalizationMethod}
  * passed in the {@link DataNormalizerParams} object.  One (and currently, the only) method is
- * {@link DataNormalizationMethod.QUANTILE}, which implements a quantile normalization
+ * {@link DataNormalizationMethod#QUANTILE}, which implements a quantile normalization
  * such that the medians of all the columns will be the same.  Here, normalization
  * means assigning a "normalized" observation value to each "raw" observation value
  * in the matrix.  Consolidation of the data (e.g., averaging) is a separate procedure.  The
@@ -36,7 +36,7 @@ import org.systemsbiology.data.*;
  * <code>cern.colt.matrix.ObjectMatrix2D</code> object <code>mNormalizedObservations</code>
  * to hold the normalized observation values.  
  * 
- * For the {@link DataNormalizationMethod.QUANTILE} method, the quantile normalization algorithm
+ * For the {@link DataNormalizationMethod#QUANTILE} method, the quantile normalization algorithm
  * used is based on a prototype written by Daehee Hwang at 
  * Institute for Systems Biology, and it is similar to the quantile normalization 
  * algorithm proposed by Bolstat <em>et al.</em> in their paper

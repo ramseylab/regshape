@@ -13,7 +13,7 @@ package org.systemsbiology.inference;
 import cern.colt.matrix.ObjectMatrix2D;
 
 /**
- * The results of a call to the {@link QuantileNormalizer}.
+ * The results of a call to the {@link DataNormalizer}.
  * Contains the normalized observations, which are stored in
  * a matrix <code>cern.colt.matrix.ObjectMatrix2D</code>, where
  * null entries represent missing data (i.e., observations that
