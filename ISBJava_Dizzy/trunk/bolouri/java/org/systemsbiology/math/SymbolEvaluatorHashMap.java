@@ -21,17 +21,18 @@ import org.systemsbiology.util.DataNotFoundException;
  */
 public class SymbolEvaluatorHashMap extends SymbolEvaluator
 {
-    protected HashMap mSymbolMap;
+    protected final HashMap mSymbolMap;
 
-    public SymbolEvaluatorHashMap()
+    public SymbolEvaluatorHashMap(HashMap pSymbolMap)
     {
         super();
-    }
-
-    public void setSymbolsMap(HashMap pSymbolMap)
-    {
         mSymbolMap = pSymbolMap;
     }
+
+//    public void setSymbolsMap(HashMap pSymbolMap)
+//    {
+//        mSymbolMap = pSymbolMap;
+//    }
 
     protected double getValue(String pSymbolName) throws DataNotFoundException
     {

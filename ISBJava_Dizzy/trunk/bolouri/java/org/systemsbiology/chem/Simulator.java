@@ -330,10 +330,15 @@ public abstract class Simulator
                                             
         }
 
-        SymbolEvaluatorChem evaluator = pModel.getSymbolEvaluator();
-        evaluator.setSymbolsMap(symbolMap);
+        ReservedSymbolMapper reservedSymbolMapper = pModel.getReservedSymbolMapper();
+        SymbolEvaluationPostProcessor symbolEvaluationPostProcessor = pModel.getSymbolEvaluationPostProcessor();
+        boolean useExpressionValueCaching = usesExpressionValueCaching();
+        
+        SymbolEvaluatorChem evaluator = new SymbolEvaluatorChem(useExpressionValueCaching,
+                                                                symbolEvaluationPostProcessor,
+                                                                reservedSymbolMapper,
+                                                                symbolMap);
         evaluator.setTime(0.0);
-        evaluator.setUseExpressionValueCaching(usesExpressionValueCaching());
         mSymbolEvaluator = evaluator;
         
         checkSymbolsValues();

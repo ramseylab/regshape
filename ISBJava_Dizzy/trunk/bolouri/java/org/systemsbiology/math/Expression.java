@@ -683,9 +683,8 @@ public class Expression implements Cloneable
     {
         if(null == mSymbolEvaluator)
         {
-            mSymbolEvaluator = new SymbolEvaluatorHashMap();
+            mSymbolEvaluator = new SymbolEvaluatorHashMap(pSymbolsMap);
         }
-        mSymbolEvaluator.setSymbolsMap(pSymbolsMap);
 
         return(mSymbolEvaluator);
     }
@@ -2475,8 +2474,7 @@ public class Expression implements Cloneable
             Z.setValue(new Value(new Expression("1.0")));
             symbolsMap.put("Z", Z);
 
-            SymbolEvaluatorHashMap symEval = new SymbolEvaluatorHashMap();
-            symEval.setSymbolsMap(symbolsMap);
+            SymbolEvaluatorHashMap symEval = new SymbolEvaluatorHashMap(symbolsMap);
 
             InputStream in = System.in;
             InputStreamReader reader = new InputStreamReader(in);

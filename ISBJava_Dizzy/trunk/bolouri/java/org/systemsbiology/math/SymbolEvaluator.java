@@ -20,16 +20,26 @@ import org.systemsbiology.util.DataNotFoundException;
  */
 public abstract class SymbolEvaluator implements Cloneable
 {
-    protected boolean mUseExpressionValueCaching;
+    protected static final int NULL_ARRAY_INDEX = Symbol.NULL_ARRAY_INDEX;
+
+    private final boolean mUseExpressionValueCaching;
+    private final SymbolEvaluationPostProcessor mSymbolEvaluationPostProcessor;
 
     public SymbolEvaluator()
     {
-        mUseExpressionValueCaching = false;
+        this(false, null);
     }
 
-    public void setUseExpressionValueCaching(boolean pUseExpressionValueCaching)
+    public SymbolEvaluationPostProcessor getSymbolEvaluationPostProcessor()
+    {
+        return(mSymbolEvaluationPostProcessor);
+    }
+
+    public SymbolEvaluator(boolean pUseExpressionValueCaching,
+                           SymbolEvaluationPostProcessor pSymbolEvaluationPostProcessor)
     {
         mUseExpressionValueCaching = pUseExpressionValueCaching;
+        mSymbolEvaluationPostProcessor = pSymbolEvaluationPostProcessor;
     }
 
     protected final double getIndexedValue(int pArrayIndex, Symbol pSymbol) throws DataNotFoundException
@@ -37,17 +47,38 @@ public abstract class SymbolEvaluator implements Cloneable
         double []doubleArray = pSymbol.mDoubleArray;
         if(null != doubleArray)
         {
-            return(doubleArray[pArrayIndex]);
+            if(null == mSymbolEvaluationPostProcessor)
+            {
+                return(doubleArray[pArrayIndex]);
+            }
+            else
+            {
+                return(mSymbolEvaluationPostProcessor.modifyResult(pSymbol, this, doubleArray[pArrayIndex]));
+            }
         }
         else
         {
             if(! mUseExpressionValueCaching)
             {
-                return(pSymbol.mValueArray[pArrayIndex].getValue(this));
+                if(null == mSymbolEvaluationPostProcessor)
+                {
+                    return(pSymbol.mValueArray[pArrayIndex].getValue(this));
+                }
+                else
+                {
+                    return(mSymbolEvaluationPostProcessor.modifyResult(pSymbol, this, pSymbol.mValueArray[pArrayIndex].getValue(this)));
+                }
             }
             else
             {
-                return(pSymbol.mValueArray[pArrayIndex].getValueWithCaching(this));
+                if(null == mSymbolEvaluationPostProcessor)
+                {
+                    return(pSymbol.mValueArray[pArrayIndex].getValueWithCaching(this));
+                }
+                else
+                {
+                    return(mSymbolEvaluationPostProcessor.modifyResult(pSymbol, this, pSymbol.mValueArray[pArrayIndex].getValueWithCaching(this)));
+                }
             }
         }
     }
@@ -70,29 +101,59 @@ public abstract class SymbolEvaluator implements Cloneable
      * @return the floating-point value associated with the specified
      * symbol.
      */
-    public double getValue(Symbol pSymbol) throws DataNotFoundException
+    /*
+     * NOTE:  the code in this function is nasty-looking and repetitive because 
+     * it has been optimized for speed.
+     */
+    public final double getValue(Symbol pSymbol) throws DataNotFoundException
     {
-        int arrayIndex = pSymbol.mArrayIndex;
-        if(NULL_ARRAY_INDEX == arrayIndex)
+        if(NULL_ARRAY_INDEX == pSymbol.mArrayIndex)
         {
-            return(getUnindexedValue(pSymbol));
+            if(null == mSymbolEvaluationPostProcessor)
+            {
+                return(getUnindexedValue(pSymbol));
+            }
+            else
+            {
+                return(mSymbolEvaluationPostProcessor.modifyResult(pSymbol, this, getUnindexedValue(pSymbol)));
+            }
         }
         else
         {
-            double []doubleArray = pSymbol.mDoubleArray;
-            if(null != doubleArray)
+            if(null != pSymbol.mDoubleArray)
             {
-                return(doubleArray[arrayIndex]);
+                if(null == mSymbolEvaluationPostProcessor)
+                {
+                    return(pSymbol.mDoubleArray[pSymbol.mArrayIndex]);
+                }
+                else
+                {
+                    return(mSymbolEvaluationPostProcessor.modifyResult(pSymbol, this, pSymbol.mDoubleArray[pSymbol.mArrayIndex]));
+                }
             }
             else
             {
                 if(! mUseExpressionValueCaching)
                 {
-                    return(pSymbol.mValueArray[arrayIndex].getValue(this));
+                    if(null == mSymbolEvaluationPostProcessor)
+                    {
+                        return(pSymbol.mValueArray[pSymbol.mArrayIndex].getValue(this));
+                    }
+                    else
+                    {
+                        return(mSymbolEvaluationPostProcessor.modifyResult(pSymbol, this, pSymbol.mValueArray[pSymbol.mArrayIndex].getValue(this)));
+                    }
                 }
                 else
                 {
-                    return(pSymbol.mValueArray[arrayIndex].getValueWithCaching(this));
+                    if(null == mSymbolEvaluationPostProcessor)
+                    {
+                        return(pSymbol.mValueArray[pSymbol.mArrayIndex].getValueWithCaching(this));
+                    }
+                    else
+                    {
+                        return(mSymbolEvaluationPostProcessor.modifyResult(pSymbol, this, pSymbol.mValueArray[pSymbol.mArrayIndex].getValueWithCaching(this)));
+                    }
                 }
             }        
         }
@@ -108,7 +169,4 @@ public abstract class SymbolEvaluator implements Cloneable
     public abstract boolean hasValue(Symbol pSymbol);
 
     public abstract double getUnindexedValue(Symbol pSymbol) throws DataNotFoundException;
-
-    protected static final int NULL_ARRAY_INDEX = Symbol.NULL_ARRAY_INDEX;
-
 }
