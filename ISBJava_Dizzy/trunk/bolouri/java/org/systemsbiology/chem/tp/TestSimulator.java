@@ -35,6 +35,9 @@ public class TestSimulator
             Model model = new Model("model");
             model.addReaction(reactionX);
             model.addReaction(reactionY);
+            // this statement is really only needed for models that contain expressions
+            // that reference reserved symbols such as "Navo" or "time":
+            model.setReservedSymbolMapper(new ReservedSymbolMapperChemCommandLanguage());
             System.out.println(model.toString());
             SimulatorStochasticGillespie simulator = new SimulatorStochasticGillespie();
             simulator.initialize(model);
