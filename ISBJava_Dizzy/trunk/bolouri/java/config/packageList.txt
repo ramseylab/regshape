@@ -1,4 +1,4 @@
-isb.chem
-isb.util
-isb.chem.sbw
-isb.chem.scripting
+org.systemsbiology.chem
+org.systemsbiology.util
+org.systemsbiology.chem.sbw
+org.systemsbiology.chem.scripting
