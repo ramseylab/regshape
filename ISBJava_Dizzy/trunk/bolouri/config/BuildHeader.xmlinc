@@ -16,8 +16,8 @@
   
   <property name="dirInstallAnywhere" location="/local/InstallAnywhere_6_Enterprise" />
   <property name="binInstallAnywhere" value="${dirInstallAnywhere}/build" />
-  <property name="binHtml2PS"         value="html2ps" />
-  <property name="binHtmlTidy"        value="tidy" />
-  <property name="binPS2PDF"          value="ps2pdf" />
+  <property name="binHtml2PS"         value="/local/bin/html2ps" />
+  <property name="binHtmlTidy"        value="/local/bin/tidy" />
+  <property name="binPS2PDF"          value="/usr/bin/ps2pdf" />
   <property name="binJavaHelpIndexer" value="/local/javahelp/bin/jhindexer" />
 
