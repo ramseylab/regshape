@@ -3483,6 +3483,7 @@ public class TestSimulator
             reactionX.setRate(1.0);
             reactionY.setRate(1.0);
             Model model = new Model("model");
+            model.setReservedSymbolMapper(new ReservedSymbolMapperChemCommandLanguage());
             model.addReaction(reactionX);
             model.addReaction(reactionY);
             System.out.println(model.toString());
@@ -3526,6 +3527,15 @@ public class TestSimulator
 </blockquote>
 </p>
 <p>
+Note the line
+<blockquote>
+  <code>
+model.setReservedSymbolMapper(new ReservedSymbolMapperChemCommandLanguage())
+  </code>
+</blockquote>
+This statement is necessary in order to have <a href="#expressions">expressions</a>
+that reference the reserved symbols in the <a href="#cmdl">CMDL</a>, representing
+Time, Avogadro&amp;s constant, etc.  
 For more information on how to use the &localJavaLibraryName; library,
 please refer to the 
 <a href="&localJavaLibraryURL;/docs/UserManual.html">&localJavaLibraryName;
