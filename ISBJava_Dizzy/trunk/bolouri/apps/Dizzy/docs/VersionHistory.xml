@@ -3,6 +3,8 @@
 <!DOCTYPE isbdocument [
   <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
   %AppConfig;
+
+<!ENTITY javaURL "&webBaseURL;/&localJavaLibraryName;">
    ]>
 
 <!--
@@ -38,11 +40,11 @@ This document contains the version history for the
 <td>Date</td>
 <td>Comments</td>
 <td>Built with 
-<a href="&webBaseURL;/&localJavaLibraryName;">&localJavaLibraryName;</a> version number:</td>
+<a href="&javaURL;">&localJavaLibraryName;</a> version number:</td>
 </tr>
 
 <tr valign="top">
-<td>1.1.2</td>
+<td><a href="../1.1.2/&installerDownloadRelURL;">1.1.2</a></td>
 <td>2004/01/13</td>
 <td>
 <ul>
@@ -72,13 +74,11 @@ program now launches correctly when installed on a Mac OSX computer.</li>
 &quot;<code>ins&appName;.log</code>&quot;.</li>
 </ul>
 </td>
-<td>
-1.1.2
-</td>
+<td><a href="&javaURL;/1.1.2/&installerDownloadRelURL;">1.1.2</a></td>
 </tr>
 
 <tr valign="top">
-<td>1.1.1</td>
+<td><a href="../1.1.1/&installerDownloadRelURL;">1.1.1</a></td>
 <td>2004/01/05</td>
 <td>
 <ul>
@@ -101,13 +101,11 @@ where window resizing was not working correctly on the Windows platform.</li>
 space on the screen.</li>
 </ul>
 </td>
-<td>
-1.1.1
-</td>
+<td><a href="&javaURL;/1.1.1/&installerDownloadRelURL;">1.1.1</a></td>
 </tr>
 
 <tr valign="top">
-<td>1.1.0</td>
+<td><a href="../1.1.0/&installerDownloadRelURL;">1.1.0</a></td>
 <td>2003/12/22</td>
 <td>
 <ul>
@@ -141,13 +139,11 @@ clipboard (e.g., Windows).</li>
 <li>Added a &quot;select all symbols&quot; feature to the simulation launcher.</li>
 </ul>
 </td>
-<td>
-1.1.0
-</td>
+<td><a href="&javaURL;/1.1.0/&installerDownloadRelURL;">1.1.0</a></td>
 </tr>
 
 <tr valign="top">
-<td>1.0.0</td>
+<td><a href="../1.0.0/&installerDownloadRelURL;">1.0.0</a></td>
 <td>2003/12/08</td>
 <td>
 <ul>
@@ -166,13 +162,11 @@ for specifying the matximum allowed relative and absolute errors</li>
 expression</li>
 </ul>
 </td>
-<td>
-1.0.0
-</td>
+<td><a href="&javaURL;/1.0.0/&installerDownloadRelURL;">1.0.0</a></td>
 </tr>
 
 <tr valign="top">
-<td>0.0.8</td>
+<td><a href="../0.0.8/&installerDownloadRelURL;">0.0.8</a></td>
 <td>2003/11/21</td>
 <td>
 <ul>
@@ -189,11 +183,11 @@ a &quot;NaN&quot; (not-a-number) appears in the simulation output.  It now gives
 human-comprehensible error message.</li>
 </ul>
 </td>
-<td>0.0.8</td>
+<td><a href="&javaURL;/0.0.8/&installerDownloadRelURL;">0.0.8</a></td>
 </tr>
 
 <tr valign="top">
-<td>0.0.7</td>
+<td><a href="../0.0.7/&installerDownloadRelURL;">0.0.7</a></td>
 <td>2003/11/07</td>
 <td>
 <ul>
@@ -207,11 +201,11 @@ environment provides its own table of contents).</li>
 <li>Adjusted the default vertical dimension of the editor pane for the model editor, to 40 characters.</li>
 </ul>
 </td>
-<td>0.0.7</td>
+<td><a href="&javaURL;/0.0.7/&installerDownloadRelURL;">0.0.7</a></td>
 </tr>
 
 <tr valign="top">
-<td>0.0.6</td>
+<td><a href="../0.0.6/&installerDownloadRelURL;">0.0.6</a></td>
 <td>2003/10/22</td>
 <td>
 <ul>
@@ -220,11 +214,11 @@ environment provides its own table of contents).</li>
 reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</li>
 </ul>
 </td>
-<td>0.0.6</td>
+<td><a href="&javaURL;/0.0.6/&installerDownloadRelURL;">0.0.6</a></td>
 </tr>
 
 <tr valign="top">
-<td>0.0.5</td>
+<td><a href="../0.0.5/&installerDownloadRelURL;">0.0.5</a></td>
 <td>2003/10/20</td>
 <td>
 <ul>
@@ -242,14 +236,14 @@ directory of a Windows (or DOS) drive.</li>
 reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</li>
 </ul>
 </td>
-<td>0.0.5</td>
+<td><a href="&javaURL;/0.0.5/&installerDownloadRelURL;">0.0.5</a></td>
 </tr>
 
 <tr valign="top">
-<td>0.0.4</td>
+<td><a href="../0.0.4/&installerDownloadRelURL;">0.0.4</a></td>
 <td>2003/08/28</td>
 <td>Modified the Cytoscape bridge to use JNLP, so Cytoscape does not have to be bundled with Dizzy</td>
-<td>0.0.4</td>
+<td><a href="&javaURL;/0.0.4/&installerDownloadRelURL;">0.0.4</a></td>
 </tr>
 
 <tr valign="top">
