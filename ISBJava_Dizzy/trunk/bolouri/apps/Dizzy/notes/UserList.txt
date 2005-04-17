@@ -1,6 +1,10 @@
 Behrendt, Dominik
-Siemens
+Siemens (Germany)
 Dominik.Behrendt@scr.siemens.com
+
+Blackwell, Avrama
+George Mason University
+avrama@gmu.edu
 
 Duguid, Adam
 Edinburgh University
@@ -69,7 +73,4 @@ Yun, Zheng
 Nanyang Technological University, Singapore
 pg04325488@ntu.edu.sg
 mincloud@pmail.ntu.edu.sg
-
-
-
 
