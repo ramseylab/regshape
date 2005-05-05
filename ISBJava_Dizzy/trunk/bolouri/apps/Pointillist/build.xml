@@ -188,8 +188,6 @@
     
   </target>
 
-  <taskdef name="buildinstaller" classname="com.zerog.ia.integration.ant.InstallAnywhereAntTask" />
-
   <target name="copyImages">
     <mkdir dir="${app.webDir}/images" />
     <copy todir="${app.webDir}/images">
@@ -209,6 +207,9 @@
   </target>
   	
   <target name="buildInstallers" depends="makeInstallAnywhereConfig">
+
+    <taskdef name="buildinstaller" classname="com.zerog.ia.integration.ant.InstallAnywhereAntTask" />
+
 
     <!-- make the installer directory -->
     <mkdir dir="${app.installerDir}" />
