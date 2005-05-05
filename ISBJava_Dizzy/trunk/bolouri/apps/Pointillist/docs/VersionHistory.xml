@@ -43,6 +43,15 @@ This document contains the version history for the
 <a href="&javaURL;">&localJavaLibraryName;</a> version number:</td>
 </tr>
 
+<!--
+<ul>
+<li>Fixed problem with build script, where it was impossible to do any
+ant tasks, even those tasks that do not require InstallAnywhere,
+on a system that does not have the InstallAnywhere JAR file installed
+into the Ant lib directory.</li>
+</ul>
+-->
+
 <tr valign="top">
 <td><a href="../1.0.0/&installerDownloadRelURL;">1.0.0</a></td>
 <td>2005/04/05</td>
