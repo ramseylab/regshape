@@ -348,7 +348,7 @@ public class MainApp
             simulationRunning = simulationLauncher.getSimulationInProgress();
         }
 
-        enableMenuItem(MainMenu.MenuItem.FILE_CLOSE, ! bufferEmpty);
+        enableMenuItem(MainMenu.MenuItem.FILE_CLOSE, ! bufferEmpty || (null != bufferFilename));
         enableMenuItem(MainMenu.MenuItem.FILE_SAVE_AS, ! bufferEmpty);
         enableMenuItem(MainMenu.MenuItem.FILE_SAVE, bufferDirty && (null != bufferFilename));
         enableMenuItem(MainMenu.MenuItem.TOOLS_VIEW, ! bufferEmpty);
