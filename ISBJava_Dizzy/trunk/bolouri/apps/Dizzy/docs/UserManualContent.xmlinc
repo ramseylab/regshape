@@ -116,13 +116,15 @@ version of the &appName; system.
 
 <isb:docsubsection name="Publications" label="pubs">
 <p>
-An <a href="&appPublicationURL;/JBCB_2005.pdf">article [PDF]</a> 
-describing &appName;
-is available (Journal of Bioinformatics and Computational
-Biology, <bf>3(2)</bf> 415-436, 2005).  The 
-<a href="&appPublicationURL;/JBCB_2005_Supp.pdf">Supplementary Material [PDF]</a> 
-for the article is also available.
-</p>
+An <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=15852513">article</a>
+describing &appName; has been published,
+<table border="1">
+  <tr>
+    <td><blockquote>Ramsey S., Orrell D. and Bolouri H. <em></em>Dizzy: stochastic simulation of large-scale genetic regulatory
+      networks.</em> J. Bioinf. Comp. Biol. <b>3(2)</b> 415-436, 2005.</blockquote></td>
+  </tr>
+</table>
+Please see the above PubMed hyperlink to access the article.
   
 </isb:docsubsection>
 
