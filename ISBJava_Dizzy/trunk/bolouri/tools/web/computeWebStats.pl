@@ -82,6 +82,7 @@ sub computeWebStats($$$)
     # handle application downloads counter
     open(DOWNLOADS, "<" . SCRATCH_DIR . "/${appName}Downloads.txt") or die("unable to open ${appName} downloads file, for reading");
     my $numDownloads = <DOWNLOADS>;
+    chomp($numDownloads);
     close(DOWNLOADS);
     if(! defined($numDownloads))
     {
@@ -97,6 +98,7 @@ sub computeWebStats($$$)
     # handle visitors counter
     open(VISITORS, "<" . SCRATCH_DIR . "/${appName}Visitors.txt") or die("unable to open ${appName} visitors file, for reading");
     my $numVisitors = <VISITORS>;
+    chomp($numVisitors);
     close(VISITORS);
     if(! defined($numVisitors))
     {
