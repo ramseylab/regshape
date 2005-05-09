@@ -116,10 +116,10 @@ version of the &appName; system.
 
 <isb:docsubsection name="Publications" label="pubs">
 <p>
-A <a href="&appPublicationURL;/JBCB_2005.pdf">preprint of an article [PDF]</a> 
+An <a href="&appPublicationURL;/JBCB_2005.pdf">article [PDF]</a> 
 describing &appName;
-is available (to be published in the Journal of Bioinformatics and Computational
-Biology, May 2005).  The 
+is available (Journal of Bioinformatics and Computational
+Biology, <bf>3(2)</bf> 415-436, 2005).  The 
 <a href="&appPublicationURL;/JBCB_2005_Supp.pdf">Supplementary Material [PDF]</a> 
 for the article is also available.
 </p>
