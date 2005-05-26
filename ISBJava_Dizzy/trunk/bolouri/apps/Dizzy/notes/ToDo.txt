@@ -7,3 +7,8 @@ some reactions are performed at all."  (Axel Kowald, 2004/10/26)
 (3) Modify SimulationResultsPlot to use the latest version of JFreeChart
 
 (4) Try compiling ISBJava using a Java-to-Native compiler (Axel Kowald, 2004/03/03)
+
+(5) Integrate Erika Birse's patches into Dizzy
+
+(6) Modify the "File->Quit" handler to display a confirmation dialog box if the edit
+buffer is dirty.
