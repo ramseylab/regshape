@@ -51,6 +51,8 @@ on a system that does not have the InstallAnywhere JAR file installed
 into the Ant lib directory.</li>
 <li>Fixed a bug where the "File->Close" menu item was not being enabled 
 after the user loads a zero-length file into the edit buffer.</li>
+<li>Fixing missing sample file "Michaelis.cmdl".  Removed unneeded
+sample file "sample-model-sbml.xml".</li>
 </ul>
 -->
 
