@@ -2162,7 +2162,7 @@ and any path to a file to read from that file]]></string>
 												<string><![CDATA[664]]></string>
 											</property>
 											<property name="sourceName">
-												<string><![CDATA[sample-model-sbml.xml]]></string>
+												<string><![CDATA[Michaelis.cmdl]]></string>
 											</property>
 											<property name="overrideUnixPermissions">
 												<boolean>true</boolean>
@@ -2174,7 +2174,7 @@ and any path to a file to read from that file]]></string>
 												<boolean>true</boolean>
 											</property>
 											<property name="destinationName">
-												<string><![CDATA[sample-model-sbml.xml]]></string>
+												<string><![CDATA[Michaelis.cmdl]]></string>
 											</property>
 											<property name="fileSize">
 												<long>2945</long>
