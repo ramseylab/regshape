@@ -13,3 +13,7 @@ some reactions are performed at all."  (Axel Kowald, 2004/10/26)
 (6) Modify the "File->Quit" handler to display a confirmation dialog box if the edit
 buffer is dirty.
 
+(7) Fix warning in build.xml file for ISBJava "buildPDF" target, about JavadocTitlePageSimple.html
+file being invalid or missing ??
+
+(8) The main ISBJava web page should link to the PDF for the UserManual for ISBJava
