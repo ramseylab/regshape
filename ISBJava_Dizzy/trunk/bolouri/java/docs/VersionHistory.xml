@@ -42,6 +42,11 @@ This document contains the version history for the
 <li>Fixed a bug in <code>org.systemsbiology.chem.app.MainApp.updateMenus()</code>,
 where the "File->Close" menu item was not being enabled after the user loads a zero-length
 file into the edit buffer.</li>
+<li>Updated the <code>SBWCore.jar</code> library distributed in the <code>lib</code>
+subdirectory.  The new version of <code>SBWCore.jar</code> is taken from version 2.2.0
+of the Systems Biology Workbench (SBW) software distribution.  This fixes an incompatibility 
+with the 2.X.X versions of SBW, that was causing an exception when the 
+<code>org.systemsbiology.chem.sbw.SimulationModule</code> program was executed.</li>
 </ul>
 -->
 
