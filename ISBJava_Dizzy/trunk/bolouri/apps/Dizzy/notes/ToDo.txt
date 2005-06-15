@@ -13,4 +13,3 @@ some reactions are performed at all."  (Axel Kowald, 2004/10/26)
 (6) Modify the "File->Quit" handler to display a confirmation dialog box if the edit
 buffer is dirty.
 
-(7) "Register SBW Simulators" is broken with SBW v2.0.1 (Ole Schulz-Trieglaff, 2005/06/15)
