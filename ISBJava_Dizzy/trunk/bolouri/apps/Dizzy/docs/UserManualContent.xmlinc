@@ -3087,7 +3087,10 @@ section of the &appName; user manual assumes you are familiar with the architect
 terminology of the Systems Biology Workbench system.  For a good overview of these
 concepts and terminology, please refer to the
 <a href="&sbwURL;/docs/intro/intro.pdf">Introduction to the Systems Biology Workbench</a>
-document, available at the SBW Project home page.  The interface
+document, available at the SBW Project home page.  <b>Please note:</b> The SBW interface
+in &appName; is compatible only with versions 2.X.X of the SBW, and not with the 1.X.X
+versions.  Unfortunately, the 2.X.X versions of SBW are only available in precompiled
+format on the Windows operating system.  The interface
 to SBW offered by &appName; includes a SBW module &quot;<code>org.systemsbiology.chem.Simulator</code>&quot;,
 which contains three SBW services, each of which implements the standard SBW simulation
 service API as defined in the <a href="&sbwURL;/docs/module-api/module-api.pdf">Systems
@@ -3119,9 +3122,7 @@ displayed.  [The console window will go away as soon as the registration is
 complete, so it may just appear as a brief flicker of a window on the screen.]
 At this point, the &appName; simulation services
 can be seen by interrogating the SBW Broker using one of the SBW Broker
-module browsing tools, such as &quot;SBW Inspector&quot; or 
-&quot;SBW Browser&quot; (the Browser tool ships with SBW, and the Inspector
-tool is available for download from the SBW Project home page.  It should be
+module browsing tools, such as &quot;SBW Inspector&quot;.  It should be
 emphasized that at this point, the &appName; simulation services 
 are not actually running, they are just registered with the broker.
 A simulation service will be automatically started if a software program attempts
@@ -3143,6 +3144,18 @@ interrogate the available &appName; simulation services through the
 Python command-line, without needing to use the SBW API.
 </li>
 </ol>
+</p>
+<p>
+Although &appName; is not compatible with 1.X.X versions of SBW, it can
+be made compatible by compiling the <a href="&webBaseURL;/&localJavaLibraryName;">&localJavaLibraryName;</a> 
+library using the <code>SBWCore.jar</code> library taken from a 1.X.X version
+of SBW.  See the user manual for &localJavaLibraryName;, for information about
+how to compile the &localJavaLibraryName; library.  
+The version of &appName; that is distributed with the graphical
+installer is compiled against a 2.X.X version of SBW, which is the preferred
+and supported SBW platform. 
+</p>
+<p>
 To have the full capabilities of &appName; available, it is recommended
 that you use the <a href="#gui">&appName; Graphical User Interface</a>,
 the <a href="#commandline">&appName; Command-Line Interface</a>, or the
@@ -4091,6 +4104,11 @@ package does not currently support interpolation, so the results from that simul
 will appear to have discontinuous jumps between constant values, when the simulator is
 able to take large time-steps.  The data point at the start of every constant region 
 is the correct value at that time.
+</li>
+<li>
+The <a href="#sbwinterface">Systems Biology Workbench interface</a> of &appName; is
+compatible only with SBW versions 2.X.X.  &appName; is not compatible with 1.X.X versions of SBW,
+although <a href="#sbwinterface">see the note</a> about recompiling against earlier versions.
 </li>
 <li>
 The &quot;<code>odeToJava-imex443-stiff</code>&quot; simulator cannot be

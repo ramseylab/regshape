@@ -37,7 +37,11 @@ This document contains the version history for the
 <td>Comments</td>
 </tr>
 
-<!--
+
+<tr valign="top">
+<td><a href="../2.2.1/download.html">2.2.1</a></td>
+<td>2005/06/15</td>
+<td>
 <ul>
 <li>Fixed a bug in <code>org.systemsbiology.chem.app.MainApp.updateMenus()</code>,
 where the "File->Close" menu item was not being enabled after the user loads a zero-length
@@ -48,7 +52,8 @@ of the Systems Biology Workbench (SBW) software distribution.  This fixes an inc
 with the 2.X.X versions of SBW, that was causing an exception when the 
 <code>org.systemsbiology.chem.sbw.SimulationModule</code> program was executed.</li>
 </ul>
--->
+</td>
+</tr>
 
 <tr valign="top">
 <td><a href="../2.2.0/download.html">2.2.0</a></td>
@@ -175,7 +180,7 @@ if both tolerances were not explicitly specified on the command-line.</li>
 
 
 
-  <tr valign="top">
+<tr valign="top">
 <td><a href="../2.1.1/download.html">2.1.1</a></td>
 <td>2005/02/18</td>
 <td>

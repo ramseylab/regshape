@@ -43,7 +43,10 @@ This document contains the version history for the
 <a href="&javaURL;">&localJavaLibraryName;</a> version number:</td>
 </tr>
 
-<!--
+<tr valign="top">
+<td><a href="../1.9.2/&installerDownloadRelURL;">1.9.2</a></td>
+<td>2005/06/15</td>
+<td>
 <ul>
 <li>Fixed problem with build script, where it was impossible to do any
 ant tasks, even those tasks that do not require InstallAnywhere,
@@ -53,8 +56,18 @@ into the Ant lib directory.</li>
 after the user loads a zero-length file into the edit buffer.</li>
 <li>Fixing missing sample file "Michaelis.cmdl".  Removed unneeded
 sample file "sample-model-sbml.xml".</li>
+<li>Fixed a problem where the <code>RegisterSBWSimulators</code> launcher
+was failing with an exception, when the installed version of the 
+Systems Biology Workbench (SBW) is 2.0.0 or greater.  This has the side effect
+that the version of &appName; distributed through the graphical installer
+will not work with 1.X.X versions of the SBW.  However, see the
+<a href="UserManual.html#sbwinterface">user manual</a> for information
+about how to make &appName; compatible with 1.X.X versions of SBW.  Thanks
+to Stanley Ng and Ole Schulz-Trieglaf for reporting this problem.</li>
 </ul>
--->
+</td>
+<td><a href="&javaURL;/2.2.1/download.html">2.2.1</a></td>
+</tr>
 
 
 <tr valign="top">
