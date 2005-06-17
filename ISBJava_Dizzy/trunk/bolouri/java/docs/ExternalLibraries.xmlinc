@@ -101,10 +101,10 @@ by Herbert Sauro and the SBW Project team)</td>
 <tr>
 <td>Cytoscape</td><td><code>cytoscape.jar</code></td>
 <td>
-The Cytoscape program.</td>
+<a href="&cytoscapeURL;"><code>&cytoscapeURL;</code></a></td>
 <td>LGPL</td>
 <td>1.1.1</td>
-<td>see <a href="http://www.cytoscape.org">the Cytoscape Project Home Page</a></td>
+<td>see <a href="&cytoscapeURL;">the Cytoscape Project Home Page</a></td>
 </tr>
 </table>
 </blockquote>
