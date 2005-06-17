@@ -3594,7 +3594,7 @@ model.setReservedSymbolMapper(new ReservedSymbolMapperChemCommandLanguage())
 </blockquote>
 This statement is necessary in order to have <a href="#expressions">expressions</a>
 that reference the reserved symbols in the <a href="#cmdl">CMDL</a>, representing
-Time, Avogadro&amp;s constant, etc.  
+Time, Avogadro's constant, etc.  
 For more information on how to use the &localJavaLibraryName; library,
 please refer to the 
 <a href="&localJavaLibraryURL;/docs/UserManual.html">&localJavaLibraryName;
