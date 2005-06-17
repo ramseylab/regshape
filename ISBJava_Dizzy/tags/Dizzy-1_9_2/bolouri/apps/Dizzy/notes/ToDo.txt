@@ -1,0 +1,20 @@
+(1) "Maybe more information could be printed if the "debug" option is used. STOCKS prints in debug mode all 
+reactions performed together with the waiting time until this reaction occured. This is useful to see if 
+some reactions are performed at all."  (Axel Kowald, 2004/10/26)
+
+(2) Modify ModelViewerCytoscape class to use the latest version of the Cytoscape SBML Reader Plug-In
+
+(3) Modify SimulationResultsPlot to use the latest version of JFreeChart
+
+(4) Try compiling ISBJava using a Java-to-Native compiler (Axel Kowald, 2004/03/03)
+
+(5) Integrate Erika Birse's patches into Dizzy
+
+(6) Modify the "File->Quit" handler to display a confirmation dialog box if the edit
+buffer is dirty.
+
+(7) Fix warning in build.xml file for ISBJava "buildPDF" target, about JavadocTitlePageSimple.html
+file being invalid or missing ??
+
+(8) Waiting to hear back from Frank Bergmann regarding issue with SBW compatibility (stack
+backtrace originally provided by Ole Schulz-Trieglaf)
