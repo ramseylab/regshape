@@ -221,7 +221,45 @@
  
   <target name="buildHTML" depends="style, srcTar, copyHtml, copyImages, javadoc" />
 
-  <target name="buildPDF" depends="javadocPDF" />
+  <target name="buildPDF" depends="javadocPDF, tidyHTML, convertHtmlToPDF" />
+
+  <target name="tidyHTML"> 
+    <apply executable="${binHtmlTidy}" failonerror="false">
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.html" />
+        <include name="AppHelp.html" />
+      </fileset>
+      <arg value="-modify" />
+      <arg value="-quiet" />
+      <arg value="-asxhtml" />
+      <srcfile />
+    </apply>
+  </target>
+	
+  <target name="convertHtmlToPDF">
+    <apply executable="${binHtml2PS}" failonerror="true" dest="${app.webDir}/docs">
+      <mapper type="regexp" from="^(.*)\.html$$" to="\1\.ps" />
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.html" />
+      </fileset>
+      <arg value="-o" />
+      <targetfile />
+      <srcfile />
+    </apply>
+    <apply executable="${binPS2PDF}" failonerror="true" dest="${app.webDir}/docs">
+      <mapper type="regexp" from="^(.*)\.ps$$" to="\1\.pdf" />
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.ps" />
+      </fileset>
+      <srcfile />
+      <targetfile />
+    </apply>
+    <delete>
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.ps" />
+      </fileset>
+    </delete>
+  </target>
 
   <target name="compile">
     <mkdir dir="${app.classesDir}" />
