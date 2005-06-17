@@ -37,4 +37,4 @@
 
 <!ENTITY installerDownloadRelURL "installer/Web_Installers/install.htm">
 <!ENTITY sbmlURL "http://www.sbml.org">
-<!ENTITY sbwURL "http://sourceforge.net/projects/sbw">
+<!ENTITY sbwURL "http://sbw.kgi.edu">
