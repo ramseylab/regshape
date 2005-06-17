@@ -16,4 +16,7 @@ buffer is dirty.
 (7) Fix warning in build.xml file for ISBJava "buildPDF" target, about JavadocTitlePageSimple.html
 file being invalid or missing ??
 
-(8) The main ISBJava web page should link to the PDF for the UserManual for ISBJava
+(8) The main Dizzy web page should link to the PDF for the ISBJava javadoc.
+
+(9) Waiting to hear back from Frank Bergmann regarding issue with SBW compatibility (stack
+backtrace originally provided by Ole Schulz-Trieglaf)
