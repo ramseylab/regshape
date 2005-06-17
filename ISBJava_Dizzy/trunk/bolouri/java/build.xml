@@ -174,7 +174,7 @@
     <copy todir="${app.buildDir}/&appName;/docs" file="${globalStyle}/License.html" />
 
     <!-- copy PDF documentation -->
-    <copy todir="${app.buildDir}/&appName;/docs" file="${app.webDir}/docs/APIDocumentation.pdf" />
+    <copy todir="${app.buildDir}/&appName;/docs" file="${app.webDir}/docs/*.pdf" />
 
     <mkdir dir="${app.webDir}/${app.version}" />
 
