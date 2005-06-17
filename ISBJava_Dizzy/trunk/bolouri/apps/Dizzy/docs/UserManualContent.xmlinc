@@ -3088,9 +3088,9 @@ terminology of the Systems Biology Workbench system.  For a good overview of the
 concepts and terminology, please refer to the
 <a href="&sbwURL;/docs/intro/intro.pdf">Introduction to the Systems Biology Workbench</a>
 document, available at the SBW Project home page.  <b>Please note:</b> The SBW interface
-in &appName; is compatible only with versions 2.X.X of the SBW, and not with the 1.X.X
-versions.  Unfortunately, the 2.X.X versions of SBW are only available in precompiled
-format on the Windows operating system.  The interface
+in &appName; is compatible only with SBW versions 2.1.0 or newer, and not with the 1.X.X
+versions.  Unfortunately, the precompiled 2.X.X versions of SBW are only available for the
+Windows operating system.  The interface
 to SBW offered by &appName; includes a SBW module &quot;<code>org.systemsbiology.chem.Simulator</code>&quot;,
 which contains three SBW services, each of which implements the standard SBW simulation
 service API as defined in the <a href="&sbwURL;/docs/module-api/module-api.pdf">Systems
