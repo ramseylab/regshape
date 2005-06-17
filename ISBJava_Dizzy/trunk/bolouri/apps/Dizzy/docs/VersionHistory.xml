@@ -59,7 +59,7 @@ sample file "sample-model-sbml.xml".</li>
 <li>Fixed a problem where the <code>RegisterSBWSimulators</code> launcher
 was failing with an exception, when the installed version of the 
 Systems Biology Workbench (SBW) is 2.0.0 or greater.  Now, &appName;
-works correctly with SBW version 2.1.0 or newer.  This has the side effect
+works correctly with SBW version 2.2.1 or newer.  This has the side effect
 that the version of &appName; distributed through the graphical installer
 will not work with 1.X.X versions of the SBW.  However, see the
 <a href="UserManual.html#sbwinterface">user manual</a> for information

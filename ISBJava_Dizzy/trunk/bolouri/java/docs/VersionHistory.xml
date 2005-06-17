@@ -47,9 +47,9 @@ This document contains the version history for the
 where the "File->Close" menu item was not being enabled after the user loads a zero-length
 file into the edit buffer.</li>
 <li>Updated the <code>SBWCore.jar</code> library distributed in the <code>lib</code>
-subdirectory.  The new version of <code>SBWCore.jar</code> is taken from version 2.1.0
+subdirectory.  The new version of <code>SBWCore.jar</code> is taken from version 2.2.1
 of the Systems Biology Workbench (SBW) software distribution, and is compatible with 
-SBW versions 2.1.0 and newer.  This fixes an incompatibility 
+SBW versions 2.2.1 and newer.  This fixes an incompatibility 
 with the 2.X.X versions of SBW, that was causing an exception when the 
 <code>org.systemsbiology.chem.sbw.SimulationModule</code> program was executed.</li>
 </ul>
