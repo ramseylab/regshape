@@ -3053,7 +3053,8 @@ for defining a <a href="#modelinstances">model instance</a> for a
 system of interacting chemical species.  The specification for SBML
 can be found at the home page of the 
 <a href="&sbmlURL;">Systems Biology Workbench Development 
-Group</a>.  
+Group</a>.  &appName; is capable of reading a model in SBML Level 1 format, 
+Versions 1 and 2.  &appName; can export a model to SBML Level 1, Version 2.
 </p>
 <p>
 The &appName; system is capable of importing a model instance
@@ -3154,6 +3155,24 @@ how to compile the &localJavaLibraryName; library.
 The version of &appName; that is distributed with the graphical
 installer is compiled against a 2.X.X version of SBW, which is the preferred
 and supported SBW platform. 
+</p>
+<p>
+In addition to supporting the Simulation Service application programming
+interface as defined in the Systems Biology Workbench Module Programmers
+Manual (A. Finney <em>et al.</em>, ERATO Kitano Systems Biology Project, 2002),
+&appName; provides an SBW-accessible method for loading a model in 
+<a href="#cmdl">CMDL</a> format, on each of its SBW simulation services,
+<blockquote>
+  <pre>
+    String []loadCMDLModel(String cmdl)
+  </pre>
+</blockquote>
+It should be noted that file inclusion within a CMDL model, 
+using the <code>#include</code> directive,
+is not allowed via th SBW interface, for security reasons.
+For a list of all SBW-accessible methods on the SBW simulation services
+in &appName;, please refer to the
+<a href="#api">programmatic interface section</a> of the user manual.
 </p>
 <p>
 To have the full capabilities of &appName; available, it is recommended
