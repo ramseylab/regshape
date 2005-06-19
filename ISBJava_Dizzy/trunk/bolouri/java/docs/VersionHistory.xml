@@ -37,6 +37,40 @@ This document contains the version history for the
 <td>Comments</td>
 </tr>
 
+<tr valign="top">
+<td><a href="../2.2.2/download.html">2.2.2</a></td>
+<td>2005/06/19</td>
+<td>
+<ul>
+<li>
+Modified <code>org.systemsbiology.chem.sbw.SimulationService</code> and
+<code>ISimulationService</code> to add the method <code>loadCMDLModel()</code>,
+which allows remote invocation of the SBW simulation services by passing the
+model definition text in CMDL format.
+</li>
+<li>
+Created a test program <code>org.systemsbiology.chem.sbw.tp.TestCMDLBuilder</code>,
+which connects to the SBW broker and passes the text of a model, in CMDL format,
+to the <code>org.systemsbiology.chem.sbw.GibsonBruckService</code> simulation 
+service.
+</li>
+<li>
+Added some operating-system-specific initialization code to the <code>main()</code>
+method of <code>org.systemsbiology.chem.sbw.SimulationModule</code>, to work around
+a bug in <code>SBWCore.jar</code> on non-Windows platforms.  (Thanks to 
+Frank Bergmann for supplying this patch.)  The bug causes clients to fail to
+connect to the SBW broker on non-Windows systems with newer versions of SBW.
+</li>
+<li>
+Modified <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code> to allow
+a null <code>IncludeHandler</code> to be passed to <code>buildModel()</code>.  This
+state indicates that file inclusion is not allowed in processing the model text,
+for security reasons.  This feature is used by the <code>loadCMDLModel()</code>
+method in the SBW service class <code>org.systemsbiology.chem.sbw.SimulationService</code>.
+</li>
+</ul>
+</td>
+</tr>
 
 <tr valign="top">
 <td><a href="../2.2.1/download.html">2.2.1</a></td>

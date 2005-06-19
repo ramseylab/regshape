@@ -15,9 +15,9 @@
 <!ENTITY appName "&localJavaLibraryName;">
 <!ENTITY appVersionMajor "2">
 <!ENTITY appVersionMinor "2">
-<!ENTITY appVersionPatch "1">
+<!ENTITY appVersionPatch "2">
 <!ENTITY appVersion "&appVersionMajor;.&appVersionMinor;.&appVersionPatch;">
-<!ENTITY appDate "2005/06/15">
+<!ENTITY appDate "2005/06/19">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
 <!ENTITY appIconURL "">
 
