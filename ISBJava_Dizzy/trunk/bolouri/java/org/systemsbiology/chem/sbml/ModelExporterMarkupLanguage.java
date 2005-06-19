@@ -22,7 +22,8 @@ import java.util.*;
 
 /**
  * Exports a {@link org.systemsbiology.chem.Model} to
- * the Systems Biology Markup Language (SBML) format.
+ * the Systems Biology Markup Language (SBML) format,
+ * Level 1, Version 1 or 2 (Version 2 is the default).
  *
  * @author Stephen Ramsey
  */
