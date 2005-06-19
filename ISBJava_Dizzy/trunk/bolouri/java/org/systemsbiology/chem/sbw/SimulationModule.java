@@ -18,38 +18,50 @@ public class SimulationModule
     public static void main(String []pArgs)
     {
         try
+        {
+            // -------------------------------
+            // :TODO: remove this next section when we upgrade to the SBWCore.jar from 
+            // SBW version 2.3.1.  This block of code works around a SBW bug on non-Windows 
+            // platforms.
+            if (edu.caltech.sbw.Sys.OSIsMac() ||
+                    edu.caltech.sbw.Sys.OSIsUnix())
             {
-                ModuleImpl moduleImp = new ModuleImpl(MODULE_UNIQUE_NAME, 
-                                                      MODULE_DISPLAY_NAME, 
-                                                      ModuleImpl.SELF_MANAGED,
-                                                      SimulationModule.class);
-
-                moduleImp.addService(GillespieService.SERVICE_NAME,
-                                     GillespieService.SERVICE_DESCRIPTION,
-                                     "Simulation",
-                                     GillespieService.class);
-
-                moduleImp.addService(GibsonBruckService.SERVICE_NAME,
-                                     GibsonBruckService.SERVICE_DESCRIPTION,
-                                     "Simulation",
-                                     GibsonBruckService.class);
-
-                moduleImp.addService(DeterministicService.SERVICE_NAME,
-                                     DeterministicService.SERVICE_DESCRIPTION,
-                                     "Simulation",
-                                     DeterministicService.class);
-
-                if(pArgs[0].equals("-sbwregister"))
-                {
-                    System.out.println("registering SBW simulation module");
-                }
-                else if(pArgs[0].equals("-sbwmodule"))
-                {
-                    System.out.println("running SBW simulation module");
-                }
-
-                moduleImp.run(pArgs);
+                System.setProperty("java.net.preferIPv4Stack", "true");
+                System.setProperty("sbw.broker.allow-remote-modules", "true");
             }
+            // -------------------------------
+            
+            ModuleImpl moduleImp = new ModuleImpl(MODULE_UNIQUE_NAME, 
+                    MODULE_DISPLAY_NAME, 
+                    ModuleImpl.SELF_MANAGED,
+                    SimulationModule.class);
+            
+            moduleImp.addService(GillespieService.SERVICE_NAME,
+                    GillespieService.SERVICE_DESCRIPTION,
+                    "Simulation",
+                    GillespieService.class);
+            
+            moduleImp.addService(GibsonBruckService.SERVICE_NAME,
+                    GibsonBruckService.SERVICE_DESCRIPTION,
+                    "Simulation",
+                    GibsonBruckService.class);
+            
+            moduleImp.addService(DeterministicService.SERVICE_NAME,
+                    DeterministicService.SERVICE_DESCRIPTION,
+                    "Simulation",
+                    DeterministicService.class);
+            
+            if(pArgs[0].equals("-sbwregister"))
+            {
+                System.out.println("registering SBW simulation module");
+            }
+            else if(pArgs[0].equals("-sbwmodule"))
+            {
+                System.out.println("running SBW simulation module");
+            }
+            
+            moduleImp.run(pArgs);
+        }
 
         catch(SBWException e)
             {
