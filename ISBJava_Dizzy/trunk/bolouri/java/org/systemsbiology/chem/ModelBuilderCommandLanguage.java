@@ -43,9 +43,10 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     private static final Pattern VALID_SYMBOL_PATTERN = Pattern.compile(VALID_SYMBOL_REGEX);
     private static final String REQUIRED_CHAR_SET = "UTF-8";
     private static final String COMPARTMENT_NAME_DEFAULT = "univ";
+    
 
     private String mNamespace;
-    
+
     private static final Charset sCharset;
     
     static
@@ -168,8 +169,7 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     {
         mSearchPatternMath = pSearchPatternMath;
     }
-
-
+    
     private void initializeSearchPatternMath()
     {
         String searchRegex = "\\[([^\\[\\]]+)\\]";
@@ -1557,6 +1557,11 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
                                         MutableInteger pNumReactions,
                                         IncludeHandler pIncludeHandler) throws InvalidInputException
     {
+        if(null == pIncludeHandler)
+        {
+            throw new InvalidInputException("encountered an include statement; include statements are not allowed in this context");
+        }
+        
         Token token = getNextToken(pTokenIter);
         assert (token.mCode.equals(Token.Code.POUNDSIGN)) : "where expected a pound sign, got an unexpected token: " + token;
 
@@ -2246,10 +2251,6 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
     public Model buildModel( InputStream pInputStream,
                              IncludeHandler pIncludeHandler ) throws InvalidInputException, IOException
     {
-        if(null == pIncludeHandler)
-        {
-            throw new IllegalArgumentException("null include handler");
-        }
         Model model = new Model();
         model.setName(DEFAULT_MODEL_NAME);
         model.setReservedSymbolMapper(new ReservedSymbolMapperChemCommandLanguage());
