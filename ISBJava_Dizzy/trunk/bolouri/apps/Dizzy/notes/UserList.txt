@@ -2,6 +2,10 @@ Behrendt, Dominik
 Siemens (Germany)
 Dominik.Behrendt@scr.siemens.com
 
+Birgmann, Frank
+Keck Graduate Institute
+frank_birgmann@kgi.edu
+
 Blackwell, Avrama
 George Mason University
 avrama@gmu.edu
@@ -68,6 +72,10 @@ s0458133@sms.ed.ac.uk
 Solis, Earl
 MIT
 eps@mit.edu
+
+Spencer, Richard
+EPA (Lockheed), Research Triangle Park, NC
+Spencer.Richard@epamail.epa.gov
 
 Taylor, James
 Institute for Systemsb Biology
