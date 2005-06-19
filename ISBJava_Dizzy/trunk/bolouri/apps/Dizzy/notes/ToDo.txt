@@ -18,3 +18,5 @@ file being invalid or missing ??
 
 (8) Waiting to hear back from Frank Bergmann regarding issue with SBW compatibility (stack
 backtrace originally provided by Ole Schulz-Trieglaf)
+
+(9) Add support for SBML Level 2.   Requested by:  Richard Spencer, 2006/06/17
