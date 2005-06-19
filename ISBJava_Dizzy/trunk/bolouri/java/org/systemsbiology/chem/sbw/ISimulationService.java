@@ -14,6 +14,7 @@ public interface ISimulationService
 {
     String []optionsSupported();
     String []loadSBMLModel(String sbml) throws SBWException;
+    String []loadCMDLModel(String cmdl) throws SBWException;
     void doTimeBasedSimulation(Module pSource, double startTime, double endTime, int noOfPoints, String[] filter) throws SBWException;
     void stop() throws SBWException;
     void restart() throws SBWException;

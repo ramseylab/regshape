@@ -104,6 +104,55 @@ public abstract class SimulationService implements ISimulationService
         return(retArray);
     }
 
+    private String []getDynamicSpecies(Model pModel)
+    {
+        Collection dynamicSymbols = pModel.getDynamicSymbols();
+        List dynamicSymbolsList = new LinkedList(dynamicSymbols);
+        Collections.sort(dynamicSymbolsList);
+        String []floatingSpecies = new String[dynamicSymbols.size()];
+        Iterator dynamicSymbolsIter = dynamicSymbolsList.iterator();
+        int symCtr = 0;
+        while(dynamicSymbolsIter.hasNext())
+        {
+            SymbolValue symbolValue = (SymbolValue) dynamicSymbolsIter.next();
+            String symbolName = symbolValue.getSymbol().getName();
+            floatingSpecies[symCtr] = symbolName;
+            ++symCtr;
+        }
+
+        return(floatingSpecies);        
+    }
+    
+    public String []loadCMDLModel(String sbml) throws SBWApplicationException
+    {
+        try
+        {
+            byte []cmdlBytes = sbml.getBytes();
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(cmdlBytes);
+            ModelBuilderCommandLanguage modelBuilder = new ModelBuilderCommandLanguage();
+            IncludeHandler fileIncludeHandler = null;  // file inclusion not allowed, for security reasons
+            Model model = modelBuilder.buildModel(inputStream, fileIncludeHandler);
+
+            String []dynamicSpecies = getDynamicSpecies(model);
+
+            ISimulator simulator = getSimulator();
+            SimulationController simulationController = getSimulationController();
+            simulator.initialize(model);
+            simulator.setController(simulationController);
+
+            return(dynamicSpecies);
+        }
+        catch(Exception e)
+        {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            pw.flush();
+            String stackTrace = sw.toString();
+            throw new SBWApplicationException("exception in loadSBMLModel()", "an exception occurred in loadSBMLModel(); error message is: " + e.toString() + "\n" + "stacktrace: " + stackTrace);
+        }
+    }
+    
     public String []loadSBMLModel(String sbml) throws SBWApplicationException
     {
         try
@@ -114,26 +163,14 @@ public abstract class SimulationService implements ISimulationService
             IncludeHandler fileIncludeHandler = null;
             Model model = modelBuilder.buildModel(inputStream, fileIncludeHandler);
 
-            Collection dynamicSymbols = model.getDynamicSymbols();
-            List dynamicSymbolsList = new LinkedList(dynamicSymbols);
-            Collections.sort(dynamicSymbolsList);
-            String []floatingSpecies = new String[dynamicSymbols.size()];
-            Iterator dynamicSymbolsIter = dynamicSymbolsList.iterator();
-            int symCtr = 0;
-            while(dynamicSymbolsIter.hasNext())
-            {
-                SymbolValue symbolValue = (SymbolValue) dynamicSymbolsIter.next();
-                String symbolName = symbolValue.getSymbol().getName();
-                floatingSpecies[symCtr] = symbolName;
-                ++symCtr;
-            }
-
+            String []dynamicSpecies = getDynamicSpecies(model);
+            
             ISimulator simulator = getSimulator();
             SimulationController simulationController = getSimulationController();
             simulator.initialize(model);
             simulator.setController(simulationController);
 
-            return(floatingSpecies);
+            return(dynamicSpecies);
         }
         catch(Exception e)
         {
