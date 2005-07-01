@@ -25,8 +25,10 @@ public class AboutDialog
 
         String message = new String( mAppConfig.getAppName() + " version " + 
                                      mAppConfig.getAppVersion() + "\nReleased " + 
-                                     mAppConfig.getAppDate() + "\nHome page: " +
-                                     mAppConfig.getAppHomePage() );
+                                     mAppConfig.getAppDate() + "\n" +
+                                     mAppConfig.getAppHomePage() + "\n" + 
+                                     mAppConfig.getAppCopyright());
+       
 
         JOptionPane optionPane = new JOptionPane();
         optionPane.setMessage(message);
