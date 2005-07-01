@@ -3104,7 +3104,8 @@ simulation launcher.  The SBML model is processed, and the
 <a href="#gui">simulation launcher</a> window is then displayed.  The
 <code>doAnalysisCMDL(cmdl)</code> method of the "asim" service is used to
 pass a model in <a href="#cmdl">CMDL</a> format to the simulation launcher.</li>
-</ul>
+</p>
+<p>
 Before the &appName; simulator can be accessed through the SBW, the Systems
 Biology Workbench must first be installed on your computer.  The software and
 installation instructions may be downloaded from the
