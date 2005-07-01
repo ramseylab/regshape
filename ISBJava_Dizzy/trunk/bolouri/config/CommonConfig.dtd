@@ -13,7 +13,7 @@
 <!ENTITY mainLogoRelURL       "images/logo-isb.png">
 
 <!ENTITY mainGroup            "Bolouri Group">
-<!ENTITY mainGroupURL         "&mainPublicURL;/Default.aspx?pagename=bolourilab">
+<!ENTITY mainGroupURL         "&mainPublicURL;/Scientists_and_Research/Faculty_Groups/Bolouri_Group">
 <!ENTITY mainAffiliation      "Institute for Systems Biology">
 <!ENTITY mainGroupEmailSafe   "bolourilab at systemsbiology.org">
 <!ENTITY mainGroupEmail       "bolourilab@systemsbiology.org">
@@ -26,7 +26,6 @@
 
 <!ENTITY groupLogoRelURL "images/logo-bolourilab.png">
 
-<!ENTITY cytoscapeURL "http://www.cytoscape.org">
 
 <!-- these definitions are used in styled XHTML files: -->
 <!ENTITY eacute "&#x00E9;">
@@ -35,6 +34,10 @@
 <!-- this is the name of the main stylesheet file for ISB documentation -->
 <!ENTITY mainDocumentStylesheet "documentation-stylesheet.xml">
 
+<!-- the directory structure created by InstallAnywhere -->
 <!ENTITY installerDownloadRelURL "installer/Web_Installers/install.htm">
+
+<!-- external software projects that we hyperlink to -->
+<!ENTITY cytoscapeURL "http://www.cytoscape.org">
 <!ENTITY sbmlURL "http://www.sbml.org">
 <!ENTITY sbwURL "http://sbw.kgi.edu">
