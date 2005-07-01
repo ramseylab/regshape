@@ -35,7 +35,9 @@ public class AppConfig
     private static final String PROPERTY_NAME_APP_ICON_URL = "appIconURL";
     private static final String PROPERTY_NAME_APP_HOME_PAGE = "appHomePage";
     private static final String PROPERTY_NAME_APP_HELP_SET_NAME = "appHelpSetName";
-
+    private static final String PROPERTY_NAME_APP_MAINTAINER_FULL_NAME = "appMaintainerFullName";
+    private static final String PROPERTY_NAME_APP_COPYRIGHT = "appCopyright";
+    
     public static final String CONFIG_FILE_NAME="AppConfig.xml";
 
     /**
@@ -151,6 +153,16 @@ public class AppConfig
         return(getProperty(PROPERTY_NAME_APP_HELP_SET_NAME));
     }
 
+    public String getAppMaintainerFullName()
+    {
+        return getProperty(PROPERTY_NAME_APP_MAINTAINER_FULL_NAME);
+    }
+    
+    public String getAppCopyright()
+    {
+        return getProperty(PROPERTY_NAME_APP_COPYRIGHT);
+    }
+    
     public static AppConfig get(Class pAppClass, String pAppDir) throws DataNotFoundException, InvalidInputException, FileNotFoundException
     {
         
