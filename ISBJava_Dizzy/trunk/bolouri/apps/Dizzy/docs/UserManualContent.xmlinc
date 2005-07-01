@@ -3103,7 +3103,7 @@ method of the "asim" service is used to pass a model in <a href="#sbml">SBML</a>
 simulation launcher.  The SBML model is processed, and the 
 <a href="#gui">simulation launcher</a> window is then displayed.  The
 <code>doAnalysisCMDL(cmdl)</code> method of the "asim" service is used to
-pass a model in <a href="#cmdl">CMDL</a> format to the simulation launcher.</li>
+pass a model in <a href="#cmdl">CMDL</a> format to the simulation launcher.
 </p>
 <p>
 Before the &appName; simulator can be accessed through the SBW, the Systems
