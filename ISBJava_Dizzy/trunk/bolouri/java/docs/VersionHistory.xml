@@ -58,7 +58,7 @@ running simulations on the model.
 <li>Modified <code>org.systemsbiology.chem.app.AboutDialog</code> to
   display the copyright string contained in the <code>AppConfig.xml</code>
   configuration file, obtained through the <code>AppConfig</code> class.</li>
-<li>Updated the external library <code>SBWCore.jar</code> to version 2.3.1a,
+<li>Updated the external library <code>SBWCore.jar</code> to version 2.3.0,
   in order to get a bug fix related to non-Windows platforms; this allows
   the removal of OS-specific workaround code that had been used in the 
   <code>org.systemsbiology.chem.sbw.SimulationDriverModule</code> class.</li>
