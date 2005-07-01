@@ -3090,22 +3090,22 @@ concepts and terminology, please refer to the
 <a href="&sbwURL;/docs/intro/intro.pdf">Introduction to the Systems Biology Workbench</a>
 document, available at the SBW Project home page.  <b>Please note:</b> The SBW interface
 in &appName; is compatible only with SBW versions 2.2.1 or newer, and not with the 1.X.X
-versions.  Unfortunately, the precompiled 2.X.X versions of SBW are only available for the
-Windows operating system.  The interface
-to SBW offered by &appName; includes a SBW module &quot;<code>org.systemsbiology.chem.Simulator</code>&quot;,
-which contains three SBW services, each of which implements the standard SBW simulation
-service API as defined in the <a href="&sbwURL;/docs/module-api/module-api.pdf">Systems
-Biology Workbench Module Programmer's Manual</a>.  The three simulation services
-offered through the &appName;-to-SBW interface are:
-<ul>
-<li><code>GillespieService</code>, which is the <a href="#gillespie">Gillespie</a> 
-simulator.</li>
-<li><code>GibsonBruckService</code>, which is the <a href="#gibsonbruck">Gibson-Bruck</a> simulator.
-</li>
-<li><code>DeterministicService</code>, which is the <a href="#sim-ODE-RK5-adaptive">Runge-Kutta 5th-order
-adaptive ODE simulator</a>.</li>
+versions.   The interface
+to SBW offered by &appName; includes a SBW module 
+&quot;<code>org.systemsbiology.chem.sbw.gui</code>&quot; (this is the SBW Unique Module
+Name, not a Java class name),
+which a single SBW service <code>asim</code>.  The display name for the module is
+"&appName; Simulation Driver", and the display name for the service is 
+"&appName; Simulation Service".  The SBW service "asim" implements the
+Analysis API as defined in the <a href="&sbwURL;/docs/module-api/module-api.pdf">Systems
+Biology Workbench Module Programmer's Manual</a>.  The <code>doAnalysis(sbml)</code>
+method of the "asim" service is used to pass a model in <a href="#sbml">SBML</a> format to the
+simulation launcher.  The SBML model is processed, and the 
+<a href="#gui">simulation launcher</a> window is then displayed.  The
+<code>doAnalysisCMDL(cmdl)</code> method of the "asim" service is used to
+pass a model in <a href="#cmdl">CMDL</a> format to the simulation launcher.</li>
 </ul>
-Before the &appName; simulators can be accessed through the SBW, the Systems
+Before the &appName; simulator can be accessed through the SBW, the Systems
 Biology Workbench must first be installed on your computer.  The software and
 installation instructions may be downloaded from the
 <a href="&sbwURL;">Systems Biology Workbench project page</a>.  Once SBW 
@@ -3157,14 +3157,14 @@ installer is compiled against a 2.X.X version of SBW, which is the preferred
 and supported SBW platform. 
 </p>
 <p>
-In addition to supporting the Simulation Service application programming
+In addition to supporting the Analysis Service application programming
 interface as defined in the Systems Biology Workbench Module Programmers
 Manual (A. Finney <em>et al.</em>, ERATO Kitano Systems Biology Project, 2002),
 &appName; provides an SBW-accessible method for loading a model in 
 <a href="#cmdl">CMDL</a> format, on each of its SBW simulation services,
 <blockquote>
   <pre>
-    String []loadCMDLModel(String cmdl)
+    void doAnalysis(String cmdl)
   </pre>
 </blockquote>
 It should be noted that file inclusion within a CMDL model, 

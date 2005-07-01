@@ -113,7 +113,7 @@ Relative paths are relative to the launcher.]]></string>
 							<method name="addElement">
 								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="4aa304629bab">
 									<property name="propertyValue">
-										<string><![CDATA[-sbwregister]]></string>
+										<string><![CDATA[-sbwregister "$USER_INSTALL_DIR$"]]></string>
 									</property>
 									<property name="propertyName">
 										<string><![CDATA[lax.command.line.args]]></string>
@@ -168,7 +168,7 @@ it will search for ones in this list]]></string>
 							<method name="addElement">
 								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="f37ec8cc8445">
 									<property name="propertyValue">
-										<string><![CDATA[org.systemsbiology.chem.sbw.SimulationModule]]></string>
+										<string><![CDATA[org.systemsbiology.chem.sbw.SimulationDriverModule]]></string>
 									</property>
 									<property name="propertyName">
 										<string><![CDATA[lax.main.class]]></string>
@@ -217,7 +217,7 @@ and any path to a file to save to the file]]></string>
 						</object>
 					</property>
 					<property name="mainClass">
-						<string><![CDATA[org.systemsbiology.chem.sbw.SimulationModule]]></string>
+						<string><![CDATA[org.systemsbiology.chem.sbw.SimulationDriverModule]]></string>
 					</property>
 				</object>
 			</property>
@@ -2884,7 +2884,7 @@ Relative paths are relative to the launcher.]]></string>
 													<method name="addElement">
 														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="c00a6f42aed2">
 															<property name="propertyValue">
-																<string><![CDATA[-sbwmodule]]></string>
+																<string><![CDATA[-sbwmodule "$USER_INSTALL_DIR$"]]></string>
 															</property>
 															<property name="propertyName">
 																<string><![CDATA[lax.command.line.args]]></string>
@@ -2939,7 +2939,7 @@ it will search for ones in this list]]></string>
 													<method name="addElement">
 														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="f37ec97b8464">
 															<property name="propertyValue">
-																<string><![CDATA[org.systemsbiology.chem.sbw.SimulationModule]]></string>
+																<string><![CDATA[org.systemsbiology.chem.sbw.SimulationDriverModule]]></string>
 															</property>
 															<property name="propertyName">
 																<string><![CDATA[lax.main.class]]></string>
@@ -2988,7 +2988,7 @@ and any path to a file to save to the file]]></string>
 												</object>
 											</property>
 											<property name="mainClass">
-												<string><![CDATA[org.systemsbiology.chem.sbw.SimulationModule]]></string>
+												<string><![CDATA[org.systemsbiology.chem.sbw.SimulationDriverModule]]></string>
 											</property>
 										</object>
 										<object class="com.zerog.ia.installer.actions.InstallDirectory" objectID="6e0fbc949afe">
