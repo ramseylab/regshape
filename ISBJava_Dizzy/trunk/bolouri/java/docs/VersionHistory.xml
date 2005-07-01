@@ -38,6 +38,36 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../2.2.3/download.html">2.2.3</a></td>
+<td>2005/06/30</td>
+<td>
+<ul>
+<li>
+Removed all classes in <code>org.systemsbiology.chem.sbw</code>, and
+added three classes <code>ISimulationDriverService</code>, 
+<code>SimulationDriverModule</code>, and <code>SimulationDriverService</code>
+to that package.  These implement a Systems Biology Workbench (SBW) Analysis 
+service, that will process a model description in either SBML or
+CMDL, and display a 
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> window for
+running simulations on the model.
+</li>
+<li>Added fields and methods to <code>org.systemsbiology.util.AppConfig</code>,
+  for the application copyright string and the application maintainer's 
+  full name.</li>
+<li>Modified <code>org.systemsbiology.chem.app.AboutDialog</code> to
+  display the copyright string contained in the <code>AppConfig.xml</code>
+  configuration file, obtained through the <code>AppConfig</code> class.</li>
+<li>Updated the external library <code>SBWCore.jar</code> to version 2.3.1,
+  in order to get a bug fix related to non-Windows platforms; this allows
+  the removal of OS-specific workaround code that had been used in the 
+  <code>org.systemsbiology.chem.sbw.SimulationDriverModule</code> class.</li>
+</ul>
+</td>
+</tr>
+
+
+<tr valign="top">
 <td><a href="../2.2.2/download.html">2.2.2</a></td>
 <td>2005/06/19</td>
 <td>

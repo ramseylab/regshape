@@ -44,6 +44,25 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.9.4/&installerDownloadRelURL;">1.9.4</a></td>
+<td>2005/07/03</td>
+<td>
+<ul>
+<li>Modified the Systems Biology Workbench (SBW) interface so
+  that the &appName; simulation launcher is now an "Analysis
+  Service".  This means that the &appName; simulation service
+  shows up in the "SBW" menu in JDesigner and other SBW-enabled
+  tools.</li>
+<li>The "About &appName;" menu item now displays the copyright
+  notice.</li>
+<li>Updated the version of the external SBW library 
+  (<core>SBWCore.jar</core>) to version 2.3.1.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.2.3/download.html">2.2.3</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.9.3/&installerDownloadRelURL;">1.9.3</a></td>
 <td>2005/06/19</td>
 <td>
