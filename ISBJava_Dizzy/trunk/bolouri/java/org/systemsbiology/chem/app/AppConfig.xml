@@ -9,6 +9,9 @@
     http://www.gnu.org/copyleft/lesser.html
  -->
 
+<!-- this file is used by the class MainApp, when no
+  configuration file is specified on the command-line -->
+
 <app>
   <appName>Dizzy</appName>
   <appVersion>[version unknown]</appVersion>
@@ -16,5 +19,7 @@
   <appHomePage>[home page unknown]</appHomePage>
   <appIconURL></appIconURL>
   <appHelpSetName></appHelpSetName>
+  <appCopyright>(c) Institute for Systems Biology, 2003-2005</appCopyright>
+  <appMaintainerFullName>Bolouri Group</appMaintainerFullName>
 </app>
 
