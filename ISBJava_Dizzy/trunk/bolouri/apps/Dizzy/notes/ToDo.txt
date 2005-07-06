@@ -22,4 +22,5 @@ backtrace originally provided by Ole Schulz-Trieglaf)
 (9) Add support for SBML Level 2.   Requested by:  Richard Spencer, 2006/06/17
     See JigCell for a 100% pure Java library for parsing SBML (thanks to Nick Allen, nallen@vt.edu)
     
-(10) Help Hooman Ahmadi (ha2130@columbia.edu) with the bug he encountered in Dizzy
+(10) Test Dizzy/ISBJava/Pointillist with Java 1.5
+
