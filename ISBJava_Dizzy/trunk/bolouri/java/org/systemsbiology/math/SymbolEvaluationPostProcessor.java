@@ -18,6 +18,7 @@ import org.systemsbiology.util.DataNotFoundException;
  */
 public abstract class SymbolEvaluationPostProcessor implements Cloneable
 {
+    public abstract String modifySymbol(Symbol pSymbol) throws DataNotFoundException;
     public abstract double modifyResult(Symbol pSymbol,
                                         SymbolEvaluator pSymbolEvaluator,
                                         double pSymbolValue) throws DataNotFoundException;
