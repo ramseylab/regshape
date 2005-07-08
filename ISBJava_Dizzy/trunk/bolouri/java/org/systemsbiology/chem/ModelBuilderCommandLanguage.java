@@ -1014,10 +1014,9 @@ public class ModelBuilderCommandLanguage implements IModelBuilder, IAliasableCla
         getEndOfStatement(pTokenIter);
     }
 
-    private Compartment getDefaultCompartment(HashMap pSymbolMap) 
+    static Compartment getDefaultCompartment(HashMap pSymbolMap) 
     {
         Compartment compartment = (Compartment) pSymbolMap.get(COMPARTMENT_NAME_DEFAULT);
-        assert (null != compartment) : "default compartment not found";
         return(compartment);
     }
 
