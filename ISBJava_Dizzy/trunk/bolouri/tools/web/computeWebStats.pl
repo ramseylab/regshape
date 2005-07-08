@@ -122,8 +122,11 @@ sub main()
     my $suffix = sprintf("%04d-%02d", $year, $week);
     my $logFilePrefix = SCRATCH_DIR . '/' . LOG_FILE_PREFIX;
     my $logFile = $logFilePrefix . '-' . $suffix . '.log';
-    system(BIN_DIR . "/ncftpget -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " " . SCRATCH_DIR . " " . REMOTE_FTP_DIR . "/" . LOG_FILE_PREFIX . ".log") and die("unable to obtain web statistics file");
-    my $sysCall = "/bin/mv " . SCRATCH_DIR . '/' . LOG_FILE_PREFIX . '.log ' . $logFile;
+    my $sysCall = BIN_DIR . "/ncftpget -u " . USERNAME . " -p " . PASSWORD . " " . FTP_SERVER . " " . SCRATCH_DIR . " " . REMOTE_FTP_DIR . "/" . LOG_FILE_PREFIX . ".log";
+    system($sysCall) and die("unable to obtain web statistics file");
+#    warn $sysCall . "\n";
+    $sysCall = "/bin/mv " . SCRATCH_DIR . '/' . LOG_FILE_PREFIX . '.log ' . $logFile;
+#    warn $sysCall . "\n";
     system($sysCall) and die("unable to move file\n"); 
     my $tempFile = TEMP_DIR . "/webstats-" . time() . "-" . $$ . ".log";
     system("/bin/cat " . $logFilePrefix . "*.log >> " . $tempFile) and die("unable to cat files to temp file: $tempFile");
