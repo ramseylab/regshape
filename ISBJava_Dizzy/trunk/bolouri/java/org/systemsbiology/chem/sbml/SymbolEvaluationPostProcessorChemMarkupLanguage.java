@@ -91,6 +91,30 @@ public final class SymbolEvaluationPostProcessorChemMarkupLanguage extends Symbo
         return(compartmentSymbol);
     }
 
+    public String modifySymbol(Symbol pSymbol) throws DataNotFoundException
+    {
+        String retStr = null;
+        
+        String symbolName = pSymbol.getName();
+        if(mReactionSet.contains(symbolName))
+        {
+            retStr = "(" + symbolName + "*" + "Navo" + ")";
+        }
+        else
+        {
+            String compartmentName = (String) mSpeciesCompartmentMap.get(symbolName);
+            if(null != compartmentName)
+            {
+                retStr = "(" + symbolName + "/" + compartmentName + ")";
+            }
+            else
+            {
+                retStr = symbolName;
+            }
+        }
+        return retStr;
+    }
+    
     public double modifyResult(Symbol pSymbol,
                                SymbolEvaluator pSymbolEvaluator,
                                double pSymbolValue) throws DataNotFoundException
