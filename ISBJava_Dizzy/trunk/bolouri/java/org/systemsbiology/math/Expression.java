@@ -469,6 +469,11 @@ public class Expression implements Cloneable
         protected static final Element ONE = new Element(1.0);
         protected static final Element TWO = new Element(2.0);
         
+        public boolean isAtomic()
+        {
+            return (mCode.equals(ElementCode.SYMBOL) || mCode.equals(ElementCode.NUMBER));
+        }
+        
         public Element(ElementCode pCode)
         {
             mCode = pCode;
@@ -564,22 +569,22 @@ public class Expression implements Cloneable
                     String operatorSymbol = getBinaryOperatorSymbol(code);
                     if(null != operatorSymbol)
                     {
-                        if(mFirstOperand.mCode != ElementCode.SYMBOL)
+                        if(! mFirstOperand.isAtomic())
                         {
                             sb.append("(");
                         }
                         sb.append(mFirstOperand.toString(pSymbolPrinter));
-                        if(mFirstOperand.mCode != ElementCode.SYMBOL)
+                        if(! mFirstOperand.isAtomic())
                         {
                             sb.append(")");
                         }
                         sb.append(operatorSymbol);
-                        if(mSecondOperand.mCode != ElementCode.SYMBOL)
+                        if(! mSecondOperand.isAtomic())
                         {
                             sb.append("(");
                         }
                         sb.append(mSecondOperand.toString(pSymbolPrinter));
-                        if(mSecondOperand.mCode != ElementCode.SYMBOL)
+                        if(! mSecondOperand.isAtomic())
                         {
                             sb.append(")");
                         }                        
