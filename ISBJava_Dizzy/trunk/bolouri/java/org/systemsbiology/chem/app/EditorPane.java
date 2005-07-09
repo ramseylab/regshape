@@ -46,7 +46,6 @@ public class EditorPane
     private long mTimestampLastChange;
     private MainApp mMainApp;
     private JScrollPane mEditorScrollPane;
-    private File mCurrentDirectory;
     private IModelBuilder mModelBuilder;
     private JLabel mLineNumberLabel;
     
@@ -108,18 +107,7 @@ public class EditorPane
         setFileNameLabel(null);
         setParserAlias(null);
         setBufferDirty(false);
-        setCurrentDirectory(mMainApp.getCurrentDirectory());
         setTimestampLastChange(TIMESTAMP_BUFFER_LAST_CHANGE_NULL);
-    }
-
-    private void setCurrentDirectory(File pCurrentDirectory)
-    {
-        mCurrentDirectory = pCurrentDirectory;
-    }
-
-    private File getCurrentDirectory()
-    {
-        return(mCurrentDirectory);
     }
 
     private void setModelBuilder(IModelBuilder pModelBuilder)
@@ -244,7 +232,7 @@ public class EditorPane
     {
         FileChooser fileChooser = new FileChooser();
         javax.swing.filechooser.FileFilter fileFilter = new ChemFileFilter();
-        File currentDirectory = getCurrentDirectory();
+        File currentDirectory = mMainApp.getCurrentDirectory();
         if(null != currentDirectory)
         {
             fileChooser.setCurrentDirectory(currentDirectory);
@@ -262,7 +250,6 @@ public class EditorPane
                 File parentFile = inputFile.getParentFile();
                 if(parentFile.isDirectory())
                 {
-                    setCurrentDirectory(parentFile);
                     mMainApp.setCurrentDirectory(parentFile);
                 }
                 loadFileToEditBuffer(fileName);
@@ -352,7 +339,7 @@ public class EditorPane
             {
                 saveEditBufferToFile(fileName);
                 mMainApp.updateMenus();
-                setCurrentDirectory(outputFile.getParentFile());
+                mMainApp.setCurrentDirectory(outputFile.getParentFile());
             }        
         }
     }
@@ -539,7 +526,13 @@ public class EditorPane
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
                 
                 IncludeHandler includeHandler = new IncludeHandler();
-                includeHandler.setDirectory(mCurrentDirectory);
+                File currentDirectory = mMainApp.getCurrentDirectory();
+                File file = new File(fileName);
+                if(file.exists())
+                {
+                    currentDirectory = file.getParentFile();
+                }
+                includeHandler.setDirectory(currentDirectory);
                 
                 model = modelBuilder.buildModel(inputStream, includeHandler);
             }

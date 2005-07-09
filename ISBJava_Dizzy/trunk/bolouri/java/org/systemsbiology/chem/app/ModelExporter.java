@@ -29,6 +29,7 @@ public class ModelExporter
         FileChooser fileChooser = new FileChooser();
         fileChooser.setApproveButtonText("export");
         fileChooser.setDialogTitle("Please specify the file to export");
+        fileChooser.setCurrentDirectory(MainApp.getApp().getCurrentDirectory());
         fileChooser.showSaveDialog(mMainFrame);
         File outputFile = fileChooser.getSelectedFile();
         if(null != outputFile)
@@ -80,6 +81,7 @@ public class ModelExporter
                     FileWriter outputFileWriter = new FileWriter(outputFile);
                     PrintWriter printWriter = new PrintWriter(outputFileWriter);
                     exporter.export(pModel, printWriter);
+                    MainApp.getApp().setCurrentDirectory(outputFile.getParentFile());
                     showSuccessfulDialog = true;
                 }
                 catch(Exception e)
