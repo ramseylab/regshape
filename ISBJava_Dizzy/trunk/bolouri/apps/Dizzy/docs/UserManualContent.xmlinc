@@ -2012,6 +2012,9 @@ Only models that do not contain any <a href="#expressions">expressions</a> may b
 exported to this format.
 <p />
 </dd>
+<dt><code>command-language</code></dt>
+<dd>Exports a model instance to the
+  <a href="#cmdl">Chemical Model Definition Language (CMDL)</a> format.</dd>
 </dl>
 </blockquote>
 Currently there is no exporter plug-in for the 
