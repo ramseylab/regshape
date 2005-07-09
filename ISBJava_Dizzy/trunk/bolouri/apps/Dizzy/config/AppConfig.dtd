@@ -14,7 +14,7 @@
 
 <!ENTITY appName "Dizzy">
 <!ENTITY appVersionMajor "1">
-<!ENTITY appVersionMinor "10">
+<!ENTITY appVersionMinor "11">
 <!ENTITY appVersionPatch "0">
 <!ENTITY appVersion "&appVersionMajor;.&appVersionMinor;.&appVersionPatch;">
 <!ENTITY appDate "2005/07/01">

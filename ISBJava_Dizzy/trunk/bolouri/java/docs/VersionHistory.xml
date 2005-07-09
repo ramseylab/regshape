@@ -38,6 +38,47 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../2.4.0/download.html">2.4.0</a></td>
+<td>2005/07/08</td>
+<td>
+<ul>
+<li>
+  Added a new class <code>org.systemsbiology.chem.ModelExporterCommandLanguage</code>,
+  which saves a <code>Model</code> in Chemical Model Definition Language (CMDL) format.
+</li>
+<li>Added a new method
+  <code>org.systemsbiology.chem.SymbolEvaluationPostProcessor.modifySymbol()</code>, which 
+  will replace a species symbol name with the ratio "sym/com" where "sym" is the species
+  symbol name, and "com" is the compartment name.  This is used 
+  by the <code>org.systemsbiology.chem.ModelExporterCommandLanguage</code>
+  for exporting a SBML model to CMDL.  Implemented this method in the subclass
+  <code>org.systemsbiology.chem.sbml.SymbolEvaluationPostProcessorChemMarkupLanguage</code>.
+</li>
+<li>Changed method <code>org.systemsbiology.chem.ModelBuilderCommandLanguage.getDefaultCompartment()</code>
+  to be package visible, and removed an unneeded assertion within the method.  The method is called
+  by <code>org.systemsbiology.chem.ModelExporterCommandLanguage</code>, from outside the class.</li>
+<li>
+Added a new method <code>org.systemsbiology.math.Expression.Element.isAtomic()</code>,
+which returns <code>true</code> if the <code>Element</code> is either a symbol or
+a numeric element.  This is used in the new <code>org.systemsbiology.chem.ModelExporterCommandLanguage</code>
+class.</li>
+<li>
+Fixed a bug in the <code>org.systemsbiology.chem.app.ModelExporter</code> class, where the
+current working directory was not being set when the file browser is opened, to select
+the output file for exporting a model.  
+</li>
+<li>
+  Refactored the current directory code, so that only the <code>org.systemsbiology.chem.app.MainApp</code>
+  has a <code>mCurrentDirectory</code> field.  The <code>mCurrentDirectory</code> field was removed
+  from the <code>EditorPane</code> class, and the latter class now uses the field from the <code>MainApp</code>
+  class.
+</li>
+</ul>
+</td>
+</tr>
+
+
+<tr valign="top">
 <td><a href="../2.3.0/download.html">2.3.0</a></td>
 <td>2005/07/01</td>
 <td>
