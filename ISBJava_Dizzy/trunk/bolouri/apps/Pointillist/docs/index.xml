@@ -55,8 +55,7 @@ run the build system.
 </table>
 
 <p>
-<img src="images/appLogo.jpg" alt="&appName; logo" border="1"
-align="left"/> &appName; is a set of four programs for inferring the
+&appName; is a set of four programs for inferring the
 set of elements affected by a perturbation of a biological
 system, based on multiple types of evidence.  &appName; is written
 in Java, and is based on the
