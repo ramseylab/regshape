@@ -111,8 +111,9 @@ sample model definition files</a>.
 <a href="images/screenshot1-big.png"><img src="images/screenshot1.png" alt="screenshot" /></a><br />
 Screen shot of the &appName; program
 </p>
-<isb:docsection name="Contact Information" label="contactinfo">
-  
+</isb:docsection>
+
+<isb:docsection name="Contact Information" label="contactinfo"> 
 &appName; was developed by Stephen Ramsey.
 <a href="&appHomePage;/docs/UserManual.html#acknowledgements">Many people</a>
 have provided help and resources.
