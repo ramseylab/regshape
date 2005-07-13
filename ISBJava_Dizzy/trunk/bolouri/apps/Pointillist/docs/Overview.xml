@@ -112,6 +112,13 @@ In addition, the &appName; system provides a set of
 sample model definition files</a>.
 </isb:docsection>
 
+<isb:docsection name="Screenshot" label="screenshot">
+<p>
+<a href="images/screenshot1-big.png"><img src="images/screenshot1.png" alt="screenshot" /></a><br />
+Screen shot of the &appName; program
+</p>
+</isb:docsection>
+
 <isb:docsection name="Contact Information" label="contactinfo">
 The &appName; software system was implemented by Stephen Ramsey, based
 on a prototype developed by Daehee Hwang and Larissa Kamenkovich.   
