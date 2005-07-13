@@ -71,16 +71,32 @@
            destdir="${app.styleDir}" 
            includes="*.xml" 
            style="${globalConfig}/${docsStyleSheet}"
-           excludes="AppConfig.xml,AppHelp.xml" />
+           excludes="AppConfig.xml,AppHelp.xml,ReadMe.xml">
+    	<param name="altGroupLogoRelURL" expression="&appName;/&appLogoURL;" />
+    </style>
 
+  	<style in="${app.docsDir}/ReadMe.xml"
+           out="${app.styleDir}/ReadMe.html"
+  	       style="${globalConfig}/${docsStyleSheet}">
+  	    <param name="hideExternalLinks" expression="true" />
+  		<param name="hideGroupLogo" expression="true" />
+    </style>
+      		
     <style basedir="${app.docsDir}" 
            destdir="${app.styleDir}" 
            includes="AppHelp.xml" 
            style="${globalConfig}/${docsStyleSheet}">
         <param name="altWebBaseURL" expression=".." />
         <param name="hideExternalLinks" expression="true" />
+    	<param name="altGroupLogoRelURL" expression="&appLogoURL;" />
     </style>
- 
+
+    <style in="${app.docsDir}/AppHelp.xml"
+           out="${app.styleDir}/AppHelpTOC.xml"
+           style="${globalConfig}/${helpTOCStyleSheet}">
+        <param name="${helpContentFileParamName}" expression="AppHelp.html" />
+    </style >
+  	
   	<style in="${app.configDir}/AppConfig.xml"
       	   out="${app.styleConfDir}/AppConfig.xml"
   	       style="${globalConfig}/${simpleXMLStyleSheet}" />
@@ -91,11 +107,6 @@
          <param name="${helpContentFileParamName}" expression="AppHelp.html" />
     </style>
 
-    <style in="${app.docsDir}/AppHelp.xml"
-           out="${app.styleDir}/AppHelpTOC.xml"
-           style="${globalConfig}/${helpTOCStyleSheet}">
-        <param name="${helpContentFileParamName}" expression="AppHelp.html" />
-    </style >
 
  </target>
 

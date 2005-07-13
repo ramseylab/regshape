@@ -43,21 +43,29 @@ This document contains the version history for the
 <a href="&javaURL;">&localJavaLibraryName;</a> version number:</td>
 </tr>
 
-<!--
+<tr valign="top">
+<td><a href="../1.0.0/&installerDownloadRelURL;">1.0.1</a></td>
+<td>2005/07/13</td>
+<td>
 <ul>
+<li>Built with latest version of &localJavaLibraryName;; no functional changes.</li>
+<li>Changed styling of documentation.</li>
 <li>Fixed problem with build script, where it was impossible to do any
 ant tasks, even those tasks that do not require InstallAnywhere,
 on a system that does not have the InstallAnywhere JAR file installed
 into the Ant lib directory.</li>
 </ul>
--->
+</td>
+<td><a href="&javaURL;/2.4.0/download.html">2.4.0</a></td> 
+</tr>
+
 
 <tr valign="top">
 <td><a href="../1.0.0/&installerDownloadRelURL;">1.0.0</a></td>
 <td>2005/04/05</td>
 <td>
 <ul>
-<li>First major public release of the software.  Written entirely in Java.
+  <li>First major public release of the software.  Written entirely in Java.
   See the <a href="UserManual.html">User Manual</a> for more information.</li>
 </ul>
 </td>
