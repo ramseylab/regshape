@@ -191,6 +191,7 @@
       <fileset dir="${globalRoot}">
         <include name="images/logo-bolourilab.png" />
         <include name="images/logo-isb.png" />
+      	<include name="images/appLogo.jpg" />
       </fileset>
     </jar>
 

@@ -19,7 +19,7 @@
 <!ENTITY appVersion "&appVersionMajor;.&appVersionMinor;.&appVersionPatch;">
 <!ENTITY appDate "2005/07/13">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
-<!ENTITY appLogoURL "images/appLogo.png">
+<!ENTITY appLogoURL "images/appLogo.jpg">
 <!ENTITY appIconURL "images/appLogoIcon.jpg">
 <!ENTITY appCopyright "(c) 2003-2005 Institute for Systems Biology">
 
