@@ -51,6 +51,7 @@ having to run the build system.
 </tr>
 </table>
 
+<p>
 The &appName; project is a library (collection) of classes
 written in the <a href="http://java.sun.com">Java</a>
 programming language, that are intended to be used for
