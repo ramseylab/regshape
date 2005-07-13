@@ -25,6 +25,8 @@
   <xsl:param name="hideGroupLogo" />
   <xsl:param name="hideMainLogo" />
   <xsl:param name="hideExternalLinks" />
+  <xsl:param name="altGroupLogoRelURL" />
+  <xsl:param name="hideDocOwner" />
   
   <xsl:template match="html:a|html:a/@*">
     <xsl:choose>
@@ -101,51 +103,55 @@
 
       <!-- if an author is specified, use the author information: -->
 
-      <xsl:if test="/isb:document/isb:docowner != ''">
-        <xsl:choose>
-          <xsl:when test="/isb:document/isb:docownerurl != '' and not( $hideExternalLinks != '' )">
-              <xsl:element name="a"> 
-                <xsl:attribute name="href"><xsl:value-of select="/isb:document/isb:docownerurl" /></xsl:attribute>
-                <span style="color: black"><h3><xsl:value-of select="isb:docowner"/></h3></span>
-              </xsl:element>
-          </xsl:when>
-          <xsl:otherwise>
-            <h3><xsl:value-of select="isb:docowner"/></h3>
-	        </xsl:otherwise>
-        </xsl:choose>
-      </xsl:if>
-
-      <xsl:choose>
-        
-	      <!-- if an owner is not specified, generate boilerplate owner information with hyperlink: -->
-	      <xsl:when test="not( /isb:document/isb:docowner != '' )">
-		        <xsl:choose>
-		           <xsl:when  test="not( $hideExternalLinks != '' )">
-		             <a href="&mainGroupURL;"><span style="color: black"><h3>&mainGroup;, &mainAffiliation;</h3></span></a>
-		           </xsl:when>
-		           <xsl:otherwise>
-		             <h3>&mainGroup;, &mainAffiliation;</h3>
-		           </xsl:otherwise>
-		        </xsl:choose>
-		      </xsl:when>
-        
-	      <!-- if author information specified, display it: -->
-	      <xsl:otherwise>
+      <xsl:if test="not($hideDocOwner != '')">
+	        
+	      <xsl:if test="/isb:document/isb:docowner != ''">
 	        <xsl:choose>
-	          <xsl:when test="/isb:document/isb:docauthorurl != '' and not( $hideExternalLinks != '' )">
-			          <xsl:element name="a">
-			            <xsl:attribute name="href"><xsl:value-of select="isb:docauthorurl" /></xsl:attribute>
-			            <span style="color: black">
-			            <h4><xsl:value-of select="isb:docauthor" /></h4>
-			            </span>
-			          </xsl:element>
+	          <xsl:when test="/isb:document/isb:docownerurl != '' and not( $hideExternalLinks != '' )">
+	              <xsl:element name="a"> 
+	                <xsl:attribute name="href"><xsl:value-of select="/isb:document/isb:docownerurl" /></xsl:attribute>
+	                <span style="color: black"><h3><xsl:value-of select="isb:docowner"/></h3></span>
+	              </xsl:element>
 	          </xsl:when>
 	          <xsl:otherwise>
-	              <h4><xsl:value-of select="isb:docauthor" /></h4>
-	          </xsl:otherwise>
+	            <h3><xsl:value-of select="isb:docowner"/></h3>
+		        </xsl:otherwise>
 	        </xsl:choose>
-	      </xsl:otherwise>
-      </xsl:choose>
+	      </xsl:if>
+	
+	      <xsl:choose>
+	        
+		      <!-- if an owner is not specified, generate boilerplate owner information with hyperlink: -->
+		      <xsl:when test="not( /isb:document/isb:docowner != '' )">
+			        <xsl:choose>
+			           <xsl:when  test="not( $hideExternalLinks != '' )">
+			             <a href="&mainGroupURL;"><span style="color: black"><h3>&mainGroup;, &mainAffiliation;</h3></span></a>
+			           </xsl:when>
+			           <xsl:otherwise>
+			             <h3>&mainGroup;, &mainAffiliation;</h3>
+			           </xsl:otherwise>
+			        </xsl:choose>
+			      </xsl:when>
+	        
+		      <!-- if author information specified, display it: -->
+		      <xsl:otherwise>
+		        <xsl:choose>
+		          <xsl:when test="/isb:document/isb:docauthorurl != '' and not( $hideExternalLinks != '' )">
+				          <xsl:element name="a">
+				            <xsl:attribute name="href"><xsl:value-of select="isb:docauthorurl" /></xsl:attribute>
+				            <span style="color: black">
+				            <h4><xsl:value-of select="isb:docauthor" /></h4>
+				            </span>
+				          </xsl:element>
+		          </xsl:when>
+		          <xsl:otherwise>
+		              <h4><xsl:value-of select="isb:docauthor" /></h4>
+		          </xsl:otherwise>
+		        </xsl:choose>
+		      </xsl:otherwise>
+	      </xsl:choose>
+      </xsl:if>
+      
       <!-- if version information specified, strip out RCS keyword stuff ($Date ... $) and display: -->
 
       <xsl:if test="/isb:document/isb:docversion != ''">
@@ -162,7 +168,7 @@
             <xsl:when test="not( $hideExternalLinks != '' )">
 		          <a href="&mainGroupURL;">
 		            <xsl:element name="img">
-		              <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/&groupLogoRelURL;</xsl:attribute>
+		              <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/<xsl:choose><xsl:when test="not($altGroupLogoRelURL != '')">&groupLogoRelURL;</xsl:when><xsl:otherwise><xsl:value-of select="$altGroupLogoRelURL" /></xsl:otherwise></xsl:choose></xsl:attribute>
 		              <xsl:attribute name="border">0</xsl:attribute>
 		              <xsl:attribute name="alt">Group Logo</xsl:attribute>
 		            </xsl:element>
@@ -170,7 +176,7 @@
             </xsl:when>
             <xsl:otherwise>
 	            <xsl:element name="img">
-	              <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/&groupLogoRelURL;</xsl:attribute>
+	              <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/<xsl:choose><xsl:when test="not($altGroupLogoRelURL != '')">&groupLogoRelURL;</xsl:when><xsl:otherwise><xsl:value-of select="$altGroupLogoRelURL" /></xsl:otherwise></xsl:choose></xsl:attribute>
 	              <xsl:attribute name="border">0</xsl:attribute>
 	              <xsl:attribute name="alt">Group Logo</xsl:attribute>
 	            </xsl:element>

@@ -53,7 +53,16 @@
     <style basedir="${projDocsDir}" 
            destdir="${projStyleDir}" 
            includes="*.xml" 
+    	   excludes="License.xml"
            style="${projConfigDir}/${docsStyleSheet}" />
+
+    <style in="${projDocsDir}/License.xml" 
+           out="${projStyleDir}/License.html" 
+           style="${projConfigDir}/${docsStyleSheet}">
+    	<param name="hideGroupLogo" expression="true" />
+    	<param name="hideExternalLinks" expression="true" />
+    	<param name="hideDocOwner" expression="true" />
+    </style>
 
     <mkdir dir="${projStyleDir}/private" />
     <style basedir="${projDocsDir}/private" 

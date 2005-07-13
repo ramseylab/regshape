@@ -1,13 +1,13 @@
 This file contains notes pertaining to the source archive
 for the Dizzy project, mostly of interest to developers. 
 
-There is a separate ReadMe.xml file that generates the application
-"ReadMe.html" that is intended for end-users to read.  The "ReadMe.xml"
+There is a separate Overview.xml file that generates the HTML document
+"Overview.html" that is intended for end-users to read.  The "Overview.xml"
 file is archived in the "docs" subdirectory.  If you are interested
 in *using* Dizzy, you should probably start reading that document,
 which can be found on the web at:
 
-  http://labs.systemsbiology.net/bolouri/software/Dizzy
+  http://labs.systemsbiology.net/bolouri/software/Dizzy/docs/Overview.html
 
 Ant is used as the driver for application builds.  You can change to
 the CVSROOT/bolouri/apps/Dizzy directory and do an "ant build", but

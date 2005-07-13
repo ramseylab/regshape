@@ -39,7 +39,7 @@ run the build system.
 <p>
 <ul>
 <li><a href="&appVersion;/&installerDownloadRelURL;">Download &appName;</a></li>
-<li><a href="&appHomePage;/docs/ReadMe.html">&appName; Overview document</a></li>
+<li><a href="&appHomePage;/docs/Overview.html">&appName; Overview</a></li>
   <li><a href="docs/UserManual.html">&appName; User Manual</a> (a <a href="docs/UserManual.pdf">PDF version</a> is available)</li>
 <li><a href="&appHomePage;/docs/VersionHistory.html">&appName; Version History</a></li>
 <li><a href="&webBaseURL;/License.html">License Agreement</a></li>
