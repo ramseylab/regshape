@@ -36,18 +36,22 @@ having to run the build system.
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 <isb:docdate>$Date$</isb:docdate>
 
-<p>
-
+<table border="0">
+<tr>
+<td>
 <ul>
 <li><a href="&appVersion;/download.html">Download &appName;</a></li>
-<li><a href="docs/ReadMe.html">&appName; Overview</a></li>
+<li><a href="docs/Overview.html">&appName; Overview</a></li>
   <li><a href="docs/UserManual.html">&appName; User Manual</a> (a <a href="docs/UserManual.pdf">PDF version</a> is available)</li>
 <li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
 <li><a href="../License.html">License Agreement</a></li>
 <li><a href="javadoc/">Javadoc API documentation</a> (a <a href="docs/APIDocumentation.pdf">PDF version</a> is available)</li>
 </ul>
+</td>
+<td>
+</tr>
+</table>
 
-<img src="images/appLogo.png" border="1" alt="&appName; logo" align="left" />
 The &appName; project is a library (collection) of classes
 written in the <a href="http://java.sun.com">Java</a>
 programming language, that are intended to be used for

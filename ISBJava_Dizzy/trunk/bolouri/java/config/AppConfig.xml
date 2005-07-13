@@ -10,5 +10,8 @@
   <appDate>&appDate;</appDate>
   <appHomePage>&appHomePage;</appHomePage>
   <appIconURL>&appIconURL;</appIconURL>
+  <appHelpSetName>&appHelpSetName;</appHelpSetName>
+  <appMaintainerFullName>&appMaintainerFullName;</appMaintainerFullName>
+  <appCopyright>&appCopyright;</appCopyright>
 </app>
 

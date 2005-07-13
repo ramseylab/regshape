@@ -19,7 +19,8 @@
 <!ENTITY appVersion "&appVersionMajor;.&appVersionMinor;.&appVersionPatch;">
 <!ENTITY appDate "2005/07/08">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
-<!ENTITY appIconURL "">
+<!ENTITY appLogoURL "images/appLogo.png">
+<!ENTITY appIconURL "images/appLogoIcon.png">
 
 <!-- these definitions are used only in documentation, not by the app itself: -->
 <!ENTITY appCopyright "(c) 2003-2005 Institute for Systems Biology">
