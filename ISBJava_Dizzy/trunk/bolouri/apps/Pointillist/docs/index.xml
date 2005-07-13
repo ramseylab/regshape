@@ -36,7 +36,9 @@ run the build system.
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 <isb:docdate>$Date$</isb:docdate>
 
-<p>
+<table border="0">
+<tr>
+<td>
 <ul>
 <li><a href="&appVersion;/&installerDownloadRelURL;">Download &appName;</a></li>
 <li><a href="docs/Overview.html">&appName; Overview</a></li>
@@ -45,7 +47,12 @@ run the build system.
 <li><a href="&webBaseURL;/License.html">License Agreement</a></li>
 <li><a href="&webBaseURL;/&localJavaLibraryName;/javadoc">Javadoc API documentation</a></li> 
 </ul>
-</p>
+</td>
+<td>
+<a href="images/screenshot1-big.png"><img src="images/screenshot-small.png" alt="screen shot" /></a>
+</td>
+</tr>
+</table>
 
 <p>
 <img src="images/appLogo.jpg" alt="&appName; logo" border="1"
