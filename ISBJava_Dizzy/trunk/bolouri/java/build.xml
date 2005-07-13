@@ -75,15 +75,20 @@
            destdir="${app.styleDir}" 
            includes="*.xml" 
     	   excludes="JavadocTitlePageSimple.xml,download.xml"
-           style="${globalConfig}/${docsStyleSheet}" />
-    <style basedir="${app.docsDir}" 
+           style="${globalConfig}/${docsStyleSheet}">
+      <param name="altGroupLogoRelURL" expression="&appName;/&appLogoURL;" />
+    </style>
+
+  	<style basedir="${app.docsDir}" 
            destdir="${app.styleDir}" 
            includes="download.xml"
            style="${globalConfig}/${docsStyleSheet}">
         <param name="hideGroupLogo" expression="true" />
         <param name="hideMainLogo" expression="true" />
+  		<param name="hideExternalLinks" expression="true" />
   	</style>
-    <style basedir="${app.docsDir}"
+    
+  	<style basedir="${app.docsDir}"
   	       destdir="${app.styleDir}"
   	       includes="JavadocTitlePageSimple.xml"
   	       style="${globalConfig}/${simpleHTMLStyleSheet}" />
