@@ -119,7 +119,6 @@
            out="${app.styleDir}/AppHelp.jhm"
            style="${globalConfig}/${helpMapStyleSheet}">
         <param name="${helpContentFileParamName}" expression="AppHelp.html" />
-    	<param name="altGroupLogoRelURL" expression="&appLogoURL;" />
     </style>
 
     <style in="${app.docsDir}/AppHelp.xml"
