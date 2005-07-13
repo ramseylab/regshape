@@ -36,7 +36,9 @@ run the build system.
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 <isb:docdate>$Date$</isb:docdate>
 
-<p>
+<table border="0">
+<tr>
+<td>
 <ul>
 <li><a href="&appVersion;/&installerDownloadRelURL;">Download &appName;</a></li>
 <li><a href="&appHomePage;/docs/Overview.html">&appName; Overview</a></li>
@@ -46,7 +48,12 @@ run the build system.
 <li><a href="&webBaseURL;/&localJavaLibraryName;/javadoc">Javadoc API documentation</a> ( a <a href="&webBaseURL;/&localJavaLibraryName;/docs/APIDocumentation.pdf">PDF version</a> is available)</li>
 <li><a href="&appHomePage;/docs/UserManual.html#pubs">An article describing &appName;</a></li>
 </ul>
-</p>
+</td>
+<td>
+<a href="images/screenshot-big.png"><img src="images/screenshot1-small.png" alt="screen shot" /></a>
+</td>
+</tr>
+</table>
 
 <p>
 &appName; is a chemical kinetics stochastic simulation
