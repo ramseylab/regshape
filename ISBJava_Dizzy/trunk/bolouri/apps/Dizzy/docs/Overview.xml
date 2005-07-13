@@ -108,7 +108,7 @@ sample model definition files</a>.
 
 <isb:docsection name="Screenshot" label="screenshot">
 <p>
-<a href="images/screenshot1-big.png"><img src="images/screenshot1.png" alt="screenshot" /></a><br />
+<a href="../images/screenshot1-big.png"><img src="../images/screenshot1.png" alt="screenshot" /></a><br />
 Screen shot of the &appName; program
 </p>
 </isb:docsection>
