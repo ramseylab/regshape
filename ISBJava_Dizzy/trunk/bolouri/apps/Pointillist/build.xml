@@ -167,6 +167,7 @@
       <srcfiles dir="${app.styleDir}" includes="AppHelp*" />
       <srcfiles dir="${app.configDir}" includes="AppHelp.hs" />
       <srcfiles dir="${basedir}" includes="images/*.png" />
+      <srcfiles dir="${basedir}" includes="images/appLogo.jpg" />
       <srcfiles dir="${globalRoot}" includes="images/*.png" />
       <srcfiles dir="${app.styleDir}/JavaHelpSearch" includes="*" />
     </uptodate>
@@ -187,11 +188,11 @@
       </fileset>
       <fileset dir="${basedir}">
         <include name="images/*.png" />
+      	<include name="images/appLogo.jpg" />
       </fileset>
       <fileset dir="${globalRoot}">
         <include name="images/logo-bolourilab.png" />
         <include name="images/logo-isb.png" />
-      	<include name="images/appLogo.jpg" />
       </fileset>
     </jar>
 
