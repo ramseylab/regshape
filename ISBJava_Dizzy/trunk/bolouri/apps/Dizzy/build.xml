@@ -176,6 +176,7 @@
       <fileset dir="${app.styleDir}">
         <include name="*.html" />
         <exclude name="index.html" />
+        <exclude name="ReadMe.html" />
       </fileset>
     </copy>
   </target>
