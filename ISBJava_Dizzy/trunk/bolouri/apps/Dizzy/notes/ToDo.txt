@@ -19,8 +19,10 @@ file being invalid or missing ??
 (8) Waiting to hear back from Frank Bergmann regarding issue with SBW compatibility (stack
 backtrace originally provided by Ole Schulz-Trieglaf)
 
-(9) Add support for SBML Level 2.   Requested by:  Richard Spencer, 2006/06/17
+(9) Add support for SBML Level 2.   Requested by:  Richard Spencer, 2005/06/17
     See JigCell for a 100% pure Java library for parsing SBML (thanks to Nick Allen, nallen@vt.edu)
     
 (10) Test Dizzy/ISBJava/Pointillist with Java 1.5
 
+(11) Add the ability to create a templatized compartment with a bunch of species within it, and
+the ability to create/destroy a compartment (Axel Kowald, 2005/07/19).
