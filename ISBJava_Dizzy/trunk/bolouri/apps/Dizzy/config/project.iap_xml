@@ -421,7 +421,7 @@ and any path to a file to save to the file]]></string>
 								<boolean>false</boolean>
 							</property>
 							<property name="sourcePath">
-								<string><![CDATA[@GLOBAL_ROOT@/build/web/@APP_NAME@/]]></string>
+								<string><![CDATA[@GLOBAL_ROOT@/apps/@APP_NAME@/build/]]></string>
 							</property>
 							<property name="shouldUninstall">
 								<boolean>true</boolean>

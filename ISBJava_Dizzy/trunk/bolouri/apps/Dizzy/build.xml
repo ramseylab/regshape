@@ -213,9 +213,6 @@
       </fileset>
     </jar>
 
-    <mkdir dir="${app.webDir}" />
-    <copy todir="${app.webDir}" file="${app.resourcesFile}" />
-    
   </target>
 
   <target name="copyImages">
