@@ -26,3 +26,40 @@ backtrace originally provided by Ole Schulz-Trieglaf)
 
 (11) Add the ability to create a templatized compartment with a bunch of species within it, and
 the ability to create/destroy a compartment (Axel Kowald, 2005/07/19).
+
+====> From Axel Kowald 2005/07/20:
+
+Hi Steve,
+
+many thanks for your quick reply.
+Regarding wishes for future Dizzy extensions, I think what I would like is some form of general purpose reaction, 
+which happens with a certain probability (as a normal reaction). But once this reaction happened, it would be up to 
+the CMDL script to decide what happens during this reaction.
+Below is an example of such an general purpose reaction and some commands which could be used.
+I guess it would be a lot of work to include such a functionality into Dizzy, but I think it would also greatly 
+increase the range of problems that could be modelled.
+
+Best wishes,
+
+              Axel
+
+
+gen_purp_r, [ certain rate ] {       // general purpose reaction
+ x = x - 2
+ z = 0.5*z                // reduce z by 50%
+ y[3] = x + y[5]        // array variables
+ y[len(y)/2] = 0        // len(y) = number of elements of array variable
+ delComp(c[1])       // delete compartment c[1]
+ c[len(c)+1] = c[1]   //  make new compartment that is copy of c[1]
+
+if (x>10){                // if construct
+ do this
+} else {
+ do that
+}
+
+for (i=1, len(y)){     // looping through array variable or array compartment
+ y[i] = 42
+}
+
+}
