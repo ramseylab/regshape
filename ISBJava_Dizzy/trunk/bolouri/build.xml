@@ -64,11 +64,6 @@
     	<param name="hideDocOwner" expression="true" />
     </style>
 
-    <mkdir dir="${projStyleDir}/private" />
-    <style basedir="${projDocsDir}/private" 
-           destdir="${projStyleDir}/private" 
-           includes="*.xml" 
-           style="${projConfigDir}/${docsStyleSheet}" />
   </target>
 
   <target name="copyHtml">
@@ -76,7 +71,6 @@
     <copy todir="${projWebDir}">
       <fileset dir="${projStyleDir}">
         <include name="*.html" />
-        <include name="private/*.html" />
         <include name="models/*.html" />
       </fileset>
     </copy>
@@ -90,10 +84,6 @@
         <include name="models/*.xml" />
       </fileset>
     </copy>
-  </target>
-
-  <target name="copyMiscContent">
-    <copy tofile="${projWebDir}/private/SampleDocument.xml.txt" file="${projDocsDir}/private/SampleDocument.xml" />
   </target>
 
   <target name="copyImages">
