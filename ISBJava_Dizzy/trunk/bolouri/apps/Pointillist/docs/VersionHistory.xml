@@ -43,8 +43,22 @@ This document contains the version history for the
 <a href="&javaURL;">&localJavaLibraryName;</a> version number:</td>
 </tr>
 
+
+<!--
 <tr valign="top">
 <td><a href="../1.0.0/&installerDownloadRelURL;">1.0.1</a></td>
+<td>2005/07/08</td>
+<td>
+<ul>
+<li>Fixed a bug in the build script, that was placing an unneeded file (<code>AppResources.jar</code>) 
+on the web server.</li>
+</ul>
+</td>
+</tr>
+-->
+
+<tr valign="top">
+<td><a href="../1.0.1/&installerDownloadRelURL;">1.0.1</a></td>
 <td>2005/07/13</td>
 <td>
 <ul>
