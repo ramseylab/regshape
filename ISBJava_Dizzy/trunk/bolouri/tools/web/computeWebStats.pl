@@ -104,7 +104,7 @@ sub computeWebStats($$$)
     {
         $numVisitors = 0;
     }
-    $numVisitors += `/bin/grep '/${appName}/ HTTP' $logFile | /usr/bin/cut -f1 -d\ | /bin/sort -u | /usr/bin/wc --lines`;
+    $numVisitors += `/bin/grep '/${appName}/ HTTP' $logFile | /usr/bin/wc --lines`;
     open(VISITORS, ">" . SCRATCH_DIR . "/${appName}Visitors.txt") or die("unable do open ${appName} visitors file, for writing");
     print VISITORS $numVisitors . "\n";
     close(VISITORS);
