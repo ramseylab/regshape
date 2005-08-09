@@ -15,8 +15,8 @@ import org.systemsbiology.util.*;
 import java.awt.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
-import javax.swing.*;
 
+import javax.swing.*;
 import java.io.*;
 
 public class EditorPane
@@ -527,13 +527,18 @@ public class EditorPane
                 
                 IncludeHandler includeHandler = new IncludeHandler();
                 File currentDirectory = mMainApp.getCurrentDirectory();
-                File file = new File(fileName);
-                if(file.exists())
-                {
-                    currentDirectory = file.getParentFile();
+		if(null != currentDirectory || null != fileName)
+		{
+		    if(null != fileName)
+		    {
+			File file = new File(fileName);
+			if(file.exists())
+			{
+			    currentDirectory = file.getParentFile();
+			}
+		    }
+		    includeHandler.setDirectory(currentDirectory);
                 }
-                includeHandler.setDirectory(currentDirectory);
-                
                 model = modelBuilder.buildModel(inputStream, includeHandler);
             }
         }
