@@ -37,6 +37,23 @@ This document contains the version history for the
 <td>Comments</td>
 </tr>
 
+<!--
+<tr valign="top">
+<td><a href="../2.4.1/download.html">2.4.1</a></td>
+<td>2005/08/??</td>
+<td>
+<ul>
+<li>
+Fixed a bug in <code>org.systemsbiology.chem.app.EditorPane</code>, where
+a <code>NullPointerException</code> was occurring when the user attempted
+to run "Tools-&gt;Simulate" on a model that did not have a filename associated
+with it yet, in the editor pane.
+</li>
+</ul>
+</td>
+</tr>
+-->
+
 <tr valign="top">
 <td><a href="../2.4.0/download.html">2.4.0</a></td>
 <td>2005/07/08</td>
