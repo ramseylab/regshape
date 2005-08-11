@@ -43,14 +43,11 @@ This document contains the version history for the
 <a href="&javaURL;">&localJavaLibraryName;</a> version number:</td>
 </tr>
 
-<!--
 <tr valign="top">
 <td><a href="../1.11.1/&installerDownloadRelURL;">1.11.1</a></td>
-<td>2005/08/??</td>
+<td>2005/08/11</td>
 <td>
 <ul>
-<li>Fixed a bug in the build script, that was placing an unneeded file (<code>AppResources.jar</code>) 
-on the web server.</li>
 <li>
 Fixed a bug in the editor pane, where a
 <code>NullPointerException</code> was occurring when the user
@@ -59,9 +56,8 @@ filename associated with it yet.
 </li>
 </ul>
 </td>
-<td><a href="&javaURL;/2.4.0/download.html">2.4.0</a></td>
+<td><a href="&javaURL;/2.4.1/download.html">2.4.1</a></td>
 </tr>
--->
 
 <tr valign="top">
 <td><a href="../1.11.0/&installerDownloadRelURL;">1.11.0</a></td>
