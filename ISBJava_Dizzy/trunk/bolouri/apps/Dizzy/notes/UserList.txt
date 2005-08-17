@@ -1,5 +1,6 @@
 Ahmadi, Hooman
 Columbia University
+[adapting Dizzy for Langevin simulations]
 ha2130@columbia.edu
 
 Behrendt, Dominik
@@ -8,6 +9,7 @@ Dominik.Behrendt@scr.siemens.com
 
 Bergmann, Frank
 Keck Graduate Institute
+[maintainer of SBW software]
 frank_bergmann@kgi.edu
 
 Blackwell, Avrama
@@ -16,6 +18,7 @@ avrama@gmu.edu
 
 Dill, David
 Stanford University
+[using Dizzy as instructional tool]
 dill@cs.stanford.edu
 
 Duguid, Adam
@@ -28,6 +31,7 @@ afinney@cds.caltech.edu
 
 Gilmore, Stephen
 University of Edinburgh
+[using Dizzy for process algebra research]
 Stephen.Gilmore@ed.ac.uk
 
 Hu, Bin
@@ -44,10 +48,12 @@ kowald@molgen.mpg.de
 
 Kramer, David
 Washington State University, Washington
+[used Dizzy as an instructional tool]
 dkramer@wsu.edu
 
 Margolin, Adam
 Columbia University
+[adapted Dizzy for operation on a vector supercomputer]
 adam@dbmi.columbia.edu
 
 Ng, Stanley
@@ -86,7 +92,7 @@ EPA (Lockheed), Research Triangle Park, NC
 Spencer.Richard@epamail.epa.gov
 
 Taylor, James
-Institute for Systemsb Biology
+Institute for Systems Biology
 jtaylor@systemsbiology.org
 
 Yun, Zheng
