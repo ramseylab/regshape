@@ -14,6 +14,10 @@ Blackwell, Avrama
 George Mason University
 avrama@gmu.edu
 
+Dill, David
+Stanford University
+dill@cs.stanford.edu
+
 Duguid, Adam
 Edinburgh University
 a.j.duguid@sms.ed.ac.uk
