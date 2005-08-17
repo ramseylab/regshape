@@ -27,6 +27,8 @@ backtrace originally provided by Ole Schulz-Trieglaf)
 (11) Add the ability to create a templatized compartment with a bunch of species within it, and
 the ability to create/destroy a compartment (Axel Kowald, 2005/07/19).
 
+(12) Run Dizzy through the CaliBase test suite (sramsey, 2005/08/17)
+
 ====> From Axel Kowald 2005/07/20:
 
 Hi Steve,
