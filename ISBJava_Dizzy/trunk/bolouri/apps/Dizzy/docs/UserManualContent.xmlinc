@@ -2564,7 +2564,7 @@ A more nontrivial example of using the looping construct would
 be to define a cascade of reactions, as shown here:
 <blockquote>
 <pre>
-loop "i": start 1, stop 4
+loop (i, 1, 4)
 {
   "reaction_[i]", "A[i]" -&gt; "A[i+1]", 1.0;
 }
