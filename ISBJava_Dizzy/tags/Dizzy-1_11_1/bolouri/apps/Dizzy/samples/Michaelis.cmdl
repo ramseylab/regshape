@@ -1,0 +1,15 @@
+#model "michaelis";
+
+// This is a simple model for exploring Michaelis-Menten 
+// enzyme kinetics
+//
+// Stephen Ramsey, 2004/11/18
+
+E = 100;
+S = 100;
+P = 0;
+ES = 0;
+
+enzyme_substrate_combine,    E + S -> ES,      1.0;
+enzyme_substrate_separate,   ES    -> E + S,   0.1;
+make_product,                ES    -> E + P,   0.01;
