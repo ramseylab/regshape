@@ -56,6 +56,11 @@ Columbia University
 [adapted Dizzy for operation on a vector supercomputer]
 adam@dbmi.columbia.edu
 
+Myers, Chris
+University of Utah
+[using Dizzy as a teaching tool]
+myers@vlsigroup.ece.utah.edu
+
 Ng, Stanley
 ngstanley74@hotmail.com
 
@@ -99,4 +104,8 @@ Yun, Zheng
 Nanyang Technological University, Singapore
 pg04325488@ntu.edu.sg
 mincloud@pmail.ntu.edu.sg
+
+Zhu, Rui
+University of Lethbridge, Canada
+rui.zhu@uleth.ca
 
