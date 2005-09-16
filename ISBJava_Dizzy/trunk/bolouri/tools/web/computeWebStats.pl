@@ -88,7 +88,7 @@ sub computeWebStats($$$)
     {
         $numDownloads = 0;
     }
-    $numDownloads += `/bin/grep '/${installerName}' $logFile | /usr/bin/cut -f1 -d\ | /bin/sort -u | /usr/bin/wc --lines`;
+    $numDownloads += `/bin/grep '/${installerName}' $logFile | /usr/bin/cut -f1 -d\\ | /bin/sort -u | /usr/bin/wc --lines`;
     open(DOWNLOADS, ">" . SCRATCH_DIR . "/${appName}Downloads.txt") or die("unable do open ${appName} downloads file, for writing");
     print DOWNLOADS $numDownloads . "\n";
     close(DOWNLOADS);
