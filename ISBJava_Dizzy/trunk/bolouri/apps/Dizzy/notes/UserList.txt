@@ -100,6 +100,9 @@ Taylor, James
 Institute for Systems Biology
 jtaylor@systemsbiology.org
 
+Wang, X
+xwang@mail.mcw.edu
+
 Yun, Zheng
 Nanyang Technological University, Singapore
 pg04325488@ntu.edu.sg
