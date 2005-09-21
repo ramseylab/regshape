@@ -29,6 +29,8 @@ the ability to create/destroy a compartment (Axel Kowald, 2005/07/19).
 
 (12) Run Dizzy through the CaliBase test suite (sramsey, 2005/08/17)
 
+(13) Modify EditorPane.java to put cursor at the top of the model file, when it is loaded.
+
 ====> From Axel Kowald 2005/07/20:
 
 Hi Steve,
