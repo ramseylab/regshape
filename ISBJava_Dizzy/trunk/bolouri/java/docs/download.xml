@@ -47,8 +47,8 @@ unpack the archive on your computer.
 <p>
 Here are the links to the &appName; software:
 <ul>
-<li><a href="&appName;.zip"><code>&appName;.zip</code> [Zip archive]</a></li>
-<li><a href="&appName;.tar.gz"><code>&appName;.tar.gz</code> [Gzipped Tar archive]</a></li>
+<li><code><a href="&appName;.zip">&appName;.zip</a></code> [Zip archive]</li>
+<li><code><a href="&appName;.tar.gz">&appName;.tar.gz</a></code> [Gzipped Tar archive]</li>
 </ul>
 Please remember to read the <a href="../docs/ReadMe.html">ReadMe document</a> that
 can be found the &quot;<code>docs</code>&quot; subdirectory when you
