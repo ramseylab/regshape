@@ -85,7 +85,6 @@
            style="${globalConfig}/${docsStyleSheet}">
         <param name="hideGroupLogo" expression="true" />
         <param name="hideMainLogo" expression="true" />
-  		<param name="hideExternalLinks" expression="true" />
   	</style>
     
   	<style basedir="${app.docsDir}"
