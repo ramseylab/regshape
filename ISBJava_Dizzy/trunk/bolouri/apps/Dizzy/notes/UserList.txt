@@ -51,6 +51,11 @@ Washington State University, Washington
 [used Dizzy as an instructional tool]
 dkramer@wsu.edu
 
+Landis, Clark
+University of Wisconsin-Madison
+[used Dizzy as an instructional tool]
+landis@chem.wisc.edu
+
 Margolin, Adam
 Columbia University
 [adapted Dizzy for operation on a vector supercomputer]
