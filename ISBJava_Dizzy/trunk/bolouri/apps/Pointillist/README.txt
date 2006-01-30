@@ -1,8 +1,16 @@
 This file contains notes pertaining to the source archive
 for the Pointillist project, mostly of interest to developers. 
 
-For an overview of Pointillist, please see the files
-docs/UserManualContent.xmlinc and matlab/README.txt.
+There is a separate UserManual.xml file that generates the HTML document
+"UserManual.html" that is intended for end-users to read.  The "UserManual.xml"
+file is archived in the "docs" subdirectory.  If you are interested
+in *using* Pointillist, you should probably start reading that document,
+which can be found on the web at:
+
+  http://projects.systemsbiology.net/magnet/software/Pointillist/docs/UserManual.html
+
+For an overview of the MATLAB codes for Pointillist you should read
+the document "magnet/README.txt".
 
 Ant is used as the driver for application builds.  You can change to
 the CVSROOT/bolouri/apps/Pointillist directory and do an "ant build", but
