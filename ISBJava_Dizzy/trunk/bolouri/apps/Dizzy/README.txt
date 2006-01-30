@@ -7,7 +7,7 @@ file is archived in the "docs" subdirectory.  If you are interested
 in *using* Dizzy, you should probably start reading that document,
 which can be found on the web at:
 
-  http://labs.systemsbiology.net/bolouri/software/Dizzy/docs/Overview.html
+  http://projects.systemsbiology.net/magnet/software/Dizzy/docs/Overview.html
 
 Ant is used as the driver for application builds.  You can change to
 the CVSROOT/bolouri/apps/Dizzy directory and do an "ant build", but
