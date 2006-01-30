@@ -991,33 +991,33 @@ Here is a screen shot of the Evidence-Weighted Inferer program:
 The &appName; algorithms are also available as a set of Matlab
 M-files.  These files can be found in the <code>matlab</code> 
 subdirectory of the directory where you installed &appName;.
-Note that one of these Matlab codes, <code>pcomp.m</code>,
-requires the Matlab Statistics Toolbox.  
-<dl>
-  <dt><b>mainpointillist.m</b></dt>
-  <dd>This program is the evidence-weighted inferer.  The
-    function <code>mainpointillist(filename, cutoff)</code> is called with the 
-    name of a data file containing the significances, <code>filename</code>, 
-    and the significance cutoff <code>cutoff</code>.</dd>
-  <dt><b>pcomp.m</b></dt>
-  <dd>This program is the significance calculator.  The
-    function <code>pcomp(filename,dt)</code> is called
-    with the name of a data file containing the observations, <code>filename</code>,
-    and an integer argument <code>dt</code> indicating the data type.
-    A data type of "0" indicates "static" data, such as steady-state
-    expression levels or protein abundance levels.  A data type of "1" 
-    indicates "dynamic" (time-course) data.  A data type of "3"
-    indicates data from "deletion" (knock-out) experiments.
-    <b>Note:</b> this program requires the <code>statgetargs.m</code>
-    program and the <code>ksdensity.m</code> program 
-    from the Matlab Statistics Toolbox.</dd>
-  <dt><b>qnorm.m</b></dt>
-  <dd>This program is the quantile normalizer.  The
-    function <code>qnorm(filename, missing)</code> is called
-    with the name of a data file containing the observations,
-    <code>filename</code>, and an optional numeric argument <code>missing</code>
-    that indicates the special value corresponding to missing data.</dd>
-</dl>
+Note that these Matlab codes require the Matlab Statistics Toolbox.  
+<blockquote>
+<pre>
+  basisexp.m: select a dataset to be used for p-value normalization
+
+  pscalef.m: normalization of p-values (correct non-ideality of p-value distributions or correlation issues if any).
+
+	     When applying "pv2.m" to the p-values obtained from real high-throughput datasets, 
+	     we recommend to run the two functions above to normalize p-values before running "pv2.m"
+
+  pv2.m: a wrapper to call esa.m and genwfunf.m depending upon the methods mentioned in the main text of the paper
+
+  esa.m: enhanced simulated annealing that searches for the optimal weight and parameters.
+
+  genwfunf.m: select elements given a weight vector and alpha
+
+  mcmc.m: Monte Carlo simulation to generate random numbers for each integration method (for example, Fisher's method)
+
+  nprampv2.m: non-parametric method for integrating datasets
+
+  paretospace.m: perform a multi-objective optimization on the Pareto space
+
+  supsmu.m: non-parametric smoothing algorithm.
+
+  nwpv2.m: non-weighted integration methods.
+</pre>
+</blockquote>
 These Matlab codes have been tested with Matlab R13 and R14.  They
 are not used by the Java implementation of &appName;, but are a 
 separate implementation of the &appName; algorithms.
