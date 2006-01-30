@@ -17,7 +17,7 @@ The version of this library is 1.0, released on February 13, 2004.
 Stephen Ramsey
 Institute for Systems Biology
 
-http://labs.systemsbiology.net/bolouri/software/ISBJava
+http://projects.systemsbiology.net/magnet/software/ISBJava
 
 
 
