@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This document is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<!-- 
+This page references an image file XXXXDownloads.jpg (where XXXX
+is the application name) that is created by an external script,
+computeWebStats.pl.  This image file is a counter of the number of
+times the software has been downloaded.  The image file is not created
+and uploaded by the build system.  It is created and uploaded
+independently, so that the web counter gets updated without having to
+run the build system.  
+-->
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>&appName; Home Page</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+<isb:docdate>$Date$</isb:docdate>
+
+<table border="0">
+<tr>
+<td>
+<ul>
+<li><a href="&appVersion;/&installerDownloadRelURL;">Download &appName;</a></li>
+<li><a href="&appHomePage;/docs/Overview.html">&appName; Overview</a></li>
+  <li><a href="docs/UserManual.html">&appName; User Manual</a> (a <a href="docs/UserManual.pdf">PDF version</a> is available)</li>
+<li><a href="&appHomePage;/docs/VersionHistory.html">&appName; Version History</a></li>
+<li><a href="&webBaseURL;/License.html">License Agreement</a></li>
+<li><a href="&webBaseURL;/&localJavaLibraryName;/javadoc">Javadoc API documentation</a> ( a <a href="&webBaseURL;/&localJavaLibraryName;/docs/APIDocumentation.pdf">PDF version</a> is available)</li>
+<li><a href="&appHomePage;/docs/UserManual.html#pubs">An article describing &appName;</a></li>
+</ul>
+</td>
+<td>
+<a href="images/screenshot1-big.png"><img src="images/screenshot1-small.png" alt="screen shot" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+&appName; is a chemical kinetics stochastic simulation software
+package written in Java.  It provides a model definition environment
+and an implementation of the <a
+href="&appHomePage;/docs/UserManual.html#gillespie">Gillespie</a>, <a
+href="&appHomePage;/docs/UserManual.html#gibsonbruck">Gibson-Bruck</a>,
+and <a href="&appHomePage;/docs/UserManual.html#tauleap">Tau-Leap</a>
+stochastic algorithms.  &appName; is capable of importing and
+exporting the <a href="&sbmlURL;">SBML model definition language</a>,
+as well as displaying models graphically using the <a
+href="&cytoscapeURL;">Cytoscape software system</a>.  &appName; was
+written by <a href="&appOriginalAuthorHomePage;">Stephen
+Ramsey</a> in the laboratory of Hamid Bolouri at ISB.  &appName; is
+based on the <a
+href="&webBaseURL;/&localJavaLibraryName;">&localJavaLibraryName;
+library</a>.  The software is available for download within a <a
+href="&appVersion;/&installerDownloadRelURL;">self-extracting
+installer</a>.  It is distributed under the <a
+href="../License.html">GNU Lesser General Public License</a> (LGPL),
+which is a standard &quot;free software&quot; and &quot;open
+source&quot; license.  &appName; requires the Java 2 Runtime
+Environment (JRE) version 1.4 or newer, or an equivalent JRE.  For
+more information about the &appName; system, please consult the <a
+href="&appHomePage;/docs/UserManual.html">&appName; User Manual</a>.
+</p>
+
+<p>
+<b>Current version:</b>  <a href="&appHomePage;/docs/VersionHistory.html">&appVersion;</a>, released on &appDate;
+</p>
+
+<p>
+<b>Download counter:</b> &appName; has been downloaded over <img border="1" align="absmiddle" src="images/&appName;Downloads.jpg" alt="[COUNTER]" /> times since June 6, 2004.
+</p>
+
+<p>
+<b>Visitor counter:</b> this page has been visited over <img border="1" align="absmiddle" src="images/&appName;Visitors.jpg" alt="[COUNTER]" /> times since June 6, 2004.
+</p>
+
+<p>
+<font size="-1">The development of &appName; is supported by a grant from 
+the National Institute of Allergy and Infectious Disease (NIAID), a division of
+the National Institutes of Health (NIH).
+</font>
+</p>
+
+</isb:document>

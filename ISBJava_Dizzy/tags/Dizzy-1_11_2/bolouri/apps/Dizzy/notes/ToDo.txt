@@ -1,0 +1,69 @@
+(1) "Maybe more information could be printed if the "debug" option is used. STOCKS prints in debug mode all 
+reactions performed together with the waiting time until this reaction occured. This is useful to see if 
+some reactions are performed at all."  (Axel Kowald, 2004/10/26)
+
+(2) Modify ModelViewerCytoscape class to use the latest version of the Cytoscape SBML Reader Plug-In
+
+(3) Modify SimulationResultsPlot to use the latest version of JFreeChart
+
+(4) Try compiling ISBJava using a Java-to-Native compiler (Axel Kowald, 2004/03/03)
+
+(5) Integrate Erika Birse's patches into Dizzy
+
+(6) Modify the "File->Quit" handler to display a confirmation dialog box if the edit
+buffer is dirty.
+
+(7) Fix warning in build.xml file for ISBJava "buildPDF" target, about JavadocTitlePageSimple.html
+file being invalid or missing ??
+
+(8) Waiting to hear back from Frank Bergmann regarding issue with SBW compatibility (stack
+backtrace originally provided by Ole Schulz-Trieglaf)
+
+(9) Add support for SBML Level 2.   Requested by:  Richard Spencer, 2005/06/17
+    See JigCell for a 100% pure Java library for parsing SBML (thanks to Nick Allen, nallen@vt.edu)
+    
+(10) Test Dizzy/ISBJava/Pointillist with Java 1.5
+
+(11) Add the ability to create a templatized compartment with a bunch of species within it, and
+the ability to create/destroy a compartment (Axel Kowald, 2005/07/19).
+
+(12) Run Dizzy through the CaliBase test suite (sramsey, 2005/08/17)
+
+(13) Modify EditorPane.java to put cursor at the top of the model file, when it is loaded.
+
+====> From Axel Kowald 2005/07/20:
+
+Hi Steve,
+
+many thanks for your quick reply.
+Regarding wishes for future Dizzy extensions, I think what I would like is some form of general purpose reaction, 
+which happens with a certain probability (as a normal reaction). But once this reaction happened, it would be up to 
+the CMDL script to decide what happens during this reaction.
+Below is an example of such an general purpose reaction and some commands which could be used.
+I guess it would be a lot of work to include such a functionality into Dizzy, but I think it would also greatly 
+increase the range of problems that could be modelled.
+
+Best wishes,
+
+              Axel
+
+
+gen_purp_r, [ certain rate ] {       // general purpose reaction
+ x = x - 2
+ z = 0.5*z                // reduce z by 50%
+ y[3] = x + y[5]        // array variables
+ y[len(y)/2] = 0        // len(y) = number of elements of array variable
+ delComp(c[1])       // delete compartment c[1]
+ c[len(c)+1] = c[1]   //  make new compartment that is copy of c[1]
+
+if (x>10){                // if construct
+ do this
+} else {
+ do that
+}
+
+for (i=1, len(y)){     // looping through array variable or array compartment
+ y[i] = 42
+}
+
+}
