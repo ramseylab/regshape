@@ -24,7 +24,7 @@
 <!ENTITY appCopyright "(c) 2003-2005 Institute for Systems Biology">
 
 <!-- these definitions are used only in documentation, not by the app itself: -->
-<!ENTITY appMaintainerFullName "&mainGroup;">
+<!ENTITY appMaintainerFullName "Bolouri Group">
 <!ENTITY appMaintainerURL "&mainGroupURL;">
 <!ENTITY appMaintainerEmailSafe "pointillist at systemsbiology.org"> 
 <!ENTITY appMaintainerAffiliation "&mainAffiliation;">
