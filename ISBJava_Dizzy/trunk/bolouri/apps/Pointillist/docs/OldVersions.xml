@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+
+<!ENTITY javaURL "&webBaseURL;/&localJavaLibraryName;">
+   ]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This document is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>&appName; Old Versions</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docdate>$Date$</isb:docdate>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+
+
+<p>
+<a href="../index.html">[Back to &appName; Home Page]</a>
+</p>
+
+
+<p>
+
+<table border="0">
+<tbody><tr>
+<td>
+<ul>
+<li>
+<a href="../2.1.1/point211.zip">Download &appName; v2.1.1</a> [18 kB ZIP archive of MATLAB codes] [This version includes Fisher's method, the Mudholkar-George
+method, and the Liptak-Stouffer method, as described in the above article.  In
+addition, v2.1.1 fixes some minor issues with the previous version.]
+<a href="../2.1.1/README.txt">[README]</a>
+<p>
+&nbsp;
+</p>
+</li>
+
+<li>
+<a href="../2.1.0/point210.zip">Download &appName; v2.1.0</a> [17 kB ZIP archive of MATLAB codes] [This version includes Fisher's method, the Mudholkar-George
+method, and the Liptak-Stouffer method, as described in the above article.  ]
+<p>
+&nbsp;
+</p>
+</li>
+<li>
+<a href="../1.0.1/installer/Web_Installers/install.htm">Download Java version of &appName;'s nonparametric method</a> [This 
+version implements the nonparametric method and uses the weighted
+Fisher's method.] <br />
+<a href="UserManual.html">User Manual for Java version (html)</a><br />
+<a href="UserManual.pdf">User Manual for Java version (pdf, 244 kB)</a>
+</li>
+</ul>
+</td>
+</tr>
+</tbody></table>
+</p>
+
+<p>
+The development of &appName; is supported by grants from the National Science Foundation (NSF)
+and the National Institutes of Health (NIH).
+</p>
+
+</isb:document>
+

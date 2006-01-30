@@ -1,14 +1,6 @@
 This file contains notes pertaining to the source archive
 for the Pointillist project, mostly of interest to developers. 
 
-There is a separate Overview.xml file that generates the application
-"Overview.html" that is intended for end-users to read.  The "Overview.xml"
-file is archived in the "docs" subdirectory.  If you are interested
-in *using* Pointillist, you should probably start reading that document,
-which can be found on the web at:
-
-  http://labs.systemsbiology.net/bolouri/software/Pointillist/docs/Overview.html
-
 Ant is used as the driver for application builds.  You can change to
 the CVSROOT/bolouri/apps/Pointillist directory and do an "ant build", but
 first you will need to do an "ant build" in the
