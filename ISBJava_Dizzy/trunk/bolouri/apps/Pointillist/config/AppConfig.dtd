@@ -15,13 +15,13 @@
 <!ENTITY appName "Pointillist">
 <!ENTITY appVersionMajor "1">
 <!ENTITY appVersionMinor "0">
-<!ENTITY appVersionPatch "1">
+<!ENTITY appVersionPatch "2">
 <!ENTITY appVersion "&appVersionMajor;.&appVersionMinor;.&appVersionPatch;">
-<!ENTITY appDate "2005/07/13">
+<!ENTITY appDate "2006/01/30">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
 <!ENTITY appLogoURL "images/appLogo.jpg">
 <!ENTITY appIconURL "images/appLogoIcon.jpg">
-<!ENTITY appCopyright "(c) 2003-2005 Institute for Systems Biology">
+<!ENTITY appCopyright "(c) 2003-2006 Institute for Systems Biology">
 
 <!-- these definitions are used only in documentation, not by the app itself: -->
 <!ENTITY appMaintainerFullName "Bolouri Group">

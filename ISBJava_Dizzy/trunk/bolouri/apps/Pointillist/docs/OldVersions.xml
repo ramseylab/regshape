@@ -57,7 +57,14 @@ method, and the Liptak-Stouffer method, as described in the above article.  ]
 </p>
 </li>
 <li>
-<a href="../1.0.1/installer/Web_Installers/install.htm">Download Java version of &appName;'s nonparametric method</a> [This 
+<a href="../1.0.2/installer/Web_Installers/install.htm">Download Java version of &appName;'s nonparametric method (version 1.0.2)</a> [This 
+version implements the nonparametric method and uses the weighted
+Fisher's method; the latest Matlab codes (from version 2.1.0) are included] <br />
+<a href="UserManual.html">User Manual for Java version (html)</a><br />
+<a href="UserManual.pdf">User Manual for Java version (pdf, 244 kB)</a>
+</li>
+<li>
+<a href="../1.0.1/installer/Web_Installers/install.htm">Download Java version of &appName;'s nonparametric method (version 1.0.1)</a> [This 
 version implements the nonparametric method and uses the weighted
 Fisher's method.] <br />
 <a href="UserManual.html">User Manual for Java version (html)</a><br />
