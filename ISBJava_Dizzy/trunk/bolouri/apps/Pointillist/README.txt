@@ -1,6 +1,9 @@
 This file contains notes pertaining to the source archive
 for the Pointillist project, mostly of interest to developers. 
 
+For an overview of Pointillist, please see the files
+docs/UserManualContent.xmlinc and matlab/README.txt.
+
 Ant is used as the driver for application builds.  You can change to
 the CVSROOT/bolouri/apps/Pointillist directory and do an "ant build", but
 first you will need to do an "ant build" in the
