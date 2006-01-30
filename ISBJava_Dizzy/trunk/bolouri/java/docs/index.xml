@@ -32,7 +32,6 @@ having to run the build system.
 
 <isb:doctitle>&appName; Home Page</isb:doctitle>
 <isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
-<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 <isb:docdate>$Date$</isb:docdate>
 
@@ -52,21 +51,22 @@ having to run the build system.
 </table>
 
 <p>
-The &appName; project is a library (collection) of classes
-written in the <a href="http://java.sun.com">Java</a>
-programming language, that are intended to be used for
-research in computational biology.  The compiled library and the body 
-of source code for these Java classes are available for download 
-within a self-extracting installer 
-(see the &quot;Download &appName;&quot; link above), subject
-to the terms of the <a href="../License.html">software license agreement</a>.
-The license agreement is the GNU Lesser General Public License (LGPL), 
-which is a standard &quot;free software&quot;
-and &quot;open source&quot; license.   
-&appName; requires the Java 2 Runtime Environment (JRE) version 1.4 or newer, or
-an equivalent JRE.
-For more information about the &appName; library, please consult the 
-<a href="docs/UserManual.html">&appName; User Manual</a>.
+The &appName; project is a library (collection) of classes written in
+the <a href="http://java.sun.com">Java</a> programming language, that
+are intended to be used for research in computational biology.
+&appName; was written by <a
+href="&appOriginalAuthorHomePage;">Stephen Ramsey</a> in the
+laboratory of Hamid Bolouri at ISB.  The compiled library and the body
+of source code for these Java classes are available for download
+within a self-extracting installer (see the &quot;Download
+&appName;&quot; link above), subject to the terms of the <a
+href="../License.html">software license agreement</a>.  The license
+agreement is the GNU Lesser General Public License (LGPL), which is a
+standard &quot;free software&quot; and &quot;open source&quot;
+license.  &appName; requires the Java 2 Runtime Environment (JRE)
+version 1.4 or newer, or an equivalent JRE.  For more information
+about the &appName; library, please consult the <a
+href="docs/UserManual.html">&appName; User Manual</a>.
 
 <br clear="left" />
 

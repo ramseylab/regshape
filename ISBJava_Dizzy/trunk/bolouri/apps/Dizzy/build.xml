@@ -92,7 +92,7 @@
            includes="*.xml" 
            style="${globalConfig}/${docsStyleSheet}"
       	   excludes="AppConfig.xml,AppHelp.xml,ReadMe.xml" >
-    	<param name="altGroupLogoRelURL" expression="&appName;/&appLogoURL;" />
+    	<param name="groupLogoRelURL" expression="&appName;/&appLogoURL;" />
     </style>
 
   	<style in="${app.docsDir}/ReadMe.xml"
@@ -108,7 +108,7 @@
            style="${globalConfig}/${docsStyleSheet}">
         <param name="altWebBaseURL" expression=".." />
     	<param name="hideExternalLinks" expression="true" />
-    	<param name="altGroupLogoRelURL" expression="&appLogoURL;" />
+    	<param name="groupLogoRelURL" expression="&appLogoURL;" />
     </style>
   	
   	<style in="${app.configDir}/AppConfig.xml"
@@ -208,7 +208,6 @@
         <include name="images/*.png" />
       </fileset>
       <fileset dir="${globalRoot}">
-        <include name="images/logo-bolourilab.png" />
         <include name="images/logo-isb.png" />
       </fileset>
     </jar>

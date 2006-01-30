@@ -76,7 +76,7 @@
            includes="*.xml" 
     	   excludes="JavadocTitlePageSimple.xml,download.xml"
            style="${globalConfig}/${docsStyleSheet}">
-      <param name="altGroupLogoRelURL" expression="&appName;/&appLogoURL;" />
+      <param name="groupLogoRelURL" expression="&appName;/&appLogoURL;" />
     </style>
 
   	<style basedir="${app.docsDir}" 

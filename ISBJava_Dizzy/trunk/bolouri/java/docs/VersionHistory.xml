@@ -20,7 +20,6 @@
 
 <isb:doctitle>&appName; Version History</isb:doctitle>
 <isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
-<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
 <isb:docdate>$Date$</isb:docdate>
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 

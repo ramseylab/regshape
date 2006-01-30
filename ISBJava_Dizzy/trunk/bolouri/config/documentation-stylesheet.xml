@@ -22,10 +22,9 @@
   <xsl:output method="html" indent="yes" encoding="ISO-8859-1" />
 
   <xsl:param name="altWebBaseURL" /> 
-  <xsl:param name="hideGroupLogo" />
   <xsl:param name="hideMainLogo" />
   <xsl:param name="hideExternalLinks" />
-  <xsl:param name="altGroupLogoRelURL" />
+  <xsl:param name="groupLogoRelURL" />
   <xsl:param name="hideDocOwner" />
   
   <xsl:template match="html:a|html:a/@*">
@@ -162,26 +161,12 @@
 
         </td>
         
-      <xsl:if test="not( $hideGroupLogo != '' )">
+      <xsl:if test=" $groupLogoRelURL != '' ">
         <td>
-          <xsl:choose>
-            <xsl:when test="not( $hideExternalLinks != '' )">
-		          <a href="&mainGroupURL;">
-		            <xsl:element name="img">
-		              <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/<xsl:choose><xsl:when test="not($altGroupLogoRelURL != '')">&groupLogoRelURL;</xsl:when><xsl:otherwise><xsl:value-of select="$altGroupLogoRelURL" /></xsl:otherwise></xsl:choose></xsl:attribute>
-		              <xsl:attribute name="border">0</xsl:attribute>
-		              <xsl:attribute name="alt">Group Logo</xsl:attribute>
-		            </xsl:element>
-		          </a>
-            </xsl:when>
-            <xsl:otherwise>
-	            <xsl:element name="img">
-	              <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/<xsl:choose><xsl:when test="not($altGroupLogoRelURL != '')">&groupLogoRelURL;</xsl:when><xsl:otherwise><xsl:value-of select="$altGroupLogoRelURL" /></xsl:otherwise></xsl:choose></xsl:attribute>
-	              <xsl:attribute name="border">0</xsl:attribute>
-	              <xsl:attribute name="alt">Group Logo</xsl:attribute>
-	            </xsl:element>
-            </xsl:otherwise>
-          </xsl:choose>
+          <xsl:element name="img">
+            <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/<xsl:value-of select="$groupLogoRelURL" /></xsl:attribute>
+            <xsl:attribute name="alt">Group Logo</xsl:attribute>
+          </xsl:element>
         </td>
       </xsl:if>
       </tr>

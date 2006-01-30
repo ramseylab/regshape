@@ -22,7 +22,6 @@
 
 <isb:doctitle>&appName; Overview</isb:doctitle>
 <isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
-<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
 <isb:docversion>Version &appVersion;, Released &appDate;</isb:docversion>
 <isb:docdate>$Date$</isb:docdate>
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>

@@ -28,7 +28,6 @@
 
 <isb:doctitle>&appName; User Manual</isb:doctitle>
 <isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
-<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
 <isb:docdate>$Date$</isb:docdate> 
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 <isb:docauthor>&appOriginalAuthorFullName; (<code>&mainGroupEmailSafe;</code>)</isb:docauthor>

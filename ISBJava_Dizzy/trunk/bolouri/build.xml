@@ -59,7 +59,6 @@
     <style in="${projDocsDir}/License.xml" 
            out="${projStyleDir}/License.html" 
            style="${projConfigDir}/${docsStyleSheet}">
-    	<param name="hideGroupLogo" expression="true" />
     	<param name="hideExternalLinks" expression="true" />
     	<param name="hideDocOwner" expression="true" />
     </style>
@@ -125,6 +124,12 @@
   </target>
 
   <target name="uploadWeb">
+    <ftp server="${webServerHostname}"
+         userid="${webServerUsername}"
+         password="${webServerPassword}"
+         action="mkdir"
+         ignoreNoncriticalErrors="true"
+         remotedir="${webServerRemoteDir}" />
     <ftp server="${webServerHostname}"
          userid="${webServerUsername}"
          password="${webServerPassword}"

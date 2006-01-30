@@ -15,7 +15,8 @@
 &appName; is a chemical kinetics simulation software 
 package implemented in Java.  It provides a model definition environment and 
 various simulation engines for evolving a dynamical model from specified 
-initial data. 
+initial data.   <a href="&appOriginalAuthorHomePage;">Stephen
+Ramsey</a> in the laboratory of Hamid Bolouri at ISB.
 A model consists of a system of interacting chemical species,
 and the reactions through which they interact.  The software can then be used 
 to simulate the reaction kinetics of the system of interacting species.

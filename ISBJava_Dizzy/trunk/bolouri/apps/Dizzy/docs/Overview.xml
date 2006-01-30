@@ -22,7 +22,6 @@
 
 <isb:doctitle>&appName; Overview</isb:doctitle>
 <isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
-<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
 <isb:docversion>Version &appVersion;, Released &appDate;</isb:docversion>
 <isb:docdate>$Date$</isb:docdate>
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
@@ -39,7 +38,9 @@ written in Java.  It provides a model definition environment and an implementati
 stochastic algorithms.  The software is based on the 
 <a href="../../&localJavaLibraryName;">&localJavaLibraryName;</a> library.
 An <a href="&appHomePage;/docs/UserManual.html#pubs">article</a> describing &appName;
-is available.
+is available.  &appName; was
+written by <a href="&appOriginalAuthorHomePage;">Stephen
+Ramsey</a> in the laboratory of Hamid Bolouri at ISB.
 </isb:docsection>
 
 <isb:docsection name="License and Disclaimer" label="licenseagreement">

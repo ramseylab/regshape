@@ -31,6 +31,8 @@
 
 <!ENTITY appOriginalAuthorFullName "Stephen Ramsey">
 <!ENTITY appOriginalAuthorEmailSafe "sramsey at systemsbiology.org"> 
+<!ENTITY appOriginalAuthorHomePage  "&publicRepositoryURL;/sramsey">
+
 <!ENTITY appHelpSetName "html/AppHelp.hs">
 
 <!ENTITY appJavaMaxHeapSizeBytes "500000000">
