@@ -45,10 +45,10 @@ sub SCRATCH_DIR() {'/local/var/webstats'}
 sub TEMP_DIR() {'/tmp'}
 sub DOCUMENT_ROOT() {'/local/apache/htdocs'}
 sub BIN_DIR() {'/local/bin'}
-sub LOG_FILE_PREFIX() {'BolouriWebStats'}
-sub USERNAME() {'bolouri_group'}
-sub PASSWORD() {'b2G4cIc'}
-sub FTP_SERVER() {'labs.systemsbiology.net'}
+sub LOG_FILE_PREFIX() {'MagnetWebStats'}
+sub USERNAME() {'magnet'}
+sub PASSWORD() {'M$2as9'}
+sub FTP_SERVER() {'projects.systemsbiology.net'}
 sub REMOTE_FTP_DIR() {'privateRepository'}
 sub DNS_CACHE_FILE() {'dns_cache.db'}
 sub WEB_STATS_WEB_SUBDIR() {'webstats'}
