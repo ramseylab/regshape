@@ -40,8 +40,6 @@ in a step-by-step tutorial, how to begin using &appName;.
 A comprehensive <a href="UserManual.html">User Manual</a> is available
 for &appName;.  It is the file "UserManual.html" 
 in the "docs" directory where you installed &appName;.  
-A complete <a href="VersionHistory.html">Version History</a>
-is also available in that directory, as file "VersionHistory.html". 
 If you discover a bug in &appName; or it fails to
 launch on your computer, please send an email message to
 <blockquote>

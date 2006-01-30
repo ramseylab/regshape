@@ -1776,35 +1776,6 @@ and any path to a file to read from that file]]></string>
 												<int>0</int>
 											</property>
 										</object>
-										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="ee480d2c84e4">
-											<property name="unixPermissions">
-												<string><![CDATA[664]]></string>
-											</property>
-											<property name="sourceName">
-												<string><![CDATA[VersionHistory.html]]></string>
-											</property>
-											<property name="overrideUnixPermissions">
-												<boolean>false</boolean>
-											</property>
-											<property name="sourcePath">
-												<string><![CDATA[$IA_PROJECT_DIR$/html/]]></string>
-											</property>
-											<property name="shouldUninstall">
-												<boolean>true</boolean>
-											</property>
-											<property name="destinationName">
-												<string><![CDATA[VersionHistory.html]]></string>
-											</property>
-											<property name="fileSize">
-												<long>-1</long>
-											</property>
-											<property name="macBinary">
-												<boolean>false</boolean>
-											</property>
-											<property name="targetCheckKind">
-												<int>0</int>
-											</property>
-										</object>
 										<object class="com.zerog.ia.installer.actions.InstallFile" objectID="ee480d2b84e3">
 											<property name="unixPermissions">
 												<string><![CDATA[664]]></string>
@@ -1859,7 +1830,6 @@ and any path to a file to read from that file]]></string>
 											<visualChildren>
 												<object refID="ee480d2c84e4"/>
 												<object refID="ee480d2b84e4"/>
-												<object refID="ee480d2c84e3"/>
 												<object refID="ee480d2b84e3"/>
 											</visualChildren>
 										</object>
