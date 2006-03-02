@@ -18,20 +18,21 @@
               xmlns:html="http://www.w3.org/TR/xhtml1"
               xmlns="http://www.w3.org/TR/xhtml1">
 
-<isb:doctitle>MAGNET Project Home Page</isb:doctitle>
+<isb:doctitle>MAGNET Project:  Software Page</isb:doctitle>
 <isb:docowner>&mainGroup;, &mainAffiliation;</isb:docowner>
 <isb:docowneremail>&mainGroupEmailSafe;</isb:docowneremail>
-<isb:docdate>Date: 2003/04/11 19:02:48 $</isb:docdate>
+<isb:docdate>Date: 2006/03/02 10:56 $</isb:docdate>
 
 
-
-<h3>MAGNET:  Modeling and Analysis of Genetic Networks</h3>
-
+<h3>MAGNET Project:  Software Page</h3>
 
 <p>
-MAGNET is a software suite developed in the laboratory of Hamid Bolouri
-at the Institute for Systems Biology.  In addition, BioTapestry is developed
-in collaboration with the laboratory of Eric Davidson at Caltech.  
+<a href="/">MAGNET</a> is a research project to model gene regulatory
+networks, initiated in the laboratory of Dr. Hamid Bolouri at the
+Institute for Systems Biology.  This page contains links to the suite
+of software tools developed in this project.  BioTapestry (see below)
+is developed in collaboration with the laboratory of Eric Davidson at
+Caltech.
 </p>
 
 <p>
