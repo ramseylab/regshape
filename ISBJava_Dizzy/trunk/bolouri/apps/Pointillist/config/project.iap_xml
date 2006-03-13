@@ -113,7 +113,7 @@ Relative paths are relative to the launcher.]]></string>
 							<method name="addElement">
 								<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="1781aab38460">
 									<property name="propertyValue">
-										<string><![CDATA[$USER_INSTALL_DIR$]]></string>
+										<string><![CDATA["$USER_INSTALL_DIR$"]]></string>
 									</property>
 									<property name="propertyName">
 										<string><![CDATA[lax.command.line.args]]></string>
@@ -2018,7 +2018,7 @@ Relative paths are relative to the launcher.]]></string>
 													<method name="addElement">
 														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="ee6590178584">
 															<property name="propertyValue">
-																<string><![CDATA[$USER_INSTALL_DIR$]]></string>
+																<string><![CDATA["$USER_INSTALL_DIR$"]]></string>
 															</property>
 															<property name="propertyName">
 																<string><![CDATA[lax.command.line.args]]></string>
@@ -2253,7 +2253,7 @@ Relative paths are relative to the launcher.]]></string>
 													<method name="addElement">
 														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="17851abb848b">
 															<property name="propertyValue">
-																<string><![CDATA[$USER_INSTALL_DIR$]]></string>
+																<string><![CDATA["$USER_INSTALL_DIR$"]]></string>
 															</property>
 															<property name="propertyName">
 																<string><![CDATA[lax.command.line.args]]></string>
@@ -2471,7 +2471,7 @@ Relative paths are relative to the launcher.]]></string>
 													<method name="addElement">
 														<object class="com.zerog.ia.installer.util.LAXPropertyData" objectID="ee659fdc8584">
 															<property name="propertyValue">
-																<string><![CDATA[$USER_INSTALL_DIR$]]></string>
+																<string><![CDATA["$USER_INSTALL_DIR$"]]></string>
 															</property>
 															<property name="propertyName">
 																<string><![CDATA[lax.command.line.args]]></string>
