@@ -43,18 +43,26 @@ This document contains the version history for the
 </tr>
 
 
-<!--
 <tr valign="top">
-<td><a href="../1.0.0/&installerDownloadRelURL;">1.0.1</a></td>
-<td>2005/07/08</td>
+<td><a href="../1.0.3/&installerDownloadRelURL;">1.0.3</a></td>
+<td>2006/03/13</td>
 <td>
 <ul>
-<li>Fixed a bug in the build script, that was placing an unneeded file (<code>AppResources.jar</code>) 
-on the web server.</li>
+<li>Fixed a bug in the build script that was making the application not
+launch properly on Windows.</li>
 </ul>
 </td>
 </tr>
--->
+
+<tr valign="top">
+<td><a href="../1.0.2/&installerDownloadRelURL;">1.0.2</a></td>
+<td>2006/01/30</td>
+<td>
+<ul>
+<li>Prepared Java version for first public release.</li>
+</ul>
+</td>
+</tr>
 
 <tr valign="top">
 <td><a href="../1.0.1/&installerDownloadRelURL;">1.0.1</a></td>

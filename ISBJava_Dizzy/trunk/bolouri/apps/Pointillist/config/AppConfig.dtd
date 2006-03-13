@@ -15,9 +15,9 @@
 <!ENTITY appName "Pointillist">
 <!ENTITY appVersionMajor "1">
 <!ENTITY appVersionMinor "0">
-<!ENTITY appVersionPatch "2">
+<!ENTITY appVersionPatch "3">
 <!ENTITY appVersion "&appVersionMajor;.&appVersionMinor;.&appVersionPatch;">
-<!ENTITY appDate "2006/01/30">
+<!ENTITY appDate "2006/03/13">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
 <!ENTITY appLogoURL "images/appLogo.jpg">
 <!ENTITY appIconURL "images/appLogoIcon.jpg">
