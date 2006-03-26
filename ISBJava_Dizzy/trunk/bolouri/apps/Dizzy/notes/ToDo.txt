@@ -31,6 +31,21 @@ the ability to create/destroy a compartment (Axel Kowald, 2005/07/19).
 
 (13) Modify EditorPane.java to put cursor at the top of the model file, when it is loaded.
 
+(14) Fix bug when you instantiate a template and have:
+
+     #ref FooTemplate "Bar" ( 1 * X );
+
+where X is defined like this:
+
+X = [ some_expression ];
+
+the Dizzy parser immediately evaluates 1*X, rather than using delayed 
+evaluation.  Is this the behavior that we want?  
+
+(15) Fix bug found by Dominique Chu, in which the Gibson-Bruck simulator does not seem
+to work when a reaction rate contains a theta function of time.
+
+
 ====> From Axel Kowald 2005/07/20:
 
 Hi Steve,
