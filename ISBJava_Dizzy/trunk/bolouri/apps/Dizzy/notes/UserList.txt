@@ -70,6 +70,11 @@ University of Utah
 [using Dizzy as a teaching tool]
 myers@vlsigroup.ece.utah.edu
 
+Mylonadis, Irini
+Imperial College, UK
+[adapting Dizzy's GUI to use with a different simulator]
+irini.mylonadis@imperial.ac.uk
+
 Ng, Stanley
 ngstanley74@hotmail.com
 
