@@ -42,10 +42,6 @@ X = [ some_expression ];
 the Dizzy parser immediately evaluates 1*X, rather than using delayed 
 evaluation.  Is this the behavior that we want?  
 
-(15) Fix bug found by Dominique Chu, in which the Gibson-Bruck simulator does not seem
-to work when a reaction rate contains a theta function of time.
-
-
 ====> From Axel Kowald 2005/07/20:
 
 Hi Steve,
