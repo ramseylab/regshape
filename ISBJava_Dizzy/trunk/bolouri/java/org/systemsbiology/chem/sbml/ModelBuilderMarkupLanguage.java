@@ -299,6 +299,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
 
             speciesCompartmentMap.put(speciesName, compartmentName);
 
+            speciesMap.put(speciesName, species);
             model.addSpecies(species);
             species.addSymbolToMap(boundarySpeciesMap, speciesName);
 
@@ -311,6 +312,7 @@ public class ModelBuilderMarkupLanguage implements IModelBuilder, IAliasableClas
         int numRules = mMarkupLanguageImporter.getNumRules();
         for(int ruleCtr = 0; ruleCtr < numRules; ++ruleCtr)
         {
+	    // go through all the rules
             String ruleType = mMarkupLanguageImporter.getNthRuleType(ruleCtr);
             assert (null != ruleType) : "null rule type encountered";
             String ruleName = mMarkupLanguageImporter.getNthRuleName(ruleCtr);
