@@ -57,6 +57,7 @@ Fixed a bug in the Gibson-Bruck simulator, that was affecting the rare case
 of a stochastic model in which a reaction propensity is an explicit function
 of time.  Thanks to Dominique Chu (University of Kent, UK) for reporting
 this bug.
+</li>
 </ul>
 </td>
 <td><a href="&javaURL;/2.4.3/download.html">2.4.3</a></td>
