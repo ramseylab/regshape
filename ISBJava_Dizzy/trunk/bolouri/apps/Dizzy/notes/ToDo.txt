@@ -96,3 +96,12 @@ for (i=1, len(y)){     // looping through array variable or array compartment
 
 -When you print your output to file, it would be great not to have to
  click ok each time the simulation finishes.
+
+
+(16) Suggested by Herbert Sauro (2006/04/17)
+
+- Add the ability to graph the ensemble-variance, for a stochastic
+  simulation result, in the GUI
+
+- Add the ability to do steady-state analysis in a stochastic simulation
+  (i.e., calculate the variance at steady-state, from a time-course).
