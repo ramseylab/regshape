@@ -78,3 +78,21 @@ for (i=1, len(y)){     // looping through array variable or array compartment
 }
 
 }
+
+
+(15) Suggested by Dominique Chu: (2006/02/09)
+
+-Shortcuts would be great, particularly for saving of the model, and
+ model reloading.
+
+-When you reload a model, you have to select again the variables to
+ plot. Would be great of the system could remember the previous
+ choice.
+
+-There seems to be a bug in the MACOS version of the GUI. Sometime it
+ is not possible any more to scroll down the editor (the scroll bar
+ dissapears). The only thing to do then is to change the size of the
+ Window.
+
+-When you print your output to file, it would be great not to have to
+ click ok each time the simulation finishes.
