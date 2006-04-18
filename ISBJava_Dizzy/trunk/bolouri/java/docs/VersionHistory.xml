@@ -45,7 +45,7 @@ This document contains the version history for the
 Fixed a bug in 
 <code>org.systemsbiology.chem.sbml.ModelBuilderMarkupLanguage</code>, in
 handling a species concentration rule in an SBML model.  Thanks to Nguyen Van
-Tam (New Delhi) for submitting this bug report, and the bug fix.
+Tam (JMI, New Delhi) for submitting this bug report, and the bug fix.
 </li>
 <li>
 Fixed a bug in
