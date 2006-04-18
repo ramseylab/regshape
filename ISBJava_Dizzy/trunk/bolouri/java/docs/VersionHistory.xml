@@ -47,6 +47,14 @@ Fixed a bug in
 handling a species concentration rule in an SBML model.  Thanks to Van
 Tam (New Delhi) for submitting this bug report, and the bug fix.
 </li>
+<li>
+Fixed a bug in
+<code>org.systemsbiology.chem.SimulatorStochasticGibsonBruck</code>,
+that was preventing reactions whose propensities are an explicit function of time,
+from having their next "firing time" updated after each iteration of the
+algorithm.  Thanks to Dominique Chu (University of Kent, UK) for reporting
+this bug.
+</li>
 </ul>
 </td>
 </tr>
