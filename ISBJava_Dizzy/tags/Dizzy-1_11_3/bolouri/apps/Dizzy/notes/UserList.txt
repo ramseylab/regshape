@@ -1,0 +1,149 @@
+Ahmadi, Hooman
+Columbia University
+[adapting Dizzy for Langevin simulations]
+ha2130@columbia.edu
+
+Behrendt, Dominik
+Siemens (Germany)
+Dominik.Behrendt@scr.siemens.com
+
+Bergmann, Frank
+Keck Graduate Institute
+[maintainer of SBW software]
+frank_bergmann@kgi.edu
+
+Blackwell, Avrama
+George Mason University
+avrama@gmu.edu
+
+Chu, Dominique
+Kent University (UK)
+D.F.Chu@kent.ac.uk
+
+Dill, David
+Stanford University
+[using Dizzy as instructional tool]
+dill@cs.stanford.edu
+
+Duguid, Adam
+Edinburgh University
+a.j.duguid@sms.ed.ac.uk
+
+Finney, Andrew
+University of Hertfordshire, UK
+afinney@cds.caltech.edu
+
+Gilmore, Stephen
+University of Edinburgh
+[using Dizzy for process algebra research]
+Stephen.Gilmore@ed.ac.uk
+
+Hu, Bin
+Keio University, Japan
+hubin@sfc.keio.ac.jp
+
+Kierzek, Andrzej
+Institute of Biochemistry and Biophysics, Poland
+andrzejk@poczta.ibb.waw.pl
+
+Kowald, Axel
+Max Planck Institute for Molecular Genetics
+kowald@molgen.mpg.de
+
+Kramer, David
+Washington State University, Washington
+[used Dizzy as an instructional tool]
+dkramer@wsu.edu
+
+Landis, Clark
+University of Wisconsin-Madison
+[used Dizzy as an instructional tool]
+landis@chem.wisc.edu
+
+Margolin, Adam
+Columbia University
+[adapted Dizzy for operation on a vector supercomputer]
+adam@dbmi.columbia.edu
+
+Myers, Chris
+University of Utah
+[using Dizzy as a teaching tool]
+myers@vlsigroup.ece.utah.edu
+
+Mylonadis, Irini
+Imperial College, UK
+[adapting Dizzy's GUI to use with a different simulator]
+irini.mylonadis@imperial.ac.uk
+
+Ng, Stanley
+ngstanley74@hotmail.com
+
+Orrell, David
+Vancouver, BC
+orrell@shaw.ca
+
+Pepin, Francois
+McGill University (Canada)
+francois.pepin@mcgill.ca
+
+Puchalka, Jacek
+Institute of Biochemistry and Biophysics PAS, Poland
+puchalka@et.put.poznan.pl
+
+Rouilly, Vincent
+Imperial College, United Kingdom
+vincent.rouilly@imperial.ac.uk
+
+Sabouri, Mohsen
+Virginia Polytechnic Institute
+sabouri@vt.edu
+
+Sauro, Herbert
+Keck Graduate Institute, California
+Herbert_Sauro@kgi.edu
+
+Schulz-Trieglaf
+University of Edinburgh
+ole.st@gmx.de
+
+Lutz Schmitt
+Univ. Duesseldorf
+lutz.schmitt@uni-duesseldorf.de
+
+Shenghua Li
+Virginia Tech
+kittyes@vt.edu
+
+Solis, Earl
+MIT
+eps@mit.edu
+
+Spencer, Richard
+EPA (Lockheed), Research Triangle Park, NC
+Spencer.Richard@epamail.epa.gov
+
+Tam, Nguyen Van
+JMI, New Delhi
+thaytam@yahoo.com
+
+Taylor, James
+Institute for Systems Biology
+jtaylor@systemsbiology.org
+
+Wang, X
+xwang@mail.mcw.edu
+
+You, Tao
+University of Aberdeen, UK
+[asked for model repository]
+tyou@csd.abdn.ac.uk
+
+Yun, Zheng
+Nanyang Technological University, Singapore
+pg04325488@ntu.edu.sg
+mincloud@pmail.ntu.edu.sg
+
+Zhu, Rui
+University of Lethbridge, Canada
+rui.zhu@uleth.ca
+

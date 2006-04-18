@@ -1,0 +1,1232 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+
+<!ENTITY javaURL "&webBaseURL;/&localJavaLibraryName;">
+   ]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This document is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>&appName; Version History</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docdate>$Date$</isb:docdate>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+
+<p>
+This document contains the version history for the
+<a href="../">&appName;</a> software product.
+</p>
+
+<p>
+<table border="1">
+<tr valign="top">
+<td>Version</td>
+<td>Date</td>
+<td>Comments</td>
+<td>Built with 
+<a href="&javaURL;">&localJavaLibraryName;</a> version number:</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.11.3/&installerDownloadRelURL;">1.11.3</a></td>
+<td>2006/04/18</td>
+<td>
+<ul>
+<li>
+Fixed a bug in the SBML import feature, where a model containing a species
+concentration rule would result in an error message.  Thanks to
+Nguyen Van Tam (JMI, New Delhi) for pointing out this bug.
+</li>
+<li>
+Fixed a bug in the Gibson-Bruck simulator, that was affecting the rare case
+of a stochastic model in which a reaction propensity is an explicit function
+of time.  Thanks to Dominique Chu (University of Kent, UK) for reporting
+this bug.
+</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.4.3/download.html">2.4.3</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.11.2/&installerDownloadRelURL;">1.11.2</a></td>
+<td>2006/01/26</td>
+<td>
+<ul>
+<li>
+Included the latest version of the Systems Biology Workbench (SBW) library,
+which will allow &appName; to interoperate with SBW version 2.5.0.
+</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.4.2/download.html">2.4.2</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.11.1/&installerDownloadRelURL;">1.11.1</a></td>
+<td>2005/08/11</td>
+<td>
+<ul>
+<li>
+Fixed a bug in the editor pane, where a
+<code>NullPointerException</code> was occurring when the user
+attempted to run "Tools-&gt;Simulate" on a model that did not have a
+filename associated with it yet.
+</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.4.1/download.html">2.4.1</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.11.0/&installerDownloadRelURL;">1.11.0</a></td>
+<td>2005/07/08</td>
+<td>
+<ul>
+<li>
+  Added a "command-language" model exporter, which will export
+  the model to Chemical Model Definition Language (CMDL) Format.
+</li>
+<li>
+  Fixed a bug where the file browser for "export model" was not
+  set to the current working directory.  Exporting a model also
+  now resets the current working directory, for consistency with
+  other file operations in the application.
+</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.4.0/download.html">2.4.0</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.10.0/&installerDownloadRelURL;">1.10.0</a></td>
+<td>2005/07/01</td>
+<td>
+<ul>
+<li>Modified the Systems Biology Workbench (SBW) interface so
+  that the &appName; simulation launcher is now an "Analysis
+  Service".  This means that the &appName; simulation service
+  shows up in the "SBW" menu in JDesigner and other SBW-enabled
+  tools.</li>
+<li>The "About &appName;" menu item now displays the copyright
+  notice.</li>
+<li>Updated the version of the external SBW library 
+  (<core>SBWCore.jar</core>) to version 2.3.0.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.3.0/download.html">2.3.0</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.9.3/&installerDownloadRelURL;">1.9.3</a></td>
+<td>2005/06/19</td>
+<td>
+<ul>
+<li>Added a work-around for a bug in the Systems Biology Workbench
+(SBW) interface, that could potentially cause the simulation service
+to fail to register with the SBW Broker on non-Windows systems.
+Thanks to Frank Bergmann for supplying the patch.</li>
+<li>Added a new method to the SBW interface, that allows a
+CMDL model to be passed to &appName; via SBW.  Using this
+feature requires knowing how to programmatically call the SBW.
+File inclusion via the <code>#include</code> directive is not
+allowed, when passing model text to &appName; via the SBW interface
+(for security reasons).</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.2.2/download.html">2.2.2</a></td>
+</tr>
+
+  
+<tr valign="top">
+<td><a href="../1.9.2/&installerDownloadRelURL;">1.9.2</a></td>
+<td>2005/06/15</td>
+<td>
+<ul>
+<li>Fixed problem with build script, where it was impossible to do any
+ant tasks, even those tasks that do not require InstallAnywhere,
+on a system that does not have the InstallAnywhere JAR file installed
+into the Ant lib directory.</li>
+<li>Fixed a bug where the "File->Close" menu item was not being enabled 
+after the user loads a zero-length file into the edit buffer.</li>
+<li>Fixing missing sample file "Michaelis.cmdl".  Removed unneeded
+sample file "sample-model-sbml.xml".</li>
+<li>Fixed a problem where the <code>RegisterSBWSimulators</code> launcher
+was failing with an exception, when the installed version of the 
+Systems Biology Workbench (SBW) is 2.0.0 or greater.  Now, &appName;
+works correctly with SBW version 2.2.1 or newer.  This has the side effect
+that the version of &appName; distributed through the graphical installer
+will not work with 1.X.X versions of the SBW.  However, see the
+<a href="UserManual.html#sbwinterface">user manual</a> for information
+about how to make &appName; compatible with 1.X.X versions of SBW.  Thanks
+to Stanley Ng and Ole Schulz-Trieglaf for reporting this problem.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.2.1/download.html">2.2.1</a></td>
+</tr>
+
+
+<tr valign="top">
+<td><a href="../1.9.1/&installerDownloadRelURL;">1.9.1</a></td>
+<td>2005/04/05</td>
+<td>
+<ul>
+  <li>
+  Fixed a <code>NullPointerException</code> that was occurring when a model contained
+  a species whose initial population value exceeded the maximum allowed for stochastic
+  simulations.  This exception would occur the <em>second</em> time the user attempted
+  to initiate a stochastic simulation.  The correct behavior is for the simulator to
+  give the same error message each time the user attempts to run a stochastic simulation
+  with the (flawed) model. Thanks to Vincent Rouilly for submitting the bug report.</li>
+  <li>
+  Improved the error message shown by the simulation launcher, when the user attempts to
+  launch a stochastic simulation and when one of the species has an initial population value that exceeds the maximum 
+  allowed for stochastic simulations.  The error message now gives the offending species name and
+  the initial population value.
+  </li>
+  <li>
+  Fixed a bug whereby a SBML model with <code>UTF-8</code> character encoding (and actually using special
+  UTF-8 characters) loaded into
+  the editor pane, and then subsequently passed to the "simulate..." or the "export model" menu
+  item, would 
+  cause a <code>SAXParserException</code> on the Macintosh OSX platform.  Thanks to Vincent Rouilly
+  for submitting this bug report.</li>  
+  <li>
+  Fixed a bug in the simulation launcher where the
+  "secs remaining" text field would show too many significant digits when the number
+  of estimated seconds remaining is very large.
+  </li>
+    <li>
+  Fixed a potential problem with the editor pane, such that when the user selected
+  "save as" or "save", the file was being written with the platform's default character encoding.  This
+  meant that (in the case of SBML models) the encoding specified in the XML header was
+  being ignored, and (in the case of CMDL models) the model would not be written in
+  the UTF-8 encoding on platforms whose default encoding is not UTF-8.  This means that
+  on certain platforms, the "save" or "save as" functions would end up writing
+  a file that does not conform to published character encoding specifications for SBML and CMDL.      
+  </li>
+  <li>
+  Fixed a bug in in the "View..." -&gt; "human-readable" menu item feature, 
+  where the comma-and-newline 
+  separator string was not being printed in every case that it should have.  This
+  led to improperly formatted output for the "human-readable" view/export feature.
+  </li>
+  <li>Fixed a bug in the simulation engine that was
+    causing incorrect results when simulating certain SBML 
+    models that have "substance" units of "mole".   Thanks to Vincent Rouilly for 
+    submitting the bug report.  This bug does not affect the results of
+    SBML models with "substance" units of "item" or CMDL models.</li> 
+ <li>Fixed a bug in the editor pane that was causing
+    the editor to fail to "forget" the model parser type,
+    when the edit buffer is cleared using the "File" -&gt; "Close" menu item.</li>
+  <li>Modified the stochastic simulators to check all
+    dynamical symbols to see if any species value exceeds the maximum allowed for stochastic
+    simulations (approximately 9.0771993e+15), each time a "result time point" is sampled
+    (by default, 100 time points spaced at equal intervals during the simulation).
+    This ensures that the stochastic simulators will continuously check to
+    see if any species values exceed the maximum allowed species value, throughout the
+    course of the simulation.  This fixes a potential problem with a simulation
+    such as
+    <blockquote>
+      <pre>
+X = 1.0e+15;
+-&gt; X, 1.0;
+      </pre>
+    </blockquote>
+    which will eventually fail in a stochastic simulator, due numeric precision
+    limitations of floating-point addition.
+    </li>    
+    <li>Improved the wording of some error messages in the simulation launcher window,
+      the editor pane, and for various menu functions.</li>
+  <li>Fixed bug in the <code>runmodel</code> program 
+    where the command-line simulation launcher was not obtaining the defualt 
+relative and absolute error tolerances for the simulator, so the user would get an error
+if both tolerances were not explicitly specified on the command-line.</li>      
+  <li>Modified the "Tools -&gt; View... &gt; cytoscape" feature so that
+     the <code>NetX</code> start-up dialog box does not appear at application start-up.
+     The dialog box asks you where you want to store your NetX cache.  After this 
+     modification, the dialog box should only appear the first time you actually use 
+     this feature.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.2.0/download.html">2.2.0</a></td>
+</tr>
+
+
+<tr valign="top">
+<td><a href="../1.9.0/&installerDownloadRelURL;">1.9.0</a></td>
+<td>2005/02/04</td>
+<td>
+<ul>
+<li>
+  Added a new section &quot;<a href="UserManual.html#simulators">Simulators</a>&quot; to the
+  User Manual, describing the different simulators that are available in &appName;
+</li>
+<li>
+  Fixed a potential problem with the sample programs for creating &appName; models using
+  the &localJavaLibraryName; API, where the reserved symbol mapper was not being set for the
+  model.  This was leading to confusion when people attempted to reference reserved symbols
+  in expressions, which was causing an exception to be thrown.  This is just a documentation
+  change.
+</li>
+<li>
+  Fixed a <code>NullPointerException</code> that occurs when the model editor buffer
+  has no filename defined for it (i.e., when the buffer has not yet been saved to a file), and
+  when there is a parser error in processing the model definition text.  Improved some
+  parser error messages to make them more human-comprehensible.
+</li>
+<li>
+  Fixed a bug in the editor code where the "save as" operation was failing to update the
+  "current directory" that is used for preprocessor file inclusion.
+</li>
+<li>
+  Fixed a bug in the CMDL parser which was causing an exception to be thrown, when a 
+  model contained a loop definition in which either the start or stop value was a 
+  mathematical expression containing parentheses.
+</li>
+<li>
+  Added support for a <code>min()</code> and <code>max()</code> function, to the
+  mathematical expression-processing engine.  Mathematical expressions in the CMDL
+  can now use these two functions, as functions of two arguments, such as
+  <blockquote>
+    <code>min(A,B)</code>
+  </blockquote>
+  Thanks to Adam Duguid, for submitting the source code patch.
+</li>
+<li>
+  Fixed confusing error messages in the Runge-Kutta simulator with fixed step-size,
+  for the case when the relative error tolerance is exceeded.
+</li>
+<li>
+  Modified the simulation launcher screen and the command-line simulation launcher program
+  to permit disabling the error checking in the fixed-stepsize Runge-Kutta simulator
+  (<code>ODE-RK5-fixed</code>).  In the simulation launcher screen, the error checking
+  is disabled by deleting the relative and/or absolute error tolerance parameters in the 
+  corresponding text entry boxes.  In the simulation launcher command-line program,
+  the error checking is disabled by passing an argument modifier "null" after the
+  corresponding command-line argument, such as 
+  <blockquote>
+    <pre>-relativeTolerance null</pre>
+  </blockquote>
+  Each of the error types can be disabled separately, or they can be disabled together.
+</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.1.0/download.html">2.1.0</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.8.2/&installerDownloadRelURL;">1.8.2</a></td>
+<td>2004/11/18</td>
+<td>
+<ul>
+<li>
+  Decreased the application start-up time by 45%, by making
+  the search for plug-in components more efficient.
+</li>
+<li>
+  Created a "View" sub-menu of "Tools", containing the aliases
+  of all <a href="UserManual.html#viewhuman">model viewers</a>.
+  Moved the "View in Cytoscape" and "View in Human-Readable
+  Format" menu items to this new sub-menu.
+</li>
+<li>
+  Created a "Export" sub-menu of "Tools", containing the aliases
+  of all the <a href="UserManual.html#exporterplugins">model
+  exporters</a>.  The aliases that used to appear in a dialog
+  box when the "Export..." menu item was selected, now appear
+  in the "Export" sub-menu.
+</li>
+<li>
+  Added a "line counter" feature to the main model editor window.
+  The line number of the current cursor position in the editor buffer
+  is displayed, and updated whenever you move the cursor in the editor
+  window.  Thanks to Earl Solis, for suggesting this useful feature.
+</li>
+<li>
+  Added new sample model definition file, <code>Michaelis.cmdl</code>, 
+  to the &quot;<code>samples</code>&quot; directory.
+</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.0.1/download.html">2.0.1</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.8.1/&installerDownloadRelURL;">1.8.1</a></td>
+<td>2004/11/12</td>
+<td>
+<ul>
+<li>
+  Please note that there have been some changes in the
+  &localJavaLibraryName; API in this release.  For more
+  information, please refer to the description of changes in 
+  version 2.0.0 in the 
+  <a href="&javaURL;/docs/VersionHistory.html">&localJavaLibraryName; Version History</a>.
+</li>
+<li>
+Fixed a bug in the simulation results table window,
+which was causing the table window to not be resizable.
+</li>
+<li>
+Modified the simulation engine to better handle formatting
+of not-a-number (<code>NaN</code>) and infinity values, in
+simulation results.
+</li>
+<li>
+Modified the <code>runmodel</code> program so that it will
+notify the user if the simulator is not capable of computing
+steady-state fluctuations, if the 
+<code>-computeFluctuations</code> flag is passed on the
+command-line.
+</li>
+<li>
+Fixed a bug in the CMDL parser which caused an exception
+when one attempts to simulate a model containing a macro
+reference embedded within another macro definition.
+</li>
+<li>
+Fixed a bug in the editor pane.  When the user would close
+the file loaded in the editor pane and then attempt to open
+a new file, the user would be needlessly prompted as to whether
+to save the changes in the editor buffer, to a file.  
+</li>
+<li>
+Modified the CMDL to enable the parsing of floating-point
+numeric literals expressed in scientific notation, such as
+<code>1.0e-7</code> and <code>2.7e+14</code>.
+</li>
+<li>
+Fixed a bug where ISO-8859-1 characters greater than 127 in the CMDL 
+model definition file were causing exceptions when the model was 
+processed, on Red Hat Linux.  CMDL files are now always processed using
+UTF-8 encoding.  This will ensure that CMDL model processing
+is consistent across different locales.  Files opened using the "include" 
+directive will be processed in the same character set as the parent file.
+</li>
+<li>
+Fixed a potential bug 
+where SBML files were being read in the default
+locale encoding for text files, and not in the encoding specified in the
+XML file header.
+</li>
+<li>
+Fixed a bug (reported by Alex Kowald) in the 
+<code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>
+in which an exception is thrown, if a
+quoted string is embedded within a deferred-evaluation mathematical
+expression.  This prevents referencing a symbol name that contains
+an integer (e.g., an index) obtained from a mathematical expression,
+within the context of a deferred-evaluation mathematical expression.
+This bug potentially affects models in which the loop construct is used,
+in conjunction with reaction definitions with complex (deferred-evaluation)
+kinetic rate expressions.
+</li>
+<li>
+Slight change to the help browser, so that it will not take up
+all the screen, when the screen size is very large.  The 
+initial size of the help browser window is now capped at 
+800x600 (but can be modified by the user), and will never
+exceed 80% of the screen size in either dimension.
+</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.0.0/download.html">2.0.0</a></td>
+</tr>
+
+
+<tr valign="top">
+<td><a href="../1.8.0/&installerDownloadRelURL;">1.8.0</a></td>
+<td>2004/10/11</td>
+<td>
+<ul>
+<li>
+Fixed a bug in the build file that was preventing the source code from
+being included in the <code>&localJavaLibraryName;</code> source distribution archives.
+</li>
+<li>
+Modified the chemical model definition language to disallow user definition
+of a symbol that begins with an underscore character.  This ensures that
+user-defined symbols will not conflict with the names of automatically
+defined symbols (such as automatically defined chemical reaction names).
+</li>
+<li>
+Modified the simulation launcher window so that internal
+symbols are never displayed in the listbox of symbols,
+and in the text output of the command-line simulation launcher.
+</li>
+<li>
+Fixed a bug in the <code>repressilator.xml</code> sample file; the
+<code>listOfUnitDefinitions</code> section was omitted, which was
+causing the initial species populations to be interpreted in terms
+of moles (the default), rather than molecules.
+</li>
+<li>
+From this release forward, &appName; will be compiled with 
+optimization enabled, before a new version is released.
+</li>
+<li>
+Modified the CMDL (chemical model definition language) so that the
+<code>log()</code> command has been changed to the <code>ln()</code>
+command.  This was done for consistency with standard computer science 
+notation, in which <code>ln()</code> represents the natural logarithm, 
+and <code>log()</code> represents the logarithm base 10.
+</li>
+<li>
+Added a new text field &quot;number of history bins&quot; to the
+simulation launcher. This allows the user to control the number of
+bins for storing the past values of a species that participates in a
+delayed or multi-step reaction.  This field is only displayed if
+the model contains a multi-step or delayed reaction.
+</li>
+<li>
+Added a new command-line option &quot;<code>-numHistoryBins</code>&quot; 
+to the command-line simulation runner, &quot;<code>runmodel</code>&quot;.
+This option enables the specification of the number of bins that are to 
+be used to store the past values of a species that participates in a delayed 
+or multi-step reaction.  This value, if specified, is only used by the
+simulation launcher if the model actually contains a delayed or multi-step
+reaction.
+</li>
+<li>
+Removed the parameter &quot;min num steps&quot; from the simulation
+launcher; it has been replaced with the &quot;(step size
+fractional)&quot; parameter.  This parameter specifies the initial
+step size (as a fraction of the total time of the simulation) in the
+case of a deterministic/ODE simulator, and it specifies the minimum
+number ratio of the reaction time to the leap time, in the case of the
+Tau-Leap simulators.
+</li>
+<li>
+Added the option <code>testOnly</code> to the simulation launcher
+program <code>runmodel</code>.  This option instructs the simulation
+launcher to process the model definition file, validate the simulation 
+parameters, and then exit.  It can be used to test a model and 
+simulation parameters for correctness, without having to execute a
+simulation.
+</li>
+<li>
+Improved the efficiency of the delayed reaction solver, by halving
+the amount of history information that needed to be stored regarding
+each delayed reaction channel.
+</li>
+<li>
+Modified the command-line simulation launcher program
+<code>runmodel</code> to print out the average number of iterations
+per second, during the last status statistics-collecting interval.
+</li>
+<li>
+Fixed a serious inefficiency in the simulation engine, for the
+case of models containing custom kinetic rate law expressions.  The
+inefficiency was in the part of the engine that clears the cache
+of previously computed expression values.  The cache was cleared for
+all non-dynamic symbols, including those symbols (usually a majority)
+that are not custom expressions (i.e., symbols that are bare numbers).
+Modified the simulation engine so that only non-dynamic symbols 
+which are in fact, expressions, have their value caches cleared.
+</li>
+<li>
+Changed the "print" output type, to "table".  The "table"
+output format now displays the simulation results in a resizable table
+with individually resizable column widths.  Changed the "file" output
+type to "store".
+</li>
+<li>
+For the "table" and "store" output formats, floating-point values
+are rounded to the correct number of significant digits, based on the
+relative and absolute error tolerances specified for the simulator.
+</li>
+<li>
+Modified the "plot" output format, so that the model name, simulator
+alias, and date/time are now displayed in a label that is outside
+the plot image.  When the plot image is saved, the labels will not
+be saved with it, which is generally preferable because the desired
+label format and font will differ based on the end application for
+the plot.
+</li>
+<li>
+Added a list of past simulations to the simulation launcher window.
+This list can be used to go back and generate a plot, or tabulator view,
+for the results of a previously run simulation.  The results of a
+previously run simulation may be saved to a file as well.
+</li>
+<li>
+The windows for simulation results plots and tabular views, are now
+tiled in a cascading pattern together, rather than tiled independently.
+</li>
+<li>
+Fixed a potential bug whereby the user was allowed to specify a 
+relative error tolerance of greater than 1.0.
+</li>
+<li>
+Modified the command-line simulation runner <code>runmodel</code>, so
+that it prints out simulation results with a number of significant 
+digits that is consistent with the specified absolute and relative
+error tolerances.
+</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.8.0/download.html">1.8.0</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.7.0/&installerDownloadRelURL;">1.7.0</a></td>
+<td>2004/06/08</td>
+<td>
+<ul>
+<li>Modified &appName; to correctly implement the importing and simulation of
+an SBML model for which the unit of &quot;substance&quot; is &quot;mole&quot;.
+This fixes incorrect simulation behavior when an SBML model with
+the default substance unit (&quot;mole&quot;) is imported.
+</li>
+<li>Fixed a bug that was causing an exception to be thrown in the
+simulation launcher, when &appName; is deployed using Java Web
+Start.</li> 
+<li>Modified the simulation framework to model multi-step
+reactions differently than delayed reactions.  Multi-step reactions
+are now simulated using the Gamma Distribution as described by Gibson
+and Bruck in their <em>Journal of Physical Chemistry A</em> paper (2000), while
+delayed reactions are simulated using delay differential equations or
+(in the case of a stochastic simulation) a time delayed stochastic
+process.</li>
+<li>Modified the SBML model export feature so that it correctly
+preserves the units for &quot;substance&quot; that were originally
+specified for the model.  This avoids a potential problem if a user
+imports a model from SBML, and then exports the model back to SBML.</li>
+<li>Decreased the maximum initial step size for the Dormand-Prince 5/4 ODE
+solver, for the case of a model with a delayed or multistep reaction.</li>
+<li>Fixed a bug whereby the &quot;tauleap-complex&quot; simulator was
+giving an exception, when simulating a model imported from SBML, that
+has local reaction parameters.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.7.0/download.html">1.7.0</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.6.4/&installerDownloadRelURL;">1.6.4</a></td>
+<td>2004/04/05</td>
+<td>
+<ul>
+<li>Fixed an inefficiency in the Gibson-Bruck simulator,
+where reaction rates for reactions with custom reaction rate expressions, were
+being recomputed after every iteration.  Now, a dependency tree is built of the 
+reaction&apos;s rate expression.  The reaction rate is then recomputed only 
+when one of the dynamical elements it is dependent upon, has changed.</li>
+<li>Split the Tau-Leap simulator into two separate simulators, 
+<code>taulea-complex</code> and <code>tauleap-simple</code>.  This allows for using
+different algorithms for calculating the leap time, for complex and
+simple models.</li>
+<li>Made some speed improvements to the stochastic simulators, in the method
+where the species populations are updated as a result of a reaction event.</li>
+<li>Fixed a problem with the delayed reaction solver where the delay was artificially 
+long in some cases.</li>
+<li>Modified the <code>RegisterSBWSimulators</code> program so that
+it prints out a message indicating that the simulators have been registered with
+the SBW Broker.</li>
+<li>Added a new program <code>LaunchSBWSimulators</code> that both
+registers and launches the SBW interface to the simulators.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.6.4/download.html">1.6.4</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.6.3/&installerDownloadRelURL;">1.6.3</a></td>
+<td>2004/03/26</td>
+<td>
+<ul>
+<li>Fixed a bug in the SBML model reader, that was reported by Adam Margolin.  
+This bug would cause an error in some cases, where
+there are more boundary species than dynamical species in a model.</li>
+<li>Improved the speed of the Gillesipe Tau-Leap
+simulator, for large models with complex reaction rate expressions.</li>
+<li>Made some speed improvements to the mathematical expression evaluation
+engine, which will improve the performance for simulating models
+with complex rate expressions, as well as the Gillespie Tau-Leap simulator.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.6.3/&installerDownloadRelURL;">1.6.3</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.6.2/&installerDownloadRelURL;">1.6.2</a></td>
+<td>2004/03/22</td>
+<td>
+<ul>
+<li>Implemented expression value caching for the deterministic simulators.
+This improves simulation performance for complex models containing nested 
+sub-expressions.  Slightly improved the speed of simulations of models
+containing deferred-evaluation expressions.</li>
+<li>Modified the stochastic simulators so that if the initial
+value for a dynamic species is not an integer, the simulator 
+will use the random number generator to select the nearest integer, 
+in a weighted fashion, so that
+on average the initial value is equal to the floating-point value specified.</li>
+<li>Fixed a bug in <code>runmodel</code> program,
+such that the output file format specified on the command-line was being ignored.</li>
+<li>Fixed a problem with the way that reaction rates were being computed,
+for the rare corner-case of a fractional non-dynamic (boundary) species 
+population, in the stochastic simulators.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.6.2/&installerDownloadRelURL;">1.6.2</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.6.1/&installerDownloadRelURL;">1.6.1</a></td>
+<td>2004/03/12</td>
+<td>
+<ul>
+<li>Fixed some instability problems with the Gillespie Tau-Leap
+stochastic simulator.</li>
+<li>Made some speed improvements to the
+Gillespie Tau-Leap stochastic simulator.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.6.1/&installerDownloadRelURL;">1.6.1</a></td>
+</tr>
+
+
+<tr valign="top">
+<td><a href="../1.6.0/&installerDownloadRelURL;">1.6.0</a></td>
+<td>2004/03/10</td>
+<td>
+<ul>
+<li>Added a new stochastic simulator &quot;<code>gillespie-tauleap</code>&quot;,
+that can obtain an approximate solution of the chemical master equation,
+according to an accuracy parameter that is specified by the user.  This
+simulator is potentially faster than the &quot;<code>gillespie-direct</code>&quot;
+simulator, because it can take large jumps in time, that will involve many
+reaction steps, in one iteration of the simulator.</li>
+<li>Added a feature whereby the &quot;<code>runmodel</code>&quot; program
+is capable of computing the steady-state fluctuations of any of the
+dynamical species in the model, as an optional post-simulation computation. 
+This feature is activated using the optional 
+&quot;<code>-computeFluctuations</code>&quot; command-line argument.</li>
+<li>Made some speed improvements to the delayed reaction solver, for the
+case of stochastic simulations.</li>
+<li>Fixed a bug the chemical model definition language (CMDL) parser,
+where a symbol defined within an included file, would never appear as a species
+in the containing model, even if it is included as a participant in a reaction.</li>
+<li>Fixed a bug in the deterministic ODE solvers, for the case of a model
+with a delayed reaction with a large time delay, and a large 
+<code>stopTime</code> parameter for the simulation.  In such cases, the
+initial step size could be too large for the delayed reaction solver to
+handle, which would cause the simulation to fail with an exception.</li>
+<li>Fixed a problem in the simulation engine, that was causing stochastic 
+simulations with a non-integer initial value for species populations,
+to become unstable.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.6.0/&installerDownloadRelURL;">1.6.0</a></td>
+</tr>
+
+
+<tr valign="top">
+<td><a href="../1.5.2/&installerDownloadRelURL;">1.5.2</a></td>
+<td>2004/02/25</td>
+<td>
+<ul>
+<li>Fixed a problem with the translation of CMDL (".dizzy") model
+descriptions into SBML.  Kinetic Laws and other formulas are now
+correctly output to SBML, with the species symbols in the formulas 
+representing concentrations, rather than substance amounts.</li>
+<li>Slightly improved performance by some code refactoring in
+the simulation engine.</li>
+<li>Fixed a problem whereby formulas in imported SBML models were not
+being interpreted correctly by the simulator; species symbols
+were not being interpreted as representing a concentration.</li>
+<li>Fixed a problem with the <code>runmodel.sh</code> script; 
+it was not working, due to changes to the SBML reader 
+in the 1.5.0 release.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.5.2/&installerDownloadRelURL;">1.5.2</a></td>
+</tr>
+
+
+<tr valign="top">
+<td><a href="../1.5.1/&installerDownloadRelURL;">1.5.1</a></td>
+<td>2004/02/24</td>
+<td>
+<ul>
+<li>Fixed several bugs in the behavior of the progress indicator
+bar and the &quot;secs remaining&quot; text field, in the simulation
+launcher frame.  The progress indicator and &quot;secs remaining&quot;
+text field should now behave properly when the &quot;pause&quot;,
+&quot;cancel&quot;, and &quot;resume&quot; buttons are used to 
+control the simulation.</li>
+<li>Modified the simulation launcher frame so that the progress indicator
+and the &quot;secs remaining&quot; text field are always visible, not
+just when a simulation is running.  This reduces annoying flicker of
+the user interface controls when a simulation starts and stops.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.5.1/&installerDownloadRelURL;">1.5.1</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.5.0/&installerDownloadRelURL;">1.5.0</a></td>
+<td>2004/02/13</td>
+<td>
+<ul>
+<li>Added a graphical progress bar and a text field indicating
+the estimated number of seconds for the simulation to complete,
+to the simulation launcher window.</li>
+<li>Added the ability to the <code>runmodel</code> command-line
+program, to print periodic status reports on the progress of
+the simulation, to standard error (<code>stderr</code>).</li>
+<li>Made several changes to the simulation engine and expression-evaluation
+code, to improve the speed of simulations.</li>
+<li>Removed redundant step in the implementations of the 
+stochastic simulators (Gillespie and Gibson-Bruck), where
+the expression value caches were being cleared twice.</li>
+<li>Fixed a problem in the <code>jfreechart.jar</code> library, which
+was causing &quot;class definition not found&quot; error messages
+to be written to the console, upon start-up of the &appName; application.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.5.0/&installerDownloadRelURL;">1.5.0</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.4.4/&installerDownloadRelURL;">1.4.4</a></td>
+<td>2004/02/10</td>
+<td>
+<ul>
+<li>Fixed a bug in the deterministic simulators based on the <code>OdeToJava</code> 
+ODE solvers, in which the simulators were failing to delete the temporary file 
+containing the simulation results.  This was cluttering up the temporary files 
+directory with old (unneeded) data files.</li>
+<li>Added a new launcher <code>runmodel</code> in the <code>bin</code> subdirectory
+of the &appName; installation directory.  This launcher is designed to launch
+the command-line interface to &appName;, without needing any prior user configuration.
+</li>
+<li>Simplified the <code>runmodel.sh</code> script, to make user configuration easier.</li>
+<li>Removed the <code>runmodel.bat</code> script, because it is superseded by the
+<code>runmodel</code> launcher.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.4.4/&installerDownloadRelURL;">1.4.4</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.4.3/&installerDownloadRelURL;">1.4.3</a></td>
+<td>2004/02/06</td>
+<td>
+<ul>
+<li>Created a new program &quot;<code>SimulationLauncherCommandLine</code>&quot;
+that runs a simulation in batch mode, saving the results to a file that the user 
+specifies.  The &quot;<code>runmodel.sh</code>&quot; and &quot;<code>runmodel.bat</code>&quot;
+scripts now run this batch mode simulation program, instead of the old program 
+that would open a simulation launcher window.</li>
+<li>Fixed a bug in the command-line parsing for the &appName; command-line
+applications &quot;<code>ModelLoaderApp</code>&quot; and
+&quot;<code>SimulationLauncherCommandLine</code>&quot;, causing an error
+when a very short command-line option is passed to the parser.</li>
+<li>The &appName; application now prints out the total number of iterations
+that occurred in the simulation, to the console window, after the simulation
+completes.</li>
+<li>The &quot;ensemble size&quot; and &quot;min number of time steps&quot; 
+simulation parameters are now &quot;long&quot; integer parameters.</li>
+<li>Fixed a bug in the <code>runmodel.bat</code> batch file.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.4.3/&installerDownloadRelURL;">1.4.3</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.4.2/&installerDownloadRelURL;">1.4.2</a></td>
+<td>2004/02/05</td>
+<td>
+<ul>
+<li>Fixed a bug where if the user had made a change to the model definition 
+editor buffer, and then selected &quot;Open...&quot; from the &quot;File&quot;
+menu, the application would disregard the user&apos;s answer to the subsequent
+confirmation dialog box.  If the user answered &quot;no&quot; to the prompt 
+for whether to proceed, the application would still open the file and discard 
+the previous edits to the buffer.</li>
+<li>Modified the simulator engine to prevent huge unnecessary memory allocations 
+when performing a stochastic of a models with an extremely large number of 
+reactions and species.  This potentially improves performance in such cases by 
+avoiding the use of large amounts of swap space on the disk drive.</li>
+<li>Fixed a problem where the application was not properly handling the exceptional 
+case of the system running out of memory during the initialization of a simulator.</li>
+<li>Modified the simulation launcher so that when the user clicks on the
+&quot;start&quot; button, the response of the button control is immediate.  
+In cases of very large and complex models and certain simulators (namely, 
+&quot;<code>gibson-bruck</code>&quot;),
+initialization was taking a long time, which was delaying the response of the 
+button control.  Now, initialization of the simulator is performed in the
+background, just prior to execution of the actual simulation.</li>
+<li>Modified the simulation launcher to rename the &quot;stop&quot; button 
+to the &quot;pause&quot; button.</li>
+<li>Changed the way that the deterministic simulators handle delayed
+(or multi-step) reactions, to improve numerical stability and performance.</li>
+<li>Modified the &quot;<code>odeToJava-dopr54-adaptive</code>&quot; simulator, so
+that it is now possible to pause or cancel a running simulation within this simulator.</li>
+<li>Removed support for the functions <code>gammaln()</code> and <code>rand()</code> in 
+mathematical expressions.  The <code>rand()</code> function causes problems with
+the expression value cachying feature introduced in version 1.4.0, and the
+<code>gammaln()</code> code is likely encumbered with license issues.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.4.2/&installerDownloadRelURL;">1.4.2</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.4.1/&installerDownloadRelURL;">1.4.1</a></td>
+<td>2004/02/02</td>
+<td>
+<ul>
+<li>Fixed a bug in the CMDL command language parser,
+where an exception is thrown if an include directive occurs after a symbol definition.</li>
+<li>Modified the CMDL command language parser
+so that it gives a more comprehensible error message if the user attempts to define
+a symbol name that is reserved for a default model element.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.4.1/&installerDownloadRelURL;">1.4.1</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.4.0/&installerDownloadRelURL;">1.4.0</a></td>
+<td>2004/01/30</td>
+<td>
+<ul>
+<li>For complex models (many symbols defined as complex expressions), 
+increased the speed of the stochastic simulators
+by a factor of five.  Slightly improved the speed of the simulators 
+for the case of simple models (all elementary
+reactions, no custom reaction rates).</li>
+<li>Modified the simulation launcher so that it remembers the directory
+of the last output file selected, when the output type is &quot;File&quot;.</li>
+<li>Modified the simulation launcher so that the Cancel/Stop/Resume 
+buttons are disabled in the OdeToJava simulators, which do
+not allow interruption by the simulation launcher.</li>
+<li>Modified the simulation launcher so that different comma-separated-output
+(CSV) output file formats are supported, for saving simulation results to a file.
+Currently there are three options:  CSV-excel, CSV-gnuplot, and CSV-matlab.
+The only difference currently is the choice of character that is used to designate
+the &quot;comment&quot; line, which is the first line of the output file.  This
+also makes it more clear that the choice of &quot;File&quot; output type, 
+refers to a comma-separated-value file format.</li>
+<li>Added a new &quot;view model in human-readable format&quot; feature which displays
+a model description in &quot;human-readable&quot; format, in a dialog box.
+Added an exporter plug-in so that it is possible to save the model description in the
+same human-readable format to a file, using the &quot;Export&quot; menu item.</li>
+<li>Modified the command language parser to fix a hard-to-understand error message 
+that occurs when there is a syntax error inside nested loops.</li>
+<li>Modified the simulation launcher to permit the user to optionally specify a 
+texual label that is added as a subtitle to the simulation results plot.</li>
+<li>Fixed a bug in the on-line help search screen where the &quot;jump to next
+search hit&quot; feature was not working for any searches after the first search.</li>
+<li>Added a text area to the on-line help search screen, that explains the
+&quot;jump to the next search hit&quot; feature.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.4.0/&installerDownloadRelURL;">1.4.0</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.3.1/&installerDownloadRelURL;">1.3.1</a></td>
+<td>2004/01/27</td>
+<td>
+<ul>
+<li>Fixed a bug in the command language parser, which was causing
+parser errors when a macro definition contains a loop construct.</li>
+<li>Fixed a bug in the command language parser, which was causing
+parser errors when a loop construct directly precedes a reaction definition statement.</li>
+<li>Modified the command language parser to allow the value of
+a symbol to be redefined, as long as the symbol has not been promoted to a
+<code>Species</code>, <code>Reaction</code>, <code>Parameter</code>, or <code>Compartment</code>
+at the point where the value of the symbol is redefined.  The purpose of this feature is
+to permit the user to define a template definition with an &quot;output&quot; parameter.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.3.1/&installerDownloadRelURL;">1.3.1</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.3.0/&installerDownloadRelURL;">1.3.0</a></td>
+<td>2004/01/26</td>
+<td>
+<ul>
+<li>Added a template feature to the Chemical Model Definition Language (CMDL).</li>
+<li>Improved the efficiency of the first pass of the command-language parser.  Improved
+syntax error detection in the command-language parser.</li>
+<li>Fixed a bug in the SBML parser where
+it was not catching the case of a parameter defined without any value (or parameter rule) being provided.
+This was leading to the application aborting unexpectedly, when a SBML file is loaded containing this
+type of semantic error.</li>
+<li>Added support to the SBML reader for reading an SBML model containing a reaction with an intrinsic 
+time delay.  The <code>kineticLaw</code> must conform to a strict format rule.  The application
+can now export (to SBML) a model containing a time delay, and read the model back into the simulator.</li>
+<li>Improved error handling by adding debugging code to the console, in cases of 
+exceptions.  The application should no longer abort when an unexpected exception occurs in processing
+a model.</li>
+<li>Modified the SBML writer so that it can properly export a model containing a reaction
+with an intrinsic time delay.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.3.0/&installerDownloadRelURL;">1.3.0</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.2.0/&installerDownloadRelURL;">1.2.0</a></td>
+<td>2004/01/13</td>
+<td>
+<ul>
+<li>Fixed the problem with the &appName; installer for the Mac OSX platform, where
+the installed application launcher would crash with an &quot;unexpected error&quot;
+dialog box message.</li>
+<li>Fixed a bug in the layout of the simulation launcher control screen, where the 
+full text of the &quot;select all&quot; button was not being displayed.</li>
+<li>Fixed a bug in the simulation launcher 
+where the simulation was not being cancelled, in the case where the user
+selects too many symbols for displaying on a plot.</li>
+<li>Fixed a bug in the chemical model definition language (CMDL) parser where the
+application was aborting when the parser encountered a mathematical expression that 
+has invalid syntax.</li>
+<li>Fixed a bug in the chemical model definition language (CMDL) parser
+where parsing errors in the model definition file were resulting in the exception class
+name being unnecessarily included in the message part of the exception.</li>
+<li>Changed the simulation results plotter so that the
+vertical axis label is the more generally applicable &quot;value&quot; rather than 
+&quot;populations&quot;.</li>
+<li>Added a new Systems Biology Workbench (SBW) simulation service, for the 
+Gibson-Bruck stochastic simulation algorithm.</li>
+<li>Modified the &quot;Register SBW Simulators&quot; program so that it
+registers services for all three supported simulators:  Gibson-Bruck, Gillespie,
+and Deterministic.</li>
+<li>Implemented a work-around for an InstallAnywhere bug, so that the &appName;
+program now launches correctly when installed on a Mac OSX computer.</li>
+<li>The InstallAnywhere installer for &appName; now logs error messages to a log file
+&quot;<code>ins&appName;.log</code>&quot;.</li>
+<li>Fixed a bug where the &quot;copy to clipboard&quot; button was failing to
+be displayed in the simulation results plot window on the Windows platform,
+in some cases.</li>
+<li>Fixed a bug where selecting &quot;view in Cytoscape&quot; with a syntactically
+incorrect model in the editor pane, leads to a <code>NullPointerException</code>.</li>
+<li>Fixed a bug where models were not displaying correctly within Cytoscape, since
+version 1.0.0.  This is because the Cytoscape SBML reader requires SBML Level 1, version 1.</li>
+<li>Fixed a bug where the &quot;Save As...&quot; menu item was not being
+enabled under the correct conditions (it should be enabled whenever the
+editor buffer is not empty).</li>
+<li>Fixed a bug where the &quot;Reload model&quot; feature was not working properly.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.2.0/&installerDownloadRelURL;">1.2.0</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.1.1/&installerDownloadRelURL;">1.1.1</a></td>
+<td>2004/01/05</td>
+<td>
+<ul>
+<li>Modified the delayed reaction solver so that the internal running
+window average is recalculated from scratch, each time a minimum
+number of points (default 4000) has been inserted into the queue.
+</li>
+<li>Fixed a file-loading bug pertaining to the case where the model 
+builder fails to construct the model from the model definition file.</li>
+<li>Modified the simulation launcher to dump a stack backtrace to the 
+terminal window if a low-level error condition is detected.</li>
+<li>Generalized the multi-step reaction solver into a &quot;delayed&quot;
+reaction solver, to permit phenomenological
+modelling of reaction processes with an intrinsic time delay.</li>
+<li>Changed the command language model builder to add language extensions
+for specifying a multistep or delayed reaction.</li>
+<li>Fixed bugs in the main editor window and the plot window,
+where window resizing was not working correctly on the Windows platform.</li>
+<li>Removed unnecessary label from main editor window, which was taking up 
+space on the screen.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.1.1/&installerDownloadRelURL;">1.1.1</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.1.0/&installerDownloadRelURL;">1.1.0</a></td>
+<td>2003/12/22</td>
+<td>
+<ul>
+<li>Added a <code>reload</code> menu item, which is used for reloading the model
+that is currently in the editor window, into the simulation launcher.  It replaces
+the model that is currently loaded into the simulation launcher.</li>
+<li>Fixed a bug in the simulation launcher, where it would still display a graph
+even when the simulation was cancelled.</li>
+<li>Made the simulation plot window dynamically resizable.</li>
+<li>Made the main editor window dynamically resizable.</li>
+<li>Added a hook to the simulation launcher so that an external application can 
+dynamically replace the model loaded in the simulation launcher.</li>
+<li>Added a hook to the simulation launcher so that an external application can
+detect when a simulation starts or ends.</li>
+<li>Fixed bug where the &appName; command language interpreter was
+rejecting model definition files that ended with whitespace.</li>
+<li>Added an &quot;append&quot; check-box to the simulation launcher
+window, which allows for specifying that the output file should be appended to, rather than overwritten.</li>
+<li>Added a &quot;save as PNG image&quot; button to the simulation results plot 
+window, which is used to save the plot as a PNG image file.</li>
+<li>Modified the simulation launcher to display all symbols (not just species) 
+in the list-box of symbols that can be displayed in the simulation results.</li>
+<li>Modified the simulation launcher to allow for an external application to
+hide the Output Type controls, and added a callback mechanism to return the simulation
+results to the calling application using a queue data structure.</li>
+<li>Added support for copying the simulation results plot image to the 
+system clipboard, on operating systems that support image transfer to the
+clipboard (e.g., Windows).</li>
+<li>Added full-text search capability for the online application help.</li>
+<li>The application help frame is now initially centered in the screen.</li>
+<li>Added a &quot;select all symbols&quot; feature to the simulation launcher.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.1.0/&installerDownloadRelURL;">1.1.0</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.0.0/&installerDownloadRelURL;">1.0.0</a></td>
+<td>2003/12/08</td>
+<td>
+<ul>
+<li>Added new deterministic (ODE) simulators &appName;,
+based on the &quot;odeToJava&quot; library for numerical solution of ODEs.  This library
+includes a Dortmand-Prince 4/5 Runge-Kutta solver with adaptive step-size control, and
+an implicit/explicit Runge-Kutta solver with adaptive step-size control (for models
+with a high degree of stiffness).</li>
+<li>Modified the SBML reader to permit inclusion of &quot;rules&quot; in SBML models</li>
+<li>Modified the SBML writer to export models in SBML level 1, version 2.</li>
+<li>Fixed a bug in which the operation does not terminate, when model-building
+fails after the user selects &quot;Export&quot; from the &quot;Tools&quot; menu.</li>
+<li>Created separate fields in the SimulationLauncher
+for specifying the matximum allowed relative and absolute errors</li>
+<li>Fixed a bug for the case of a parameter defined as a deferred-evaluation
+expression</li>
+</ul>
+</td>
+<td><a href="&javaURL;/1.0.0/&installerDownloadRelURL;">1.0.0</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../0.0.8/&installerDownloadRelURL;">0.0.8</a></td>
+<td>2003/11/21</td>
+<td>
+<ul>
+<li>Modified the fixed-stepsize deterministic simulator so that it can detect when the
+simulation error exceeds a certain threshold, and produce a human-comprehensible 
+error message (the message suggests that the step-size be decreased).</li>
+<li>Modified the &quot;simulation launcher&quot; pane so that it has text-box controls
+for specifying separate simulator-specific parameters, such as the ensemble size, the
+minimum number of steps, and the maximum allowed fractional error.  Default values
+are auto-filled in these new fields, depending on the type of simulator selected.  The
+&quot;ensemble size&quot; and &quot;number of steps&quot; are now separate fields.</li>
+<li>The &quot;plot&quot; output type no longer gives a strange error message when
+a &quot;NaN&quot; (not-a-number) appears in the simulation output.  It now gives a more
+human-comprehensible error message.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/0.0.8/&installerDownloadRelURL;">0.0.8</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../0.0.7/&installerDownloadRelURL;">0.0.7</a></td>
+<td>2003/11/07</td>
+<td>
+<ul>
+<li>Modified the editor pane so that it &quot;remembers&quot; the directory of the last file
+that was opened; the default directory for the file chooser for the next &quot;open&quot; command,
+is set to this directory.</li>
+<li>Fixed a problem where the ISB and Bolouri Lab logo images were not displaying in the on-line
+help screen, when the computer is not connected to the network.</li>
+<li>Removed the table of contents from the HTML User Manual used in the on-line help (the JavaHelp
+environment provides its own table of contents).</li>
+<li>Adjusted the default vertical dimension of the editor pane for the model editor, to 40 characters.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/0.0.7/&installerDownloadRelURL;">0.0.7</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../0.0.6/&installerDownloadRelURL;">0.0.6</a></td>
+<td>2003/10/22</td>
+<td>
+<ul>
+<li>In the &appName; simulation launcher form, made &quot;Plot&quot; the default output mode</li>
+<li>Redefined how the stochastic simulators compute
+reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/0.0.6/&installerDownloadRelURL;">0.0.6</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../0.0.5/&installerDownloadRelURL;">0.0.5</a></td>
+<td>2003/10/20</td>
+<td>
+<ul>
+<li>Fixed a bug in the Gibson-Bruck simulator, for the case of a boundary
+reactant species.</li>
+<li>Fixed a bug in the command-language parser, it can
+now accept tabs as valid whitespace in the model definition file.</li>  
+<li>The
+SBML import feature can now process model definition files that conform to the
+SBML Level 1, Version 2 specification.</li>  
+<li>Fixed a bug in which &appName; would
+fail to start, in the case where &appName; was installed in the top-level
+directory of a Windows (or DOS) drive.</li> 
+<li>Redefined how the stochastic simulators compute
+reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/0.0.5/&installerDownloadRelURL;">0.0.5</a></td>
+</tr>
+
+<tr valign="top">
+<td><a href="../0.0.4/&installerDownloadRelURL;">0.0.4</a></td>
+<td>2003/08/28</td>
+<td>Modified the Cytoscape bridge to use JNLP, so Cytoscape does not have to be bundled with the application</td>
+<td><a href="&javaURL;/0.0.4/&installerDownloadRelURL;">0.0.4</a></td>
+</tr>
+
+<tr valign="top">
+<td>0.0.3</td>
+<td>2003/08/26</td>
+<td>Added the ability to simulate a multistep chemical reaction as a single composite reaction</td>
+<td>0.0.3</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.2</td>
+<td>2003/08/06</td>
+<td>Added the ability to display a model in a <a href="&cytoscapeURL;">Cytoscape</a> window.</td>
+<td>0.0.2</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.1</td>
+<td>2003/08/04</td>
+<td>First version of the program.  It is an alpha version,
+intended only for internal use at &mainAffiliation;.</td>
+<td>0.0.1</td>
+</tr>
+
+</table>
+</p>
+
+</isb:document>
