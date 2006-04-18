@@ -50,7 +50,7 @@ This document contains the version history for the
 <li>
 Fixed a bug in the SBML import feature, where a model containing a species
 concentration rule would result in an error message.  Thanks to
-Van Tam (JMI, New Delhi) for pointing out this bug.
+Nguyen Van Tam (JMI, New Delhi) for pointing out this bug.
 </li>
 <li>
 Fixed a bug in the Gibson-Bruck simulator, that was affecting the rare case
