@@ -117,7 +117,7 @@ version of the &appName; system.
 
 <isb:docsubsection name="Publications" label="pubs">
 <p>
-An <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=15852513">article</a>
+An <a href="&articleURL;">article</a>
 describing &appName; has been published,
 <table border="1">
   <tr>
