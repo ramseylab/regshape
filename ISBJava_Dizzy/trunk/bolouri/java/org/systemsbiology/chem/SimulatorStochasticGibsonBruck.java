@@ -396,7 +396,7 @@ public final class SimulatorStochasticGibsonBruck extends SimulatorStochasticBas
             for(int j = numReactionsRecomputeAfterEachIteration; --j >= 0; )
             {
                 int reactionCtr = mReactionsRecomputeAfterEachIteration[j].intValue();
-                updateReactionRateAndTime(time, j, lastReactionIndex);
+                updateReactionRateAndTime(time, reactionCtr, lastReactionIndex);
             }
             
             Integer []dependentReactions = (Integer []) reactionDependencies[lastReactionIndex];
