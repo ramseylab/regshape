@@ -37,6 +37,21 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../2.4.3/download.html">2.4.3</a></td>
+<td>2006/04/18</td>
+<td>
+<ul>
+<li>
+Fixed a bug in 
+<code>org.systemsbiology.chem.sbml.ModelBuilderMarkupLanguage</code>, in
+handling a species concentration rule in an SBML model.  Thanks to Van
+Tam (New Delhi) for submitting this bug report, and the bug fix.
+</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../2.4.2/download.html">2.4.2</a></td>
 <td>2006/01/26</td>
 <td>

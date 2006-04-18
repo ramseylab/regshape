@@ -15,9 +15,9 @@
 <!ENTITY appName "Dizzy">
 <!ENTITY appVersionMajor "1">
 <!ENTITY appVersionMinor "11">
-<!ENTITY appVersionPatch "2">
+<!ENTITY appVersionPatch "3">
 <!ENTITY appVersion "&appVersionMajor;.&appVersionMinor;.&appVersionPatch;">
-<!ENTITY appDate "2006/01/26">
+<!ENTITY appDate "2006/04/18">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
 <!ENTITY appLogoURL "images/appLogo.png">
 <!ENTITY appIconURL "images/appLogoIcon.png">
