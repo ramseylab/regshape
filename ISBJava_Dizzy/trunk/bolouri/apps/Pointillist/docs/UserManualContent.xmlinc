@@ -308,6 +308,31 @@ empty cells are denoted by two adjacent delimiters (except in the
 case of the "space" delimiter), or a significance value of "-1" or 
 the "null" string.  
 </p>
+
+<isb:docsubsection name="Negative Control Data File Format" label="negcontrolfmt">
+<p>
+In the <b>Significance Calculator</b>, negative control data can be supplied
+to enable the calculation of significance values of observations from
+the perturbed system.  The negative control data are provided in a file
+format that differs from the above standard &appName; data file format.
+Specifically, the leftmost column of element names is <em>not</em> allowed.
+Although each column can have a different number of elements, <em>missing</em>
+elements are not allowed (i.e., each column must be a consecutive list of
+numbers, without skipping any rows).
+An example negative control data file is shown here:
+  <blockquote>
+  <pre>
+evidence0,evidence1,evidence2,evidence3,evidence4,evidence5
+1.000000,2.000000,1.000000,2.000000,3.000000,4.000000
+2.000000,3.000000,2.000000,3.000000,2.700000,3.000000
+3.000000,4.000000,3.000000,1.000000,2.000000,2.000000
+,,4.000000,5.000000,,
+  </pre>
+  </blockquote>
+The first row of evidence names is optional.
+</p>
+</isb:docsubsection>
+
 </isb:docsection>
 
 <isb:docsection name="Data Manager" label="datamanager">
@@ -656,7 +681,8 @@ Here is a screen shot of the Data Normalizer program:
     from the results data table.</dd>
   <dt><b>Negative control observations</b></dt>
   <dd>This field is used to specify a set of "negative control" observations for
-    the evidence type.  It is optional, and by default, set to "&lt;none&gt;".  By
+    the evidence type, as <a href="negativecontrolfmt">described above</a>.  
+    It is optional, and by default, set to "&lt;none&gt;".  By
     double-clicking on the field, a file browser is opened and you are prompted
     to select a data file.  The data file should contain negative control data 
     arranged in columns, with each column a different evidence type.  The columns
