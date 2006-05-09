@@ -42,6 +42,16 @@ This document contains the version history for the
 <a href="&javaURL;">&localJavaLibraryName;</a> version number:</td>
 </tr>
 
+<tr valign="top">
+<td><a href="../1.0.3/&installerDownloadRelURL;">1.0.4</a></td>
+<td>2006/05/08</td>
+<td>
+<ul>
+<li>Clarified documentation regarding the file format for specifying
+negative control observations, for the Significance Calculator.</li>
+</ul>
+</td>
+</tr>
 
 <tr valign="top">
 <td><a href="../1.0.3/&installerDownloadRelURL;">1.0.3</a></td>
