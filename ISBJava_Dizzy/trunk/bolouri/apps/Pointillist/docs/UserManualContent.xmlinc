@@ -686,7 +686,7 @@ Here is a screen shot of the Data Normalizer program:
     from the results data table.</dd>
   <dt><b>Negative control observations</b></dt>
   <dd>This field is used to specify a set of "negative control" observations for
-    the evidence type, as <a href="negativecontrolfmt">described above</a>.  
+    the evidence type, as <a href="#negativecontrolfmt">described above</a>.  
     It is optional, and by default, set to "&lt;none&gt;".  By
     double-clicking on the field, a file browser is opened and you are prompted
     to select a data file.  The data file should contain negative control data 
