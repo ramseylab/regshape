@@ -329,7 +329,12 @@ evidence0,evidence1,evidence2,evidence3,evidence4,evidence5
 ,,4.000000,5.000000,,
   </pre>
   </blockquote>
-The first row of evidence names is optional.
+The first row of evidence names is optional.  The number of columns in the 
+negative control data file, and the order of the columns, does not need to 
+correspond to the data file loaded into the Significance Calculator.  The
+Significance Calculator will prompt the user to indicate which column in the
+negative control data file, corresponds to the specific column selected in
+the loaded data matrix. 
 </p>
 </isb:docsubsection>
 
@@ -685,7 +690,10 @@ Here is a screen shot of the Data Normalizer program:
     It is optional, and by default, set to "&lt;none&gt;".  By
     double-clicking on the field, a file browser is opened and you are prompted
     to select a data file.  The data file should contain negative control data 
-    arranged in columns, with each column a different evidence type.  The columns
+    arranged in columns, with each column a different evidence type.  The file can contain
+only one column, or multiple columns.  If you specify a file with multiple columns,
+the program will prompt you to indicate which column is to be used as the negative
+control for the selected column in the loaded data matrix.  The columns
     may have different numbers of observations in them, and there is no requirement
     of uniformity of rows.  You will be prompted to select a column in a separate
     data table that is displayed, for the negative control file you provided.  If
