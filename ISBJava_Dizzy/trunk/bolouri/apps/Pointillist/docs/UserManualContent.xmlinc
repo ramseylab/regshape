@@ -309,7 +309,7 @@ case of the "space" delimiter), or a significance value of "-1" or
 the "null" string.  
 </p>
 
-<isb:docsubsection name="Negative Control Data File Format" label="negcontrolfmt">
+<isb:docsubsection name="Negative Control Data File Format" label="negativecontrolfmt">
 <p>
 In the <b>Significance Calculator</b>, negative control data can be supplied
 to enable the calculation of significance values of observations from
