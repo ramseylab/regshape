@@ -20,6 +20,11 @@ Chu, Dominique
 Kent University (UK)
 D.F.Chu@kent.ac.uk
 
+Curry, Edward
+University of Edinburgh (UK)
+[using Dizzy to model circadian rhythms]
+edthecurry@gmail.com
+
 Dill, David
 Stanford University
 [using Dizzy as instructional tool]
