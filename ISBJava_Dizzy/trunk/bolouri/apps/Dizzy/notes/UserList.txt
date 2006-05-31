@@ -70,6 +70,10 @@ Columbia University
 [adapted Dizzy for operation on a vector supercomputer]
 adam@dbmi.columbia.edu
 
+Mossing, Mike
+University of Mississippi
+mmossing@olemiss.edu
+
 Myers, Chris
 University of Utah
 [using Dizzy as a teaching tool]
