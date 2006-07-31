@@ -127,6 +127,11 @@ Solis, Earl
 MIT
 eps@mit.edu
 
+Sommer, Selina
+Ludwig-Maximilians Universitat Muenchen
+[uses ISBJava; wants SBML level 2]
+selina.sommer@bio.ifi.lmu.de
+
 Spencer, Richard
 EPA (Lockheed), Research Triangle Park, NC
 Spencer.Richard@epamail.epa.gov
