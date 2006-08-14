@@ -62,7 +62,8 @@ results to the MATLAB version on most datasets.
 <a href="2.1.2/point212.zip">Download Pointillist v2.1.2</a> [1.4 MB ZIP archive of MATLAB codes] [This version includes Fisher's method, the Mudholkar-George
 method, and the Liptak-Stouffer method, as described in the above article.  In
 addition, v2.1.2 fixes some minor issues with the previous version.]
-<a href="2.1.2/README.txt">[README]</a>
+<a href="2.1.2/README.txt">[README]</a> <br />
+<a href="2.1.2/Pointillist_Users_Guide.pdf">User Manual for MATLAB version (PDF)</a>
 <p>
 &nbsp;
 </p>
