@@ -43,6 +43,10 @@ University of Edinburgh
 [using Dizzy for process algebra research]
 Stephen.Gilmore@ed.ac.uk
 
+Grant, Patrick
+Inverbrough Corporation
+patrick@inverbrough.co.uk
+
 Hu, Bin
 Keio University, Japan
 hubin@sfc.keio.ac.jp
