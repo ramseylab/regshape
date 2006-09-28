@@ -15,15 +15,15 @@
 <!ENTITY appName "&localJavaLibraryName;">
 <!ENTITY appVersionMajor "2">
 <!ENTITY appVersionMinor "4">
-<!ENTITY appVersionPatch "3">
+<!ENTITY appVersionPatch "4">
 <!ENTITY appVersion "&appVersionMajor;.&appVersionMinor;.&appVersionPatch;">
-<!ENTITY appDate "2006/04/18">
+<!ENTITY appDate "2006/09/28">
 <!ENTITY appHomePage "&webBaseURL;/&appName;">
 <!ENTITY appLogoURL "images/appLogo.png">
 <!ENTITY appIconURL "images/appLogoIcon.png">
 
 <!-- these definitions are used only in documentation, not by the app itself: -->
-<!ENTITY appCopyright "(c) 2003-2005 Institute for Systems Biology">
+<!ENTITY appCopyright "(c) 2003-2006 Institute for Systems Biology">
 <!ENTITY appMaintainerFullName "&mainGroup;">
 <!ENTITY appMaintainerURL "&mainGroupURL;">
 <!ENTITY appMaintainerEmailSafe "isbjava at systemsbiology.org"> 

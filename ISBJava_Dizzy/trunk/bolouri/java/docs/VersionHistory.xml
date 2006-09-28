@@ -37,6 +37,41 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../2.4.4/download.html">2.4.4</a></td>
+<td>2006/09/28</td>
+<td>
+<ul>
+<li>
+Fixed a bug in <code>org.systemsbiology.util.ClassRegistry</code> that
+caused a ClassCastExcption for certain Windows installations; it
+appears to be something appearing in the classpath that is neither a
+directory or a JAR file.  Inserted defensive code to check before
+casting, and to ignore the case where the URLConnection cannot be cast
+to a JarURLConnection.  Thanks to Patrick Grant for reporting this
+bug.
+</li>
+<li>
+Fixed a bug in
+<code>org.systemsbiology.chem.TimeSeriesOutoutFormat</code> that
+resulted in localized numbers being output, which in Germany means
+that a comma is used as the symbol for the decimal place.  This was
+causing problems for Matlab interpreting the "matlab output" file
+format. Thanks to Steffen Waldherr (Univ. Stuttgart) for pointing out
+this bug, and for providing a bug fix.
+</li>
+<li>
+Fixed a bug in
+<code>org.systemsbiology.chem.SimulatorStochasticGibsonBruck</code>,
+that was preventing reactions whose propensities are an explicit function of time,
+from having their next "firing time" updated after each iteration of the
+algorithm.  Thanks to Dominique Chu (University of Kent, UK) for reporting
+this bug.
+</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
 <td><a href="../2.4.3/download.html">2.4.3</a></td>
 <td>2006/04/18</td>
 <td>
