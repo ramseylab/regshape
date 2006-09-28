@@ -43,6 +43,36 @@ This document contains the version history for the
 </tr>
 
 <tr valign="top">
+<td><a href="../1.11.4/&installerDownloadRelURL;">1.11.4</a></td>
+<td>2006/09/28</td>
+<td>
+<ul>
+<li>
+Fixed an output formatting bug that resulted in localized numbers
+being output, which in Germany means that a comma is used as the
+symbol for the decimal place.  This was causing problems for Matlab
+interpreting the "matlab output" file format, in Germany. Thanks to
+Steffen Waldherr (Univ. Stuttgart) for pointing out this bug, and for
+providing a bug fix.
+</li>
+<li>
+Fixed a bug that caused an exception when &appName; was run on 
+certain Windows platforms with an unusual file type in the classpath.
+Thanks to Patrick Grant for reporting this bug.
+</li>
+<li>
+Fixed a bug in the Gibson-Bruck simulator, that was preventing
+reactions whose propensities are an explicit function of time, from
+having their next "firing time" updated after each iteration of the
+algorithm.  Thanks to Dominique Chu (University of Kent, UK) for
+reporting this bug.
+</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.4.4/download.html">2.4.4</a></td>
+</tr>
+
+<tr valign="top">
 <td><a href="../1.11.3/&installerDownloadRelURL;">1.11.3</a></td>
 <td>2006/04/18</td>
 <td>
