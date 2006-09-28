@@ -286,51 +286,55 @@ public class ClassRegistry
             else
             {
                 // must be a jar file
-                JarURLConnection conn = (JarURLConnection)url.openConnection();
-                String starts = conn.getEntryName();
-                JarFile jfile = conn.getJarFile();
-                Enumeration e = jfile.entries();
-                while (e.hasMoreElements()) 
-                {
-                    ZipEntry entry = (ZipEntry)e.nextElement();
-                    String entryName = entry.getName();
-                    if(entryName.endsWith("/"))
-                    {
-                        // this entry is a directory
-                        if(entryName.equals(MANIFEST_DIR_NAME + "/"))
-                        {
-                            continue;
-                        }
+		URLConnection uconn = url.openConnection();
+		if(uconn instanceof JarURLConnection)
+		{
+		    JarURLConnection conn = (JarURLConnection)uconn;
+		    String starts = conn.getEntryName();
+		    JarFile jfile = conn.getJarFile();
+		    Enumeration e = jfile.entries();
+		    while (e.hasMoreElements()) 
+		    {
+			ZipEntry entry = (ZipEntry)e.nextElement();
+			String entryName = entry.getName();
+			if(entryName.endsWith("/"))
+			{
+			    // this entry is a directory
+			    if(entryName.equals(MANIFEST_DIR_NAME + "/"))
+			    {
+				continue;
+			    }
 
-                        // this entry is a package
-                        String subPackageResourceName = entryName;
-                        String subPackageName = entryName.replace('/', '.');
-                        if(pPackagesAlreadySearched.contains(subPackageName))
-                        {
-                            continue;
-                        }
-                        pPackagesAlreadySearched.add(subPackageName);
+			    // this entry is a package
+			    String subPackageResourceName = entryName;
+			    String subPackageName = entryName.replace('/', '.');
+			    if(pPackagesAlreadySearched.contains(subPackageName))
+			    {
+				continue;
+			    }
+			    pPackagesAlreadySearched.add(subPackageName);
 
-                        searchForClassesImplementingInterface(subPackageName,
-                                                              pPackagesAlreadySearched,
-                                                              pInterface,
-                                                              pClassesImplementingInterface);
-                    }
-                    if (entryName.startsWith(starts)
-                        &&(entryName.lastIndexOf('/')<=starts.length())
-                        &&entryName.endsWith(".class")) 
-                    {
-                        String classname = entryName.substring(0,entryName.length()-6);
-                        if (classname.startsWith("/"))
-                            classname = classname.substring(1);
-                        classname = classname.replace('/','.');
-                        if(! pClassesImplementingInterface.contains(classname) &&
-                             classImplementsInterface(classname, pInterface))
-                        {
-                            pClassesImplementingInterface.add(classname);
-                        }
-                    }
-                }
+			    searchForClassesImplementingInterface(subPackageName,
+								  pPackagesAlreadySearched,
+								  pInterface,
+								  pClassesImplementingInterface);
+			}
+			if (entryName.startsWith(starts)
+			    &&(entryName.lastIndexOf('/')<=starts.length())
+			    &&entryName.endsWith(".class")) 
+			{
+			    String classname = entryName.substring(0,entryName.length()-6);
+			    if (classname.startsWith("/"))
+				classname = classname.substring(1);
+			    classname = classname.replace('/','.');
+			    if(! pClassesImplementingInterface.contains(classname) &&
+			       classImplementsInterface(classname, pInterface))
+			    {
+				pClassesImplementingInterface.add(classname);
+			    }
+			}
+		    }
+		}
 
             }
         }
