@@ -24,17 +24,19 @@ public class TimeSeriesOutputFormat
     private static final HashMap mMap;
     private final String mNaN;
     private final String mInfinity;
-    
+    private final boolean mLocalizeDecimal;
+
     static
     {
         mMap = new HashMap();
     }
-    private TimeSeriesOutputFormat(String pName, char pCommentChar, String pNaN, String pInfinity)
+    private TimeSeriesOutputFormat(String pName, char pCommentChar, String pNaN, String pInfinity, boolean pLocalizeDecimal)
     {
         mName = pName;
         mCommentChar = pCommentChar;
         mNaN = pNaN;
         mInfinity = pInfinity;
+	mLocalizeDecimal = pLocalizeDecimal;
         mMap.put(pName, this);
     }
     public String toString()
@@ -56,6 +58,10 @@ public class TimeSeriesOutputFormat
         {
             pDecimalFormatSymbols.setInfinity(mInfinity);
         }
+	if(! mLocalizeDecimal)
+	{
+	    pDecimalFormatSymbols.setDecimalSeparator('.');
+	}
     }
     
     public String getNaN()
@@ -68,11 +74,12 @@ public class TimeSeriesOutputFormat
         return(mInfinity);
     }
     
-    public static final TimeSeriesOutputFormat CSV_EXCEL = new TimeSeriesOutputFormat("CSV-excel", '#', null, null);
+    public static final TimeSeriesOutputFormat CSV_EXCEL = new TimeSeriesOutputFormat("CSV-excel", '#', null, null, false);
     
-    public static final TimeSeriesOutputFormat CSV_MATLAB = new TimeSeriesOutputFormat("CSV-matlab", '%', "nan", "inf");
+    public static final TimeSeriesOutputFormat CSV_MATLAB = new TimeSeriesOutputFormat("CSV-matlab", '%', "nan", "inf", false);
     
-    public static final TimeSeriesOutputFormat CSV_GNUPLOT = new TimeSeriesOutputFormat("CSV-gnuplot", '#', "nan", "inf");
+    public static final TimeSeriesOutputFormat CSV_GNUPLOT = new TimeSeriesOutputFormat("CSV-gnuplot", '#', "nan", "inf", false);
+ 
     public static String []getSortedFileFormatNames()
     {
         Set fileFormatNamesSet = mMap.keySet();
