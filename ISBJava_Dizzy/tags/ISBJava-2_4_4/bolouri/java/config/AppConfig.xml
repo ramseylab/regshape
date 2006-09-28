@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE AppConfig [
+  <!ENTITY % AppConfig SYSTEM "AppConfig.dtd">
+  %AppConfig;
+]>
+
+<app>
+  <appName>&appName;</appName>
+  <appVersion>&appVersion;</appVersion>
+  <appDate>&appDate;</appDate>
+  <appHomePage>&appHomePage;</appHomePage>
+  <appIconURL>&appIconURL;</appIconURL>
+  <appHelpSetName>&appHelpSetName;</appHelpSetName>
+  <appMaintainerFullName>&appMaintainerFullName;</appMaintainerFullName>
+  <appCopyright>&appCopyright;</appCopyright>
+</app>
+
