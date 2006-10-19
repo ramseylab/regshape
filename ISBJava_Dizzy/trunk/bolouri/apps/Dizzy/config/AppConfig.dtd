@@ -26,7 +26,7 @@
 <!-- these definitions are used only in documentation, not by the app itself: -->
 <!ENTITY appMaintainerFullName "&mainGroup;">
 <!ENTITY appMaintainerURL "&mainGroupURL;">
-<!ENTITY appMaintainerEmailSafe "dizzy at systemsbiology.org"> 
+<!ENTITY appMaintainerEmailSafe "dizzy NOSPAM_at_NOSPAM systemsbiology.org"> 
 <!ENTITY appMaintainerAffiliation "&mainAffiliation;">
 
 <!ENTITY appOriginalAuthorFullName "Stephen Ramsey">
