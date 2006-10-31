@@ -95,6 +95,10 @@ Orrell, David
 Vancouver, BC
 orrell@shaw.ca
 
+Pakka, Vijayanarasimha
+Southampton University, UK
+vijay.pakka@soton.ac.uk
+
 Pepin, Francois
 McGill University (Canada)
 francois.pepin@mcgill.ca
@@ -102,6 +106,11 @@ francois.pepin@mcgill.ca
 Puchalka, Jacek
 Institute of Biochemistry and Biophysics PAS, Poland
 puchalka@et.put.poznan.pl
+
+Qian, Yong
+National Institute on Aging, NIHI
+[interested in modeling large-scale GRNs]
+qiany@grc.nia.nih.gov
 
 Rouilly, Vincent
 Imperial College, United Kingdom
