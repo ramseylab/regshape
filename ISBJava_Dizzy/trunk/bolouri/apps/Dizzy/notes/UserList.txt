@@ -103,6 +103,11 @@ Pakka, Vijayanarasimha
 Southampton University, UK
 vijay.pakka@soton.ac.uk
 
+Parra, Jeremy
+Portland State University
+[using Dizzy to model atmospheric kinetics]
+parra@pdx.edu
+
 Pepin, Francois
 McGill University (Canada)
 francois.pepin@mcgill.ca
