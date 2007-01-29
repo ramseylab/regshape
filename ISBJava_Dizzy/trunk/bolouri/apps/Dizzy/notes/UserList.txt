@@ -73,6 +73,11 @@ University of Wisconsin-Madison
 [used Dizzy as an instructional tool]
 landis@chem.wisc.edu
 
+Lett, G. Scott
+BioAnalytics, Inc.
+[Interested in Dizzy]
+slett@bioanalyticsgroup.com
+
 Margolin, Adam
 Columbia University
 [adapted Dizzy for operation on a vector supercomputer]
