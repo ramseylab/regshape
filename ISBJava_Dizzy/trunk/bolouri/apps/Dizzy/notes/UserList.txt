@@ -78,6 +78,10 @@ BioAnalytics, Inc.
 [Interested in Dizzy]
 slett@bioanalyticsgroup.com
 
+Maier, Christian
+University of Bamberg, Germany
+christian.geo@t-online.de
+
 Margolin, Adam
 Columbia University
 [adapted Dizzy for operation on a vector supercomputer]
@@ -137,6 +141,10 @@ vincent.rouilly@imperial.ac.uk
 Sabouri, Mohsen
 Virginia Polytechnic Institute
 sabouri@vt.edu
+
+Sandmann, Werner
+University of Bamberg, Germany
+werner.sandmann@wiai.uni-bamberg.de
 
 Sauro, Herbert
 Keck Graduate Institute, California
