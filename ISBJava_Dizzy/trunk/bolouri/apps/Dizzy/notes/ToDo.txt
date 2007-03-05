@@ -20,7 +20,7 @@ file being invalid or missing ??
 backtrace originally provided by Ole Schulz-Trieglaf)
 
 (9) Add support for SBML Level 2.   Requested by:  Richard Spencer, 2005/06/17
-    See JigCell for a 100% pure Java library for parsing SBML (thanks to Nick Allen, nallen@vt.edu)
+    See JigCell for a 100% pure Java library for parsing SBML (thanks to Nick Allen, nallen@vt.edu)  Also requested by Michael Pedersen.
     
 (10) Test Dizzy/ISBJava/Pointillist with Java 1.5
 
