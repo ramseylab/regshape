@@ -836,7 +836,7 @@ to be written to the console, upon start-up of the &appName; application.</li>
 </tr>
 
 <tr valign="top">
-<td><a href="../1.4.4/&installerDownloadRelURL;">1.4.4</a></td>
+<td>1.4.4</td>
 <td>2004/02/10</td>
 <td>
 <ul>
@@ -853,11 +853,11 @@ the command-line interface to &appName;, without needing any prior user configur
 <code>runmodel</code> launcher.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/1.4.4/&installerDownloadRelURL;">1.4.4</a></td>
+<td>1.4.4</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../1.4.3/&installerDownloadRelURL;">1.4.3</a></td>
+<td>1.4.3</td>
 <td>2004/02/06</td>
 <td>
 <ul>
@@ -878,11 +878,11 @@ simulation parameters are now &quot;long&quot; integer parameters.</li>
 <li>Fixed a bug in the <code>runmodel.bat</code> batch file.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/1.4.3/&installerDownloadRelURL;">1.4.3</a></td>
+<td>1.4.3</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../1.4.2/&installerDownloadRelURL;">1.4.2</a></td>
+<td>1.4.2</td>
 <td>2004/02/05</td>
 <td>
 <ul>
@@ -917,11 +917,11 @@ the expression value cachying feature introduced in version 1.4.0, and the
 <code>gammaln()</code> code is likely encumbered with license issues.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/1.4.2/&installerDownloadRelURL;">1.4.2</a></td>
+<td>1.4.2</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../1.4.1/&installerDownloadRelURL;">1.4.1</a></td>
+<td>1.4.1</td>
 <td>2004/02/02</td>
 <td>
 <ul>
@@ -932,11 +932,11 @@ so that it gives a more comprehensible error message if the user attempts to def
 a symbol name that is reserved for a default model element.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/1.4.1/&installerDownloadRelURL;">1.4.1</a></td>
+<td>1.4.1</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../1.4.0/&installerDownloadRelURL;">1.4.0</a></td>
+<td>1.4.0</td>
 <td>2004/01/30</td>
 <td>
 <ul>
@@ -971,11 +971,11 @@ search hit&quot; feature was not working for any searches after the first search
 &quot;jump to the next search hit&quot; feature.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/1.4.0/&installerDownloadRelURL;">1.4.0</a></td>
+<td>1.4.0</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../1.3.1/&installerDownloadRelURL;">1.3.1</a></td>
+<td>1.3.1</td>
 <td>2004/01/27</td>
 <td>
 <ul>
@@ -990,11 +990,11 @@ at the point where the value of the symbol is redefined.  The purpose of this fe
 to permit the user to define a template definition with an &quot;output&quot; parameter.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/1.3.1/&installerDownloadRelURL;">1.3.1</a></td>
+<td>1.3.1</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../1.3.0/&installerDownloadRelURL;">1.3.0</a></td>
+<td>1.3.0</td>
 <td>2004/01/26</td>
 <td>
 <ul>
@@ -1015,11 +1015,11 @@ a model.</li>
 with an intrinsic time delay.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/1.3.0/&installerDownloadRelURL;">1.3.0</a></td>
+<td>1.3.0</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../1.2.0/&installerDownloadRelURL;">1.2.0</a></td>
+<td>1.2.0</td>
 <td>2004/01/13</td>
 <td>
 <ul>
@@ -1062,11 +1062,11 @@ editor buffer is not empty).</li>
 <li>Fixed a bug where the &quot;Reload model&quot; feature was not working properly.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/1.2.0/&installerDownloadRelURL;">1.2.0</a></td>
+<td>1.2.0</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../1.1.1/&installerDownloadRelURL;">1.1.1</a></td>
+<td>1.1.1</td>
 <td>2004/01/05</td>
 <td>
 <ul>
@@ -1089,11 +1089,11 @@ where window resizing was not working correctly on the Windows platform.</li>
 space on the screen.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/1.1.1/&installerDownloadRelURL;">1.1.1</a></td>
+<td>1.1.1</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../1.1.0/&installerDownloadRelURL;">1.1.0</a></td>
+<td>1.1.0</td>
 <td>2003/12/22</td>
 <td>
 <ul>
@@ -1127,11 +1127,11 @@ clipboard (e.g., Windows).</li>
 <li>Added a &quot;select all symbols&quot; feature to the simulation launcher.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/1.1.0/&installerDownloadRelURL;">1.1.0</a></td>
+<td>1.1.0</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../1.0.0/&installerDownloadRelURL;">1.0.0</a></td>
+<td>1.0.0</td>
 <td>2003/12/08</td>
 <td>
 <ul>
@@ -1150,11 +1150,11 @@ for specifying the matximum allowed relative and absolute errors</li>
 expression</li>
 </ul>
 </td>
-<td><a href="&javaURL;/1.0.0/&installerDownloadRelURL;">1.0.0</a></td>
+<td>1.0.0</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../0.0.8/&installerDownloadRelURL;">0.0.8</a></td>
+<td>0.0.8</td>
 <td>2003/11/21</td>
 <td>
 <ul>
@@ -1171,11 +1171,11 @@ a &quot;NaN&quot; (not-a-number) appears in the simulation output.  It now gives
 human-comprehensible error message.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/0.0.8/&installerDownloadRelURL;">0.0.8</a></td>
+<td>0.0.8</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../0.0.7/&installerDownloadRelURL;">0.0.7</a></td>
+<td>0.0.7</td>
 <td>2003/11/07</td>
 <td>
 <ul>
@@ -1189,11 +1189,11 @@ environment provides its own table of contents).</li>
 <li>Adjusted the default vertical dimension of the editor pane for the model editor, to 40 characters.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/0.0.7/&installerDownloadRelURL;">0.0.7</a></td>
+<td>0.0.7</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../0.0.6/&installerDownloadRelURL;">0.0.6</a></td>
+<td>0.0.6</td>
 <td>2003/10/22</td>
 <td>
 <ul>
@@ -1202,11 +1202,11 @@ environment provides its own table of contents).</li>
 reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/0.0.6/&installerDownloadRelURL;">0.0.6</a></td>
+<td>0.0.6</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../0.0.5/&installerDownloadRelURL;">0.0.5</a></td>
+<td>0.0.5</td>
 <td>2003/10/20</td>
 <td>
 <ul>
@@ -1224,14 +1224,14 @@ directory of a Windows (or DOS) drive.</li>
 reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</li>
 </ul>
 </td>
-<td><a href="&javaURL;/0.0.5/&installerDownloadRelURL;">0.0.5</a></td>
+<td>0.0.5</td>
 </tr>
 
 <tr valign="top">
-<td><a href="../0.0.4/&installerDownloadRelURL;">0.0.4</a></td>
+<td>0.0.4</td>
 <td>2003/08/28</td>
 <td>Modified the Cytoscape bridge to use JNLP, so Cytoscape does not have to be bundled with the application</td>
-<td><a href="&javaURL;/0.0.4/&installerDownloadRelURL;">0.0.4</a></td>
+<td>0.0.4</td>
 </tr>
 
 <tr valign="top">
