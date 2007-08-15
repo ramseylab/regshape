@@ -42,6 +42,11 @@ X = [ some_expression ];
 the Dizzy parser immediately evaluates 1*X, rather than using delayed 
 evaluation.  Is this the behavior that we want?  
 
+(15) Bug in InstallAnywhere on the newest version of the Linux kernel; need to update LD_ASSUME_KERNEL
+in the InstallAnywhere launcher shell script.
+
+
+
 ====> From Axel Kowald 2005/07/20:
 
 Hi Steve,
