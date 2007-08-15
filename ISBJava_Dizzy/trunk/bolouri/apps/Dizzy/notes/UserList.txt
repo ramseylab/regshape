@@ -1,3 +1,8 @@
+Abedi, Vida
+University of Ottawa, Canada
+[using Dizzy to study GAL regulon]
+vidaabedi@alumni.uottawa.ca
+
 Ahmadi, Hooman
 Columbia University
 [adapting Dizzy for Langevin simulations]
@@ -197,6 +202,11 @@ jtaylor@systemsbiology.org
 
 Wang, X
 xwang@mail.mcw.edu
+
+Wang, Zhijie
+unknown
+[trying to run Dizzy from source code]
+w.zhijie@gmail.com
 
 You, Tao
 University of Aberdeen, UK
