@@ -8,6 +8,11 @@ Columbia University
 [adapting Dizzy for Langevin simulations]
 ha2130@columbia.edu
 
+Apostu, Raluca
+McGill University, Canada
+[studing galactose model]
+raluca.apostu@mail.mcgill.ca
+
 Behrendt, Dominik
 Siemens (Germany)
 Dominik.Behrendt@scr.siemens.com
@@ -199,6 +204,11 @@ thaytam@yahoo.com
 Taylor, James
 Institute for Systems Biology
 jtaylor@systemsbiology.org
+
+Thorsley, David
+University of Washington, Dept of Electrical Engineering
+[interested in galactose model]
+thorsley@u.washington.edu
 
 Wang, X
 xwang@mail.mcw.edu
