@@ -30,9 +30,21 @@ Bruggeman, Frank
 Vrije Universiteit (NL)
 frank.bruggeman@falw.vu.nl
 
+Cappello, Igor
+University of Trento, Italy
+igor.cappello@studenti.unitn.it
+
 Chu, Dominique
 Kent University (UK)
 D.F.Chu@kent.ac.uk
+
+Chung-hyun, Park
+Seoul National University
+tarazta@phya.snu.kc.ar
+
+Cottrell, David
+McGill University, Canada
+cottrell@math.mcgill.ca
 
 Curry, Edward
 University of Edinburgh (UK)
@@ -48,6 +60,14 @@ Duguid, Adam
 Edinburgh University
 a.j.duguid@sms.ed.ac.uk
 
+Endy, Drew
+MIT, Biological Engineering
+endy@mit.edu
+
+Falkenhahn, Valentin
+somehwere in Germany
+vfalkenhahn@web.de
+
 Finney, Andrew
 University of Hertfordshire, UK
 afinney@cds.caltech.edu
@@ -61,6 +81,10 @@ Grant, Patrick
 Inverbrough Corporation
 patrick@inverbrough.co.uk
 
+Haubein, Ned
+BioAnalytics Group
+ned@bioanalyticsgroup.com
+
 Hu, Bin
 Keio University, Japan
 hubin@sfc.keio.ac.jp
@@ -68,6 +92,10 @@ hubin@sfc.keio.ac.jp
 Igoshin, Oleg
 Rice University
 igoshin@rice.edu
+
+Kaats, Adrian
+McGill University, Canada
+akaats@po-box.mcgill.ca
 
 Kierzek, Andrzej
 Institute of Biochemistry and Biophysics, Poland
@@ -135,6 +163,10 @@ Portland State University
 [using Dizzy to model atmospheric kinetics]
 parra@pdx.edu
 
+Passini, Valerio
+University of Camerino, Italy
+valerio.passini@unicam.it
+
 Pedersen, Michael David
 University of Edinburgh
 michael.d.pedersen@googlemail.com
@@ -152,9 +184,17 @@ National Institute on Aging, NIHI
 [interested in modeling large-scale GRNs]
 qiany@grc.nia.nih.gov
 
+Quan, David
+University of Maryland, College Park
+deequan@gmail.com
+
 Reimann, Axel
 Germany
 axel.privat@web.de
+
+Riley, Todd
+Institute for Advanced Study
+triley@ias.edu
 
 Rouilly, Vincent
 Imperial College, United Kingdom
@@ -175,6 +215,10 @@ Herbert_Sauro@kgi.edu
 Schulz-Trieglaf
 University of Edinburgh
 ole.st@gmx.de
+
+Sciacca, Eva
+University of Catania, Italy
+sciacca@dmi.unict.it
 
 Lutz Schmitt
 Univ. Duesseldorf
@@ -197,6 +241,10 @@ Spencer, Richard
 EPA (Lockheed), Research Triangle Park, NC
 Spencer.Richard@epamail.epa.gov
 
+Shukla, Ambar
+unknown
+ambars@gmail.com
+
 Tam, Nguyen Van
 JMI, New Delhi
 thaytam@yahoo.com
@@ -217,6 +265,14 @@ Wang, Zhijie
 unknown
 [trying to run Dizzy from source code]
 w.zhijie@gmail.com
+
+Vaughn, Justin
+University of Tennessee, Knoxville
+jvaughn7@utk.edu
+
+You, Sungyong
+Pohang University of Science and Technology, Korea
+guru@postech.ac.kr
 
 You, Tao
 University of Aberdeen, UK
