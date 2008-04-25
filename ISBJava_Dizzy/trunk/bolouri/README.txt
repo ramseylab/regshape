@@ -8,7 +8,7 @@ directory:
           source tree.  Generally does not contain
           any Java source code, just application build
           and config files, and other resources.   Broken out
-          by project (e.g., apps/Dizzy, apps/Mogul, etc.)
+          by project (e.g., apps/Dizzy)
 
           For more information, read the "apps/README.txt" file.
 
@@ -33,7 +33,7 @@ directory:
           things like built Jar files, Web content, etc.
 
   tools:  For software tools that aren't really an integrated
-          "application".  Broken out by project (tools/Mogul, etc).
+          "application".  
 
 The build system used underneath this directory tree is "Ant"
 (http://ant.apache.org).  Invoking "Ant" is just like invoking
