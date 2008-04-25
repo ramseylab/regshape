@@ -18,13 +18,7 @@ This directory contains the non-Java resources for the
 following Java-based applications:
 
 Dizzy        (in the subdirectory Dizzy)
-Mogul        (in the subdirectory Mogul)
 Pointillist  (in the subdirectory Pointillist)  
-
-In addition, the BioTapestry directory contains all of the
-Java source code for the BioTapestry program, and the 
-PointillistOld directory contains all of the Java source code
-for version 0.1 of the Pointillist program.
 
 For application-specific notes, look for a README.txt file
 in the application's subdirectory.
