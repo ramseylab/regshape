@@ -73,6 +73,7 @@
         <include name="models/*.html" />
       </fileset>
     </copy>
+    <copy todir="${projWebDir}" file="${projConfigDir}/&cssStylesheetFile;" />
   </target>
 
   <target name="copyModels">
@@ -115,8 +116,8 @@
   </target>
 
   <target name="build" depends="buildLocalHTML">
-    <ant dir="${projJavaDir}" target="build" />
-    <ant dir="${projAppsDir}" target="build" />
+    <ant dir="${projJavaDir}" target="build" />  
+    <ant dir="${projAppsDir}" target="build" /> 
   </target>
 
   <target name="test">

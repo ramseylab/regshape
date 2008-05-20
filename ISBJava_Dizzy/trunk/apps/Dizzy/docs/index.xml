@@ -35,68 +35,129 @@ run the build system.
 <isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
 <isb:docdate>$Date$</isb:docdate>
 
-<table border="0">
-<tr>
-<td>
-<ul>
-<li><a href="&appVersion;/&installerDownloadRelURL;">Download &appName;</a></li>
-<li><a href="&appHomePage;/docs/Overview.html">&appName; Overview</a></li>
-  <li><a href="docs/UserManual.html">&appName; User Manual</a> (a <a href="docs/UserManual.pdf">PDF version</a> is available)</li>
-<li><a href="&appHomePage;/docs/VersionHistory.html">&appName; Version History</a></li>
-<li><a href="&webBaseURL;/License.html">License Agreement</a></li>
-<li><a href="&webBaseURL;/&localJavaLibraryName;/javadoc">Javadoc API documentation</a> ( a <a href="&webBaseURL;/&localJavaLibraryName;/docs/APIDocumentation.pdf">PDF version</a> is available)</li>
-<li><a href="&articleURL;">An article describing &appName;</a></li>
-</ul>
-</td>
-<td>
-<a href="images/screenshot1-big.png"><img src="images/screenshot1-small.png" alt="screen shot" /></a>
-</td>
-</tr>
+
+
+
+<table width="680" border="0" cellspacing="0" cellpadding="0" align="center">
+	<tr>
+		<td width="680" height="4" bgcolor="#2d2c2c"></td>
+	</tr>
+	<tr>
+		<td width="680" height="51" bgcolor="#000000" valign="top"><img src="&appHomePage;/images/AppTitleBar.gif" align="left" /><a href="&mainPublicURL;" target="_blank"><img src="&webBaseURL;/images/isblogo.gif" border="0" align="right" /></a></td>
+	</tr>
+	<tr>
+		<td width="680" height="1" bgcolor="#ffffff"></td>
+	</tr>
+	<tr>
+		<td><img src="&appHomePage;/images/AppGridImage.jpg" /></td>
+	</tr>
+	<tr>
+		<td width="680" height="1" bgcolor="#ffffff"></td>
+	</tr>
+	<tr>
+		<td width="680" height="20" bgcolor="#000000">
+		
+		
+<center><a href="&appVersion;/&installerDownloadRelURL;" target="help" class="toplinks">Download</a><img src="&webBaseURL;/images/clear.gif" width="30" height="1" />
+
+
+<a href="&appHomePage;/docs/Overview.html" target="help" class="toplinks">Overview</a><img src="&webBaseURL;/images/clear.gif" width="30" height="1" />
+
+
+<a href="docs/UserManual.html" target="help" class="toplinks">User Manual</a><img src="&webBaseURL;/images/clear.gif" width="30" height="1" />
+
+
+
+<a href="&appHomePage;/docs/VersionHistory.html" target="help" class="toplinks">Versions</a><img src="&webBaseURL;/images/clear.gif" width="30" height="1" />
+
+
+<a href="&webBaseURL;/License.html" target="help" class="toplinks">License Agreement</a><img src="&webBaseURL;/images/clear.gif" width="30" height="1" />
+
+<a href="&webBaseURL;/&localJavaLibraryName;/javadoc" target="help" class="toplinks">API</a><img src="&webBaseURL;/images/clear.gif" width="30" height="1" />
+
+<a href="&articleURL;" target="help" class="toplinks">Publication</a>
+
+		</center>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		</td>
+	</tr>
+	<tr>
+		<td width="680" height="5" bgcolor="#2d2c2c"></td>
+	</tr>
 </table>
 
-<p>
+<table width="680" class="table" bgcolor="#ffffff" align="center"><tr><td class="text">
+
+<a href="&appHomePage;/images/screenshot1-big.png">
+<img src="&appHomePage;/images/screenshot1-small.png" border="0" alt="screen shot" align="right" />
+</a>
+
+
+<p class="text">
 &appName; is a chemical kinetics stochastic simulation software
 package written in Java.  It provides a model definition environment
-and an implementation of the <a
-href="&appHomePage;/docs/UserManual.html#gillespie">Gillespie</a>, <a
-href="&appHomePage;/docs/UserManual.html#gibsonbruck">Gibson-Bruck</a>,
-and <a href="&appHomePage;/docs/UserManual.html#tauleap">Tau-Leap</a>
+and an implementation of the <a href="&appHomePage;/docs/UserManual.html#gillespie" class="textlink" target="_blank">Gillespie</a>, <a
+class="textlink" target="_blank" href="&appHomePage;/docs/UserManual.html#gibsonbruck">Gibson-Bruck</a>,
+and <a class="textlink" target="_blank" href="&appHomePage;/docs/UserManual.html#tauleap">Tau-Leap</a>
 stochastic algorithms.  &appName; is capable of importing and
-exporting the <a href="&sbmlURL;">SBML model definition language</a>,
+exporting the <a class="textlink" target="_blank" href="&sbmlURL;">SBML model definition language</a>,
 as well as displaying models graphically using the <a
-href="&cytoscapeURL;">Cytoscape software system</a>.  &appName; was
-written by <a href="&appOriginalAuthorHomePage;">Stephen
+class="textlink" target="_blank" href="&cytoscapeURL;">Cytoscape software system</a>.  &appName; was
+written by <a class="textlink" target="_blank" href="&appOriginalAuthorHomePage;">Stephen
 Ramsey</a> in the laboratory of Hamid Bolouri at ISB.  &appName; is
 based on the <a
-href="&webBaseURL;/&localJavaLibraryName;">&localJavaLibraryName;
+class="textlink" target="_blank" href="&webBaseURL;/&localJavaLibraryName;">&localJavaLibraryName;
 library</a>.  The software is available for download within a <a
-href="&appVersion;/&installerDownloadRelURL;">self-extracting
+class="textlink" target="_blank" href="&appVersion;/&installerDownloadRelURL;">self-extracting
 installer</a>.  It is distributed under the <a
-href="../License.html">GNU Lesser General Public License</a> (LGPL),
+class="textlink" target="_blank" href="../License.html">GNU Lesser General Public License</a> (LGPL),
 which is a standard &quot;free software&quot; and &quot;open
 source&quot; license.  &appName; requires the Java 2 Runtime
 Environment (JRE) version 1.4 or newer, or an equivalent JRE.  For
 more information about the &appName; system, please consult the <a
-href="&appHomePage;/docs/UserManual.html">&appName; User Manual</a>.
+class="textlink" target="_blank" href="&appHomePage;/docs/UserManual.html">&appName; User Manual</a>.
 </p>
 
-<p>
-<b>Current version:</b>  <a href="&appHomePage;/docs/VersionHistory.html">&appVersion;</a>, released on &appDate;
+<p class="text">
+<b>Current version:</b>  <a class="textlink" target="_blank" href="&appHomePage;/docs/VersionHistory.html">&appVersion;</a>, released on &appDate;
 </p>
 
-<p>
-<b>Download counter:</b> &appName; has been downloaded over <img border="1" align="absmiddle" src="images/&appName;Downloads.jpg" alt="[COUNTER]" /> times since June 6, 2004.
+<p class="text">
+<b>Download counter:</b> &appName; has been downloaded over <img border="1" align="absmiddle" src="&appHomePage;/images/&appName;Downloads.jpg" alt="[COUNTER]" /> times since June 6, 2004.
 </p>
 
-<p>
-<b>Visitor counter:</b> this page has been visited over <img border="1" align="absmiddle" src="images/&appName;Visitors.jpg" alt="[COUNTER]" /> times since June 6, 2004.
+<p class="text">
+<b>Visitor counter:</b> this page has been visited over <img border="1" align="absmiddle" src="&appHomePage;/images/&appName;Visitors.jpg" alt="[COUNTER]" /> times since June 6, 2004.
 </p>
 
-<p>
+<p class="text">
 <font size="-1">The development of &appName; is supported by a grant from 
 the National Institute of Allergy and Infectious Disease (NIAID), a division of
 the National Institutes of Health (NIH).
 </font>
 </p>
+
+</td></tr></table>
+
+<table align="center" bgcolor="#000000" border="0" width="680">
+<tbody><tr><td><p class="copyright">
+<center>
+<span class="copyright">© 2008, Institute for Systems Biology, All Rights Reserved </span>
+</center>
+
+</p></td></tr>
+</tbody></table>
 
 </isb:document>

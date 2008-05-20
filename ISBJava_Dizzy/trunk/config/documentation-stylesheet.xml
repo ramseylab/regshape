@@ -22,11 +22,13 @@
   <xsl:output method="html" indent="yes" encoding="ISO-8859-1" />
 
   <xsl:param name="altWebBaseURL" /> 
+  <xsl:param name="hideHeader" />
   <xsl:param name="hideMainLogo" />
   <xsl:param name="hideExternalLinks" />
   <xsl:param name="groupLogoRelURL" />
   <xsl:param name="hideDocOwner" />
-  
+  <xsl:param name="useCSSStylesheet" />
+
   <xsl:template match="html:a|html:a/@*">
     <xsl:choose>
       <xsl:when test="$hideExternalLinks != ''">
@@ -64,12 +66,18 @@
   <xsl:template match="/isb:document">
     <head>
       <title><xsl:value-of select="isb:doctitle"/></title>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+      <xsl:if test="$useCSSStylesheet != ''">
+      <link href="&cssStylesheet;" rel="stylesheet" type="text/css" media="all" />
+      </xsl:if>
     </head>
-    <body>
+    <body bgcolor="#ffffff" leftmargin="20" topmargin="20" marginwidth="20" marginheight="20">
     <xsl:if test="/isb:document/isb:docpreamble != ''">
       <xsl:value-of select="/isb:document/isb:docpreamble" />
 
     </xsl:if>
+
+  <xsl:if test="not( $hideHeader != '' )">
     <table cellpadding="20">
       <tr>
         <xsl:if test="not( $hideMainLogo != '' )">
@@ -172,12 +180,18 @@
       </tr>
       </table>
       <hr noshade="true" />
+    </xsl:if>
       <xsl:apply-templates/>
 
       <hr noshade="true" />
 
       <xsl:if test="/isb:document/isb:docdate != ''">
-        <p>
+        <xsl:if test="$useCSSStylesheet != ''">
+        <p class="text" />
+        </xsl:if>
+	<xsl:if test="not( $useCSSStylesheet != '' )">
+        <p />
+        </xsl:if>
         <b>Last updated:
           <xsl:if test="contains(isb:docdate, '$Date:')">
             <xsl:value-of select="translate(concat(
@@ -188,10 +202,14 @@
             <xsl:value-of select="isb:docdate"/>
           </xsl:if>
         </b>
-        </p>
       </xsl:if>
  
-      <p>
+        <xsl:if test="$useCSSStylesheet != ''">
+        <p class="text" />
+        </xsl:if>
+	<xsl:if test="not( $useCSSStylesheet != '' )">
+        <p />
+        </xsl:if>     
       <b>Please e-mail comments or corrections regarding this document to: 
         <code>
           <xsl:if test="/isb:document/isb:docowneremail != ''">
@@ -202,7 +220,6 @@
           </xsl:if>
         </code>
       </b>
-      </p>  
 
     </body>
   </xsl:template>

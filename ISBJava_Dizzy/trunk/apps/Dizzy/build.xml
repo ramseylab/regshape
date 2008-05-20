@@ -91,7 +91,7 @@
            destdir="${app.styleDir}" 
            includes="*.xml" 
            style="${globalConfig}/${docsStyleSheet}"
-      	   excludes="AppConfig.xml,AppHelp.xml,ReadMe.xml" >
+      	   excludes="AppConfig.xml,AppHelp.xml,ReadMe.xml,index.xml" >
     	<param name="groupLogoRelURL" expression="&appName;/&appLogoURL;" />
     </style>
 
@@ -100,6 +100,13 @@
   	       style="${globalConfig}/${docsStyleSheet}">
   	    <param name="hideExternalLinks" expression="true" />
   		<param name="hideGroupLogo" expression="true" />
+    </style>
+
+    <style in="${app.docsDir}/index.xml"
+           out="${app.styleDir}/index.html" 
+           style="${globalConfig}/${docsStyleSheet}">
+           <param name="hideHeader" expression="true" />
+           <param name="useCSSStylesheet" expression="true" />
     </style>
   	       
     <style basedir="${app.docsDir}" 
