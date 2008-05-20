@@ -1,2 +1,0 @@
-MAILTO=sramsey
-5 5 * * sun	/users/sramsey/bin/computeWebStats.pl Dizzy insDizzy ISBJava ISBJava\. Pointillist insPoint
