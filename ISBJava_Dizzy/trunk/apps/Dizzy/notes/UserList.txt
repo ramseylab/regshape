@@ -132,6 +132,11 @@ Maier, Christian
 University of Bamberg, Germany
 christian.geo@t-online.de
 
+Manninen, Tiina
+Tampere University of Technology, Finland
+[compared dizzy to three other simulators]
+tiina.manninen@tut.fi
+
 Margolin, Adam
 Columbia University
 [adapted Dizzy for operation on a vector supercomputer]
