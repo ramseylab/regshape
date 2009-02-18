@@ -184,6 +184,10 @@ Pepin, Francois
 McGill University (Canada)
 francois.pepin@mcgill.ca
 
+Petrosyan, Karen
+Academica Sinica (Taiwan)
+pkaren@phys.sinica.edu.tw
+
 Puchalka, Jacek
 Institute of Biochemistry and Biophysics PAS, Poland
 puchalka@et.put.poznan.pl
@@ -266,6 +270,10 @@ Thorsley, David
 University of Washington, Dept of Electrical Engineering
 [interested in galactose model]
 thorsley@u.washington.edu
+
+Vigliotti, Maria Grazia
+Imperial College (UK)
+mgv98@doc.ic.ac.uk
 
 Wang, X
 xwang@mail.mcw.edu
