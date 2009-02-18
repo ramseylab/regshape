@@ -26,6 +26,10 @@ Blackwell, Avrama
 George Mason University
 avrama@gmu.edu
 
+Bottani, Samuel
+Universite Paris Diderot (France)
+samuel.bottani@univ-paris-diderot.fr
+
 Bruggeman, Frank
 Vrije Universiteit (NL)
 frank.bruggeman@falw.vu.nl
@@ -80,6 +84,10 @@ Gilmore, Stephen
 University of Edinburgh
 [using Dizzy for process algebra research]
 Stephen.Gilmore@ed.ac.uk
+
+Gjuvsland, Arne
+Universitetet for Miljo (Norway)
+arne.gjuvsland@umb.no
 
 Grant, Patrick
 Inverbrough Corporation
