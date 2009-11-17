@@ -250,9 +250,13 @@ Sciacca, Eva
 University of Catania, Italy
 sciacca@dmi.unict.it
 
-Lutz Schmitt
+Schmitt, Lutz
 Univ. Duesseldorf
 lutz.schmitt@uni-duesseldorf.de
+
+Shapiro, Bruce
+Caltech
+bshapiro@caltech.edu
 
 Shenghua Li
 Virginia Tech
