@@ -135,6 +135,10 @@ Krause, Falko
 Max-Planck Society, Germany
 krause_f@molgen.mpg.de
 
+Lan, Tain
+[graduate student in bioinformatics, somewhere]
+tainlan@gmail.com
+
 Landis, Clark
 University of Wisconsin-Madison
 [used Dizzy as an instructional tool]
@@ -278,10 +282,6 @@ Spencer.Richard@epamail.epa.gov
 Shukla, Ambar
 unknown
 ambars@gmail.com
-
-Tain, Ian
-[bioinformatics graduate student, somewhere]
-tainian@gmail.com
 
 Tam, Nguyen Van
 JMI, New Delhi
