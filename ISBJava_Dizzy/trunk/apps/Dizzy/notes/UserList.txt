@@ -68,6 +68,10 @@ University of Edinburgh (UK)
 [using Dizzy to model circadian rhythms]
 edthecurry@gmail.com
 
+Davidson, Fordyce
+University of Dundee, Scotland
+fdavidson@maths.dundee.ac.uk
+
 Dill, David
 Stanford University
 [using Dizzy as instructional tool]
