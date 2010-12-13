@@ -34,6 +34,10 @@ Bottani, Samuel
 Universite Paris Diderot (France)
 samuel.bottani@univ-paris-diderot.fr
 
+Bouchet, Pascal
+Pasteur Institute (FR)
+pascal.bouchet@pasteur.fr
+
 Bruggeman, Frank
 Vrije Universiteit (NL)
 frank.bruggeman@falw.vu.nl
@@ -138,6 +142,9 @@ dkramer@wsu.edu
 Krause, Falko
 Max-Planck Society, Germany
 krause_f@molgen.mpg.de
+
+Kumar, Satya
+mail2mvskumar@gmail.com
 
 Lan, Tain
 [graduate student in bioinformatics, somewhere]
