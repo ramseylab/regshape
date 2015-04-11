@@ -1,0 +1,36 @@
+# regshape
+DNA shape-based classifier for regulatory elements (R pkg)
+
+The regshape R package (written by Jichen Yang and Stephen Ramsey) provides a classifier for predicting whether a given oligonucleotide sequence (of 
+length *l* bp, where *l* would typically vary from six to as high as 25 bp) is, or is not, a transcription factor (TF) binding site. It is not specialized to any particular TF; regshape is a TF-generic classifier for 
+regulatory elements based on local three-dimensional shape properties of the DNA as can be discerned from the nucleotide sequence. The regshape package uses the Random Forest classifier (provided by the 
+randomForest R package, which is a required dependency) and it was constructed by analyzing a compendium of representative TF binding site sequences from the JASPAR database (release 5.0) and on a large representative sample of human noncoding DNA sequence from which known TF binding sites (from ENCODE ChIP-seq genome location datasets from 457 different experiments 
+comprising 119 different TFs). The regshape package is available on GitHub at the URL 
+<a href="http://github.com/ramseylab/regshape">github.com/ramseylab/regshape</a>. The regshape package is furnished under the GNU General Public License version 2.0 (see LICENSE file in the package distribution). There are two ways to use the regshape package; processing a vector of short sequences (each of length *l*), or processing a single long sequence using a sliding window of length *l*.
+
+To install regshape, the `devtools` R package can be used.
+
+```{r}
+library(devtools)
+install_github("ramseylab/regshape")
+```
+
+To use regshape, the package library must first be loaded into your R session:
+
+```{r}
+library(regshape)
+```
+
+Once the regshape package has been loaded, you are ready to compute shape scores for a vector of
+short DNA sequences (in this example, *l*=6 but any value greater than six is allowed):
+
+```{r}
+getShapeScores(c("AAAAAA","GATACG","TCGAGT"))
+```
+
+In many situations, it is convenient to obtain shape scores for short length-*l* subsequences of a long
+DNA sequence. For this example, we will use *l*=8:
+
+```{r}
+getShapeScoresSlidingWindow("AGACACGACGTCGATCATAAACTAGATCAGCCTGA", 8)
+```
