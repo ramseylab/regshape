@@ -7,9 +7,9 @@
 getShapeScoresSlidingWindow(seq.chars, wlen)
 }
 \arguments{
-\item{seq.chars:}{A character string composed of "A", "C", "G", or "T" characters}
+\item{seq.chars}{A character string composed of "A", "C", "G", or "T" characters}
 
-\item{wlen:}{A positive integer indicating the window size (in bp) for computing the DNA shape
+\item{wlen}{A positive integer indicating the window size (in bp) for computing the DNA shape
 based voting fraction score for the regulatory element classifier}
 }
 \value{

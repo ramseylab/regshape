@@ -3,3 +3,4 @@
 export(getDNAShapeParamValues)
 export(getShapeScores)
 export(getShapeScoresSlidingWindow)
+import(randomForest)

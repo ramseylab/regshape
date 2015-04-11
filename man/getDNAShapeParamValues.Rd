@@ -8,7 +8,7 @@ get DNA parameters: MGW, Prot, Roll, and Helt, the length of sequence should >=6
 getDNAShapeParamValues(seq.string)
 }
 \arguments{
-\item{seq.string:}{A DNA sequence, or a set of DNA sequences}
+\item{seq.string}{A DNA sequence, or a set of DNA sequences}
 }
 \value{
 the parameter values for MGW, Prot, Roll, and Helt, for each hexamer subsequence

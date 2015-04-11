@@ -26,8 +26,9 @@ Description: Transcription factor binding site (TFBS) sequence patterns are
     binding sites" (Yang and Ramsey, Dec. 2014).
 URL: http://lab.saramsey.org, http://github.com/ramseylab/regshape
 VignetteBuilder: knitr
-License: GPL (>= 2)
-Depends:
-    randomForest
+LazyData: true
+License: file LICENSE
+Depends: R (>= 2.10) 
+Imports:  randomForest
 Suggests: knitr
 Packaged: 2014-11-25 00:07:53 UTC; qq

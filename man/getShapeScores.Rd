@@ -7,7 +7,7 @@
 getShapeScores(x)
 }
 \arguments{
-\item{x:}{A vector of character strings, each of length L characters, composed of sequences of
+\item{x}{A vector of character strings, each of length L characters, composed of sequences of
 "A", "C", "G", or "T" characters}
 }
 \value{

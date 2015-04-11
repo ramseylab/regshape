@@ -15,11 +15,9 @@
 # Copyright Jichen Yang and Stephen Ramsey, Oregon State University
 # 2014.12.16
 
-library(randomForest)
-
 #' get DNA shape parameter values for a provided DNA sequence string
 #' get DNA parameters: MGW, Prot, Roll, and Helt, the length of sequence should >=6
-#' @param seq.string: A DNA sequence, or a set of DNA sequences
+#' @param seq.string A DNA sequence, or a set of DNA sequences
 #' @return the parameter values for MGW, Prot, Roll, and Helt, for each hexamer subsequence
 #' of seq.string, all concatenated together as one vector (MGW parameter values first, then
 #' Propeller twist parameter values, then roll values, and then helix twist parameter values)
@@ -89,12 +87,13 @@ getFeatures<-function(vector){
 
 #' get DNA shape score for a set of sequences
 #'
-#' @param x: A vector of character strings, each of length L characters, composed of sequences of
+#' @param x A vector of character strings, each of length L characters, composed of sequences of
 #' "A", "C", "G", or "T" characters
 #' @return a vector of voting fraction scores in the range [0-1], for the DNA shape-based regulatory element classifier
 #' @examples
 #' getShapeScores(c("ACGTACGT","ACGTACTG","ACTTACGT","GCGTGACT"))
 #' @export
+#' @import randomForest
 getShapeScores<-function(x){
   d<-data.frame(x)
   DNApars<-t(apply(d,1,getDNAShapeParamValues))
@@ -118,8 +117,8 @@ getShapeScores<-function(x){
 
 #' get DNA shape score for a set of sequences
 #'
-#' @param seq.chars: A character string composed of "A", "C", "G", or "T" characters
-#' @param wlen: A positive integer indicating the window size (in bp) for computing the DNA shape
+#' @param seq.chars A character string composed of "A", "C", "G", or "T" characters
+#' @param wlen A positive integer indicating the window size (in bp) for computing the DNA shape
 #' based voting fraction score for the regulatory element classifier
 #' @return a vector of voting fraction scores in the range [0-1], for the DNA shape-based regulatory element classifier,
 #' at each position of the sliding window (length of the vector is nchar(seq.chars) - wlen + 1).
@@ -144,9 +143,7 @@ generatePred<-function(x){
 
 # this is auto-run when the package loads (see zzz.R)
 Initialize<-function(){
-  print("loading nonbinding sequences (general)")
-  FivemerTable<<-get(load(system.file("data","FivemerTable.RData", package = "regshape")))
-  RFmodel<<-get(load(system.file("data","RFmodel1.RData", package = "regshape")))
+  print("setting random number seed")
   set.seed(20140930)
 }
 
