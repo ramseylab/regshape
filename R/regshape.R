@@ -141,9 +141,4 @@ generatePred<-function(x){
 	return(RFmodel)
 }
 
-# this is auto-run when the package loads (see zzz.R)
-Initialize<-function(){
-  print("setting random number seed")
-  set.seed(20140930)
-}
 
