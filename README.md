@@ -2,7 +2,7 @@
 DNA shape-based classifier for regulatory elements (R pkg)
 
 The regshape R package (written by Jichen Yang and Stephen Ramsey) provides a classifier for predicting whether a given oligonucleotide sequence (of 
-length *l* bp, where *l* would typically vary from six to as high as 25 bp) is, or is not, a transcription factor (TF) binding site. It is not specialized to any particular TF; regshape is a TF-generic classifier for 
+length *l* bp, where *l* would typically vary from six to as high as 25 bp) is, or is not, a transcription factor (TF) binding site. The regshape classifier was developed using data from 75 vertebrate TFs, and thus is not specialized to any particular TF; regshape is a TF-generic classifier for vertebrate
 regulatory elements based on local three-dimensional shape properties of the DNA as can be discerned from the nucleotide sequence. The regshape package uses the Random Forest classifier (provided by the 
 randomForest R package, which is a required dependency) and it was constructed by analyzing a compendium of representative TF binding site sequences from the JASPAR database (release 5.0) and on a large representative sample of human noncoding DNA sequence from which known TF binding sites (from ENCODE ChIP-seq genome location datasets from 457 different experiments 
 comprising 119 different TFs). The regshape package is available on GitHub at the URL 
