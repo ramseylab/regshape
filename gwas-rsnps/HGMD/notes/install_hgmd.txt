@@ -1,0 +1,107 @@
+# Homebrew MySQL post-install message
+
+A "/etc/my.cnf" from another install may interfere with a Homebrew-built
+server starting up correctly.
+
+To connect:
+    mysql -uroot
+
+To have launchd start mysql at login:
+  ln -sfv /usr/local/opt/mysql/*.plist ~/Library/LaunchAgents
+
+Then to load mysql now:
+  launchctl load ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist
+
+Or, if you don't want/need launchctl, you can just run:
+  mysql.server start
+
+http://blog.joefallon.net/2013/10/install-mysql-on-mac-osx-using-homebrew/
+ mysql_secure_installation # Set root password, nothing else
+
+# HGMD Install
+mysqladmin -u root -p create hgmd_pro
+mysqladmin -u root -p create hgmd_phenbase
+mysqladmin -u root -p create hgmd_snp
+mysqladmin -u root -p create hgmd_views
+
+# Load MySQL dumpfiles into new HGMD tables.
+ mysql -u root hgmd_pro < hgmd_pro-2015.2.dump
+ mysql -u root hgmd_phenbase < hgmd_phenbase-2015.2.dump
+ mysql -u root hgmd_snp < hgmd_snp-2015.2.dump
+ mysql -u root hgmd_views < hgmd_views-2015.2.dump
+
+# Verify
+SELECT TABLE_NAME, TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'hgmd_pro' ORDER BY TABLES.TABLE_NAME ASC;
+
+# All looks good!
+
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| hgmd_phenbase      |
+| hgmd_pro           |
+| hgmd_snp           |
+| hgmd_views         |
+| mysql              |
+| performance_schema |
+| test               |
++--------------------+
+
+mysql> USE hgmd_snp;
+mysql> DESCRIBE mutsnp;
++----------+----------------------------------------+------+-----+---------+-------+
+| Field    | Type                                   | Null | Key | Default | Extra |
++----------+----------------------------------------+------+-----+---------+-------+
+| disease  | varchar(125)                           | YES  |     | NULL    |       |
+| gene     | varchar(15)                            | YES  |     | NULL    |       |
+| base     | varchar(9)                             | YES  |     | NULL    |       |
+| amino    | varchar(8)                             | YES  |     | NULL    |       |
+| codon    | int(11)                                | YES  |     | NULL    |       |
+| tag      | enum('DP','FP','DFP','DM','FTV','DBS') | YES  |     | NULL    |       |
+| author   | varchar(25)                            | YES  |     | NULL    |       |
+| journal  | varchar(10)                            | YES  |     | NULL    |       |
+| fullname | varchar(50)                            | YES  |     | NULL    |       |
+| vol      | varchar(6)                             | YES  |     | NULL    |       |
+| page     | varchar(10)                            | YES  |     | NULL    |       |
+| year     | year(4)                                | YES  |     | NULL    |       |
+| pmid     | varchar(8)                             | YES  |     | NULL    |       |
+| comments | varchar(125)                           | YES  |     | NULL    |       |
+| acc_num  | varchar(12)                            | YES  |     | NULL    |       |
+| new_date | date                                   | YES  |     | NULL    |       |
++----------+----------------------------------------+------+-----+---------+-------+
+
+
+### SCRATCH 
+
+SELECT * FROM mutsnp INTO OUTFILE '~/Desktop/mutsnp.txt' 
+ FIELDS TERMINATED BY '\t' ENCLOSED BY '"'
+ LINES TERMINATED BY '\n';
+
+
+mysql --user=genome --host=genome-mysql.cse.ucsc.edu -A
+
+## mysqldump --lock-tables=FALSE -u genome --host=genome-mysql.cse.ucsc.edu hg19 snp142 > ucsc.hg19.snp142.dump
+# fails! too large for UCSC
+
+mut <- read.delim("mutsnp.txt")
+names(mut) <- c("disease", "gene", "base", "amino", "codon", "tag", "author",  
+ "journal", "fullnam", "vol", "page", "year", "pmid", "comment", "acc_num", "new_dat")
+summary(mut)
+
+If you would like your installed R packages to survive minor R upgrades,
+you can run:
+  mkdir -p ~/Library/R/3.2/library
+so R will preferentially install packages under your home directory
+instead of in the Cellar.
+
+To enable rJava support, run the following command:
+  R CMD javareconf JAVA_CPPFLAGS=-I/System/Library/Frameworks/JavaVM.framework/Headers
+If you've installed a version of Java other than the default, you might need to instead use:
+  R CMD javareconf JAVA_CPPFLAGS="-I/System/Library/Frameworks/JavaVM.framework/Headers -I/Library/Java/JavaVirtualMachines/jdk<version>.jdk/"
+(where <version> can be found by running `java -version`, `/usr/libexec/java_home`, or `locate jni.h`), or:
+  R CMD javareconf JAVA_CPPFLAGS="-I/System/Library/Frameworks/JavaVM.framework/Headers -I$(/usr/libexec/java_home | grep -o '.*jdk')"
+
+Bash completion has been installed to:
+  /usr/local/etc/bash_completion.d

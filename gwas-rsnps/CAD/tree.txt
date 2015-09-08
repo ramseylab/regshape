@@ -1,0 +1,57 @@
+.
+├── data
+│   ├── C4D_CAD_DISCOVERY_METAANALYSIS_UPDATE.TXT
+│   ├── C4D_CAD_DISCOVERY_METAANALYSIS_UPDATE.head.TXT
+│   ├── CARDIoGRAM_GWAS_RESULTS.head.txt
+│   ├── CARDIoGRAM_GWAS_RESULTS.txt
+│   ├── CARDIoGRAM_GWAS_RESULTS.txt.RData
+│   ├── RegulomeDB.dbSNP132.Category1.txt
+│   ├── RegulomeDB.dbSNP141.txt
+│   ├── archive
+│   │   ├── c4d_cad_discovery_metaanalysis.zip
+│   │   ├── cardiogram_gwas_results.zip
+│   │   └── cardiogramplusc4d_data.zip
+│   ├── cardiogramplusc4d_data.head.txt
+│   ├── cardiogramplusc4d_data.txt
+│   ├── cardiogramplusc4d_data.txt.RData
+│   ├── files.md
+│   ├── genes_and_coordinates_GRCh37_hg19.txt
+│   ├── md5.txt
+│   ├── rDB141.1x.txt
+│   ├── rdb.txt
+│   └── snp138.cut.txt
+├── misc
+│   ├── CARDIoGRAMplusC4D_NatGenet_2013.pdf
+│   ├── QuBBD Proposal Solicitation.pdf
+│   └── files.md
+├── src
+│   ├── R
+│   │   ├── DNAShape.R
+│   │   ├── cad-table.R
+│   │   ├── gwas-snap-preprocess.R
+│   │   ├── gwas_eqtl_integration.R
+│   │   └── gwas_preprocess_to_intergenic.R
+│   ├── python
+│   │   └── add_hg19_coordinates.py
+│   └── sql
+│       ├── loci-level-data.sql
+│       ├── ucsc-snp-intergenic.sql
+│       └── ucsc-snp-metadata.sql
+├── tree.md
+└── workspace
+    ├── CADC4D-Intergenic-SNPs.txt
+    ├── SNAP.Regulome1x.refGeneIntergenic.csv
+    ├── SNAP.RegulomeDB1x.NonCoding.txt
+    ├── SNAPResults.EligibleProxySNPs.txt
+    ├── SNAPResults.rsq07.txt
+    ├── SNAPResults.rsq08.txt
+    ├── SNAPResults.rsq09.txt
+    ├── eQTL-rSNP-loci.csv
+    ├── files.md
+    ├── gwas_eligible.tsv
+    ├── gwas_eligible.tsv.hg19.txt
+    ├── gwas_ucsc_genic.csv
+    ├── loci.txt
+    └── ucsc_query_result.csv
+
+8 directories, 46 files

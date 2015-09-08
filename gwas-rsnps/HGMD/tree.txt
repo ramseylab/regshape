@@ -1,0 +1,36 @@
+.
+├── data
+│   ├── HGMD_Professional_2015.2
+│   │   ├── HGMD_Advanced_Micro_Lesions.csv
+│   │   ├── HGMD_Advanced_Substitutions.csv
+│   │   ├── HGMD_FAQ_2015.2.pdf
+│   │   ├── HGMD_PRO_2015.2_hg19.vcf
+│   │   ├── HGMD_PRO_2015.2_hg38.vcf
+│   │   ├── HGMD_Pro_Global_Document_2015.2.pdf
+│   │   ├── HGMD_Schema_2015.2.pdf
+│   │   ├── HGMD_download_installation_2015.2.pdf
+│   │   ├── hgmd_phenbase-2015.2.dump
+│   │   ├── hgmd_pro-2015.2.dump
+│   │   ├── hgmd_snp-2015.2.dump
+│   │   ├── hgmd_views-2015.2.dump
+│   │   ├── md5sum.txt
+│   │   ├── mutsnp.txt
+│   │   ├── rSNPs.txt
+│   │   └── ucsc.hg19.snp142.dump
+│   ├── hgmd_rsnps.csv
+│   └── hgmd_snp-2015.2.dump
+├── install_hgmd.txt
+├── src
+│   ├── R
+│   ├── bash
+│   │   └── set_environment.sh
+│   ├── python
+│   └── sql
+│       ├── get_rSNPs_from_local_hgmd.sh
+│       └── hmdb_exploration.sql
+├── tree.txt
+└── workspace
+    ├── hgmd_rsnps.txt
+    └── rsnps.rslist.txt
+
+8 directories, 25 files

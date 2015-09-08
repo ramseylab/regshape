@@ -1,0 +1,1 @@
+export PROJECT_HOME=`cd ../../; pwd`

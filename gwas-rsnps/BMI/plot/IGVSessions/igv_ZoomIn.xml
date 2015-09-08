@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Session genome="hg18" hasGeneTrack="true" hasSequenceTrack="true" locus="chr11:47881721-47881759" path="/Users/singhsa/Desktop/BMI-GWAS-SummerProject/igv_ZoomIn.xml" version="8">
+    <Resources>
+        <Resource path="Plot/PlotData/DNAShape.bedGraph"/>
+        <Resource path="Plot/PlotData/PhastCons.bedGraph"/>
+        <Resource path="Plot/PlotData/GWAS-negLogPVal-Low.bedGraph"/>
+        <Resource path="Plot/PlotData/ChIP-Seq-Local.bed"/>
+        <Resource path="Plot/PlotData/tflocal.bed"/>
+        <Resource path="Plot/PlotData/GWAS-negLogPVal-High.bedGraph"/>
+        <Resource path="Plot/PlotData/dnase1b_datapoints.bedGraph"/>
+    </Resources>
+    <Panel height="609" name="DataPanel" width="1029">
+        <Track altColor="0,0,178" autoScale="false" clazz="org.broad.igv.track.DataSourceTrack" color="199,234,229" displayMode="COLLAPSED" featureVisibilityWindow="-1" fontSize="10" id="/Users/singhsa/Desktop/BMI-GWAS-SummerProject/Plot/PlotData/PhastCons.bedGraph" name="PhastCons" normalize="false" renderer="BAR_CHART" sortable="true" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="0.1" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track altColor="0,0,178" autoScale="false" clazz="org.broad.igv.track.FeatureTrack" color="90,180,172" displayMode="EXPANDED" featureVisibilityWindow="-1" fontSize="15" id="/Users/singhsa/Desktop/BMI-GWAS-SummerProject/Plot/PlotData/tflocal.bed" name="tflocal.bed" renderer="BASIC_FEATURE" sortable="false" visible="true" windowFunction="count"/>
+        <Track altColor="0,0,178" autoScale="false" clazz="org.broad.igv.track.FeatureTrack" color="1,102,94" displayMode="COLLAPSED" featureVisibilityWindow="-1" fontSize="15" id="/Users/singhsa/Desktop/BMI-GWAS-SummerProject/Plot/PlotData/ChIP-Seq-Local.bed" name="ChIP-Seq-Local.bed" renderer="BASIC_FEATURE" sortable="false" visible="true" windowFunction="count"/>
+        <Track altColor="0,0,178" autoScale="false" clazz="org.broad.igv.track.DataSourceTrack" color="216,179,101" displayMode="COLLAPSED" featureVisibilityWindow="-1" fontSize="10" id="/Users/singhsa/Desktop/BMI-GWAS-SummerProject/Plot/PlotData/dnase1b_datapoints.bedGraph" name="DNAse1-DataPoints" normalize="false" renderer="LINE_PLOT" sortable="true" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="19.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track altColor="0,0,178" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="140,81,10" displayMode="COLLAPSED" featureVisibilityWindow="-1" fontSize="10" id="/Users/singhsa/Desktop/BMI-GWAS-SummerProject/Plot/PlotData/DNAShape.bedGraph" name="DNAShape" normalize="false" renderer="BAR_CHART" sortable="true" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="0.102" minimum="-0.018" type="LINEAR"/>
+        </Track>
+        <Track altColor="0,0,178" autoScale="false" clazz="org.broad.igv.track.MergedTracks" color="0,0,178" displayMode="COLLAPSED" featureVisibilityWindow="-1" fontSize="10" id="20df5017-fbc4-42fb-a383-bd2d93e344f9" name="GWAS SNPs" renderer="BAR_CHART" sortable="true" visible="true">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="23.761906" minimum="0.0" type="LINEAR"/>
+            <Track xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" altColor="0,0,204" autoScale="false" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,204" displayMode="COLLAPSED" featureVisibilityWindow="-1" fontSize="10" id="/Users/singhsa/Desktop/BMI-GWAS-SummerProject/Plot/PlotData/GWAS-negLogPVal-High.bedGraph" name="GWAS-negLogPValueHigh" normalize="false" renderer="BAR_CHART" sortable="true" visible="true" windowFunction="mean" xsi:type="dataSourceTrack">
+                <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="23.761906" minimum="0.0" type="LINEAR"/>
+            </Track>
+            <Track xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" altColor="0,0,178" autoScale="false" clazz="org.broad.igv.track.DataSourceTrack" color="153,153,153" displayMode="COLLAPSED" featureVisibilityWindow="-1" fontSize="10" id="/Users/singhsa/Desktop/BMI-GWAS-SummerProject/Plot/PlotData/GWAS-negLogPVal-Low.bedGraph" name="GWAS-negLogPValueLow" normalize="false" renderer="BAR_CHART" sortable="true" visible="true" windowFunction="mean" xsi:type="dataSourceTrack">
+                <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="14.381145" minimum="0.0" type="LINEAR"/>
+            </Track>
+        </Track>
+        <Track altColor="0,0,178" autoScale="false" color="0,0,178" displayMode="COLLAPSED" featureVisibilityWindow="-1" fontSize="10" id="Reference sequence" name="Reference sequence" sortable="false" visible="true"/>
+    </Panel>
+    <Panel height="230" name="FeaturePanel" width="1029">
+        <Track altColor="0,0,178" autoScale="false" clazz="org.broad.igv.track.FeatureTrack" color="0,0,178" colorScale="ContinuousColorScale;0.0;287.0;255,255,255;0,0,178" displayMode="COLLAPSED" featureVisibilityWindow="-1" fontSize="10" height="35" id="hg18_genes" name="RefSeq genes" renderer="BASIC_FEATURE" sortable="false" visible="true" windowFunction="count">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="287.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+    </Panel>
+    <PanelLayout dividerFractions="0.7222222222222222"/>
+    <HiddenAttributes>
+        <Attribute name="DATA FILE"/>
+        <Attribute name="DATA TYPE"/>
+        <Attribute name="NAME"/>
+    </HiddenAttributes>
+</Session>
