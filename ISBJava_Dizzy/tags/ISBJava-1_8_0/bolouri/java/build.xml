@@ -1,0 +1,264 @@
+<?xml version="1.0"?>
+<!DOCTYPE BuildFile [
+<!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
+%CommonConfig;
+<!ENTITY % AppConfig SYSTEM "config/AppConfig.dtd">
+%AppConfig;
+<!ENTITY BuildHeader SYSTEM "../config/BuildHeader.xmlinc">
+]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This source code is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<project name="localJava" default="compile" basedir=".">
+  <property name="projRoot"                      location=".." />
+
+  &BuildHeader;
+
+
+  <property name="app.srcDir"                  location="${basedir}/org" />
+  <property name="app.configDir"               location="${basedir}/config" />
+  <property name="app.buildDir"                location="${basedir}/build" />
+  <property name="app.styleDir"                location="${app.buildDir}/html" />
+  <property name="app.docsDir"                 location="${basedir}/docs" />
+  <property name="app.extLibDir"               location="${basedir}/extlib" />
+  <property name="app.classesDir"              location="${app.buildDir}/classes" />
+  <property name="app.imagesDir"               location="${basedir}/images" />
+  <property name="app.webDir"                  location="${projWebDir}/&appName;" />
+  <property name="app.javadocDir"              location="${app.webDir}/javadoc" />
+  <property name="app.version"                 value="&appVersion;" />
+  <property name="app.downloadDir"             location="${app.webDir}/&appVersion;" />
+  <property name="app.installerDir"            location="${app.downloadDir}/installer" />
+  <property name="app.rootPackage"             value="org" />
+  <property name="javadocLink"                 value="http://java.sun.com/j2se/1.4.2/docs/api" />
+
+  <property name="compile.debug"               value="true" />
+  <property name="compile.deprecation"         value="false" />
+  <property name="compile.optimize"            value="true" />
+
+  <property name="app.sourceCompileFlag"       value="1.4" />
+
+  <property name="app.jarFile"                 location="${app.buildDir}/&appName;.jar" />
+  <property name="app.srcFile"                 location="${app.buildDir}/&appName;-src.tar.gz" />
+
+  <path id="app.classpath">
+    <pathelement location="${app.classesDir}" />
+    <fileset dir="${app.extLibDir}"> 
+      <include name="*.jar" />
+      <include name="*.zip" />
+    </fileset>
+  </path>
+
+  <path id="app.docletclasspath">
+    <pathelement location="${app.classesDir}" />
+    <fileset dir="${app.extLibDir}/doclet"> 
+      <include name="pdfdoclet.jar" />
+      <include name="jakarta-regexp.jar" />
+      <include name="itext.jar" />
+    </fileset>
+  </path>
+
+  <target name="copyCommonConfig">
+    <copy file="${projConfigDir}/CommonConfig.dtd" todir="${app.configDir}" />
+  </target>
+
+  <target name="style" depends="copyCommonConfig">
+    <mkdir dir="${app.styleDir}" />
+    <style basedir="${app.docsDir}" 
+           destdir="${app.styleDir}" 
+           includes="*.xml" 
+           style="${docsStyleSheet}" />
+  </target>
+
+  <target name="copyImages">
+    <mkdir dir="${app.webDir}/images" />
+    <copy todir="${app.webDir}/images">
+      <fileset dir="${app.imagesDir}">
+        <include name="*.png" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="copyHtml">
+    <mkdir dir="${app.webDir}" />
+    <copy todir="${app.webDir}" file="${app.styleDir}/index.html" />
+
+    <mkdir dir="${app.webDir}/docs" />
+    <copy todir="${app.webDir}/docs">
+      <fileset dir="${app.styleDir}">
+        <include name="*.html" />
+        <exclude name="JavadocTitlePage.html" />
+        <exclude name="index.html" />
+        <exclude name="download.html" />
+      </fileset>
+    </copy>
+
+  </target>
+
+  <target name="copyResources">
+    <copy todir="${app.classesDir}">
+      <fileset dir="${basedir}">
+        <include name="${app.rootPackage}/**/*.xml" />
+        <include name="${app.rootPackage}/**/*.dtd" />
+        <include name="${app.rootPackage}/**/*.html" />
+        <exclude name="**/tp/*" />
+        <exclude name="docs/*.xml" />
+        <exclude name="build.xml" />
+        <exclude name="**/package.html" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="buildInstallers">
+    <mkdir dir="${app.buildDir}/&appName;" />
+    <mkdir dir="${app.buildDir}/&appName;/src" />
+
+    <!-- copy all source files -->
+
+    <copy todir="${app.buildDir}/&appName;/src">
+      <fileset dir="${basedir}">
+        <include name="${app.rootPackage}/**/*.java" />
+        <include name="${app.rootPackage}/**/*.dtd" />
+        <include name="${app.rootPackage}/**/*.xml" />
+      </fileset>
+    </copy>
+
+    <!-- copy all external Java libraries -->
+
+    <mkdir dir="${app.buildDir}/&appName;/lib" />
+    <copy todir="${app.buildDir}/&appName;/lib">
+      <fileset dir="${basedir}/extlib">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
+
+    <!-- copy the ISBJava.jar file -->
+    <copy todir="${app.buildDir}/&appName;/lib" file="${app.jarFile}" />
+
+    <!-- copy the documentation -->
+    <mkdir dir="${app.buildDir}/&appName;/docs" />
+    <copy todir="${app.buildDir}/&appName;/docs">
+      <fileset dir="${app.styleDir}">
+        <include name="*.html" />
+        <exclude name="JavadocTitlePage*.html" />
+        <exclude name="download.html" />
+      </fileset>
+    </copy>
+
+    <!-- copy the license file -->
+    <copy todir="${app.buildDir}/&appName;/docs" file="${projStyleDir}/License.html" />
+
+    <!-- copy PDF documentation -->
+    <copy todir="${app.buildDir}/&appName;/docs" file="${app.webDir}/docs/APIDocumentation.pdf" />
+
+    <mkdir dir="${app.webDir}/${app.version}" />
+
+    <!-- zip it all up into an archive -->
+    <zip destfile="${app.webDir}/${app.version}/&appName;.zip" basedir="${app.buildDir}" includes="&appName;/**/*" />
+    <tar destfile="${app.buildDir}/&appName;.tar" basedir="${app.buildDir}" includes="&appName;/**/*" />
+    <gzip zipfile="${app.webDir}/${app.version}/&appName;.tar.gz" src="${app.buildDir}/&appName;.tar" />
+
+    <!-- copy the download.html file -->
+    <copy todir="${app.webDir}/&appVersion;" file="${app.styleDir}/download.html" />
+  </target>
+
+  <target name="javadocPDF">
+    <filter token="APP_VERSION" value="${app.version}" />
+    <filter token="APP_OWNER" value="&appMaintainerFullName;" />
+    <filter token="APP_OWNER_EMAIL" value="&appMaintainerFullName;" />
+
+    <mkdir dir="${app.webDir}/docs" />
+    <javadoc source="${app.sourceCompileFlag}"
+             Overview="${app.styleDir}/JavadocTitlePage.html"
+             sourcepath="${basedir}"
+             packageList="${app.configDir}/packageList.txt"
+             docletpathref="app.docletclasspath"
+             doclet="com.tarsec.javadoc.pdfdoclet.PDFDoclet"
+             additionalparam="-pdf ${app.webDir}/docs/APIDocumentation.pdf -config ${app.configDir}/PDFDoclet.properties">
+      <classpath refid="app.classpath" />
+    </javadoc>                 
+  </target>
+
+  <target name="javadoc">
+    <mkdir dir="${app.javadocDir}" />
+    <javadoc source="${app.sourceCompileFlag}" 
+             Overview="${app.styleDir}/JavadocTitlePage.html" 
+             sourcepath="${basedir}" 
+             destdir="${app.javadocDir}"
+             packageList="${app.configDir}/packageList.txt"
+             link="${javadocLink}"
+             additionalparam="-breakiterator"> 
+      <classpath refid="app.classpath" />
+    </javadoc>
+  </target>
+ 
+  <target name="buildHTML" depends="style, srcTar, copyHtml, copyImages, javadoc" />
+
+  <target name="buildPDF" depends="javadocPDF" />
+
+  <target name="compile">
+    <mkdir dir="${app.classesDir}" />
+    <javac srcdir="${app.srcDir}" 
+           destdir="${app.classesDir}" 
+           source="${app.sourceCompileFlag}" 
+           debug="${compile.debug}" 
+           deprecation="${compile.deprecation}"
+           optimize="${compile.optimize}"
+           excludes="**/tp/*.java">
+      <classpath refid="app.classpath" />
+    </javac>
+  </target>
+
+  <target name="compiletests" depends="compile">
+    <mkdir dir="${app.classesDir}" />
+    <javac srcdir="${app.srcDir}" 
+           destdir="${app.classesDir}" 
+           source="${app.sourceCompileFlag}" 
+           debug="on" 
+           includes="**/tp/*.java" />
+  </target>  
+ 
+  <target name="srcTar">
+    <mkdir dir="${app.buildDir}" />
+    <tar destfile="${app.srcFile}" 
+         compression="gzip">
+      <tarfileset dir="${basedir}">
+        <include name="${app.rootPackage}/**/*.java" />
+        <include name="${app.rootPackage}/**/*.dtd" />
+        <include name="${app.rootPackage}/**/*.xml" />
+      </tarfileset>
+      <tarfileset dir="${projStyleDir}" prefix="">
+        <include name="License.html" />
+      </tarfileset>
+    </tar>
+  </target>
+
+  <target name="build" depends="jar" />
+
+  <target name="test" depends="compiletests" />
+  
+  <target name="jar" depends="compile, copyResources">
+    <mkdir dir="${app.buildDir}" />
+    <jar destfile="${app.jarFile}">
+      <fileset dir="${app.classesDir}">
+        <include name="${app.rootPackage}/**/*.class" />
+        <include name="${app.rootPackage}/**/*.xml" />
+        <include name="${app.rootPackage}/**/*.html" />
+        <include name="${app.rootPackage}/**/*.dtd" />
+        <exclude name="${app.rootPackage}/**/tp/*.class" />
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="clean">
+    <delete dir="${app.buildDir}" quiet="yes" />
+    <delete file="${app.configDir}/CommonConfig.dtd" quiet="yes" />
+  </target>
+
+</project>

@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+
+<project name="ISBJava" default="compile" basedir=".">
+
+  <property name="classesDir" location="${basedir}/../classes" />
+  <property name="styleDir" location="${basedir}/html" />
+  <property name="buildDir" location="${basedir}/../build" />
+  <property name="srcDir" location="${basedir}/isb" />
+  <property name="docsDir" location="${basedir}/docs" />
+  <property name="sourceCompileFlag" value="1.4" />
+
+  <target name="style">
+    <mkdir dir="${styleDir}" />
+    <style basedir="${docsDir}" 
+           destdir="${styleDir}" 
+           includes="*.xml" 
+           style="${docsStyleSheet}" />
+  </target>
+
+  <target name="copyResources">
+    <copy todir="${classesDir}">
+      <fileset dir="${basedir}">
+        <include name="**/*.xml" />
+        <include name="**/*.dtd" />
+        <exclude name="**/tp/*" />
+        <exclude name="${basedir}/build.xml" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="install-web" depends="style, javadoc" />
+  
+  <target name="javadoc">
+    <javadoc source="${sourceCompileFlag}" 
+             Overview="${styleDir}/overview.html" 
+             sourcepath="${basedir}" 
+             destdir="${webDir}/javadoc"
+             packageList="${basedir}/packageList.txt"
+             additionalparam="-breakiterator" />
+  </target>
+
+  <target name="compile">
+    <mkdir dir="${classesDir}" />
+    <javac srcdir="${srcDir}" 
+           destdir="${classesDir}" 
+           source="${sourceCompileFlag}" 
+           debug="on" 
+           excludes="**/tp/*.java" />
+  </target>
+
+  <target name="compiletests" depends="compile">
+    <mkdir dir="${classesDir}" />
+    <javac srcdir="${srcDir}" 
+           destdir="${classesDir}" 
+           source="${sourceCompileFlag}" 
+           debug="on" 
+           includes="**/tp/*.java" />
+  </target>  
+ 
+  <target name="srctar">
+    <tar destfile="${buildDir}/isb-src.tar.gz" 
+         basedir="${basedir}"
+         includes="**/*.java,**/*.xml,**/.dtd" 
+         compression="gzip">
+    </tar>
+  </target>
+
+  <target name="build" depends="jar, srctar" />
+
+  <target name="jar" depends="clean, compile, copyResources">
+    <mkdir dir="${buildDir}" />
+    <jar basedir="${classesDir}" destfile="${buildDir}/isb.jar">
+      <fileset dir="${classesDir}">
+        <include name="**/*.class" />
+        <include name="**/*.xml" />
+        <include name="**/*.dtd" />
+        <exclude name="**/tp/*.class" />
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="clean">
+    <delete dir="${styleDir}" quiet="yes" />
+    <delete quiet="yes">
+      <fileset dir="${srcDir}">
+        <include name="**/*.class" />
+      </fileset>
+    </delete>
+    <delete dir="${buildDir}" quiet="yes" />
+    <delete quiet="yes">
+      <fileset dir="${classesDir}">
+        <include name="**/*.class" />
+        <include name="**/*.xml" />
+        <include name="**/*.dtd" />
+      </fileset>
+    </delete>
+  </target>
+  
+</project>

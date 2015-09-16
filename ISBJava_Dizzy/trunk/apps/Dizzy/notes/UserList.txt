@@ -1,0 +1,350 @@
+Abedi, Vida
+University of Ottawa, Canada
+[using Dizzy to study GAL regulon]
+vidaabedi@alumni.uottawa.ca
+
+Ahmadi, Hooman
+Columbia University
+[adapting Dizzy for Langevin simulations]
+ha2130@columbia.edu
+
+Apostu, Raluca
+McGill University, Canada
+[studing galactose model]
+raluca.apostu@mail.mcgill.ca
+
+Barnes, David J.
+University of Kent, (UK)
+d.j.barnes@kent.ac.uk
+
+Behrendt, Dominik
+Siemens (Germany)
+Dominik.Behrendt@scr.siemens.com
+
+Bergmann, Frank
+Keck Graduate Institute
+[maintainer of SBW software]
+frank_bergmann@kgi.edu
+
+Blackwell, Avrama
+George Mason University
+avrama@gmu.edu
+
+Bottani, Samuel
+Universite Paris Diderot (France)
+samuel.bottani@univ-paris-diderot.fr
+
+Bouchet, Pascal
+Pasteur Institute (FR)
+pascal.bouchet@pasteur.fr
+
+Bruggeman, Frank
+Vrije Universiteit (NL)
+frank.bruggeman@falw.vu.nl
+
+Cappello, Igor
+University of Trento, Italy
+igor.cappello@studenti.unitn.it
+
+Caravagna, Giulio
+University of Pisa, Italy
+caravagn@di.unipi.it
+
+Chu, Dominique
+Kent University (UK)
+D.F.Chu@kent.ac.uk
+
+Chung-hyun, Park
+Seoul National University
+tarazta@phya.snu.kc.ar
+
+Corradin, Alberto
+Universita degli Studi de Padova
+Italy
+acorradin@dei.unipd.it
+
+Cottrell, David
+McGill University, Canada
+cottrell@math.mcgill.ca
+
+Curry, Edward
+University of Edinburgh (UK)
+[using Dizzy to model circadian rhythms]
+edthecurry@gmail.com
+
+Davidson, Fordyce
+University of Dundee, Scotland
+fdavidson@maths.dundee.ac.uk
+
+Dill, David
+Stanford University
+[using Dizzy as instructional tool]
+dill@cs.stanford.edu
+
+Duguid, Adam
+Edinburgh University
+a.j.duguid@sms.ed.ac.uk
+
+Endy, Drew
+MIT, Biological Engineering
+endy@mit.edu
+
+Falkenhahn, Valentin
+somehwere in Germany
+vfalkenhahn@web.de
+
+Finney, Andrew
+University of Hertfordshire, UK
+afinney@cds.caltech.edu
+
+Gilmore, Stephen
+University of Edinburgh
+[using Dizzy for process algebra research]
+Stephen.Gilmore@ed.ac.uk
+
+Gjuvsland, Arne
+Universitetet for Miljo (Norway)
+arne.gjuvsland@umb.no
+
+Grant, Patrick
+Inverbrough Corporation
+patrick@inverbrough.co.uk
+
+Haubein, Ned
+BioAnalytics Group
+ned@bioanalyticsgroup.com
+
+Hsieh, Gibbon
+starynight68@googlemail.com
+
+Hu, Bin
+Keio University, Japan
+hubin@sfc.keio.ac.jp
+
+Igoshin, Oleg
+Rice University
+igoshin@rice.edu
+
+Kaats, Adrian
+McGill University, Canada
+adrian.kaats@mcgill.ca
+
+Kierzek, Andrzej
+Institute of Biochemistry and Biophysics, Poland
+andrzejk@poczta.ibb.waw.pl
+
+Kowald, Axel
+Max Planck Institute for Molecular Genetics
+kowald@molgen.mpg.de
+
+Kramer, David
+Washington State University, Washington
+[used Dizzy as an instructional tool]
+dkramer@wsu.edu
+
+Krause, Falko
+Max-Planck Society, Germany
+krause_f@molgen.mpg.de
+
+Kumar, Satya
+mail2mvskumar@gmail.com
+
+Lan, Tain
+[graduate student in bioinformatics, somewhere]
+tainlan@gmail.com
+
+Landis, Clark
+University of Wisconsin-Madison
+[used Dizzy as an instructional tool]
+landis@chem.wisc.edu
+
+Lett, G. Scott
+BioAnalytics, Inc.
+[Interested in Dizzy]
+slett@bioanalyticsgroup.com
+
+Maier, Christian
+University of Bamberg, Germany
+christian.geo@t-online.de
+
+Manninen, Tiina
+Tampere University of Technology, Finland
+[compared dizzy to three other simulators]
+tiina.manninen@tut.fi
+
+Margolin, Adam
+Columbia University
+[adapted Dizzy for operation on a vector supercomputer]
+adam@dbmi.columbia.edu
+
+Mossing, Mike
+University of Mississippi
+mmossing@olemiss.edu
+
+Myers, Chris
+University of Utah
+[using Dizzy as a teaching tool]
+myers@vlsigroup.ece.utah.edu
+
+Mylonadis, Irini
+Imperial College, UK
+[adapting Dizzy's GUI to use with a different simulator]
+irini.mylonadis@imperial.ac.uk
+
+Ng, Stanley
+ngstanley74@hotmail.com
+
+Olliver, Julien
+McGill University
+julien.olliver@mail.mcgill.ca
+
+Orrell, David
+Vancouver, BC
+orrell@shaw.ca
+
+Pakka, Vijayanarasimha
+Southampton University, UK
+vijay.pakka@soton.ac.uk
+
+Parra, Jeremy
+Portland State University
+[using Dizzy to model atmospheric kinetics]
+parra@pdx.edu
+
+Passini, Valerio
+University of Camerino, Italy
+valerio.passini@unicam.it
+
+Pedersen, Michael David
+University of Edinburgh
+michael.d.pedersen@googlemail.com
+
+Pepin, Francois
+McGill University (Canada)
+francois.pepin@mcgill.ca
+
+Petrosyan, Karen
+Academica Sinica (Taiwan)
+pkaren@phys.sinica.edu.tw
+
+Puchalka, Jacek
+Institute of Biochemistry and Biophysics PAS, Poland
+puchalka@et.put.poznan.pl
+
+Qian, Yong
+National Institute on Aging, NIHI
+[interested in modeling large-scale GRNs]
+qiany@grc.nia.nih.gov
+
+Quan, David
+University of Maryland, College Park
+deequan@gmail.com
+
+Reimann, Axel
+Germany
+axel.privat@web.de
+
+Riley, Todd
+Institute for Advanced Study
+triley@ias.edu
+
+Rouilly, Vincent
+Imperial College, United Kingdom
+vincent.rouilly@imperial.ac.uk
+
+Sabouri, Mohsen
+Virginia Polytechnic Institute
+sabouri@vt.edu
+
+Sandmann, Werner
+University of Bamberg, Germany
+werner.sandmann@wiai.uni-bamberg.de
+
+Sauro, Herbert
+Keck Graduate Institute, California
+Herbert_Sauro@kgi.edu
+
+Schulz-Trieglaf
+University of Edinburgh
+ole.st@gmx.de
+
+Sciacca, Eva
+University of Catania, Italy
+sciacca@dmi.unict.it
+
+Schmitt, Lutz
+Univ. Duesseldorf
+lutz.schmitt@uni-duesseldorf.de
+
+Shapiro, Bruce
+Caltech
+bshapiro@caltech.edu
+
+Shenghua Li
+Virginia Tech
+kittyes@vt.edu
+
+Solis, Earl
+MIT
+eps@mit.edu
+
+Sommer, Selina
+Ludwig-Maximilians Universitat Muenchen
+[uses ISBJava; wants SBML level 2]
+selina.sommer@bio.ifi.lmu.de
+
+Spencer, Richard
+EPA (Lockheed), Research Triangle Park, NC
+Spencer.Richard@epamail.epa.gov
+
+Shukla, Ambar
+unknown
+ambars@gmail.com
+
+Tam, Nguyen Van
+JMI, New Delhi
+thaytam@yahoo.com
+
+Taylor, James
+Institute for Systems Biology
+jtaylor@systemsbiology.org
+
+Thorsley, David
+University of Washington, Dept of Electrical Engineering
+[interested in galactose model]
+thorsley@u.washington.edu
+
+Vigliotti, Maria Grazia
+Imperial College (UK)
+mgv98@doc.ic.ac.uk
+
+Wang, X
+xwang@mail.mcw.edu
+
+Wang, Zhijie
+unknown
+[trying to run Dizzy from source code]
+w.zhijie@gmail.com
+
+Vaughn, Justin
+University of Tennessee, Knoxville
+jvaughn7@utk.edu
+
+You, Sungyong
+Pohang University of Science and Technology, Korea
+guru@postech.ac.kr
+
+You, Tao
+University of Aberdeen, UK
+[asked for model repository]
+tyou@csd.abdn.ac.uk
+
+Yun, Zheng
+Nanyang Technological University, Singapore
+pg04325488@ntu.edu.sg
+mincloud@pmail.ntu.edu.sg
+
+Zhu, Rui
+University of Lethbridge, Canada
+rui.zhu@uleth.ca
+

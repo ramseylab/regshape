@@ -1,0 +1,294 @@
+<?xml version="1.0"?>
+<!DOCTYPE xsl:stylesheet [
+  <!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
+  %CommonConfig;
+   ]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This source code is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<xsl:stylesheet version="1.0" 
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+                xmlns:isb="http://www.systemsbiology.org/xmlns"
+                xmlns:html="http://www.w3.org/TR/xhtml1"
+                xmlns="http://www.w3.org/TR/xhtml1"
+                >              
+  <xsl:output method="html" indent="yes" encoding="ISO-8859-1" />
+
+  <xsl:param name="altWebBaseURL" /> 
+  <xsl:param name="hideHeader" />
+  <xsl:param name="hideMainLogo" />
+  <xsl:param name="hideExternalLinks" />
+  <xsl:param name="groupLogoRelURL" />
+  <xsl:param name="hideDocOwner" />
+  <xsl:param name="useCSSStylesheet" />
+
+  <xsl:template match="html:a|html:a/@*">
+    <xsl:choose>
+      <xsl:when test="$hideExternalLinks != ''">
+        <xsl:choose>
+          <xsl:when test="substring(@href, 0, 1) != '#'">
+            <xsl:apply-templates select="node()" />
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:copy>
+              <xsl:apply-templates select="@* | node()" />
+            </xsl:copy>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy>
+          <xsl:apply-templates select="@* | node()" />
+        </xsl:copy>
+       </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="html:*|html:*/@*">
+    <xsl:copy>
+      <xsl:apply-templates select="@* | node()" />
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="/">
+    <html>
+      <xsl:apply-templates/>
+    </html>  
+  </xsl:template>
+
+  <xsl:template match="/isb:document">
+    <head>
+      <title><xsl:value-of select="isb:doctitle"/></title>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+      <xsl:if test="$useCSSStylesheet != ''">
+      <link href="&cssStylesheet;" rel="stylesheet" type="text/css" media="all" />
+      </xsl:if>
+    </head>
+    <body bgcolor="#ffffff" leftmargin="20" topmargin="20" marginwidth="20" marginheight="20">
+    <xsl:if test="/isb:document/isb:docpreamble != ''">
+      <xsl:value-of select="/isb:document/isb:docpreamble" />
+
+    </xsl:if>
+
+  <xsl:if test="not( $hideHeader != '' )">
+    <table cellpadding="20">
+      <tr>
+        <xsl:if test="not( $hideMainLogo != '' )">
+        <td>
+          <xsl:choose>
+            <xsl:when test="not( $hideExternalLinks != '' )">
+              <a href="&mainPublicURL;">
+                <xsl:element name="img">
+                  <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/&mainLogoRelURL;</xsl:attribute>
+                  <xsl:attribute name="border">0</xsl:attribute>
+                  <xsl:attribute name="alt">ISB Logo</xsl:attribute>
+                </xsl:element>
+              </a>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:element name="img">
+                  <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/&mainLogoRelURL;</xsl:attribute>
+                  <xsl:attribute name="border">0</xsl:attribute>
+                  <xsl:attribute name="alt">ISB Logo</xsl:attribute>
+                </xsl:element>              
+            </xsl:otherwise>
+          </xsl:choose>
+        </td>
+        </xsl:if>
+
+        <td>
+      <xsl:if test="/isb:document/isb:doctitle != ''">
+        <h1><xsl:value-of select="isb:doctitle"/></h1>
+      </xsl:if>
+
+      <!-- if an author is specified, use the author information: -->
+
+      <xsl:if test="not($hideDocOwner != '')">
+	        
+	      <xsl:if test="/isb:document/isb:docowner != ''">
+	        <xsl:choose>
+	          <xsl:when test="/isb:document/isb:docownerurl != '' and not( $hideExternalLinks != '' )">
+	              <xsl:element name="a"> 
+	                <xsl:attribute name="href"><xsl:value-of select="/isb:document/isb:docownerurl" /></xsl:attribute>
+	                <span style="color: black"><h3><xsl:value-of select="isb:docowner"/></h3></span>
+	              </xsl:element>
+	          </xsl:when>
+	          <xsl:otherwise>
+	            <h3><xsl:value-of select="isb:docowner"/></h3>
+		        </xsl:otherwise>
+	        </xsl:choose>
+	      </xsl:if>
+	
+	      <xsl:choose>
+	        
+		      <!-- if an owner is not specified, generate boilerplate owner information with hyperlink: -->
+		      <xsl:when test="not( /isb:document/isb:docowner != '' )">
+			        <xsl:choose>
+			           <xsl:when  test="not( $hideExternalLinks != '' )">
+			             <a href="&mainGroupURL;"><span style="color: black"><h3>&mainGroup;, &mainAffiliation;</h3></span></a>
+			           </xsl:when>
+			           <xsl:otherwise>
+			             <h3>&mainGroup;, &mainAffiliation;</h3>
+			           </xsl:otherwise>
+			        </xsl:choose>
+			      </xsl:when>
+	        
+		      <!-- if author information specified, display it: -->
+		      <xsl:otherwise>
+		        <xsl:choose>
+		          <xsl:when test="/isb:document/isb:docauthorurl != '' and not( $hideExternalLinks != '' )">
+				          <xsl:element name="a">
+				            <xsl:attribute name="href"><xsl:value-of select="isb:docauthorurl" /></xsl:attribute>
+				            <span style="color: black">
+				            <h4><xsl:value-of select="isb:docauthor" /></h4>
+				            </span>
+				          </xsl:element>
+		          </xsl:when>
+		          <xsl:otherwise>
+		              <h4><xsl:value-of select="isb:docauthor" /></h4>
+		          </xsl:otherwise>
+		        </xsl:choose>
+		      </xsl:otherwise>
+	      </xsl:choose>
+      </xsl:if>
+      
+      <!-- if version information specified, strip out RCS keyword stuff ($Date ... $) and display: -->
+
+      <xsl:if test="/isb:document/isb:docversion != ''">
+        <h4>
+          <xsl:value-of select="isb:docversion"/>
+        </h4>
+      </xsl:if>
+
+        </td>
+        
+      <xsl:if test=" $groupLogoRelURL != '' ">
+        <td>
+          <xsl:element name="img">
+            <xsl:attribute name="src"><xsl:choose><xsl:when test="$altWebBaseURL != ''"><xsl:value-of select="$altWebBaseURL" /></xsl:when><xsl:otherwise>&webBaseURL;</xsl:otherwise></xsl:choose>/<xsl:value-of select="$groupLogoRelURL" /></xsl:attribute>
+            <xsl:attribute name="alt">Group Logo</xsl:attribute>
+          </xsl:element>
+        </td>
+      </xsl:if>
+      </tr>
+      </table>
+      <hr noshade="true" />
+    </xsl:if>
+      <xsl:apply-templates/>
+
+      <hr noshade="true" />
+
+      <xsl:if test="/isb:document/isb:docdate != ''">
+        <xsl:if test="$useCSSStylesheet != ''">
+        <p class="text" />
+        </xsl:if>
+	<xsl:if test="not( $useCSSStylesheet != '' )">
+        <p />
+        </xsl:if>
+        <b>Last updated:
+          <xsl:if test="contains(isb:docdate, '$Date:')">
+            <xsl:value-of select="translate(concat(
+                                      substring-before(isb:docdate, '$Date:'), 
+                                      substring-after(isb:docdate, '$Date:')),'$','')"/>
+          </xsl:if>
+          <xsl:if test="not( contains( isb:docdate, '$Date:') )">
+            <xsl:value-of select="isb:docdate"/>
+          </xsl:if>
+        </b>
+      </xsl:if>
+ 
+        <xsl:if test="$useCSSStylesheet != ''">
+        <p class="text" />
+        </xsl:if>
+	<xsl:if test="not( $useCSSStylesheet != '' )">
+        <p />
+        </xsl:if>     
+      <b>Please e-mail comments or corrections regarding this document to: 
+        <code>
+          <xsl:if test="/isb:document/isb:docowneremail != ''">
+            <xsl:value-of select="isb:docowneremail" />
+          </xsl:if>
+          <xsl:if test="not( /isb:document/isb:docowneremail != '')">
+            &mainGroupEmailSafe;
+          </xsl:if>
+        </code>
+      </b>
+
+    </body>
+  </xsl:template>
+ 
+  <xsl:template match="isb:doctitle"></xsl:template>
+  <xsl:template match="isb:docowner"></xsl:template>
+  <xsl:template match="isb:docownerurl"></xsl:template>
+  <xsl:template match="isb:docowneremail"></xsl:template>
+  <xsl:template match="isb:docversion"></xsl:template>
+  <xsl:template match="isb:docdate"></xsl:template>
+  <xsl:template match="isb:docpreamble"></xsl:template>
+  <xsl:template match="isb:docauthor"></xsl:template>
+  <xsl:template match="isb:docauthorurl"></xsl:template>
+
+  <xsl:template match="isb:doccontents">
+      <h3>Contents</h3>
+      <ol>
+      <xsl:for-each select="/isb:document/isb:docsection">
+        <li>
+        <xsl:if test="@label != ''">
+          <xsl:element name="a">
+            <xsl:attribute name="href">#<xsl:value-of select="@label" /></xsl:attribute>
+            <b><xsl:value-of select="@name" /></b>
+          </xsl:element>
+        </xsl:if>
+        <xsl:if test="not (@label != '')">
+            <b><xsl:value-of select="@name" /></b>
+        </xsl:if>
+        <xsl:if test="isb:docsubsection != ''">
+          <ul>
+          <xsl:for-each select="isb:docsubsection">
+            <li>
+              <xsl:if test="@label != ''">
+                <xsl:element name="a">
+                  <xsl:attribute name="href">#<xsl:value-of select="@label" /></xsl:attribute>
+                  <b><xsl:value-of select="@name" /></b>
+                </xsl:element>
+              </xsl:if>
+              <xsl:if test="not (@label != '')">
+                  <b><xsl:value-of select="@name" /></b>
+              </xsl:if>
+            </li>
+          </xsl:for-each>
+          </ul>
+        </xsl:if>
+        </li>
+      </xsl:for-each>
+      </ol>
+      <hr noshade="true" />
+  </xsl:template>
+
+  <xsl:template match="//isb:docsubsection">
+    <xsl:if test="@label != ''">
+      <xsl:element name="a">
+        <xsl:attribute name="name"><xsl:value-of select="@label" /></xsl:attribute>
+      </xsl:element>
+    </xsl:if>
+    <p><b><xsl:value-of select="@name" /></b></p>
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="//isb:docsection">
+    <xsl:if test="@label != ''">
+      <xsl:element name="a">
+        <xsl:attribute name="name"><xsl:value-of select="@label" /></xsl:attribute>
+      </xsl:element>
+    </xsl:if>
+    <h3><xsl:value-of select="@name" /></h3>
+    <xsl:apply-templates/>
+  </xsl:template>
+  
+</xsl:stylesheet>

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>&appName; Home Page</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+<isb:docdate>$Date$</isb:docdate>
+
+<p>
+<ul>
+<li><a href="&appVersion;/installer/Web_Installers/install.htm">Download &appName;</a></li>
+<li><a href="docs/UserManual.html">&appName; User Manual</a> (a <a href="docs/UserManual.pdf">PDF version</a> is available)</li>
+<li><a href="docs/ReleaseNotes.html">&appName; Release Notes</a></li>
+<li><a href="docs/VersionHistory.html">&appName; Version History</a></li>
+<li><a href="../License.html">License Agreement</a></li>
+<li><a href="../ISBJava/javadoc">Javadoc API documentation</a></li>
+</ul>
+</p>
+
+<p>
+<img src="images/appLogo.png" alt="&appName; logo" border="1" align="left"/>
+&appName; is a chemical kinetics stochastic simulation software package 
+written in Java.  It provides a model definition environment and an implementation of the 
+<a href="docs/UserManual.html#gillespie">Gillespie</a> and
+<a href="docs/UserManual.html#gibsonbruck">Gibson-Bruck</a> stochastic algorithms.
+The software is based on the 
+<a href="../&localJavaLibraryName;">&localJavaLibraryName; library</a>. 
+The software is available for download within a self-extracting installer 
+(see the &quot;Download &appName;&quot; link above), subject
+to the terms of the <a href="../License.html">software license agreement</a>.
+The license agreement is the GNU Lesser General Public License (LGPL), 
+which is a standard &quot;free software&quot; and &quot;open source&quot; license.  
+&appName; requires the Java 2 Runtime Environment (JRE) version 1.4 or newer,
+or an equivalent JRE.
+For more information about the &appName; system, please consult the 
+<a href="docs/UserManual.html">&appName; User Manual</a>.
+</p>
+<p>
+<a href="images/screenshot1.png"><img src="images/screenshot1-small.png" alt="screenshot" /></a>Screen shot of the &appName; program
+</p>
+
+</isb:document>

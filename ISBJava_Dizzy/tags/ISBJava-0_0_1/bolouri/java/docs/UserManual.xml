@@ -1,0 +1,248 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>&appName; User Manual</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
+<isb:docdate>$Date$</isb:docdate>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+
+<isb:doccontents />
+
+<isb:docsection name="Introduction" label="introduction">
+<p>
+The &appName; project is a library (collection) of classes
+written in the <a href="http://java.sun.com">Java</a>
+programming language, that are intended to be used for
+research in computational biology.  
+</p>
+<p>
+This document is the user manual for the &appName; library.
+This manual applies to the following release version of the library:
+<blockquote>
+<pre>
+release version:   &appVersion;
+release date:      &appDate;
+</pre>
+</blockquote>
+The release notes for this version of the library can be found
+at the following URL:
+<blockquote>
+<a href="ReleaseNotes.html">&appHomePage;/docs/ReleaseNotes.html</a>
+</blockquote>
+The home page for this library is:
+<blockquote>
+<a href="&appHomePage;">&appHomePage;</a>
+</blockquote>
+The version history for this library can be found at the following URL:
+<blockquote>
+<a href="VersionHistory.html">&appHomePage;/docs/VersionHistory.html</a>
+</blockquote>
+If you are reading this document through a print-out, you can find
+the online version of this document (which may be a more recent version)
+at the following URL:
+<blockquote>
+<a href="UserManual.html">&appHomePage;/docs/UserManual.html</a>
+</blockquote>
+</p>
+
+</isb:docsection>
+
+<isb:docsection name="Requirements" label="requirements">
+You will need the Sun Java Development Kit (JDK) vesrion 1.4 
+or newer (or the equivalent) in order to use these classes.
+Some of the packages in this source directory tree
+require external Java packages/libraries to be installed.
+In particular, in order to be able to compile the full
+source tree, you will need to have the following Java libraries
+installed and available within your <code>CLASSPATH</code> environment
+variable:
+<blockquote>
+<table border="1">
+<tr>
+<td>Package name</td><td>JAR name</td><td>Source</td><td>License</td>
+</tr>
+<tr>
+<td>jfreechart</td><td><code>jfreechart-&lt;VERS&gt;.jar</code></td>
+<td><a href="http://www.jfree.org/jfreechart"><code>www.jfree.org/jfreechart/</code></a></td><td>LGPL</td>
+</tr>
+<tr>
+<td>jcommon</td><td><code>jcommon-&lt;VERS&gt;.jar</code></td>
+<td><a href="http://www.jfree.org/jcommon"><code>www.jfree.org/jcommon/</code></a></td><td>LGPL</td>
+</tr>
+<tr>
+<td>SBW (core)</td><td><code>SBWCore.jar</code></td>
+<td><a href="http://www.sbw-sbml.org/sbw/software"><code>www.sbw-sbml.org/sbw/software/</code></a></td><td>LGPL</td>
+</tr>
+<tr>
+<td>SBML Validator</td><td><code>SBMLValidate.jar</code></td>
+<td><a href="http://www.sbw-sbml.org/sbw/software"><code>www.sbw-sbml.org/sbw/software/</code></a></td><td>LGPL</td>
+</tr>
+<tr>
+<td>JavaHelp</td><td><code>jh.jar</code></td>
+<td><a href="http://java.sun.com/products/javahelp"><code>java.sun.com/products/javahelp</code></a></td><td>Sun Binary Code License</td>
+</tr>
+</table>
+</blockquote>
+Note that the SBW/SBML libraries and packages are only required for
+compiling the code in the &quot;<code>org.systemsbiology.chem.sbw</code>&quot; 
+directory.  By omitting this
+directory from the compilation (by adding a suitable 
+&quot;<code>exclude</code>&quot; to the
+&quot;<code>javac</code>&quot; statements in the 
+<code>build.xml</code> file), in principle the resulting
+<code>&localJavaLibraryName;.jar</code> file that would be built, 
+would not have any dependencies on 
+the aforementioned SBW/SBML libraries.  
+<p />
+The <code>jfreechart</code> and <code>jcommon</code> libraries
+are needed in order to compile the <code>org.systemsbiology.chem.app</code>
+package.  They are not needed for any other packages in the &appName;
+library.
+<p />
+The classes in this library
+have been tested on the Sun JDK v1.4.1, on the Red Hat
+Linux 8.0 platform and on Windows XP.  On other platforms,
+your mileage may vary.
+<p />
+Ant is required to use the "build.xml" file in this directory.
+You can download and install Ant from 
+<a href="http://ant.apache.org">the apache Ant project</a>.
+</isb:docsection>
+
+<isb:docsection name="Naming Conventions" label="namingconventions">
+<p />
+A few notes about conventions used these java packages.
+The &quot;.tp&quot; suffix at the end of a package name
+indicates that the &quot;.tp&quot; 
+subpackage contains test programs for
+the parent package.  Similarly, a suffix &quot;.t&quot;
+at the end of a package name indicates that the 
+&quot;.t&quot; subpackage contains unit tests for the
+parent package (in the JUnit framework).  
+<p />
+These classes are all in development, and are subject
+to change at any time, without notice.  All classes contained
+herein should be considered copyright of the &mainAffiliation;, 
+2003.  
+</isb:docsection>
+
+<isb:docsection name="Using the library" label="using">
+<p>
+In order to use this library, you will need to download and
+run the installer available on the 
+<a href="&webBaseURL;/&localJavaLibraryName;">&localJavaLibraryName;
+home page</a>.  When you run the installer, you will be prompted
+to specify an installation directory.
+</p>
+<p>
+The documentation will
+be stored in a subdirectory &quot;<code>docs</code>&quot;
+of the installation directory.  Note that the Javadoc documentation 
+is not provided by the installer, but you can generate it using
+the &quot;<code>javadoc</code>&quot; program available from the
+Sun Java Development Kit (JDK).  You can also 
+<a href="&webBaseURL;/&localJavaLibraryName;/javadoc">browse
+the Javadoc API for &localJavaLibraryName;</a> on the web.
+</p>
+<p>
+The compiled Java code for the library is contained in the
+file &quot;<code>&localJavaLibraryName;.jar</code>&quot;, which is stored in the
+&quot;<code>lib</code>&quot; subdirectory of the installation
+directory.  In order to be able to use this library in your
+Java programs, you will need to ensure that the aforementioned
+JAR file (<code>&localJavaLibraryName;.jar</code>) is added to your Java
+<code>CLASSPATH</code>.  This can be done by modifying (or
+defining) the <code>CLASSPATH</code> environment variable,
+or it can be done by passing the &quot;<code>-cp</code>&quot;
+argument to the &quot;<code>javac</code>&quot; and 
+&quot;<code>java</code>&quot; commands when compiling and
+running your program, respectively.
+</p>
+
+</isb:docsection>
+
+<isb:docsection name="API Documentation" label="apidocumentation">
+<p>
+For technical reasons, the API documentation has been
+separated from the User Manual for the &localJavaLibraryName; library.
+The API documentation is available on-line at:
+<blockquote>
+<a href="&webBaseURL;/&localJavaLibraryName;/javadoc">&webBaseURL;/&localJavaLibraryName;/javadoc</a>
+</blockquote>
+There is also a PDF version available at:
+<blockquote>
+<a href="&webBaseURL;/&localJavaLibraryName;/docs/APIDocumentation.pdf">&webBaseURL;/&localJavaLibraryName;/docs/APIDocumentation.pdf</a>
+</blockquote>
+Please note that the PDF documentation is generated using
+an experimental Javadoc-to-PDF translater, so there are
+some glitches in the formatting of the PDF.  At this time,
+the HTML Javadoc is the more readable format and has the more
+comprehensive network of hyperlinks.
+</p>
+
+</isb:docsection>
+
+<isb:docsection name="Source Code" label="sourcecode">
+<p>
+The source code for the &localJavaLibraryName; library 
+is included with the library installer.  You can find the code 
+in the file &quot;<code>&localJavaLibraryName;-src.tar.gz</code>&quot;
+that is installed in the &quot;<code>src</code>&quot;
+subdirectory of the installation directory for this program.
+</p>
+</isb:docsection>
+
+<isb:docsection name="Getting Help" label="gettinghelp">
+<p>
+If you find that the &appName; library does not function in accordance
+with the descriptions in this manual, or if there are sections of
+this manual that are incorrect or unclear, the authors would like to 
+hear about it, so that we can make improvements and fix bugs in the
+software.  Furthermore, the authors would appreciate feedback
+regarding new features or improvements that would be useful to
+users of this software.  Before e-mailing the authors, it is a good
+idea to check the <a href="&appHomePage;">&appName; application home page</a>
+to see if a new version has been released, in which your specific
+problem may have been corrected.  All releases are documented in
+the &quot;version history&quot; page accessible from the home page.
+The best way to contact the authors is to send e-mail to:
+<blockquote>
+<code>&appMaintainerEmailSafe;</code>.
+</blockquote>
+The authors will attempt to respond to your e-mail as quickly as
+possible.
+</p>
+<p>
+If you are reporting a bug, or something that you suspect is a bug,
+please provide as much information as you can about your specific
+installation of the &appName; library.  In particular, please provide
+us with the version number of the &appName; library that you are using,
+the type and version number of the Java Runtime Environment that you
+are using (e.g., Sun JRE version 1.4.1), and your operating system
+type and verion (e.g., Red Hat Linux 8.0).  Furthermore, if the
+problem is with a specific Java program using the library, please send
+us the source code of the complete program that generates the problem.
+Note that some effort to localize the problem to a reproducible
+test case with a small program, will help us significantly in fixing
+the problem that you are encountering.  If the problem that you 
+encountered generated a &quot;stack backtrace&quot; on the console,
+please include the full stack backtrace text in your bug report.
+Please also send us the text of any error message that you may 
+have been reported by the library, in a dialog box or on the console.
+Providing this information will dramatically increase the likelihood
+that the authors will be able to quickly and successfully resolve
+the problem that you are encountering. 
+</p>
+
+</isb:docsection>
+
+</isb:document>

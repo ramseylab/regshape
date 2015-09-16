@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+
+<!ENTITY javaURL "&webBaseURL;/&localJavaLibraryName;">
+   ]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This document is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>&appName; Version History</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docdate>$Date$</isb:docdate>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+
+<p>
+This document contains the version history for the
+<a href="../">&appName;</a> software product.
+</p>
+
+<p>
+<table border="1">
+<tr valign="top">
+<td>Version</td>
+<td>Date</td>
+<td>Comments</td>
+<td>Built with 
+<a href="&javaURL;">&localJavaLibraryName;</a> version number:</td>
+</tr>
+
+
+<!--
+<tr valign="top">
+<td><a href="../1.0.0/&installerDownloadRelURL;">1.0.1</a></td>
+<td>2005/07/08</td>
+<td>
+<ul>
+<li>Fixed a bug in the build script, that was placing an unneeded file (<code>AppResources.jar</code>) 
+on the web server.</li>
+</ul>
+</td>
+</tr>
+-->
+
+<tr valign="top">
+<td><a href="../1.0.1/&installerDownloadRelURL;">1.0.1</a></td>
+<td>2005/07/13</td>
+<td>
+<ul>
+<li>Built with latest version of &localJavaLibraryName;; no functional changes.</li>
+<li>Changed styling of documentation.</li>
+<li>Fixed problem with build script, where it was impossible to do any
+ant tasks, even those tasks that do not require InstallAnywhere,
+on a system that does not have the InstallAnywhere JAR file installed
+into the Ant lib directory.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.4.0/download.html">2.4.0</a></td> 
+</tr>
+
+
+<tr valign="top">
+<td><a href="../1.0.0/&installerDownloadRelURL;">1.0.0</a></td>
+<td>2005/04/05</td>
+<td>
+<ul>
+  <li>First major public release of the software.  Written entirely in Java.
+  See the <a href="UserManual.html">User Manual</a> for more information.</li>
+</ul>
+</td>
+<td><a href="&javaURL;/2.2.0/download.html">2.2.0</a></td> 
+</tr>
+
+<tr valign="top">
+<td><a href="../0.1.0/download.html">0.1.0</a> (Linux only)</td>
+<td>2004/05/04</td>
+<td>
+<ul>
+<li>First experimental version of the software.  Linux only.  Requires Matlab and
+  the Matlab Statistics Toolbox.</li>
+</ul>
+</td>
+<td>n/a</td>
+</tr>
+
+</table>
+</p>
+
+</isb:document>

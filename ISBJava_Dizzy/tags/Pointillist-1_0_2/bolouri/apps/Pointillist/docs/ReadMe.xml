@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This document is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>Welcome to &appName;</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+
+<h3>Getting Started</h3>
+<p>
+To get started with &appName;, run the launch the 
+"DataManager" icon from the "&appName;" program group in your Start Menu
+(Windows) or on your Desktop (Linux).  Then click on the green "question mark" icon
+in the upper-right-hand side of the menu.  In the help browser window that appears, click on the 
+"Getting Started" link in the table of contents pane on the left side. 
+This will display the section of the application help scrren that explains
+in a step-by-step tutorial, how to begin using &appName;.
+</p>
+
+<h3>Additional Information</h3>
+<p>
+A comprehensive <a href="UserManual.html">User Manual</a> is available
+for &appName;.  It is the file "UserManual.html" 
+in the "docs" directory where you installed &appName;.  
+If you discover a bug in &appName; or it fails to
+launch on your computer, please send an email message to
+<blockquote>
+  <code>&appMaintainerEmailSafe;</code>
+</blockquote>
+including a detailed description of the problem.
+</p>
+ 
+</isb:document>

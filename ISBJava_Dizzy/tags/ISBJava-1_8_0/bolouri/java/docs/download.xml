@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This document is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>&appName; Download Page</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+<isb:docversion>&appName; Version: &appVersion;, &nbsp; &appDate;</isb:docversion>
+<isb:docdate>$Date$</isb:docdate>
+
+<isb:docsection name="Instructions" label="instructions">
+<p>
+The &appName; library is available for download in two different
+compressed archive formats, Zip and &quot;gzipped tar&quot;.  The
+former is most commonly preferred by Windows users, and the latter is
+most commonly preferred by Unix users.  There are two hyperlinks below,
+one for each of the archive formats.  In most web browsers, you may 
+download the archive by right-clicking with your mouse button and
+selecting &quot;save link target as&quot; from the menu that appears.
+Alternatively, you may click on the link, and be prompted with a 
+&quot;save as&quot; dialog box.  In either case, save the archive
+to your hard drive, and follow the instructions supplied below
+in the section appropriate to the archive type you seleted, to
+unpack the archive on your computer.
+</p>
+</isb:docsection>
+
+<isb:docsection name="Download" label="download">
+<p>
+Here are the links to the &appName; software:
+<ul>
+<li><a href="&appName;.zip"><code>&appName;.zip</code> [Zip archive]</a></li>
+<li><a href="&appName;.tar.gz"><code>&appName;.tar.gz</code> [Gzipped Tar archive]</a></li>
+</ul>
+Please remember to read the <a href="../docs/ReadMe.html">ReadMe document</a> that
+can be found the &quot;<code>docs</code>&quot; subdirectory when you
+have unpacked the archive.  For more information about how to use
+the &appName; software, please refer to the 
+<a href="UserManual.html">&appName; User Manual</a>.
+</p>
+<p>
+If you have any difficulties downloading or installing this software, please contact
+the developers at the e-mail address shown below.
+</p>
+</isb:docsection>
+
+<isb:docsection name="Zip Archive" label="zipinst">
+<p>
+To unpack the Zip archive, you would open a shell (or command) 
+session and type at the prompt:
+<blockquote>
+<pre>
+unzip &appName;.zip
+</pre>
+</blockquote>
+You should see a list of the files that are unpacked.  A subdirectory
+&quot;<code>&appName;</code>&quot; should be created, and all of
+the files should be placed within subdirectories of this directory.
+</p>
+</isb:docsection>
+<isb:docsection name="Gzipped Tar Archive" label="tgzinst">
+<p>
+To unpack the Gzipped Tar archive, you would open a shell (or command) 
+session and type at the prompt:
+<blockquote>
+<pre>
+tar xvzf &appName;.tar.gz
+</pre>
+</blockquote>
+You should see a list of the files that are unpacked.  A subdirectory
+&quot;<code>&appName;</code>&quot; should be created, and all of
+the files should be placed within subdirectories of this directory.
+</p>
+</isb:docsection>
+
+</isb:document>

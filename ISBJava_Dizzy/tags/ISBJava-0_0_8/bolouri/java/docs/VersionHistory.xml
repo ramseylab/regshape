@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This document is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>&appName; Version History</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
+<isb:docdate>$Date$</isb:docdate>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+
+<p>
+This document contains the version history for the
+<a href="../">&appName;</a> software product.
+</p>
+
+<p>
+<table border="1">
+<tr valign="top">
+<td>Version</td>
+<td>Date</td>
+<td>Comments</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.8</td>
+<td>2003/11/21</td>
+<td>
+<ul>
+<li>Created a new <code>org.systemsbiology.chem.SimulatorParameters</code> mechanism to pass
+simulator-specific parameters to the simulator object.</li>
+<li>Modified the fixed-stepsize deterministic simulator, so that it can detect when the step-size
+is insufficient.</li>
+<li>Fixed an error-handling bug in the <code>org.systemsbiology.chem.app.Plotter</code> class.</li>
+<li>Modified the <code>SimulationLauncher</code> so that default simulator-specific parameters
+are auto-filled, and are updated when the simulator selection is changed.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.7</td>
+<td>2003/11/07</td>
+<td>
+<ul>
+<li>Modified <code>org.systemsbiology.chem.app.EditorPane</code> so that it &quot;remembers&quot; the
+directory of the last file opened in the editor.  The default directory for the 
+<code>org.systemsbiology.chem.app.FileChooser</code>
+for the next &quot;Open&quot; command, is set to this directory.</li>
+<li>Adjusted the default vertical dimension of the <code>org.systemsbiology.chem.app.EditorPane</code>
+for the model editor, to 40 characters.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.6</td>
+<td>2003/10/22</td>
+<td>
+<ul>
+<li>In <code>org.systemsbiology.chem.app.SimulationLauncher</code>, make
+plotting the default output mode</li>
+<li>Redefined how the stochastic simulators compute
+reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.5</td>
+<td>2003/10/20</td>
+<td>
+<ul>
+<li>Fixed a bug in the <code>GibsonSimulator</code> initialization code, for the case of a boundary
+reactant species.</li>
+<li>Fixed a bug in the <code>ModelBuilderCommandLanguage</code> tokenizer, so that
+it can now accept a tab character as valid whitespace in a model definition file.</li>  
+<li>Modified the
+<code>SBMLValidate</code> package so that it can process SBML Level 1, Version 2 model definition files.</li>
+<li>Modified <code>org.systemsbiology.chem.app.MainApp</code> class, to work around a limitation of
+DOS shell command-line argument processing.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.4</td>
+<td>2003/08/28</td>
+<td>Modified the Cytoscape bridge to use JNLP, so Cytoscape does not have to be bundled with Dizzy.</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.3</td>
+<td>2003/08/26</td>
+<td>Added the ability to simulate a multistep chemical reaction as a single composite reaction.</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.2</td>
+<td>2003/08/06</td>
+<td>Added the ability to display a model in a <a href="&cytoscapeURL;">Cytoscape</a> window.</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.1</td>
+<td>2003/08/04</td>
+<td>First version of the library.  It is an alpha version,
+intended only for internal use at &mainAffiliation;.</td>
+</tr>
+
+</table>
+</p>
+
+</isb:document>
+

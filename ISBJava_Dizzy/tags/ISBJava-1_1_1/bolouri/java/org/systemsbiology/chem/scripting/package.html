@@ -1,0 +1,57 @@
+<html>
+<body>
+<p>
+This package contains classes used to provide a command language
+interface to the classes of the <code>isb.chem</code> package.
+For information on the <code>isb.chem</code> package, please
+refer to its <a href="../package-overview.html">javadoc pages</a>.  
+This command language permits defining a 
+<a href="../Model.html"><code>Model</code></a> using
+a declarative command syntax that is very similar to a programming
+language:
+<blockquote>
+<pre>
+include &quot;GlobalDefinitions.txt&quot;;
+compartment &quot;univ2&quot;: volume 10.0;
+compartment &quot;univ&quot;: volume 1.0;
+
+species &quot;s1&quot;: compartment &quot;univ&quot;, speciesType boundary;        
+species &quot;s2&quot;: compartment &quot;univ&quot;;
+species &quot;s3&quot;: compartment &quot;univ&quot;;
+
+parameter &quot;k&quot;: value 1.0;                     
+
+reaction &quot;r1&quot;: reactants (&quot;s1&quot; &quot;s2&quot; &quot;s2&quot;), 
+                         products (&quot;s3&quot;), rate &quot;s1*s2*s2*k/2.0&quot;;   
+
+speciesPopulations &quot;sp&quot;: species (&quot;s1&quot; &quot;s2&quot; &quot;s3&quot;), 
+                                   values (100 200 0);
+
+model &quot;myModel&quot;: reactions (&quot;r1&quot;), 
+                           speciesMode molecules, parameters (&quot;k&quot;); 
+
+printModel &quot;myModel&quot;;
+</pre>
+</blockquote>
+A full description of the command language can be found in the
+documentation for the 
+<a href="CommandLanguageParser.html"><code>CommandLanguageParser</code></a>
+class.
+</p>
+<p>
+This package can be compiled without installing the SBW system.
+However, in order to use the <code>ScriptBuilderMarkupLanguage</code>
+script builder class, you will need to have the SBW
+system installed on the build system and the target (runtime)
+system.  In particular, this package makes use of the JAR files
+<blockquote>
+<pre>
+/usr/local/lib/SBWCore.jar
+/usr/local/modules/SBWValidate.jar
+</pre>
+</blockquote>
+whre &quot;<code>/usr/local</code>&quot; should be understood to denote
+the installation directory prefix where the SBW system was installed.
+</p>
+</body>
+</html>

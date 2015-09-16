@@ -1,0 +1,64 @@
+# converted from the Repressilator model of Elowitz and Leibler
+# (Nature 403: 335-338, 2000).
+
+compartment "cell": volume 1.0;
+species "PX":           compartment "cell", speciesType floating;
+species "PY":           compartment "cell", speciesType floating;
+species "PZ":           compartment "cell", speciesType floating;
+species "X":            compartment "cell", speciesType floating;
+species "Y":            compartment "cell", speciesType floating;
+species "Z":            compartment "cell", speciesType floating;
+species "EmptySet":     compartment "cell", speciesType boundary;
+speciesPopulations "initialSpeciesPopulations": 
+                        populations (5.0 0.0 15.0 0.0 0.0 0.0 0.0), 
+                        speciesList ("PX" "PY" "PZ" "X" "Y" "Z" "EmptySet");
+
+reaction "Reaction1":   products ("EmptySet"), rate "k1*X", reactants ("X");
+parameter "k1": reactions ("Reaction1"), value 1.0;
+
+reaction "Reaction2":   products ("EmptySet"), rate "k1*Y", reactants ("Y");
+parameter "k1": reactions ("Reaction2"), value 1.0;
+
+reaction "Reaction3":   products ("EmptySet"), rate "k1*Z", reactants ("Z");
+parameter "k1": reactions ("Reaction3"), value 1.0;
+
+reaction "Reaction4":   products ("X" "PX"), rate "X*beta", reactants ("X" "EmptySet");
+parameter "beta": reactions ("Reaction4"), value 5.0;
+
+reaction "Reaction5":   products ("Y" "PY"), rate "Y*beta", reactants ("Y" "EmptySet");
+parameter "beta": reactions ("Reaction5"), value 5.0;
+
+reaction "Reaction6":   products ("Z" "PZ"), rate "Z*beta", reactants ("Z" "EmptySet");
+parameter "beta": reactions ("Reaction6"), value 5.0;
+
+reaction "Reaction7":   products ("EmptySet"), rate "PX*beta", reactants ("PX");
+parameter "beta": reactions ("Reaction7"), value 5.0;
+
+reaction "Reaction8":   products ("EmptySet"), rate "PY*beta", reactants ("PY");
+parameter "beta": reactions ("Reaction8"), value 5.0;
+
+reaction "Reaction9":   products ("EmptySet"), rate "PZ*beta", reactants ("PZ");
+parameter "beta": reactions ("Reaction9"), value 5.0;
+
+reaction "Reaction10":  products ("X"), rate "alpha0 + (alpha + PZ^n*alpha1)/(K^n + PZ^n)", reactants ("EmptySet");
+parameter "alpha1":     reactions ("Reaction10"), value 0.0;
+parameter "n":          reactions ("Reaction10"), value 2.1;
+parameter "K":          reactions ("Reaction10"), value 1.0;
+parameter "alpha0":     reactions ("Reaction10"), value 0.0;
+parameter "alpha":      reactions ("Reaction10"), value 250.0;
+reaction "Reaction11":  products ("Y"), rate "alpha0 + (alpha + PX^n*alpha1)/(K^n + PX^n)", reactants ("EmptySet");
+parameter "alpha1":     reactions ("Reaction11"), value 0.0;
+parameter "n":          reactions ("Reaction11"), value 2.1;
+parameter "K":          reactions ("Reaction11"), value 1.0;
+parameter "alpha0":     reactions ("Reaction11"), value 0.0;
+parameter "alpha":      reactions ("Reaction11"), value 250.0;
+reaction "Reaction12":  products ("Z"), rate "alpha0 + (alpha + PY^n*alpha1)/(K^n + PY^n)", reactants ("EmptySet");
+parameter "alpha1":     reactions ("Reaction12"), value 0.0;
+parameter "n":          reactions ("Reaction12"), value 2.1;
+parameter "K":          reactions ("Reaction12"), value 1.0;
+parameter "alpha0":     reactions ("Reaction12"), value 0.0;
+parameter "alpha":      reactions ("Reaction12"), value 250.0;
+model "repressilator":  reactions ("Reaction1" "Reaction10" "Reaction11" "Reaction12" 
+                                   "Reaction2" "Reaction3" "Reaction4" "Reaction5" "Reaction6" 
+                                   "Reaction7" "Reaction8" "Reaction9"), speciesMode molecules;
+

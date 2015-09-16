@@ -1,0 +1,28 @@
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This source code is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<!-- these definitions are used both in the app and in the documentation: -->
+
+<!ENTITY % CommonConfig SYSTEM "CommonConfig.dtd">
+%CommonConfig;
+
+<!ENTITY appName "&localJavaLibraryName;">
+<!ENTITY appVersion "0.0.6">
+<!ENTITY appDate "2003/10/22">
+<!ENTITY appHomePage "&webBaseURL;/&appName;">
+<!ENTITY appIconURL "">
+
+<!-- these definitions are used only in documentation, not by the app itself: -->
+<!ENTITY appMaintainerFullName "&mainGroup;">
+<!ENTITY appMaintainerURL "&mainGroupURL;">
+<!ENTITY appMaintainerEmailSafe "isbjava at systemsbiology.org"> 
+<!ENTITY appMaintainerAffiliation "&mainAffiliation;">
+
+<!ENTITY appOriginalAuthorFullName "Stephen Ramsey">
+<!ENTITY appOriginalAuthorEmailSafe "sramsey at systemsbiology.org"> 

@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+
+<!ENTITY javaURL "&webBaseURL;/&localJavaLibraryName;">
+   ]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This document is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>&appName; Home Page</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docdate>$Date$</isb:docdate>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+
+<p>
+Pointillist v2 is a set of MATLAB codes for inferring the set of
+elements affected by a perturbation of a biological system, based on
+multiple types of evidence.  
+The software implements the full set of
+data integration methods discussed in the article 
+</p><blockquote>
+<table border="1">
+<tbody><tr><td>
+Hwang&nbsp;D, Rust&nbsp;AG, Ramsey&nbsp;S, Smith&nbsp;JJ,
+Leslie&nbsp;DM, Weston&nbsp;AD, de&nbsp;Atauri&nbsp;P,
+Aitchison&nbsp;JD, Hood&nbsp;L, Siegel&nbsp;AF, Bolouri&nbsp;H.
+"A data integration methodology for systems biology."
+Proc Natl Acad Sci U S A 2005; 102(48) 17296-17301.
+</td></tr>
+</tbody></table>
+</blockquote>
+<p></p>
+<p>
+The most recent version of the Pointillist v2 MATLAB codes is 2.1.2.
+In addition, a Java implementation of an earlier version of our
+nonparametric method (with the Fisher method) is available.  We are
+presently adapting our Java version to conform to the method outlined
+in the above articles, but the Java version should give equivalent
+results to the MATLAB version on most datasets.
+</p>
+
+<table border="0">
+<tbody><tr>
+<td>
+<ul>
+<li>
+<a href="2.1.2/point212.zip">Download Pointillist v2.1.2</a> [1.4 MB ZIP archive of MATLAB codes] [This version includes Fisher's method, the Mudholkar-George
+method, and the Liptak-Stouffer method, as described in the above article.  In
+addition, v2.1.2 fixes some minor issues with the previous version.]
+<a href="2.1.2/README.txt">[README]</a>
+<p>
+&nbsp;
+</p>
+</li>
+
+
+<li>
+<a href="&appVersion;/installer/Web_Installers/install.htm">Download Java version of Pointillist's nonparametric method</a> [This 
+version implements the nonparametric method and uses the weighted Fisher's
+method, as decribed in the above article.] <br />
+<a href="docs/UserManual.html">User Manual for Java version (html)</a><br />
+<a href="docs/UserManual.pdf">User Manual for Java version (pdf, 244 kB)</a>
+<p>
+&nbsp;
+</p>
+</li>
+
+<li>
+<a href="docs/OldVersions.html">Go to download page for old versions of the
+code</a>
+</li>
+</ul>
+</td>
+</tr>
+</tbody></table>
+
+
+<p>
+<b>Download counter:</b> Pointillist has been downloaded over <img src="images/PointillistDownloads.jpg" alt="[COUNTER]" align="middle" border="1" /> times since November 2005.
+</p>
+
+<p>
+<b>Visitor counter:</b> this page has been visited over <img src="images/PointillistVisitors.jpg" alt="[COUNTER]" align="middle" border="1" /> times since November 2005.
+</p>
+<p>
+The development of Pointillist is supported by grants from the National Science Foundation (NSF)
+and the National Institutes of Health (NIH).
+</p>
+
+</isb:document>

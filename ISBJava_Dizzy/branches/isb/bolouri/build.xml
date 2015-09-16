@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE AntBuildFile [
+  <!ENTITY % CommonConfig SYSTEM "config/CommonConfig.dtd">  
+  %CommonConfig;
+  ]>
+
+<project name="ISBJava" default="compile" basedir=".">
+
+  <property name="webDir" location="&installWebDir;" />
+  <property name="mainDocsDir" location="${basedir}/docs" />
+  <property name="mainConfigDir" location="${basedir}/config" />
+  <property name="docsStyleSheet" value="${mainDocsDir}/documentation-stylesheet.xml" />
+  <property name="javaDir" location="${basedir}/java" />
+  <property name="appsDir" location="${basedir}/apps" />
+
+  <target name="compile">
+    <ant dir="${javaDir}" target="compile" />
+    <ant dir="${appsDir}" target="compile" />
+  </target>
+
+  <target name="clean">
+    <ant dir="${javaDir}" target="clean" />
+    <ant dir="${appsDir}" target="clean" />
+  </target>
+
+  <target name="copyImages">
+    <copy todir="${webDir}/images">
+      <fileset dir="docs">
+        <include name="*.png" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="install-web" depends="copyImages">
+    <ant dir="${javaDir}" target="install-web" />
+    <ant dir="${appsDir}" target="install-web" />
+  </target>
+
+  <target name="build">
+    <ant dir="${javaDir}" target="build" />
+    <ant dir="${appsDir}" target="build" />
+  </target>
+
+</project>

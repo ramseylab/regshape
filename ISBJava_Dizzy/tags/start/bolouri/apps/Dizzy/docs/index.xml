@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../../../docs/documentation-stylesheet.xml"?>
+<!DOCTYPE UserGuide [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+<!-- ========== PREAMBLE ========== -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns">
+
+<isb:doctitle>&appName; Home Page</isb:doctitle>
+<isb:docauthor>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docauthor>
+
+<p>
+<ul>
+<li><a href="installer/Web_Installers/install.htm">Download &appName;</a></li>
+<li><a href="UserManual.html">&appName; User Manual</a></li>
+<li><a href="README.html">&appName; Release Notes</a></li>
+<li><a href="VersionHistory.html">&appName; Version History</a></li>
+<li><a href="../LICENSE.txt">License Agreement</a></li>
+<li><a href="../javadoc">ISBJava Javadoc API</a></li>
+</ul>
+</p>
+
+<p>
+<a href="screenshot1.png"><img src="screenshot1-small.png" alt="screenshot" /></a>Screen shot of the &appName; program
+</p>
+
+<p>
+&appName; is a chemical kinetics simulation software package implemented in Java.
+This software can be used to define a system of interacting chemical species,
+and the reactions through which they interact.  The software can then be
+used to simulate the reaction kinetics of the system of interacting species.
+The software consists of the following elements:
+<ol>
+<li>a set of Java packages or "libraries" that constitute a Java 
+application programming interface (or "API") for this software system
+There is <a href="../javadoc">javadoc</a> documentation available
+for the API for this software package.</li>
+<li>a scripting engine that can be invoked from the command-line, to define
+a model and run simulations on the model, and to export a model to a different
+model definition language</li>
+<li>a graphical user interface ("GUI") application that can be used to run 
+simulations and export a model to a different model definition language</li>
+<li>a Systems Biology Workbench bridge that allows the simulator to be
+invoked through the Systems Biology Workbench, using a model defined in
+the Systems Biology Markup Language</li>
+</ol>
+Models are defined in text files that you must edit, or generate using
+an external tool (e.g., JDesigner).  This system can understand three types of 
+model definition languages:  two languages specific to &appName;, and the
+Systems Biology Markup Language (SBML).
+</p>
+<p>
+<font color="red"><b>NOTE:</b></font>
+This is alpha (experimental) software.  Please be patient while we fix 
+bugs, add new features, and add (much needed) documentation.  Your 
+patience is appreciated.
+</p>
+<p>
+This program is distributed under the GNU Public License (GPL), 
+which is a standard &quot;free software&quot;
+and &quot;open source&quot; license.  A copy of the 
+The text of the license agreement is available <a href="../LICENSE.txt">here</a>.
+</p>
+<p>
+<a href="installer/Web_Installers/install.htm">Download an installer for the 
+&appName; program</a>
+</p>
+<p>
+&appOriginalAuthorFullName;<br />
+&appMaintainerFullName;, &appMaintainerAffiliation;<br />
+Seattle, Washington<br />
+</p>
+<p>
+Email:  &appMaintainerEmailSafe;
+</p>
+</isb:document>

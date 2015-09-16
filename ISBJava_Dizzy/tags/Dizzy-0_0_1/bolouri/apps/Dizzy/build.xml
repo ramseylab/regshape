@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE BuildFile [
+<!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
+%CommonConfig;
+<!ENTITY % AppConfig SYSTEM "config/AppConfig.dtd">
+%AppConfig;
+]>
+
+<project name="Dizzy" default="compile" basedir=".">
+  <property name="app.styleDir"                 location="${basedir}/html" />
+  <property name="app.buildDir"                 location="${basedir}/build" />
+  <property name="app.configDir"                location="${basedir}/config" />
+  <property name="app.docsDir"                  location="${basedir}/docs" />
+  <property name="app.imagesDir"                location="${basedir}/images" />
+  <property name="app.webDir"                   location="${projWebDir}/${ant.project.name}" />
+  <property name="app.downloadDir"              location="${app.webDir}/&appVersion;" />
+  <property name="app.installerDir"             location="${app.downloadDir}/installer" />
+  <property name="app.version"                  value="&appVersion;" />
+
+  <target name="compile">
+    <!-- nothing to do -->
+  </target>
+
+  <target name="clean">
+    <delete dir="${app.styleDir}" quiet="yes" />
+    <delete dir="${app.buildDir}" quiet="yes" />
+    <delete file="${app.configDir}/CommonConfig.dtd" quiet="yes" />
+  </target>
+
+  <target name="copyCommonConfig">
+    <copy file="${projConfigDir}/CommonConfig.dtd" todir="${app.configDir}" />
+  </target>
+
+  <target name="style" depends="copyCommonConfig">
+    <mkdir dir="${app.styleDir}" />
+    <style basedir="${app.docsDir}" 
+           destdir="${app.styleDir}" 
+           includes="*.xml" 
+           style="${docsStyleSheet}"
+           excludes="AppConfig.xml" />
+
+    <style in="${app.docsDir}/UserManual.xml"
+           out="${app.styleDir}/AppHelp.jhm"
+           style="${helpMapStyleSheet}">
+      <param name="${helpContentFileParamName}" expression="UserManual.html" />
+    </style>
+
+    <style in="${app.docsDir}/UserManual.xml"
+           out="${app.styleDir}/AppHelpTOC.xml"
+           style="${helpTOCStyleSheet}">
+      <param name="${helpContentFileParamName}" expression="UserManual.html" />
+    </style >
+
+ </target>
+
+  <target name="tidyHTML"> 
+    <apply executable="${binHtmlTidy}" failonerror="true">
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.html" />
+      </fileset>
+      <arg value="-modify" />
+      <arg value="-quiet" />
+      <arg value="-xml" />
+      <arg value="-asxhtml" />
+      <srcfile />
+    </apply>
+  </target>
+
+  <target name="convertHtmlToPDF">
+    <apply executable="${binHtml2PS}" failonerror="true" dest="${app.webDir}/docs">
+      <mapper type="regexp" from="^(.*)\.html$$" to="\1\.ps" />
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.html" />
+      </fileset>
+      <arg value="-o" />
+      <targetfile />
+      <srcfile />
+    </apply>
+    <apply executable="${binPS2PDF}" failonerror="true" dest="${app.webDir}/docs">
+      <mapper type="regexp" from="^(.*)\.ps$$" to="\1\.pdf" />
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.ps" />
+      </fileset>
+      <srcfile />
+      <targetfile />
+    </apply>
+    <delete>
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.ps" />
+      </fileset>
+    </delete>
+  </target>
+
+  <target name="copyHtml">
+    <mkdir dir="${app.webDir}" />
+    <copy todir="${app.webDir}" file="${app.styleDir}/index.html" />
+
+    <mkdir dir="${app.webDir}/docs" />
+    <copy todir="${app.webDir}/docs">
+      <fileset dir="${app.styleDir}">
+        <include name="*.html" />
+        <exclude name="index.html" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="buildHelp">
+    <mkdir dir="${app.webDir}" />
+    <copy todir="${app.styleDir}" file="${app.configDir}/AppHelp.hs" />
+    <jar destfile="${app.webDir}/AppResources.jar">
+      <fileset dir="${basedir}">
+        <include name="html/AppHelp.jhm" />
+        <include name="html/AppHelpTOC.xml" />
+        <include name="html/UserManual.html" />
+        <include name="html/AppHelp.hs" />
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="images/*.png" />
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="copyImages">
+    <mkdir dir="${app.webDir}/images" />
+    <copy todir="${app.webDir}/images">
+      <fileset dir="${app.imagesDir}">
+        <include name="*.png" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="buildInstallers">
+    <!-- make the build directory -->
+    <mkdir dir="${app.buildDir}" />
+
+    <filter token="VERSION" value="${app.version}" />
+    <filter token="PROJROOT" value="${projRoot}" />
+
+    <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
+    <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />
+
+    <exec executable="${binInstallAnywhere}" failonerror="true">
+      <arg value="${app.buildDir}/project.iap_xml" />
+    </exec>
+
+    <!-- make the installer directory -->
+    <mkdir dir="${app.installerDir}" />
+
+    <!-- copy the InstallAnywhere web installer stuff to the web directory -->
+    <copy todir="${app.installerDir}">
+      <fileset dir="${app.buildDir}/project_Build_Output" />
+    </copy>
+  </target>
+
+  <target name="buildPDF" depends="tidyHTML, convertHtmlToPDF" />
+
+  <target name="buildHTML" depends="style, copyImages, copyHtml, buildHelp" />
+
+  <target name="build">
+    <!-- do nothing -->
+  </target>
+
+  <target name="distClean" depends="clean">
+  </target>
+
+</project>

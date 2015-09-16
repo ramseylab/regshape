@@ -1,0 +1,5 @@
+org.systemsbiology.chem
+org.systemsbiology.util
+org.systemsbiology.chem.sbw
+org.systemsbiology.chem.scripting
+org.systemsbiology.chem.app

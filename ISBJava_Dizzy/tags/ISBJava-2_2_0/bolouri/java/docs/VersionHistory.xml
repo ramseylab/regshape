@@ -1,0 +1,1585 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % AppConfig SYSTEM "../config/AppConfig.dtd">
+  %AppConfig;
+   ]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This document is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>&appName; Version History</isb:doctitle>
+<isb:docowner>&appMaintainerFullName;, &appMaintainerAffiliation;</isb:docowner>
+<isb:docownerurl>&appMaintainerURL;</isb:docownerurl>
+<isb:docdate>$Date$</isb:docdate>
+<isb:docowneremail>&appMaintainerEmailSafe;</isb:docowneremail>
+
+<p>
+This document contains the version history for the
+<a href="../">&appName;</a> software product.
+</p>
+
+<p>
+<table border="1">
+<tr valign="top">
+<td>Version</td>
+<td>Date</td>
+<td>Comments</td>
+</tr>
+
+
+<tr valign="top">
+<td><a href="../2.2.0/download.html">2.2.0</a></td>
+<td>2005/04/05</td>
+<td>
+<ul>
+  <li>Updated <code>org.systemsbiology.inference.SignificancesData</code> and 
+    <code>org.systemsbiology.inference.ObservationsData</code> to require
+    a <code>BufferedReader</code> object instead of a <code>File</code> object in their
+    <code>loadFromFile()</code> methods, thus allowing defining a data object based on
+    an alternative type of data stream, other than a file.
+  </li>
+  <li>Added a new data normalization class, <code>org.systemsbiology.inference.DataNormalizer</code>.
+    A graphical user interface driver is included, <code>org.systemsbiology.inference.DataNormalizerDriver</code>.</li>
+  <li>Added a new data management class, <code>org.systemsbiology.inference.DataManagerDriver</code>,
+      which is essentially a spreadsheet program adapted for
+    manipulating multi-evidence biological systems data.  Data merging, sorting, and (evidence-specific) subselection
+    are supported.</li>
+  <li>Added a <code>writeToFile()</code> method to the <code>org.systemsbiology.inference.ObservationsData</code> class.</li>
+  <li>Modified <code>org.systemsbiology.inference.SignificancesData.loadFromFile()</code> so that 
+    it will interpret a cell containing the string "null" (and not in the first row or first
+    column of the data file) as an empty cell.</li>
+  <li>
+    Added the <code>org.systemsbiology.inference</code> package, which has code for
+    inferring a set of affected network elements from multiple evidence types.
+  </li>
+  <li>
+  Fixed a <code>NullPointerException</code> that was occurring when a call to
+  <code>org.systemsbiology.chem.ISimulator.initialize()</code> failed (i.e., threw
+  an exception), and when the exception was handled and <code>initialize()</code> was
+  called again.  This was causing unexpected behavior in <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+  when the model initial conditions validation (i.e., the call to
+  <code>org.systemsbiology.chem.SimulatorStochasticBase.checkDynamicalSymbolsInitialValues()</code>) 
+  failed.  Thanks to Vincent Rouilly for submitting the bug report.</li>
+  <li>
+  Improved the error message in the exception thrown by the <code>org.systemsbiology.chem.SimulatorStochasticBase.checkDynamicalSymbolsInitialValues()</code>
+  method, called indirectly by the <code>org.systemsbiology.chem.Simulator.initialize()</code> method, hen one of the species has an initial population value that exceeds the maximum 
+  allowed for stochastic simulations.  The error message now gives the offending species name and
+  the initial population value.
+  </li>
+  <li>
+  Refactored <code>org.systemsbiology.chem.IModelBuilder</code> so that the
+  <code>getBufferedReader()</code> method is now turned into a <code>readModel()</code>
+  method.  Added a <code>writeModel()</code> method to the same interface.  
+  This creates a set of symmetric methods which decode/encode a model from/to a byte
+  stream, respectively.</li>
+    <li>
+  Fixed a potential problem with <code>org.systemsbiology.chem.app.EditorPane</code>
+  where the <code>saveEditBufferToFile()</code> method was implicitly calling
+  <code>String.getBytes()</code> on the contents of the edit buffer, which means
+  that the file is being written with the platform's default character encoding.  This
+  meant that (in the case of SBML models) the encoding specified in the XML header was
+  being ignored, and (in the case of CMDL models) the model would not be written in
+  the UTF-8 encoding on platforms whose default encoding is not UTF-8.  This means that
+  on certain platforms, the <code>saveEditBufferToFile</code> method would end up writing
+  a file that does not conform to published character encoding specifications for SBML and CMDL.
+  </li>
+  <li>
+  Fixed a bug in <code>org.systemsbiology.chem.app.SimulationLauncher</code> where the
+  "secs remaining" text field would show too many significant digits when the number
+  of estimated seconds remaining is very large.
+  </li>
+  <li>
+  Modified <code>org.systemsbiology.chem.app.EditorPane</code> so that it no longer
+  uses the platform-default character encoding when translating a model into a byte
+  stream that is passed to the <code>org.systemsbiology.chem.IModelBuilder</code>.  This
+  was causing unexpected behavior because different platforms have different default
+  character encodings.  The solution was to add a <code>writeModel()</code> method to the
+  <code>IModelBuilder</code> interface, so that the <code>EditorPane</code> can transparently
+  write the model to a byte stream that can be understood by the <code>IModelBuilder</code>.
+  This fixed a bug whereby a SBML model with <code>UTF-8</code> character encoding loaded into
+  the <code>EditorPane</code>, and then subsequently passed to the <code>IModelBuilder</code>, would 
+  cause a <code>SAXParserException</code> on the Macintosh OSX platform.  Thanks to Vincent Rouilly
+  for submitting this bug report.
+  </li>
+  <li>
+  Fixed a bug in <code>org.systemsbiology.util.DebugUtils.describeSortedObjectList()</code>
+  where the separator string was not being printed in every case that it should have.
+  </li>
+  <li>Fixed a bug in <code>org.systemsbiology.math.SymbolEvaluator.getValue()</code> that was
+    causing inconsistent results in subsequent calls to <code>getValue()</code> when
+    the model is an SBML model with "substance" units of "mole" and when 
+    expression-value caching is enabled.   Thanks to Vincent Rouilly for 
+    submitting the bug report.</li>
+  <li>Fixed a bug in <code>org.systemsbiology.chem.app.EditorPane</code> that was causing
+    the editor to fail to "forget" the <code>org.systemsbiology.chem.IModelBuilder</code>
+    when the edit buffer is cleared.</li>
+  <li>Modified <code>org.systemsbiology.chem.SimulatorStochasticBase</code> to call
+    <code>org.systemsbiology.chem.SimulatorStochasticBase.checkDynamicalSymbolsValues()</code> to check all
+    dynamical symbols to see if any species value exceeds the maximum allowed for stochastic
+    simulations (approximately 9.0771993e+15), just before <code>addRequestedSymbolValues()</code>
+    is called.  This ensures that the stochastic simulators will continuously check to
+    see if any species values exceed the maximum allowed species value, throughout the
+    course of the simulation.</li>
+  <li>Changed <code>main()</code> method of <code>org.systemsbiology.chem.app.MainApp</code>,
+    to "final".</li>
+  <li>Added a static factory method <code>org.systemsbiology.util.AppConfig.get()</code>,
+    which finds the application configuration file and instantiates an <code>AppConfig</code>
+    object containing the configuration data loaded from the file.  Refactored
+    <code>org.systemsbiology.chem.app.MainApp</code> and all four main
+    programs in <code>org.systemsbiology.inference</code> (<code>EvidenceWeightedInferer</code>,
+    <code>SignificanceCalculator</code>, <code>DataNormalizer</code>, and <code>DataManager</code>)
+    to use this new method.</li>
+  <li>Created a two-argument constructor for
+    <code>org.systemsbiology.util.ExceptionNotificationOptionPane</code>.  This allows passing
+    a message text to be included in the body of the dialog box.</li>
+  <li>Refactored classes <code>SimulationLauncher</code>, <code>MainApp</code>, and
+    <code>EditorPane</code> in <code>org.systemsbiology.chem.app</code>, to use the
+    two-element constructor for <code>org.systemsbiology.util.ExceptionNotificationOptionPane.</code></li>
+  <li>Added a static method <code>org.systemsbiology.math.probability.Normal.cdf()</code>,
+    which is simply a wrapper to a call in the  Colt library .</li>
+  <li>Fixed bug in <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>
+    where the command-line simulation launcher was not obtaining the defualt 
+relative and absolute error tolerances for the simulator, so the user would get an error
+if both tolerances were not explicitly specified on the command-line.</li>
+  <li>Modified <code>org.systemsbiology.chem.app.ModelViewerCytoscape</code> so that
+     the <code>NetX</code> start-up dialog box does not appear at application start-up.
+     The dialog box asks you where to store your JNLP cache.  After this modification,
+     the dialog box should only appear the first time you actually use the 
+     "Tools -&gt; View... -&gt; cytoscape" feature.</li>
+</ul>
+</td>
+</tr>
+
+
+
+  <tr valign="top">
+<td><a href="../2.1.1/download.html">2.1.1</a></td>
+<td>2005/02/18</td>
+<td>
+<ul>
+  <li>Added an enumeration class defining the three allowed states of  
+      graphical user inferface table column sorting status, 
+      <code>org.systemsbiology.gui.SortingStatus</code>.</li>
+  <li>Added a <code>scrubIdentifier()</code> method to the <code>org.systemsbiology.data.DataFileDelimmiter</code>
+    class, which takes a string identifier and converts any instances of the <code>DataFileDelimiter</code> 
+    object's delimiter character (or string) into the "_" (underscore) character.</li>
+  <li>Modified <code>org.systemsbiology.gui.HelpBrowser</code> to cache the <code>HelpBroker</code>, 
+    which may help speed up the initialization process for the help browser.</li>
+  <li>Removed <code>cytoscape.jar</code> that was mistakenly being included in the
+    <code>ISBJava.tar.gz</code> distribution.</li>
+</ul>
+</td>
+</tr>
+
+
+<tr valign="top">
+<td><a href="../2.1.0/download.html">2.1.0</a></td>
+<td>2005/02/04</td>
+<td>
+<ul>
+  <li>Renamed <code>org.systemsbiology.gui.DataColumnSelector</code> to
+    <code>org.systemsbiology.gui.TableFrame</code>.</li>
+  <li>Moved the <code>org.systemsbiology.chem.SymbolEvaluationPostProcessorChemMarkupLanguage</code>
+    class to the <code>org.systemsbiology.chem.sbml</code> package.</li>
+  <li>Made <code>org.systemsbiology.chem.LoopIndex</code> an inner class of 
+    <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>.</li>
+  <li>Fixed a bug in <code>org.systemsbiology.util.ClassRegistry</code>, where 
+    certain JRE problems were causing a <code>NoClassDefFoundError</code> which
+    was not being properly handled.  This was causing the application to abort,
+    when a warning message to <code>STDERR</code> would suffice.  Now, when this
+    error occurs, a warning message is printed, and the JRE does not abort.</li>
+  <li>Fixed an XML syntax error in the boilerplate application configuration 
+    resource file <code>org.systemsbiology.chem.app.AppConfig.xml</code>.</li>
+  <li>Removed the <code>org.systemsbiology.pointillist</code> package from
+    the JavaDoc documentation, because it is still under development.</li>
+  <li>Fixed a problem with the build script <code>build.xml</code>, where the
+    resource JAR files for external libraries were not included in the compilation
+    classpath for compiling the test programs.</li>
+  <li>
+    Moved the <code>org.systemsbiology.math.MathFunctions</code> static functions
+    that implement vector arithmetic, to the new class 
+    <code>org.systemsbiology.math.DoubleVector</code>.  Updated all classes that
+    depend on these functions, to reference the new class name.
+  </li>
+  <li>
+    Added code to set the <code>org.systemsbiology.chem.ReservedSymbolMapper</code>
+    in the test programs in the <code>org.systemsbiology.chem.tp</code> package.
+    This code change is not necessary for the programs to work properly, but it
+    is useful from a pedagogical standpoint, since most uses of the API will 
+    want to be able to access the reserved symbols defined in the CMDL.
+  </li>
+  <li>
+    Defined a package of probability distribution functions, <code>org.systemsbiology.math.probability</code>.
+  </li>
+  <li>
+    Changed <code>org.systemsbiology.chem.SimulationAccuracyException</code>  to
+    <code>org.systemsbiology.math.AccuracyException</code>.
+  </li>
+  <li>
+    Improved some parser error messages in <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>.
+  </li>
+  <li>
+    Fixed a <code>NullPointerException</code> that was occurring in 
+    <code>org.systemsbiology.chem.app.EditorPane</code>,
+    when a parser error occurred in a parsing model text when there is no filename associated with the
+    editor buffer.
+  </li>
+  <li>
+    Refactored <code>org.systemsbiology.chem.app.ParserPicker</code> so that it
+    now has two methods, <code>selectParserAliasFromFileName()</code> and
+    <code>selectParserAliasManually()</code>.  The latter method no longer displays
+    a confirmation dialog, when the user cancels the parser selection dialog (it is
+    left up to the calling method to detect the null return value and issue the
+    confirmation dialog).
+  </li>
+  <li>
+    Fixed a bug in <code>org.systemsbiology.chem.app.EditorPane</code> where the
+    current directory was not being set, when &quot;save as&quot; operation is performed.
+  </li>
+  <li>
+    Fixed a bug in <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code> 
+    that was disallowing parenthetic mathematical expressions within a loop definition
+    statement.  Refactored some code in same class, to ensure more consistent mathematical
+    expression parsing in various contexts.  Modified same class to allow for a comma
+    character to appear within a mathematical expression, in preparation for allowing
+    the <code>min(a,b)</code> and <code>max(a,b)</code> functions within the 
+    <code>org.systemsbiology.math.Expression</code> class.
+  </li>
+  <li>
+    Modified <code>org.systemsbiology.math.Expression</code> to permit two-argument
+    functions in general, and the <code>min()</code> and <code>max()</code> functions
+    in particular.  Thanks to Adam Duguid for submitting the source code patch.
+  </li>
+  <li>
+    Fixed a bug in the <code>cdf()</code> method of the
+    <code>org.systemsbiology.math.probability.Maxwell</code> class, in which the
+    asymptotic limit of large argument was returning an incorrect value (greater than
+    1.0).
+  </li>
+  <li>
+    Added code to the <code>org.systemsbiology.math.probability.DistributionPrinter.print()</code>
+    method to print the cumulative distribution function (CDF), in addition to the
+    probability distribution function (PDF).
+  </li>
+  <li>
+    Added a file filter regular expression and a default file extension, to
+    each instance of the <code>org.systemsbiology.data.DataFileDelimiter</code>
+    class.
+  </li>
+  <li>
+    Updated the <code>org.systemsbiology.data.MatrixString</code> class to
+    accept a <code>org.systemsbiology.data.DataFileDelimiter</code> as a 
+    delimiter, instead of a <code>String</code> delimiter.  Fixed a potential
+    bug for the case of a space delimiter and a column-aligned data file.
+  </li>
+  <li>
+    Fixed a bug in <code>org.systemsbiology.math.ScientificNumberFormat.format()</code>
+    that was resulting in a negative argument always being formatted in scientific
+    notation.
+  </li>
+  <li>
+    Changed the <code>org.systemsbiology.data.DataFileDelimiter.forName()</code> method to
+    <code>get()</code>.
+  </li>
+  <li>
+    Fixed some incorrect error messages in <code>org.systemsbiology.chem.SimulatorDeterministicRungeKuttaFixed</code>,
+    for the case of an <code>org.systemsbiology.math.AccuracyException</code>.
+  </li>
+  <li>
+    Modified <code>org.systemsbiology.util.CommandLineApp</code> to permit
+    passing the string "null" as an argument modifier, to obtain a null modifier
+    for a command-line argument.
+  </li>
+  <li>
+    Modified <code>org.systemsbiology.chem.app.SimulationLauncher</code> and
+    <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code> to
+    allow disabling error checking for the fixed-stepsize Runge-Kutta integrator.
+  </li>
+  <li>
+    Modified the <code>org.systemsbiology.chem.Simulator.checkSimulationParametersForDeterministicSimulator</code>
+    method to allow a <code>null</code> parameter for the <code>maxRelativeError</code> and
+    <code>maxAbsoluteError</code> fields of the <code>org.systemsbiology.chem.SimulatorParameters</code>
+    class.  This change required some modifications to several of the <code>org.systemsbiology.chem.Simulator</code>
+    subclasses.
+  </li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../2.0.1/download.html">2.0.1</a></td>
+<td>2004/11/18</td>
+<td>
+<ul>
+  <li>
+  Fixed a bug in <code>org.systemsbiology.gui.DataColumnSelector</code>, which
+  was causing a <code>NullPointerException</code> when the "save" button is
+  clicked, when the selector object was constructed using the parameterized 
+  constructor.
+</li>
+<li>
+  Refactored <code>org.systemsbiology.chem.app.ModelExporter</code> to minimize
+  back-references to <code>org.systemsbiology.chem.app.MainApp</code>.
+</li>
+<li>
+  Refactored <code>org.systemsbiology.chem.app.SimulationLauncher</code> to minimize
+  back-references to <code>org.systemsbiology.chem.app.MainApp</code>.
+</li>
+<li>
+  Changed <code>org.systemsbiology.util.AppConfig.getProperty()</code> method
+  so that it is now public.
+</li>
+<li>
+  Modified <code>org.systemsbiology.util.ClassRegistry</code> to cache the
+  set of class names for classes implementing 
+  <code>org.systemsbiology.util.IAliasableClass</code>.  This way, we are
+  only searching the tree of all packages and classes once.  This dramatically
+  speeds up invocations of <code>buildRegistry()</code> for the second and
+  all subsequent instances of <code>ClassRegistry</code>.  
+</li>
+<li>
+  Created <code>org.systemsbiology.chem.IModelViewer</code> as an interface
+  for classes that implement a model-vizualization capability, whether graphical 
+  or textual.  Moved <code>org.systemsbiology.chem.app.CytoscapeViewer</code> to
+  <code>org.systemsbiology.chem.app.ModelViewerCytoscape</code>, which implements
+  this interface.  Modified 
+  <code>org.systemsbiology.chem.app.ModelViewerHumanReadable</code>
+  to implement this interface.  
+  Modified <code>org.systemsbiology.chem.app.MainMenu</code> to have a "View"
+  sub-menu containing the aliases of all classes implementing <code>IModelViewer</code>.
+</li>
+<li>
+  Modified <code>org.systemsbiology.chem.app.MainMenu</code> to have a "Export" 
+  sub-menu containing the aliases of all classes implementing <code>IModelExporter</code>.
+</li>
+<li>
+  Moved the <code>org.systemsbiology.chem.app.MainApp.handleWindowsArgumentMangling()</code>
+  method to the 
+  <code>fixWindowsCommandLineDirectoryNameMangling()</code> 
+  method in the <code>org.systemsbiology.util.FileUtils</code> class..
+</li>
+<li>
+  Created <code>org.systemsbiology.pointillist.IAction</code>, which
+  is now the interface implemented by all "Action" classes in Pointillist.
+</li>
+<li>
+  Moved the GUI part of <code>org.systemsbiology.pointillist.EditPreferencesAction</code> to
+  a new class, <code>org.systemsbiology.pointillist.EditPreferencesFrame</code>.
+</li>
+<li>
+  Fixed a bug in <code>NetworkIntegrationcAction</code>, <code>NormalizeAction</code>,
+  and <code>StatisticalTestsAction</code> that was causing a <code>NullPointerException</code>
+  when the output file already exists, and the user decided to cancel the operation at the
+  confirmation dialog box.
+</li>
+<li>
+  Modified <code>org.systemsbiology.pointillist.App</code> so that it keeps
+  track of all open <code>DataColumnSelector</code> frames for data files, and
+  when someone attemps to re-open a file that is already open, it simply raises
+  the correponding <code>DataColumnSelector</code> frame.  This required changes
+  to the 
+  <code>org.systemsbiology.pointillist.FileOpenAction</code> class also.
+</li>
+<li>
+  Modified <code>org.systemsbiology.pointillist.MatlabConnectAction</code> to
+  set the wait cursor, while the <code>MatlabConnectionManager.connect()</code>
+  method is being called.
+</li>  
+<li>
+  Removed the <code>org.systemsbiology.util.BrowserLauncher</code> class, 
+  because it is hacky, it is not being used, and it no longer works on 
+  Unix-type systems that do not have Netscape installed. 
+</li>
+<li>
+  Deleted unused class <code>org.systemsbiology.math.ISymbolValueMap</code>.
+</li>
+<li>
+  Added a line counter feature to <code>org.systemsbiology.chem.app.EditorPane</code>.
+</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../2.0.0/download.html">2.0.0</a></td>
+<td>2004/11/12</td>
+<td>
+<ul>
+<li>
+Fixed a bug in <code>org.systemsbiology.chem.app.SimulationResultsTable</code>,
+which was causing the table window to not be resizable.
+</li>
+<li>
+Fixed a bug in <code>org.systemsbiology.chem.app.EditorPane</code> in
+which the <code>Tools-&gt;Simulate</code> menu item was not being enabled
+after the first character was typed in the editor text area.
+</li>
+<li>
+Changed the <code>org.systemsbiology.util.URLUtils</code> class into
+the <code>org.systemsbiology.util.FileUtils</code> class.  Added 
+<code>getExtension()</code> and a <code>removeExtension()</code> methods.
+</li>
+<li>
+Restructed the GUI-related classes in <code>org.systemsbiology.chem.app</code>
+and <code>org.systemsbiology.util</code>, to move the commonly used
+GUI classes to <code>org.systemsbiology.gui</code>.  This includes
+<code>org.systemsbiology.util.FramePlacer</code>, 
+<code>org.systemsbiology.util.ImageTransferHandler</code>, 
+<code>org.systemsbiology.chem.app.FileChooser</code>, 
+<code>org.systemsbiology.chem.app.RegexFileFilter</code>, 
+<code>org.systemsbiology.chem.app.SimpleTextArea</code>, 
+<code>org.systemsbiology.chem.app.ExceptionDialogOperationCancelled</code>
+</li>
+<li>
+Modified <code>org.systemsbiology.util.ExceptionUtility</code> to
+allow passing any <code>Throwable</code> to <code>getStackTrace()</code>,
+instead of only the <code>Exception</code> subclass.
+</li>
+<li>
+Moved the code that disables double-clicking on a Swing component, from
+<code>org.systemsbiology.gui.FileChooser</code> to a new class
+<code>org.systemsbiology.gui.ComponentUtil</code>.
+</li>
+<li>
+Renamed the <code>org.systemsbiology.util.ExceptionUtility</code> class
+to <code>org.systemsbiology.util.ExceptionUtils</code>.
+</li>
+<li>
+Renamed the <code>org.systemsbiology.gui.ComponentUtil</code> class 
+to <code>org.systemsbiology.gui.ComponentUtils</code>.
+</li>
+<li>
+Fixed a bug in <code>org.systemsbiology.math.SignificantDigitsCalculator</code>,
+for case of <code>NaN</code> and <code>Infinity</code> 
+input to the <code>calculate()</code> method.
+</li>
+<li>
+Modified <code>org.systemsbiology.chem.ISimulator</code> to add a
+<code>canComputeFluctuations()</code> method.  Implemented this method
+in <code>org.systemsbiology.chem.Simulator</code>.  Modified the
+<code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code> to
+check this method and issue an error message, if the simulator returns false
+and the user has requested <code>-computeFluctuations</code>.
+</li>
+<li>
+Added a new class <code>org.systemsbiology.gui.DataColumnSelector</code>.
+</li>
+<li>
+Refactored the <code>org.systemsbiology.gui.FileChooser</code> class, to
+remove unnecessary methods that were provided adequately by the superclass.
+In particular, the <code>show()</code> was removed, in favor of the
+<code>showOpenDialog()</code>, <code>showSaveDialog()</code> and
+<code>showDialog()</code> methods in the superclass.
+</li>
+<li>
+Modified <code>org.systemsbiology.math.ScientificNumberFormat</code> class
+to allow for overriding the default symbols for not-a-number and infinity.
+Modified <code>org.systemsbiology.chem.TimeSeriesOutputFormat</code> to define
+the symbols for not-a-number and inifity, for the different output file formats.
+</li>
+<li>
+Fixed a bug in <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>,
+which was occurring when a macro reference is embedded within another macro definition.
+The bug was causing an exception for an undefined symbol.
+</li>
+<li>
+Fixed bug in <code>org.systemsbiology.chem.app.EditorPane</code> in which the
+file dirty bit was being set, when a file was closed.  This was prompting a
+needless dialog box about saving changes to the editor buffer, the next time
+the user attempted to load a model definition file.
+</li>
+<li>
+Modified <code>org.systemsbiology.math.Expression</code> to enable parsing
+of floating-point numeric literals in scientific notation.
+</li>
+<li>
+Added a new class <code>org.systemsbiology.data.DataFileDelimiter</code>,
+for enumerating the possible delimiters for text data files.</li>
+<li>
+Added a new class <code>org.systemsbiology.data.MatrixString</code>,
+for loading a data file into a matrix of String objects.</li>
+<li>
+When processing model definition files, the default locale encoding is now
+ignored, to ensure that model processing is consistent in all locales.
+Fixed bug in <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>
+that was using different encodings on different platforms.  This class now uses UTF-8 
+encoding on all platforms, for interpreting the CMDL model description from 
+the byte stream.  Files loaded with an "include" directive in any model builder,
+will now be processed in the same character encoding as the parent file.  Thus,
+in a CMDL file, when processing a "#include", the included file is required to be
+in UTF-8 encoding.
+</li>
+<li>
+Moved the <code>org.systemsbiology.util.Queue</code> class and all subclasses,
+as well as <code>org.systemsbiology.util.AbstractComparator</code> to the
+<code>org.systemsbiology.data</code> package.  Also moved the
+<code>SlidingWindowTimeSeriesQueue</code> class to the <code>org.systemsbiology.data</code>
+package.
+</li>
+<li>
+Moved the <code>org.systemsbiology.chem.app.HelpBrowser</code> and the
+classes <code>ExHelpSearchNavigator</code> and <code>ExHelpSearchNavigatorUI</code>
+to the <code>org.systemsbiology.gui</code> package.  Added some new mutator
+methods to the <code>HelpBrowser</code> class, to make it more flexible.
+</li>
+<li>
+Added method <code>addSuffixToFilename()</code> to the 
+<code>org.systemsbiology.util.FileUtils</code> class.
+</li>
+<li>
+Fixed a potential bug in <code>org.systemsbiology.chem.sbml.ModelBuilderMarkupLanguage</code>
+where SBML files were being read in the default
+locale encoding for text files, and not in the encoding specified in the
+XML file header.
+</li>
+<li>
+Moved the <code>processModel</code> method of the 
+<code>org.systemsbiology.chem.app.ModelProcessor</code>
+class into the <code>org.systemsbiology.chem.app.EditorPane</code> class.
+</li>
+<li>
+Fixed a bug (reported by Alex Kowald) in the CMDL in which an exception is 
+thrown, if a quoted string is embedded within a deferred-evaluation mathematical
+expression.  This prevents referencing a symbol name that contains
+an integer (e.g., an index) obtained from a mathematical expression,
+within the context of a deferred-evaluation mathematical expression.
+This bug potentially affects models in which the loop construct is used,
+in conjunction with reaction definitions with complex (deferred-evaluation)
+kinetic rate expressions.
+</li>
+<li>
+Renamed the Ant target <code>compiletests</code> to <code>compileTests</code>.
+</li>
+<li>
+Included the first version of the source code for Pointillist application,
+in the package <code>org.systemsbiology.pointillist</code>
+</li>
+<li>
+Added new class <code>org.systemsbiology.util.MatlabInterface</code> for 
+communicating with the Matlab console via a TCP/IP bridge.  This class is
+used by Pointillist for executing Matlab function calls..
+</li>
+<li>
+Modified <code>org.systemsbiology.gui.HelpBrowser</code> so that it
+initially sets the size of the frame to never more than 800x600.  
+</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.8.0/download.html">1.8.0</a></td>
+<td>2004/10/11</td>
+<td>
+<ul>
+<li>
+Fixed a bug in the build file that was preventing the source code from
+being included in the source distribution archives 
+<code>ISBJava.tar.gz</code> and <code>ISBJava.zip</code>.
+</li>
+<li>
+Modified the chemical model definition language to disallow user definition
+of a symbol that begins with an underscore character.  This ensures that
+user-defined symbols will not conflict with the names of automatically
+defined symbols (such as automatically defined chemical reaction names).
+</li>
+<li>
+Refactored <code>Model.java</code>, <code>Simulator.java</code>, and
+<code>ModelBuilderCommandLanguage.java</code> so that the internal symbol
+prefix does not appear as a quoted string in these classes, but is 
+abstracted to a String field variable of the 
+<code>org.systemsbiology.chem.Model</code> class.
+</li>
+<li>
+Modified <code>org.systemsbiology.chem.Model</code> so that internal
+symbols are never displayed in the listbox of symbols in the 
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> window,
+and the <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>
+text output.
+</li>
+<li>
+Modified build system to enable optimization during compilation, by default.
+</li>
+<li>
+Modified <code>org.systemsbiology.math.Expression</code> so that the
+<code>log()</code> command in the CMDL has been changed to the <code>ln()</code>
+command.  This was done for consistency with standard computer science notation,
+in which <code>ln()</code> represents the natural logarithm, and <code>log()</code> 
+represents the logarithm base 10.
+</li>
+<li>
+Added an <code>initialize()</code> method to
+<code>org.systemsbiology.util.SlidingWindowTimeSeriesQueue</code>, separate
+from the constructor, which can be used to re-initialize the data structure
+with a different number of data points.
+</li>
+<li>
+Added method <code>containsDelayedOrMultistepReaction()</code> to the
+<code>org.systemsbiology.chem.Model</code> class, so that the
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> can 
+query whether a <code>Model</code> contains a delayed or multi-step
+reaction.  This enables the simulation launcher to decide whether or
+not to display the &quot;number of history bins&quot; text field.
+</li>
+<li>
+Added a new text field &quot;number of history bins&quot; to the
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> user
+interface panel.  This field is only displayed if the 
+<code>org.systemsbiology.chem.Model</code> contains a delayed
+or multi-step reaction.  
+</li>
+<li>
+Added a new command-line option &quot;<code>-numHistoryBins</code>&quot; 
+to the <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>
+class.  This option enables the specification of the number of bins 
+that are to be used to store the past values of a species that participates
+in a delayed or multi-step reaction.  Added a new parameter <code>numHistoryBins</code>
+to <code>org.systemsbiology.chem.SimulatorParameters</code>, for passing this
+information to the simulator.  Modified 
+<code>org.systemsbiology.chem.DelayedReactionSolver</code> to allow
+changing the number of bins for storing the species value history.
+</li>
+<li>
+Removed the parameter <code>minNumSteps</code> from the
+<code>org.systemsbiology.chem.SimulatorParameters</code> class,
+and all of the <code>org.systemsbiology.chem.Simulator</code> subclasses
+that depend on this parameter.  This parameter was replaced with a 
+floating-point parameter <code>stepSizeFraction</code>, which
+specifies the initial step size (as a fraction of the total time of
+the simulation) in the case of a deterministic/ODE simulator, and 
+specifies the minimum number ratio of the reaction time to the
+leap time, in the case of the Tau-Leap simulators.
+</li>
+<li>
+Changed the variable <code>flagGetFinalSymbolFluctuations</code> in
+<code>org.systemsbiology.chem.SimulatorParameters</code> to
+<code>computeFluctuations</code>, for consistency with the parameter
+name in the user interface class 
+<code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>.
+</li>
+<li>
+Added a new method <code>checkSimulationParameters</code> to the
+<code>org.systemsbiology.chem.ISimulator</code> interface.  This
+allows validating a set of parameters, without actually running a
+simulation.  If the simulation parameters are determined to be invalid,
+an exception is thrown.
+</li>
+<li>
+Added the option <code>testOnly</code> to
+<code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>.
+This option instructs the simulation launcher to process the model
+definition file, validate the simulation parameters, and then exit.
+It can be used to test a model and simulation parameters for
+correctness, without having to execute a simulation.
+</li>
+<li>Removed the intermediate species history storage in 
+<code>org.systemsbiology.chem.DelayedReactionSolver</code>,
+for performance reasons, since it was not being used by the
+<code>computeRate()</code> method.
+</li>
+<li>
+Refactored the code for validating simulator parameters to
+a method <code>checkSimulationParameters()</code> in 
+<code>org.systemsbiology.chem.Simulator</code>.  This method
+calls an abstract method <code>checkSimulationParametersImpl</code>
+that must be provided by each <code>Simulator</code> subclass,
+in order to allow the subclass to perform its own simulator-specific
+simulation parameter validation.
+</li>
+<li>
+Modified <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>
+to print out the average number of iterations per second, during the
+last status statistics-collecting interval.
+</li>
+<li>
+Fixed a serious inefficiency in <code>org.systemsbiology.chem.Simulator</code>
+in which the <code>clearExpressionValueCaches()</code> method was looping
+over an array of all non-dynamic symbols, including those symbols that
+were not expressions.  Modified to loop only over an array of non-dynamic
+symbols that are expressions.  Changed the aforementioned method to be
+non-static, so that the subclasses of <code>Simulator</code> do not have
+to pass the array data structure to the method.
+</li>
+<li>
+Changed the &quot;print&quot; output type so that it now is called
+&quot;table&quot;, in the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+dialog box.  In the same dialog, changed the output type
+&quot;file&quot; to &quot;store&quot;.  
+Add a <code>org.systemsbiology.chem.app.SimulationResultsTable</code>
+class that displays the simulation results in a <code>JTable</code>.  
+
+</li> 
+<li>
+Changed <code>org.systemsbiology.chem.app.Plotter</code> into
+<code>org.systemsbiology.chem.app.SimulationResultsPlot</code>, and
+made it extend <code>JFrame</code>.  The class now displays the
+model name, date/time, and simulator alias in a <code>JLabel</code> 
+outside the plot image.
+</li>
+<li>
+Modified <code>org.systemsbiology.chem.app.SimulationLauncher</code> to
+keep a <code>JList</code> of past simulation results, and to allow
+re-generating a plot or simulation results table, from the past simulation
+results.  This list is re-initialized each time the model is re-processed.
+</li>
+<li>
+Added classes <code>org.systemsbiology.math.SignificantDigitsCalculator</code>
+and <code>org.systemsbiology.math.ScientificNumberFormat</code>, which are
+used to display a floating-point number with the number of significant 
+digits calculated from specified absolute and relative error tolerances.
+</li>
+<li>
+Added a function <code>log10()</code> to the 
+<code>org.systemsbiology.math.MathFunctions</code> class.  This is 
+used by <code>org.systemsbiology.math.SignificantDigitsCalculator</code>.
+</li>
+<li>
+Added new methods <code>placeInCascadeFormat()</code> and
+<code>placeInCenterOfScreen()</code> to <code>org.systemsbiology.util.FramePlacer</code>,
+that accept a <code>JFrame</code> as an argument.  These are used in
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> for placing the
+<code>SimulationResultsTable</code> and <code>SimulationResultsPlot</code> frames.
+Modified the method call in <code>org.systemsbiology.chem.app.MainApp</code>, accordingly.
+</li>
+<li>
+Moved <code>generateSimulationResultsLabel()</code> method from
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> to
+<code>org.systemsbiology.chem.SimulationResults</code> class, so that
+applications using the programmatic <code>org.systemsbiology.chem.ISimulator</code> API
+will have access to the simulator results label, for display purposes.  Added the
+model name to the <code>SimulationResults</code> class as a data member.
+</li>
+<li>
+Fixed a potential bug in <code>org.systemsbiology.chem.Simulator</code> 
+and <code>org.systemsbiology.chem.SimulatorStochasticTauLeapBase</code> so that
+the maximum allowed relative error cannot be greater than unity.
+</li>
+<li>
+Modified <code>SimulationLauncherCommandLine</code> to use the
+<code>org.systemsbiology.math.ScientificNumberFormat</code> class, for
+formatting the floating point values that it prints out.
+</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.7.0/download.html">1.7.0</a></td>
+<td>2004/06/08</td>
+<td>
+<ul>
+<li>
+Added the capability to detect the &quot;substance&quot; units in an SBML model,
+to the SBML-parsing library, <code>SBMLReader</code>.  Modified the
+<code>ModelBuilderMarkupLanguage</code> to use this capability to configure
+the <code>SymbolEvaluationPostProcessorChemMarkupLanguage</code> to auto-convert
+species symbols appearing in formulas, from molecules to molar concentration.
+</li>
+<li>
+Fixed a bug in the <code>org.systemsbiology.util.ClassRegistry</code> such that
+the registry was not working properly, when an application using <code>ISBJava</code>
+is deployed using Java Web Start.  The <code>ClassRegistry</code> class was not
+using the correct method to obtain the current user-space class loader.
+</li>
+<li>
+Overhauled the <code>org.systemsbiology.util.Queue</code> class so that it is now an abstract base
+superclass for <code>IndexedPriorityQueue</code>, <code>PriorityQueue</code>,
+and <code>ListQueue</code>.  This enables the alternate use of <code>PriorityQueue</code>
+and <code>ListQueue</code> within <code>org.systemsbiology.chem.DelayedReactionSolver</code>,
+for storing the expected times for a delayed reaction to produce product molecules.
+</li>
+<li>
+Made <code>org.systemsbiology.math.SymbolEvaluationPostProcessor</code> 
+cloneable, which is necessary because some of the post processor class
+implementations are stateful and therefore need to be cloned by the
+<code>org.systemsbiology.chem.Simulator</code> before they can be used.
+Each <code>Simulator</code> needs to have its own <em>separate</em> copy 
+of the applicable <code>SymbolEvaluationPostProcessor</code> object.  Otherwise,
+models loaded from SBML with substance units of &quot;mole&quot; will not
+function properly in any but the first simulator selected in the simulation
+controller window.
+</li>
+<li>
+Modified the <code>org.systemsbiology.chem.sbml.ModelExporterMarkupLanguage</code> 
+so that it preserves the substance units that the model originally had when
+it was imported, when exporting a model to SBML.
+</li>
+<li>
+Modified the <code>org.systemsbiology.chem.odetojava.SimulatorOdeToJavaBase</code>
+so that it takes a smaller initial step size, when there are delayed reactions in 
+the model.
+</li>
+<li>Modified the <code>org.systemsbiology.chem.sbw.SimulationModule</code> so that
+it prints out a message indicating that the simulators have been registered
+or initiated.</li>
+<li>Fixed potential <code>ArrayIndexOutOfBoundsException</code> in
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> if there is
+a class loading problem, and the <code>ClassRegistry</code> does not 
+discover any <code>org.systemsbiology.chem.ISimulator</code> classes 
+in the classpath.</li>
+<li>Modified the <code>org.systemsbiology.chem.TimeSeriesSymbolValuesReporter</code>
+class so that it prints symbol values in scientific notation.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.SymbolEvaluatorChem.getExpressionValue()</code> 
+where it was not finding symbols in the local symbols map.  This was causing a
+<code>NullPointerException</code> when an SBML model with local reaction parameters, 
+is simulated using the <code>org.systemsbiology.chem.SimulatorStochasticTauLeapComplex</code> 
+simulator.</li>
+<li>Moved the <code>org.systemsbiology.chem.Reaction.computeRatePartialDerivative()</code>
+method to the <code>org.systemsbiology.chem.Simulator</code> class, in order to fix
+a bug where SBML models with local parameters were not being simulated correctly.</li>
+<li>Modified the <code>org.systemsbiology.chem.DelayedReactionSolver</code> so that
+multistep and delayed reactions are handled completely separately.  Fixed some problems
+with how delayed reactions were being numerically solved in the ODE simulators.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.6.4/download.html">1.6.4</a></td>
+<td>2004/04/05</td>
+<td>
+<ul>
+<li>Added the <code>IVisitor</code> interface to the <code>org.systemsbiology.math.Expression</code>
+class, which makes it possible to call some user-constructed code on every node of a
+parsed expression tree.  This was needed in order to fix some inefficiencies in the
+Gibson-Bruck simulator, as described below.</li>
+<li>Refactored the <code>ReactionParticipant</code> inner class code from the
+<code>org.systemsbiology.chem.Reaction</code> class to become a
+separate class.  This makes it less cumbersome for the Simulator class to
+refer to the <code>ReactionParticipant.Type</code> enumerations.</li>
+<li>Moved all of the data structures used by the <code>Simulator</code>
+class tree, out of the <code>org.systemsbiology.chem.Reaction</code> class, and
+into the <code>org.systemsbiology.chem.Simulator</code> class.</li>
+<li>Fixed an inefficiency in the <code>SimulatorStochasticGibsonBruck</code>,
+where reaction rates for reactions with custom reaction rate expressions, were
+being recomputed after every iteration.  Now, the <code>Expression.IVisitor</code>
+interface is used to build a dependency tree of the reaction rate expression.
+The reaction rate is then recomputed only when one of the dynamical elements it is 
+dependent upon, has changed.</li>
+<li>Split the <code>SimulatorStochasticGillespieTauLeap</code> into two
+separate simulators, <code>SimulatorStochasticTauLeapComplex</code> and
+<code>SimulatorStochasticTauLeapSimple</code>.  This allows for using
+different algorithms for calculating the leap time, for complex and
+simple models.</li>
+<li>Modified the <code>updateSymbolValuesForReaction()</code> method in the
+<code>SimulatorStochasticBase</code> class, in order to improve speed.</li>
+<li>Changed the <code>org.systemsbiology.chem.DelayedReactionSolver</code> class
+so that it is no longer a subclass of <code>org.systemsbiology.math.Expression</code>.
+Fixed a problem with the <code>org.systemsbiology.chem.DelayedReactionSolver.computeValue()</code>
+where the delay was artificially long in some cases, and renamed the method 
+<code>computeRate()</code>.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.6.3/&installerDownloadRelURL;">1.6.3</a></td>
+<td>2004/03/26</td>
+<td>
+<ul>
+<li>Fixed a bug in <code>org.systemsbiology.chem.sbml.ModelBuilderMarkupLanguage</code>,
+that was reported by Adam Margolin.  This bug would cause an error in some cases, where
+there are more boundary species than dynamical species in a model.</li>
+<li>Improved the speed of the <code>SimulatorStochasticGillespieTauLeap</code> 
+simulator, for large models with complex reaction rate expressions.</li>
+<li>Made some speed improvements to <code>org.systemsbiology.math.Expression.computeValue()</code></li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.6.2/&installerDownloadRelURL;">1.6.2</a></td>
+<td>2004/03/22</td>
+<td>
+<ul>
+<li>Implemented expression value caching for the deterministic simulators.
+This improves simulation performance for complex models containing nested 
+sub-expressions.  Removed the <code>usesExpressionValueCaching()</code>
+method from the <code>org.systemsbiology.chem.Simulator</code> class and 
+its subclasses.  Refactored <code>clearExpressionValueCaches()</code> from
+the simulator subclasses to the <code>Simulator</code> parent class, and
+made this method a static method to improve performance.</li>
+<li>Modified the <code>SimulatorStochasticBase</code> so that if the initial
+value for a dynamic species is not an integer, it will use the random number
+generator to select the nearest integer, in a weighted fashion, so that
+on average the initial value is equal to the floating-point value specified.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>,
+such that the output file format specified on the command-line was being ignored.</li>
+<li>Modified <code>org.systemsbiology.chem.Reaction.computeRate()</code> so that it
+correctly handles fractional species populations for non-dynamic (boundary) 
+species, for the case of stochastic simulations.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.6.1/&installerDownloadRelURL;">1.6.1</a></td>
+<td>2004/03/12</td>
+<td>
+<ul>
+<li>Fixed some instability problems with the 
+<code>org.systemsbiology.chem.SimulatorStochasticGillespieTauLeap</code> simulator.</li>
+<li>Optimized the 
+<code>org.systemsbiology.chem.SimulatorStochasticGillespieTauLeap</code> simulator.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.6.0/&installerDownloadRelURL;">1.6.0</a></td>
+<td>2004/03/10</td>
+<td>
+<ul>
+<li>Added a new stochastic simulator,
+<code>org.systemsbiology.chem.SimulatorStochasticGillespieTauLeap</code>.</li>
+<li>Made some performance improvements to the
+<code>org.systemsbiology.util.Queue</code> class, and added a new
+<code>peekNext()</code> method that is now used by the 
+<code>org.systemsbiology.chem.DelayedReactionSolver</code>.</li>
+<li>Made several speed improvements to the
+<code>org.systemsbiology.util.PriorityQueue</code> class, which
+also required a slight change to the
+<code>org.systemsbiology.util.IndexedPriorityQueue</code> class.</li>
+<li>Added the <code>getExpressionValue()</code> method to the
+<code>org.systemsbiology.math.Value</code> class and the
+<code>org.systemsbiology.math.SymbolEvaluator</code> class.</li>
+<li>Changed several classes to type <code>final</code>, to
+improve run-time performance.</li>
+<li>Added several new methods to the <code>Expression</code> class:
+<code>add()</code>, <code>multiply()</code>, <code>subtract()</code>
+<code>divide()</code>, <code>negate()</code>, and <code>square()</code>.  
+These new methods are used by the <code>SimulatorStochasticGillespieTauLeap</code> 
+simulator, and the <code>Reaction</code> class.</li>
+<li>Changed the <code>simulate()</code> method to return
+a <code>SimulationResults</code> object, to allow for different
+and more complex types of simulation results.</li>
+<li>Switched the <code>org.systemsbiology.chem.DelayedReactionSolver</code>
+to using a faster <code>Queue</code> data structure, instead of the
+slower <code>PriorityQueue</code> data structure.</li>
+<li>Added a feature whereby the <code>Simulator</code> classes are
+now capable of computing the fluctuations of dynamical symbols (species),
+at the final time point of the simulation.  For stochastic simulators,
+a direct ensemble average calculation is done to obtain the fluctuations,
+in <code>org.systemsbiology.chem.SimulatorStochasticBase</code>..
+For ODE simulators, the Jacobian of the model is used to obtain an
+estimate of the fluctuations, in 
+<code>org.systemsbiology.chem.SteadyStateAnalyzer</code>.</li>
+<li>Refactored the <code>org.systemsbiology.math.SymbolEvaluator</code>
+class and subclasses, to improve modularity and performance.  This
+resulted in the creation of the
+<code>org.systemsbiology.chem.ReservedSymbolMapperChemCommandLanguage</code>
+class, and the
+<code>org.systemsbiology.chem.SymbolEvaluationPostProcessorChemMarkupLanguage</code>
+class, and the removal of the
+<code>org.systemsbiology.chem.SymbolEvaluatorChemCommandLanguage</code> class and the
+<code>org.systemsbiology.chem.SymbolEvaluatorChemMarkupLanguage</code> class.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.ModelBuilderCommandLanguage</code>
+where a symbol defined within an included file, would never appear as a species
+in the containing model, even if it is included as a participant in a reaction.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.odetojava.SimulatorOdeToJavaBase</code>
+where the initial step size was too large, in the case of large <code>stopTime</code>,
+in models with a delayed reaction with a large delay time.  Fixed a similar bug in
+<code>org.systemsbiology.chem.SimulatorDeterministicBase</code>, so that it
+correctly calculates the initial step size, for cases of a delayed single-step
+reaction.</li>
+<li>Fixed a problem in the <code>org.systemsbiology.chem.Reaction</code> class, that was 
+causing stochastic simulations with a non-integer initial value for species populations,
+to become unstable.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.5.2/&installerDownloadRelURL;">1.5.2</a></td>
+<td>2004/02/25</td>
+<td>
+<ul>
+<li>Modified the <code>org.systemsbiology.math.Expression</code>
+class so that it is possible to use a custom <code>SymbolPrinter</code>
+class to print symbols in any format desired.  This is used by the
+<code>org.systemsbiology.chem.sbml.ModelExporterMarkupLanguage</code>
+to export a model built from CMDL, into SBML.</li>
+<li>Fixed bugs in <code>org.systemsbiology.chem.sbml.ModelExporterMarkupLanguage</code>,
+so that it now exports correct <code>kineticLaw</code> formulas in
+the case where the model was originally built from a CMDL description.</li>
+<li>Removed the <code>SpeciesRateFactorEvaluator</code> class and
+subclasses, for performance reasons.</li>
+<li>Created a new <code>SymbolEvaluatorChem</code> class and subclasses,
+to handle the different ways that <code>Species</code> symbols are
+interpreted in models built from SBML and CMDL.</li>
+<li>Fixed a problem whereby formulas in SBML models were not
+being interpreted correctly by the simulator; species symbols
+were not being interpreted as representing a concentration.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.5.1/&installerDownloadRelURL;">1.5.1</a></td>
+<td>2004/02/24</td>
+<td>
+<ul>
+<li>Fixed a bug in how the &quot;secs remaining&quot; text field in
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> behaves
+when the &quot;Pause&quot; button is pressed, to pause the simulation.</li>
+<li>The progress bar and &quot;secs remaining&quot; text field in
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> are now 
+always visible, rather than only when a simulation is running.</li>
+<li>Fixed a bug in how the &quot;secs remaining&quot; text field in
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> behaves
+when the &quot;Cancel&quot; button is pressed, to cancel the simulation.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.5.0/&installerDownloadRelURL;">1.5.0</a></td>
+<td>2004/02/13</td>
+<td>
+<ul>
+<li>Major reorganization of the source code tree.  This will make it easier
+to compile the tree without optional external libraries, such as 
+<code>odeToJava</code> and <code>SBMLReader</code>.  It will also make it
+easier to reuse certain classes that have been refactored to the
+<code>org.systemsbiology.util</code> and <code>org.sytemsbiology.chem</code>
+packages.</li>
+<li>Changed the <code>org.systemsbiology.math.SymbolEvaluator</code> abstract 
+class and its derived classes, in order to increase the speed of the
+<code>SymbolEvaluator.getValue(Symbol)</code> method.</li>
+<li>Changes to the <code>org.systemsbiolgoy.math.MutableDouble</code> class,
+for performance improvement.</li>
+<li>Refactored the <code>getIndexedValue()</code> and
+<code>getIndexedValueWithCaching()</code> methods of the
+<code>org.systemsbiology.math.Symbol</code> class to the
+<code>org.systemsbiology.math.SymbolEvaluator</code> class,
+which is the more appropriate place for this functionality.  Also
+made all data field members of the <code>Symbol</code> class
+package-visible.  This will also improve speed by preventing 
+unnecessary function calls in the dominant-case of processing a 
+<code>SymbolEvaluator.getValue(Symbol)</code> invocation.</li>
+<li>Removed the unneeded <code>initialize()</code> method on the
+<code>org.systemsbiology.chem.DelayedReactionSolver</code> class.</li>
+<li>Renamed the <code>checkIfCancelled()</code> method of the
+<code>org.systemsbiology.chem.SimulationController</code> class
+to <code>handlePauseOrCancel</code> method.  Made all methods 
+of this class final, which may improve speed.</li>
+<li>Created a <code>org.systemsbiology.chem.SimulationProgressReporter</code>
+class that gives periodic updates (with a customizable interval) on the
+progress of the simulation (fraction complete, number of iterations,
+and timestamp of the update.</li>
+<li>Updated the <code>org.systemsbiology.chem.Simulator</code> to
+use a customizable update interval for both the check of the
+<code>SimulationController</code> status (for pause or cancel) as
+well as status updates through the <code>SimulationProgressReporter</code>.
+Added an abstract method <code>isStochasticSimulator()</code> to the
+<code>Simulator</code> class, and removed the method from the 
+<code>ISimulator</code> interface, so that independent 
+<code>ISimulator</code> class implementations do not need to 
+implement this method.</li>
+<li>Created a new class <code>org.systemsbiology.chem.TimeSeriesOutputFormat</code>
+to replace the inner class
+<code>org.systemsbiology.chem.TimeSeriesSymbolValuesReporter.OutputFormat</code>.
+This makes it somewhat easier to use the <code>TimeSeriesSymbolValuesReporter</code>
+class.</li>
+<li>Removed needless call to <code>clearExpressionValueCaches</code> in 
+<code>org.systemsbiology.chem.SimulatorStochasticGillespie</code> and in
+<code>org.systemsbiology.chem.SimulatorStochasticGibsonBruck</code>.   This
+gives a small increase in the speed of these two simulators.</li>
+<li>Made the <code>ISimulator.initialize()</code> method no longer take
+<code>SimulationController</code> as an argument.  Instead, the simulation
+controller (if desired) is set using the <code>setController()</code> method
+on the <code>ISimulator</code> interface.</li>
+<li>Added a new progress bar control to the 
+<code>org.systemsbiology.chem.app.SimulationLauncher</code>.</li>
+<li>Changed the <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>
+to allow for optionally printing out progress information to <code>stderr</code>,
+including the expected &quot;time to completion&quot; of the simulation, in seconds.</li>
+<li>Modifided the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+to show the expected &quot;time to completion&quot; of the simulation, in seconds.</li>
+<li>Fixed a problem in the <code>jfreechart.jar</code> archive that
+was causing error messages on start-up of the
+<code>org.systemsbiology.chem.app.MainApp</code> class.</li>
+<li>All external libraries needed in order to compile the
+&appName; library, are now included in the downloadable installer
+for &appName;.  The external libraries are installed as JAR files
+into the &quot;<code>extlib</code>&quot; subdirectory of the
+user-selected installation directory.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.4.4/&installerDownloadRelURL;">1.4.4</a></td>
+<td>2004/02/10</td>
+<td>
+<ul>
+<li>Fixed a bug in <code>org.systemsbiology.chem.SimulatorOdeToJavaBase</code>, in which
+the simulator was failing to delete the temporary file containing the simulation results.
+This was cluttering up the temporary files directory with old (unneeded) data files.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.4.3/&installerDownloadRelURL;">1.4.3</a></td>
+<td>2004/02/06</td>
+<td>
+<ul>
+<li>Created a new program <code>org.systemsbiology.chem.app.SimulationLauncherCommandLine</code>
+that runs a simulation in batch mode, saving the results to a file that the user specifies.</li>
+<li>Fixed a bug in <code>org.systemsbiology.util.CommandLineApp</code> regarding
+arguments with short string lengths, causing problems in the method
+<code>checkAndHandleHelpRequest</code>.</li>
+<li>Refactored the string 
+<code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage.NAMESPACE_IDENTIFIER</code>
+to the <code>org.systemsbiology.chem.Model</code> class.</li>
+<li>Added new method <code>getIterationCounter()</code> to the 
+<code>org.systemsbiology.chem.ISimulator</code> interface.  This allows
+users of the simulators to obtain the number of iterations in the previously
+run simulation.</li>
+<li>Converted integer simulation parameters in <code>org.systemsbiology.chem.SimulatorParameters</code>
+to type &quot;long&quot;.</li>
+<li>The <code>org.systemsbiology.chem.SimulatorStochasticBase</code> simulators now
+keep track of the total number of iterations across the entire ensemble average.</li>
+<li>Removed all <code>assert()</code> statements from performance-critical code
+sections within the <code>org.systemsbiology.chem.SimulatorStochasticGillespie</code>
+and the <code>org.systemsbiology.chem.SimulatorStochasticGibsonBruck</code> simulators,
+to increase runtime speed.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.4.2/&installerDownloadRelURL;">1.4.2</a></td>
+<td>2004/02/05</td>
+<td>
+<ul>
+<li>Fixed a bug in <code>org.systemsbiology.chem.app.EditorPane</code>
+where if the user had made a change to the model definition editor buffer,
+and then selected &quot;open&quot; to open a new file, the system would
+disregard the user&apos;s answer to the confirmation dialog box.  If the
+user answered &quot;no&quot; to the prompt for whether to proceed, the
+system would still open the file and discard the previous edits to the buffer.</li>
+<li>Modified the <code>org.systemsbiology.chem.Simulator</code> class
+and the <code>org.systemsbiology.chem.SimulatorDeterministicBase</code> class,
+and the <code>org.systemsbiology.chem.SimulatorOdeToJavaBase</code> class, so that
+the <code>initializeDynamicSymbolAdjustmentVectors()</code> method is only 
+called for deterministic (not stochastic) simulators.  This prevents huge
+unnecessary memory allocations when performing purely stochastic simulations
+of models with a very large number of reactions and species.</li>
+<li>Fixed problem where an <code>OutOfMemoryError</code> occuring within
+the <code>org.systemsbiology.chem.Simulator.initialize()</code> method was
+not being caught and handled properly.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+so that the <code>org.systemsbiology.chem.Simulator.initialize()</code>
+method is no longer called on the AWT event thread.  Instead, it is called
+from the <code>org.systemsbiology.chem.app.SimulationLauncher.SimulationRunner</code>
+thread.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+to rename the &quot;stop&quot; button to the &quot;pause&quot; button.</li>
+<li>Modified the <code>org.systemsbiology.chem.SimulatorDeterministicBase</code>
+so that it calls the <code>org.systemsbiology.chem.DelayedReactionSolver.update()</code>
+directly, rather than implicitly through the <code>DelayedReactionSolver.computeValue()</code>
+method.  This increases stability of the numeric integrator, as well as speed.</li>
+<li>Refactored the interation counter to the <code>org.systemsbiology.chem.Simulator</code>
+class, from the <code>SimulatorStochasticBase</code> and <code>SimulatorDeterministicBase</code>
+classes.  The new method is 
+<code>Simulator.incrementIterationCounterAndCheckForCancellation()</code>.</li>
+<li>Modified the <code>SimulatorOdeToJavaBase</code> and 
+<code>SimulatorOdeToJavaRungeKuttaAdaptive</code> classes, to permit pause/cancel
+of the running simulation via the <code>SimulationController</code> class.</li>
+<li>Modified the <code>SimulatorOdeToJavaBase</code> class to call the
+<code>DelayedReactionSolver.update()</code> method after each successful iteration
+of the integrator.</li>
+<li>Modified the <code>org.systemsbiology.math.Expression</code> class to add the
+<code>computePartialDerivative()</code> method, which computes the symbolic partial
+derivative of a given <code>Expression</code>, with respect to a given <code>Symbol</code>.</li>
+<li>Removed support for the functions <code>gammaln()</code> and <code>rand()</code> in 
+mathematical expressions.  The <code>rand()</code> function causes problems with
+the expression value cachying feature introduced in version 1.4.0, and the
+<code>gammaln()</code> code is likely encumbered with license issues.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.4.1/&installerDownloadRelURL;">1.4.1</a></td>
+<td>2004/02/02</td>
+<td>
+<ul>
+<li>Fixed a bug in <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>
+where an exception is thrown if an include directive occurs after a symbol definition.</li>
+<li>Modified the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>
+so that it gives a more comprehensible error message if the user attempts to define
+a symbol name that is reserved for a default model element.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.4.0/&installerDownloadRelURL;">1.4.0</a></td>
+<td>2004/01/30</td>
+<td>
+<ul>
+<li>Optimized the <code>org.systemsbiology.chem.Reaction.computeRate()</code> method.</li>
+<li>Rewrote the <code>org.systemsbiology.math.Expression.valueOfSubtree()</code> method, 
+to improve speed.</li>
+<li>Optimized the accessor/mutator methods in the 
+<code>org.systemsbiology.math.MutableDouble</code> class.</li>
+<li>Added a caching feature for expression values
+in the <code>org.systemsbiology.math.Value</code> class.</li>
+<li>Optimized the <code>org.systemsbiology.math.Symbol</code> class,
+and modified it to use the caching feature added to the 
+<code>org.systemsbiology.math.Value</code> class.</li>
+<li>Modified the stochastic simulators
+<code>org.systemsbiology.chem.SimulatorStochasticGillespie</code> and
+<code>org.systemsbiology.chem.SimulatorStochasticGibsonBruck</code> 
+to use the expression value-caching feature in the <code>Value</code> class.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code> so that
+it remembers the directory of the last output file selected, when the output type
+is set to &quot;File&quot;.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code> so that
+the Cancel/Stop/Resume buttons are disabled in the OdeToJava simulators, which do
+not allow interruption by the <code>org.systemsbiology.chem.SimulationController</code>.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code> and the
+<code>org.systemsbiology.chem.TimeSeriesSymbolValuesReporter</code> so that different
+CSV output file formats are supported, for saving simulation results to a file.  This
+also makes it more clear that the choice of
+&quot;File&quot; output type, refers to a comma-separated-value file format.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.MainApp</code> and <code>.MainMenu</code> 
+classes so that they now support the &quot;view model in human-readable format&quot; feature.
+Created a new <code>org.systemsbiology.chem.scripting.ModelExporterHumanReadable</code> model
+exporter, to allow for saving a model description in human-readable format.</li>
+<li>Modified the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>
+to fix a hard-to-understand error message that occurs when there is a syntax error inside 
+nested loops.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code> to permit
+the user to specify a texual label that is added as a subtitle to the simulation results 
+plot.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.app.ExHelpSearchNavigatorUI</code> 
+where the search hit index was not getting re-set to zero for a subsequent search.</li>
+<li>Added a text area to the <code>org.systemsbiology.chem.app.ExHelpSearchNavigatorUI</code>, 
+that explains the &quot;jump to the next search hit&quot; feature.</li>
+</ul>
+</td>
+
+</tr>
+
+<tr valign="top">
+<td><a href="../1.3.1/&installerDownloadRelURL;">1.3.1</a></td>
+<td>2004/01/27</td>
+<td>
+<ul>
+<li>Fixed a bug in the <code>ModelBuilderCommandLanguage</code> for the case where a
+macro definition contains a loop construct.</li>
+<li>Fixed a bug in the <code>ModelBuilderCommandLanguage</code> for the case where a 
+reaction definition statement comes after a loop construct.</li>
+<li>Modified the <code>ModelBuilderCommandLanguage</code> to allow the value of
+a <code>SymbolValue</code> to be redefined, as long as the symbol has not been promoted to a
+<code>Species</code>, <code>Reaction</code>, <code>Parameter</code>, or <code>Compartment</code>
+at the point where the value of the symbol is redefined.  The purpose of this feature is
+to permit the user to define a template definition with an &quot;output&quot; parameter.</li>
+</ul>
+</td>
+
+</tr>
+
+<tr valign="top">
+<td><a href="../1.3.0/&installerDownloadRelURL;">1.3.0</a></td>
+<td>2004/01/26</td>
+<td>
+<ul>
+<li>Added a template feature to the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>.</li>
+<li>Refactored the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code> class 
+to use the <code>java.io.StreamTokenizer</code> for initial tokenization pass.  Improved syntax error
+detection by rewinding the token stream completely to the beginning of the statement, 
+before calling the handler function for a statement.</li>
+<li>Fixed a bug in the <code>org.systemsbiology.chem.scripting.ModelBuilderMarkupLanguage</code> where
+it was not catching the case of a parameter defined without any value (or parameter rule) being provided.
+This was leading to a <code>NullPointerException</code> within the <code>org.systemsbiology.chem.Model</code>
+class.</li>
+<li>Added support to the 
+<code>org.systemsbiology.chem.scripting.ModelBuilderMarkupLanguage</code> 
+for reading an SBML model containing a reaction with an intrinsic time delay.</li>
+<li>Added a function <code>isFunctionName()</code> to the <code>org.systemsbiology.math.Expression</code>
+class, that is used to determine if a given string matches any known built-in mathematical function
+names.</li>
+<li>Moved the <code>isValidSymbol()</code> method from the
+<code>org.systemsbiology.math.Symbol</code> class to the
+<code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>, which moves
+the naming policy out of the base <code>Symbol</code> class and into a more appropriate
+layer; this change was also to facilitate the template definition feature in the CMDL.</li>
+<li>Modified the <code>org.systemsbiology.math.SymbolEvaluatorHashMap</code> to add a new
+protected <code>getValue(String)</code> method, which is used by the 
+<code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code> class in
+processing template references.</li>
+<li>Improved error handling in the <code>org.systemsbiology.chem.app.MainApp</code> class,
+by adding debugging code to standard error in cases of exceptions.  Removed an unneeded exit()
+method from same class.</li>
+<li>Fixed the <code>org.systemsbiology.chem.app.ModelProcessor</code> so that it no longer
+calls <code>System.exit()</code> when an error is detected.</li>
+<li>Removed some unneeded code from <code>org.systemsbiology.chem.Simulator</code>,
+pertaining to the handling of multi-step or delayed reactions.</li>
+<li>Modified the <code>org.systemsbiology.chem.scripting.ModelExporterMarkupLanguage</code>
+so that it translates illegal "<code>::</code>" characters in symbol names, to permitted
+"<code>__</code>" characters.  Fixed a bug where delayed reactions were not being
+written to the <code>kineticLaw</code> field using the "<code>delay(species,time)</code>"
+construct.</li>
+<li>Modified the <code>org.systemsbiology.chem.scripting.ModelExporterMarkupLanguage</code>
+so that it can properly export a model containing a reaction with an intrinsic time delay.</li>
+<li>Fixed a potential <code>NullPointerException</code> in the 
+<code>org.systemsbiology.math.SymbolEvaluatorHashMap</code> class, in the case where a 
+<code>SymbolValue</code> object does not have a <code>Value</code> object defined.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.2.0/&installerDownloadRelURL;">1.2.0</a></td>
+<td>2004/01/13</td>
+<td>
+<ul>
+<li>Fixed a bug in the layout of the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+control screen, where the full text of the &quot;select all&quot; button was not being
+displayed.</li>
+<li>Fixed a bug in the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+where the simulation was not being cancelled, in the case where the user
+selects too many symbols for displaying on a plot.</li>
+<li>Fixed a bug in the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>
+where the <code>org.systemsbiology.chem.app.ModelProcessor</code> was
+getting an unexpected <code>IllegalArgumentException</code> when the model definition
+file contains a mathematical expression that has invalid syntax.</li>
+<li>Fixed a bug in the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code>
+where parsing errors in the model definition file were resulting in the exception class
+name being unnecessarily included in the message part of the exception.</li>
+<li>Changed the <code>org.systemsbiology.chem.app.Plotter</code> class so that the
+vertical axis label is the more generally applicable &quot;value&quot; rather than 
+&quot;populations&quot;.</li>
+<li>Added a new SBW simulation service, the 
+<code>org.systemsbiology.chem.sbw.GibsonBruckService</code>.</li>
+<li>Modified the class (<code>org.systemsbiology.chem.sbw.SimulationModule</code>)
+that registers the various 
+<code>org.systemsbiology.chem.sbw.SimulationService</code> simulation services 
+with the SBW broker, to add the <code>DeterministicService</code>
+and the <code>GibsonBruckService</code> services to the list of services
+offered by this module.</li>
+<li>Fixed a bug in the <code>org.systemsbiology.util.ImageTransferHandler</code>, where the
+<code>createTransferableImage()</code> method was returning a <code>Transferable</code> object
+that was failing to properly set the &quot;<code>transfredSuccessfully</code>&quot; flag in 
+some cases.</li>
+<li>Fixed a bug in the error-handling code in the
+<code>org.systemsbiology.chem.app.MainApp</code> class, for the case of when
+a syntactially invalid model is processed and a null pointer is passed
+to the <code>org.systemsbiology.chem.app.CytoscapeViewer</code> class.</li>
+<li>Extended the <code>org.systemsbiology.chem.scripting.ModelExporterMarkupLanguage</code>
+so that it is capable of exporting SBML Level 1, versions 1 <em>and</em> 2.  Previously it
+was only capable of exporting version 2.  The version 1 export is needed for the
+<code>org.systemsbiology.chem.app.CytoscapeViewer</code> to export a model to Cytoscape.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.app.MainApp</code> where the 
+<code>MainMenu.MenuItem.FILE_SAVE_AS</code> menu item was not being enabled
+under the correct conditions.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.app.SimulationLauncher</code> where model
+reloading (into the simulation launcher window) was not working properly.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.1.1/&installerDownloadRelURL;">1.1.1</a></td>
+<td>2004/01/05</td>
+<td>
+<ul>
+<li>Modified the <code>org.systemsbiology.util.SlidingWindowTimeSeriesQueue</code> so that
+the internal average variable is recalculated from scratch, each time <code>numTimePoints</code>
+number of points has been inserted into the queue.
+</li>
+<li>Fixed bug in <code>org.systemsbiology.chem.app.ParserPicker</code> pertaining to case
+where the model builder fails to construct the model from the model definition file.</li>
+<li>Modified <code>org.systemsbiology.chem.app.SimulationLauncher</code> to dump a stack
+backtrace to <code>STDERR</code> if a <code>Throwable</code> (but not an <code>Exception</code>)
+condition is detected.</li>
+<li>Changed <code>org.systemsbiology.chem.MultistepReactionSolver</code> into
+<code>org.systemsbiology.chem.DelayedReactionSolver</code>, to permit phenomenological
+modelling of reaction processes with an intrinsic time delay.</li>
+<li>Changed <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code> 
+for extensions to the chemical model definition language (CMDL) for specifying a 
+multistep or delayed reaction.</li>
+<li>Fixed bugs in <code>org.systemsbiology.chem.app.MainApp</code> and
+<code>org.systemsbiology.chem.app.Plotter</code>, where window resizing
+was not working correctly on the Windows platform.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.1.0/&installerDownloadRelURL;">1.1.0</a></td>
+<td>2003/12/22</td>
+<td>
+<ul>
+<li>Added a <code>reload</code> menu item to the <code>org.systemsbiology.chem.app.MainMenu</code>
+class, which is used for loading a new <code>org.systemsbiology.chem.Model</code> into the
+<code>org.systemsbiology.chem.app.SimulationLauncher</code>.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.app.SimulationLauncher</code> where it was
+still calling <code>handleOutput()</code> even when the simulation was cancelled.</li>
+<li>Made simulation plot window (<code>org.systemsbiology.chem.app.Plotting.Plot</code>) 
+a separate class, which is now dynamically resizable.</li>
+<li>Made the main editor pane (<code>org.systemsbiology.chem.app.EditorPane</code>) 
+dynamically resizable.</li>
+<li>Added a <code>setModel()</code> method to the <code>org.systemsbiology.chem.app.SimulationLauncher</code>,
+so that an application can dynamically change the model loaded in the simulation launcher.</li>
+<li>Added a <code>addListener()</code> method to the <code>org.systemsbiology.chem.app.SimulationLauncher</code>,
+so that an application can provide a callback method to detect when the simulation launcher is closed.</li>
+<li>Fixed bug where the <code>org.systemsbiology.chem.scripting.ModelBuilderCommandLanguage</code> was
+rejecting model definition files that ended with whitespace.</li>
+<li>Added an &quot;append&quot; check-box to the <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+window, which allows for specifying that the output file should be appended to, rather than overwritten.</li>
+<li>Added a &quot;save as PNG image&quot; button to the <code>org.systemsbiology.chem.app.Plotter.Plot</code>
+class window, which is used to save the plot as a PNG image file.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code> to display
+all symbols (not just <code>org.systemsbiology.chem.Species</code>) in the list-box of
+symbols that can be displayed in the simulation results.</li>
+<li>Modified the <code>org.systemsbiology.chem.app.SimulationLauncher</code> to allow for
+hiding the Output Type controls, and added a callback mechanism to return the simulation
+results to the calling application as a <code>org.systemsbiology.chem.SimulationResults</code>
+object, on a queue; this entailed a change to the <code>SimulationLauncher</code> constructor.</li>
+<li>Added a <code>org.systemsbiology.util.Queue</code> data structure.</li>
+<li>Added support for copying the <code>org.systemsbiology.chem.app.Plotter.Plot</code>
+image to the system clipboard, on operating systems that support image transfer to the
+clipboard.</li>
+<li>Added full-text search capability for online help, in the
+<code>org.systemsbiology.chem.app.HelpBrowser</code> class.</li>
+<li>Refactored the code that sets locations for new JFrames, to the
+<code>org.systemsbiology.util.FramePlacer</code> class.</li>
+<li>Added &quot;select all symbols&quot; feature to the
+<code>org.systemsbiology.chem.app.SimulationLauncher</code> class.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../1.0.0/&installerDownloadRelURL;">1.0.0</a></td>
+<td>2003/12/08</td>
+<td>
+<ul>
+<li>Added new deterministic (ODE) simulators to the <code>org.systemsbiology.chem</code> package,
+based on the &quot;odeToJava&quot; library for numerical solution of ODEs.  This library
+includes a Dormand-Prince 4/5 Runge-Kutta solver with adaptive step-size control, and
+an implicit/explicit Runge-Kutta solver with adaptive step-size control (for models
+with a high degree of stiffness).</li>
+<li>Modified the <code>org.systemsbiology.chem.scripting.ModelBuilderMarkupLanguage</code>
+to permit inclusion of &quot;rules&quot; in SBML models</li>
+<li>Modified the <code>org.systemsbiology.chem.scripting.ModelExporterMarkupLanguage</code>
+to export models in SBML level 1, version 2.</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.app.MainApp</code> when model-building
+fails after the user selects &quot;Export&quot; from the &quot;Tools&quot; menu.</li>
+<li>Created separate fields in <code>org.systemsbiology.chem.app.SimulationLauncher</code>
+for specifying the matximum allowed relative and absolute errors</li>
+<li>Fixed a bug in <code>org.systemsbiology.chem.Parameter</code>, in which a 
+<code>clone()</code> implementation was not provided, leading to incorrect behavior
+of the simulator when a parameter is defined with a deferred-evaluation expression</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../0.0.8/&installerDownloadRelURL;">0.0.8</a></td>
+<td>2003/11/21</td>
+<td>
+<ul>
+<li>Created a new <code>org.systemsbiology.chem.SimulatorParameters</code> mechanism to pass
+simulator-specific parameters to the simulator object.</li>
+<li>Modified the fixed-stepsize deterministic simulator, so that it can detect when the step-size
+is insufficient.</li>
+<li>Fixed an error-handling bug in the <code>org.systemsbiology.chem.app.Plotter</code> class.</li>
+<li>Modified the <code>SimulationLauncher</code> so that default simulator-specific parameters
+are auto-filled, and are updated when the simulator selection is changed.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../0.0.7/&installerDownloadRelURL;">0.0.7</a></td>
+<td>2003/11/07</td>
+<td>
+<ul>
+<li>Modified <code>org.systemsbiology.chem.app.EditorPane</code> so that it &quot;remembers&quot; the
+directory of the last file opened in the editor.  The default directory for the 
+<code>org.systemsbiology.chem.app.FileChooser</code>
+for the next &quot;Open&quot; command, is set to this directory.</li>
+<li>Adjusted the default vertical dimension of the <code>org.systemsbiology.chem.app.EditorPane</code>
+for the model editor, to 40 characters.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../0.0.6/&installerDownloadRelURL;">0.0.6</a></td>
+<td>2003/10/22</td>
+<td>
+<ul>
+<li>In <code>org.systemsbiology.chem.app.SimulationLauncher</code>, make
+plotting the default output mode</li>
+<li>Redefined how the stochastic simulators compute
+reaction rates for dimerization reactions, for model interchangability with the ODE simulators.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../0.0.5/&installerDownloadRelURL;">0.0.5</a></td>
+<td>2003/10/20</td>
+<td>
+<ul>
+<li>Fixed a bug in the <code>GibsonSimulator</code> initialization code, for the case of a boundary
+reactant species.</li>
+<li>Fixed a bug in the <code>ModelBuilderCommandLanguage</code> tokenizer, so that
+it can now accept a tab character as valid whitespace in a model definition file.</li>  
+<li>Modified the
+<code>SBMLValidate</code> package so that it can process SBML Level 1, Version 2 model definition files.</li>
+<li>Modified <code>org.systemsbiology.chem.app.MainApp</code> class, to work around a limitation of
+DOS shell command-line argument processing.</li>
+</ul>
+</td>
+</tr>
+
+<tr valign="top">
+<td><a href="../0.0.4/&installerDownloadRelURL;">0.0.4</a></td>
+<td>2003/08/28</td>
+<td>Modified the Cytoscape bridge to use JNLP, so Cytoscape does not have to be bundled with Dizzy.</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.3</td>
+<td>2003/08/26</td>
+<td>Added the ability to simulate a multistep chemical reaction as a single composite reaction.</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.2</td>
+<td>2003/08/06</td>
+<td>Added the ability to display a model in a <a href="&cytoscapeURL;">Cytoscape</a> window.</td>
+</tr>
+
+<tr valign="top">
+<td>0.0.1</td>
+<td>2003/08/04</td>
+<td>First version of the library.  It is an alpha version,
+intended only for internal use at &mainAffiliation;.</td>
+</tr>
+
+</table>
+</p>
+
+</isb:document>
+

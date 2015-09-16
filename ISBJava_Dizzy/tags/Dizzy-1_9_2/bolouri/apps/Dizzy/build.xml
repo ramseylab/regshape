@@ -1,0 +1,250 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE BuildFile [
+<!ENTITY % CommonConfig SYSTEM "../../config/CommonConfig.dtd">
+%CommonConfig;
+<!ENTITY % AppConfig SYSTEM "config/AppConfig.dtd">
+%AppConfig;
+]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This source code is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<project name="&appName;" default="compile" basedir=".">
+
+	  <property name="globalRoot"                     location="../.." />
+	  <property name="globalConfig"                   location="${globalRoot}/config" />
+		
+	  <property file="${globalConfig}/CommonConfig.properties" />
+	
+  <property name="app.buildDir"                 location="${basedir}/build" />
+  <property name="app.styleDir"                 location="${app.buildDir}/html" />
+  <property name="app.styleConfDir"             location="${app.buildDir}/config" />
+  <property name="app.configDir"                location="${basedir}/config" />
+  <property name="app.docsDir"                  location="${basedir}/docs" />
+  <property name="app.imagesDir"                location="${basedir}/images" />
+  <property name="app.samplesDir"               location="${basedir}/samples" />
+  <property name="app.binDir"                   location="${basedir}/bin" />
+  <property name="app.webDir"                   location="${globalRoot}/build/web/${ant.project.name}" />
+  <property name="app.downloadDir"              location="${app.webDir}/&appVersion;" />
+  <property name="app.installerDir"             location="${app.downloadDir}/installer" />
+  <property name="app.resourcesFile"            location="${app.buildDir}/AppResources.jar" />
+
+  <target name="setFilters">
+    <filter token="APP_VERSION" value="&appVersion;" />
+    <filter token="APP_VERSION_MAJOR" value="&appVersionMajor;" />
+    <filter token="APP_VERSION_MINOR" value="&appVersionMinor;" />
+    <filter token="APP_VERSION_PATCH" value="&appVersionPatch;" />
+    <filter token="GLOBAL_ROOT" value="${globalRoot}" />
+    <filter token="APP_NAME" value="${ant.project.name}" />
+    <filter token="APP_JAVA_MAX_HEAP_SIZE_BYTES" value="&appJavaMaxHeapSizeBytes;" />
+  	<filter token="WEB_BASE_URL" value="&webBaseURL;" />
+  	<filter token="MAIN_PUBLIC_URL" value="&mainPublicURL;" />
+  	<filter token="MAIN_GROUP_EMAIL" value="&mainGroupEmail;" />
+  	<filter token="MAIN_AFFILIATION" value="&mainAffiliation;" />
+  	<filter token="APP_INSTALLER_NAME" value="&appInstallerName;" />
+  </target>
+
+  <target name="compile">
+    <!-- nothing to do -->
+  </target>
+
+  <target name="clean">
+    <delete dir="${app.buildDir}" quiet="yes" />
+    <delete file="${app.configDir}/CommonConfig.dtd" quiet="yes" />
+  </target>
+
+  <target name="copyCommonConfig">
+    <copy file="${globalConfig}/CommonConfig.dtd" todir="${app.configDir}" />
+  </target>
+
+  <target name="copySamples" depends="setFilters">
+    <mkdir dir="${app.buildDir}/samples" />
+    <copy todir="${app.buildDir}/samples" filtering="true">
+      <fileset dir="${app.samplesDir}">
+        <include name="*.cmdl" />
+        <include name="*.xml" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="copyScripts" depends="setFilters">
+    <mkdir dir="${app.buildDir}/bin" />
+    <copy todir="${app.buildDir}/bin" filtering="true">
+      <fileset dir="${app.binDir}">
+        <include name="runmodel.sh" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="style" depends="copyCommonConfig">
+    <mkdir dir="${app.styleDir}" />
+  	<mkdir dir="${app.styleConfDir}" />
+  		
+    <style basedir="${app.docsDir}" 
+           destdir="${app.styleDir}" 
+           includes="*.xml" 
+           style="${globalConfig}/${docsStyleSheet}"
+           excludes="AppConfig.xml,AppHelp.xml" />
+
+    <style basedir="${app.docsDir}" 
+           destdir="${app.styleDir}" 
+           includes="AppHelp.xml" 
+           style="${globalConfig}/${docsStyleSheet}">
+        <param name="altWebBaseURL" expression=".." />
+    	<param name="hideExternalLinks" expression="true" />
+    </style>
+  	 
+  	<style in="${app.configDir}/AppConfig.xml"
+  	   	   out="${app.styleConfDir}/AppConfig.xml"
+  	       style="${globalConfig}/${simpleXMLStyleSheet}" />
+  	
+    <style in="${app.docsDir}/AppHelp.xml"
+           out="${app.styleDir}/AppHelp.jhm"
+           style="${globalConfig}/${helpMapStyleSheet}">
+         <param name="${helpContentFileParamName}" expression="AppHelp.html" />
+    </style>
+
+    <style in="${app.docsDir}/AppHelp.xml"
+           out="${app.styleDir}/AppHelpTOC.xml"
+           style="${globalConfig}/${helpTOCStyleSheet}">
+        <param name="${helpContentFileParamName}" expression="AppHelp.html" />
+    </style >
+ </target>
+
+
+  <target name="tidyHTML"> 
+    <apply executable="${binHtmlTidy}" failonerror="false">
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.html" />
+        <include name="AppHelp.html" />
+      </fileset>
+      <arg value="-modify" />
+      <arg value="-quiet" />
+      <arg value="-asxhtml" />
+      <srcfile />
+    </apply>
+  </target>
+
+  <target name="convertHtmlToPDF">
+    <apply executable="${binHtml2PS}" failonerror="true" dest="${app.webDir}/docs">
+      <mapper type="regexp" from="^(.*)\.html$$" to="\1\.ps" />
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.html" />
+      </fileset>
+      <arg value="-o" />
+      <targetfile />
+      <srcfile />
+    </apply>
+    <apply executable="${binPS2PDF}" failonerror="true" dest="${app.webDir}/docs">
+      <mapper type="regexp" from="^(.*)\.ps$$" to="\1\.pdf" />
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.ps" />
+      </fileset>
+      <srcfile />
+      <targetfile />
+    </apply>
+    <delete>
+      <fileset dir="${app.webDir}/docs">
+        <include name="UserManual.ps" />
+      </fileset>
+    </delete>
+  </target>
+
+  <target name="copyHtml">
+    <mkdir dir="${app.webDir}" />
+    <copy todir="${app.webDir}" file="${app.styleDir}/index.html" />
+
+    <mkdir dir="${app.webDir}/docs" />
+    <copy todir="${app.webDir}/docs">
+      <fileset dir="${app.styleDir}">
+        <include name="*.html" />
+        <exclude name="index.html" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="checkBuildResourcesFile">
+    <uptodate property="app.doNotNeedToBuildResourcesFile" targetfile="${app.resourcesfile}">
+      <srcfiles dir="${app.styleDir}" includes="AppHelp*" />
+      <srcfiles dir="${app.configDir}" includes="AppHelp.hs" />
+      <srcfiles dir="${app.imagesDir}" includes="images/*.png" />
+      <srcfiles dir="${globalRoot}" includes="images/*.png" />
+      <srcfiles dir="${app.styleDir}/JavaHelpSearch" includes="*" />
+    </uptodate>
+  </target>
+
+  <target name="buildResourcesFile" depends="checkBuildResourcesFile" unless="app.doNotNeedToBuildResourcesFile">
+    
+    <mkdir dir="${app.styleDir}" />
+    <copy todir="${app.styleDir}" file="${app.configDir}/AppHelp.hs" />
+    <exec executable="${binJavaHelpIndexer}" dir="${app.styleDir}" failonerror="true">
+      <arg value="AppHelp.html" />
+    </exec>
+
+    <jar destfile="${app.resourcesFile}">
+      <fileset dir="${app.buildDir}">
+        <include name="html/AppHelp*" />
+        <include name="html/JavaHelpSearch/*" />
+      </fileset>
+      <fileset dir="${basedir}">
+        <include name="images/*.png" />
+      </fileset>
+      <fileset dir="${globalRoot}">
+        <include name="images/logo-bolourilab.png" />
+        <include name="images/logo-isb.png" />
+      </fileset>
+    </jar>
+
+    <mkdir dir="${app.webDir}" />
+    <copy todir="${app.webDir}" file="${app.resourcesFile}" />
+    
+  </target>
+
+  <target name="copyImages">
+    <mkdir dir="${app.webDir}/images" />
+    <copy todir="${app.webDir}/images">
+      <fileset dir="${app.imagesDir}">
+        <include name="*.png" />
+      	<include name="*.jpg" />
+      	<include name="*.gif" />
+      </fileset>
+    </copy>
+  </target>
+
+	<target name="makeInstallAnywhereConfig" depends="setFilters">
+	    <!-- make the build directory -->
+	    <mkdir dir="${app.buildDir}" />
+	    <!-- copy the InstallAnywhere build file from the config dir to the build dir -->
+	    <copy todir="${app.buildDir}" file="${app.configDir}/project.iap_xml" filtering="true" />
+	</target>
+	
+  <target name="buildInstallers" depends="makeInstallAnywhereConfig, copySamples, copyScripts">
+
+    <taskdef name="buildinstaller" classname="com.zerog.ia.integration.ant.InstallAnywhereAntTask" />
+
+    <!-- make the installer directory -->
+    <mkdir dir="${app.installerDir}" />
+
+    <buildinstaller IALocation="${dirInstallAnywhere}"
+                    IAProjectFile="${app.buildDir}/project.iap_xml"
+                    failonerror="true" 
+                    BuildOutputLocation="${app.installerDir}" />
+  	
+  	<!-- clean up after InstallAnywhere Ant task, which uses the "iabuild.properties" file to pass options to the "build" script -->
+  	<delete file="${user.dir}/iabuild.properties" quiet="yes" />
+  </target>
+
+  <target name="buildPDF" depends="tidyHTML, convertHtmlToPDF" />
+
+  <target name="buildHTML" depends="style, copyImages, copyHtml, buildResourcesFile" />
+
+  <target name="build" depends="buildHTML, buildPDF, buildInstallers" />
+
+</project>

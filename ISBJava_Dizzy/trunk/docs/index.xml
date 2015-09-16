@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xml" href="../config/documentation-stylesheet.xml"?>
+<!DOCTYPE isbdocument [
+  <!ENTITY % CommonConfig SYSTEM "../config/CommonConfig.dtd">
+  %CommonConfig;
+   ]>
+
+<!--
+  Copyright (C) 2003 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This document is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<isb:document xmlns:isb="http://www.systemsbiology.org/xmlns"
+              xmlns:html="http://www.w3.org/TR/xhtml1"
+              xmlns="http://www.w3.org/TR/xhtml1">
+
+<isb:doctitle>MAGNET Project:  Software Page</isb:doctitle>
+<isb:docowner>&mainGroup;, &mainAffiliation;</isb:docowner>
+<isb:docowneremail>&mainGroupEmailSafe;</isb:docowneremail>
+<isb:docdate>Date: 2006/03/02 10:56 $</isb:docdate>
+
+
+<h3>MAGNET Project:  Software Page</h3>
+
+<p>
+<a href="/">MAGNET</a> is a research project to model gene regulatory
+networks, initiated in the laboratory of Dr. Hamid Bolouri at the
+Institute for Systems Biology.  This page contains links to the suite
+of software tools developed in this project.  BioTapestry (see below)
+is developed in collaboration with the laboratory of Eric Davidson at
+Caltech.
+</p>
+
+<p>
+<a href="Dizzy">Dizzy:  a chemical kinetics stochastic simulation software package written in Java</a>
+</p>
+<p>
+<a href="ISBJava">ISBJava:  a Java library for computational biology</a>
+</p>
+<p>
+<a href="http://www.biotapestry.org">BioTapestry:  network visualization, documentation, and dissemination</a>
+</p>
+<p>
+<a href="Pointillist">Pointillist:  an iterative framework for biological modeling</a>
+</p>
+<p>
+<a href="http://labs.systemsbiology.net/bolouri/Mogul">Mogul:   Motif Analysis Pipeline</a>
+</p>
+
+</isb:document>
+
+
+
+

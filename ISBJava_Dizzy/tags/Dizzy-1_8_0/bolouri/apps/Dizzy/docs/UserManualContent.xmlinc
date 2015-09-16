@@ -1,0 +1,3916 @@
+<!--
+  Copyright (C) 2004 by Institute for Systems Biology,
+  Seattle, Washington, USA.  All rights reserved.
+  
+  This document is distributed under the GNU Lesser 
+  General Public License, the text of which is available at:
+    http://www.gnu.org/copyleft/lesser.html
+ -->
+
+<!-- ========== INTRODUCTION ========== -->
+
+<isb:docsection name="Introduction" label="introduction">
+<isb:docsubsection name="About &appName;" label="about">
+<p />
+&appName; is a chemical kinetics simulation software 
+package implemented in Java.  It provides a model definition environment and 
+various simulation engines for evolving a dynamical model from specified 
+initial data. 
+A model consists of a system of interacting chemical species,
+and the reactions through which they interact.  The software can then be used 
+to simulate the reaction kinetics of the system of interacting species.
+The software consists of the following elements:
+<ol>
+<li>a set of Java packages or &quot;libraries&quot; that constitute a Java 
+<a href="&webBaseURL;/&localJavaLibraryName;">application programming interface</a> 
+(or &quot;API&quot;) for this software system.</li>
+<li>a scripting engine that can be invoked from the command-line, to define
+a model and run simulations on the model, and to export a model to a different
+model definition language</li>
+<li>an implementation of the 
+<a href="#gillespie">Gillespie stochastic algorithm</a> 
+for simulating chemical reaction kinetics</li>
+<li>an implementation of the 
+<a href="#gibsonbruck">Gibson-Bruck stochastic algorithm</a> 
+for simulating chemical reaction kinetics</li>
+<li>an implementation of a deterministic (ODE-based) algorithm for
+simulating chemical reaction kinetics</li>
+<li>a graphical user interface ("GUI") application that can be used to run 
+simulations and export a model to a different model definition language</li>
+<li>a <a href="#sbwinterface">Systems Biology Workbench (SBW) interface</a> 
+that allows the simulator to be
+invoked through the <a href="&sbwURL;">Systems Biology Workbench</a>, using a model defined in
+the Systems Biology Markup Language</li>
+<li>a graphical display feature that can display a graphical
+representation of a model using the <a href="&cytoscapeURL;">Cytoscape system</a>.</li>
+</ol>
+Models are defined in text files that you must edit, or generate using
+an external tool (e.g., JDesigner).  This system can understand three types of 
+model definition languages, each of which has an associated filename 
+suffix ("extension").  The GUI program (referred to above) uses the
+filename extension to guess what model definition language the file contains.
+<ol>
+<li><a href="&sbmlURL;">Systems Biology Markup Language</a> ("SBML")
+<p />
+The SBML standard is documented outside the scope of this document, at the
+aforementioned web site.  The &appName; system
+is able to read and write a subset of the SBML Level 1 specification.
+You can generate a model in SBML format by using the JDesigner software tool.
+<p />
+The file extension of the SBML language is: &quot;.xml&quot;
+<p />
+</li>
+<li><a href="#cmdl">Chemical Model Definition Language (CMDL)</a>
+<p />
+The Chemical Model Definition Language (CMDL) 
+is the language understood "natively" by the
+&appName; scripting engine.  
+<p />
+The file extension of the CMDL command language is: &quot;<code>&cmdlFileExtension;</code>&quot;.
+The extension &quot;<code>&appFileExtension;</code>&quot; is also recognized as indicating a CMDL file.
+<p />
+</li>
+</ol>
+For both of the above languages, 
+<a href="#samplefiles">example model definition files</a> are provided with
+the &appName; installation.
+<p />
+<p>
+This document is the user manual for the &appName; program.
+This manual applies to the following release version of the program:
+<blockquote>
+<pre>
+release version:   &appVersion;
+release date:      &appDate;
+</pre>
+</blockquote>
+The README file for this version of the program can be found
+at the following URL:
+<blockquote>
+<a href="&appHomePage;/docs/ReadMe.html">&appHomePage;/docs/ReadMe.html</a>
+</blockquote>
+The home page for this program is:
+<blockquote>
+<a href="&appHomePage;">&appHomePage;</a>
+</blockquote>
+The version history for this program can be found at the following URL:
+<blockquote>
+<a href="&appHomePage;/docs/VersionHistory.html">&appHomePage;/docs/VersionHistory.html</a>
+</blockquote>
+If you are reading this document through a print-out, you can find
+the online version of this document (which may be a more recent version)
+at the following URL:
+<blockquote>
+<a href="&appHomePage;/docs/UserManual.html">&appHomePage;/docs/UserManual.html</a>
+</blockquote>
+A PDF version of this manual is also available on-line at:
+<blockquote>
+<pre>
+<a href="&appHomePage;/docs/UserManual.pdf">&appHomePage;/docs/UserManual.pdf</a>
+</pre>
+</blockquote>
+The above hyperlinks for the User Manual are for the most recent
+version of the &appName; system.
+</p>
+</isb:docsubsection>
+<isb:docsubsection name="External Libraries" label="extlib">
+<p>
+The &appName; system relies upon a number of external open-source
+libraries.  These libraries are bundled with the &appName; program and
+are installed within the &appName; directory when you install
+&appName; on your system.   
+</p>
+&ExternalLibraries;
+</isb:docsubsection>
+
+<isb:docsubsection name="Acknowledgements" label="acknowledgements">
+<p>
+The assistance, advice, and contributions of several individuals 
+to the &appName; project is gratefully acknowledged.
+</p>
+<p>
+Hamid Bolouri: principal investigator and co-designer of the &appName; 
+system.
+</p>
+<p>
+David Orrell:  for serving as an early adopter of &appName; 
+and for contributing many ideas to the project
+</p>
+<p>
+William Longabaugh:  for providing frequent advice on Java
+</p>
+<p>
+Mike Hucka and Andrew Finney:  for providing much assistance
+with SBML and SBW
+</p>
+<p>
+Paul Shannon and the Cytoscape team: for
+helping to make the &appName;&lt;-&gt;Cytoscape bridge possible.
+</p>
+<p>
+Raymond Spiteri:  for kindly permitting the
+inclusion of the &quot;odeToJava&quot; library with &appName;.  
+Many thanks to Murray Patterson also, for developing the
+&quot;odeToJava&quot; library.
+</p>
+<p>
+Many other individuals have contributed to the project, as well.
+In particular it should be noted that &appName; makes extensive use of 
+<a href="#extlib">external libraries</a>. The &appName; system would 
+not have been possible without the hard work and contributions of the 
+authors of these libraries.
+</p>
+
+</isb:docsubsection>
+</isb:docsection>
+
+<isb:docsection name="Getting Started" label="gettingstarted">
+
+<p>
+This section describes how to get started with using the &appName;
+system.
+</p>
+
+<!-- ========== SYSTEM REQUIREMENTS ========== -->
+
+<isb:docsubsection name="System Requirements" label="systemrequirements">
+<p>
+The &appName; system is implemented in the Java programming language.
+This means that an installation of the Java Runtime Environment
+(JRE) is required in order to be able to use the &appName; system.
+
+A version of the &appName; system installer program 
+(&quot;<code>ins&appName;.bin</code>&quot; on Unix/Linux, 
+or &quot;<code>ins&appName;.exe</code>&quot; on Windows)
+is available which has the Sun JRE version 1.4.1 pre-bundled with it.
+This is the recommended approach for users who are not knowledgeable
+in the use of the Java programming language and runtime environment.
+</p>
+<p>
+You may also download the &quot;thin&quot; version of the installer 
+that does not  have the JRE pre-bundled.  In order to use 
+the &quot;thin&quot; installation of &appName;, you must already have
+a JRE installed on your computer.  The JRE must be at least version 
+1.4 or newer, because the software uses Java 1.4 language features and 
+extensions.  This software will not function correctly with a 1.3.X 
+version of the JRE; if you attempt to run it under a 1.3.X version
+of the JRE, you will see an <code>UnsupportedClassVersionException</code>.
+</p>
+<p>
+The specific hardware requirements for using the &appName; system
+will vary depending on the complexity of the models being
+studied, and on the type of JRE and host operating system.
+A good rule of thumb is that at least 512 MB of RAM is recommended.
+If you are using your own JRE and it is not a Sun JRE, you will need
+to ensure that the appropriate command-line parameters are passed
+to the JRE to ensure that the built-in heap size limit is set to
+at least 512 MB.  If you are using the Sun JRE, or the JRE that
+is pre-bundled with the &appName; installer, this issue does not 
+apply to you.
+</p>
+<p>
+This software has been tested on Windows XP and Red Hat Linux 8.0.
+It should function properly on most Windows and Linux distributions.
+For other operating systems, you may download the &quot;Other Java-Enabled
+Platforms&quot; version of the installer.  A Mac OSX version of the
+installer is under development and will be released soon.
+</p>
+<p>
+The &appName; installer will install an executable for the
+&appName; launcher program specifically designed for the operating
+system of the computer on which you are running the installer.
+This means that if you run the installer on a Windows computer,
+the &appName; launcher that is installed will be a Windows executable.
+If there is a need to run &appName; on multiple operating systems
+(e.g., in a dual-boot or heterogeneous network-file-system environment),
+&appName; should be installed in a separate directory for each
+operating system.  One exception applies: it is possible to install 
+&appName; on one operating system (e.g., Windows) and run it on a 
+different operating system (e.g., Unix), if you run the 
+<a href="#commandline">command-line program</a> and not the GUI.
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Tutorial" label="tutorial">
+
+<p>
+&appName; is launched by executing the &quot;&appName;&quot; executable
+that was installed as a symbolic link by the installation program.  The
+default location of this symbolic link depends on your operating system.
+If you are installing on a Windows computer, the symbolic link is created
+in a new Program Group &quot;&appName;&quot;, which will show up in the
+&quot;Start&quot; menu.  If you are installing on a Linux computer, the
+symbolic link is created in your home directory, by default.  Note that
+the installation program permits you to override the default location for
+the symbolic link to be created, so the symbolic link may not be in the 
+default location on your computer, if you selected a different location
+in the installation process.  By double-clicking on the &quot;&appName;&quot;
+symbolic link, the &appName; program should start up.  You should see an
+application window appear that looks like the following picture:
+</p>
+<p>
+<img src="../images/screenshot2.png" alt="&appName; screenshot 2" />
+</p>
+<p>
+To load a model definition file into &appName;, select the &quot;Open...&quot;
+item from the &quot;File&quot; menu.  This will open a dialog box, as shown
+here:
+</p>
+<p>
+<img src="../images/screenshot3.png" alt="&appName; screenshot 3" />
+</p>
+<p>
+In the &quot;Please select a file to open&quot; dialog box, navigate to the
+directory in which you installed &appName;.  Then navigate into the
+&quot;samples&quot; subdirectory.  The dialog box should look like this:
+</p>
+<p>
+<img src="../images/screenshot4.png" alt="&appName; screenshot 4" />
+</p>
+<p>
+For starters, try selecting the &quot;<code>GAL&cmdlFileExtension;</code>&quot; 
+file, by double-clicking on that file name in the dialog box. 
+The &appName; window should now look like this:
+</p>
+<p>
+<img src="../images/screenshot5.png" alt="&appName; screenshot 5" />
+</p>
+<p>
+Note that the model description has appeared in the editor window.
+In this window, you can edit a model description, after which you
+may save your changes.  You probably will not want to modify the 
+<code>GAL&cmdlFileExtension;</code> model definition file just yet.
+Note that the file name appears after the &quot;<b>file:</b>&quot; label.
+There is also a label &quot;<b>parser:</b>&quot; label, whose function
+will be described later.
+Now, from the &quot;Tools&quot; menu, select &quot;Simulate...&quot;,
+which essentially processes the model definition and loads the relevant
+information into the &appName; simulation engine.
+This should create a &quot;&appName;: simulator&quot; 
+dialog box, that looks like this:
+</p>
+<p>
+<img src="../images/screenshot7.png" alt="&appName; screenshot 7" />
+</p>
+<p>
+First, you will need to specify a &quot;stop time&quot; for the simulation.
+This is a floating-point number that you must type into the text box next
+to the &quot;stop time:&quot; label in the &quot;&appName;: simulator&quot;
+dialog box.  Second, you will need to select one or more species whose
+populations are to be returned as time-series data resultant from the simulation.
+For the purposes of demonstration, select the &quot;<code>G3D_G80D</code>&quot;
+species in the list box under the &quot;view species&quot; label in the dialog
+box.  
+<blockquote>
+<b>TIP:</b> You can select two species that are not adjacent to one another
+in the list box of species, by holding down the &quot;control&quot; key, and
+(while holding down the key) clicking on a species name with the mouse.
+</blockquote>
+Finally, you will need to specify the &quot;output type&quot; for the
+simulation.  For demonstration purposes, click on the circular button next
+to the &quot;plot&quot; label on the dialog box.  Go ahead and change the
+number of samples to 30 samples, by editing the &quot;100&quot; appearing
+in the text box next to &quot;num samples&quot;.  This controls the number of
+time points for which the result data will be graphed.  At this point, the dialog
+box should look like this:
+</p>
+<p>
+<img src="../images/screenshot8.png" alt="&appName; screenshot 8" />
+</p>
+<p>
+Now, let&apos;s run the simulation, by single-clicking on the &quot;start&quot;
+button in the &quot;&appName;: simulator&quot; dialog box.  After a moment,
+you should see a plot window appear that resembles the following image:
+</p>
+<p>
+<img src="../images/screenshot9.png" alt="&appName; screenshot 9" />
+</p>
+<p>
+For longer-running simulations, you can use the &quot;cancel&quot;,
+&quot;pause&quot;, and &quot;resume&quot; buttons to control a running
+simulation.  It is possible to pause and resume a simulation using the
+&quot;pause&quot; and &quot;resume&quot; buttons.  You may terminate a
+running simulation at any time using the &quot;cancel&quot; button.
+The &quot;start&quot; button is only used to initiate a simulation.
+Only one simulation may be running at a time, in the &appName; application.
+</p>
+<p>
+A special note applies to the case of importing a model definition file in
+SBML format, using the GUI application.  In this case, the GUI application
+will ask you to specify how species symbols appearing in reaction rate
+expressions are to be interpreted.  The choices given are "concentration"
+and "molecules".  It is recommended that you try using "concentration" first.
+If the GUI application complains that the initial population of a given
+chemical species is too large for it to handle, try reloading the
+model with the "molecules" choice instead.  This will likely solve 
+the problem.
+</p>
+<p>
+Now that you have become acquainted with the simulation driver screen, 
+the next step is to become acquainted with the 
+<a href="#cmdl">CMDL model definition language</a>, which permits 
+rapid development of new models. 
+To begin, let&apos;s define a simple model of a chemical system.
+This system will consist of the enzyme-substrate reaction:
+<blockquote>
+<pre>
+&nbsp;&nbsp;&nbsp;E
+S ---&gt; P
+</pre>
+</blockquote>
+where the &quot;<code>E</code>&quot; is the enzyme, and 
+&quot;<code>S</code>&quot; is the substrate, and &quot;<code>P</code>&quot;
+is the product.  It is well known that the above symbols are
+shorthand for the following three elementary chemical reactions:
+<blockquote>
+<pre>
+E + S ---&gt; ES
+ES    ---&gt; E + S
+ES    ---&gt; E + P
+</pre>
+</blockquote>
+where the &quot;<code>ES</code>&quot; species is the enzyme-substrate
+complex. We will now investigate the stochastic kinetics of this
+very simple model using the &appName; simulator.  
+</p>
+<p>
+A few notes about editing models:  You may use the 
+editor window in &appName;, which is the white text box 
+below the &quot;file:&quot; and
+&quot;parser:&quot; labels, to enter the model description as described below.  
+Once you have entered the model description into the editor window, you may
+save the model description to a file by selecting &quot;save as&quot;
+from the &quot;File&quot; menu.  Alternatively, you use your own 
+text editor program (e.g., Notepad on Windows) to create the model
+definition file.  In that case, you would use the &quot;open&quot;
+menu item under the &quot;File&quot; menu, to load the model definition
+file into &appName;.   
+</p>
+<p>
+We will assume that the model definition
+file you are creating will be called &quot;Model&cmdlFileExtension;&quot;. 
+This file will define the species
+and chemical reactions that make up the model, as well as the kinetic
+parameters that will be used to simulate the reaction kinetics.  The 
+&quot;&cmdlFileExtension;&quot; file extension is important, so please
+type the file name exactly as shown.  This helps the &appName; program
+to recognize the file as an official &quot;&appName; model definition file&quot;,
+and to select the proper interpreter to load the file.
+The file should start out completely empty.  Let&apos;s begin by defining
+the first of the three elementary reactions that make up the above model.
+We will be defining this model in the 
+<a href="#cmdl">CMDL language for entering a model definition file</a>,
+which is syntactically very close to the &quot;Jarnac&quot; language. At the top of
+the file, please enter the following lines of text, exactly as shown here:
+<blockquote>
+<pre>
+E = 100.0;
+S = 100.0;
+ES = 0.0;
+r1, E + S -&gt; ES, 1.0;
+</pre>
+</blockquote>
+These lines are examples of <em>statements</em>.  The first three statements
+define symbols &quot;E&quot;, &quot;S&quot;, and &quot;ES&quot;, 
+and assign them the values 100.0, 100.0, and 0.0, respectively. The
+fourth statement is called a <em>reaction definition</em>.  These symbols represent
+initial species populations for the chemical species appearing in the model.
+It is important that the reaction definition statement occurs after the statements
+defining the species symbols that appear in the reaction.  Since statements are
+processed sequentially by the &appName; parser, if the &quot;ES = 0.0&quot; statement
+did not occur before the reaction definition statement, the parser would generate
+an error message because it would not recognize the &quot;ES&quot; symbol occurring
+in the reaction definition statement.  [At this point, processing of the model would 
+cease because of the syntax error.]  You will notice that in the above example,
+each line ends with a semicolon.  In the &appName; language,
+semicolons divide the model definition file into a sequence of statements.
+Each statement ends with a semicolon.  A statement can in principle extend
+over one line, as shown here:
+<blockquote>
+<pre>
+r1, E + S -&gt; ES,
+                    1.0;
+</pre>
+</blockquote>
+This definition is logically equivalent to the one-line reaction definition
+above it.  
+</p>
+<p>
+The commas in the reaction definition statement divide the statement into
+<em>elements</em>.  We will explain each element in turn.  In a reaction
+definition statement, the first element is optional, and defines the
+&quot;name&quot; of the reaction.  This is just a symbolic name for the
+reaction, that does not affect the chemical kinetics of the model.  There
+are <a href="#symbols">rules governing allowed symbol names</a> that apply
+to reaction names.  The reaction name specified above was &quot;r1&quot;,
+which is not very descriptive.  Perhaps a more descriptive name would have
+been &quot;enzyme_substrate_combine&quot;, as shown here:
+<blockquote>
+<pre>
+enzyme_substrate_combine, E + S -&gt; ES, 1.0;
+</pre>
+</blockquote>
+Note the use of the underscore character (&quot;<code>_</code>&quot;), which
+is necessary because spaces are not allowed in symbol names such as reaction names.
+The second element of the reaction definition statement defines the
+list of reactant species and products species for the chemical reaction.
+In this case, the reactants are species &quot;<code>E</code>&quot; (the enzyme)
+and species &quot;<code>S</code>&quot; (the substrate).  The special symbol
+&quot;<code>-&gt;</code>&quot; separates the list of reactants and products.
+The sole product species is &quot;<code>ES</code>&quot;, the enzyme-substrate
+complex.  The &quot;<code>+</code>&quot; operator is used to separate species 
+in either the reactant or product side of the reaction.  In passing, we note
+that this is a <em>one-way</em> reaction, meaning that it defines a process
+that is not (by itself) reversible.  To define a reversible reaction in &appName;,
+you would need to follow the above reaction definition statement with a second
+reaction definition statement, in which the reactants and products are reversed,
+for example:
+<blockquote>
+<pre>
+enzyme_substrate_separate, ES -&gt; E + S, 0.1;
+</pre>
+</blockquote>
+The third element is a reaction rate.  This can be specified as a bare number,
+a mathematical expression, or as a bracketed mathematical expression.  When you specify the
+reaction rate as a bare number or as an (unbracketed) mathematical expression, 
+you are instructing the &appName; simulator to compute the reaction rate 
+using its built-in combinatoric method.  This means that the reaction probability 
+density (usually designated with the
+symbol &quot;<code>a</code>&quot;) per unit time is computed as
+the product of the number of district combinations of reactant species,
+times the reaction rate parameter you specified in the reaction definition.
+Let us illustrate this with an example.  For the reaction
+<blockquote>
+<pre>
+r1, A + B -&gt; C + D, 2.0;
+</pre>
+</blockquote>
+If species <code>A</code> has a population of 10, and species <code>B</code>
+has a population of 10, the reaction probability density per unit time will
+be evaluated as the number of distinct combinations of reactant molecules 
+(in this case, that is 100) times the reaction rate parameter, 2.0.  The
+resulting reaction probability density per unit time will be 200.  This
+probability density can be used to compute the probability <code>P</code> that a given
+chemical reaction will occur during an infinitesimal time interval <code>dt</code>:
+<blockquote>
+<pre>
+P = a dt
+</pre>
+</blockquote>
+The probability that a given chemical reaction (whose probability density per
+unit time is designated with the symbol &quot;<code>a</code>&quot;) will
+occur during the infitesimal time interval <code>dt</code> is just the product
+of the infinitesimal time interval, and the reaction probability density per
+unit time.  
+</p>
+<p>
+An example of a reaction definition with a mathematical expression for the
+reaction rate is shown here:
+<blockquote>
+<pre>
+A = 100.0;
+B = 100.0;
+C = 0.0;
+D = 0.0;
+F = 10.0;
+G = 10.0;
+r1, A + B -&gt; C + D, F * G;
+</pre>
+</blockquote>
+In the above example, the parser will attempt to immediately evaluate the
+expression &quot;F * G&quot;.  This evaluation will yield the result 
+&quot;100.0&quot;.  Therefore, the above is functionally equivalent to:
+<blockquote>
+<pre>
+A = 100.0;
+B = 100.0;
+C = 0.0;
+D = 0.0;
+r1, A + B -&gt; C + D, 100.0;
+</pre>
+</blockquote>
+In either case, the built-in combinatoric method for computing the reaction
+rate is used, with a reaction parameter of 100.0.  For some cases, it may
+be desirable to specify a custom reaction rate, in which you specify a 
+mathematical expression that is to be re-evaluated for each reaction event,
+to give the reaction rate.  This might be useful for simulating cooperativity,
+or enzyme reactions, or inhibition.  An example of a reaction defintion with
+a custom reaction rate expression is shown here:
+<blockquote>
+<pre>
+A = 100.0;
+B = 100.0;
+C = 0.0;
+D = 0.0;
+k = 0.1;
+r1, A + B -&gt; C + D, [k * (time + 1.0) * A * B];
+</pre>
+</blockquote>
+The symbol &quot;time&quot; is a special reserved symbol indicating the elapsed
+time of the simulation.
+</p>
+<p>
+Getting back to our previous model-building exercise, we have:
+<blockquote>
+<pre>
+E = 100.0;
+S = 100.0;
+ES = 0.0;
+enzyme_substrate_combine, E + S -&gt; ES, 1.0;
+enzyme_substrate_separate, ES -&gt; E + S, 0.1;
+</pre>
+</blockquote>
+we see that the forward reaction for
+the enzyme and substrate combining, was given a reaction rate parameter of
+1.0, and the reverse of that reaction (enzyme-substrate complex separating)
+was given the rate of 0.1.  
+</p>
+<p>
+Note that in defining a chemical reaction, the element specifying the
+reaction name is not required.  If you do not specify a reaction name,
+a unique reaction name is automatically assigned to the reaction by &appName;.
+The syntax for a reaction thus defined is:
+<blockquote>
+<pre>
+A + B -&gt; C + D, 2.0;
+</pre>
+</blockquote>
+It is recommended that you specify your own reaction names, because the names 
+automatically assigned by &appName; will be verbose and hard to understand.
+</p>
+<p>
+Now, let&apos;s define the third reaction, which takes the enzyme-substrate
+complex to the enzyme plus product,
+<blockquote>
+<pre>
+make_product, ES -&gt; E + P, 0.01;
+</pre>
+</blockquote>
+We will also need to define the initial population of the &quot;P&quot;
+species, using the statement:
+<blockquote>
+<pre>
+P = 0.0;
+</pre>
+</blockquote>
+(note that this statement must occur before the &quot;make_product&quot;
+reaction definition statement occurs in the model definition file).
+Putting the three reaction definition statements together, your model
+definition file should look like this:
+<blockquote>
+<pre>
+E = 100.0;
+S = 100.0;
+P = 0.0;
+ES = 0.0;
+enzyme_substrate_combine, E + S -&gt; ES, 1.0;
+enzyme_substrate_separate, ES -&gt; E + S, 0.1;
+make_product, ES -&gt; E + P, 0.01;
+</pre>
+</blockquote>
+The &appName; system ignores whitespace that is not in a quoted string,
+so you may reformat your model definition file using spaces, so that
+it is more tabular:
+<blockquote>
+<pre>
+E = 100.0;
+S = 100.0;
+P = 0.0;
+ES = 0.0;
+enzyme_substrate_combine,    E + S -&gt; ES,      1.0;
+enzyme_substrate_separate,   ES    -&gt; E + S,   0.1;
+make_product,                ES    -&gt; E + P,   0.01;
+</pre>
+</blockquote>
+Note that it is very important that the  statements defining the initial
+species populations appear before the
+reaction definition statements.  Otherwise, the &appName; interpreter will
+not understand the species symbols appearing in the reaction definition.
+</p>
+<p>
+The final model definition file should look like this:
+<blockquote>
+<table border="1">
+<tr><td>
+<pre>
+E = 100;
+S = 100;
+P = 0;
+ES = 0;
+enzyme_substrate_combine,    E + S -&gt; ES,      1.0;
+enzyme_substrate_separate,   ES    -&gt; E + S,   0.1;
+make_product,                ES    -&gt; E + P,   0.01;
+</pre>
+</td></tr>
+</table>
+</blockquote>
+</p>
+<p>
+Remember, whitespace is ignored by the &appName; interpreter, so your spacing
+does not need to look exactly like the example shown above.
+Now, let&apos;s save this model definition file in your text editor.  Now, let&apos;s
+open the model definition file in &appName;, as shown above.  Finally, let&apos;s
+select the &quot;Simulate...&quot; menu item from the &quot;Tools&quot; menu,
+and run a simulation.  Select a stop time of 400.0, and specify an output type
+of &quot;plot&quot;, and a &quot;num samples&quot; of 40.  
+Select &quot;<code>P</code>&quot; as the species to view.  Your simulation
+controller dialog box should look like this:
+</p>
+<p>
+<img src="../images/screenshot10.png" alt="screenshot 10" />
+</p>
+<p>
+Now, run the simulation.  You should see the familiar Michaelis-Menten type
+reaction kinetics appear in a plot window:
+</p>
+<p>
+<img src="../images/screenshot11.png" alt="screenshot 11" />
+</p>
+<p>
+Note that the curve is not a perfect Michaelis-Menten kinetics.  This is
+because we are running a <b>stochastic simulation</b>.  The Gillespie
+algorithm introduces the noisy effects of low copy numbers of chemical
+species in the model.  If we were to drastically increase the number of species
+(say, by a factor or 1000) in the model, the curve would become less noisy:
+</p>
+<p>
+<img src="../images/screenshot12.png" alt="screenshot 12" />
+</p>
+<p>
+Note that the larger the initial copy number of the species in the model,
+the more computational time will be requird to simulate the model for
+a given (fixed) choice of &quot;stop time&quot;.  This means that in general,
+when running stochastic simulations you should start with small initial 
+copy numbers for the species in your model, and determine the computational
+run-time, before attempting simulations with large initial species populations.
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Sample Model Definition Files" label="samplefiles">
+<p>
+When you install the &appName; application, a subdirectory &quot;samples&quot;
+is created in the directory where &appName; is installed.  
+You will find examples of all three languages in the "samples"
+subdirectory of the directory in which you install the &appName; software.
+<blockquote>
+<b>Note to Windows users:</b> please do not use Notepad to open the
+sample model definition files in the &quot;samples&quot; subdirectory.
+Please use a different editor, such as WordPad or Emacs, in order to 
+ensure that the files appear properly formatted, in the editor.  <b>You
+may wish to associate &quot;<code>&cmdlFileExtension;</code>&quot; and
+&quot;<code>&appFileExtension;</code>&quot; files 
+with the WordPad program, so that you can double-click on a
+&quot;<code>&cmdlFileExtension;</code>&quot; or
+&quot;<code>&appFileExtension;</code>&quot; file and have it open
+(properly formatted) in WordPad.</b>
+</blockquote>
+In addition, there is a <a href="&webBaseURL;/models">repository of
+biomolecular models</a> maintained by the &mainGroup;, that
+will serve as a good source of sample model definition files.
+</p>
+</isb:docsubsection>
+
+
+</isb:docsection>
+
+<isb:docsection name="Preliminary Concepts" label="preliminaries">
+
+<p>
+This section describes preliminary concepts that are common
+throughout the various model definition languages for the
+&appName; system.
+</p>
+
+<!-- ========== NUMERIC PRECISION ========== -->
+
+<isb:docsubsection name="Numeric Precision" label="numericprecision">
+<p>
+All floating-point numbers in the &appName; system are Java double-precision
+numbers.  This means that they are floating-point numbers in a 64-bit 
+representation adhering to the IEEE 754-1985 standard.  Java 
+double-precision floating-point numbers provide approximately 15 
+digits of precision.  All internal calculations are performed 
+using double-precision floating-point arithmetic, unless otherwise noted.
+</p>
+<p>
+It should be noted that the above limitation of the number of 
+significant digits of a double-precision floating-point number in 
+Java, means that reaction rates differing by more than 15 orders 
+of magnitude will cause incorrect results from the stochastic simulator.
+In practice, this limitation rarely presents a problem.
+</p>
+</isb:docsubsection>
+
+<!-- ========== CASE SENSITIVITY ========== -->
+
+<isb:docsubsection name="Case Sensitivity" label="casesensitive">
+<p>
+All symbols, keywords and expressions in the &appName; system are
+case-sensitive.  This means that if you define a symbol such as
+&quot;<code>x</code>&quot; (lower-case), you cannot later 
+refer to it as
+&quot;<code>X</code>&quot; (upper-case).  Similarly, mixed-case 
+keywords that are built into the &appName; system,
+such as the keyword <code>exportModelInstance</code>,
+must be entered exactly as shown; case variants such as
+<code>exportmodelinstance</code> would not be recognized as 
+valid keywords.
+</p>
+</isb:docsubsection>
+
+<!-- ========== SYMBOL NAMES ========== -->
+
+<isb:docsubsection name="Symbol Names" label="symbols">
+<p>
+Symbol names are a core ingredient of the &appName; system.  
+Most elements of the &appName; system (reactions, species, parameters,
+compartments, etc.) are named elements whose names must be
+valid symbol names.  A symbol name must conform to the following
+rules:
+<ol>
+<li>A symbol name must be composed entirely of alphanumeric characters, 
+and the underscore character.  It may not start with an underscore character.</li>
+<li>A symbol name must not parse as a numeric literal (i.e., it cannot
+be a number, such as <code>32</code></li>
+<li>A symbol name may not start with the first character being a numeric character (0-9)</li>
+<li>the symbols <code>time</code> and <code>Navo</code> are reserved,
+because they represent clock time and Avogadro&apos;s constant, respectively</li>
+</ol>
+Note that Rule #1 above implies that a symbol name cannot contain 
+parentheses, square brackets, curly braces, or the arithmetic operators: 
+<code>+</code>, <code>-</code>, <code>*</code>,
+<code>/</code>, <code>%</code>, <code>^</code>, or the
+relations <code>&gt;</code>, <code>&lt;</code>, and <code>=</code>.  
+Further, it implies that a symbol name cannot contain the following 
+reserved characters:
+<code>!</code>, <code>@</code>, <code>#</code>, <code>$</code>,
+<code>|</code>, <code>&amp;</code>, <code>;</code>, 
+<code>=</code>, the comma &quot;<code>,</code>&quot;,
+and the period &quot;<code>.</code>&quot;.
+</p>
+<p>
+For the reader who is familiar with the C programming language, the
+above can be summarized as:  a symbol name is legal if it would be 
+a legal variable name in a C program.  
+</p>
+<p>
+Some examples of valid symbol names are shown here:
+<blockquote>
+<pre>
+Species_A
+Galactose
+DNA_plus_TFA
+P1
+</pre>
+</blockquote>
+The following shows some examples of <em>illegal</em> symbol names:
+<blockquote>
+<table>
+<tr valign="top">
+<td>
+<b>ILLEGAL:</b>&nbsp;&nbsp;&nbsp;&nbsp;
+</td>
+<td>
+<pre>
+A + B
+DNA plus TFA
+C-D
+1.0
+1e+6
+B!
+</pre>
+</td>
+</tr>
+</table>
+</blockquote>
+The underscore can be used as a convenient separator
+when defining a symbol name with multiple words.
+</p>
+<p>
+<a name="namespace" />
+Symbol names are stored in a <b>namespace</b>.  There are two
+types of namespaces, <b>global</b> and <b>local</b>.  Normally,
+all symbol names reside in the <b>global namespace</b>.  This applies
+to <a href="#species">species names</a>, <a href="#reactions">reaction
+names</a>, <a href="#compartments">compartment names</a>, and
+<a href="#parameters">parameter names</a>.  This means that you cannot
+define a species <code>X</code> and a reaction <code>X</code>; their
+names would collide in the global namespace.  
+</p>
+<p>
+The <b>local namespace</b> applies only to a parameter that is defined
+only for a specific reaction (or reactions).  Each reaction has
+a local namespace for its reaction-specific parameters.  It <em>is</em>
+permissible to define a parameter <code>X</code> in the global 
+namespace, and to also define a parameter <code>X</code> with a 
+different value, in the local namespace for one or more reactions.
+In that case, the value associated with <code>X</code> for the
+specific reaction supersedes the value associated with <code>X</code>
+in the global namespace, for the purpose of evaluating the custom
+reaction rate expression for the reaction.  This can be summarized by
+saying that a parameter defined locally supersedes a parameter defined
+globally, of the same name.  The local namespace concept applies only
+to parameters.  Note that defining parameters within the local
+namespace is not possible in the <a href="#cmdl">Chemical
+Model Definition Language</a>.
+</p>
+
+</isb:docsubsection>
+
+<!-- ========== MATHEMATICAL EXPRESSIONS ========== -->
+
+<isb:docsubsection name="Mathematical Expressions" label="expressions">
+<p>
+Various aspects of the &appName; system permit the textual
+specification of mathematical expressions.  This is a useful
+method of customizing reaction rate equations and other aspects
+of a chemical system model.  A mathematical
+expression may involve symbols, numeric literals, arithmetic 
+operators, and built-in mathematical functions.  
+</p>
+<p>
+<a href="#symbols">Symbols</a> are analogous 
+to algebraic variables or symbols. Depending on the context,
+a symbol may represent the population or concentration
+of a chemical species, or it may represent a floating
+point parameter defined for a model or a chemical reaction.
+In the context of an expression, a symbol always has
+an associated numeric value.  When a symbol appears in
+a mathematical expression, its associated numeric value
+is used in place of the symbol, for the purpose of evaluating
+the expression.  
+</p>
+<p>
+In the context of a mathematical expression, numeric literals 
+are simply numbers, either floating point or integer.  Note that
+within a mathematical expression, scientific notation 
+(e.g., <code>1.2e-7</code> or <code>1.2e+7</code>) is not
+permitted in the specification of bare numbers.  However,
+this does not pose a problem because constructions such
+as <code>1.2*10^7</code> and <code>1.2*10^(-7)</code>
+are permitted.
+</p>
+<p>
+In the &appName; system, mathematical 
+expressions are described using a syntax similar to the C 
+programming language.  The basic operations permitted are:
+<blockquote>
+<dl>
+<dt><b>addition</b></dt>
+<dd>adding two symbols, numbers, or sub-expressions, such
+as <code>A+B</code>, or <code>A+1.7</code>, or <code>2+2</code></dd>
+
+<dt><b>subtraction</b></dt>
+<dd>computes the difference of two symbols, numbers, or sub-expressions, such
+as <code>A-B</code>, or <code>A-1.7</code>, or <code>2-2</code></dd>
+
+<dt><b>multiplication</b></dt>
+<dd>multiplying two symbols, numbers, or sub-expressions, such
+as <code>A*B</code>, or <code>A*1.7</code>, or <code>2*2</code></dd>
+
+<dt><b>division</b></dt>
+<dd>computes the quotient of two symbols, numbers, or sub-expressions, such
+as <code>A/B</code>, or <code>A/1.7</code>, or <code>2/2</code>.
+The first operand is the dividend, and the second operator is the divisor.</dd>
+
+<dt><b>modulo division</b></dt>
+<dd>computes the remainder of the quotient of two symbols, numbers, or sub-expressions, such
+as <code>A%B</code>, or <code>A%1.7</code>, or <code>2%2</code>.
+The first operand is the dividend, and the second operator is the divisor.</dd>
+
+<dt><b>exponentiation</b></dt>
+<dd>computes the exponent of two symbols, numbers, or sub-expressions, such
+as <code>A^B</code>, or <code>A^1.7</code>, or <code>2^2</code>.
+The first operand is the value being exponentiated.
+The second operand is the exponent.</dd>
+
+<dt><b>parentheses</b></dt>
+<dd>represents a sub-expression whose value is to be
+computed, such as the sub-expression <code>(B+C)</code>
+appearing in the expression <code>A+(B+C)</code>.</dd>
+
+<dt><b>negation</b></dt>
+<dd>computes the negative of a symbol, number, or sub-expression, such as
+<code>-A</code>, or <code>-1.0</code>, or <code>-(A+B)</code>.</dd>
+</dl>
+</blockquote>
+In addition to the above operations, there are a number
+of built-in mathematical functions that may be used in
+mathematical expressions.  Unless otherwise stated, the
+built-in functions described below are implemented by calling
+the corresponding function in the <code>java.lang.Math</code>
+class in the Java Runtime Environment.  The built-in mathematical
+functions available for use in mathematical expressions are:
+<blockquote>
+<dl>
+<dt><b>exp</b></dt>
+<dd>Computes the value of the base of the natural logarithm, 
+<code>e</code>, raised to the power of the (floating-point) 
+argument.</dd>
+
+<dt><b>ln</b></dt>
+<dd>Computes the natual logarithm of the argument, which
+must be in the range <code>(0, infinity)</code>.</dd>
+
+<dt><b>sin</b></dt>
+<dd>Computes the trigonometric sine of the argument.
+The argument is an angle, which must be specified in radians.
+Example:  <code>sin(A)</code>, <code>sin(3.14159)</code>.
+</dd>
+
+<dt><b>cos</b></dt>
+<dd>Computes the trigonometric cosine of the argument.
+The argument is an angle, which must be specified in radians.
+Example:  <code>cos(A)</code>, <code>cos(3.14159)</code>.
+</dd>
+
+<dt><b>tan</b></dt>
+<dd>Computes the trigonometric tangent of the argument.
+The argument is an angle, which must be specified in radians.
+Example:  <code>tan(A)</code>, <code>tan(3.14159)</code>.
+</dd>
+
+<dt><b>asin</b></dt>
+<dd>Computes the trigonometric inverse sine of the argument.
+The argument is a dimensionless ratio, that must be within the
+range [-1,1].  The value returned is an angle, in radians.
+Example:  <code>asin(A)</code>, <code>asin(0.5)</code>.
+</dd>
+
+<dt><b>acos</b></dt>
+<dd>Computes the trigonometric inverse cosine of the argument.
+The argument is a dimensionless ratio, that must be within the
+range [-1,1].  The value returned is an angle, in radians.
+Example:  <code>acos(A)</code>, <code>acos(0.5)</code>.
+</dd>
+
+<dt><b>atan</b></dt>
+<dd>Computes the trigonometric inverse tangent of the argument.
+The argument is a dimensionless ratio.  The value returned is 
+an angle, in radians.
+Example:  <code>atan(A)</code>, <code>acos(0.5)</code>.
+</dd>
+
+<dt><b>abs</b></dt>
+<dd>Computes the absolute value of the argument.
+</dd>
+
+<dt><b>floor</b></dt>
+<dd>Computes greatest integer value that is less than
+or equal to the floating-point argument.
+Example:  <code>floor(A)</code>, <code>floor(1.7)</code></dd>
+
+<dt><b>ceil</b></dt>
+<dd>Computes the smallest integer value that is greater than
+or equal to the floating-point argument.
+Example:  <code>ceil(A)</code>, <code>ceil(1.7)</code></dd>
+
+<dt><b>sqrt</b></dt>
+<dd>Computes the value of the square root of the argument.
+The argument must be nonnegative.</dd>
+
+<dt><b>theta</b></dt>
+<dd>Returns 0.0 if the argument is negative, or 1.0 if
+the argument is nonnegative (i.e., zero or positive)</dd>
+
+</dl>
+</blockquote>
+New built-in mathematical functions may be added in 
+forthcoming versions of the &appName; system.
+</p>
+<p>
+Please remember that all elements of the &appName; system
+are <a href="#casesensitive">case-sensitive</a>, 
+including the aforementioned
+built-in mathematical functions.  Therefore an expression
+such as <code>SIN(3.14)</code> would not be recognized
+as referring to the <code>sin</code> trigonometric function.
+The expression would therefore be considered invalid,
+because the <code>SIN</code> function would not be 
+recognized as a valid built-in function.
+</p>
+<p>
+It is important to note that all expressions are evaluated
+using double-precision floating-point arithmetic.  For
+functions that return an integer, such as the <code>floor()</code>
+function appearing in the expression <code>A * floor(B)</code>, 
+the integer result of <code>floor(B)</code> is converted to a 
+double-precision floating-point number, before the result 
+is used in evaluating the <code>A * floor(B)</code> expression.
+</p>
+<p>
+The following are a few examples of valid mathematical
+expressions that have been used in &appName; models:
+<blockquote>
+<pre>
+10*(1/(1+exp(-0.0025*(-2000+time))))
+
+alpha0 + (alpha + PY^n*alpha1)/(K^n + PY^n)
+
+k * (A/(N*V)) * (B/(N*V))
+</pre>
+</blockquote>
+Note that the symbols <code>time</code> and <code>N</code>
+are special symbols, defined <a href="#symbols">above</a>.
+</p>
+<p>
+Certain functions offered above, are not differentiable.
+This means that algorithms or features of &appName; that
+rely on the Jacobian matrix of the model (the partial derivative
+of the time rate of change of the ith species in the model, 
+with respect to the jth species), may not be used if you
+specify a model that contains one of these non-differentiable
+functions in an expression.  An error will result if you
+attempt to use a feature that relies on the Jacobian,
+with a model containing a non-differentiable function.
+The non-differentiable functions are:
+<code>theta()</code>, <code>ceil()</code>, <code>floor()</code>,
+<code>abs()</code>, and the modulo division operator <code>%</code>.
+The features in &appName; that rely on the Jacobian are the
+<a href="#tauleap">Tau-Leap simulators</a> and the
+<a href="#steadystatefluc">steady state fluctuations estimator</a>
+(the latter relies on the Jacobian only in the case of an ODE-based
+simulator).
+</p>
+
+<p>
+When specifying a mathematical expression, it is important
+to understand the distinction between <b>immediate evaluation</b>
+and <b>deferred evaluation</b>.  An example of immediate evaluation
+is shown here:
+<blockquote>
+<pre>
+A = 1.0;
+B = A * 5.0;
+</pre>
+</blockquote>
+The value for the symbol B is set to 5.0.  The mathematical expression
+appearing in the definition of symbol B is immediately evaluated by the
+parser, so any symbols appearing in that expression (namely, A) must have
+been previously defined as symbols in the model.  The special symbols
+&quot;time&quot; and &quot;Navo&quot; may not be used in immediate-evaluation
+expressions.
+</p>
+<p>
+An example of deferred evaluation is shown her:
+<blockquote>
+<pre>
+A = 1.0;
+B = [A * 5.0];
+</pre>
+</blockquote>
+The square brackets define the expression as a deferred-evaluation expression.
+This means that the parser stores the <em>expression</em> and associates it
+with the symbol B, rather than a value.  The expression will be evaluated by
+the simulation engine only when a value for the symbol "B" is needed.
+The special symbols &quot;time&quot; and &quot;Navo&quot; may be used in
+deferred-evaluation expressions.
+</p>
+<p>
+<b>Important note about time-dependent expressions:</b><br />
+Although it is technically possible to define a rate law or other
+expression that has an explicit time dependence through the use of
+the reserved symbol &quot;<code>time</code>&quot;, this practice
+is discouraged when using the stochastic simulators.  This is because
+the stochastic simulators are based on a mathematical theory of
+reaction kinetics in which the time-invariance of the reaction parameters
+is <em>a priori</em> assumed.  The <code>time</code> reserved symbol
+is intended solely for use with the ODE simulators.  A very slowly-varying
+time dependence for some expression in a model, <em>may</em> be compatible with
+the stochastic simulators, to the extent that on the time scale for
+any reaction to occur, the expression is effectively time-translation-invariant. 
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Gillespie Stochastic Algorithm" label="gillespie">
+<p>
+The Gillespie stochastic algorithm is an algorithm for modeling the
+kinetics of a set of coupled chemical reactions, taking into account
+stochastic effects from low copy numbers of the chemical species.
+The algorithm is defined in the article:
+<blockquote>
+<table border="1">
+<tr><td>
+D. T. Gillespie, &quot;A General Method for Numerically Simulating the Stochastic
+Time Evolution of Coupled Chemical Species&quot;, <em>J. Comp.  Phys.</em>
+<b>22</b>, 403-434 (1976).
+</td></tr>
+</table>
+</blockquote>
+In Gillespie&apos;s approach, chemical reaction kinetics are modeled
+as a markov process in which reactions occur at specific instants of time
+defining intervals that are Poisson-distributed, with a mean reaction 
+time interval that is recomputed after each chemical reaction occurs.
+For each chemical reaction interval, a specific chemical reaction occurs,
+randomly selected from the set of all possible reactions with a weight
+given by the individual reaction rates.  
+</p>
+<p>
+The &appName; system provides a Java implementation of the Gillespie
+algorithm, for which 
+<a href="&localJavaLibraryURL;/javadoc/org/systemsbiology/chem/SimulatorStochasticGillespie.html">more
+information is available in the Javadoc documentation</a>.  This implementation
+uses the &quot;direct method&quot; variant of Gillespie's algorithm.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Gillespie Tau-Leap Stochastic Algorithm" label="tauleap">
+<p>
+The Gillespie Tau-Leap algorithm is a method for obtaining
+approximate solutions for the stochastic kinetics of a coupled set of
+chemical reactions.  An dimensionless relative tolerance &quot;epsilon&quot;
+controls the amount of error (as compared to the <a href="#gillespie">Gillespie Direct</a> 
+method) permitted in the solution, by scaling the maximum allowed &quot;leap time&quot;
+which is recomputed after each iteration of the algorithm.  The leap time
+is the amount by which the time is stepped forward during the iteration.
+The number of times each reaction in the model occured during the leap
+time is computed as the result of a Poisson stochastic process.  Species
+populations are adjusted in accordance with the number of times each reaction
+occurred during the leap time interval.  In the limit as the epsilon parameter
+is set to zero, the Tau-Leap algorithm should agree precisely with the results
+of the Gillespie Direct algorithm.  For complex models with a significant
+separation of time scales, this algorithm may potentially be much faster than
+the Gillespie Direct algorithm.
+</p>
+<p>
+The Tau-Leap algorithm is described in:
+<blockquote>
+<table border="1">
+<tr><td>
+D. T. Gillespie and L. R. Petzold, &quot;Improved Leap-Size Selection for
+Accelerated Stochastic Simulation&quot;, <em>J. Chem. Phys.</em>
+<b>119</b>, 8229-8234 (2003).
+</td>
+</tr>
+</table>
+</blockquote>
+and in references therein.
+</p>
+<p>
+Two implementations of the Tau-Leap algorithm are provided with &appName;
+The first is called &quot;<code>tauleap-simple</code>&quot;.  It is intended
+for use with models that are entirely composed of elementary reactions, that is,
+reactions with rate laws that are simple mass-action kinetics.  The 
+second is called &quot;<code>tauleap-complex</code>&quot;.  It is intended
+for use with models that contain custom algebraic 
+<a href="#expressions">rate expressions</a>.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Gibson-Bruck Stochastic Algorithm" label="gibsonbruck">
+<p>
+The Gibson-Bruck stochastic algorithm is an algorithm for modeling
+the kinetics of a coupled set of coupled chemical reactions.  The algorithm
+is defined in the article:
+<blockquote>
+<table border="1">
+<tr>
+<td>
+M. A. Gibson and J. Bruck, &quot;Efficient Exact Stochastic Simulation
+of Chemical Systems with Many Species and Many Channels&quot;, Caltech
+Parallel and Distributed Systems Group technical report number 026, (1999).
+</td>
+</tr>
+</table>
+</blockquote>
+This implementation uses the "next reaction" variant of the 
+Gibson and Bruck algorithm, for which  
+<a href="&localJavaLibraryURL;/javadoc/org/systemsbiology/chem/SimulatorStochasticGibsonBruck.html">more information</a> is available. 
+The Gibson-Bruck algorithm is O(log(M)) 
+in the number of reactions, so it is preferred over the Gillespie
+algorithm for models with a large number of reactions and/or species.
+For models with a small number of reactions and species, the Gillepie
+algorithm is preferred, as it avoids the overhead of maintaining
+the complex data structures needed for the Gibson-Bruck algorithm.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="ODE Simulator (Adaptive)" label="odesimadaptive">
+<p>
+The &appName; system provides a deterministic simulator
+for reaction kinetics, in which the system is modeled as
+a set of coupled ordinary differential equations (ODEs).
+The differential equations are solved using a finite
+difference method, specifically the 5th-order Runge-Kutta
+algorithm with an adaptive stepsize controller.  The 
+error tolerance per iteration of the algorithm is set to 10^-3,
+but can be made smaller by specifying a large integer value
+(greater than 1000) for the "number of steps" input field 
+in the simulation controller window.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="ODE Simulator (Fixed)" label="odesimfixed">
+<p>
+The &appName; system provides a deterministic simulator
+for reaction kinetics, in which the system is modeled as
+a set of coupled ordinary differential equations (ODEs).
+The differential equations are solved using a finite
+difference method, specifically the 5th-order Runge-Kutta
+algorithm with a fixed stepsize.  The number of steps
+defaults to the number of time points at which the 
+species populations are to be sampled (default of 100), but
+this can be modified by changing the "number of steps" input 
+field in the simulation controller window.
+</p>
+</isb:docsubsection>
+
+</isb:docsection>
+
+<isb:docsection name="Model Elements" label="modelelement">
+
+<!-- ========== PARAMETERS ========== -->
+
+<isb:docsubsection name="Parameters" label="parameters">
+
+<p>
+A parameter is a name-value pair that may be referenced
+symbolically (i.e., by its name) in 
+<a href="#expressions">mathematical expressions</a>.  The
+value is always a numeric (floating-point) value.
+The parameter name must be a valid <a href="#symbols">symbol name</a>.
+</p>
+<p>
+A parameter can be associated with a <a href="#models">model</a>,
+in which case it can be referenced in the custom rate expression for
+any chemical <a href="#reactions">reaction</a> associated with the model;
+in addition, it can be referenced in the species population expression
+for any <a href="#species">boundary species</a> within the model.
+</p>
+
+</isb:docsubsection>
+
+<!-- ========== COMPARTMENTS ========== -->
+
+<isb:docsubsection name="Compartments" label="compartments">
+<p>
+A compartment is an abstraction for a named region of space 
+that has a fixed volume.  The contents of this volume are 
+assumed to be well-stirred, so that chemical species do not
+have concentration gradients within this volume.  Every 
+<a href="#species">species</a> must be assigned to a 
+compartment.  The volume of the compartment can be used 
+to compute the concentration of the species, from the 
+number of molecules (population) of the species in the
+compartment.  
+</p>
+<p>
+By default, species defined in the <a href="#cmdl">Chemical 
+Model Definition Language</a> are associated with a default
+compartment &quot;<code>univ</code>&quot;  This compartment
+has unit volume.  
+</p>
+<p>
+A non-default compartment can be defined by a symbol definition
+as shown here:
+<blockquote>
+<pre>
+c1 = 1.0;
+</pre>
+</blockquote>
+A species &quot;S&quot; can be associated with this 
+compartment by the statement:
+<blockquote>
+<pre>
+S @ c1;
+</pre>
+</blockquote>
+The special symbol &quot;@&quot; is used to associate a
+species with a compartment.  Note that the species symbol
+&quot;S&quot; and the compartment symbol &quot;c1&quot; must
+have been previously defined, as shown here:
+<blockquote>
+<pre>
+c1 = 1.0;
+S = 100.0;
+S @ c1;
+</pre>
+</blockquote>
+The above statement would tell the parser to define the two
+symbols "S" and "c1" with values 100 and 1, respectively, and
+that "S" is a species associated with the compartment "c1".
+</p>
+
+</isb:docsubsection>
+
+<!-- ========== SPECIES ========== -->
+
+<isb:docsubsection name="Species" label="species">
+<p>
+A species is an abstraction representing a type of molecule or
+molecular state.  A species has a name, which must be unique;
+in addition, a species must be assigned to one (and only one)
+compartment.  A species must also be assigned a population value, 
+which is a double-precision floating point number.
+There are two types of species in the &appName; system, <b>floating</b>
+species and <b>boundary</b> species.  
+</p>
+<p>
+A floating species
+is a species whose population is affected by reactions
+in which it participates.  For example, if a reaction takes
+species X as a reactant, and does not produce species X as
+a product, then when this reaction occurs, the population
+of species X is decremented by one.  The floating species
+is the most commonly used species type, and it is the 
+default species type for species in the &appName; system.
+</p>
+<p>
+A boundary species is a species whose population is 
+externally specified as a boundary condition for the simulation.
+The population of a boundary species is not affected by
+the occurrence of reactions in which the species participates.
+In this sense, a boundary species is not &quot;dynamical&quot;.
+The population of a boundary species can be set to a constant,
+or a more complex time-dependent function.  The details of
+how to define the population of a boundary species will
+be discussed further below.
+</p>
+<p>
+Occasionally it is desirable to create a model in which
+a given species can reside in more than one compartment.
+This is accomplished in the &appName; system by defining
+two different species with similar (but still distinct)
+names, and assigning each species to a different compartment.
+For example, one might define two different species
+named &quot;<code>SpeciesX_cytoplasm</code>&quot; and
+&quot;<code>SpeciesX_nucleus</code>&quot;, representing
+the instances of chemical species &quot;X&quot; in the
+cytoplasm and nucleus, respectively.
+</p>
+</isb:docsubsection>
+
+<!-- ========== REACTIONS ========== -->
+
+<isb:docsubsection name="Reactions" label="reactions">
+<p>
+A <b>reaction</b> is a one-way process in which zero
+or more chemical species may interact, transforming into
+zero or more (possibly different) chemical species.  
+The interacting species are the <b>reactants</b>, and the 
+chemical species that are produced are called the 
+<b>products</b>.  
+</p>
+<p>
+Here, &quot;one-way&quot; means that a single reaction
+defines a process that can only proceed from reactants 
+to products.  The &quot;reverse&quot; reaction is not
+implicitly defined.  In order to model a chemical system with a 
+&quot;reversible&quot; reaction, a second reaction must 
+be defined in which the roles of reactants and products 
+are swapped. 
+</p>
+<p>
+The mention of &quot;zero species&quot; above merits some 
+explanation.  Consider the case of a chemical reaction with
+zero reactants and a finite number of products.  This represents
+a process in which the products are spontaneously created, 
+somewhat like pair creation of an electron-positron pair
+from the vacuum, in the presence of a strong electic field.
+The case of zero products and a finite number of reactants
+represents a process of annihilation of the reactant
+molecules, such as in electron-positron pair annihilation.  
+Note that a reaction with zero reactants <em>and</em> zero 
+products is not permitted by the &appName; system.  The
+cases of zero reactants or zero products are somewhat
+degenerate, but are useful for defining a signal molecule
+with an (ensemble-averaged) equilibrium population that is a time-dependent
+function.  For example, one can model a signal molecule
+&quot;<code>S</code>&quot; whose equilibrium population 
+is a specified function of time by considering two separate 
+</p>
+<p>
+It is permissible for a chemical species to participate
+in a reaction as both a reactant and a product, as shown
+here:
+<blockquote>
+<pre>
+A + B -&gt; A + C
+</pre>
+</blockquote>
+In such a reaction, a single molecules of species 
+<code>A</code> is used in the reaction, but also
+produced, so the net change in the population of 
+species <code>A</code> from this reaction is zero.
+Note that the above reaction definition is not a good model of 
+catalysis.  A simple model of catalysis in which species <code>A</code>
+catalyzes the transformation of species <code>B</code> into
+species <code>C</code> would involve three separate 
+reactions, as shown here:
+<blockquote>
+<pre>
+A + B -&gt; AB
+AB -&gt; A + B
+AB -&gt; A + C
+</pre>
+</blockquote>
+with appropriate conditions on the relative rates
+of the second and third reactions.  Note that the species
+named &quot;<code>AB</code>&quot; represents the 
+enzyme-substrate complex.
+</p>
+<p>
+The above discussion assumes that species participating
+in reactions are &quot;floating&quot; (dynamical) species.
+As described above in the <a href="#species">species</a>
+section, a species can also be defined as a &quot;boundary&quot;
+species.  In this case, the population of the species is
+not dynamical but instead a boundary condition of the
+system.  As an illustration, suppose that species 
+<code>X</code> is declared as a boundary species.
+Even if species <code>X</code> were to appear in a
+reaction as a reactant, such as in the reaction
+<code>X + A -&gt; B</code>, the population of species
+<code>X</code> would not be affected by the occurrence
+of this reaction.  This is mostly useful for defining
+a species whose role in a system is as an externally
+applied &quot;signal&quot; or &quot;input&quot;.
+Note that special notation is used to describe a
+boundary species in the Chemical Model Definition 
+Language (CMDL), as described <a href="#cmdl">below</a>.
+</p>
+
+</isb:docsubsection>
+
+<!-- ========== REACTION RATES ========== -->
+
+<isb:docsubsection name="Reaction Rates" label="reactionrates">
+<p>
+A reaction rate is defined as the probability density
+per unit time, of a given chemical reaction occurring.
+In the &appName; system, there are two methods of defining
+reaction rates, the <b>built-in method</b>
+and the <b>custom expression method</b>.  
+The built-in method is the default method used, and 
+it is preferred for reasions of 
+computational performance (speed).
+</p>
+<p>
+<a name="reactionratebuiltin" />
+In the <b>built-in method</b> of defining a reaction
+rate, one specifies a numeric <b>reaction parameter</b>.
+The units of the reaction parameter depend on the
+<a href="#reactionratespeciesmode">reaction rate species mode</a>
+attribute of the <a href="#model">model</a> with which
+the reaction is associated.  
+</p>
+<p>
+If the model&apos;s reaction rate species mode is <b>molecules</b>
+(the default), the reaction parameter represents the 
+numeric reaction probability density per unit time,
+<em>per distinct combination of reactant molecules</em>.
+The reaction rate is then obtained by first computing
+the number of distinct combinations of reactant molecules
+(which depends on the populations of the various reactant
+species), and multiplying this number by the reaction
+parameter for the reaction.  The result is the reaction 
+rate. 
+</p>
+<p>
+If the model&apos;s reaction rate species mode is <b>concentration</b>,
+the reaction parameter represents the kinetic constant for
+the reaction, in units of inverse molar concentration to the
+power of the number of reactant species, per unit time.
+In this case, the concentration of each reactant species is
+computed, and the concentrations are multiplied together
+(with suitable exponentiation for a reactant species that
+has a stoichiometry greater than one).  The result is then
+multiplied by the reaction parameter, to produce the reaction rate.
+</p>
+<p>
+<a name="reactionratecustom" />
+In the <b>custom expression method</b> of defining a
+reaction rate, one specifies a textual <b>reaction rate
+expression</b>.  This expression is a 
+<a href="#expressions">mathematical expression</a>
+involving symbols, arithmetic operators, and simple 
+built-in mathematical functions.  Symbols can be 
+<a href="#species">species names</a> or parameters.
+A species name appearing in the expression represents
+either the number of molecules of the species, or
+the species concentration, depending on the
+<a href="#reactionratespeciesmode">reaction rate
+species mode</a> of the model with which the
+reaction is associated.  The custom expression
+method is less desirable than the built-in
+method, due to the computational overhead of
+evaluating the mathematical expression for each
+reaction event during the simulation of the model.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Multistep Reactions" label="multistep">
+<p>
+The &appName; system allows for defining an N-step
+process as a single composite &quot;reaction&quot;.  This is
+an <em>experimental</em> feature that still needs further
+testing before it can be considered reliable.  As a more
+reliable and better-tested alternative, consider using the
+<a href="#delayed">delayed reaction</a> construct.
+</p>
+<p>
+A multistep reaction assumed to consist of N irreversible 
+elementary reactions that are chained together, as shown here:
+<blockquote>
+<pre>
+S0 -&gt; S1 -&gt; S2 -&gt; S3 -&gt; S4 -&gt; ... -&gt; SN
+</pre>
+</blockquote>
+One should note that it is possible to define each of
+these reaction steps separately, as shown here:
+<blockquote>
+S0 -&gt; S1, k;
+S1 -&gt; S2, k;
+...
+</blockquote>
+The <a href="#loops">loop</a> construct can make
+the above definition easier.  However, if the
+following conditions are met:
+<ol>
+<li>each
+reaction step has precisely one reaction and
+one product</li>
+<li>all the reactions have the same
+elementary rate value (which may not be a custom
+<a href="#expressions">expression</a>)</li>
+<li>the
+reactions are chained together as shown above</li>
+</ol>
+it is possible to simplify the reaction definitions
+using a single &quot;multistep&quot; composite
+reaction:
+<blockquote>
+<pre>
+S0 -&gt; S1, k, steps: N;
+</pre>
+</blockquote>
+where <code>k</code> is the rate value for each
+elementary reaction, and <code>N</code> is the
+number of reaction steps in the composite multistep
+reaction.  If the value specified for <code>N</code>
+is less than or equal to 15, the &appName; simulator 
+will just insert the <code>N</code> separate reactions into
+the <a href="#models">model</a>.  If the value
+<code>N</code> is greater than 15, the &appName; simulator
+will treat the cascade of reactions as a single
+&quot;multistep&quot; reaction, using a history-dependent
+mechanism for evaluating the probability density of producing
+a molecule <code>SN</code> at any given time.  This method
+is described in the paper of <a href="#gibsonbruck">Gibson
+and Bruck</a>.
+</p>
+<p>
+Multistep reactions are useful for simulating processes
+such as transcription and translation, in which a long
+sequence of individual reaction steps transforms the system
+from an initial state ("polymerization complex") to a final
+state ("completed transcript").  
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Delayed Reactions" label="delayed">
+<p>
+The &appName; system allows for defining a reaction
+process containing an intrinsic &quot;delay&quot;.  
+This can be useful for phenomenologically modelling 
+complex processes for which the detailed dynamics is 
+not known, but for which the overall rate is known and the 
+total time for the process to occur, is known.  A
+delayed reaction must have exactly one reactant and one product
+species. The delayed reaction takes up the reactant and produces
+the product molecule, at the specified rate.  However,
+the rate of production of the product species depends upon
+the number of reactant molecules at a time in the past equal
+to the &quot;delay&quot; time specified for the reaction. For
+reactant <code>S0</code> and product <code>S1</code> and delay
+<code>s</code> and rate <code>k</code>, the delayed reaction
+is equivalent to the following differential equations:
+<blockquote>
+<pre>
+dS0/dt = -k * S0(t)
+dS1/dt = k * S0(t - s)
+</pre>
+</blockquote>
+To define a delayed reaction equivalent to the above, the
+command language statement would be:
+<blockquote>
+<pre>
+S0 -&gt; S1, k, delay: s;
+</pre>
+</blockquote>
+where <code>k</code> is the rate value for each
+elementary reaction, and <code>s</code> is the delay. 
+The delay time is in the same units as the time scale
+used for all kinetic parameters in the model, and must
+be a nonnegative number.  Specifying a delay time of zero
+is equivalent to having no delay at all.
+</p>
+
+</isb:docsubsection>
+
+<!-- ========== MODELS ========== -->
+
+<isb:docsubsection name="Models" label="models">
+<p>
+In the &appName; system, a <b>model</b> is a collection of
+one or more <a href="#reactions">reactions</a>, together
+with all of the chemical <a href="#species">species</a>
+involved in the reactions, and any 
+<a href="#parameters">parameters</a>
+defined for the model or the reactions.  In addition,
+a model contains all of the <a href="#compartments">compartments</a>
+with which the species are associated.  A model
+also incorporates the initial species populations.
+</p>
+<p>
+<a name="reactionratespeciesmode" />
+A model has an important attribute called the
+<b>reaction rate species mode</b>.  This attribute
+controls how a given species contributes to a reaction
+rate.  It has two possible values, <b>molecules</b> and
+<b>concentration</b>.  Each will be defined in turn.
+</p>
+<p>
+In the <b>molecules</b> reaction rate species mode,
+the contribution of any given species to a reaction
+rate is always computed using the number of molecules
+of the species.  In the case of the 
+<a href="#reactionratebuiltin">default method of
+computing the reaction rate</a>, this means that
+the reaction rate is computed as the product of the 
+number of distinct combinations of reactant molecules,
+and the reaction parameter.  The <b>molecules</b>
+reaction rate species mode is the default.
+</p>
+<p>
+In the <b>concentration</b> reaction rate species mode,
+the contribution of a given species to a reaction rate
+is computed using the molar concentration of the species
+(number of moles of the species, divided by the volume
+of the compartment).  
+</p>
+
+</isb:docsubsection>
+
+</isb:docsection>
+
+<!-- ========== CMDL ========== -->
+<isb:docsection name="Chemical Model Definition Language (CMDL)" label="cmdl">
+
+<p>
+The Chemical Model Definition Language (CMDL) is a simplified
+model definition language designed to minimize the amount of repetitive
+typing required to define a model.   The default file extension of model
+definition files in the CMDL language is the &quot;<code>&cmdlFileExtension;</code>&quot;
+suffix.  The alternative extension &quot;<code>&appFileExtension;</code>&quot; is also
+understood to indicate a CMDL file.
+</p>
+
+
+<!-- ========== Symbol Values ========== -->
+<isb:docsubsection name="Symbol Values" label="symbolvalues">
+<p>
+A fundamental concept in the CMDL language is the 
+<b>symbol value</b>.  A symbol value is an assocation between
+a <a href="#symbols">symbol name</a> and a <b>value</b>.  A
+<b>value</b> may be defined as a
+<a href="#expressions">mathematical expression</a>, in which
+case it is immediately evaluated and the resulting floating
+point value is associated with the symbol.  Or, the value may be
+defined as a bracketed mathematical expression (enclosed in
+square brackets), in which case the expression itself is stored
+and associated with the symbol name.  The former type of value
+(immediately evaluated expression) is akin to a numeric macro.
+The latter type of value (expression with deferred evaluation)
+is similar to a symbolic function definition in <em>Mathematica</em>.
+</p>
+<p>
+As mentioned previously, symbol names must be unique.  This means
+that you cannot use the same symbol name for two different purposes.
+For example, it is illegal to define both a species "S" and a 
+compartment "S".  All elements of the &appName; system (reaction names,
+species names, compartment names, and parameter names) live in the 
+same "namespace", and so each element must have a globally unique name.
+</p>
+<p>
+In the CMDL, compartments, species, and parameters all start out as symbol
+value definitions like this:
+<blockquote>
+<pre>
+S = 1.0;
+</pre>
+</blockquote>
+In this example, "S" is the symbol name, and the value is 1.0.
+The &appName; parser determines that a given symbol name is 
+a species, compartment, or parameter based on how the symbol
+is subsequently used.  For example, if the symbol "S" appears 
+as a reactant in a subsequent reaction definition,
+<blockquote>
+<pre>
+r1, A + S -&gt; C + D, 1.0;
+</pre>
+</blockquote>
+the symbol "S" is automatically promoted to be a species.
+It cannot be subsequently used as a compartment or other
+type of symbol.  For the case of a compartment, suppose that 
+a symbol "comp" is defined as shown here:
+<blockquote>
+<pre>
+comp = 2.0;
+</pre>
+</blockquote>
+If this is later followed by a statement such as:
+<blockquote>
+<pre>
+S @ comp;
+</pre>
+</blockquote>
+the parser will automatically promote the symbol "comp" to
+be a compartment (and "S" will be promoted to be a species,
+if this has not already happened).  If at the end of processing
+all statements in the model definition file, there are symbols
+left that are neither species nor compartments, these symbols
+are added to the model as global <a href="#parameters">parameters</a>.
+</p>
+
+</isb:docsubsection>
+
+<!-- ========== STATEMENTS ========== -->
+
+<isb:docsubsection name="Statements" label="statements">
+<p>
+The CMDL langauge is centered around the concept
+of a <b>statement</b>.  Model definition files are broken into
+statements by use of the reserved symbol &quot;<code>;</code>&quot;,
+the semicolon.  Each statement must terminate with a semicolon, even
+if there is only one statement in the file.  The CMDL 
+model definition file is tokenized and parsed by the parser, and
+turned into an ordered collection of statements that are executed
+by the scripting engine.  In this way, there is a logical decoupling
+between parsing of model definition files and the execution of the
+statements defining the model.  Statements are processed in the order
+in which they appear in a model definition file. 
+</p>
+<p>
+There are two types of statements, known as <b>statement categories</b>.
+The first and most important category of statements is known as
+<b>model definition statements</b>.  This category of statements
+includes all statements that define model elements, such as
+species, reactions, parameters, etc. 
+</p>
+<p>
+The second category of statements is known as <b>action performers</b>.
+These statements instruct the scripting engine to perform a concrete
+action, such as conducting a simulation, exporting a model definition,
+printing the contents of a data structure, etc.  This category of 
+statements is supported only for use with the command-line interface
+to the &appName; system.  The graphical user interface for the
+&appName; system allows only the model definition statement category,
+and ignores any statements in the &quot;action performers&quot;
+category.  This is because in the graphical user interface, various
+graphical elements (menu items, dialog boxes, and other controls)
+are used to instruct the application to perform actions, rather
+than the scripting language.
+</p>
+
+</isb:docsubsection>
+
+
+<isb:docsubsection name="File Inclusion" label="fileinclusion">
+<p>
+In the &appName; system, a model definition file may include
+another model definition file.  This include mechanism is
+permitted in both of the command-language-based model definition
+language.  Model definitino file inclusion works just as it
+does with the preprocessor in the C programming language.
+The parser splices the text of the included file into the
+including file, at exactly the point where the &quot;include
+directive&quot; occurs.  There is a built-in mechanism to 
+prevent cyclic inclusion of files.  If file <code>A</code>
+includes file <code>B</code>, and file <code>B</code>
+includes file <code>A</code>, then the parser will simply
+ignore the include directive inside file <code>B</code>,
+since it will already have processed file <code>A</code>.
+</p>
+<p>
+The include mechanism is useful for separating out 
+&quot;boilerplate&quot; macro definitions thare are shared
+from model to model.  In addition, the include mechanism 
+might potentially be useful for extending a model.
+</p>
+<p>
+The specific syntax for including a model definition file
+within another model definition file, is shown here:
+<blockquote>
+<pre>
+#include "myFile&cmdlFileExtension;";
+</pre>
+</blockquote>
+where &quot;<code>myFile&cmdlFileExtension;</code>&quot; is the name of the file 
+that is to be &quot;included&quot;.  The contents of 
+&quot;<code>myFile&cmdlFileExtension;</code>&quot; are parsed at exactly the
+point where the include statement is encountered in the file,
+after all statements in the <em>including</em> file preceding
+the <code>include</code> statement have been parsed.  
+Note that the double-quotes and the semicolon are required.
+It is <em>not allowed</em> to embed a file inclusion statement
+inside a <a href="#loops">loop</a> construct.  Normally,
+file includes are placed at the top of a model definition file,
+in order to load a separate file containing &quot;boilerplate&quot;
+macro definitions and reaction definitions that are shared
+between different models.
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Comments" label="comments">
+<p>
+The CMDL provides a mechanism for
+embedding explanatory comments in a model definition file.
+A comment is a fragment of text beginning with a double-slash
+(&quot;<code>//</code>&quot;).  All text from the
+double-slash, to the end of the line, are considered
+by the parser to be a comment, and are ignored.  The following
+example shows an example of a comment:
+<blockquote>
+<pre>
+        // this is a comment
+</pre>
+</blockquote>
+It is acceptable to include a comment on the same line as an
+actual statement, as shown here:
+<blockquote>
+<pre>
+&lt;some statement&gt;;    // this is a comment
+</pre>
+</blockquote>
+In the above example, the statement would be parsed, but everything
+after (and including)  the double-slash would be ignored.
+</p>
+<p>
+The &appName; system also supports <em>multi-line comments</em>.
+The syntax for a multi-line comment is identical to a comment in
+the C programming language:
+<blockquote>
+<pre>
+/*
+  this is a comment
+  
+  this is also a comment
+ */
+</pre>
+</blockquote>
+The parser will ignore anything between the &quot;<code>/*</code>&quot;
+and the &quot;<code>*/</code>&quot; symbols.  This can be  useful for
+temporarily commenting out multiple lines of your model definition file,
+as shown here:
+<blockquote>
+<pre>
+/*
+ commented out temporarily for testing purposes (sramsey 2003/05/09)
+G4_dimer_binding_at_DNA4,     G4D_free + DNA4 -&gt; G4D_DNA4,     kf;
+G4_dimer_debinding_at_DNA4,   G4D_DNA4 -&gt; G4D_free + DNA4,     kr;
+ */
+</pre>
+</blockquote>
+Using the multiline comment syntax for this case is easier beacause
+you do not have to add a pound symbol &quot;<code>//</code>&quot; to each
+line that you are commenting out.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Exporter Plug-ins" label="exporterplugins">
+<p>
+The &appName; system has a framework of plug-ins for exporting
+an &appName; <a href="#model">model</a> to different file formats.
+Each exporter plug-in has an <b>exporter alias</b> defined.  The
+default exporter is the exporter for <a href="#sbml">Systems Biology
+Markup Language</a> (SBML).  The SBML exporter has the exporter
+alias &quot;<code>markup-language</code>&quot; (quotes not included).
+The full list of exporters is defined here:
+<blockquote>
+<dl>
+<dt><code>markup-language</code></dt>
+<dd>Exports a model instance to <a href="#sbml">SBML</a>.
+<p />
+</dd>
+<dt><code>human-readable</code></dt>
+<dd>Exports a <a href="#viewhuman">human-readable textual representation</a> 
+of the model.
+<p />
+</dd>
+<dt><code>orrell-column-format</code></dt>
+<dd>Exports a model instance to a numeric-column-format used
+at Institute for Systems Biology for certain software tools.  
+Only models that do not contain any <a href="#expressions">expressions</a> may be
+exported to this format.
+<p />
+</dd>
+</dl>
+</blockquote>
+Currently there is no exporter plug-in for the 
+<a href="#cmdl">CMDL</a> language. 
+Additional exporter plug-ins may be defined in the future.
+</p>
+</isb:docsubsection>
+
+<!-- ========== SIMULATOR PLUG-INS ========== -->
+<isb:docsubsection name="Simulator Plug-Ins" label="simplugins">
+<p>
+The &appName; system has a framework for pluggable simulation
+modules.  Each simulator plug-in has a simulator &quot;alias&quot;.
+The available simulator plug-ins are:
+<blockquote>
+  <dl>
+  <dt><code>gillespie</code></dt>
+  <dd>An implementation of the 
+<a href="#gillespie">Gillespie stochastic algorithm</a>
+for modeling the reaction kinetics.  This algorithm is described in the article
+</dd>
+  <dt><code>ODE</code></dt>
+  <dd>An implementation of an ODE-based deterministic simulator
+of the reaction kinetics.  The implementation is based on a 5th-order
+Runge-Kutta integrator with an adaptive stepsize controller.
+  </dd>
+  </dl>
+</blockquote>
+Each simulator above is identified by its &quot;simulator alias&quot;.  For example,
+the simulator alias for the Gillespie algorithm is &quot;<code>gillespie</code>&quot;.
+</p>
+</isb:docsubsection>
+
+
+
+
+<isb:docsubsection name="Default Model Elements" label="defaultmodelelements">
+<p>
+One of the distinguishing aspects of the CMDL is that several core
+elements are created by default:
+<ul>
+<li>A <a href="#models">model</a> is created, with model name 
+&quot;<code>model</code>&quot;.  The model name can be modified
+with the &quot;<code>#model</code>&quot; statement.</li>
+<li>A <a href="#compartments">compartment</a> is created, with 
+name &quot;<code>univ</code>&quot; and volume of 1.0 liters</li>
+</ul>
+This provides a built-in &quot;context&quot; for reaction and species
+definitions.    All species that are defined are automatically 
+associated with the default (&quot;<code>univ</code>&quot;)
+compartment.  All reactions are automatically associated with the 
+default model (&quot;<code>myModel</code>&quot;).
+</p>
+<p>
+The default &quot;model&quot; in the CMDL language has a 
+<a href="#reactionratespeciesmode">reaction rate species mode</a>
+of &quot;molecules&quot;.  In order to use a reaction rate
+species mode of &quot;concentration&quot;, it is presently necessary to
+use the <a href="#api">programmatic interface</a> to &appName;.
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Reaction Statements" label="reactionstatements">
+<p>
+A CMDL model definition (usually, but not always, a single file) consists
+of a series of <b>statements</b> which are text strings separated by
+semicolons.  Whitespace and newlines are ignored by the CMDL parser, except
+in a quoted string environment, where whitespace is interpreted literally
+and newlines are illegal.
+</p>
+<p>
+The centerpiece of the chemical model definition
+language is the reaction statement.  A reaction statement
+defines a one-way chemical reaction in which zero or
+more chemical species participate as reactants, and zero
+or more chemical species participate as products.  The species
+appearing in the reaction definition must be previously defined 
+symbols.  Reaction statements have three <em>elements</em>
+separated by commas.  The first element is the reaction name,
+and it is an optional element.  The second element defines
+the reactants and products.  The third element defines the
+reaction rate.  The following example shows a reaction 
+statement, along with the preceding species symbol definitions:
+<blockquote>
+<pre>
+A = 100.0;
+B = 100.0;
+C = 0.0;
+D = 0.0;
+creation_of_c_d,  A + B -&gt; C + D,  1.0;
+</pre>
+</blockquote>
+As explained above, each statement ends with the semicolon 
+character  &quot;<code>;</code>&quot;.
+Note the use of the comma character &quot;<code>,</code>&quot;
+to separate different <em>elements</em> of the statement.
+The statement causes the following definitions to be made:
+<ul>
+<li>a floating species <code>A</code>, in the default compartment</li>
+<li>a floating species <code>B</code>, in the default compartment</li>
+<li>a floating species <code>C</code>, in the default compartment</li>
+<li>a floating species <code>D</code>, in the default compartment</li>
+<li>a reaction <code>creation_of_c_d</code>, in which 
+species <code>A</code> and <code>B</code> participate
+as reactants, and in which species <code>C</code> and
+<code>D</code> are products.</li>
+<li>the reaction rate of the <code>creation_of_c_d</code>
+reaction is computed using the 
+<a href="#reactionratebuiltin">built-in
+method</a>, with a reaction parameter of 1.0.</li>
+</ul>
+Please note that if the reaction name is omitted, 
+the first comma must be omitted as well, as shown here:
+<blockquote>
+<pre>
+A + B -&gt; C + D,  1.0;
+</pre>
+</blockquote>
+In this case, a default reaction name is assigned by
+the &appName; parser.
+</p>
+<p>
+In many cases, it is desirable to specify a 
+<a href="#reactionratecustom">custom reaction rate</a>, 
+rather than using the built-in method of
+computing the reaction rate.   To specify a custom
+reaction rate, the reaction rate element should be
+defined as a string data type.  This is accomplished
+by substituting a bracketed mathematical expression.
+In the example of the above reaction, one might write:
+<blockquote>
+<pre>
+creation_of_c_d,  A + B -&gt; C + D,  [2.0 * A * B];
+</pre>
+</blockquote>
+The square brackets are required in order to tell the
+parser that the reaction rate is a custom reaction rate, for
+deferred (rather than immediate) evaluation.
+The text inside the quotes is parsed as a
+<a href="#expressions">mathematical expression</a>
+that typically involves species name symbols, numeric literals,
+and arithmetic operators.  In addition, a mathematical
+expression may involve built-in functions (e.g., 
+<code>ln()</code> or <code>sin()</code>) and
+special symbols such as &quot;<code>time</code>&quot;.
+In the above example, the reaction rate will be computed
+as the product of the number <code>2.0</code> times the
+product of the populations of species <code>A</code> and 
+<code>B</code>, in molecules. 
+</p>
+<p>
+It should be emphasized that the CMDL parser determines
+which type of reaction rate computation method to use, based
+on whether or not the reaction rate is specified using square
+brackets.  As explained above, if the rate expression is not
+bounded by square brackets, the
+parser will use the built-in reaction rate computation method.
+If the rate expression is bounded by square brackets, 
+the parser will assume
+that the reaction rate computation method is a custom rate. 
+</p>
+<p>
+Note that specifying a custom reaction rate using a
+mathematical expression (in square brackets) has a significant
+drawback, relative to using the built-in method of computing
+the reaction rate.  The custom reaction rate is more expensive
+to compute, in terms of the number of CPU instructions per reaction
+event in the simulation. 
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Symbol Values and Expressions" label="numericmacrosexpressions">
+<p>
+Often, a single value will be used frequently
+throughout a model definition file.  For example, a reaction
+rate parameter of <code>1.0</code> may be used for many reactions
+in a given model definition file.  This can make it tedious
+to modify the parameter once the model definition file has
+been written.  The <a href="#symbolvalues">symbol value</a>
+construct makes it easier to centralize definition of numeric
+values in the model definition file. One can define a symbol
+such as this:
+<blockquote>
+<pre>
+k = 1.0;
+</pre>
+</blockquote>
+This declares a symbol "k" and associates it with
+the value <code>1.0</code>. 
+</p>
+<p>
+This symbol may be referenced in any subsequent
+mathematical expression in the model definition file.
+For example, we may define a reaction whose rate is "2.0 * k":
+<blockquote>
+<pre>
+creation_of_c_d,  A + B -&gt; C + D,  2.0 * k;
+</pre>
+</blockquote>
+The absence of square brackets around the "2.0 * k" expression 
+instructs the parser to immediately evaluate this expression,
+and to use the resultant value as the rate for the reaction.
+</p>
+<p>
+In addition, the "k" symbol may be referenced in a 
+deferred-evaluation mathematical expression, in which
+case "k" is evaluated as a model parameter (this works
+because the "k" symbol will be added to the model as
+a parameter, if it is not used as a species or compartment
+anywhere in the model):
+<blockquote>
+<pre>
+creation_of_c_d,  A + B -&gt; C + D,  [2.0 * k * A * B];
+</pre>
+</blockquote>
+</p>
+<p>
+In the above example, the rate of reaction 
+"creation_of_c_d" is defined as the expression "2.0 * k * A * B",
+as a <em>deferred evaluation expression</em>.  This means
+that each time the rate needs to be computed, this expression
+is used.  This is sometimes referred to as a "custom rate
+expression", to distinguish it from the built-in (combinatoric)
+method of computing the reaction rate based on a floating-point
+reaction parameter.
+</p>
+<p>
+A mathematical expression may also be embedded within a 
+symbol name using a double-quote syntax, as shown here:
+<blockquote>
+<pre>
+k1 = 1.0;
+"my_reaction[2.0 * k1]", A + B -&gt; C + D, 1.0;
+</pre>
+</blockquote>
+In the above, the parser detects the square brackets 
+within the quoted string, and attempts to immediately
+evaluate the expression within the square brackets. The
+result of the evaluation is converted to an integer, and
+interpolated into the quoted string. This example would
+therefore be equivalent to the reaction definition:
+<blockquote>
+<pre>
+k1 = 1.0;
+"my_reaction2", A + B -&gt; C + D, 1.0;
+</pre>
+</blockquote>
+The decimal point does not appear in "my_reaction2" because
+the numeric value within the string has been converted
+to an integer.  This is occasionally useful in combination
+with the <a href="#loops">loop</a> construct defined below.
+This technique can also be used in defining a symbol value,
+as shown here:
+<blockquote>
+<pre>
+k1 = 1.0;
+"k[ 2.0 * k1 ]" = 1.0;
+</pre>
+</blockquote>
+The above example is equivalent to:
+<blockquote>
+<pre>
+k1 = 1.0;
+k2 = 1.0;
+</pre>
+</blockquote>
+after translation by the parser.
+</p>
+<p>
+The mathematical expression facility allows
+for using the special symbol <code>time</code>
+to include simulation time.  As an illustration,
+consider the following exmple reaction definition:
+<blockquote>
+<pre>
+my_reaction, A + B -&gt; C + D, [2.0 * A * B * time^0.5];
+</pre>
+</blockquote>
+The above defines a reaction in which the reaction
+rate increases as the square root of the elapsed
+time.  
+</p>
+<p>
+In addition to the <code>time</code> symbol,
+there is a special symbol <code>Navo</code> that
+defines the Avogadro constant.  This is occasionally
+useful if you have a numeric macro that you wish
+to specify in terms of moles.  For example:
+<blockquote>
+<pre>
+k = 3.6 * 10^(-45);
+my_reaction, A + B -&gt; C + D, [k * N * A * N * B];
+</pre>
+</blockquote>
+In the above definition, the symbol <code>k</code>
+is defined in terms of inverse moles squared.
+So to regain the correct units in the reaction
+rate expression, the factor <code>Navo</code>
+is multiplied by each species symbol appearing
+in the reaction rate expression.
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Specifying Species Populations" label="specifyingspeciespopulations">
+<p>
+In the CMDL, the initial populations of species
+are specified using a numeric element, as shown
+here:
+<blockquote>
+<pre>
+A = 100;
+B = 100;
+my_reaction, A -&gt; B, 1.0;
+</pre>
+</blockquote>
+In the above example, species <code>A</code> and
+<code>B</code> have their initial populations set
+to 100 molecules. The appearance of the symbols
+<code>A</code> and <code>B</code> in the reaction
+definition statement causes the &appName; parser to 
+understand that they are species.
+</p>
+<p>
+Instead of using a numeric literal to define the 
+initial species population, it is also possible
+to use a mathematical expression, as shown here:
+<blockquote>
+<pre>
+N = 10.0;
+A = N * 10.0;
+B = N * 10.0;
+my_reaction, A -&gt; B, 1.0;
+</pre>
+</blockquote>
+In this case, the symbol <code>N</code> is 
+defined as a numeric macro with value 10.0.
+The initial populations of <code>A</code>
+and <code>B</code> are defined as the value
+of the expressions contained in the square
+brackets. In the above example, the initial populations
+of species <code>A</code> and <code>B</code>
+are set to 100.
+</p>
+<p>
+The above discussion has assumed that species
+defined in chemical reactions are always
+floating species.  In order to define a boundary
+species that participates in a chemical reaction, 
+the dollar sign is used, as shown in the following
+example:
+<blockquote>
+<pre>
+A = 100;
+B = 100;
+my_reaction, $A -&gt; B, 2.0;
+</pre>
+</blockquote>
+In the above example, species <code>A</code> is 
+defined as a boundary species with a population 
+of 100.  Species <code>B</code> is
+defined as a boundary species with an initial
+population of 100.  Recall that the population
+of a boundary species is unaffected by the 
+occurrence of a chemical reaction involving
+that species.  Therefore, defining the population
+of a boundary species differs from that of a
+floating species, in that the population definition
+of a boundary species is not just for the inital
+time, but for all times during the simulation.
+Given that the above definition
+specifies the built-in method of computing the
+reaction rate, the above definition could be
+simplified in the following way:
+<blockquote>
+<pre>
+A = 100;
+B = 100;
+my_reaction,  -&gt; B, [2.0 * A];
+</pre>
+</blockquote>
+In the above example, <code>A</code> has been
+changed into a parameter, and eliminated as
+a species in the reaction that produces species 
+<code>B</code>.  The reaction rate has been increased
+by a factor of the value of <code>A</code>.
+</p>
+<p>
+As with floating species, the population definition
+for a boundary species may invole a mathematical
+expression that is parsed immediately by the parser:
+<blockquote>
+<pre>
+num = 10;
+A = num * 10;
+B = 100;
+my_reaction, $A -&gt; B, 2.0;
+</pre>
+</blockquote>
+The right-hand side of the statement defining the
+population of <code>A</code> is still a numeric element,
+in the above example, which means that the population
+value is determined by the parser, and stored as an
+invariant floating-point value.
+</p>
+<p>
+The population of a boundary species may also be
+defined as a <b>late-evaluation</b> mathematical
+expression.  This means that the actual <em>expression</em>
+is stored by the parser, rather than the value of the expression
+evaluated initially.  This is accomplished
+by using a string element rather than a numeric element,
+on the right-hand side of the definition of the 
+boundary species population. One can define a boundary
+species with a non-integer population value, as shown here:
+<blockquote>
+<pre>
+A = 0.5;
+B = 100;
+my_reaction, $A -&gt; B, 2.0;
+</pre>
+</blockquote>
+This use of a boundary species is not necessary in this case, 
+because it possible to just rescale the reaction parameter 
+and eliminate the boundary species &quot;<code>A</code>&quot; as a 
+participatnt in the reaction.  A more useful case is when
+one wishes to define a boundary species whose value actually
+<em>varies over time</em>, according to a function defined
+by the user.  In this case, the boundary species is still
+not dynamical; the time dependence of its population value
+is governed by a mathematical expression involving the
+special symbol <code>time</code>, as in the following example:
+<blockquote>
+<pre>
+A = [10 * time];
+B = 100;
+y_reaction, $A -&gt; B, 2.0;
+</pre>
+</blockquote>
+In this case, the boundary species <code>A</code>
+has a population that is linearly increasing with time.
+</p>
+<p>
+Specifying the boundary species population as a
+mathematical expression has a significant limitation,
+in that it makes the simulation of the model more
+computationally complex, and therefore, slower.  Therefore,
+one should specify a boundary species population using
+a string representation of a mathematical expression
+<em>only</em> in cases where it is required to have
+a time-varying boundary species population that is
+externally controlled.
+</p>
+<p>
+Note that it is illegal to attempt to define the 
+initial population of a <em>floating</em> species as a
+string element containing a mathematical expression.
+</p>
+<p>
+The definition of the boundary species population
+may include the special symbol <code>time</code>.
+This is useful in cases where it is desired to
+model the effects of a singnal molecule whose
+population is externally controlled.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Loops" label="loops">
+<p>
+The CMDL language contains a looping construct that
+permits defining a family of model elements where
+a single counter is incremented for each member of the
+family.  For example, one might wish to generate a family
+of species and chemical reactions, parameterized by an integer.
+The species might be
+<blockquote>
+<pre>
+A1, A2, A3, A4
+B1, B2, B3, B4
+</pre>
+</blockquote>
+and the reactions might be of the form
+<blockquote>
+<code>A</code><em>n</em> -&gt; <code>B</code><em>n</em>
+</blockquote>
+This can be accomplished with the &quot;<code>loop</code>&quot;
+keyword, as shown here:
+<blockquote>
+<pre>
+loop (i, 1, 4)
+{
+  "reaction_[i]",   "A[i]" -&gt; "B[i]", 1.0;
+}
+</pre>
+</blockquote>
+In the above example, the symbol &quot;<code>i</code>&quot; is
+the loop index, and it is incremented from 1 to 4 in steps
+of one.  For each iteration of the loop, all statements between
+the curly braces are executed.  More than one statement can occur
+between the curly braces, although only one statement is shown here.
+The <code>[i]</code> tokens represent evaluating a mathematical
+expression, in which <code>i</code> appears as a symbol.  The
+<code>i</code> symbol is essentially a numeric macro whose value
+is incremented for each iteration of the loop.  It is important
+to note that in the above example, the dollar sign is required.  
+This is because statement elements specifying the reaction
+name, and the reactant/product species, are all <em>implicit string
+elements</em>.  In implicit string elements, the 
+dollar-sign-square-bracket construct is required in order
+to embed a mathematical expression, just as in explicit strings.
+After the loop statement and the embedded mathematical expressions
+are processed by the parser, the above example is equivalent to:
+<blockquote>
+<pre>
+reaction_1, A1 -&gt; B1, 1.0;
+reaction_2, A2 -&gt; B2, 1.0;
+reaction_3, A3 -&gt; B3, 1.0;
+reaction_4, A4 -&gt; B4, 1.0;
+</pre>
+</blockquote>
+A more nontrivial example of using the looping construct would
+be to define a cascade of reactions, as shown here:
+<blockquote>
+<pre>
+loop "i": start 1, stop 4
+{
+  "reaction_[i]", "A[i]" -&gt; "A[i+1]", 1.0;
+}
+</pre>
+</blockquote>
+This example defines a cascade of reactions that ultimately
+convert species <code>A1</code> into species <code>A5</code>.
+After the loop statement and the embedded mathematical expressions
+are processed by the parser, the above example is equivalent to:
+<blockquote>
+<pre>
+reaction_1, A1 -&gt; A2, 1.0;
+reaction_2, A2 -&gt; A3, 1.0;
+reaction_3, A3 -&gt; A4, 1.0;
+reaction_4, A4 -&gt; A5, 1.0;
+</pre>
+</blockquote>
+In both of the above examples, it is usually the case
+that a loop is used to define the initial species populations.
+For example, one might define (before the reaction definition
+loop):
+<blockquote>
+<pre>
+A1 = 100;
+loop (i, 1, 5)
+{
+  "A[i]" = 0;
+}
+</pre>
+</blockquote>
+This sets the initial population of species <code>A1</code>
+to 100, and the initial population of species <code>A2</code>
+through <code>A5</code> to zero.
+</p>
+<p>
+In defining a loop, note that the start and stop values are 
+numeric elements.  This means that they can be simple numeric 
+literals (as shown above), or mathematical expressions, as shown here:
+<blockquote>
+<pre>
+k = 10;
+loop (i, 1, k + 2)
+{
+  "reaction_[i]", "A[i]" -&gt; "A[i+1]", 1.0;
+}
+</pre>
+</blockquote>
+In the above example, the loop index <code>i</code> would iterate 
+over the range of integer values from 1 to 12, inclusive.
+</p>
+
+</isb:docsubsection>
+
+<isb:docsubsection name="Commands" label="commands">
+<p>
+In the CMDL, commands are preceded by the pound sign.  The following
+commands are recognized by the CMDL parser:
+<dl>
+<dt><b>#model</b></dt>
+<dd>
+The &quot;<code>#model</code>&quot; command sets the model name, as
+shown here:
+<blockquote>
+<pre>
+#model "mymodel";
+</pre>
+</blockquote>
+If the model name is not explicitly set using this command,
+a default model name will be used.  The &appName; program
+uses the default model name &quot;model&quot;.
+The rules for parsing the model name are the same as for parsing
+other symbol names.  
+</dd>
+<dt><b>#include</b></dt>
+<dd>For information, refer to the section on
+<a href="#fileinclusion">file inclusion</a>.
+</dd>
+
+<dt><b>#define</b></dt>
+<dd>
+The &quot;<code>#define</code>&quot; command is a template
+definition.  For more information, please refer to the
+<a href="#templates">section on templates</a>.
+</dd>
+
+<dt><b>#ref</b></dt>
+<dd>
+The &quot;<code>#ref</code>&quot; command is a template
+reference.  For more information, please refer to the
+<a href="#templates">section on templates</a>.
+</dd>
+</dl>
+
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Templates" label="templates">
+<p>
+This section describes the template feature of the CMDL. The
+template construct is like a parameterized macro.  One defines
+the template, and can later reference the template at various
+places in the model definition file.   Each time the template
+is referenced, the (suitably modified) body of the template is
+inserted into the model definition by the CMDL parser.  Templates
+are most useful when used with parameter lists, which allows
+for passing information &quot;into&quot; and &quot;out of&quot;
+the body of the template.  By default, all symbols within the
+body of the template are not visible outside the body of the
+template.  This is to avoid &quot;naming collisions&quot; with
+symbols defined outside the body of the template.  Therefore,
+templates are really only useful to the extent they can interact
+with other model elements defined within your model definition
+file; this is accomplished using the template parameter list.
+</p>
+<p>
+The &quot;<code>#define</code>&quot; command is used to define
+a template.  Each template has a name, that usually is indicative of
+its function.  An example template definition is shown here:
+<blockquote>
+<pre>
+#define Gene (X, Y)
+{
+  I = 3.0;
+  r1, X -> I, 1.0;
+  r2, I -> Y, 0.1;
+}
+</pre>
+</blockquote>
+In the above example, &quot;Gene&quot; is the template name.  The
+symbols &quot;X&quot; and &quot;Y&quot; are &quot;dummy symbols&quot;
+that act like parameters for the template.  You may refer to "X" and
+"Y" inside the body of the template definition.  The body of the template
+definition is typed inside the curly braces.  The symbols "X" and "Y"
+as shown above, should <em>not</em> have been previously defined.
+The body of the template definition must be completely self-contained;
+it may not refer to any external symbols except &quot;dummy symbols&quot;
+provided in the parenthetically delimited list at the beginning of the
+template definition (e.g., "X" and "Y" in the above example).  The symbol
+&quot;I&quot; defined within the template is known as an <em>internal symbol</em>.
+It is "scoped" by the command language parser so that its name does not 
+conflict with any symbols defined outside the body of the template definition.
+</p>
+<p>
+The "<code>#ref</code>" command is used to reference a template.
+The template must have been previous defined using the "<code>#define</code>"
+command.  In a template reference, you must provide a parenthetic list of
+symbols for all of the dummy symbols in the template definition.  These
+symbols <em>must</em> have been previously defined, before your
+"<code>#ref</code>" template reference occurs in the model definition file.
+An example is shown here:
+<blockquote>
+<pre>
+A = 100.0;
+B = 0.0;
+#ref Gene "GAL4" (A, B);
+</pre>
+</blockquote>
+After the template is substituted into the model definition by the 
+parser, the model definition would be as follows:
+<blockquote>
+<pre>
+A = 100.0;
+B = 0.0;
+GAL4::I = 3.0;
+GAL4::r1, A -&gt; GAL4::I, 1.0;
+GAL4::r2, GAL4::I -&gt; B, 0.0;
+</pre>
+</blockquote>
+The prepending of the "<code>GAL4::</code>" before each symbol name
+is the "scoping" that ensures that symbols defined within the body of
+the template definition do not have names that conflict with symbols defined
+outside the template definition.  Template references may exist within template
+definitions (this is simply nesting a template expansion within another 
+template definition), but it is illegal to nest a template definition within the
+body of another template definition.
+</p>
+<p>
+You may pass a numeric value to a template, as shown here:
+<blockquote>
+<pre>
+#define Gene (A, B, k)
+{
+r1, A -&gt; B, k;
+}
+
+X = 100.0;
+Y = 0.0;
+
+#ref Gene "GAL4" (X, Y, 0.5);
+</pre>
+</blockquote>
+In this example, the numeric value is substituted
+anywhere the symbol &quot;k&quot; appears within the
+body of the template.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Example CMDL model definition file" label="examplefile">
+<p>
+The following example illustrates a complete CMDL model definition file:
+<blockquote>
+<pre>
+// Simple model of transcription, in Escherichia coli
+// Written by:  Stephen Ramsey, October 10, 2004
+// Institute for Systems Biology, Seattle, Washington, USA
+// 
+#model "bacteria";
+
+#define fracSatTwoStatesTwoSitesOR( kfp, krp, qp, f0, fracsat )
+{
+        kp = kfp / krp;
+        kpf0 = [kp * f0];
+        kpf0_2 = [ kpf0*kpf0 ];
+        numerator = [ qp*kpf0_2 + 
+                      2.0 * kpf0 ];
+        fracsat = [ numerator / (numerator + 1.0) ];
+}
+
+cellVolume = 2.5 * 10^(-15); // Liters
+halfLifeMRNA = 5.0; // minutes
+halfLifeProtein = 60.0; // minutes
+transcriptLength = 1000.0;
+proteinLength = transcriptLength / 3.0;  // peptides
+transcriptionTranslocationRate = 2400.0; // nucleotides/minute
+translationTranslocationRate = 96.0; // codons / minute
+minimumInterRibosomeDistanceCodons = 26.6; // codons
+ribosomeMoleculesPerCell = 20000.0;
+mrnaMoleculesPerGene = 15.0;
+rnapMoleculesPerCell = 2000.0;
+proteinToMRNARatio = 600.0; // dimensionless
+protMoleculesPerGene = proteinToMRNARatio * mrnaMoleculesPerGene;
+
+// --------------------------------------
+// species
+// --------------------------------------
+
+transfac = 61.0; 
+
+-&gt; transfac, 61.0;
+transfac -&gt;, 1.0;
+
+kfp = 6.25 * 10^(-4);
+krp = 1.0;
+qp = 7.5;
+
+#ref fracSatTwoStatesTwoSitesOR "twoSitesOR" (kfp, krp, qp, transfac, 
+                                              fracsat_twoSitesOR);
+
+fracsat = [fracsat_twoSitesOR];
+
+gene = 1.0;
+rnap = rnapMoleculesPerCell;
+mrna = 0.0;
+protein = 0.0;
+ribosome = ribosomeMoleculesPerCell;
+
+startTranscript = 0.0;
+mrna = 0.0;
+finishTranscript = 0.0;
+
+startProtein = 0.0;
+protein = 0.0;
+finishProtein = 0.0;
+
+// --------------------------------------
+// parameters
+// --------------------------------------
+
+log2 = 0.693147181;
+
+kd_mrna = log2/halfLifeMRNA;
+
+kd_prot = log2/halfLifeProtein;
+
+rnapBindingKineticRate = kd_mrna * mrnaMoleculesPerGene / 
+                          rnapMoleculesPerCell;
+
+protMoleculesPerGene = proteinToMRNARatio * mrnaMoleculesPerGene;
+
+ribosomeBindingKineticRate = kd_prot * protMoleculesPerGene / 
+                          (ribosomeMoleculesPerCell * mrnaMoleculesPerGene);
+
+// transcription time delay
+transcriptionTimeDelay = transcriptLength / transcriptionTranslocationRate;
+
+// start transcription rate
+startTranscriptionRate = rnapBindingKineticRate; // per min, per molec
+
+// transcription rate
+transcriptionRate = 1.0 / transcriptionTimeDelay;
+
+// translation time delay
+translationTimeDelay = proteinLength / translationTranslocationRate; // minutes
+
+// start translation rate
+startTranslationRate = ribosomeBindingKineticRate; // per min, per molec
+
+// translation rate
+translationRate = 1.0 / translationTimeDelay; // codons/minute
+
+// --------------------------------------
+// reactions
+// --------------------------------------
+
+// start transcription
+startTranscription, rnap + $gene -&gt; startTranscript, 
+              [fracsat * startTranscriptionRate * rnap * gene];
+
+// transcription
+transcription, startTranscript -&gt; finishTranscript, 
+              transcriptionTranslocationRate, delay: transcriptionTimeDelay;
+
+// finish transcription
+finishTranscription, finishTranscript -&gt; rnap + mrna, transcriptionRate;
+
+// degrade mrna
+degradeTranscript, mrna -&gt; , kd_mrna;
+
+// start translation
+startTranslation, ribosome + $mrna -&gt; startProtein, startTranslationRate;
+
+// translation
+translation, startProtein -&gt; finishProtein, translationRate, 
+              delay: translationTimeDelay;
+
+// finish translation
+finishTranslation, finishProtein -&gt; ribosome + protein, translationRate;
+
+// degrade protein degradeProtein, protein -&gt; , kd_prot; 
+</pre>
+</blockquote> 
+This model definition file contains a very simple model
+of transcription in <em>Escherichia coli</em>.  Please
+note that this model is provided purely for pedagogical purposes, and
+thus, no citations to the literature are included for the parameters
+in the model.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Symbol Names" label="cmdl-symbolnames">
+In the CMDL, all <a href="#symbols">symbol names</a> defined 
+(except for parameters that are defined in a reaction namespace) 
+reside within the global
+namespace.  This means that, for example, a compartment and
+a species cannot have the same name.  Each symbol that is
+defined must have a unique name.
+<p />
+Note that in the CMDL, a species symbol appearing in a
+reaction rate expression can mean one of two things, 
+depending on the <a href="#reactionratespeciesmode">
+reaction rate species mode</a> of the <a href="#models">model</a>
+with which the reaction is associated.  For a reaction rate species
+mode of &quot;molecules&quot; (the default), the symbols 
+<code>A</code> and <code>B</code> in the reaction rate 
+mathematical expression refer to the numeric populations
+of species <code>A</code> and <code>B</code>, respectively.
+For a reaction rate species mode of &quot;concentration&quot;,
+the symbols <code>A</code> and <code>B</code> in the reaction 
+rate mathematical expression refer to the molar concentrations
+of species <code>A</code> and <code>B</code>, respectively.
+</isb:docsubsection>
+
+</isb:docsection>
+
+
+<!-- ========== SBML ========== -->
+
+<isb:docsection name="Systems Biology Markup Language (SBML)" label="sbml">
+<p>
+This section describes the Systems Biology Markup Language.  The
+systems biology markup language is an XML-based document specification
+for defining a <a href="#modelinstances">model instance</a> for a
+system of interacting chemical species.  The specification for SBML
+can be found at the home page of the 
+<a href="&sbmlURL;">Systems Biology Workbench Development 
+Group</a>.  
+</p>
+<p>
+The &appName; system is capable of importing a model instance
+from an SBML document, and exporting a model instance (defined through
+a different language) to an SBML document.  Some features of the &appName;
+system cannot be exported to an SBML document.  In particular, a boundary
+species whose population is a mathematical expression defining a function
+of time, cannot be exported to SBML.   Similarly, certain SBML constructs
+will not be imported into the &appName; system, namely, unit definitions.
+The &appName; system can import SBML documents with either of two systems
+of units:
+<ul>
+<li>Initial species populations specified in moles; Reaction rates
+specified using expressions in which species symbols represent molar concentration</li>
+<li>Initial species populations specified in molecules; Reaction rates
+specified using expressions in which species symbols represent number of molecules</li>
+</ul>
+While this is a fairly significant limitation, the above two cases permit
+successful import of most of the SBML models available.
+</p>
+</isb:docsection>
+
+<!-- ========== SBW INTERFACE ============ -->
+
+<isb:docsection name="&appName; Systems Biology Workbench Interface" label="sbwinterface">
+<p>
+&appName; has an interface to the <a href="&sbwURL;">Systems Biology Workbench (SBW)</a>
+system.  This makes it possible to access the simulation engine for &appName; using
+the cross-language remote procedure invocation capabilities of SBW.  Note that this
+section of the &appName; user manual assumes you are familiar with the architecture and
+terminology of the Systems Biology Workbench system.  For a good overview of these
+concepts and terminology, please refer to the
+<a href="&sbwURL;/docs/intro/intro.pdf">Introduction to the Systems Biology Workbench</a>
+document, available at the SBW Project home page.  The interface
+to SBW offered by &appName; includes a SBW module &quot;<code>org.systemsbiology.chem.Simulator</code>&quot;,
+which contains three SBW services, each of which implements the standard SBW simulation
+service API as defined in the <a href="&sbwURL;/docs/module-api/module-api.pdf">Systems
+Biology Workbench Module Programmer's Manual</a>.  The three simulation services
+offered through the &appName;-to-SBW interface are:
+<ul>
+<li><code>GillespieService</code>, which is the <a href="#gillespie">Gillespie</a> 
+simulator.</li>
+<li><code>GibsonBruckService</code>, which is the <a href="#gibsonbruck">Gibson-Bruck</a> simulator.
+</li>
+<li><code>DeterministicService</code>, which is the <a href="#odesimadaptive">Runge-Kutta 5th-order
+adaptive ODE simulator</a>.</li>
+</ul>
+Before the &appName; simulators can be accessed through the SBW, the Systems
+Biology Workbench must first be installed on your computer.  The software and
+installation instructions may be downloaded from the
+<a href="&sbwURL;">Systems Biology Workbench project page</a>.  Once SBW 
+is installed on your computer, the SBW Broker must be started.  Instructions
+for how to do this are also provided in the installation guide for the SBW.
+At this point, you are ready to start the &appName; interface to SBW.  This
+may be done in one of two ways:
+<ol>
+<li>You may wish to &quot;register&quot; the &appName; simulation services
+with the SBW broker.  This is done by running the &quot;<code>RegisterSBWServices</code>&quot;
+launcher that was placed on your desktop or in your Start Menu when you
+first installed &appName;.  A console window should briefly appear, and in
+it the message &quot;registering SBW simulation module&quot; should be
+displayed.  [The console window will go away as soon as the registration is
+complete, so it may just appear as a brief flicker of a window on the screen.]
+At this point, the &appName; simulation services
+can be seen by interrogating the SBW Broker using one of the SBW Broker
+module browsing tools, such as &quot;SBW Inspector&quot; or 
+&quot;SBW Browser&quot; (the Browser tool ships with SBW, and the Inspector
+tool is available for download from the SBW Project home page.  It should be
+emphasized that at this point, the &appName; simulation services 
+are not actually running, they are just registered with the broker.
+A simulation service will be automatically started if a software program attempts
+to invoke a method on it, through the SBW Broker.</li>
+<li>You may wish to directly register and start the &appName; simulation servics.
+This performs registration and the start-up of all of the &appName;-provided
+simulation services listed above, in a single step.  To do this, run the
+&quot;<code>LaunchSBWSimulators</code>&quot; launcher that was placed in
+your Start Menu or on your desktop, when you installed &appName;. A console
+window should appear, with the string &quot;running SBW simulation module&quot;
+displayed.  The console window should remain in that state until the simulation
+services (or the SBW Broker) are terminated.  At that point, you
+should be able to invoke the methods of the simulation services
+through the SBW Broker, without the overhead of starting up a new Java Virtual
+Machine. In addition, if you built SBW with the SBW-Python bridge included
+(or installed a pre-built version of SBW containing the SBW-Python bridge),
+you should be able to run &quot;sbwpython&quot; and programmatically 
+interrogate the available &appName; simulation services through the 
+Python command-line, without needing to use the SBW API.
+</li>
+</ol>
+To have the full capabilities of &appName; available, it is recommended
+that you use the <a href="#gui">&appName; Graphical User Interface</a>,
+the <a href="#commandline">&appName; Command-Line Interface</a>, or the
+<a href="#api">&appName; Programmatic Interface</a>, instead of
+accessing &appName; via the Systems Biology Workbench.
+</p>
+</isb:docsection>
+
+<!-- ========== COMMAND-LINE INTERFACE ========== -->
+
+<isb:docsection name="&appName; Command-line Interface" label="commandline">
+<p>
+A command-line interface to the &appName; scripting engine is available.
+On most platforms, the <code>runmodel</code> program can be used.  It is
+in the &quot;<code>bin</code>&quot; subdirectory of the directory in which
+you installed &appName;.  Because it is not a GUI application and requires
+command-line arguments that you must type, the &quot;<code>runmodel</code>&quot;
+program does not have a link (icon) on your desktop or &quot;Start Menu&quot;.
+Like the <code>&appName;</code> program, the <code>runmodel</code> program will 
+only function correctly on the platform on which you originally installed &appName;.
+</p>
+<p>
+In addition, there is a &quot;<code>runmodel.sh</code>&quot; shell script in the
+same directory, that should work on any operating system that has the 
+&quot;Bash&quot; shell installed.  You will need to customize the two 
+environment variables <code>JAVA_BIN</code> and 
+<code>INSTALL_DIR</code> at the top of the script, using your text editor.
+This script should allow you to install &appName; into a network file system
+on a non-Unix computer (e.g., Windows), and to then run the
+<code>runmodel.sh</code> program from a Unix-type computer mounting the
+same file system.
+</p>
+<p>
+ For the purposes of illustration, we will assume
+that the <code>runmodel</code> program is being used.  
+</p>
+<p>
+The usage synopsis for the <code>runmodel</code> program is as follows:
+<blockquote>
+<pre>
+runmodel [-debug] [-parser &lt;parserAlias&gt;] 
+                  [-startTime &lt;startTime_float&gt;] 
+                  -stopTime &lt;stopTime_float&gt; 
+                  [-numSamples &lt;numSamples_int&gt;] 
+                  [-ensembleSize &lt;ensembleSize_long&gt;] 
+                  [-relativeTolerance &lt;tolerance_float&gt;] 
+                  [-absoluteTolerance &lt;tolerance_float&gt;] 
+                  [-stepSizeFraction &lt;step_size_fraction_float&gt;]
+                  -simulator &lt;simulatorAlias&gt; 
+                  -modelFile &lt;modelFile&gt; 
+                  [-outputFile &lt;outputFile&gt;] 
+                  [-outputFormat &lt;formatAlias&gt;]
+                  [-computeFluctuations]
+                  [-testOnly]
+                  [-printParameters]
+</pre>
+</blockquote>
+The explanation of the command-line options are as follows:
+<dl>
+<dt><b><code>debug</code></b></dt>
+<dd>Enables debug mode, in which the simulator will run normally,
+except it will print debugging information to the standard error
+stream (which you may capture to a file using shell redirection).
+The values of all simulator parameters are printed before the
+simulation commences. By default, debug mode is not enabled.</dd>
+
+<dt><b><code>parser</code></b></dt> <dd> This option specifies the
+alias of the parser that is to be used to parse your model definition
+file (see the <code>modelFile</code> option below).  If you do not
+specify this option, the simulation launcher program attempts to guess
+the appropriate parser to use, based on the extension of the model
+definition file's name.  The allowed parser aliases are: <blockquote>
+<dl> <dt><code><b>command-language</b></code></dt> <dd><a
+href="#cmdl">Chemical Model Definition Language</a> (CMDL).  File
+extensions: <code>.cmdl</code>, <code>.dizzy</code>.</dd>
+<dt><code><b>markup-language</b></code></dt> <dd><a
+href="#sbml">Systems Biology Markup Language</a> (SBML).  File
+extensions: <code>.xml</code>, <code>.sbml</code>.</dd> </dl>
+</blockquote> If you do not specify a parser alias and if the file
+suffix does not match any of the above, the CMDL parser is assumed.
+The parser alias must be typed exactly as shown above; it is
+case-sensitive.  </dd>
+
+<dt><b><code>startTime</code></b></dt>
+<dd>The (absolute) start time of the simulation.  It is a floating-point parameter.
+The default is 0.0.</dd>
+
+<dt><b><code>stopTime</code></b></dt>
+<dd>The (absolute) stop time of the simulation.  It is a floating-point parameter.
+This parameter is required.  It must be greater than the value of the 
+<code>startTime</code> parameter.</dd>
+
+<dt><b><code>numSamples</code></b></dt>
+<dd>The number of requested results time points.  It is an integer parameter.
+The default value is 100.  Your results will be a NxM matrix of values, 
+where N is the <code>numSamples</code> parameter, and M is the number of species
+in the model.</dd>
+
+<dt><b><code>ensembleSize</code></b></dt> <dd>The size of the
+ensemble.  It is an integer parameter.  This parameter is only used if
+you specify a stochastic simulator (see the <code>simulator</code>
+command-line argument below).  The default value is 1.  The minimum
+value is 1 (unless you specify <code>computeFluctuations</code>, in
+which case the minimum value is 2). The results of the simulation will
+be an average over <code>ensembleSize</code> separate realizations of the 
+stochastic process.</dd>
+
+<dt><b><code>relativeTolerance</code></b></dt><dd>The relative error tolerance.
+It is a floating-point parameter.  The minimum value is 0.0 (must be strictly greater
+than 0.0).  This parameter is only used with ODE simulators and the Tau-Leap
+simulators.  The maximum allowed error in the value of a given species S 
+is equal to the product of the value of S, and the value of the error tolerance,
+at any given time.  The default value depends on the simulator.</dd>
+
+<dt><b><code>absoluteTolerance</code></b></dt><dd>The absolute error tolerance.
+It is a floating-point parameter.  The minimum value is 0.0 (must be strictly greater
+than 0.0).  This parameter is only used with ODE simulators.  No species may have
+an error greater than the value of this parameter.  This parameter should not
+be made too small, in cases where a given species will take on a very large
+value.  The default value depends on the simulator.</dd>
+
+<dt><b><code>stepSizeFraction</code></b></dt> <dd>The step size, as a
+fraction of the time interval for the simulation
+(<code>stopTime</code> - <code>startTime</code>).  It is a
+floating-point parameter.  The default value depends on the simulator.
+The minimum value is 0.0 (must be strictly greater than 0.0).  If the
+simulator is a deterministic ODE simulator with fixed step-size, the
+step size that you specify is used as the uniform step size for the
+entire simulation.  If the simulator is a deterministic ODE simulator,
+the step size that you specify is used for the first step only;
+subsequent step sizes are controlled by the error tolerance parameters
+you specified (see <code>relativeTolerance</code> and
+<code>absoluteTolerance</code> above).  If you are using a stochastic
+<a href="#tauleap">Tau-Leap</a> simulator, the value you specify for
+this parameter specifies the maximum the ratio of the reaction time
+scale to the &quot;leap&quot; time scale. (If the &quot;leap&quot;
+time scale gets too small, the simulator will revert to stepping with
+the Gibson-Bruck algorithm).</dd>
+
+<dt><b><code>simulator</code></b></dt>
+<dd>This option specifies the alias of the simulator that is
+to be used for the simulation.  It is required.  The choices 
+of simulator aliases are:
+<blockquote>
+<pre>
+  ODE-RK5-adaptive
+  ODE-RK5-fixed
+  ODEtoJava-dopr54-adaptive
+  ODEtoJava-imex443-stiff
+  gibson-bruck
+  gillespie-direct
+  tauleap-complex
+  tauleap-simple
+</pre>
+</blockquote>
+The simulator alias is a case-sensitive option.  It must be
+typed exactly as shown above.  The listing of simulator
+aliases may be printed at any time by running
+&quot;<code>runmodel.sh -help</code>&quot;.
+</dd>
+
+<dt><b><code>modelFile</code></b></dt>
+<dd>This option specifies the model definition file.
+It is a required option.</dd>
+
+<dt><b><code>outputFile</code></b></dt>
+<dd>This option specifies the file to which the output
+should be saved.  If this option is not specified, the
+simulation results are printed to the standard output stream.
+</dd>
+
+<dt><b><code>outputFormat</code></b></dt>
+<dd>This option specifies the output format in which the simulation
+results should be printed, using an output format alias.  The
+list of allowed output format aliases are:
+<blockquote>
+<pre>
+  CSV-excel
+  CSV-gnuplot
+  CSV-matlab
+</pre>
+</blockquote>
+Here, &quot;CSV&quot; means comma-separated values.  The different
+programs refer to the comment character (i.e., Matlab uses the percent
+symbol as a comment character, whereas Gnuplot uses the pound symbol
+as the comment character).  The default output format alias is 
+<code>CSV-excel</code>.  Note that the output format alias must
+be typed exactly as shown above; it is case-sensitive.</dd>
+
+<dt><b><code>computeFluctuations</code></b></dt>
+<dd>
+<p>
+The <code>computeFluctuations</code> option is used to specify that
+the simulator should attempt to compute the steady-state fluctuations
+in the dynamical species in the model.  These fluctuations come from
+stochastic effects, i.e., from the non-continuum copy numbers of the
+dynamical species in the model.  The fluctuations will be written
+to the output file as specified with the <code>-outputFile</code> 
+command-line option (or standard output, if no <code>-outputFile</code>
+option was specified).  To use the <code>-computeFluctuations</code> option,
+it is necessary that the stop time specified with the <code>-stopTime</code>
+command-line option be sufficiently large that the model will have reached
+steady-state, defined as the condition whereby the rates of change of the
+concentrations of the dynamical species in the model are approximately zero.
+If the <code>-stopTime</code> specified is too small, the system will not
+have reached steady state at the end of the simulation, and the simulator
+will not be able to estimate the steady-state fluctuations of the dynamical
+species in the model.  
+</p>
+<p>
+The method of calculating the steady-state fluctuations
+depends on the type of simulator used.  If a deterministic (ODE) simulator
+is used, the fluctuations are estimated using a linear-algebraic approach,
+based on a theory developed by David Orrell,
+involving the Jacobian of the ODE model.  In this case, the calculations 
+of the steady-state fluctuations are estimates; the accuracy of the
+estimates will depend on how accurately the system can be characterized in
+terms of linear perturbations around the steady-state.  If the Jacobian
+of the model is ill-conditioned or the model is unstable around this steady-state, 
+the estimates of the steady-state fluctuations of the species will not 
+be very accurate.  If a stochastic simulator is used, the steady-state
+fluctuations are computed in terms of a standard deviation of the species
+values with respect to the ensemble-averaged mean, at the end time point
+of the simulation.  This requires an <code>-ensembleSize</code> that is
+greater than one.  The larger the ensemble size, the more accurate the
+calculation of the steady-state fluctuations will be.
+</p>
+</dd>
+
+<dt><b><code>testOnly</code></b></dt>
+<dd>This option specifies that the <code>runmodel</code> program
+should stop just before commencing the simulation.  The command-line
+and simulation parameters are still parsed and validated.  This feature
+is useful for checking your command-line parameters before running the
+simulation through a batch processing system.</dd>
+
+<dt><b><code>printParameters</code></b></dt>
+<dd>This option instructs the <code>runmodel</code> program to
+print a list of the parameters you selected (or the default values,
+for the parameters you did not specify) for the simulator you
+specified with the <code>-simulator</code> option.  The program
+then exits, without validating your simulation parameters or starting
+the simulation.  The <code>modelFile</code> option is not required if
+you specify the <code>printParameters</code> option.  This feature is
+useful if you want to know what the default values are for a given 
+simulator parameter, for a given simulator.</dd>
+
+</dl>
+Command-line options may be specified in any order.
+</p>
+<p>
+To see the default values for a given simulator <code>mysim</code>, try running the
+following command:
+<blockquote>
+<pre>
+runmodel.sh -simulator mysim -printParameters
+</pre>
+</blockquote>
+This will print all default values for the simulator parameters to 
+the standard error stream.  Parameters that are not used by the simulator
+will be printed as <code>null</code>.
+</p>
+<p>
+When you invoke the command-line interface to &appName;, the model definition
+file that you specify will be automatically loaded into the Simulator. A simulation
+will be run based on the parameters you specified on the command-line.  The
+output will be saved to the output file you specified with the
+&quot;<code>outputFile</code>&quot; command-line option, or to 
+standard output (the console) if you did not specify the
+&quot;<code>outputFile</code>&quot; command-line option.
+</p>
+<p>
+In order to be able to use the command-line interface to the &appName;
+system, you may need to set up your Java <code>CLASSPATH</code>
+variable properly.  On most operating systems, this is an environment
+variable.  If you installed &appName; in the default directory (just
+clicked &quot;next&quot; when prompted to specify the installation directory),
+you should not need to specify the <code>CLASSPATH</code> when running
+the <code>runmodel</code> program.  However, if you selected a directory
+other than the default directory for &appName; as the installation directory,
+you will need to modify the <code>CLASSPATH</code> environment variable to add
+the <code>&localJavaLibraryName;.jar</code> file to the path.  This file
+is installed in the &quot;<code>lib</code>&quot; subdirectory of the
+directory in which you installed the &appName; system.  In addition,
+if you wish to be able to import or export SBML, you will need to add
+the <code>SBMLValidate.jar</code> file and the <code>SBWCore.jar</code>
+file to your <code>CLASSPATH</code>.  Both of these JAR files are in
+the &quot;<code>lib</code>&quot; subdirectory where you installed &appName;.
+For example, if you installed &appName; in the &quot;<code>/usr/opt/&appName;</code>&quot;
+directory, your <code>CLASSPATH</code> variable might me modified to look
+like this:
+<blockquote>
+<pre>
+CLASSPATH=/usr/opt/&appName;/lib/&localJavaLibraryName;:/usr/opt/&appName;/lib/SBWCore.jar
+</pre>
+</blockquote>
+on Linux.  On Windows, if you installed &appName; in the
+&quot;<code>U:\&appName;</code>&quot; directory, your 
+<code>CLASSPATH</code> variable might be modified to look like
+this:
+<blockquote>
+<pre>
+CLASSPATH=U:\&appName;\lib\&localJavaLibraryName;;U:\&appName;\lib\SBWCore.jar
+</pre>
+</blockquote>
+Again, manually setting the <code>CLASSPATH</code> environment variable
+is only necessary if you selected an installation directory other than
+the default directory suggested by the &appName; installer program.
+</p>
+<p>
+In addition to setting your <code>CLASSPATH</code> variable, your
+shell <code>PATH</code> variable must be set so that the &quot;<code>java</code>&quot;
+program can be found within the <code>PATH</code>, in order to use the
+command-line interface to &appName;.
+</p>
+<p>
+<b>Estimating the steady-state fluctuations:</b><br />
+<a name="steadystatefluc" />
+The command-line interface to &appName; has a feature
+(not available in the <a href="#gui">graphical user interface</a>)
+for computing the steady-state fluctuations in a model.
+For more information, please refer to the documentation for
+the <code>-computeFluctuations</code> option above.
+</p>
+<p>
+</p>
+
+</isb:docsection>
+
+<isb:docsection name="&appName; Programmatic Interface" label="api">
+<p>
+The &appName; system is entirely implemented in the Java programming
+language.  All of the Java classes that make up the  &appName; system
+are provided within a library of Java packages called &localJavaLibraryName;.
+The packages within this library were designed to be reusable and extensible.
+This library represents the programmatic interface to the &appName; system.
+</p>
+<p>
+<a href="&localJavaLibraryURL;/javadoc">Javadoc application 
+programming interface (API) documentation</a> to the &localJavaLibraryName; library
+(including &appName;) can be
+found on the <a href="&localJavaLibraryURL;">&localJavaLibraryName;
+home page</a>.  The source code and compiled Java archive (JAR) file for this
+library can be downloaded from the same home page.  In addition, a downloadable
+PDF version of the user manual for the library is available.
+</p>
+<p>
+As a concrete illustration of a possible use of the API to &appName;,
+here is an example of a Java program that makes use of the programmatic
+interface to the &appName; system, to run a stochastic simulation of
+a simple system of chemical species and reactions:
+<blockquote>
+<pre>
+package org.systemsbiology.chem.tp;
+
+import org.systemsbiology.chem.*;
+import java.io.PrintWriter;
+
+public class TestSimulator
+{
+    private static final int NUM_TIME_POINTS = 100;
+
+    public static final void main(String []pArgs)
+    {
+        try
+        {
+            Compartment compartment = new Compartment("univ");
+            Species speciesA = new Species("A", compartment);
+            speciesA.setSpeciesPopulation(100.0);
+            Species speciesB = new Species("B", compartment);
+            speciesB.setSpeciesPopulation(500.0);
+            Reaction reactionX = new Reaction("X");
+            reactionX.addReactant(speciesA, 1);
+            reactionX.addProduct(speciesB, 1);
+            Reaction reactionY = new Reaction("Y");
+            reactionY.addReactant(speciesB, 1);
+            reactionY.addProduct(speciesA, 1);
+            reactionX.setRate(1.0);
+            reactionY.setRate(1.0);
+            Model model = new Model("model");
+            model.addReaction(reactionX);
+            model.addReaction(reactionY);
+            System.out.println(model.toString());
+            SimulatorStochasticGillespie simulator = new SimulatorStochasticGillespie();
+            SimulatorParameters simParams = simulator.getDefaultSimulatorParameters();
+            simParams.setEnsembleSize(40);
+            simulator.initialize(model);
+            String []requestedSymbolNames = { "A", "B" };
+            
+            long curTime = System.currentTimeMillis();
+
+            SimulationResults simulationResults = simulator.simulate(0.0, 
+                                                  1000.0, 
+                                                  simParams,
+                                                  NUM_TIME_POINTS,
+                                                  requestedSymbolNames);
+
+            long finalTime = System.currentTimeMillis();
+            double elapsedTimeSec = (double) (finalTime - curTime) / 1000.0;
+            System.out.println("elapsed time: " + elapsedTimeSec);
+
+            int numSymbols = requestedSymbolNames.length;
+
+            double []timeValues = simulationResults.getResultsTimeValues();
+            Object []symbolValues = simulationResults.getResultsSymbolValues();
+
+            TimeSeriesSymbolValuesReporter.reportTimeSeriesSymbolValues(new PrintWriter(System.out),
+                                                                        requestedSymbolNames,
+                                                                        timeValues,
+                                                                        symbolValues,
+                                                                        TimeSeriesOutputFormat.CSV_EXCEL);
+        }
+
+        catch(Exception e)
+        {
+            e.printStackTrace(System.err);
+        }
+    }
+}
+</pre>
+</blockquote>
+</p>
+<p>
+For more information on how to use the &localJavaLibraryName; library,
+please refer to the 
+<a href="&localJavaLibraryURL;/docs/UserManual.html">&localJavaLibraryName;
+User Manual</a>.
+</p>
+
+</isb:docsection>
+
+<!-- ========== GRAPHICAL USER INTERFACE ========== -->
+
+<isb:docsection name="&appName; Graphical User Interface" label="gui">
+<p>
+The &appName; system has a graphical user interface (GUI) application 
+that is layered on top of the previously described 
+<a href="#cmdl">scripting engine</a>.  This GUI is a work in progress.
+This section presumes that you have already installed the &appName;
+application using the 
+<a href="&appHomePage;/&appVersion;/installer/Web_Installers/install.htm">downloadable, self-extracting 
+installer</a>.  To start the &appName; application, find the link 
+entitled &quot;&appName;&quot; in your home directory or start menu.
+Launch the executable file that this symbolic link points to.  This should
+launch the &appName; application.  It takes a moment to load, because it
+must first start up the Java virtual machine and search your classpath for
+plug-ins.
+</p>
+<p>
+The &appName; application provides the following features:
+<ul>
+<li>load a model definition file</li>
+<li>run a simulation and store, plot, or display the results</li>
+<li>export a model instance to a file of a specified format</li>
+<li>display a graphical representation of a model using <a href="&cytoscapeURL;">Cytoscape</a>
+system.</li>
+</ul>
+A sample screen shot of the &appName; graphical user interface follows:
+</p>
+<p>
+<a href="../images/screenshot1-big.png"><img src="../images/screenshot1.png" alt="screenshot" /></a>
+</p>
+<p>
+Each of the above features will be described in turn.
+</p>
+
+<isb:docsubsection name="Load a model definition file" label="gui-loadfile">
+<p>
+The first step in using the &appName; GUI application is usually to
+load a model definition file.  This is done by selecting the &quot;Open...&quot;
+option from the &quot;File&quot; menu.  You will be asked to specify a model
+definition file.  By default, only model definition files whose file extensions
+(file name suffixes) are of a recognized type, are displayed.  By selecting
+&quot;All files&quot; from the pull-down menu &quot;Files of Type&quot;, you
+can optionally choose from among any file, regardless of the file extension.
+When the file is selected, if you click on the &quot;open&quot; button, the
+model definition file will appear in the editor window.  The editor window
+is the white text box in the main &appName; window, as seen here:
+</p>
+<p>
+<img src="../images/screenshot14.png" alt="screenshot 14" />
+</p>
+<p>
+The file name is indicated in the label that starts with &quot;<b>file:</b>&quot;.
+At this stage, the model has not yet been processed by the scripting runtime,
+so no parser is listed next to the &quot;<b>parser:</b>&quot; label.
+</p>
+<p>
+To simulate the model, select the &quot;Simulate...&quot; option from the
+&quot;Tools&quot; menu.  If the model definition file has a recognized
+file extension, &appName; will automatically select the correct parser and
+will indicate the alias of the parser next to the &quot;<b>parser:</b>&quot;
+label.  Otherwise, you will be prompted to specify a parser for &appName; to use
+in processing your model definition.  &appName; will remember this parser
+choice until you close the file, or exit the application.  A simulation launcher
+window will be displayed.
+</p>
+<p>
+To close the file (i.e., clear the editor window), 
+select &quot;Close&quot; from the &quot;File&quot; menu.  If you have made
+changes to the model in the editor window, you will be prompted to confirm
+your choice to close the file.  If you edit a model definition within
+&appName; and then close the file, your changes will be lost.  You may save
+your changes by selecting the &quot;Save&quot; item under the &quot;File&quot;
+menu.  To save your changes to a specific file, use the &quot;Save as&quot;
+menu item under the &quot;File&quot; menu.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Run a simulation" label="gui-runsimulation">
+<p>
+Once a <a href="#models">model</a> has been loaded into the text editor, 
+the &quot;Simulate...&quot; menu option under the &quot;Tools&quot; 
+menu becomes enabled (no longer
+greyed out).  Selecting the &quot;Simulate...&quot; menu option causes a
+dialog box entitled &quot;&appName;: simulator&quot; to be displayed.
+In this dialog box, you must specify the start and stop time for the 
+simulation, as well as the output type, the type of simulator (i.e.,
+which <a href="#simplugins">simulator plug-in</a> to use), and the
+list of species to be included in the &quot;output&quot;.  The start 
+time defaults to 0.0, and it is rarely necessary to use a different value.
+The simulator defaults to the 
+<a href="&localJavaLibraryURL;/javadoc/org/systemsbiology/chem/SimulatorStochasticGillespie.html">
+Gillespie Simulator</a>.
+You must select at least one species to be included in the &quot;output&quot;.
+The other species not selected, may still participate in the simulation,
+but their population values over time will not be included in the data
+resultant from running the simulation.  
+</p>
+<p>
+The &quot;number of results points&quot; text box is used to input the
+number of time points you wish to have, as the results of your
+simulation.  If you specify 100 points, the results of your simulation
+will be values for the species that you selected, at 100 time points
+uniformly distributed throughout the time interval of the simulation.
+The minimum value for this parameter is 2.  A sensible starting value
+is 100.  Note that if you select more than a few hundred points, the
+plotting software may have difficulties plotting all the results
+points (if you requested the results to be saved to a data file, this
+is not an issue).
+</p>
+<p>
+The &quot;stochastic ensemble size&quot; text box is enabled only for
+stochastic simulators such as the Gillespie, Gibson-Bruck, or Tau-Leap
+simulators.  This text-box is an integer that specifies the number of
+separate realizations of the stochastic process that should be
+conducted.  The &quot;results&quot; of the simulation are an average
+over the values of each species at each point in time, over the
+ensemble of realizations of the stochastic process.  The default value
+is 1.  Exercise care in specifying a large value for this parameter,
+because it can make the simulation run-time prohibitively long.  It is
+best to start with a value of 1, and to note how long the simulation
+runs.  If the simulation takes N seconds to run with an ensemble size
+of 1, then with an ensemble size of E, it will take N*E seconds to
+complete.  The minimum allowed value of the &quot;stochastic ensemble
+size&quot; parameter is 1.  The maximum value is, practically
+speaking, limited by the complexity of your model, how long you are
+willing to wait for a solution, and the CPU power of your computer.
+</p>
+<p>
+The &quot;step size fraction&quot; text box is used to enter a
+floating-point number specifying the step size, as a fraction of the
+total time range for the simulation.  The total time range of the
+simulation is entered in the &quot;start&quot; and &quot;stop&quot;
+text boxes, as described above.  The &quot;step size fraction&quot;
+text box is only enabled for ODE-based deterministic simulators.  If
+you are using a simulator with a fixed step-size, the simulator will
+use your step size as the fixed step size for the entire time
+interval.  If you are using a simulator with an adaptive step-size,
+the simulator will use this step size for the initial time-step; it
+will change the step size for time steps after the initial time step,
+depending on the error control parameters you specify (see below).
+For fixed step-size simulators, if you specify a step size fraction
+that is too large, the simulator may exceed its error threshold, in
+which case the simulation will halt with an exception (and it will
+suggest that you re-run the simulation with a large minimum number of
+time steps).  If you are using a stochastic <a href="#tauleap">Tau-Leap</a> simulator, the
+step-size fraction specifies the maximum the ratio of the reaction
+time scale to the &quot;leap&quot; time scale. (If the
+&quot;leap&quot; time scale gets too small, the simulator will revert
+to stepping with the Gibson-Bruck algorithm).
+</p>
+<p>
+The &quot;max allowed relative error&quot; text box is used to define
+a floating point number (greater than 0.0 and less than 1.0) that
+specifies the maximum allowed aggregate fractional relative simulation
+error.  This is only used by the deterministic (ODE) simulators.  A
+good starting value for this parameter is about 0.0001.
+</p>
+<p>
+The &quot;max allowed absolute error&quot; text box is used to define
+a floating point number (greater than 0.0 and less than 1.0) that
+specifies the maximum allowed aggregate absolute simulation error.
+This is only used by the deterministic (ODE) simulators.  Care should
+be exercised before setting this parameter to too small a value.  A
+good starting value would be 0.01.
+</p>
+<p>
+The &quot;number of history bins&quot; text box is only enabled for
+models that contain <a href="#delayed">delayed</a> or
+<a href="#multistep">multistep</a> reactions.  In this text box,
+you may specify the granularity with which the delayed reaction
+solver should retain the history of species values, for species
+that participate in delayed reactions.  The default value is 400.
+The minimum value is 10.  If you are having trouble with 
+mass conservation in an ODE simulation of a model with a
+delayed reaction, try increasing this parameter.
+</p>
+<p>
+The &quot;output type&quot; part of the simulation specifies how the
+simulator should process the simulation results.  There are three
+choices:  <b>plot</b>, <b>table</b>, and <b>store</b>.
+<dl>
+<dt><b>table</b></dt>
+<dd>
+The <b>table</b> option just displays the values for the species populations, over time,
+in a tabular format, in a new window.  
+</dd>
+<dt><b>plot</b></dt>
+<dd>
+The <b>plot</b> output type will cause a
+graphical plot to be generated, in a new window.  
+Note that when plotting the output,
+all species selected are displayed on the same graph.  This means that
+one species with values that are much greater than the other species,
+will cause Y-axis scaling that will render the other species data
+points all at the bottom of the graph window.  To avoid this problem,
+you can display a graph without the species with large population
+values, or you can export the data in comma-separated value
+format.  This is done by selecting the <b>store</b> output
+type.  With the data in a file in comma-separated-value format, you may
+import the data into a program that has more sophisticated graphing
+capabilities, such as Gnuplot, Octave, Gnumeric, Excel, or Matlab
+(see the &quot;store&quot; output type below).
+</dd>
+<dt><b>store</b></dt>
+<dd>
+The <b>store</b> output type instructs the simulator to save the 
+simulation results in a file that you specify, in a format chosen
+from the &quot;format:&quot; drop-down.  At present, all possible
+output formats are comma-separated-value text formats, differening
+only in the type of commetn character used in the first line.
+Make sure to select the appropriate output file format depending on
+the application into which you wish to import the result.  This is
+necessary because Matlab has a different comment character
+(&quot;%&quot;) than Gnuplot and Excel (&quot;#&quot;).  By default,
+selecting the &quot;store&quot; output type will generate a file for
+writing.  If the file selected already exists, you will be asked to
+confirm your choice.  To instead append to the selected file (rather
+than overwrite), click on the &quot;append&quot; check-box.
+</dd>
+</dl>
+</p>
+<p>
+At the bottom of the &quot;&appName;: simulator&quot; frame, you will 
+see a progress bar and a text field &quot;secs remaining&quot;.
+The progress bar gives an indication of the fraction of the time range 
+for the simulation that has been completed.  However, it does not give 
+an accurate indication of the estimated time to completion.  This is 
+because simulations may frequently slow down or speed up, depending on 
+the concentration levels of the species in the model.  At best, the
+progress bar is a rough guideline indicating the progress of the simulator.  
+The &quot;secs remaining&quot; field is an estimate of the number of
+seconds remaining (in real time) for the simulation to complete.  The
+estimate can change by several orders of magnitude during the course of
+a simulation, if the dynamical time scale of the system changes radically.
+As a rule of thumb, the &quot;secs remaining&quot; estimate should only be 
+regarded as reliable when the progress bar is over 75% complete.
+</p>
+<p>
+To the right of the &quot;output type&quot; section of the simulation
+launcher, there is a section &quot;simulation results list&quot;.  The
+list box in this section shows an entry for each simulation that you have
+run, labeled by a combination of the model name, the simulator alias, and
+the date/time at which the simulation concluded.  You may select one of
+the past simulations, and click on the &quot;reprocess results&quot; button,
+which will re-process the results of that past simulation based on the
+output type you specified in the &quot;output type&quot; section of the
+simulation launcher.  Note that only those symbol names that were
+<em>originally</em> specified as your desired results symbol names, at the
+time you launched the simulation, are available to display when you click
+on the &quot;reprocess results&quot; button.  For example, suppose you have
+symbols <code>A</code>, <code>B</code>, and <code>C</code> in your model, 
+and you originally had <code>A</code> and <code>B</code> highlighted in the
+&quot;view symbols&quot; list box when you ran the simulation.  Later,
+if you click on the &quot;reprocess results&quot; button, you will only have
+the results for symbols <code>A</code> and <code>B</code> available to you,
+to display, plot or save.  To get results for symbol <code>C</code> in this
+scenario, you would need to re-run the simulation.  The &quot;reprocess results&quot;
+feature is useful if you decide, based on the plot, that you wish to capture
+the simulation results to a file; you may save the numeric results that you plotted,
+to a comma-separated file, without having to re-run the simulation.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Plotting" label="plotting">
+<p>
+You may view a graphical plot of the time-series values for model elements
+that you have selected in the simulation launcher.  This is accomplished by
+clicking on the &quot;Plot&quot; output type, before initiating the simulation.
+The plot may be enlarged or shrunk by re-sizing the plot window.  Please be
+patient, as it takes some time to resize the plot to the desired dimensions.
+</p>
+<p>
+You may save a plot to a file in PNG format, by clicking on the 
+&quot;save as PNG image file&quot; button.  Saving to JPEG is not presently
+supported, because JPEG tends to poorly render line art.  Images in PNG
+format are readable by the most recent versions of Photoshop, Powerpoint, 
+etc.  Because of Unix incompatibilities, saving a plot image to the clipboard
+is not currently supported, but may be added in the future as a 
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Export model" label="gui-export">
+<p>
+A model may be exported to one of two
+different formats:  <a href="#sbml">SBML</a> and <a href="#cmdl">CMDL</a>.
+Both of those formats may be subsequently loaded into the &appName; system.
+The export feature
+is used by selecting the &quot;Export...&quot; menu
+item from the &quot;Tools&quot; menu.  You will be presented with a dialog 
+box in which you must specify the file format for exporting the model instance.
+You will then be prompted to specify the file name and location for the file
+to which the model instance should be exported.  This feature is useful for
+converting, say, a CMDL model instance into a SBML model instance.   
+The model instance thus exported can then be imported into a
+variety of modeling and visualization tools that support the SBML format for
+model interchange.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Reload Model" label="gui-reload">
+<p>
+Once a model has been loaded into the <a href="#gui-runsimulation">simulator</a>,
+you may update the model in the simulator by selecting the &quot;Reload&quot;
+menu item under the &quot;Tools&quot; menu.  This operation may only be performed
+when the simulation launcher window is open, and when a simulation is not actively
+underway.  While a simulation is being run, the &quot;Reload&quot; menu item
+is disabled (greyed out).  You may modify your model definition file in the editor,
+and then select &quot;Reload&quot; to cause the simulation launcher to reload the model.
+</p>
+</isb:docsubsection>
+
+
+<isb:docsubsection name="Display in Cytoscape" label="gui-cytoscape">
+<p>
+A graphical representation of a model may be displayed by selecting the
+&quot;View in Cytoscape&quot; menu item from the &quot;Tools&quot; menu.
+This will cause a new window to open, in which the model is displayed
+as a directed graph, with species and reactions being represented as
+nodes in the graph.  An example of such a graph is shown here:
+</p>
+<p>
+<img src="../images/screenshot6.png" alt="&appName; screenshot 6" />
+</p>
+<p>
+The Cytoscape bridge uses the Java Network Launching Protocol (JNLP) to
+invoke Cytoscape.  This requires a working network connection in order for
+the bridge to function properly, the first time you run Cytoscape.  
+If you do not have a working network connection, you may still use the 
+other features in &appName;; however, you will get an error message if 
+you select the &quot;display in Cytoscape&quot; menu item.  For subsequent
+invocations of this feature, a network connection is not needed, as the
+Cytoscape program will be stored in a local cache on your computer.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="View in human-readable format" label="viewhuman">
+<p>
+This menu item, under the &quot;Tools&quot; menu, is used to display
+a human-readable representation of a model, in a dialog box.  When this
+menu item is selected, the model definition in the editor buffer 
+is processed by the appropriate parser, and the resulting model is 
+printed in a dialog box, in human-readable format.  For example, the
+&appName; CMDL model definition shown here:
+<blockquote>
+<pre>
+A = 100.0;
+B = 0.0;
+C = 1000.0;
+D = 0.0;
+
+k1 = 0.1;
+
+r1, A -&gt; B, k1;
+
+k2 = 0.001;
+
+r2, C -&gt; D, [k2 * C];
+
+</pre>
+</blockquote>
+would have the human-readable representation:
+<blockquote>
+<pre>
+Model: model
+
+Parameters: 
+{
+Parameter: k1 [Value: 0.1],
+Parameter: k2 [Value: 0.0010]
+}
+
+Compartments: 
+{
+Compartment: univ [Value: 1.0]
+}
+
+Species: 
+{
+Species: A [Value: 100.0, Compartment: univ],
+Species: B [Value: 0.0, Compartment: univ],
+Species: C [Value: 1000.0, Compartment: univ],
+Species: D [Value: 0.0, Compartment: univ]
+}
+
+Reactions: 
+{
+Reaction: r1, A -&gt; B,  [Rate: 0.1],
+Reaction: r2, C -&gt; D,  [Rate: "k2*C"]
+}
+</pre>
+</blockquote>
+To save the human-readable version of a model to a file, use the
+<a href="#gui-export">export model</a> feature.  Select the
+&quot;Export&quot; item under the &quot;Tools&quot; menu.  Then
+select the &quot;human-readable&quot; exporter from the list of
+exporters available.
+</p>
+</isb:docsubsection>
+
+<isb:docsubsection name="Browse Help" label="gui-browsehelp">
+<p>
+You may browse the online help by selecting the &quot;Browse help...&quot;
+menu item from the &quot;Help&quot; menu.  This will display a window in
+which the
+<a href="&appHomePage;/docs/UserManual.html">&appName; User Manual</a>
+is displayed.  The left-hand side of this window contains a &quot;navigation&quot;
+frame.  By default, the table of contents is displayed in the navigation frame.
+If you click on an item in the table of contents, the relevant section is 
+displayed in the manual on right right-hand-side of the help window.  
+You may also select the &quot;search&quot; navigator by clicking on the
+tab with the magnifying glass icon.  A text-box will be displayed into
+which you may type a natural language query, such as &quot;reaction rate&quot;.
+The search engine will display a &quot;hit summary&quot;
+indicating the document and the number of hits, just below the text-box.
+You may double-click on the &quot;hit summary&quot; to advance to the next
+hit within the document.  At presently, only one document (the user manual)
+is indexed for full-text search capability.
+</p>
+<p>
+<img src="../images/screenshot15.png" alt="&appName; screenshot 15" />
+</p>
+</isb:docsubsection>
+
+</isb:docsection>
+
+<isb:docsection name="Frequently asked Questions" label="faq">
+
+<p>
+<b>How do I graph the time-series data for an algebraic function of
+one or more species, such as the sum of two species, <code>SA + SB</code>?</b>
+</p>
+<p>
+After you have defined species <code>SA</code> and <code>SB</code>
+in your model definition file, define a symbol as shown here:
+<blockquote>
+<pre>
+SumAB = [ SA + SB ];
+</pre>
+</blockquote>
+The symbol <code>SumAB</code> will show up in the &quot;view symbols&quot;
+list-box in the Simulation Launcher window, and you may select 
+<code>SumAB</code> from this list-box in order to view the time-series
+data for the sum of the values for the two species.  This technique
+can be generalized to an arbitrary expression involving any number of
+species or parameters defined previously in the model.
+</p>
+<p>
+<b>Why does the output of the <code>ODEtoJava-imex443-stiff</code> simulator
+look different than the other simulators?</b>
+</p>
+<p>
+See the <a href="#odeToJavaInterpolation">known issue with
+interpolation in the implicit-explicit odeToJava solver</a>.
+</p>
+<p>
+<b>Is it possible to estimate the steady-state stochastic
+fluctuations in a model, without doing a full stochastic simulation?
+</b>
+</p>
+<p>
+Yes, but you will have to use the <a href="#commandline">command-line
+interface to &appName;</a>.  Please refer to the documentation on the
+&quot;<code>-computeFluctuations</code>&quot; command-line option, in the aforementioned
+section.
+</p>
+
+</isb:docsection>
+
+<isb:docsection name="Known Bugs and Limitations" label="knownbugs">
+<p>
+This section lists all known bugs and limitations of the &appName;
+system.
+</p>
+<p>
+<ol>
+<li>
+<a name="odeToJavaInterpolation" />
+The implicit/explicit Runge-Kutta simulator in the &quot;<code>odeToJava</code>&quot;
+package does not currently support interpolation, so the results from that simulation
+will appear to have discontinuous jumps between constant values, when the simulator is
+able to take large time-steps.  The data point at the start of every constant region 
+is the correct value at that time.
+</li>
+<li>
+The &quot;<code>odeToJava-imex443-stiff</code>&quot; simulator cannot be
+interrupted by using the &quot;pause&quot; and &quot;cancel&quot; buttons.
+Quitting the &appName; application is the only way to cancel a simulation if
+one of the &quot;<code>odeToJava</code>&quot; simulators is being used.
+</li>
+<li>
+The &quot;copy to clipboard&quot; feature is not supported on
+Unix/Linux.  It is currently only available on Windows.  This 
+is due to limitations in the XFree86 clipboard feature.
+</li>
+</ol>
+</p>
+
+</isb:docsection>
+
+<isb:docsection name="Getting Help" label="gettinghelp">
+<p>
+If you find that the &appName; program does not function in accordance
+with the descriptions in this manual, or if there are sections of
+this manual that are incorrect or unclear, the authors would like to 
+hear about it, so that we can make improvements and fix bugs in the
+software.  Furthermore, the authors would appreciate feedback
+regarding new features or improvements that would be useful to
+users of this software.  Before e-mailing the authors, it is a good
+idea to check the <a href="&appHomePage;">&appName; application home page</a>
+to see if a new version has been released, in which your specific
+problem may have been corrected.  All releases are documented in
+the &quot;version history&quot; page accessible from the home page.
+The best way to contact the authors is to send e-mail to:
+<blockquote>
+<code>&appMaintainerEmailSafe;</code>.
+</blockquote>
+The authors will attempt to respond to your e-mail as quickly as
+possible.
+</p>
+<p>
+If you are reporting a bug, or something that you suspect is a bug,
+please provide as much information as you can about your specific
+installation of the &appName; program.  In particular, please provide
+us with the version number of the &appName; program that you are using,
+the type and version number of the Java Runtime Environment that you
+are using (e.g., Sun JRE version 1.4.1), and your operating system
+type and verion (e.g., Red Hat Linux 8.0).  Furthermore, if the
+problem is with a specific model definition file, please send us the
+model definition file, and any model definition files that it 
+<a href="#fileinclusion">includes</a>.  If the problem that you 
+encountered generated a &quot;stack backtrace&quot; on the console,
+please include the full stack backtrace text in your bug report.
+Please also send us the text of any error message that you may 
+have been reported by the application, in a dialog box or the like.
+Providing this information will dramatically increase the likelihood
+that the authors will be able to quickly and successfully resolve
+the problem that you are encountering.
+</p>
+
+</isb:docsection>
+
