@@ -28,3 +28,5 @@ Type `sudo crontab -e` in console to add a cron task as a root user like below:
 # minute (0-59), hour (0-23, 0 = midnight), day (1-31), month (1-12), weekday (0-6, 0 = Sunday)
 0 0 * * * /bin/bash ~/backup_to_macmini.sh
 ```
+
+Crontab may fail to find `bash` in PATH (extra configuration may be required.), so use `/bin/bash` for the command line (check `whereis bash`). 
