@@ -104,8 +104,8 @@ getShapeScores<-function(x){
   Prot<-DNApars[,(ncol(Helt)+ncol(MGW)+ncol(Roll)+1):(ncol(Helt)+ncol(MGW)+ncol(Roll)+(l-4)),drop=FALSE]
   HelTfeature<-t(apply(Helt,1,getFeatures))
   MGWfeature<-t(apply(MGW,1,getFeatures))
-  ProTfeature<-t(apply(Roll,1,getFeatures))
-  Rollfeature<-t(apply(Prot,1,getFeatures))
+  ProTfeature<-t(apply(Prot,1,getFeatures))
+  Rollfeature<-t(apply(Roll,1,getFeatures))
   featureTable<-cbind(HelTfeature,MGWfeature,ProTfeature,Rollfeature)
   head(featureTable)
   featureTable<-data.frame(featureTable)
