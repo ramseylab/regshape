@@ -1,6 +1,0 @@
-org.systemsbiology.chem
-org.systemsbiology.util
-org.systemsbiology.chem.sbw
-org.systemsbiology.chem.sbml
-org.systemsbiology.chem.odetojava
-org.systemsbiology.chem.app

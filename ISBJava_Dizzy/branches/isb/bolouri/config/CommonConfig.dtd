@@ -1,4 +1,0 @@
-<!ENTITY installWebDir "/users/sramsey/public_html/bolouri">
-<!ENTITY webBaseURL    "http://projects.systemsbiology.net/bolouri_group">
-<!ENTITY mainLogoURL   "&webBaseURL;/images/logo-isb.png">
-<!ENTITY mainPublicURL "http://www.systemsbiology.org">
